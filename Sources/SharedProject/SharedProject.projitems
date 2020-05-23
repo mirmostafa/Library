@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>a129a5a3-48ac-4e5e-be11-ee571cd8dda5</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SharedProject</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Enumerable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\EqualityComparerBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\EqualityComparerList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\HierarchicalItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\HierarchicalList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\IIndexerEnumerable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\IndexerEnumerable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\LibEqualityComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\PairValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\SynchronizedCircularQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\TripleValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\Tuple.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Generic\ValueCompare.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\IndentTreeNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\IReadOnlyTreeById.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\IReadOnlyTreeByIdComplex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\Node.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\NodeById.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\NodeByIdComplex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\ReadOnlyTree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\ReadOnlyTreeById.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\ReadOnlyTreeByIdComplex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\Tree.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\TreeById.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\TreeByIdComplex.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\AsyncObservableCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\CollectionContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\DelayedCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\EventualCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\IEventualCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\IEventualEnumerable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\PairValueCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\ReadOnlyCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\ReadOnlyDictionary.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\SpecialCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\TripleValueCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ObjectModel\UniqueCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Specialized\TaskList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\Behavioral\Memento.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\Creational\Exceptions\SingletonException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\Creational\Factory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\Creational\ISingleton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\Creational\Singleton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\DecisionRequiringPattern\NotifyDecisionRequired.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\ExceptionHandlingPattern\ExceptionHandlerContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\ExceptionHandlingPattern\ExceptionHandling.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\ExceptionHandlingPattern\Handlers\ExceptionHandlingExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DesignPatterns\ExceptionHandlingPattern\IExceptionHandlerContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Diagnostics\Diag.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Diagnostics\MemoryProfiler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dynamic\Expando.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dynamic\Xml\XNode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Dynamic\Xml\XNodeList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventsArgs\Bases.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventsArgs\ExceptionOccurredEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventsArgs\MultiStepLogEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventsArgs\ProgressiveOperationEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EventsArgs\WindowsServiceProgramBaseStartupEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\BreakException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ExceptionBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\InvalidDataEntryException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\LibraryExceptionBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ObjectDuplicateException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ObjectNotFoundException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\OperationCancelledException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\PairMessageStatusCodeExceptionBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\ParseException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Exceptions\WindowMismatchException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\Attributes\LocalizedDescription.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\CustomFormatters\CustomNumberFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\DataTypes\Definitions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\DateTimeFormatter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\DateTools.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\Helpers\Localization.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\Helpers\PersianCultureHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\ILocalizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\PersianAlphabetConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\PersianCultureInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\PersianDateTime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Globalization\Utilities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ArgHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ClassHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\CodeHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ComparableHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\DateTimeHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\DelegateHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\DynamicHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\EnumerableHelper.Async.cs">
+      <DependentUpon>EnumerableHelper.cs</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\EnumerableHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\EnumerableHelper.Privates.cs">
+      <DependentUpon>EnumerableHelper.cs</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\EnumHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\EventHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ExceptionHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ImmutableTypeInitializer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\Internals\MemberInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\LogProviderHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\NumericHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\ObjectHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\PersianDateTimeHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\PropertyHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\StringHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Helpers\XmlHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IProgressiveOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\ISupportSilence.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LibrarySupervisor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\ILogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\ILogRotator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\ISimpleLogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\LoggerContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\LoggingSeverity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\LogLevel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Primitives\Contracts\ArrayContract.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Primitives\Contracts\IArray.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Primitives\IApplication.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Primitives\Os.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Primitives\PrettyTime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Primitives\VersionInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\Json.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Text\NumberCulture.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Async.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\AsyncCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\AsyncImp.cs">
+      <DependentUpon>Async.cs</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\AsyncPool.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\AsyncResultAwaiter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Definitions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\PriodicAsync.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\PriodicAsyncImp.cs">
+      <DependentUpon>PriodicAsync.cs</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\Async.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\ParallelHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\Processor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\RunCancellableResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\Timer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\Tasks\TimerFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)DesignPatterns\structural\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)Collections\Hierarchy\Hierarchy.cd" />
+    <None Include="$(MSBuildThisFileDirectory)Logging\Logging.cd" />
+  </ItemGroup>
+</Project>
