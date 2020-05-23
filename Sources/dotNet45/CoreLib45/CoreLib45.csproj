@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
- <PropertyGroup>
-    <LangVersion>8.0</LangVersion>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
- </PropertyGroup>
- <PropertyGroup>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E9A26E5C-B17E-4A9F-899D-844DA2C0FBFC}</ProjectGuid>
@@ -115,44 +115,6 @@
     <Compile Include="BusinessModel\MessageExchange\IActionResult.cs" />
     <Compile Include="BusinessModel\MessageExchange\PrimaryActionResults\ActionResult.cs" />
     <Compile Include="BusinessModel\MessageExchange\PrimaryActionResults\ActionResult.Generic.cs" />
-    <Compile Include="Collections\Generic\Enumerable.cs" />
-    <Compile Include="Collections\Generic\EqualityComparerBase.cs" />
-    <Compile Include="Collections\Generic\EqualityComparerList.cs" />
-    <Compile Include="Collections\Generic\HierarchicalItem.cs" />
-    <Compile Include="Collections\Generic\HierarchicalList.cs" />
-    <Compile Include="Collections\Generic\IIndexerEnumerable.cs" />
-    <Compile Include="Collections\Generic\IndexerEnumerable.cs" />
-    <Compile Include="Collections\Generic\LibEqualityComparer.cs" />
-    <Compile Include="Collections\Generic\PairValue.cs" />
-    <Compile Include="Collections\Generic\SynchronizedCircularQueue.cs" />
-    <Compile Include="Collections\Generic\TripleValue.cs" />
-    <Compile Include="Collections\Generic\Tuple.cs" />
-    <Compile Include="Collections\Generic\ValueCompare.cs" />
-    <Compile Include="Collections\Hierarchy\IndentTreeNode.cs" />
-    <Compile Include="Collections\Hierarchy\IReadOnlyTreeById.cs" />
-    <Compile Include="Collections\Hierarchy\IReadOnlyTreeByIdComplex.cs" />
-    <Compile Include="Collections\Hierarchy\Node.cs" />
-    <Compile Include="Collections\Hierarchy\NodeById.cs" />
-    <Compile Include="Collections\Hierarchy\NodeByIdComplex.cs" />
-    <Compile Include="Collections\Hierarchy\ReadOnlyTree.cs" />
-    <Compile Include="Collections\Hierarchy\ReadOnlyTreeById.cs" />
-    <Compile Include="Collections\Hierarchy\ReadOnlyTreeByIdComplex.cs" />
-    <Compile Include="Collections\Hierarchy\Tree.cs" />
-    <Compile Include="Collections\Hierarchy\TreeById.cs" />
-    <Compile Include="Collections\Hierarchy\TreeByIdComplex.cs" />
-    <Compile Include="Collections\ObjectModel\AsyncObservableCollection.cs" />
-    <Compile Include="Collections\ObjectModel\CollectionContainer.cs" />
-    <Compile Include="Collections\ObjectModel\DelayedCollection.cs" />
-    <Compile Include="Collections\ObjectModel\EventualCollection.cs" />
-    <Compile Include="Collections\ObjectModel\IEventualCollection.cs" />
-    <Compile Include="Collections\ObjectModel\IEventualEnumerable.cs" />
-    <Compile Include="Collections\ObjectModel\PairValueCollection.cs" />
-    <Compile Include="Collections\ObjectModel\ReadOnlyCollection.cs" />
-    <Compile Include="Collections\ObjectModel\ReadOnlyDictionary.cs" />
-    <Compile Include="Collections\ObjectModel\SpecialCollection.cs" />
-    <Compile Include="Collections\ObjectModel\TripleValueCollection.cs" />
-    <Compile Include="Collections\ObjectModel\UniqueCollection.cs" />
-    <Compile Include="Collections\Specialized\TaskList.cs" />
     <Compile Include="Compression\ByteCompressor.cs" />
     <Compile Include="Constants\RegexPatterns.cs" />
     <Compile Include="Data\Ado\AdoQueryWatcher.cs" />
@@ -198,55 +160,13 @@
     <Compile Include="Data\SqlServer\Sql.cs" />
     <Compile Include="Data\SqlServer\SqlStatementBuilder.cs" />
     <Compile Include="Definitions\VectorVideoStandardResolutions.cs" />
-    <Compile Include="DesignPatterns\Behavioral\Memento.cs" />
-    <Compile Include="DesignPatterns\Creational\Exceptions\SingletonException.cs" />
-    <Compile Include="DesignPatterns\Creational\Factory.cs" />
-    <Compile Include="DesignPatterns\Creational\ISingleton.cs" />
-    <Compile Include="DesignPatterns\Creational\Singleton.cs" />
-    <Compile Include="DesignPatterns\DecisionRequiringPattern\NotifyDecisionRequired.cs" />
-    <Compile Include="DesignPatterns\ExceptionHandlingPattern\ExceptionHandlerContainer.cs" />
-    <Compile Include="DesignPatterns\ExceptionHandlingPattern\ExceptionHandling.cs" />
-    <Compile Include="DesignPatterns\ExceptionHandlingPattern\Handlers\ExceptionHandlingExtensions.cs" />
-    <Compile Include="DesignPatterns\ExceptionHandlingPattern\IExceptionHandlerContainer.cs" />
-    <Compile Include="Diagnostics\Diag.cs" />
-    <Compile Include="Diagnostics\MemoryProfiler.cs" />
     <Compile Include="DirectoryServices\Adsi.cs" />
     <Compile Include="DynamicProxy\IProxyInvocationHandler.cs" />
     <Compile Include="DynamicProxy\MetaDataFactory.cs" />
     <Compile Include="DynamicProxy\ProxyFactory.cs" />
     <Compile Include="DynamicProxy\SecurityProxy.cs" />
-    <Compile Include="Dynamic\Expando.cs" />
-    <Compile Include="Dynamic\Xml\XNode.cs" />
-    <Compile Include="Dynamic\Xml\XNodeList.cs" />
-    <Compile Include="EventsArgs\Bases.cs" />
-    <Compile Include="EventsArgs\ExceptionOccurredEventArgs.cs" />
-    <Compile Include="EventsArgs\MultiStepLogEventArgs.cs" />
-    <Compile Include="EventsArgs\ProgressiveOperationEventArgs.cs" />
-    <Compile Include="EventsArgs\WindowsServiceProgramBaseStartupEventArgs.cs" />
     <Compile Include="EventsArgs\YoutubeDownloader.cs" />
-    <Compile Include="Exceptions\BreakException.cs" />
-    <Compile Include="Exceptions\ExceptionBase.cs" />
-    <Compile Include="Exceptions\InvalidDataEntryException.cs" />
-    <Compile Include="Exceptions\LibraryExceptionBase.cs" />
-    <Compile Include="Exceptions\ObjectDuplicateException.cs" />
-    <Compile Include="Exceptions\ObjectNotFoundException.cs" />
-    <Compile Include="Exceptions\OperationCancelledException.cs" />
-    <Compile Include="Exceptions\PairMessageStatusCodeExceptionBase.cs" />
-    <Compile Include="Exceptions\ParseException.cs" />
-    <Compile Include="Exceptions\WindowMismatchException.cs" />
     <Compile Include="Generic\ICloneable.cs" />
-    <Compile Include="Globalization\Attributes\LocalizedDescription.cs" />
-    <Compile Include="Globalization\CustomFormatters\CustomNumberFormatter.cs" />
-    <Compile Include="Globalization\DataTypes\Definitions.cs" />
-    <Compile Include="Globalization\DateTimeFormatter.cs" />
-    <Compile Include="Globalization\DateTools.cs" />
-    <Compile Include="Globalization\Helpers\Localization.cs" />
-    <Compile Include="Globalization\Helpers\PersianCultureHelper.cs" />
-    <Compile Include="Globalization\ILocalizer.cs" />
-    <Compile Include="Globalization\PersianAlphabetConverter.cs" />
-    <Compile Include="Globalization\PersianCultureInfo.cs" />
-    <Compile Include="Globalization\PersianDateTime.cs" />
-    <Compile Include="Globalization\Utilities.cs" />
     <Compile Include="Helpers\AdoHelper.cs" />
     <Compile Include="Helpers\AdoHelper.DataRow.cs">
       <DependentUpon>AdoHelper.cs</DependentUpon>
@@ -255,11 +175,7 @@
     <Compile Include="Helpers\ApplicationHelper.Config.cs" />
     <Compile Include="Helpers\ApplicationHelper.cs" />
     <Compile Include="Helpers\ApplicationRegistration.cs" />
-    <Compile Include="Helpers\ArgHelper.cs" />
-    <Compile Include="Helpers\ClassHelper.cs" />
     <Compile Include="Helpers\CodeDomHelper.cs" />
-    <Compile Include="Helpers\CodeHelper.cs" />
-    <Compile Include="Helpers\ComparableHelper.cs" />
     <Compile Include="Helpers\Console\ConsoleHelper.cs" />
     <Compile Include="Helpers\Console\ConsoleProgramBase.cs" />
     <Compile Include="Helpers\Console\Controls\MenuItem.cs" />
@@ -274,17 +190,6 @@
     <Compile Include="Helpers\Console\MessageBox.cs" />
     <Compile Include="Helpers\Console\ObjectDumper.cs" />
     <Compile Include="Helpers\DateTimeHelper.cs" />
-    <Compile Include="Helpers\DynamicHelper.cs" />
-    <Compile Include="Helpers\EnumerableHelper.Async.cs">
-      <DependentUpon>EnumerableHelper.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Helpers\EnumerableHelper.cs" />
-    <Compile Include="Helpers\EnumerableHelper.Privates.cs">
-      <DependentUpon>EnumerableHelper.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Helpers\EnumHelper.cs" />
-    <Compile Include="Helpers\EventHelper.cs" />
-    <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\FileSystemHelper.cs" />
     <Compile Include="Helpers\Html\Controls\HtmlButton.cs" />
     <Compile Include="Helpers\Html\Controls\HtmlControl.cs" />
@@ -294,42 +199,17 @@
     <Compile Include="Helpers\Html\HtmlParser.cs" />
     <Compile Include="Helpers\Html\HtmlTag.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
-    <Compile Include="Helpers\ImmutableTypeInitializer.cs" />
-    <Compile Include="Helpers\Internals\MemberInfo.cs" />
     <Compile Include="Helpers\IPAddressHelper.cs" />
     <Compile Include="Helpers\IpRangeHelper.cs" />
     <Compile Include="Helpers\LinqToSqlHelper.cs" />
-    <Compile Include="Helpers\LogProviderHelper.cs" />
-    <Compile Include="Helpers\NumericHelper.cs" />
-    <Compile Include="Helpers\ObjectHelper.cs" />
-    <Compile Include="Helpers\PersianDateTimeHelper.cs" />
-    <Compile Include="Helpers\PropertyHelper.cs" />
-    <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\WcfHelper.cs" />
-    <Compile Include="Helpers\XmlHelper.cs" />
-    <Compile Include="Interfaces\IProgressiveOperation.cs" />
-    <Compile Include="Interfaces\ISupportSilence.cs" />
     <Compile Include="Internals\Definitions.cs" />
     <Compile Include="Internals\MethodCallingEventArgs.cs" />
     <Compile Include="IO\DirectoryWatcher.cs" />
     <Compile Include="IO\PrinterOlivettiPR4SL.cs" />
     <Compile Include="IO\SecureFile.cs" />
-    <Compile Include="LibrarySupervisor.cs" />
     <Compile Include="Logging\Gateways\FileLoggerGateway.cs" />
-    <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\ILogRotator.cs" />
-    <Compile Include="Logging\ISimpleLogger.cs" />
-    <Compile Include="Logging\Logger.cs" />
-    <Compile Include="Logging\LoggerContainer.cs" />
-    <Compile Include="Logging\LoggingSeverity.cs" />
-    <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Logging\LogProvider.cs" />
-    <Compile Include="Primitives\AppCache.cs" />
-    <Compile Include="Primitives\ApplicationInjector.cs" />
-    <Compile Include="Primitives\ApplicationMainThreadBase.cs" />
-    <Compile Include="Primitives\Contracts\ArrayContract.cs" />
-    <Compile Include="Primitives\Contracts\IArray.cs" />
-    <Compile Include="Primitives\IApplication.cs" />
     <Compile Include="Net\DataStructs\InternetCacheEntryInfo.cs" />
     <Compile Include="Net\Dns.cs" />
     <Compile Include="Net\Downloader.cs" />
@@ -340,15 +220,14 @@
     <Compile Include="Net\Internals\WinINetUtils.cs" />
     <Compile Include="Net\InternetCache.cs" />
     <Compile Include="Net\InternetProxySettings.cs" />
-    <Compile Include="Net\IpAddress.Conversion.cs" />
     <Compile Include="Net\IpAddress.cs" />
     <Compile Include="Net\Mail.cs" />
     <Compile Include="Net\Nic.cs" />
     <Compile Include="Net\ResolveAndPingResult.cs" />
-    <Compile Include="Primitives\Os.cs" />
-    <Compile Include="Primitives\PrettyTime.cs" />
+    <Compile Include="Primitives\AppCache.cs" />
+    <Compile Include="Primitives\ApplicationInjector.cs" />
+    <Compile Include="Primitives\ApplicationMainThreadBase.cs" />
     <Compile Include="Primitives\SpeechRecognizer.cs" />
-    <Compile Include="Primitives\VersionInfo.cs" />
     <Compile Include="ProgressiveOperations\IMultiStepOperationStep.cs" />
     <Compile Include="ProgressiveOperations\MultiStepOperation.cs" />
     <Compile Include="ProgressiveOperations\MultiStepOperationStep.cs" />
@@ -395,26 +274,6 @@
     <Compile Include="Specialized\BingInternals\TranslationService.cs" />
     <Compile Include="Specialized\BingService.cs" />
     <Compile Include="Specialized\Youtube.cs" />
-    <Compile Include="Text\Json.cs" />
-    <Compile Include="Text\NumberCulture.cs" />
-    <Compile Include="Threading\Async.cs" />
-    <Compile Include="Threading\AsyncCollection.cs" />
-    <Compile Include="Threading\AsyncImp.cs">
-      <DependentUpon>Async.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Threading\AsyncPool.cs" />
-    <Compile Include="Threading\AsyncResultAwaiter.cs" />
-    <Compile Include="Threading\Definitions.cs" />
-    <Compile Include="Threading\PriodicAsync.cs" />
-    <Compile Include="Threading\PriodicAsyncImp.cs">
-      <DependentUpon>PriodicAsync.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Threading\Tasks\Async.cs" />
-    <Compile Include="Threading\Tasks\ParallelHelper.cs" />
-    <Compile Include="Threading\Tasks\Processor.cs" />
-    <Compile Include="Threading\Tasks\RunCancellableResult.cs" />
-    <Compile Include="Threading\Tasks\Timer.cs" />
-    <Compile Include="Threading\Tasks\TimerFactory.cs" />
     <Compile Include="Validation\Attributes\IsBetween.cs" />
     <Compile Include="Validation\Attributes\NotLessThan.cs" />
     <Compile Include="Validation\Attributes\NotNull.cs" />
@@ -484,16 +343,13 @@
     <Compile Include="Wmi\WmiTools.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Collections\Hierarchy\Hierarchy.cd" />
     <None Include="Data\Ado\Ado.cd" />
     <None Include="Data\SqlServer\Dynamics\SqlServer.cd" />
-    <None Include="Logging\Logging.cd" />
     <None Include="Properties\CoreLibCodeAnalysis.ruleset" />
     <None Include="Security\Cryptography\_Cryptography.cd" />
     <None Include="ServiceModel\ServiceModel.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DesignPatterns\Structural\" />
     <Folder Include="Security\DirectoryServices\" />
   </ItemGroup>
   <ItemGroup>
@@ -501,6 +357,7 @@
       <Version>4.5.0</Version>
     </PackageReference>
   </ItemGroup>
+  <Import Project="..\..\SharedProject\SharedProject.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
