@@ -12,27 +12,46 @@ namespace Mohammad.Helpers.Html
 {
     public sealed class HtmlParser
     {
-        #region Fields
-
-        private string _Html;
-        private int    _Pos;
-        private bool   _ScriptBegin;
-
-        #endregion
+        public bool Eof => this._Pos >= this._Html.Length;
 
         public HtmlParser(string html)
         {
             this.Reset(html);
         }
 
-        public bool Eof => this._Pos >= this._Html.Length;
-
         public IEnumerable<dynamic> GetTagsByName(string tagName)
         {
             HtmlTag tag;
             while (this.ParseNext(tagName, out tag))
+            {
                 yield return tag;
+            }
+
             this.Reset();
+        }
+
+        public char Peek() => this.Peek(0);
+
+        public char Peek(int ahead)
+        {
+            var pos = this._Pos + ahead;
+            if (pos < this._Html.Length)
+            {
+                return this._Html[pos];
+            }
+
+            return (char)0;
+        }
+
+        public void Reset()
+        {
+            this._Pos = 0;
+        }
+
+        public void Reset(string html)
+        {
+            this._Html = html;
+            this._Pos = 0;
         }
 
         private void Move(int ahead = 1)
@@ -50,14 +69,19 @@ namespace Mohammad.Helpers.Html
         private void NormalizePosition()
         {
             if (this._Pos < 0)
+            {
                 this._Pos = this._Html.Length;
+            }
         }
 
         private string ParseAttributeName()
         {
             var start = this._Pos;
             while (!this.Eof && !char.IsWhiteSpace(this.Peek()) && this.Peek() != '>' && this.Peek() != '=')
+            {
                 this.Move();
+            }
+
             return this._Html.Substring(start, this._Pos - start);
         }
 
@@ -68,12 +92,14 @@ namespace Mohammad.Helpers.Html
             if (c == '"' || c == '\'')
             {
                 this.Move();
-                start     = this._Pos;
+                start = this._Pos;
                 this._Pos = this._Html.IndexOfAny(new[] {c, '\r', '\n'}, start);
                 this.NormalizePosition();
                 end = this._Pos;
                 if (this.Peek() == c)
+                {
                     this.Move();
+                }
             }
             else
             {
@@ -94,7 +120,9 @@ namespace Mohammad.Helpers.Html
         {
             tag = null;
             if (string.IsNullOrEmpty(name))
+            {
                 return false;
+            }
 
             while (this.MoveToNextTag())
             {
@@ -126,11 +154,15 @@ namespace Mohammad.Helpers.Html
                         this.Move(endScript.Length);
                         this.SkipWhitespace();
                         if (this.Peek() == '>')
+                        {
                             this.Move();
+                        }
                     }
 
                     if (result)
+                    {
                         return true;
+                    }
                 }
             }
 
@@ -143,23 +175,31 @@ namespace Mohammad.Helpers.Html
 
             var doctype = this._ScriptBegin = false;
             if (string.Compare(s, "!DOCTYPE", StringComparison.OrdinalIgnoreCase) == 0)
+            {
                 doctype = true;
+            }
             else if (string.Compare(s, "script", StringComparison.OrdinalIgnoreCase) == 0)
+            {
                 this._ScriptBegin = true;
+            }
 
             var requested = false;
             if (name == "*" || string.Compare(s, name, StringComparison.OrdinalIgnoreCase) == 0)
             {
-                tag       = new HtmlTag(s);
+                tag = new HtmlTag(s);
                 requested = true;
             }
 
             this.SkipWhitespace();
             while (this.Peek() != '>')
+            {
                 if (this.Peek() == '/')
                 {
                     if (requested)
+                    {
                         tag.TrailingSlash = true;
+                    }
+
                     this.Move();
                     this.SkipWhitespace();
                     this._ScriptBegin = false;
@@ -180,10 +220,14 @@ namespace Mohammad.Helpers.Html
                     if (requested)
                     {
                         if (tag.Contains(s))
+                        {
                             tag.Remove(s);
+                        }
+
                         tag.Add(s, value);
                     }
                 }
+            }
 
             this.Move();
 
@@ -194,35 +238,27 @@ namespace Mohammad.Helpers.Html
         {
             var start = this._Pos;
             while (!this.Eof && !char.IsWhiteSpace(this.Peek()) && this.Peek() != '>')
+            {
                 this.Move();
+            }
+
             return this._Html.Substring(start, this._Pos - start);
-        }
-
-        public char Peek() => this.Peek(0);
-
-        public char Peek(int ahead)
-        {
-            var pos = this._Pos + ahead;
-            if (pos < this._Html.Length)
-                return this._Html[pos];
-            return (char) 0;
-        }
-
-        public void Reset()
-        {
-            this._Pos = 0;
-        }
-
-        public void Reset(string html)
-        {
-            this._Html = html;
-            this._Pos  = 0;
         }
 
         private void SkipWhitespace()
         {
             while (!this.Eof && char.IsWhiteSpace(this.Peek()))
+            {
                 this.Move();
+            }
         }
+
+        #region Fields
+
+        private string _Html;
+        private int _Pos;
+        private bool _ScriptBegin;
+
+        #endregion
     }
 }

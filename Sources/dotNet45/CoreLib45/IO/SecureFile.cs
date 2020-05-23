@@ -16,9 +16,27 @@ namespace Mohammad.IO
 {
     public class SecureFile
     {
-        private const    string   _Separator = "tyupoi";
+        private const string _Separator = "tyupoi";
         private readonly FileInfo _File;
-        private readonly string   _Key;
+        private readonly string _Key;
+
+        public FileInfo OriginalFile
+        {
+            get
+            {
+                if (!this._File.Directory.Exists)
+                {
+                    this._File.Directory.Create();
+                }
+
+                if (!this._File.Exists)
+                {
+                    this._File.Create().Close();
+                }
+
+                return this._File;
+            }
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SecureFile" /> class.
@@ -29,7 +47,7 @@ namespace Mohammad.IO
         {
             Contract.Requires(file != null);
             this._File = file;
-            this._Key  = key;
+            this._Key = key;
         }
 
         /// <summary>
@@ -40,20 +58,8 @@ namespace Mohammad.IO
         public SecureFile(string file, string key)
             : this(new FileInfo(file), key)
         {
-            Contract.Requires(file        != null);
+            Contract.Requires(file != null);
             Contract.Requires(file.Length > 0);
-        }
-
-        public FileInfo OriginalFile
-        {
-            get
-            {
-                if (!this._File.Directory.Exists)
-                    this._File.Directory.Create();
-                if (!this._File.Exists)
-                    this._File.Create().Close();
-                return this._File;
-            }
         }
 
         //public void Write(string text)
@@ -133,7 +139,9 @@ namespace Mohammad.IO
         {
             Contract.Requires(text != null);
             if (!this.OriginalFile.Directory.Exists)
+            {
                 this.OriginalFile.Directory.Create();
+            }
 
             var encrypt = RijndaelEncryption.Encrypt(text, this._Key);
             File.AppendAllText(this.OriginalFile.FullName, string.Concat(_Separator, encrypt));
@@ -148,13 +156,19 @@ namespace Mohammad.IO
         {
             var lines = File.ReadAllText(this.OriginalFile.FullName).Split(new[] {_Separator}, StringSplitOptions.None).Compact();
             foreach (var line in lines)
+            {
                 if (line.Equals(_Separator))
+                {
                     yield return Environment.NewLine;
+                }
                 else
+                {
                     yield return RijndaelEncryption.Decrypt(line, this._Key);
+                }
+            }
         }
 
-        public          string Read()     => string.Concat(this.ReadLines());
+        public string Read() => string.Concat(this.ReadLines());
         public override string ToString() => this.OriginalFile.FullName;
     }
 }

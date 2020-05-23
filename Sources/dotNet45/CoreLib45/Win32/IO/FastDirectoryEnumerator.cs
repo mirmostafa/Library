@@ -60,6 +60,18 @@ namespace Mohammad.Win32.IO
         /// </summary>
         public readonly long Size;
 
+        public DateTime CreationTime => this.CreationTimeUtc.ToLocalTime();
+
+        /// <summary>
+        ///     Gets the last access time in local time.
+        /// </summary>
+        public DateTime LastAccesTime => this.LastAccessTimeUtc.ToLocalTime();
+
+        /// <summary>
+        ///     Gets the last access time in local time.
+        /// </summary>
+        public DateTime LastWriteTime => this.LastWriteTimeUtc.ToLocalTime();
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="FileData" /> class.
         /// </summary>
@@ -84,27 +96,15 @@ namespace Mohammad.Win32.IO
             this.Path = System.IO.Path.Combine(dir, findData.cFileName);
         }
 
-        public DateTime CreationTime => this.CreationTimeUtc.ToLocalTime();
+        public override string ToString() => this.Name;
 
-        /// <summary>
-        ///     Gets the last access time in local time.
-        /// </summary>
-        public DateTime LastAccesTime => this.LastAccessTimeUtc.ToLocalTime();
-
-        /// <summary>
-        ///     Gets the last access time in local time.
-        /// </summary>
-        public DateTime LastWriteTime => this.LastWriteTimeUtc.ToLocalTime();
-
-        private static long CombineHighLowInts(uint high, uint low) => ((long) high << 0x20) | low;
+        private static long CombineHighLowInts(uint high, uint low) => ((long)high << 0x20) | low;
 
         private static DateTime ConvertDateTime(uint high, uint low)
         {
             var fileTime = CombineHighLowInts(high, low);
             return DateTime.FromFileTimeUtc(fileTime);
         }
-
-        public override string ToString() => this.Name;
     }
 
     /// <summary>
@@ -149,8 +149,8 @@ namespace Mohammad.Win32.IO
         ///     <paramref name="searchPattern" /> is a null reference (Nothing in VB)
         /// </exception>
         public static IEnumerable<FileData> EnumerateFiles(string path, string searchPattern) => EnumerateFiles(path,
-                                                                                                                searchPattern,
-                                                                                                                SearchOption.TopDirectoryOnly);
+            searchPattern,
+            SearchOption.TopDirectoryOnly);
 
         /// <summary>
         ///     Gets <see cref="FileData" /> for all the files in a directory that
@@ -179,11 +179,19 @@ namespace Mohammad.Win32.IO
         public static IEnumerable<FileData> EnumerateFiles(string path, string searchPattern, SearchOption searchOption)
         {
             if (path == null)
+            {
                 throw new ArgumentNullException("path");
+            }
+
             if (searchPattern == null)
+            {
                 throw new ArgumentNullException("searchPattern");
+            }
+
             if (searchOption != SearchOption.TopDirectoryOnly && searchOption != SearchOption.AllDirectories)
+            {
                 throw new ArgumentOutOfRangeException("searchOption");
+            }
 
             var fullPath = Path.GetFullPath(path);
 
@@ -209,7 +217,7 @@ namespace Mohammad.Win32.IO
         /// </exception>
         public static FileData[] GetFiles(string path, string searchPattern, SearchOption searchOption)
         {
-            var e    = EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
+            var e = EnumerateFiles(path, searchPattern, SearchOption.TopDirectoryOnly);
             var list = new List<FileData>(e);
 
             var retval = new FileData[list.Count];
@@ -224,8 +232,8 @@ namespace Mohammad.Win32.IO
         /// </summary>
         private class FileEnumerable : IEnumerable<FileData>
         {
-            private readonly string       _Filter;
-            private readonly string       _Path;
+            private readonly string _Filter;
+            private readonly string _Path;
             private readonly SearchOption _SearchOption;
 
             /// <summary>
@@ -239,8 +247,8 @@ namespace Mohammad.Win32.IO
             /// </param>
             public FileEnumerable(string path, string filter, SearchOption searchOption)
             {
-                this._Path         = path;
-                this._Filter       = filter;
+                this._Path = path;
+                this._Filter = filter;
                 this._SearchOption = searchOption;
             }
 
@@ -270,12 +278,30 @@ namespace Mohammad.Win32.IO
         [SuppressUnmanagedCodeSecurity]
         private class FileEnumerator : IEnumerator<FileData>
         {
-            private readonly string               _Filter;
+            private readonly string _Filter;
             private readonly Stack<SearchContext> _Handles;
-            private readonly SearchOption         _SearchOption;
-            private readonly WIN32_FIND_DATA      _Win32FindData = new WIN32_FIND_DATA();
-            private          SafeFindHandle       _FindFileHandle;
-            private          string               _Path;
+            private readonly SearchOption _SearchOption;
+            private readonly WIN32_FIND_DATA _Win32FindData = new WIN32_FIND_DATA();
+            private SafeFindHandle _FindFileHandle;
+            private string _Path;
+
+            /// <summary>
+            ///     Gets the element in the collection at the current position of the enumerator.
+            /// </summary>
+            /// <value></value>
+            /// <returns>
+            ///     The element in the collection at the current position of the enumerator.
+            /// </returns>
+            public FileData Current => new FileData(this._Path, this._Win32FindData);
+
+            /// <summary>
+            ///     Gets the element in the collection at the current position of the enumerator.
+            /// </summary>
+            /// <value></value>
+            /// <returns>
+            ///     The element in the collection at the current position of the enumerator.
+            /// </returns>
+            object IEnumerator.Current => new FileData(this._Path, this._Win32FindData);
 
             /// <summary>
             ///     Initializes a new instance of the <see cref="FileEnumerator" /> class.
@@ -288,22 +314,15 @@ namespace Mohammad.Win32.IO
             /// </param>
             public FileEnumerator(string path, string filter, SearchOption searchOption)
             {
-                this._Path         = path;
-                this._Filter       = filter;
+                this._Path = path;
+                this._Filter = filter;
                 this._SearchOption = searchOption;
 
                 if (this._SearchOption == SearchOption.AllDirectories)
+                {
                     this._Handles = new Stack<SearchContext>();
+                }
             }
-
-            /// <summary>
-            ///     Gets the element in the collection at the current position of the enumerator.
-            /// </summary>
-            /// <value></value>
-            /// <returns>
-            ///     The element in the collection at the current position of the enumerator.
-            /// </returns>
-            public FileData Current => new FileData(this._Path, this._Win32FindData);
 
             /// <summary>
             ///     Performs application-defined tasks associated with freeing, releasing,
@@ -312,17 +331,10 @@ namespace Mohammad.Win32.IO
             public void Dispose()
             {
                 if (!this._FindFileHandle.IsClosed)
+                {
                     this._FindFileHandle.Dispose();
+                }
             }
-
-            /// <summary>
-            ///     Gets the element in the collection at the current position of the enumerator.
-            /// </summary>
-            /// <value></value>
-            /// <returns>
-            ///     The element in the collection at the current position of the enumerator.
-            /// </returns>
-            object IEnumerator.Current => new FileData(this._Path, this._Win32FindData);
 
             /// <summary>
             ///     Advances the enumerator to the next element of the collection.
@@ -346,7 +358,7 @@ namespace Mohammad.Win32.IO
 
                     var searchPath = Path.Combine(this._Path, this._Filter);
                     this._FindFileHandle = FindFirstFile(searchPath, this._Win32FindData);
-                    retval               = !this._FindFileHandle.IsInvalid;
+                    retval = !this._FindFileHandle.IsInvalid;
                 }
                 else
                     //Otherwise, find the next item.
@@ -360,7 +372,9 @@ namespace Mohammad.Win32.IO
                     if (this._Win32FindData.cFileName == "." || this._Win32FindData.cFileName == "..") //Ignore the special "." and ".." folders.   We 
                         //call MoveNext recursively here to move to the next item 
                         //that FindNextFile will return.
+                    {
                         return this.MoveNext();
+                    }
 
                     //If we are now on a directory...
                     if (this._Win32FindData.dwFileAttributes == FileAttributes.Directory)
@@ -374,7 +388,7 @@ namespace Mohammad.Win32.IO
                             var context = new SearchContext(this._FindFileHandle, this._Path);
                             this._Handles.Push(context);
 
-                            this._Path           = Path.Combine(this._Path, this._Win32FindData.cFileName);
+                            this._Path = Path.Combine(this._Path, this._Win32FindData.cFileName);
                             this._FindFileHandle = null;
                         }
 
@@ -388,7 +402,7 @@ namespace Mohammad.Win32.IO
                     if (this._Handles.Count > 0)
                     {
                         var context = this._Handles.Pop();
-                        this._Path           = context.Path;
+                        this._Path = context.Path;
                         this._FindFileHandle = context.Handle;
 
                         return this.MoveNext();
@@ -413,8 +427,9 @@ namespace Mohammad.Win32.IO
             private static extern SafeFindHandle FindFirstFile(string fileName, [In] [Out] WIN32_FIND_DATA data);
 
             [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-            private static extern bool FindNextFile(SafeFindHandle hndFindFile, [In] [Out] [MarshalAs(UnmanagedType.LPStruct)]
-                                                    WIN32_FIND_DATA lpFindFileData);
+            private static extern bool FindNextFile(SafeFindHandle hndFindFile,
+                [In] [Out] [MarshalAs(UnmanagedType.LPStruct)]
+                WIN32_FIND_DATA lpFindFileData);
 
             /// <summary>
             ///     Hold context information about where we current are in the directory search.
@@ -422,12 +437,12 @@ namespace Mohammad.Win32.IO
             private class SearchContext
             {
                 public readonly SafeFindHandle Handle;
-                public readonly string         Path;
+                public readonly string Path;
 
                 public SearchContext(SafeFindHandle handle, string path)
                 {
                     this.Handle = handle;
-                    this.Path   = path;
+                    this.Path = path;
                 }
             }
         }
@@ -446,10 +461,6 @@ namespace Mohammad.Win32.IO
             {
             }
 
-            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-            [DllImport("kernel32.dll")]
-            private static extern bool FindClose(IntPtr handle);
-
             /// <summary>
             ///     When overridden in a derived class, executes the code required to free the handle.
             /// </summary>
@@ -459,6 +470,10 @@ namespace Mohammad.Win32.IO
             ///     generates a releaseHandleFailed MDA Managed Debugging Assistant.
             /// </returns>
             protected override bool ReleaseHandle() => FindClose(this.handle);
+
+            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+            [DllImport("kernel32.dll")]
+            private static extern bool FindClose(IntPtr handle);
         }
     }
 }

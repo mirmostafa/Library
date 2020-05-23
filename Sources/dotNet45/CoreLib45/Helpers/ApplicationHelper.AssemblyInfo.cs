@@ -31,8 +31,8 @@ namespace Mohammad.Helpers
 
         public static string Copyright => CalculatePropertyValue<AssemblyCopyrightAttribute>("Copyright");
 
-        public static string Description  => CalculatePropertyValue<AssemblyDescriptionAttribute>("Description");
-        public static string Guid         => CalculatePropertyValue<GuidAttribute>("Value");
+        public static string Description => CalculatePropertyValue<AssemblyDescriptionAttribute>("Description");
+        public static string Guid => CalculatePropertyValue<GuidAttribute>("Value");
         public static string ProductTitle => CalculatePropertyValue<AssemblyProductAttribute>("Product");
 
         public static string Version
@@ -43,19 +43,6 @@ namespace Mohammad.Helpers
                 var version = Assembly.GetEntryAssembly().GetName().Version;
                 return version?.ToString() ?? string.Empty;
             }
-        }
-
-        private static string CalculatePropertyValue<T>(string propertyName)
-        {
-            var assembly = Assembly.GetEntryAssembly();
-            if (assembly == null)
-                return string.Empty;
-            var attributes = assembly.GetCustomAttributes(typeof(T), false);
-            if (attributes.Length <= 0)
-                return string.Empty;
-            var attrib   = (T) attributes[0];
-            var property = attrib.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
-            return property != null ? property.GetValue(attributes[0], null) as string : string.Empty;
         }
 
         public static string GetAboutAppString(string moreInfo = null)
@@ -83,6 +70,25 @@ namespace Mohammad.Helpers
                 registryKey?.SetValue(appName, Environment.CommandLine.Remove("/crashed"));
                 registryKey?.Flush();
             }
+        }
+
+        private static string CalculatePropertyValue<T>(string propertyName)
+        {
+            var assembly = Assembly.GetEntryAssembly();
+            if (assembly == null)
+            {
+                return string.Empty;
+            }
+
+            var attributes = assembly.GetCustomAttributes(typeof(T), false);
+            if (attributes.Length <= 0)
+            {
+                return string.Empty;
+            }
+
+            var attrib = (T)attributes[0];
+            var property = attrib.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
+            return property != null ? property.GetValue(attributes[0], null) as string : string.Empty;
         }
     }
 }

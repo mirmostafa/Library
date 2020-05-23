@@ -24,7 +24,10 @@ namespace Mohammad.Diagnostics
             get
             {
                 if (_Out != null)
+                {
                     return _Out;
+                }
+
                 _Out = new Logger("ConsoleHelper.Out");
                 //_Out.Logged += (_, e) => { DebugWriteLine(e.Log, CodeHelper.GetCallerMethodName(3)); };
 #if DEBUG
@@ -37,39 +40,50 @@ namespace Mohammad.Diagnostics
         public static IEnumerable<ExceptionHandlingClause> GetActiveTryClauses(Type type)
         {
             var stackTrace = new StackTrace();
-            var frames     = stackTrace.GetFrames();
+            var frames = stackTrace.GetFrames();
 
             if (frames == null)
+            {
                 yield break;
+            }
+
             for (var i = 1; i < frames.Length; i++)
             {
-                var frame  = frames[i];
+                var frame = frames[i];
                 var method = frame.GetMethod();
-                var body   = method.GetMethodBody();
+                var body = method.GetMethodBody();
 
                 if (body == null)
+                {
                     continue;
-                var clauses = body.ExceptionHandlingClauses.Where(clause => clause.Flags == ExceptionHandlingClauseOptions.Clause).Select(clause => new
-                                   {
-                                       clause,
-                                       offsetInFrame
-                                           = frame
-                                              .GetILOffset()
-                                   })
-                                  .Select(t => new
-                                   {
-                                       t,
-                                       tryStartOffset = t.clause.TryOffset
-                                   }).Select(t => new
-                                   {
-                                       t,
-                                       tryEndOffset = t.tryStartOffset + t.t.clause.TryLength
-                                   }).Where(t => t.t.t.offsetInFrame >= t.t.tryStartOffset && t.t.t.offsetInFrame < t.tryEndOffset)
-                                  .Where(t => t.t.t.clause.CatchType != null)
-                                  .Where(t => t.t.t.clause.CatchType != null && (type == null || t.t.t.clause.CatchType.IsAssignableFrom(type)))
-                                  .Select(t => t.t.t.clause);
+                }
+
+                var clauses = body.ExceptionHandlingClauses.Where(clause => clause.Flags == ExceptionHandlingClauseOptions.Clause)
+                    .Select(clause => new
+                    {
+                        clause,
+                        offsetInFrame
+                            = frame
+                                .GetILOffset()
+                    })
+                    .Select(t => new
+                    {
+                        t,
+                        tryStartOffset = t.clause.TryOffset
+                    })
+                    .Select(t => new
+                    {
+                        t,
+                        tryEndOffset = t.tryStartOffset + t.t.clause.TryLength
+                    })
+                    .Where(t => t.t.t.offsetInFrame >= t.t.tryStartOffset && t.t.t.offsetInFrame < t.tryEndOffset)
+                    .Where(t => t.t.t.clause.CatchType != null)
+                    .Where(t => t.t.t.clause.CatchType != null && (type == null || t.t.t.clause.CatchType.IsAssignableFrom(type)))
+                    .Select(t => t.t.t.clause);
                 foreach (var clause in clauses)
+                {
                     yield return clause;
+                }
             }
         }
 
@@ -85,11 +99,14 @@ namespace Mohammad.Diagnostics
             var st = new StackTrace(true);
             for (var i = 0; i < st.FrameCount; i++)
             {
-                var frame  = st.GetFrame(i);
+                var frame = st.GetFrame(i);
                 var method = frame.GetMethod();
-                var t      = method.DeclaringType;
+                var t = method.DeclaringType;
                 if (t == null || !isTarget(t))
+                {
                     continue;
+                }
+
                 return method;
             }
 
@@ -188,36 +205,50 @@ namespace Mohammad.Diagnostics
             return stopwatch;
         }
 
-        public static bool? TestExpect<TResult>(Func<TResult>     func,               TResult result, Action onSucced = null, Action onFailure = null,
-                                                Action<Exception> onException = null, string  actionName = null) => TestExpect(func,
-                                                                                                                               r => result == null &&
-                                                                                                                                    r      == null ||
-                                                                                                                                    result !=
-                                                                                                                                    null && result.Equals(r),
-                                                                                                                               r => onSucced?.Invoke(),
-                                                                                                                               onFailure,
-                                                                                                                               onException,
-                                                                                                                               actionName);
+        public static bool? TestExpect<TResult>(Func<TResult> func,
+            TResult result,
+            Action onSucced = null,
+            Action onFailure = null,
+            Action<Exception> onException = null,
+            string actionName = null) => TestExpect(func,
+            r => result == null &&
+                 r == null ||
+                 result !=
+                 null && result.Equals(r),
+            r => onSucced?.Invoke(),
+            onFailure,
+            onException,
+            actionName);
 
-        public static bool? TestExpect(Action action, Action onSucced = null, Action onFailure = null, Action<Exception> onException = null,
-                                       string actionName = null)
+        public static bool? TestExpect(Action action,
+            Action onSucced = null,
+            Action onFailure = null,
+            Action<Exception> onException = null,
+            string actionName = null)
         {
             return TestExpect<object>(() =>
-                                      {
-                                          action();
-                                          return null;
-                                      },
-                                      onSucced: r => onSucced?.Invoke(),
-                                      onFailure: onFailure,
-                                      onException: onException,
-                                      actionName: actionName);
+                {
+                    action();
+                    return null;
+                },
+                onSucced: r => onSucced?.Invoke(),
+                onFailure: onFailure,
+                onException: onException,
+                actionName: actionName);
         }
 
-        public static bool? TestExpect<TResult>(Func<TResult> action,           Func<TResult, bool> resultPredict = null, Action<TResult> onSucced   = null,
-                                                Action        onFailure = null, Action<Exception>   onException   = null, string          actionName = null)
+        public static bool? TestExpect<TResult>(Func<TResult> action,
+            Func<TResult, bool> resultPredict = null,
+            Action<TResult> onSucced = null,
+            Action onFailure = null,
+            Action<Exception> onException = null,
+            string actionName = null)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
+
             Func<TResult, bool> True = r =>
             {
                 DebugWriteLine("succeed.", actionName.IfNullOrEmpty("Action"));
@@ -234,7 +265,10 @@ namespace Mohammad.Diagnostics
             {
                 var r = RunDebug(action, actionName);
                 if (resultPredict == null)
+                {
                     return True(r);
+                }
+
                 return resultPredict(r) ? True(r) : False();
             }
             catch (Exception ex)
@@ -245,9 +279,13 @@ namespace Mohammad.Diagnostics
             }
         }
 
-        public static bool? TestExpect(Delegate          action, Func<object, bool> resultPredict = null, Action<object> onSucced = null,
-                                       Action            onFailure   = null,
-                                       Action<Exception> onException = null, string actionName = null, params object[] args)
+        public static bool? TestExpect(Delegate action,
+            Func<object, bool> resultPredict = null,
+            Action<object> onSucced = null,
+            Action onFailure = null,
+            Action<Exception> onException = null,
+            string actionName = null,
+            params object[] args)
         {
             return TestExpect(() => action.DynamicInvoke(args), resultPredict, onSucced, onFailure, onException, actionName);
         }
@@ -260,23 +298,32 @@ namespace Mohammad.Diagnostics
         public static void RunDebug(Action action, string actionName = null, bool showStartingPrompts = true)
         {
             RunDebug<object>(() =>
-                             {
-                                 action();
-                                 return null;
-                             },
-                             actionName,
-                             showStartingPrompts);
+                {
+                    action();
+                    return null;
+                },
+                actionName,
+                showStartingPrompts);
         }
 
         public static TResult RunDebug<TResult>(Func<TResult> action, string actionName = null, bool showStartingPrompts = true)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
+
             if (actionName.IsNullOrEmpty())
+            {
                 actionName = action.Method.Name;
+            }
+
             TResult r;
             if (showStartingPrompts)
+            {
                 DebugWriteLine("is starting", actionName.IfNullOrEmpty("Action"));
+            }
+
             var stopwatch = Stopwatch(action, out r);
             DebugWriteLine($"is done and took {stopwatch.Elapsed}", actionName.IfNullOrEmpty("Action"));
             return r;
@@ -287,12 +334,12 @@ namespace Mohammad.Diagnostics
             Trace.WriteLine(Logger.FormatLogText(log, sender: sender ?? CodeHelper.GetCallerMethodName(3), logTextFormat: format));
         }
 
-        public static TResult RunDebug<TArg1, TResult>(Func<TArg1, TResult> action, TArg1 arg1, string actionName = null) => (TResult) RunDebug(action,
-                                                                                                                                                actionName,
-                                                                                                                                                arg1);
+        public static TResult RunDebug<TArg1, TResult>(Func<TArg1, TResult> action, TArg1 arg1, string actionName = null) => (TResult)RunDebug(action,
+            actionName,
+            arg1);
 
         public static TResult RunDebug<TArg1, TArg2, TResult>(Func<TArg1, TArg2, TResult> action, TArg1 arg1, TArg2 arg2, string actionName = null) =>
-            (TResult) RunDebug(action, actionName, arg1, arg2);
+            (TResult)RunDebug(action, actionName, arg1, arg2);
 
         public static void RedirectDebugsToOutputPane(bool redirect)
         {
@@ -316,12 +363,16 @@ namespace Mohammad.Diagnostics
             if (redirect)
             {
                 if (Trace.Listeners.Cast<TraceListener>().All(ts => ts.GetType() != typeof(TListenerType)))
+                {
                     Trace.Listeners.Add(listener);
+                }
             }
             else
             {
                 if (Trace.Listeners.Cast<TraceListener>().Any(ts => ts.GetType() == typeof(TListenerType)))
+                {
                     Trace.Listeners.Remove(Trace.Listeners.Cast<TraceListener>().First(ts => ts.GetType() == typeof(TListenerType)));
+                }
             }
         }
     }

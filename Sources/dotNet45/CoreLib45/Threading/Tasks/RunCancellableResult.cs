@@ -11,7 +11,7 @@ namespace Mohammad.Threading.Tasks
 {
     public class RunCancellableResult
     {
-        public bool                    IsDone                  { get; internal set; }
+        public bool IsDone { get; internal set; }
         public CancellationTokenSource CancellationTokenSource { get; internal set; }
     }
 

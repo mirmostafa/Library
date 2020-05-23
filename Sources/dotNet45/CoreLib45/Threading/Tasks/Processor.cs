@@ -32,11 +32,18 @@ namespace Mohammad.Threading.Tasks
                 var index1 = index;
                 actions[index] = Async.Run(() => Thread.SpinWait(iterations ?? int.MaxValue));
                 if (callbackForEach == null)
+                {
                     continue;
+                }
+
                 if (callbackSynchronizationContext == null)
+                {
                     actions[index].ContinueWith(t => callbackForEach?.Invoke(index1, actions.Length));
+                }
                 else
+                {
                     actions[index].ContinueWith(t => callbackForEach?.Invoke(index1, actions.Length), callbackSynchronizationContext);
+                }
             }
 
             Async.WaitAll(actions);
@@ -48,16 +55,16 @@ namespace Mohammad.Threading.Tasks
         }
 
         public static string GetUsingProcessorsByMask(string processName = null) => Convert
-                                                                                   .ToString((int) GetProcessByName(processName).ProcessorAffinity, 2)
-                                                                                   .PadLeft(Environment.ProcessorCount, '0');
-
-        private static Process GetProcessByName(string processName = null) => string.IsNullOrEmpty(processName)
-                                                                                  ? Process.GetCurrentProcess()
-                                                                                  : Process.GetProcessesByName(processName).FirstOrDefault();
+            .ToString((int)GetProcessByName(processName).ProcessorAffinity, 2)
+            .PadLeft(Environment.ProcessorCount, '0');
 
         public static void UseProcessorsByMask(string affinityMask, string processName = null)
         {
             GetProcessByName(processName).ProcessorAffinity = new IntPtr(Convert.ToInt32(affinityMask, 2));
         }
+
+        private static Process GetProcessByName(string processName = null) => string.IsNullOrEmpty(processName)
+            ? Process.GetCurrentProcess()
+            : Process.GetProcessesByName(processName).FirstOrDefault();
     }
 }

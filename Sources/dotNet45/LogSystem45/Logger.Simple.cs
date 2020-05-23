@@ -7,8 +7,12 @@ namespace Mohammad.Logging
         where TWriter : class, IWriter<LogEntity>
     {
         public Logger(TWriter writer, bool raiseEventOnly = false)
-            : base(writer, raiseEventOnly) { }
+            : base(writer, raiseEventOnly)
+        {
+        }
 
-        protected Logger() { }
+        protected Logger()
+        {
+        }
     }
 }

@@ -18,9 +18,14 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(TitleBar),
             new PropertyMetadata(default(Window)));
 
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title",
+            typeof(string),
+            typeof(TitleBar),
+            new PropertyMetadata(default(string)));
+
         public Window ParentWindow
         {
-            get { return (Window) this.GetValue(ParentWindowProperty); }
+            get => (Window)this.GetValue(ParentWindowProperty);
             set
             {
                 this.SetValue(ParentWindowProperty, value);
@@ -29,14 +34,9 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title",
-            typeof(string),
-            typeof(TitleBar),
-            new PropertyMetadata(default(string)));
-
         public string Title
         {
-            get { return (string) this.GetValue(TitleProperty); }
+            get => (string)this.GetValue(TitleProperty);
             set
             {
                 this.SetValue(TitleProperty, value);
@@ -47,7 +47,7 @@ namespace Mohammad.Wpf.Windows.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public object ItemsBar
         {
-            get { return this.ItemsBarContentPresenter.Content; }
+            get => this.ItemsBarContentPresenter.Content;
             set
             {
                 this.ItemsBarContentPresenter.Content = value;
@@ -55,7 +55,10 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        public TitleBar() { this.InitializeComponent(); }
+        public TitleBar()
+        {
+            this.InitializeComponent();
+        }
 
         private void OnParentFormChanged()
         {
@@ -68,21 +71,35 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             var parent = this.Parent;
             while (parent != null && !(parent is Page) && !(parent is Window))
+            {
                 parent = parent.GetParent();
+            }
+
             this.ParentWindow = parent as Window;
         }
 
-        private void MinimizeButton_OnClick(object sender, RoutedEventArgs e) { this.ParentWindow.WindowState = WindowState.Minimized; }
+        private void MinimizeButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.ParentWindow.WindowState = WindowState.Minimized;
+        }
 
         private void MaximizeButton_OnClick(object sender, RoutedEventArgs e)
         {
             var parentWindow = this.ParentWindow;
             if (parentWindow != null)
+            {
                 parentWindow.WindowState = parentWindow.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+            }
         }
 
-        private void CloseButton_OnClick(object sender, RoutedEventArgs e) { this.ParentWindow.Close(); }
+        private void CloseButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.ParentWindow.Close();
+        }
 
-        private void TitleBar_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e) { this.ParentWindow?.DragMove(); }
+        private void TitleBar_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.ParentWindow?.DragMove();
+        }
     }
 }

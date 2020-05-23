@@ -54,15 +54,17 @@ namespace Mohammad.Helpers
             where TEntity : class
         {
             Catch(() =>
-                  {
-                      Catch(() => db.GetTable<TEntity>().Attach(entity, false));
-                      db.Refresh(RefreshMode.KeepCurrentValues, entity);
-                      db.GetTable<TEntity>().DeleteOnSubmit(entity);
-                      if (submitChanges)
-                          db.SubmitChanges();
-                  },
-                  handling: exceptionHandling,
-                  throwException: true);
+                {
+                    Catch(() => db.GetTable<TEntity>().Attach(entity, false));
+                    db.Refresh(RefreshMode.KeepCurrentValues, entity);
+                    db.GetTable<TEntity>().DeleteOnSubmit(entity);
+                    if (submitChanges)
+                    {
+                        db.SubmitChanges();
+                    }
+                },
+                handling: exceptionHandling,
+                throwException: true);
         }
 
         public static Table<TEntity> GetAll<TEntity>(this DataContext db, ExceptionHandling exceptionHandling)
@@ -74,28 +76,15 @@ namespace Mohammad.Helpers
             where TEntity : class
         {
             Catch(() =>
-                  {
-                      db.GetTable<TEntity>().InsertOnSubmit(entity);
-                      if (submitChanges)
-                          db.SaveChanges();
-                  },
-                  handling: exceptionHandling,
-                  throwException: true);
-        }
-
-        private static void SaveChanges(this DataContext db, ConflictMode? failureMode = null)
-        {
-            if (failureMode.HasValue)
-            {
-                db.SubmitChanges(failureMode.Value);
-            }
-            else
-            {
-                if (DefaultConflictMode.HasValue)
-                    db.SubmitChanges(DefaultConflictMode.Value);
-                else
-                    db.SubmitChanges();
-            }
+                {
+                    db.GetTable<TEntity>().InsertOnSubmit(entity);
+                    if (submitChanges)
+                    {
+                        db.SaveChanges();
+                    }
+                },
+                handling: exceptionHandling,
+                throwException: true);
         }
 
         public static DataTable ToDataTable(this IQueryable query, DataContext db)
@@ -112,13 +101,34 @@ namespace Mohammad.Helpers
             {
                 Catch(() => Attach(db, entity));
                 Catch(() =>
-                      {
-                          db.Refresh(RefreshMode.KeepCurrentValues, entity);
-                          if (submitChanges)
-                              db.SubmitChanges();
-                      },
-                      handling: exceptionHandling,
-                      throwException: true);
+                    {
+                        db.Refresh(RefreshMode.KeepCurrentValues, entity);
+                        if (submitChanges)
+                        {
+                            db.SubmitChanges();
+                        }
+                    },
+                    handling: exceptionHandling,
+                    throwException: true);
+            }
+        }
+
+        private static void SaveChanges(this DataContext db, ConflictMode? failureMode = null)
+        {
+            if (failureMode.HasValue)
+            {
+                db.SubmitChanges(failureMode.Value);
+            }
+            else
+            {
+                if (DefaultConflictMode.HasValue)
+                {
+                    db.SubmitChanges(DefaultConflictMode.Value);
+                }
+                else
+                {
+                    db.SubmitChanges();
+                }
             }
         }
     }

@@ -18,50 +18,6 @@ namespace Mohammad.Win.Controls
 
         #endregion
 
-        #region Enable
-
-        private bool enable;
-        private CallBack_WinProc myWndProc;
-
-        /// <summary>
-        ///     Enables or disabled tracking dialog boxes
-        /// </summary>
-        [Description("Enables or disabled tracking dialog boxes")]
-        [DefaultValue(false)]
-        public bool Enable
-        {
-            get { return this.enable; }
-            set
-            {
-                this.enable = value;
-                if (this.DesignMode)
-                    return;
-                if (this.Enable)
-                {
-                    if (this.hHook != 0)
-                        UnhookWindowsHookEx(this.hHook);
-
-                    int hInst;
-                    int Thread;
-
-                    this.myWndProc = this.WinProc;
-
-                    hInst = GetWindowLong(0, GWL_HINSTANCE);
-                    Thread = GetCurrentThreadId();
-                    this.hHook = SetWindowsHookEx(WH_CBT, this.myWndProc, hInst, Thread);
-                }
-                else
-                {
-                    UnhookWindowsHookEx(this.hHook);
-                    this.hHook = 0;
-                    this.myWndProc = null;
-                    this.myEnumProc = null;
-                }
-            }
-        }
-
-        #endregion
-
         #region RightToLeft
 
         /// <summary>
@@ -106,6 +62,55 @@ namespace Mohammad.Win.Controls
 
         #endregion
 
+        #region Enable
+
+        private bool enable;
+        private CallBack_WinProc myWndProc;
+
+        /// <summary>
+        ///     Enables or disabled tracking dialog boxes
+        /// </summary>
+        [Description("Enables or disabled tracking dialog boxes")]
+        [DefaultValue(false)]
+        public bool Enable
+        {
+            get => this.enable;
+            set
+            {
+                this.enable = value;
+                if (this.DesignMode)
+                {
+                    return;
+                }
+
+                if (this.Enable)
+                {
+                    if (this.hHook != 0)
+                    {
+                        UnhookWindowsHookEx(this.hHook);
+                    }
+
+                    int hInst;
+                    int Thread;
+
+                    this.myWndProc = this.WinProc;
+
+                    hInst = GetWindowLong(0, GWL_HINSTANCE);
+                    Thread = GetCurrentThreadId();
+                    this.hHook = SetWindowsHookEx(WH_CBT, this.myWndProc, hInst, Thread);
+                }
+                else
+                {
+                    UnhookWindowsHookEx(this.hHook);
+                    this.hHook = 0;
+                    this.myWndProc = null;
+                    this.myEnumProc = null;
+                }
+            }
+        }
+
+        #endregion
+
         #region Dictionary
 
         private DialogBoxControllerDict _Dictionary;
@@ -118,10 +123,13 @@ namespace Mohammad.Win.Controls
             get
             {
                 if (this._Dictionary == null)
+                {
                     this._Dictionary = new DialogBoxControllerDict();
+                }
+
                 return this._Dictionary;
             }
-            set { this._Dictionary = value; }
+            set => this._Dictionary = value;
         }
 
         #endregion

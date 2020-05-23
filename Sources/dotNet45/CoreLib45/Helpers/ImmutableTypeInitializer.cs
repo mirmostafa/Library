@@ -60,24 +60,37 @@ namespace Mohammad.Helpers
             {
                 var binderName = ctorParamName.ToLower();
                 if (this._CtorParameters.ContainsKey(binderName))
+                {
                     this._CtorParameters[binderName] = value;
+                }
                 else
+                {
                     this._CtorParameters.Add(binderName, value);
+                }
             }
         }
 
+        public static implicit operator T(ImmutableTypeInitializer<T> initializer) => initializer.Build();
+
         public T Build()
         {
-            var target = typeof(T).GetConstructors().FirstOrDefault(ctor => ctor.GetParameters()
-                                                                                .Any(parameter =>
-                                                                                         this._CtorParameters.Keys.Contains(parameter.Name.ToLower())));
+            var target = typeof(T).GetConstructors()
+                .FirstOrDefault(ctor => ctor.GetParameters()
+                    .Any(parameter =>
+                        this._CtorParameters.Keys.Contains(parameter.Name.ToLower())));
             if (target == null)
+            {
                 throw new Exception();
+            }
+
             var paramInfos = target.GetParameters();
-            var seqParams  = new object[paramInfos.Length];
+            var seqParams = new object[paramInfos.Length];
             for (var index = 0; index < paramInfos.Length; index++)
+            {
                 seqParams[index] = this._CtorParameters[paramInfos[index].Name];
-            return (T) target.Invoke(seqParams);
+            }
+
+            return (T)target.Invoke(seqParams);
         }
 
         public ImmutableTypeInitializer<T> CtorParam(string name, object value)
@@ -86,10 +99,8 @@ namespace Mohammad.Helpers
             return this;
         }
 
-        public static ImmutableTypeInitializer<T> New()        => new ImmutableTypeInitializer<T>();
-        public static dynamic                     NewDynamic() => new ImmutableTypeInitializer<T>();
-
-        public static implicit operator T(ImmutableTypeInitializer<T> initializer) => initializer.Build();
+        public static ImmutableTypeInitializer<T> New() => new ImmutableTypeInitializer<T>();
+        public static dynamic NewDynamic() => new ImmutableTypeInitializer<T>();
 
         /// <inheritdoc />
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)

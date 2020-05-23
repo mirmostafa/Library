@@ -12,7 +12,14 @@ namespace Mohammad.Logging.FileBased.Xml
         where TLogEntity : LogEntity
     {
         public XmlWriter(string xmlLogFileSpec)
-            : base(new FileInfo(xmlLogFileSpec)) { }
+            : base(new FileInfo(xmlLogFileSpec))
+        {
+        }
+
+        public override void LoadLastLog()
+        {
+            throw new NotSupportedException();
+        }
 
         protected override void InnerWrite(TLogEntity logEntity)
         {
@@ -20,20 +27,30 @@ namespace Mohammad.Logging.FileBased.Xml
             {
                 var row = ObjectHelper.ReflectProperties(logEntity);
                 if (logEntity.Level == LogLevel.Fatal || logEntity.Level == LogLevel.Error)
+                {
                     row["StackTrace"] = logEntity.StackTrace;
+                }
 
                 var doc = new XmlDocument();
                 if (!this.Log.Directory.Exists)
+                {
                     this.Log.Directory.Create();
+                }
+
                 this.Log.Refresh();
                 if (this.Log.Exists)
+                {
                     using (var reader = new XmlTextReader(this.Log.FullName))
                     {
                         reader.WhitespaceHandling = WhitespaceHandling.None;
                         doc.Load(reader);
                     }
+                }
                 else
+                {
                     doc.LoadXml(string.Format("<XmlLogger Generator='Log System Center'><File>\n\r{0}\n\r</File></XmlLogger>", this.Log.FullName));
+                }
+
                 using (var writer = new XmlTextWriter(this.Log.FullName, null) {Formatting = Formatting.Indented})
                 {
                     XmlNode node = doc.DocumentElement;
@@ -44,7 +61,10 @@ namespace Mohammad.Logging.FileBased.Xml
                     {
                         var elem = doc.CreateElement(field.Key);
                         if (field.Value != null)
+                        {
                             elem.InnerText = field.Value.ToString();
+                        }
+
                         node.AppendChild(elem);
                     }
 
@@ -52,7 +72,5 @@ namespace Mohammad.Logging.FileBased.Xml
                 }
             }
         }
-
-        public override void LoadLastLog() { throw new NotSupportedException(); }
     }
 }

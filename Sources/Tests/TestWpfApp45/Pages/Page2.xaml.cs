@@ -5,6 +5,9 @@
     /// </summary>
     public partial class Page2
     {
-        public Page2() { this.InitializeComponent(); }
+        public Page2()
+        {
+            this.InitializeComponent();
+        }
     }
 }

@@ -19,6 +19,10 @@ namespace Mohammad.ServiceModel
     /// <typeparam name="TContract"> The service contract, usually an interface </typeparam>
     public partial class ServiceClient<TContract>
     {
+        public EndpointAddress Endpoint { get; }
+        public ChannelFactory<TContract> ChannelFactory { get; }
+        public Binding Binding { get; }
+
         public ServiceClient(string uri)
             : this(uri, WcfHelper.DefaultBinding)
         {
@@ -35,27 +39,34 @@ namespace Mohammad.ServiceModel
             {
                 var serviceConfigs = typeof(TContract).GetCustomAttributes(typeof(ServiceConfigAttribute), true);
                 if (serviceConfigs.Length > 0)
+                {
                     uri = serviceConfigs[0].As<ServiceConfigAttribute>().ServiceUrl;
+                }
+
                 if (uri == null)
+                {
                     throw new ArgumentNullException(nameof(uri));
+                }
             }
 
             if (binding == null)
+            {
                 throw new ArgumentNullException(nameof(binding));
+            }
+
             this.Binding = binding;
             if (sendTimeout.HasValue)
+            {
                 this.Binding.SendTimeout = sendTimeout.Value;
+            }
+
             this.Endpoint = new EndpointAddress(uri);
             this.ChannelFactory = callbackObject == null
-                                      ? new ChannelFactory<TContract>(this.Binding, this.Endpoint)
-                                      : new DuplexChannelFactory<TContract>(callbackObject, this.Binding, this.Endpoint);
+                ? new ChannelFactory<TContract>(this.Binding, this.Endpoint)
+                : new DuplexChannelFactory<TContract>(callbackObject, this.Binding, this.Endpoint);
         }
 
-        public EndpointAddress           Endpoint       { get; }
-        public ChannelFactory<TContract> ChannelFactory { get; }
-        public Binding                   Binding        { get; }
-
-        public       TContract       GetChannel()      => this.ChannelFactory.CreateChannel();
+        public TContract GetChannel() => this.ChannelFactory.CreateChannel();
         public async Task<TContract> GetChannelAsync() => await Task.Run(() => this.GetChannel());
     }
 }

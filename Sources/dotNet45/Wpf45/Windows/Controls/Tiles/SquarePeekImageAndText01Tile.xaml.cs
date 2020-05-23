@@ -5,6 +5,9 @@
     /// </summary>
     public partial class SquarePeekImageAndText01Tile
     {
-        public SquarePeekImageAndText01Tile() { this.InitializeComponent(); }
+        public SquarePeekImageAndText01Tile()
+        {
+            this.InitializeComponent();
+        }
     }
 }

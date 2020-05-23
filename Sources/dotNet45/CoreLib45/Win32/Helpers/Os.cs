@@ -22,9 +22,15 @@ namespace Mohammad.Win32.Helpers
             get
             {
                 if (Environment.OSVersion.Version.Major < 6 || Environment.OSVersion.Version.Major == 6 && Environment.OSVersion.Version.Minor <= 1)
+                {
                     return OsVersion.Win7;
+                }
+
                 if (Environment.OSVersion.Version.Major <= 6)
+                {
                     return OsVersion.WinVista;
+                }
+
                 return Environment.OSVersion.Version.Major <= 5 ? OsVersion.WinXp : OsVersion.Unknown;
             }
         }
@@ -51,7 +57,9 @@ namespace Mohammad.Win32.Helpers
         public static void ThrowIfNotVista()
         {
             if (Version != OsVersion.WinVista || Version != OsVersion.Win7)
+            {
                 throw new PlatformNotSupportedException("Only supported on Windows Vista or newer.");
+            }
         }
 
         /// <summary>
@@ -60,7 +68,9 @@ namespace Mohammad.Win32.Helpers
         public static void ThrowIfNotWin7()
         {
             if (Version != OsVersion.Win7)
+            {
                 throw new PlatformNotSupportedException("Only supported on Windows 7 or newer.");
+            }
         }
 
         /// <summary>
@@ -71,7 +81,10 @@ namespace Mohammad.Win32.Helpers
         public static string GetStringResource(string resourceId)
         {
             if (string.IsNullOrEmpty(resourceId))
+            {
                 return string.Empty;
+            }
+
             // Known folder "Recent" has a malformed resource id
             // for its tooltip. This causes the resource id to
             // parse into 3 parts instead of 2 parts if we don't fix.
@@ -85,9 +98,9 @@ namespace Mohammad.Win32.Helpers
             var index = int.Parse(parts[1]);
 
             library = Environment.ExpandEnvironmentVariables(library);
-            var handle      = Api.LoadLibrary(library);
+            var handle = Api.LoadLibrary(library);
             var stringValue = new StringBuilder(255);
-            var retval      = Api.LoadString(handle, index, stringValue, 255);
+            var retval = Api.LoadString(handle, index, stringValue, 255);
 
             if (retval == 0)
             {

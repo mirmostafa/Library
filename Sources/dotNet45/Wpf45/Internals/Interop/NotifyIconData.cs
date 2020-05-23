@@ -15,30 +15,24 @@ namespace Mohammad.Wpf.Internals.Interop
     public struct NotifyIconData
     {
         /// <summary>
-        ///     Size of this structure, in bytes.
+        ///     Adds an icon to a balloon ToolTip, which is placed to the left of the title. If the
+        ///     <see cref="BalloonTitle" /> member is zero-length, the icon is not shown.
         /// </summary>
-        public uint cbSize;
+        public BalloonFlags BalloonFlags;
 
         /// <summary>
-        ///     Handle to the window that receives notification messages associated with an icon in the
-        ///     taskbar status area. The Shell uses hWnd and uID to identify which icon to operate on
-        ///     when Shell_NotifyIcon is invoked.
+        ///     String with the text for a balloon ToolTip. It can have a maximum of 255 characters.
+        ///     To remove the ToolTip, set the NIF_INFO flag in uFlags and set szInfo to an empty string.
         /// </summary>
-        public IntPtr WindowHandle;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+        public string BalloonText;
 
         /// <summary>
-        ///     Application-defined identifier of the taskbar icon. The Shell uses hWnd and uID to identify
-        ///     which icon to operate on when Shell_NotifyIcon is invoked. You can have multiple icons
-        ///     associated with a single hWnd by assigning each a different uID. This feature, however
-        ///     is currently not used.
+        ///     String containing a title for a balloon ToolTip. This title appears in boldface
+        ///     above the text. It can have a maximum of 63 characters.
         /// </summary>
-        public uint TaskbarIconId;
-
-        /// <summary>
-        ///     Flags that indicate which of the other members contain valid data. This member can be
-        ///     a combination of the NIF_XXX constants.
-        /// </summary>
-        public IconDataMembers ValidMembers;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string BalloonTitle;
 
         /// <summary>
         ///     Application-defined message identifier. The system uses this identifier to send
@@ -47,18 +41,24 @@ namespace Mohammad.Wpf.Internals.Interop
         public uint CallbackMessageId;
 
         /// <summary>
+        ///     Size of this structure, in bytes.
+        /// </summary>
+        public uint cbSize;
+
+        /// <summary>
+        ///     Windows Vista (Shell32.dll version 6.0.6) and later. The handle of a customized
+        ///     balloon icon provided by the application that should be used independently
+        ///     of the tray icon. If this member is non-NULL and the <see cref="Interop.BalloonFlags.User" />
+        ///     flag is set, this icon is used as the balloon icon.<br />
+        ///     If this member is NULL, the legacy behavior is carried out.
+        /// </summary>
+        public IntPtr CustomBalloonIconHandle;
+
+        /// <summary>
         ///     A handle to the icon that should be displayed. Just
         ///     <see cref="Icon.Handle" />.
         /// </summary>
         public IntPtr IconHandle;
-
-        /// <summary>
-        ///     String with the text for a standard ToolTip. It can have a maximum of 64 characters including
-        ///     the terminating NULL. For Version 5.0 and later, szTip can have a maximum of
-        ///     128 characters, including the terminating NULL.
-        /// </summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-        public string ToolTipText;
 
         /// <summary>
         ///     State of the icon. Remember to also set the <see cref="StateMask" />.
@@ -74,11 +74,34 @@ namespace Mohammad.Wpf.Internals.Interop
         public IconState StateMask;
 
         /// <summary>
-        ///     String with the text for a balloon ToolTip. It can have a maximum of 255 characters.
-        ///     To remove the ToolTip, set the NIF_INFO flag in uFlags and set szInfo to an empty string.
+        ///     Windows XP (Shell32.dll version 6.0) and later.<br />
+        ///     - Windows 7 and later: A registered GUID that identifies the icon.
+        ///     This value overrides uID and is the recommended method of identifying the icon.<br />
+        ///     - Windows XP through Windows Vista: Reserved.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-        public string BalloonText;
+        public Guid TaskbarIconGuid;
+
+        /// <summary>
+        ///     Application-defined identifier of the taskbar icon. The Shell uses hWnd and uID to identify
+        ///     which icon to operate on when Shell_NotifyIcon is invoked. You can have multiple icons
+        ///     associated with a single hWnd by assigning each a different uID. This feature, however
+        ///     is currently not used.
+        /// </summary>
+        public uint TaskbarIconId;
+
+        /// <summary>
+        ///     String with the text for a standard ToolTip. It can have a maximum of 64 characters including
+        ///     the terminating NULL. For Version 5.0 and later, szTip can have a maximum of
+        ///     128 characters, including the terminating NULL.
+        /// </summary>
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+        public string ToolTipText;
+
+        /// <summary>
+        ///     Flags that indicate which of the other members contain valid data. This member can be
+        ///     a combination of the NIF_XXX constants.
+        /// </summary>
+        public IconDataMembers ValidMembers;
 
         /// <summary>
         ///     Mainly used to set the version when <see cref="WinApi.Shell_NotifyIcon" /> is invoked
@@ -88,34 +111,11 @@ namespace Mohammad.Wpf.Internals.Interop
         public uint VersionOrTimeout;
 
         /// <summary>
-        ///     String containing a title for a balloon ToolTip. This title appears in boldface
-        ///     above the text. It can have a maximum of 63 characters.
+        ///     Handle to the window that receives notification messages associated with an icon in the
+        ///     taskbar status area. The Shell uses hWnd and uID to identify which icon to operate on
+        ///     when Shell_NotifyIcon is invoked.
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
-        public string BalloonTitle;
-
-        /// <summary>
-        ///     Adds an icon to a balloon ToolTip, which is placed to the left of the title. If the
-        ///     <see cref="BalloonTitle" /> member is zero-length, the icon is not shown.
-        /// </summary>
-        public BalloonFlags BalloonFlags;
-
-        /// <summary>
-        ///     Windows XP (Shell32.dll version 6.0) and later.<br />
-        ///     - Windows 7 and later: A registered GUID that identifies the icon.
-        ///     This value overrides uID and is the recommended method of identifying the icon.<br />
-        ///     - Windows XP through Windows Vista: Reserved.
-        /// </summary>
-        public Guid TaskbarIconGuid;
-
-        /// <summary>
-        ///     Windows Vista (Shell32.dll version 6.0.6) and later. The handle of a customized
-        ///     balloon icon provided by the application that should be used independently
-        ///     of the tray icon. If this member is non-NULL and the <see cref="Interop.BalloonFlags.User" />
-        ///     flag is set, this icon is used as the balloon icon.<br />
-        ///     If this member is NULL, the legacy behavior is carried out.
-        /// </summary>
-        public IntPtr CustomBalloonIconHandle;
+        public IntPtr WindowHandle;
 
         /// <summary>
         ///     Creates a default data structure that provides
@@ -130,7 +130,7 @@ namespace Mohammad.Wpf.Internals.Interop
             if (Environment.OSVersion.Version.Major >= 6)
                 //use the current size
             {
-                data.cbSize = (uint) Marshal.SizeOf(data);
+                data.cbSize = (uint)Marshal.SizeOf(data);
             }
             else
             {
@@ -145,7 +145,7 @@ namespace Mohammad.Wpf.Internals.Interop
             data.WindowHandle = handle;
             data.TaskbarIconId = 0x0;
             data.CallbackMessageId = WindowMessageSink.CallbackMessageId;
-            data.VersionOrTimeout = (uint) NotifyIconVersion.Win95;
+            data.VersionOrTimeout = (uint)NotifyIconVersion.Win95;
 
             data.IconHandle = IntPtr.Zero;
 

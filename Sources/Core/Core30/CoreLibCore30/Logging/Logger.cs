@@ -4,15 +4,15 @@ namespace Mohammad.Logging
 {
     public sealed class Logger : IEventLogger, ISupportSilence
     {
-        #region Implementation of IEventLogger
-
-        public event EventHandler<ILog> Logged;
-
-        #endregion
-
         #region Implementation of ISupportSilence
 
         public bool IsSilent { get; set; }
+
+        #endregion
+
+        #region Implementation of IEventLogger
+
+        public event EventHandler<ILog> Logged;
 
         #endregion
 
@@ -30,7 +30,10 @@ namespace Mohammad.Logging
 
         public void Write(ILog log)
         {
-            if (!this.IsSilent) this.OnLogged(log);
+            if (!this.IsSilent)
+            {
+                this.OnLogged(log);
+            }
         }
 
         #endregion

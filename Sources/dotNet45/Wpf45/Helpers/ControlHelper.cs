@@ -25,8 +25,13 @@ namespace Mohammad.Wpf.Helpers
         {
             var parent = dp;
             while ((parent = VisualTreeHelper.GetParent(parent)) != null)
+            {
                 if (parent is TParent)
+                {
                     return parent as TParent;
+                }
+            }
+
             return null;
         }
 
@@ -41,10 +46,7 @@ namespace Mohammad.Wpf.Helpers
         /// <returns>
         ///     <c>true</c> if [is design time]; otherwise, <c>false</c>.
         /// </returns>
-        public static bool IsDesignTime()
-        {
-            return Application.Current.MainWindow == null;
-        }
+        public static bool IsDesignTime() => Application.Current.MainWindow == null;
 
         public static void Run(this DispatcherObject control, Action action)
         {
@@ -58,7 +60,10 @@ namespace Mohammad.Wpf.Helpers
             var parent = VisualTreeHelper.GetParent(item);
 
             while (!(parent is TreeViewItem || parent is TreeView))
+            {
                 parent = VisualTreeHelper.GetParent(parent);
+            }
+
             return parent as ItemsControl;
         }
 
@@ -97,12 +102,21 @@ namespace Mohammad.Wpf.Helpers
                 c =>
                 {
                     if (!loopThrouth && !Equals(c, control))
+                    {
                         return Enumerable.Empty<Visual>();
+                    }
+
                     if (!(c is TabItem))
-                        return Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual) VisualTreeHelper.GetChild(c, i));
+                    {
+                        return Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i));
+                    }
+
                     if (c.As<TabItem>().Content is Visual)
+                    {
                         return new[] {c.As<TabItem>().Content.As<Visual>(), c.As<TabItem>().Header.As<Visual>()};
-                    return Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual) VisualTreeHelper.GetChild(c, i));
+                    }
+
+                    return Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i));
                 },
                 result.Add,
                 null);
@@ -116,7 +130,7 @@ namespace Mohammad.Wpf.Helpers
             return textRange.Text;
         }
 
-        public static void Bind<TEnum>(this ComboBox comboBox, TEnum selectedItem = default(TEnum)) where TEnum : struct
+        public static void Bind<TEnum>(this ComboBox comboBox, TEnum selectedItem = default) where TEnum : struct
         {
             //var members = EnumHelper.GetMembers<TEnum>().Where(item => EnumHelper.GetItemAttribute<TEnum, NonSerializedAttribute>(item.ValueMember) == null).ToCollection();
             //comboBox.ItemsSource = members;
@@ -127,26 +141,43 @@ namespace Mohammad.Wpf.Helpers
             comboBox.SelectedItem = selectedItem;
         }
 
-        public static void BindToElementPath(this UIElement source, FrameworkElement target, DependencyProperty targetDependencyProperty, string path,
+        public static void BindToElementPath(this UIElement source,
+            FrameworkElement target,
+            DependencyProperty targetDependencyProperty,
+            string path,
             BindingMode bindingMode = BindingMode.TwoWay)
         {
             target?.SetBinding(targetDependencyProperty, new Binding {Source = source, Path = new PropertyPath(path), Mode = bindingMode});
         }
 
-        public static void EnsureVisible(this ListViewItem item) { item.Parent.As<ListView>()?.ScrollIntoView(item); }
-        public static void EnsureVisibleItem(this ListView lv, object item) { lv?.ScrollIntoView(item); }
+        public static void EnsureVisible(this ListViewItem item)
+        {
+            item.Parent.As<ListView>()?.ScrollIntoView(item);
+        }
 
-        public static void EnsureVisibleItem(this DataGrid dg, object item) { dg?.ScrollIntoView(item); }
+        public static void EnsureVisibleItem(this ListView lv, object item)
+        {
+            lv?.ScrollIntoView(item);
+        }
+
+        public static void EnsureVisibleItem(this DataGrid dg, object item)
+        {
+            dg?.ScrollIntoView(item);
+        }
 
         public static void Expand(this TreeViewItem item, bool isExpanded = true)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
+
             var parent = item;
             do
             {
                 parent.IsExpanded = isExpanded;
             } while ((parent = parent.Parent.As<TreeViewItem>()) != null);
+
             item.BringIntoView();
         }
 
@@ -159,7 +190,10 @@ namespace Mohammad.Wpf.Helpers
         public static bool? ShowDialog<TWindow>(this Window owner, Func<TWindow> creator, out TWindow window) where TWindow : Window
         {
             if (creator == null)
+            {
                 throw new ArgumentNullException(nameof(creator));
+            }
+
             window = creator();
             window.Owner = owner;
             return window.ShowDialog();
@@ -188,10 +222,22 @@ namespace Mohammad.Wpf.Helpers
                         WindowsMessages.SWP_NOMOVE | WindowsMessages.SWP_NOSIZE | WindowsMessages.SWP_NOZORDER | WindowsMessages.SWP_FRAMECHANGED));
         }
 
-        public static IntPtr GetHandle(this Window window) { return new WindowInteropHelper(window).Handle; }
-        public static void Flick(this IFlickable element, int duration = 500) { Catch(() => Animations.Flick(element.FlickerTextBlock, duration)); }
-        public static void Flick(FrameworkElement element, int duration = 500) { Catch(() => Animations.Flick(element, duration)); }
-        public static void Rebind(this TextBox target) { BindingOperations.GetBindingExpressionBase(target, TextBox.TextProperty)?.UpdateTarget(); }
+        public static IntPtr GetHandle(this Window window) => new WindowInteropHelper(window).Handle;
+
+        public static void Flick(this IFlickable element, int duration = 500)
+        {
+            Catch(() => Animations.Flick(element.FlickerTextBlock, duration));
+        }
+
+        public static void Flick(FrameworkElement element, int duration = 500)
+        {
+            Catch(() => Animations.Flick(element, duration));
+        }
+
+        public static void Rebind(this TextBox target)
+        {
+            BindingOperations.GetBindingExpressionBase(target, TextBox.TextProperty)?.UpdateTarget();
+        }
 
         public static void MoveToNextUIElement(RoutedEventArgs e)
         {
@@ -199,22 +245,35 @@ namespace Mohammad.Wpf.Helpers
             var elementWithFocus = Keyboard.FocusedElement as UIElement;
 
             if (elementWithFocus == null)
+            {
                 return;
+            }
+
             if (elementWithFocus.MoveFocus(request))
+            {
                 if (e != null)
+                {
                     e.Handled = true;
+                }
+            }
         }
 
-        public static DependencyProperty GetDependencyProperty<TType, TOwnerType>(string propertyName, Action<TOwnerType, TType> onDependencyPropertyChanged = null,
-            Action<TOwnerType, string> onPropertyChanged = null, Func<TType, bool> validateValue = null, CoerceValueCallback coerceValueCallback = null,
+        public static DependencyProperty GetDependencyProperty<TType, TOwnerType>(string propertyName,
+            Action<TOwnerType, TType> onDependencyPropertyChanged = null,
+            Action<TOwnerType, string> onPropertyChanged = null,
+            Func<TType, bool> validateValue = null,
+            CoerceValueCallback coerceValueCallback = null,
             object defaultValue = null) where TOwnerType : class
         {
             PropertyChangedCallback callback = (sender, e) =>
             {
                 var me = sender as TOwnerType;
                 if (me == null)
+                {
                     return;
-                onDependencyPropertyChanged?.Invoke(me, (TType) e.NewValue);
+                }
+
+                onDependencyPropertyChanged?.Invoke(me, (TType)e.NewValue);
                 onPropertyChanged?.Invoke(me, e.Property.Name);
             };
 
@@ -232,7 +291,7 @@ namespace Mohammad.Wpf.Helpers
                     new FrameworkPropertyMetadata(defaultValue ?? default(TType),
                         FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
                         callback) {BindsTwoWayByDefault = true, DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged},
-                    value => validateValue == null || validateValue((TType) value));
+                    value => validateValue == null || validateValue((TType)value));
         }
 
         public static T GetVisualChild<T>(this Visual parent) where T : Visual
@@ -240,11 +299,14 @@ namespace Mohammad.Wpf.Helpers
             var numVisuals = VisualTreeHelper.GetChildrenCount(parent);
             for (var index = 0; index < numVisuals; index++)
             {
-                var v = (Visual) VisualTreeHelper.GetChild(parent, index);
+                var v = (Visual)VisualTreeHelper.GetChild(parent, index);
                 var child = v as T ?? GetVisualChild<T>(v);
                 if (child != null)
+                {
                     return child;
+                }
             }
+
             return null;
         }
 
@@ -252,30 +314,45 @@ namespace Mohammad.Wpf.Helpers
         {
             var rowContainer = GetRow(grid, row);
             if (rowContainer == null)
+            {
                 return null;
+            }
+
             var presenter = GetVisualChild<DataGridCellsPresenter>(rowContainer);
-            var cell = (DataGridCell) presenter.ItemContainerGenerator.ContainerFromIndex(column);
+            var cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
             if (cell != null)
+            {
                 return cell;
+            }
+
             grid.ScrollIntoView(rowContainer, grid.Columns[column]);
-            cell = (DataGridCell) presenter.ItemContainerGenerator.ContainerFromIndex(column);
+            cell = (DataGridCell)presenter.ItemContainerGenerator.ContainerFromIndex(column);
             return cell;
         }
 
         public static DataGridRow GetRow(this DataGrid grid, int index)
         {
-            var row = (DataGridRow) grid.ItemContainerGenerator.ContainerFromIndex(index);
+            var row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(index);
             if (row != null)
+            {
                 return row;
+            }
+
             grid.UpdateLayout();
             grid.ScrollIntoView(grid.Items[index]);
-            row = (DataGridRow) grid.ItemContainerGenerator.ContainerFromIndex(index);
+            row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(index);
             return row;
         }
 
-        public static void Refresh(this UIElement uiElement) { uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate); }
+        public static void Refresh(this UIElement uiElement)
+        {
+            uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyDelegate);
+        }
 
-        public static void SetValue(this RangeBase pb, double step) { Animations.AnimateDouble(pb, RangeBase.ValueProperty, pb.Value, step, 100); }
+        public static void SetValue(this RangeBase pb, double step)
+        {
+            Animations.AnimateDouble(pb, RangeBase.ValueProperty, pb.Value, step, 100);
+        }
         //public static void SetValue(this RangeBase pb, double step) { pb.Value = step; }
 
         public static IEnumerable<dynamic> RetieveCheckedItems(this MultiSelector dg)

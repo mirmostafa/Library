@@ -13,13 +13,6 @@ namespace Mohammad.Win.Security.Credentials
     /// </summary>
     public sealed class CredentialsDialog
     {
-        private Image _Banner;
-        private string _Caption = string.Empty;
-        private string _Message = string.Empty;
-        private string _Name = string.Empty;
-        private string _Password = string.Empty;
-        private string _Target = string.Empty;
-
         /// <summary>
         ///     The only valid bitmap height (in pixels) of a user-defined banner.
         /// </summary>
@@ -29,6 +22,13 @@ namespace Mohammad.Win.Security.Credentials
         ///     The only valid bitmap width (in pixels) of a user-defined banner.
         /// </summary>
         private const int _ValidBannerWidth = 320;
+
+        private Image _Banner;
+        private string _Caption = string.Empty;
+        private string _Message = string.Empty;
+        private string _Name = string.Empty;
+        private string _Password = string.Empty;
+        private string _Target = string.Empty;
 
         /// <summary>
         ///     Gets or sets if the dialog will be shown even if the credentials
@@ -56,10 +56,11 @@ namespace Mohammad.Win.Security.Credentials
         /// </summary>
         public string Name
         {
-            get { return this._Name; }
+            get => this._Name;
             set
             {
                 if (value != null)
+                {
                     if (value.Length > CREDUI.MAX_USERNAME_LENGTH)
                     {
                         var message = string.Format(Thread.CurrentThread.CurrentUICulture,
@@ -67,6 +68,8 @@ namespace Mohammad.Win.Security.Credentials
                             CREDUI.MAX_USERNAME_LENGTH);
                         throw new ArgumentException(message, "Name");
                     }
+                }
+
                 this._Name = value;
             }
         }
@@ -76,10 +79,11 @@ namespace Mohammad.Win.Security.Credentials
         /// </summary>
         public string Password
         {
-            get { return this._Password; }
+            get => this._Password;
             set
             {
                 if (value != null)
+                {
                     if (value.Length > CREDUI.MAX_PASSWORD_LENGTH)
                     {
                         var message = string.Format(Thread.CurrentThread.CurrentUICulture,
@@ -87,6 +91,8 @@ namespace Mohammad.Win.Security.Credentials
                             CREDUI.MAX_PASSWORD_LENGTH);
                         throw new ArgumentException(message, "Password");
                     }
+                }
+
                 this._Password = value;
             }
         }
@@ -109,11 +115,14 @@ namespace Mohammad.Win.Security.Credentials
         /// </summary>
         public string Target
         {
-            get { return this._Target; }
+            get => this._Target;
             set
             {
                 if (value == null)
+                {
                     throw new ArgumentException("The target cannot be a null value.", "Target");
+                }
+
                 if (value.Length > CREDUI.MAX_GENERIC_TARGET_LENGTH)
                 {
                     var message = string.Format(Thread.CurrentThread.CurrentUICulture,
@@ -121,6 +130,7 @@ namespace Mohammad.Win.Security.Credentials
                         CREDUI.MAX_GENERIC_TARGET_LENGTH);
                     throw new ArgumentException(message, "Target");
                 }
+
                 this._Target = value;
             }
         }
@@ -133,10 +143,11 @@ namespace Mohammad.Win.Security.Credentials
         /// </remarks>
         public string Caption
         {
-            get { return this._Caption; }
+            get => this._Caption;
             set
             {
                 if (value != null)
+                {
                     if (value.Length > CREDUI.MAX_CAPTION_LENGTH)
                     {
                         var message = string.Format(Thread.CurrentThread.CurrentUICulture,
@@ -144,6 +155,8 @@ namespace Mohammad.Win.Security.Credentials
                             CREDUI.MAX_CAPTION_LENGTH);
                         throw new ArgumentException(message, "Caption");
                     }
+                }
+
                 this._Caption = value;
             }
         }
@@ -156,10 +169,11 @@ namespace Mohammad.Win.Security.Credentials
         /// </remarks>
         public string Message
         {
-            get { return this._Message; }
+            get => this._Message;
             set
             {
                 if (value != null)
+                {
                     if (value.Length > CREDUI.MAX_MESSAGE_LENGTH)
                     {
                         var message = string.Format(Thread.CurrentThread.CurrentUICulture,
@@ -167,6 +181,8 @@ namespace Mohammad.Win.Security.Credentials
                             CREDUI.MAX_MESSAGE_LENGTH);
                         throw new ArgumentException(message, "Message");
                     }
+                }
+
                 this._Message = value;
             }
         }
@@ -179,16 +195,22 @@ namespace Mohammad.Win.Security.Credentials
         /// </remarks>
         public Image Banner
         {
-            get { return this._Banner; }
+            get => this._Banner;
             set
             {
                 if (value != null)
                 {
                     if (value.Width != _ValidBannerWidth)
+                    {
                         throw new ArgumentException("The banner image width must be 320 pixels.", "Banner");
+                    }
+
                     if (value.Height != _ValidBannerHeight)
+                    {
                         throw new ArgumentException("The banner image height must be 60 pixels.", "Banner");
+                    }
                 }
+
                 this._Banner = value;
             }
         }
@@ -199,7 +221,9 @@ namespace Mohammad.Win.Security.Credentials
         /// </summary>
         /// <param name="target">The name of the target for the credentials, typically a server name.</param>
         public CredentialsDialog(string target)
-            : this(target, null) {}
+            : this(target, null)
+        {
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
@@ -208,7 +232,9 @@ namespace Mohammad.Win.Security.Credentials
         /// <param name="target">The name of the target for the credentials, typically a server name.</param>
         /// <param name="caption">The caption of the dialog (null will cause a system default title to be used).</param>
         public CredentialsDialog(string target, string caption)
-            : this(target, caption, null) {}
+            : this(target, caption, null)
+        {
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
@@ -218,7 +244,9 @@ namespace Mohammad.Win.Security.Credentials
         /// <param name="caption">The caption of the dialog (null will cause a system default title to be used).</param>
         /// <param name="message">The message of the dialog (null will cause a system default message to be used).</param>
         public CredentialsDialog(string target, string caption, string message)
-            : this(target, caption, message, null) {}
+            : this(target, caption, message, null)
+        {
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
@@ -240,30 +268,21 @@ namespace Mohammad.Win.Security.Credentials
         ///     Shows the credentials dialog.
         /// </summary>
         /// <returns>Returns a DialogResult indicating the user action.</returns>
-        public DialogResult Show()
-        {
-            return this.Show(null, this.Name, this.Password, this.SaveChecked);
-        }
+        public DialogResult Show() => this.Show(null, this.Name, this.Password, this.SaveChecked);
 
         /// <summary>
         ///     Shows the credentials dialog with the specified save checkbox status.
         /// </summary>
         /// <param name="saveChecked">True if the save checkbox is checked.</param>
         /// <returns>Returns a DialogResult indicating the user action.</returns>
-        public DialogResult Show(bool saveChecked)
-        {
-            return this.Show(null, this.Name, this.Password, saveChecked);
-        }
+        public DialogResult Show(bool saveChecked) => this.Show(null, this.Name, this.Password, saveChecked);
 
         /// <summary>
         ///     Shows the credentials dialog with the specified name.
         /// </summary>
         /// <param name="name">The name for the credentials.</param>
         /// <returns>Returns a DialogResult indicating the user action.</returns>
-        public DialogResult Show(string name)
-        {
-            return this.Show(null, name, this.Password, this.SaveChecked);
-        }
+        public DialogResult Show(string name) => this.Show(null, name, this.Password, this.SaveChecked);
 
         /// <summary>
         ///     Shows the credentials dialog with the specified name and password.
@@ -271,10 +290,7 @@ namespace Mohammad.Win.Security.Credentials
         /// <param name="name">The name for the credentials.</param>
         /// <param name="password">The password for the credentials.</param>
         /// <returns>Returns a DialogResult indicating the user action.</returns>
-        public DialogResult Show(string name, string password)
-        {
-            return this.Show(null, name, password, this.SaveChecked);
-        }
+        public DialogResult Show(string name, string password) => this.Show(null, name, password, this.SaveChecked);
 
         /// <summary>
         ///     Shows the credentials dialog with the specified name, password and save checkbox status.
@@ -283,20 +299,14 @@ namespace Mohammad.Win.Security.Credentials
         /// <param name="password">The password for the credentials.</param>
         /// <param name="saveChecked">True if the save checkbox is checked.</param>
         /// <returns>Returns a DialogResult indicating the user action.</returns>
-        public DialogResult Show(string name, string password, bool saveChecked)
-        {
-            return this.Show(null, name, password, saveChecked);
-        }
+        public DialogResult Show(string name, string password, bool saveChecked) => this.Show(null, name, password, saveChecked);
 
         /// <summary>
         ///     Shows the credentials dialog with the specified owner.
         /// </summary>
         /// <param name="owner">The System.Windows.Forms.IWin32Window the dialog will display in front of.</param>
         /// <returns>Returns a DialogResult indicating the user action.</returns>
-        public DialogResult Show(IWin32Window owner)
-        {
-            return this.Show(owner, this.Name, this.Password, this.SaveChecked);
-        }
+        public DialogResult Show(IWin32Window owner) => this.Show(owner, this.Name, this.Password, this.SaveChecked);
 
         /// <summary>
         ///     Shows the credentials dialog with the specified owner and save checkbox status.
@@ -304,10 +314,7 @@ namespace Mohammad.Win.Security.Credentials
         /// <param name="owner">The System.Windows.Forms.IWin32Window the dialog will display in front of.</param>
         /// <param name="saveChecked">True if the save checkbox is checked.</param>
         /// <returns>Returns a DialogResult indicating the user action.</returns>
-        public DialogResult Show(IWin32Window owner, bool saveChecked)
-        {
-            return this.Show(owner, this.Name, this.Password, saveChecked);
-        }
+        public DialogResult Show(IWin32Window owner, bool saveChecked) => this.Show(owner, this.Name, this.Password, saveChecked);
 
         /// <summary>
         ///     Shows the credentials dialog with the specified owner, name and password.
@@ -316,10 +323,7 @@ namespace Mohammad.Win.Security.Credentials
         /// <param name="name">The name for the credentials.</param>
         /// <param name="password">The password for the credentials.</param>
         /// <returns>Returns a DialogResult indicating the user action.</returns>
-        public DialogResult Show(IWin32Window owner, string name, string password)
-        {
-            return this.Show(owner, name, password, this.SaveChecked);
-        }
+        public DialogResult Show(IWin32Window owner, string name, string password) => this.Show(owner, name, password, this.SaveChecked);
 
         /// <summary>
         ///     Shows the credentials dialog with the specified owner, name, password and save checkbox status.
@@ -332,7 +336,10 @@ namespace Mohammad.Win.Security.Credentials
         public DialogResult Show(IWin32Window owner, string name, string password, bool saveChecked)
         {
             if (Environment.OSVersion.Version.Major < 5)
+            {
                 throw new ApplicationException("The Credential Management API requires Windows XP / Windows Server 2003 or later.");
+            }
+
             this.Name = name;
             this.Password = password;
             this.SaveChecked = saveChecked;
@@ -396,7 +403,9 @@ namespace Mohammad.Win.Security.Credentials
 
             // clean up resources
             if (this.Banner != null)
+            {
                 Api.DeleteObject(info.hbmBanner);
+            }
 
             // set the accessors from the api call parameters
             this.Name = name.ToString();
@@ -414,11 +423,17 @@ namespace Mohammad.Win.Security.Credentials
         {
             var info = new CREDUI.INFO();
             if (owner != null)
+            {
                 info.hwndParent = owner.Handle;
+            }
+
             info.pszCaptionText = this.Caption;
             info.pszMessageText = this.Message;
             if (this.Banner != null)
+            {
                 info.hbmBanner = new Bitmap(this.Banner, _ValidBannerWidth, _ValidBannerHeight).GetHbitmap();
+            }
+
             info.cbSize = Marshal.SizeOf(info);
             return info;
         }
@@ -434,16 +449,22 @@ namespace Mohammad.Win.Security.Credentials
             // if (incorrectPassword) flags = flags | CredUI.CREDUI_FLAGS.INCORRECT_PASSWORD;
 
             if (this.AlwaysDisplay)
+            {
                 flags = flags | CREDUI.FLAGS.ALWAYS_SHOW_UI;
+            }
 
             if (this.ExcludeCertificates)
+            {
                 flags = flags | CREDUI.FLAGS.EXCLUDE_CERTIFICATES;
+            }
 
             if (this.Persist)
             {
                 flags = flags | CREDUI.FLAGS.EXPECT_CONFIRMATION;
                 if (this.SaveDisplayed)
+                {
                     flags = flags | CREDUI.FLAGS.SHOW_SAVE_CHECK_BOX;
+                }
             }
             else
             {
@@ -451,7 +472,9 @@ namespace Mohammad.Win.Security.Credentials
             }
 
             if (this.KeepName)
+            {
                 flags = flags | CREDUI.FLAGS.KEEP_USERNAME;
+            }
 
             return flags;
         }
@@ -494,6 +517,7 @@ namespace Mohammad.Win.Security.Credentials
                 default:
                     throw new ApplicationException("Unknown credential result encountered.");
             }
+
             return result;
         }
     }

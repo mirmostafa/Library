@@ -2,7 +2,7 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.5": {
-      "MSTest.TestFramework/2.1.0": {
+      "MSTest.TestFramework/2.1.1": {
         "type": "package",
         "compile": {
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll": {},
@@ -11,6 +11,15 @@
         "runtime": {
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll": {},
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.dll": {}
+        }
+      },
+      "System.ValueTuple/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "CoreLib45/1.0.0": {
@@ -28,7 +37,7 @@
       }
     },
     ".NETFramework,Version=v4.5/win": {
-      "MSTest.TestFramework/2.1.0": {
+      "MSTest.TestFramework/2.1.1": {
         "type": "package",
         "compile": {
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll": {},
@@ -37,6 +46,15 @@
         "runtime": {
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll": {},
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.dll": {}
+        }
+      },
+      "System.ValueTuple/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "CoreLib45/1.0.0": {
@@ -54,7 +72,7 @@
       }
     },
     ".NETFramework,Version=v4.5/win-x64": {
-      "MSTest.TestFramework/2.1.0": {
+      "MSTest.TestFramework/2.1.1": {
         "type": "package",
         "compile": {
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll": {},
@@ -63,6 +81,15 @@
         "runtime": {
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll": {},
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.dll": {}
+        }
+      },
+      "System.ValueTuple/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "CoreLib45/1.0.0": {
@@ -80,7 +107,7 @@
       }
     },
     ".NETFramework,Version=v4.5/win-x86": {
-      "MSTest.TestFramework/2.1.0": {
+      "MSTest.TestFramework/2.1.1": {
         "type": "package",
         "compile": {
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll": {},
@@ -89,6 +116,15 @@
         "runtime": {
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll": {},
           "lib/net45/Microsoft.VisualStudio.TestPlatform.TestFramework.dll": {}
+        }
+      },
+      "System.ValueTuple/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
         }
       },
       "CoreLib45/1.0.0": {
@@ -107,10 +143,10 @@
     }
   },
   "libraries": {
-    "MSTest.TestFramework/2.1.0": {
-      "sha512": "FcW3sokxmi52e4gzBdv4bv59yQWJ0Lg2F579U82O4V9Pr7aNwTe7HxlHChzQqvcqgnH69XH8aDfMlfM3Y1wjAg==",
+    "MSTest.TestFramework/2.1.1": {
+      "sha512": "lS552ma6LxHf7aOTNQHJa4udC3KVml+Hlzs3cEJP/caIUc6UvYMmmaPpYO3ErEL9qF4xGayeHXwAmrTiFWUAMw==",
       "type": "package",
-      "path": "mstest.testframework/2.1.0",
+      "path": "mstest.testframework/2.1.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -205,8 +241,52 @@
         "lib/uap10.0/zh-Hans/Microsoft.VisualStudio.TestPlatform.TestFramework.xml",
         "lib/uap10.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml",
         "lib/uap10.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.TestFramework.xml",
-        "mstest.testframework.2.1.0.nupkg.sha512",
+        "mstest.testframework.2.1.1.nupkg.sha512",
         "mstest.testframework.nuspec"
+      ]
+    },
+    "System.ValueTuple/4.5.0": {
+      "sha512": "okurQJO6NRE/apDIP23ajJ0hpiNmJ+f0BwOlB/cSqTLQlw5upkf+5+96+iG2Jw40G1fCVCyPz/FhIABUjMR+RQ==",
+      "type": "package",
+      "path": "system.valuetuple/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net461/System.ValueTuple.dll",
+        "lib/net461/System.ValueTuple.xml",
+        "lib/net47/System.ValueTuple.dll",
+        "lib/net47/System.ValueTuple.xml",
+        "lib/netcoreapp2.0/_._",
+        "lib/netstandard1.0/System.ValueTuple.dll",
+        "lib/netstandard1.0/System.ValueTuple.xml",
+        "lib/netstandard2.0/_._",
+        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
+        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.xml",
+        "lib/uap10.0.16299/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net461/System.ValueTuple.dll",
+        "ref/net47/System.ValueTuple.dll",
+        "ref/netcoreapp2.0/_._",
+        "ref/netstandard2.0/_._",
+        "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
+        "ref/uap10.0.16299/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.valuetuple.4.5.0.nupkg.sha512",
+        "system.valuetuple.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
       ]
     },
     "CoreLib45/1.0.0": {
@@ -218,7 +298,7 @@
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.5": [
       "CoreLib45 >= 1.0.0",
-      "MSTest.TestFramework >= 1.4.0",
+      "MSTest.TestFramework >= 2.1.1",
       "System.ValueTuple >= 4.5.0"
     ]
   },
@@ -249,7 +329,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "D:\\Mirmostafa\\Sources\\Satrap\\Shared": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net45": {
@@ -266,7 +346,7 @@
         "dependencies": {
           "MSTest.TestFramework": {
             "target": "Package",
-            "version": "[1.4.0, )"
+            "version": "[2.1.1, )"
           },
           "System.ValueTuple": {
             "target": "Package",
@@ -286,32 +366,5 @@
         "#import": []
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "CoreLib45.Test depends on MSTest.TestFramework (>= 1.4.0) but MSTest.TestFramework 1.4.0 was not found. An approximate best match of MSTest.TestFramework 2.1.0 was resolved.",
-      "libraryId": "MSTest.TestFramework",
-      "targetGraphs": [
-        ".NETFramework,Version=v4.5",
-        ".NETFramework,Version=v4.5/win",
-        ".NETFramework,Version=v4.5/win-x64",
-        ".NETFramework,Version=v4.5/win-x86"
-      ]
-    },
-    {
-      "code": "NU1101",
-      "level": "Error",
-      "message": "Unable to find package System.ValueTuple. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages, Stimul",
-      "libraryId": "System.ValueTuple",
-      "targetGraphs": [
-        ".NETFramework,Version=v4.5",
-        ".NETFramework,Version=v4.5/win",
-        ".NETFramework,Version=v4.5/win-x64",
-        ".NETFramework,Version=v4.5/win-x86"
-      ]
-    }
-  ]
+  }
 }

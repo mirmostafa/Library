@@ -13,15 +13,18 @@ namespace Mohammad.Exceptions
 {
     public interface IException
     {
-        string    Instruction { get; }
-        string    Message     { get; }
-        object    Owner       { get; set; }
+        string Instruction { get; }
+        string Message { get; }
+        object Owner { get; set; }
         Exception GetBaseException();
     }
 
     [Serializable]
     public abstract class ExceptionBase : Exception, IException
     {
+        public string Instruction { get; set; }
+        public object Owner { get; set; }
+
         protected ExceptionBase()
         {
         }
@@ -47,25 +50,22 @@ namespace Mohammad.Exceptions
         protected ExceptionBase(string message, Exception inner, string instruction)
             : this(message, inner) => this.Instruction = instruction;
 
-        public string Instruction { get; set; }
-        public object Owner       { get; set; }
-
         public static void WrapThrow<TException>()
             where TException : ExceptionBase
         {
-            WrapThrow<TException>(null, null, (Exception) null);
+            WrapThrow<TException>(null, null, (Exception)null);
         }
 
         public static void WrapThrow<TException>(string message)
             where TException : ExceptionBase
         {
-            WrapThrow<TException>(message, null, (IException) null);
+            WrapThrow<TException>(message, null, (IException)null);
         }
 
         public static void WrapThrow<TException>(string message, string instruction)
             where TException : ExceptionBase
         {
-            WrapThrow<TException>(message, instruction, (IException) null);
+            WrapThrow<TException>(message, instruction, (IException)null);
         }
 
         public static void WrapThrow<TException>(string message, object owner)
@@ -90,7 +90,7 @@ namespace Mohammad.Exceptions
             where TException : ExceptionBase
         {
             var me = ObjectHelper.CreateInstance<TException>(new[] {typeof(string), typeof(Exception), typeof(string)},
-                                                             new object[] {message, ex, instruction});
+                new object[] {message, ex, instruction});
             me.Owner = owner;
             throw me;
         }
@@ -99,7 +99,7 @@ namespace Mohammad.Exceptions
             where TException : ExceptionBase
         {
             var me = ObjectHelper.CreateInstance<TException>(new[] {typeof(string), typeof(Exception), typeof(string)},
-                                                             new object[] {message, ex, instruction});
+                new object[] {message, ex, instruction});
             throw me;
         }
     }

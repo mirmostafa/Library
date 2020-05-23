@@ -22,7 +22,10 @@ namespace Mohammad.Net
         private IpAddress(string ip)
         {
             if (ip == null)
+            {
                 throw new ArgumentNullException(nameof(ip));
+            }
+
             var builder = new StringBuilder();
             builder.Append(ip);
             Validate(builder.ToString());
@@ -43,26 +46,14 @@ namespace Mohammad.Net
         public bool Equals(IpAddress other)
         {
             if (other == null)
+            {
                 throw new ArgumentNullException(nameof(other));
+            }
+
             return this.GetFormatted().Equals(other.GetFormatted());
         }
 
         public bool Equals(IPAddress other) => this == Parse(other?.ToString());
-
-        private static int[] Split(string ip)
-        {
-            Validate(ip);
-            return ip.Split('.').Select(s => s.ToInt()).ToArray();
-        }
-
-        private static void Validate(string ip)
-        {
-            if (ip == null)
-                throw new ArgumentNullException(nameof(ip));
-            string[] parts;
-            if ((parts = ip.Split('.')).Length != 4 || parts.Any(part => !part.IsInteger()) || parts.Any(part => !part.ToInt().IsBetween(0, 255)))
-                throw new InvalidCastException("Parameter cannot be cast to IpAddress");
-        }
 
         public static bool IsValid(string ip)
         {
@@ -80,9 +71,15 @@ namespace Mohammad.Net
         public static IEnumerable<IpAddress> GetRange(IpAddress start, IpAddress end)
         {
             if (start == null)
+            {
                 throw new ArgumentNullException(nameof(start));
+            }
+
             if (end == null)
+            {
                 throw new ArgumentNullException(nameof(end));
+            }
+
             while (start.CompareTo(end) == -1)
             {
                 yield return start;
@@ -121,7 +118,9 @@ namespace Mohammad.Net
             }
 
             if (this._Parts[0] == 256)
+            {
                 this._Parts[0] = this._Parts[1] = this._Parts[2] = this._Parts[3] = 0;
+            }
         }
 
         public override int GetHashCode() => this._Parts?.GetHashCode() ?? 0;
@@ -132,7 +131,10 @@ namespace Mohammad.Net
         {
             var hostNameOrAddress = this.ToString();
             if (hostNameOrAddress == null)
+            {
                 throw new ArgumentNullException(nameof(hostNameOrAddress));
+            }
+
             LibrarySupervisor.Logger.Debug($"Pinging {hostNameOrAddress}");
             using (var ping = new Ping())
             {
@@ -173,8 +175,8 @@ namespace Mohammad.Net
         {
             var system = CodeHelper.CatchFunc(this.Resolve, "");
             return system.IsNullOrEmpty()
-                       ? new ResolveAndPingResult(this, IPStatus.DestinationUnreachable, string.Empty)
-                       : new ResolveAndPingResult(this, this.Ping(TimeSpan.FromSeconds(5)).Status, system);
+                ? new ResolveAndPingResult(this, IPStatus.DestinationUnreachable, string.Empty)
+                : new ResolveAndPingResult(this, this.Ping(TimeSpan.FromSeconds(5)).Status, system);
         }
 
         public static IpAddress GetFirstInSubmask(IpAddress ip)
@@ -194,11 +196,37 @@ namespace Mohammad.Net
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
+            {
                 return false;
+            }
+
             if (ReferenceEquals(this, obj))
+            {
                 return true;
+            }
+
             var ip = obj as IpAddress;
             return ip != null && this.Equals(ip);
+        }
+
+        private static int[] Split(string ip)
+        {
+            Validate(ip);
+            return ip.Split('.').Select(s => s.ToInt()).ToArray();
+        }
+
+        private static void Validate(string ip)
+        {
+            if (ip == null)
+            {
+                throw new ArgumentNullException(nameof(ip));
+            }
+
+            string[] parts;
+            if ((parts = ip.Split('.')).Length != 4 || parts.Any(part => !part.IsInteger()) || parts.Any(part => !part.ToInt().IsBetween(0, 255)))
+            {
+                throw new InvalidCastException("Parameter cannot be cast to IpAddress");
+            }
         }
     }
 
@@ -206,7 +234,20 @@ namespace Mohammad.Net
 
     partial class IpAddress
     {
-        public static IpAddress Parse(string    ip) => new IpAddress(ip);
+        public static bool operator ==(IpAddress left, IpAddress right) => Equals(left, right);
+        public static bool operator !=(IpAddress left, IpAddress right) => !Equals(left, right);
+
+        public static IpAddress operator +(IpAddress left, int num)
+        {
+            var result = new IpAddress(left);
+            EnumerableHelper.For(num, result.MoveNext);
+            return result;
+        }
+
+        public static explicit operator string(IpAddress ipAddress) => ipAddress?.ToString() ?? string.Empty;
+        public static implicit operator IPAddress(IpAddress ip) => IPAddress.Parse(ip.ToString());
+        public static implicit operator IpAddress(IPAddress ip) => Parse(ip.ToString());
+        public static IpAddress Parse(string ip) => new IpAddress(ip);
         public static IpAddress Parse(IPAddress ip) => new IpAddress(ip?.ToString());
 
         public static bool TryParse(string ip, out IpAddress result)
@@ -222,19 +263,5 @@ namespace Mohammad.Net
                 return false;
             }
         }
-
-        public static bool operator ==(IpAddress left, IpAddress right) => Equals(left, right);
-        public static bool operator !=(IpAddress left, IpAddress right) => !Equals(left, right);
-
-        public static IpAddress operator +(IpAddress left, int num)
-        {
-            var result = new IpAddress(left);
-            EnumerableHelper.For(num, result.MoveNext);
-            return result;
-        }
-
-        public static explicit operator string(IpAddress    ipAddress) => ipAddress?.ToString() ?? string.Empty;
-        public static implicit operator IPAddress(IpAddress ip)        => IPAddress.Parse(ip.ToString());
-        public static implicit operator IpAddress(IPAddress ip)        => Parse(ip.ToString());
     }
 }

@@ -40,7 +40,7 @@ namespace Mohammad.Wpf.Win32
     {
         public int cxLeftWidth;
         public int cxRightWidth;
-        public int cyTopHeight;
         public int cyBottomHeight;
+        public int cyTopHeight;
     }
 }

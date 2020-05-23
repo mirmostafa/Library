@@ -19,13 +19,6 @@ namespace Mohammad.Helpers.Console.Controls
 
         #endregion
 
-        public MenuItem(string text, ConsoleKey key, EventHandler handler)
-        {
-            this.Text    = text;
-            this.Key     = key;
-            this.Handler = handler;
-        }
-
         public Menu DropDownMenu
         {
             get => this._DropDownMenu ?? (this._DropDownMenu = new Menu());
@@ -34,8 +27,15 @@ namespace Mohammad.Helpers.Console.Controls
 
         public EventHandler Handler { get; set; }
 
-        public ConsoleKey Key  { get; set; }
-        public string     Text { get; set; }
+        public ConsoleKey Key { get; set; }
+        public string Text { get; set; }
+
+        public MenuItem(string text, ConsoleKey key, EventHandler handler)
+        {
+            this.Text = text;
+            this.Key = key;
+            this.Handler = handler;
+        }
     }
 
     public class Menu
@@ -46,8 +46,6 @@ namespace Mohammad.Helpers.Console.Controls
 
         #endregion
 
-        public event EventHandler           Displayed;
-        public event EventHandler           Displaying;
         public EventualCollection<MenuItem> Items => this._Items ?? (this._Items = new EventualCollection<MenuItem>());
 
         public MenuItem AddItem(string text, ConsoleKey key, EventHandler handler)
@@ -57,17 +55,34 @@ namespace Mohammad.Helpers.Console.Controls
             return result;
         }
 
+        public void Show()
+        {
+            var selectedKey = ConsoleHelper.PressKeyInRange(this.Display, this.Items.Select(i => i.Key).ToArray());
+            var selectedItem = this.Items.First(item => item.Key == selectedKey);
+            if (selectedItem.DropDownMenu.Items.Count > 0)
+            {
+                selectedItem.DropDownMenu.Show();
+            }
+            else
+            {
+                selectedItem.Handler(this, EventArgs.Empty);
+            }
+        }
+
         private void Display()
         {
             lock (this)
             {
                 this.OnDisplaying();
-                var formatter     = string.Concat("{0,-",        System.Console.WindowWidth - 2,  "}");
+                var formatter = string.Concat("{0,-", System.Console.WindowWidth - 2, "}");
                 var itemFormatter = string.Concat("{0,10} {1,-", System.Console.WindowWidth - 13, "}");
                 string.Format(formatter, "Main menu").WriteLine();
                 string.Format(formatter, "==========================").WriteLine();
                 foreach (var item in this.Items)
+                {
                     string.Format(itemFormatter, item.Key, item.Text).WriteLine();
+                }
+
                 string.Format(formatter, "Choose an item").WriteLine();
                 this.OnDisplayed();
             }
@@ -83,14 +98,7 @@ namespace Mohammad.Helpers.Console.Controls
             this.Displaying.RaiseAsync(this);
         }
 
-        public void Show()
-        {
-            var selectedKey  = ConsoleHelper.PressKeyInRange(this.Display, this.Items.Select(i => i.Key).ToArray());
-            var selectedItem = this.Items.First(item => item.Key == selectedKey);
-            if (selectedItem.DropDownMenu.Items.Count > 0)
-                selectedItem.DropDownMenu.Show();
-            else
-                selectedItem.Handler(this, EventArgs.Empty);
-        }
+        public event EventHandler Displayed;
+        public event EventHandler Displaying;
     }
 }

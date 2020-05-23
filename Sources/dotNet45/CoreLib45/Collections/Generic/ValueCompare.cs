@@ -17,7 +17,10 @@ namespace Mohammad.Collections.Generic
         public ValueCompare(Func<T, T, int> compare)
         {
             if (compare == null)
+            {
                 throw new ArgumentNullException(nameof(compare));
+            }
+
             this._Compare = compare;
         }
 

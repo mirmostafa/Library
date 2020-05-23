@@ -43,8 +43,12 @@ namespace Mohammad.Win32.Natives
         /// </returns>
         [DllImport("advapi32.DLL", SetLastError = true)]
         //public static extern int Run(string lpszUsername, string lpszDomain, string lpszPassword, int dwLogonType, int dwLogonProvider, ref IntPtr phToken);
-        public static extern bool LogonUser([In] string lpszUsername,    [In]           string lpszDomain, [In] string lpszPassword, [In] int dwLogonType,
-                                            [In] int    dwLogonProvider, [In] [Out] ref IntPtr phToken);
+        public static extern bool LogonUser([In] string lpszUsername,
+            [In] string lpszDomain,
+            [In] string lpszPassword,
+            [In] int dwLogonType,
+            [In] int dwLogonProvider,
+            [In] [Out] ref IntPtr phToken);
 
         /// <summary>
         ///     The ImpersonateLoggedOnUser function lets the calling thread impersonate the security context of a logged-on user.

@@ -26,31 +26,45 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(HamburgerMenuItem),
             new PropertyMetadata(null));
 
-        public ImageSource Icon { get { return (ImageSource) this.GetValue(IconProperty); } set { this.SetValue(IconProperty, value); } }
-
         public static readonly DependencyProperty SelectionIndicatorColorProperty = DependencyProperty.Register("SelectionIndicatorColor",
             typeof(Brush),
             typeof(HamburgerMenuItem),
             new PropertyMetadata(Brushes.Blue));
-
-        public Brush SelectionIndicatorColor
-        {
-            get { return (Brush) this.GetValue(SelectionIndicatorColorProperty); }
-            set { this.SetValue(SelectionIndicatorColorProperty, value); }
-        }
 
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text",
             typeof(string),
             typeof(HamburgerMenuItem),
             new PropertyMetadata(string.Empty));
 
-        public string Text { get { return (string) this.GetValue(TextProperty); } set { this.SetValue(TextProperty, value); } }
+        public ImageSource Icon
+        {
+            get => (ImageSource)this.GetValue(IconProperty);
+            set => this.SetValue(IconProperty, value);
+        }
 
-        static HamburgerMenuItem() { DefaultStyleKeyProperty.OverrideMetadata(typeof(HamburgerMenuItem), new FrameworkPropertyMetadata(typeof(HamburgerMenuItem))); }
+        public Brush SelectionIndicatorColor
+        {
+            get => (Brush)this.GetValue(SelectionIndicatorColorProperty);
+            set => this.SetValue(SelectionIndicatorColorProperty, value);
+        }
 
-        public ILibCommand Command { get { return (ILibCommand) this.GetValue(CommandProperty); } set { this.SetValue(CommandProperty, value); } }
+        public string Text
+        {
+            get => (string)this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
 
-        public object CommandParameter { get { return this.GetValue(CommandParameterProperty); } set { this.SetValue(CommandParameterProperty, value); } }
+        public ILibCommand Command
+        {
+            get => (ILibCommand)this.GetValue(CommandProperty);
+            set => this.SetValue(CommandProperty, value);
+        }
+
+        public object CommandParameter
+        {
+            get => this.GetValue(CommandParameterProperty);
+            set => this.SetValue(CommandParameterProperty, value);
+        }
 
         /// <summary>Gets or sets the element on which to raise the specified command.  </summary>
         /// <returns>Element on which to raise a command.</returns>
@@ -58,8 +72,13 @@ namespace Mohammad.Wpf.Windows.Controls
         [Category("Action")]
         public ILibInputElement CommandTarget
         {
-            get { return (ILibInputElement) this.GetValue(CommandTargetProperty); }
-            set { this.SetValue(CommandTargetProperty, value); }
+            get => (ILibInputElement)this.GetValue(CommandTargetProperty);
+            set => this.SetValue(CommandTargetProperty, value);
+        }
+
+        static HamburgerMenuItem()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(HamburgerMenuItem), new FrameworkPropertyMetadata(typeof(HamburgerMenuItem)));
         }
     }
 }

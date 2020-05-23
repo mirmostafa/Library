@@ -13,15 +13,14 @@ namespace Mohammad.Helpers.Html
 {
     public class HtmlTag : Expando
     {
-        internal HtmlTag(string name) => this.Name = name;
-
         public IEnumerable<KeyValuePair<string, string>> Attributes
         {
-            get { return this.Properties.Select(p => new KeyValuePair<string, string>(p.Key, (string) (p.Value ?? string.Empty))); }
+            get { return this.Properties.Select(p => new KeyValuePair<string, string>(p.Key, (string)(p.Value ?? string.Empty))); }
         }
 
-        public string Name          { get; }
-        public bool   TrailingSlash { get; internal set; }
+        public string Name { get; }
+        public bool TrailingSlash { get; internal set; }
+        internal HtmlTag(string name) => this.Name = name;
 
         internal void Add(string attribute, string value)
         {

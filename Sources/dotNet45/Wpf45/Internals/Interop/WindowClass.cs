@@ -16,19 +16,20 @@ namespace Mohammad.Wpf.Internals.Interop
     [StructLayout(LayoutKind.Sequential)]
     public struct WindowClass
     {
-        public uint style;
-        public WindowProcedureHandler lpfnWndProc;
         public int cbClsExtra;
         public int cbWndExtra;
-        public IntPtr hInstance;
-        public IntPtr hIcon;
-        public IntPtr hCursor;
         public IntPtr hbrBackground;
+        public IntPtr hCursor;
+        public IntPtr hIcon;
+        public IntPtr hInstance;
+        public WindowProcedureHandler lpfnWndProc;
+
+        [MarshalAs(UnmanagedType.LPWStr)]
+        public string lpszClassName;
 
         [MarshalAs(UnmanagedType.LPWStr)]
         public string lpszMenuName;
 
-        [MarshalAs(UnmanagedType.LPWStr)]
-        public string lpszClassName;
+        public uint style;
     }
 }

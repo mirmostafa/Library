@@ -17,17 +17,23 @@ namespace Mohammad.Win.Controls
     public partial class BindableListView : ListView, IBindingListView
     {
         private object _DataSource;
-        public IEnumerable<ListViewItem> ListViewItems { get { return this.Items.Cast<ListViewItem>(); } }
+        public IEnumerable<ListViewItem> ListViewItems => this.Items.Cast<ListViewItem>();
 
         public object DataSource
         {
-            get { return this._DataSource; }
+            get => this._DataSource;
             set
             {
                 if (this._DataSource == value)
+                {
                     return;
+                }
+
                 if (value is BindingSource)
+                {
                     (value as BindingSource).DataSourceChanged += (p1, p2) => this.Rebind();
+                }
+
                 this._DataSource = value;
                 this.Rebind();
             }
@@ -39,9 +45,17 @@ namespace Mohammad.Win.Controls
         [DefaultValue(true)]
         public bool AutoRebind { get; set; }
 
-        public object SelectedEntity { get { return this.SelectedItems.Count > 0 ? this.SelectedEntities.ElementAt(0) : null; } }
-        public IEnumerable SelectedEntities { get { return this.SelectedItems.Cast<ListViewItem>().Select(item => item.Tag); } }
-        public IEnumerable CheckedEntities { get { return this.CheckedItems.Cast<ListViewItem>().Select(item => item.Tag); } }
+        public object SelectedEntity => this.SelectedItems.Count > 0 ? this.SelectedEntities.ElementAt(0) : null;
+
+        public IEnumerable SelectedEntities
+        {
+            get { return this.SelectedItems.Cast<ListViewItem>().Select(item => item.Tag); }
+        }
+
+        public IEnumerable CheckedEntities
+        {
+            get { return this.CheckedItems.Cast<ListViewItem>().Select(item => item.Tag); }
+        }
 
         [DefaultValue(true)]
         public bool EditOnDoubleClick { get; set; }
@@ -49,7 +63,10 @@ namespace Mohammad.Win.Controls
         [DefaultValue(false)]
         public bool DeleteOnShiftDelPressed { get; set; }
 
-        public IEnumerable<object> Entities { get { return this.ListViewItems.Select(item => item.Tag); } }
+        public IEnumerable<object> Entities
+        {
+            get { return this.ListViewItems.Select(item => item.Tag); }
+        }
 
         public BindableListView()
         {
@@ -59,64 +76,18 @@ namespace Mohammad.Win.Controls
             this.AutoRebind = true;
         }
 
-        public event EventHandler<ItemActingEventArgs<object>> Editing;
-        public event EventHandler<ItemActingEventArgs<IEnumerable>> Deleting;
-        public event EventHandler<ItemActingEventArgs<object>> ItemBinding;
-        public event EventHandler<BindableListViewItemDataBound> ItemBound;
-        public event EventHandler<AddingNewEventArgs> AddingNew;
-        public event EventHandler DataBound;
-
-        protected virtual void OnAddingNew(AddingNewEventArgs e)
+        public ListViewItem GetListViewItemByData(object value)
         {
-            if (this.AddingNew != null)
-                this.AddingNew(this, e);
+            return this.ListViewItems.FirstOrDefault(item => item.Tag.Equals(value));
         }
-
-        protected virtual int CoreInsertItem(object value, int? index)
-        {
-            ListViewItem item = null;
-
-            //Check if this row is excepted.
-            if (!this.OnItemBinding(new ItemActingEventArgs<object>(value)))
-                return -1;
-
-            if (value is string)
-            {
-                item = index.HasValue ? this.Items.Insert(index.Value, value.ToString()) : this.Items.Add(value.ToString());
-                item.Tag = value;
-            }
-            else
-            {
-                //Get item's schema
-                var properties = ObjectHelper.ReflectProperties(value);
-
-                //iterate on columns' tag which represent table's fields
-                foreach (var property in this.Columns.Cast<ColumnHeader>().Where(column => column.Tag != null).Select(column => properties[column.Tag.ToString()]))
-                    //is the first field on current row?
-                    if (item == null)
-                    {
-                        //Yes: add new item to rows
-                        item = index.HasValue ? this.Items.Insert(index.Value, ToItemString(property)) : this.Items.Add(ToItemString(property));
-                        //Save the entity in tag for future uses
-                        item.Tag = value;
-                    }
-                    else
-                        //No: add sub item to item
-                    {
-                        item.SubItems.Add(ToItemString(property));
-                    }
-            }
-            if (item != null)
-                this.OnItemBound(new BindableListViewItemDataBound(value, item));
-            return item != null ? item.Index : -2;
-        }
-
-        public ListViewItem GetListViewItemByData(object value) { return this.ListViewItems.FirstOrDefault(item => item.Tag.Equals(value)); }
 
         public void Rebind()
         {
             if (!this.AutoGenerateColumns && this.Columns.Cast<ColumnHeader>().All(col => col.Tag == null))
+            {
                 throw new NotNullOrZeroValidationException("Please fill the tags or set AutoGenerateColumns to true.");
+            }
+
             try
             {
                 if (this.DataSource == null)
@@ -136,19 +107,29 @@ namespace Mohammad.Win.Controls
 
                     //Retrieve entity list
                     if (!entityList.Any())
+                    {
                         return;
+                    }
 
                     //Generating columns by the schema of first entity.
                     var entity = entityList.First();
                     if (this.AutoGenerateColumns)
                         //Clear old columns
+                    {
                         this.GenerateColumns(entity);
+                    }
+
                     //Add entities to the list
                     foreach (var datasourceItem in entityList.Where(ent => ent != null))
+                    {
                         this.Add(datasourceItem);
+                    }
+
                     this.SelectedIndices.Clear();
                     foreach (var item in selectedItems)
+                    {
                         this.SelectedIndices.Add(this.Items.IndexOf(item));
+                    }
                 }
             }
             finally
@@ -156,6 +137,93 @@ namespace Mohammad.Win.Controls
                 this.ResumeLayout();
                 this.OnDataBound(EventArgs.Empty);
             }
+        }
+
+        public void DeleteSelectedEntities()
+        {
+            if (this.SelectedItems.Count > 0)
+            {
+                if (this.OnDeleting(new ItemActingEventArgs<IEnumerable>(this.SelectedEntities)) && this.AutoRebind)
+                {
+                    this.Rebind();
+                }
+            }
+        }
+
+        public void EditSelectedEntity()
+        {
+            if (this.SelectedItems.Count == 1)
+            {
+                if (this.OnEditing(new ItemActingEventArgs<object>(this.SelectedItems[0].Tag)) && this.AutoRebind)
+                {
+                    this.Rebind();
+                }
+            }
+        }
+
+        public static string ToItemString(object o)
+        {
+            if (o is bool)
+            {
+                return (bool)o ? "*" : "";
+            }
+
+            return (o ?? "").ToString();
+        }
+
+        protected virtual void OnAddingNew(AddingNewEventArgs e)
+        {
+            if (this.AddingNew != null)
+            {
+                this.AddingNew(this, e);
+            }
+        }
+
+        protected virtual int CoreInsertItem(object value, int? index)
+        {
+            ListViewItem item = null;
+
+            //Check if this row is excepted.
+            if (!this.OnItemBinding(new ItemActingEventArgs<object>(value)))
+            {
+                return -1;
+            }
+
+            if (value is string)
+            {
+                item = index.HasValue ? this.Items.Insert(index.Value, value.ToString()) : this.Items.Add(value.ToString());
+                item.Tag = value;
+            }
+            else
+            {
+                //Get item's schema
+                var properties = ObjectHelper.ReflectProperties(value);
+
+                //iterate on columns' tag which represent table's fields
+                foreach (var property in this.Columns.Cast<ColumnHeader>().Where(column => column.Tag != null).Select(column => properties[column.Tag.ToString()]))
+                    //is the first field on current row?
+                {
+                    if (item == null)
+                    {
+                        //Yes: add new item to rows
+                        item = index.HasValue ? this.Items.Insert(index.Value, ToItemString(property)) : this.Items.Add(ToItemString(property));
+                        //Save the entity in tag for future uses
+                        item.Tag = value;
+                    }
+                    else
+                        //No: add sub item to item
+                    {
+                        item.SubItems.Add(ToItemString(property));
+                    }
+                }
+            }
+
+            if (item != null)
+            {
+                this.OnItemBound(new BindableListViewItemDataBound(value, item));
+            }
+
+            return item != null ? item.Index : -2;
         }
 
         protected virtual void GenerateColumns(object entity)
@@ -183,16 +251,39 @@ namespace Mohammad.Win.Controls
         {
             IEnumerable result;
             if (this.DataSource is BindingSource)
+            {
                 result = (this.DataSource as BindingSource).DataSource as IEnumerable<object>;
+            }
             else if (this.DataSource is IEnumerable)
+            {
                 result = this.DataSource as IEnumerable;
+            }
             else
+            {
                 throw new NotSupportedException();
+            }
+
             return result;
         }
 
-        private void OnDataBound(EventArgs e) { this.DataBound.RaiseAsync(e); }
-        private void OnItemBound(BindableListViewItemDataBound e) { this.ItemBound.Raise(this, e); }
+        protected override void OnDoubleClick(EventArgs e)
+        {
+            base.OnDoubleClick(e);
+            if (this.EditOnDoubleClick)
+            {
+                this.EditSelectedEntity();
+            }
+        }
+
+        private void OnDataBound(EventArgs e)
+        {
+            this.DataBound.RaiseAsync(e);
+        }
+
+        private void OnItemBound(BindableListViewItemDataBound e)
+        {
+            this.ItemBound.Raise(this, e);
+        }
 
         private bool OnItemBinding(ItemActingEventArgs<object> e)
         {
@@ -200,37 +291,16 @@ namespace Mohammad.Win.Controls
             return !e.Handled;
         }
 
-        public void DeleteSelectedEntities()
-        {
-            if (this.SelectedItems.Count > 0)
-                if (this.OnDeleting(new ItemActingEventArgs<IEnumerable>(this.SelectedEntities)) && this.AutoRebind)
-                    this.Rebind();
-        }
+        private bool OnDeleting(ItemActingEventArgs<IEnumerable> e) => !this.Deleting.Raise(this, e).Handled;
 
-        private bool OnDeleting(ItemActingEventArgs<IEnumerable> e) { return !this.Deleting.Raise(this, e).Handled; }
+        private bool OnEditing(ItemActingEventArgs<object> e) => !this.Editing.Raise(this, e).Handled;
 
-        public void EditSelectedEntity()
-        {
-            if (this.SelectedItems.Count == 1)
-                if (this.OnEditing(new ItemActingEventArgs<object>(this.SelectedItems[0].Tag)) && this.AutoRebind)
-                    this.Rebind();
-        }
-
-        private bool OnEditing(ItemActingEventArgs<object> e) { return !this.Editing.Raise(this, e).Handled; }
-
-        protected override void OnDoubleClick(EventArgs e)
-        {
-            base.OnDoubleClick(e);
-            if (this.EditOnDoubleClick)
-                this.EditSelectedEntity();
-        }
-
-        public static string ToItemString(object o)
-        {
-            if (o is bool)
-                return (bool) o ? "*" : "";
-            return (o ?? "").ToString();
-        }
+        public event EventHandler<ItemActingEventArgs<object>> Editing;
+        public event EventHandler<ItemActingEventArgs<IEnumerable>> Deleting;
+        public event EventHandler<ItemActingEventArgs<object>> ItemBinding;
+        public event EventHandler<BindableListViewItemDataBound> ItemBound;
+        public event EventHandler<AddingNewEventArgs> AddingNew;
+        public event EventHandler DataBound;
 
         #region IBindingListView Members
 
@@ -243,7 +313,7 @@ namespace Mohammad.Win.Controls
         ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public IEnumerator GetEnumerator() { return this.Entities.GetEnumerator(); }
+        public IEnumerator GetEnumerator() => this.Entities.GetEnumerator();
 
         /// <summary>
         ///     Copies the elements of the <see cref="T:System.Collections.ICollection" /> to an <see cref="T:System.Array" />,
@@ -291,7 +361,10 @@ namespace Mohammad.Win.Controls
         ///     .
         /// </exception>
         /// <filterpriority>2</filterpriority>
-        public void CopyTo(Array array, int index) { array.CopyTo(this.Entities.ToArray(), index); }
+        public void CopyTo(Array array, int index)
+        {
+            array.CopyTo(this.Entities.ToArray(), index);
+        }
 
         /// <summary>
         ///     Gets the number of elements contained in the <see cref="T:System.Collections.ICollection" />.
@@ -300,7 +373,7 @@ namespace Mohammad.Win.Controls
         ///     The number of elements contained in the <see cref="T:System.Collections.ICollection" /> .
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        public int Count { get { return this.Entities.Count(); } }
+        public int Count => this.Entities.Count();
 
         /// <summary>
         ///     Gets an object that can be used to synchronize access to the <see cref="T:System.Collections.ICollection" />.
@@ -309,7 +382,7 @@ namespace Mohammad.Win.Controls
         ///     An object that can be used to synchronize access to the <see cref="T:System.Collections.ICollection" /> .
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        object ICollection.SyncRoot { get { return null; } }
+        object ICollection.SyncRoot => null;
 
         /// <summary>
         ///     Gets a value indicating whether access to the <see cref="T:System.Collections.ICollection" /> is synchronized
@@ -320,7 +393,7 @@ namespace Mohammad.Win.Controls
         ///     false.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        bool ICollection.IsSynchronized { get { return false; } }
+        bool ICollection.IsSynchronized => false;
 
         /// <summary>
         ///     Adds an item to the <see cref="T:System.Collections.IList" />.
@@ -337,7 +410,7 @@ namespace Mohammad.Win.Controls
         ///     has a fixed size.
         /// </exception>
         /// <filterpriority>2</filterpriority>
-        public int Add(object value) { return this.CoreInsertItem(value, null); }
+        public int Add(object value) => this.CoreInsertItem(value, null);
 
         /// <summary>
         ///     Determines whether the <see cref="T:System.Collections.IList" /> contains a specific value.
@@ -350,7 +423,7 @@ namespace Mohammad.Win.Controls
         ///     The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.IList" /> .
         /// </param>
         /// <filterpriority>2</filterpriority>
-        public bool Contains(object value) { return this.Entities.Contains(value); }
+        public bool Contains(object value) => this.Entities.Contains(value);
 
         /// <summary>
         ///     Determines the index of a specific item in the <see cref="T:System.Collections.IList" />.
@@ -397,7 +470,10 @@ namespace Mohammad.Win.Controls
         ///     .
         /// </exception>
         /// <filterpriority>2</filterpriority>
-        public void Insert(int index, object value) { this.CoreInsertItem(value, index); }
+        public void Insert(int index, object value)
+        {
+            this.CoreInsertItem(value, index);
+        }
 
         /// <summary>
         ///     Removes the first occurrence of a specific object from the <see cref="T:System.Collections.IList" />.
@@ -413,7 +489,10 @@ namespace Mohammad.Win.Controls
         ///     has a fixed size.
         /// </exception>
         /// <filterpriority>2</filterpriority>
-        public void Remove(object value) { this.Items.Remove(this.GetListViewItemByData(value)); }
+        public void Remove(object value)
+        {
+            this.Items.Remove(this.GetListViewItemByData(value));
+        }
 
         /// <summary>
         ///     Removes the <see cref="T:System.Collections.IList" /> item at the specified index.
@@ -433,7 +512,10 @@ namespace Mohammad.Win.Controls
         ///     has a fixed size.
         /// </exception>
         /// <filterpriority>2</filterpriority>
-        public void RemoveAt(int index) { this.Items.RemoveAt(index); }
+        public void RemoveAt(int index)
+        {
+            this.Items.RemoveAt(index);
+        }
 
         /// <summary>
         ///     Gets or sets the element at the specified index.
@@ -452,7 +534,11 @@ namespace Mohammad.Win.Controls
         ///     is read-only.
         /// </exception>
         /// <filterpriority>2</filterpriority>
-        public object this[int index] { get { return this.Items[index].Tag; } set { throw new NotSupportedException(); } }
+        public object this[int index]
+        {
+            get => this.Items[index].Tag;
+            set => throw new NotSupportedException();
+        }
 
         /// <summary>
         ///     Gets a value indicating whether the <see cref="T:System.Collections.IList" /> is read-only.
@@ -461,7 +547,7 @@ namespace Mohammad.Win.Controls
         ///     true if the <see cref="T:System.Collections.IList" /> is read-only; otherwise, false.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        bool IList.IsReadOnly { get { return true; } }
+        bool IList.IsReadOnly => true;
 
         /// <summary>
         ///     Gets a value indicating whether the <see cref="T:System.Collections.IList" /> has a fixed size.
@@ -470,7 +556,7 @@ namespace Mohammad.Win.Controls
         ///     true if the <see cref="T:System.Collections.IList" /> has a fixed size; otherwise, false.
         /// </returns>
         /// <filterpriority>2</filterpriority>
-        bool IList.IsFixedSize { get { return false; } }
+        bool IList.IsFixedSize => false;
 
         /// <summary>
         ///     Adds a new item to the list.
@@ -483,7 +569,7 @@ namespace Mohammad.Win.Controls
         public object AddNew()
         {
             var e = new AddingNewEventArgs();
-            return e.NewObject ?? (this.Entities.Any() ? this.Entities.ElementAt(0).GetType().GetConstructor(new Type[] {}).Invoke(new object[] {}) : null);
+            return e.NewObject ?? (this.Entities.Any() ? this.Entities.ElementAt(0).GetType().GetConstructor(new Type[] { }).Invoke(new object[] { }) : null);
         }
 
         /// <summary>
@@ -492,7 +578,9 @@ namespace Mohammad.Win.Controls
         /// <param name="property">
         ///     The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to add to the indexes used for searching.
         /// </param>
-        void IBindingList.AddIndex(PropertyDescriptor property) { }
+        void IBindingList.AddIndex(PropertyDescriptor property)
+        {
+        }
 
         /// <summary>
         ///     Sorts the list based on a <see cref="T:System.ComponentModel.PropertyDescriptor" /> and a
@@ -510,7 +598,9 @@ namespace Mohammad.Win.Controls
         ///     <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" />
         ///     is false.
         /// </exception>
-        void IBindingList.ApplySort(PropertyDescriptor property, ListSortDirection direction) { }
+        void IBindingList.ApplySort(PropertyDescriptor property, ListSortDirection direction)
+        {
+        }
 
         /// <summary>
         ///     Returns the index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor" />.
@@ -528,7 +618,7 @@ namespace Mohammad.Win.Controls
         ///     <see cref="P:System.ComponentModel.IBindingList.SupportsSearching" />
         ///     is false.
         /// </exception>
-        int IBindingList.Find(PropertyDescriptor property, object key) { return -1; }
+        int IBindingList.Find(PropertyDescriptor property, object key) => -1;
 
         /// <summary>
         ///     Removes the <see cref="T:System.ComponentModel.PropertyDescriptor" /> from the indexes used for searching.
@@ -536,7 +626,9 @@ namespace Mohammad.Win.Controls
         /// <param name="property">
         ///     The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to remove from the indexes used for searching.
         /// </param>
-        void IBindingList.RemoveIndex(PropertyDescriptor property) { }
+        void IBindingList.RemoveIndex(PropertyDescriptor property)
+        {
+        }
 
         /// <summary>
         ///     Removes any sort applied using
@@ -548,7 +640,9 @@ namespace Mohammad.Win.Controls
         ///     <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" />
         ///     is false.
         /// </exception>
-        void IBindingList.RemoveSort() { }
+        void IBindingList.RemoveSort()
+        {
+        }
 
         /// <summary>
         ///     Gets whether you can add items to the list using <see cref="M:System.ComponentModel.IBindingList.AddNew" />.
@@ -557,13 +651,13 @@ namespace Mohammad.Win.Controls
         ///     true if you can add items to the list using <see cref="M:System.ComponentModel.IBindingList.AddNew" /> ; otherwise,
         ///     false.
         /// </returns>
-        public bool AllowNew { get { return true; } }
+        public bool AllowNew => true;
 
         /// <summary>
         ///     Gets whether you can update items in the list.
         /// </summary>
         /// <returns> true if you can update the items in the list; otherwise, false. </returns>
-        public bool AllowEdit { get { return true; } }
+        public bool AllowEdit => true;
 
         /// <summary>
         ///     Gets whether you can remove items from the list, using
@@ -573,7 +667,7 @@ namespace Mohammad.Win.Controls
         ///     .
         /// </summary>
         /// <returns> true if you can remove items from the list; otherwise, false. </returns>
-        public bool AllowRemove { get { return true; } }
+        public bool AllowRemove => true;
 
         /// <summary>
         ///     Gets whether a <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event is raised when the list
@@ -583,7 +677,7 @@ namespace Mohammad.Win.Controls
         ///     true if a <see cref="E:System.ComponentModel.IBindingList.ListChanged" /> event is raised when the list changes or
         ///     when an item changes; otherwise, false.
         /// </returns>
-        public bool SupportsChangeNotification { get { return false; } }
+        public bool SupportsChangeNotification => false;
 
         /// <summary>
         ///     Gets whether the list supports searching using the
@@ -597,13 +691,13 @@ namespace Mohammad.Win.Controls
         ///         cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" />
         ///     method; otherwise, false.
         /// </returns>
-        bool IBindingList.SupportsSearching { get { return false; } }
+        bool IBindingList.SupportsSearching => false;
 
         /// <summary>
         ///     Gets whether the list supports sorting.
         /// </summary>
         /// <returns> true if the list supports sorting; otherwise, false. </returns>
-        bool IBindingList.SupportsSorting { get { return false; } }
+        bool IBindingList.SupportsSorting => false;
 
         /// <summary>
         ///     Gets whether the items in the list are sorted.
@@ -621,7 +715,7 @@ namespace Mohammad.Win.Controls
         ///     <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" />
         ///     is false.
         /// </exception>
-        bool IBindingList.IsSorted { get { return false; } }
+        bool IBindingList.IsSorted => false;
 
         /// <summary>
         ///     Gets the <see cref="T:System.ComponentModel.PropertyDescriptor" /> that is being used for sorting.
@@ -633,7 +727,7 @@ namespace Mohammad.Win.Controls
         ///     <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" />
         ///     is false.
         /// </exception>
-        PropertyDescriptor IBindingList.SortProperty { get { return default(PropertyDescriptor); } }
+        PropertyDescriptor IBindingList.SortProperty => default;
 
         /// <summary>
         ///     Gets the direction of the sort.
@@ -645,7 +739,7 @@ namespace Mohammad.Win.Controls
         ///     <see cref="P:System.ComponentModel.IBindingList.SupportsSorting" />
         ///     is false.
         /// </exception>
-        ListSortDirection IBindingList.SortDirection { get { return default(ListSortDirection); } }
+        ListSortDirection IBindingList.SortDirection => default;
 
         /// <summary>
         ///     Sorts the data source based on the given <see cref="T:System.ComponentModel.ListSortDescriptionCollection" />.
@@ -654,12 +748,16 @@ namespace Mohammad.Win.Controls
         ///     The <see cref="T:System.ComponentModel.ListSortDescriptionCollection" /> containing the sorts to apply to the data
         ///     source.
         /// </param>
-        public void ApplySort(ListSortDescriptionCollection sorts) { }
+        public void ApplySort(ListSortDescriptionCollection sorts)
+        {
+        }
 
         /// <summary>
         ///     Removes the current filter applied to the data source.
         /// </summary>
-        void IBindingListView.RemoveFilter() { }
+        void IBindingListView.RemoveFilter()
+        {
+        }
 
         /// <summary>
         ///     Gets or sets the filter to be used to exclude items from the collection of items returned by the data source
@@ -667,11 +765,8 @@ namespace Mohammad.Win.Controls
         /// <returns> The string used to filter items out in the item collection returned by the data source. </returns>
         string IBindingListView.Filter
         {
-            get
-            {
-                //throw new NotImplementedException();
-                return string.Empty;
-            }
+            //throw new NotImplementedException();
+            get => string.Empty;
             set
             {
                 //throw new NotImplementedException();
@@ -684,19 +779,19 @@ namespace Mohammad.Win.Controls
         /// <returns>
         ///     The <see cref="T:System.ComponentModel.ListSortDescriptionCollection" /> currently applied to the data source.
         /// </returns>
-        ListSortDescriptionCollection IBindingListView.SortDescriptions { get { return null; } }
+        ListSortDescriptionCollection IBindingListView.SortDescriptions => null;
 
         /// <summary>
         ///     Gets a value indicating whether the data source supports advanced sorting.
         /// </summary>
         /// <returns> true if the data source supports advanced sorting; otherwise, false. </returns>
-        public bool SupportsAdvancedSorting { get { return false; } }
+        public bool SupportsAdvancedSorting => false;
 
         /// <summary>
         ///     Gets a value indicating whether the data source supports filtering.
         /// </summary>
         /// <returns> true if the data source supports filtering; otherwise, false. </returns>
-        public bool SupportsFiltering { get { return false; } }
+        public bool SupportsFiltering => false;
 
         #endregion
     }
@@ -706,6 +801,7 @@ namespace Mohammad.Win.Controls
         public ListViewItem ListViewItem { get; set; }
 
         public BindableListViewItemDataBound(object item, ListViewItem listViewItem)
-            : base(item) { this.ListViewItem = listViewItem; }
+            : base(item)
+            => this.ListViewItem = listViewItem;
     }
 }

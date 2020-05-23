@@ -5,24 +5,39 @@
     private WebPartManager _manager;
 
     [__ReSharperSynthetic]
-    private void __ReSharper_Render(object expression) { }
+    private void __ReSharper_Render(object expression)
+    {
+    }
 
     [__ReSharperSynthetic]
-    private void __ReSharper_Data_Bind__Conversion<T>(T _, T expression) { }
+    private void __ReSharper_Data_Bind__Conversion<T>(T _, T expression)
+    {
+    }
 
     [__ReSharperSynthetic]
-    private void __ReSharper_Data_Bind__Conversion<T>(T _, object expression) { }
+    private void __ReSharper_Data_Bind__Conversion<T>(T _, object expression)
+    {
+    }
 
     [__ReSharperSynthetic]
-    private void __ReSharper_Render(object expression) { }
+    private void __ReSharper_Render(object expression)
+    {
+    }
 
     [__ReSharperSynthetic]
-    private void __ReSharper_Data_Bind__Conversion<T>(T _, T expression) { }
+    private void __ReSharper_Data_Bind__Conversion<T>(T _, T expression)
+    {
+    }
 
     [__ReSharperSynthetic]
-    private void __ReSharper_Data_Bind__Conversion<T>(T _, object expression) { }
+    private void __ReSharper_Data_Bind__Conversion<T>(T _, object expression)
+    {
+    }
 
-    private void Page_Init(object sender, EventArgs e) { this.Page.InitComplete += this.InitComplete; }
+    private void Page_Init(object sender, EventArgs e)
+    {
+        this.Page.InitComplete += this.InitComplete;
+    }
 
     private void InitComplete(object sender, EventArgs e)
     {
@@ -50,9 +65,13 @@
         {
             this.Panel2.Visible = true;
             if (this._manager.Personalization.Scope == PersonalizationScope.User)
+            {
                 this.RadioButton1.Checked = true;
+            }
             else
+            {
                 this.RadioButton2.Checked = true;
+            }
         }
     }
 
@@ -63,7 +82,9 @@
 
         var mode = this._manager.SupportedDisplayModes[selectedMode];
         if (mode != null)
+        {
             this._manager.DisplayMode = mode;
+        }
     }
 
         // Set the selected item equal to the current display mode.
@@ -75,12 +96,18 @@
     }
 
         // Reset all of a user's personalization data for the page.
-    protected void LinkButton1_Click(object sender, EventArgs e) { this._manager.Personalization.ResetPersonalizationState(); }
+    protected void LinkButton1_Click(object sender, EventArgs e)
+    {
+        this._manager.Personalization.ResetPersonalizationState();
+    }
+
         // If not in User personalization scope, toggle into it.
     protected void RadioButton1_CheckedChanged(object sender, EventArgs e)
     {
         if (this._manager.Personalization.Scope == PersonalizationScope.Shared)
+        {
             this._manager.Personalization.ToggleScope();
+        }
     }
 
         // If not in Shared scope, and if user has permission, toggle 
@@ -88,7 +115,9 @@
     protected void RadioButton2_CheckedChanged(object sender, EventArgs e)
     {
         if (this._manager.Personalization.CanEnterSharedScope && this._manager.Personalization.Scope == PersonalizationScope.User)
+        {
             this._manager.Personalization.ToggleScope();
+        }
     }
 
 </script>

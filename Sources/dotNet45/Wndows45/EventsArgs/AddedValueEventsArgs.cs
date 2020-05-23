@@ -4,8 +4,8 @@ namespace Mohammad.Win.EventsArgs
 {
     public class AddedValueEventsArgs : EventArgs
     {
-        public decimal CurrentValue { get; private set; }
-        public decimal BeforeValue { get; private set; }
+        public decimal CurrentValue { get; }
+        public decimal BeforeValue { get; }
 
         public AddedValueEventsArgs(decimal currentValue, decimal beforeValue)
         {

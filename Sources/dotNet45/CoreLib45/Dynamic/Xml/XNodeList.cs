@@ -24,7 +24,10 @@ namespace Mohammad.Dynamic.Xml
         {
             var targetType = binder.Type;
             if (targetType != typeof(IEnumerable))
+            {
                 return base.TryConvert(binder, out result);
+            }
+
             result = this;
             return true;
         }
@@ -32,7 +35,10 @@ namespace Mohammad.Dynamic.Xml
         public override bool TryGetIndex(GetIndexBinder binder, object[] indexes, out object result)
         {
             if (indexes.Length != 1)
+            {
                 return base.TryGetIndex(binder, indexes, out result);
+            }
+
             result = new XNode(this._Elements[Convert.ToInt32(indexes[0])]);
             return true;
         }
@@ -40,7 +46,10 @@ namespace Mohammad.Dynamic.Xml
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             if (string.Compare("Length", binder.Name, StringComparison.Ordinal) != 0)
+            {
                 return base.TryGetMember(binder, out result);
+            }
+
             result = this._Elements.Count;
             return true;
         }
@@ -48,7 +57,6 @@ namespace Mohammad.Dynamic.Xml
         private sealed class NodeEnumerator : IEnumerator
         {
             private readonly IEnumerator<XElement> _ElementEnumerator;
-            public NodeEnumerator(IEnumerator<XElement> elementEnumerator) => this._ElementEnumerator = elementEnumerator;
 
             public object Current
             {
@@ -58,6 +66,8 @@ namespace Mohammad.Dynamic.Xml
                     return new XNode(element);
                 }
             }
+
+            public NodeEnumerator(IEnumerator<XElement> elementEnumerator) => this._ElementEnumerator = elementEnumerator;
 
             public bool MoveNext() => this._ElementEnumerator.MoveNext();
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Mohammad.Internals;
 using Mohammad.Wpf.Windows.Controls;
 using Mohammad.Wpf.Windows.Media;
 
@@ -10,11 +9,16 @@ namespace Mohammad.Wpf.Windows.Dialogs
     {
         public static bool AddEffetcts { get; set; }
 
-        public static bool? ShowDialog<TLibraryCommonPage>( Func<TLibraryCommonPage> creator, out TLibraryCommonPage page, Window owner = null,
+        public static bool? ShowDialog<TLibraryCommonPage>(Func<TLibraryCommonPage> creator,
+            out TLibraryCommonPage page,
+            Window owner = null,
             bool? addEffetcts = null) where TLibraryCommonPage : LibraryCommonPage
         {
             if (creator == null)
+            {
                 throw new ArgumentNullException(nameof(creator));
+            }
+
             page = creator();
             return ShowDialog(page, owner, addEffetcts);
         }
@@ -55,42 +59,65 @@ namespace Mohammad.Wpf.Windows.Dialogs
             return ShowDialog(page, owner, addEffetcts);
         }
 
-        public static bool? ShowDialog<TLibraryCommonPage>( Func<TLibraryCommonPage> creator, Window owner = null, bool? addEffetcts = null)
+        public static bool? ShowDialog<TLibraryCommonPage>(Func<TLibraryCommonPage> creator, Window owner = null, bool? addEffetcts = null)
             where TLibraryCommonPage : LibraryCommonPage
         {
             if (creator == null)
+            {
                 throw new ArgumentNullException(nameof(creator));
+            }
+
             var page = creator();
             return ShowDialog(page, owner, addEffetcts);
         }
 
-        public static bool? ShowDialog( LibraryCommonPage page, Window owner = null, bool? addEffetcts = null)
+        public static bool? ShowDialog(LibraryCommonPage page, Window owner = null, bool? addEffetcts = null)
         {
             if (page == null)
+            {
                 throw new ArgumentNullException(nameof(page));
+            }
+
             double opacity = 1;
             if (addEffetcts == null)
+            {
                 addEffetcts = AddEffetcts;
+            }
+
             try
             {
                 var dialog = GetDialog(page, owner);
                 if (owner == null)
+                {
                     return dialog.ShowDialog();
+                }
+
                 opacity = owner.Opacity;
                 if (addEffetcts.Value)
+                {
                     Animations.FadeOut(owner, .75);
+                }
                 else
+                {
                     owner.Opacity = .75;
+                }
+
                 return dialog.ShowDialog();
             }
             finally
             {
                 if (owner != null)
+                {
                     if (addEffetcts.Value)
+                    {
                         Animations.FadeIn(owner, opacity);
+                    }
 
                     else
+                    {
                         owner.Opacity = opacity;
+                    }
+                }
             }
         }
 
@@ -98,16 +125,25 @@ namespace Mohammad.Wpf.Windows.Dialogs
             where TLibraryCommonPage : LibraryCommonPage
         {
             if (creator == null)
+            {
                 throw new ArgumentNullException(nameof(creator));
+            }
+
             return GetDialog(creator(), owner);
         }
 
         public static LibraryCommonDialog GetDialog<TLibraryCommonPage>(TLibraryCommonPage page, Window owner = null) where TLibraryCommonPage : LibraryCommonPage
         {
             if (page == null)
+            {
                 throw new ArgumentNullException(nameof(page));
+            }
+
             if (owner == null)
+            {
                 owner = Application.Current.MainWindow;
+            }
+
             var lcd = new LibraryCommonDialog {Page = page, Owner = owner};
             return lcd;
         }

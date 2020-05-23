@@ -12,12 +12,18 @@ namespace Mohammad.Web.Asp.Security
         public static bool IsCurrentUserNameAuthenticated => HttpContext.Current?.User?.Identity?.IsAuthenticated ?? false;
         public static bool IsCurrentUserNameAdmin => new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
-        public static void LogInUser(string username, bool isPersistent, DateTime issueDate = default(DateTime), DateTime expiration = default(DateTime))
+        public static void LogInUser(string username, bool isPersistent, DateTime issueDate = default, DateTime expiration = default)
         {
-            if (issueDate == default(DateTime))
+            if (issueDate == default)
+            {
                 issueDate = DateTime.Now;
-            if (expiration == default(DateTime))
+            }
+
+            if (expiration == default)
+            {
                 expiration = issueDate.AddMinutes(30);
+            }
+
             var ticket = new FormsAuthenticationTicket(1, username, issueDate, expiration, isPersistent, username, FormsAuthentication.FormsCookiePath);
             var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, FormsAuthentication.Encrypt(ticket)) {Path = FormsAuthentication.FormsCookiePath};
             isPersistent.IfTrue(() => cookie.Expires = ticket.Expiration);

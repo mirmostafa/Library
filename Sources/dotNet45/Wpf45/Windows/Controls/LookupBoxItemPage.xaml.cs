@@ -24,28 +24,52 @@ namespace Mohammad.Wpf.Windows.Controls
             set
             {
                 if (this._ItemsSource.Equals(value))
+                {
                     return;
+                }
+
                 this._ItemsSource = value;
                 this.BindData();
             }
-            get { return this._ItemsSource; }
+            get => this._ItemsSource;
         }
 
         public bool OwnedBindData { get; set; }
-        public IEnumerable SelectedItems { get { return this._SelectedItems != null ? (IEnumerable) this._SelectedItems : Enumerable.Empty<object>(); } }
-        public LookupBoxItemPage() { this.InitializeComponent(); }
-        public void Connect(int connectionId, object target) { }
-        public event EventHandler BindingData;
-        public event EventHandler BoundData;
-        public void OnBoundData(EventArgs e) { this.BoundData.Raise(this, TaskScheduler.FromCurrentSynchronizationContext()); }
-        protected virtual void OnBindingData(EventArgs e) { this.BindingData.Raise(this, TaskScheduler.FromCurrentSynchronizationContext()); }
+        public IEnumerable SelectedItems => this._SelectedItems != null ? (IEnumerable)this._SelectedItems : Enumerable.Empty<object>();
+
+        public LookupBoxItemPage()
+        {
+            this.InitializeComponent();
+        }
+
+        public void Connect(int connectionId, object target)
+        {
+        }
+
+        public void OnBoundData(EventArgs e)
+        {
+            this.BoundData.Raise(this, TaskScheduler.FromCurrentSynchronizationContext());
+        }
 
         public void BindData()
         {
             this.OnBindingData(EventArgs.Empty);
             if (!this.OwnedBindData)
+            {
                 this.ItemsDataGrid.ItemsSource = this.ItemsSource;
+            }
+
             this.OnBoundData(EventArgs.Empty);
+        }
+
+        protected virtual void OnBindingData(EventArgs e)
+        {
+            this.BindingData.Raise(this, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        protected virtual void OnSelectedItemsChanged(EventArgs e)
+        {
+            this.SelectedItemsChanged.RaiseAsync(this);
         }
 
         private void ItemsDataGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -54,7 +78,9 @@ namespace Mohammad.Wpf.Windows.Controls
             this.OnSelectedItemsChanged(EventArgs.Empty);
         }
 
+        public event EventHandler BindingData;
+        public event EventHandler BoundData;
+
         public event EventHandler SelectedItemsChanged;
-        protected virtual void OnSelectedItemsChanged(EventArgs e) { this.SelectedItemsChanged.RaiseAsync(this); }
     }
 }

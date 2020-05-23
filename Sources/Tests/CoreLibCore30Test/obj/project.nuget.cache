@@ -1,20 +1,20 @@
 {
   "version": 2,
-  "dgSpecHash": "pzyg5/vri2J5U9GtDqkha9shQdrQ86Wi4KmAG3sn3oVEN7OboeDZB277V4Hp5WVJ6uVxv0YSjHXyEfI6e1pThw==",
+  "dgSpecHash": "XVb43BS4Pku3BR1F7iPDNk4GL/pBxIs4TkQ1bw30VfQlUdgGFqOtKTEm9lXu99nt/ozK0LCqIYM5Sq6+w9PRow==",
   "success": true,
   "projectFilePath": "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\Tests\\CoreLibCore30Test\\CoreLibCore30Test.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\coverlet.collector\\1.2.0\\coverlet.collector.1.2.0.nupkg.sha512",
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.codecoverage\\16.3.0\\microsoft.codecoverage.16.3.0.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\coverlet.collector\\1.2.1\\coverlet.collector.1.2.1.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.codecoverage\\16.6.1\\microsoft.codecoverage.16.6.1.nupkg.sha512",
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.csharp\\4.0.1\\microsoft.csharp.4.0.1.nupkg.sha512",
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.net.test.sdk\\16.3.0\\microsoft.net.test.sdk.16.3.0.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.net.test.sdk\\16.6.1\\microsoft.net.test.sdk.16.6.1.nupkg.sha512",
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.testplatform.objectmodel\\16.3.0\\microsoft.testplatform.objectmodel.16.3.0.nupkg.sha512",
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.testplatform.testhost\\16.3.0\\microsoft.testplatform.testhost.16.3.0.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.testplatform.objectmodel\\16.6.1\\microsoft.testplatform.objectmodel.16.6.1.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.testplatform.testhost\\16.6.1\\microsoft.testplatform.testhost.16.6.1.nupkg.sha512",
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.win32.primitives\\4.3.0\\microsoft.win32.primitives.4.3.0.nupkg.sha512",
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\mstest.testadapter\\2.1.0\\mstest.testadapter.2.1.0.nupkg.sha512",
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\mstest.testframework\\2.1.0\\mstest.testframework.2.1.0.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\mstest.testadapter\\2.1.1\\mstest.testadapter.2.1.1.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\mstest.testframework\\2.1.1\\mstest.testframework.2.1.1.nupkg.sha512",
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\netstandard.library\\1.6.1\\netstandard.library.1.6.1.nupkg.sha512",
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\newtonsoft.json\\9.0.1\\newtonsoft.json.9.0.1.nupkg.sha512",
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\nuget.frameworks\\5.0.0\\nuget.frameworks.5.0.0.nupkg.sha512",
@@ -92,46 +92,5 @@
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "CoreLibCore30Test depends on coverlet.collector (>= 1.0.1) but coverlet.collector 1.0.1 was not found. An approximate best match of coverlet.collector 1.2.0 was resolved.",
-      "libraryId": "coverlet.collector",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v3.0"
-      ]
-    },
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "CoreLibCore30Test depends on Microsoft.NET.Test.Sdk (>= 16.2.0) but Microsoft.NET.Test.Sdk 16.2.0 was not found. An approximate best match of Microsoft.NET.Test.Sdk 16.3.0 was resolved.",
-      "libraryId": "Microsoft.NET.Test.Sdk",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v3.0"
-      ]
-    },
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "CoreLibCore30Test depends on MSTest.TestAdapter (>= 1.4.0) but MSTest.TestAdapter 1.4.0 was not found. An approximate best match of MSTest.TestAdapter 2.1.0 was resolved.",
-      "libraryId": "MSTest.TestAdapter",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v3.0"
-      ]
-    },
-    {
-      "code": "NU1603",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "CoreLibCore30Test depends on MSTest.TestFramework (>= 1.4.0) but MSTest.TestFramework 1.4.0 was not found. An approximate best match of MSTest.TestFramework 2.1.0 was resolved.",
-      "libraryId": "MSTest.TestFramework",
-      "targetGraphs": [
-        ".NETCoreApp,Version=v3.0"
-      ]
-    }
-  ]
+  "logs": []
 }

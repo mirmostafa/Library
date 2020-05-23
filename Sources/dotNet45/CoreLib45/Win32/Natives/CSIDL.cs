@@ -127,7 +127,7 @@ namespace Mohammad.Win32.Natives
         CSIDL_HISTORY = 0x0022, // The file system directory that serves as a common repository
 
         // for Internet history items.
-        CSIDL_INTERNET       = 0x0001, // A virtual folder representing the Internet.
+        CSIDL_INTERNET = 0x0001, // A virtual folder representing the Internet.
         CSIDL_INTERNET_CACHE = 0x0020, // Version 4.72. The file system directory that serves as a 
 
         // common repository for temporary Internet files. A typical 
@@ -170,7 +170,7 @@ namespace Mohammad.Win32.Natives
         // C:\Documents and Settings\username\My Documents. This should
         // be distinguished from the virtual My Documents folder in 
         // the namespace, identified by CSIDL_MYDOCUMENTS. 
-        CSIDL_PRINTERS  = 0x0004, // The virtual folder containing installed printers.
+        CSIDL_PRINTERS = 0x0004, // The virtual folder containing installed printers.
         CSIDL_PRINTHOOD = 0x001b, // The file system directory that contains the link objects that
 
         // can exist in the Printers virtual folder. A typical path is 

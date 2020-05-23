@@ -14,16 +14,6 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(LineBlock),
             new PropertyMetadata(default(Brush)));
 
-        public Brush LineBrush
-        {
-            get { return (Brush) this.GetValue(LineBrushProperty); }
-            set
-            {
-                this.SetValue(LineBrushProperty, value);
-                this.OnPropertyChanged();
-            }
-        }
-
         //public static readonly DependencyProperty TextWrappingProperty = DependencyProperty.Register("TextWrapping",
         //	typeof(TextWrapping),
         //	typeof(LineBlock),
@@ -33,9 +23,19 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(LineBlock),
             new PropertyMetadata(default(string)));
 
+        public Brush LineBrush
+        {
+            get => (Brush)this.GetValue(LineBrushProperty);
+            set
+            {
+                this.SetValue(LineBrushProperty, value);
+                this.OnPropertyChanged();
+            }
+        }
+
         public string Text
         {
-            get { return (string) this.GetValue(TextProperty); }
+            get => (string)this.GetValue(TextProperty);
             set
             {
                 this.SetValue(TextProperty, value);
@@ -45,7 +45,7 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public TextWrapping TextWrapping
         {
-            get { return this.LibTextBlock.TextWrapping; }
+            get => this.LibTextBlock.TextWrapping;
             set
             {
                 this.LibTextBlock.TextWrapping = value;
@@ -55,7 +55,7 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public Style BlockStyle
         {
-            get { return this.LibTextBlock.Style; }
+            get => this.LibTextBlock.Style;
             set
             {
                 this.LibTextBlock.Style = value;
@@ -64,6 +64,9 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         public bool AutoFlick { get; set; }
+
+        public DependencyProperty BindingFieldProperty => TextProperty;
+        public FrameworkElement FlickerTextBlock => this.LibTextBlock.FlickerTextBlock;
 
         public LineBlock()
         {
@@ -74,12 +77,11 @@ namespace Mohammad.Wpf.Windows.Controls
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
             if (this.AutoFlick && e.Property != null && e.Property.Name == "Text")
+            {
                 this.Flick();
+            }
 
             base.OnPropertyChanged(e);
         }
-
-        public DependencyProperty BindingFieldProperty { get { return TextProperty; } }
-        public FrameworkElement FlickerTextBlock { get { return this.LibTextBlock.FlickerTextBlock; } }
     }
 }

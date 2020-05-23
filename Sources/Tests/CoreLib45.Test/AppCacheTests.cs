@@ -50,9 +50,9 @@ namespace CoreLib45.Test
         {
             const string tmpKey = "Test 6";
             Assert.AreEqual(new AppCache
-                            {
-                                [tmpKey] = 5
-                            }[tmpKey],
+                {
+                    [tmpKey] = 5
+                }[tmpKey],
                 5);
         }
     }

@@ -24,7 +24,6 @@ namespace Mohammad.Win32.Utilities
 
     public class Window : IEquatable<Window>
     {
-        protected Window(IntPtr hwnd) => this.Hwnd = hwnd;
         public static IEqualityComparer<Window> HwndComparer { get; } = new HwndEqualityComparer();
 
         public WindowState WindowState
@@ -91,6 +90,11 @@ namespace Mohammad.Win32.Utilities
             }
         }
 
+        protected Window(IntPtr hwnd) => this.Hwnd = hwnd;
+
+        public static bool operator ==(Window left, Window right) => left.Hwnd == right.Hwnd;
+        public static bool operator !=(Window left, Window right) => !(left == right);
+
         /// <summary>
         ///     Indicates whether the current object is equal to another object of the same type.
         /// </summary>
@@ -101,11 +105,14 @@ namespace Mohammad.Win32.Utilities
         public bool Equals(Window other)
         {
             if (ReferenceEquals(null, other))
+            {
                 return false;
+            }
+
             return ReferenceEquals(this, other) || this.Hwnd.Equals(other.Hwnd);
         }
 
-        public static Window FindByText(string      text)      => Find(text, null);
+        public static Window FindByText(string text) => Find(text, null);
         public static Window FindByClassName(string className) => Find(null, className);
 
         public static Window Find(string text, string className)
@@ -144,10 +151,16 @@ namespace Mohammad.Win32.Utilities
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
+            {
                 return false;
+            }
+
             if (ReferenceEquals(this, obj))
+            {
                 return true;
-            return obj.GetType() == this.GetType() && this.Equals((Window) obj);
+            }
+
+            return obj.GetType() == this.GetType() && this.Equals((Window)obj);
         }
 
         /// <summary>
@@ -159,19 +172,16 @@ namespace Mohammad.Win32.Utilities
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode() => this.Hwnd.GetHashCode();
 
-        public static bool operator ==(Window left, Window right) => left.Hwnd == right.Hwnd;
-        public static bool operator !=(Window left, Window right) => !(left == right);
-
         public static IEnumerable<Window> GetAll()
         {
             var result = new List<Window>();
             Api.EnumDesktopWindows(IntPtr.Zero,
-                                   delegate(IntPtr wnd1, int param1)
-                                   {
-                                       result.Add(new Window(wnd1));
-                                       return true;
-                                   },
-                                   IntPtr.Zero);
+                delegate(IntPtr wnd1, int param1)
+                {
+                    result.Add(new Window(wnd1));
+                    return true;
+                },
+                IntPtr.Zero);
             return result;
         }
 
@@ -182,7 +192,7 @@ namespace Mohammad.Win32.Utilities
         /// </summary>
         public static string GetWindowText(IntPtr hWnd)
         {
-            var title       = new StringBuilder(1024);
+            var title = new StringBuilder(1024);
             var titleLength = Api.GetWindowText(hWnd, title, title.Capacity + 1);
             title.Length = titleLength;
 
@@ -216,11 +226,20 @@ namespace Mohammad.Win32.Utilities
             public bool Equals(Window x, Window y)
             {
                 if (ReferenceEquals(x, y))
+                {
                     return true;
+                }
+
                 if (ReferenceEquals(x, null))
+                {
                     return false;
+                }
+
                 if (ReferenceEquals(y, null))
+                {
                     return false;
+                }
+
                 return x.GetType() == y.GetType() && x.Hwnd.Equals(y.Hwnd);
             }
 

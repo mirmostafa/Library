@@ -15,9 +15,9 @@ namespace Mohammad.Settings
     public class ApplicationSettings<TApplicationSettings> : IAppSettings
         where TApplicationSettings : ApplicationSettings<TApplicationSettings>, new()
     {
-        private static string  _Prefix;
-        private        string  _SettingsFile;
-        private        Expando _Windows;
+        private static string _Prefix;
+        private string _SettingsFile;
+        private Expando _Windows;
 
         protected static string Prefix
         {
@@ -42,7 +42,10 @@ namespace Mohammad.Settings
         public void Save(bool encryptAfterSave = false, string password = null)
         {
             if (encryptAfterSave && password == null)
+            {
                 throw new ArgumentNullException(nameof(password));
+            }
+
             SerializationHelper.Save(this.SettingsFile, this, encryptAfterSave, password);
             this.OnSaved(EventArgs.Empty);
         }
@@ -55,7 +58,10 @@ namespace Mohammad.Settings
             defaultValue.OnLoading(EventArgs.Empty);
             var result = SerializationHelper.Load(settingsFile ?? GetSettingsFile(), defaultValue, isEncrypted, password);
             if (!settingsFile.IsNullOrEmpty())
+            {
                 result.SettingsFile = settingsFile;
+            }
+
             return result;
         }
 

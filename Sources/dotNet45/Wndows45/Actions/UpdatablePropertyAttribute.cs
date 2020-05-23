@@ -6,5 +6,7 @@ namespace Mohammad.Win.Actions
     ///     Ensures that the owner is Updatable
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
-    public sealed class UpdatablePropertyAttribute : Attribute {}
+    public sealed class UpdatablePropertyAttribute : Attribute
+    {
+    }
 }

@@ -1,6 +1,7 @@
 using System;
 
-namespace Mohammad.Web.Asp.Security {
+namespace Mohammad.Web.Asp.Security
+{
     [Serializable]
     public class UserData
     {
@@ -20,6 +21,8 @@ namespace Mohammad.Web.Asp.Security {
         }
 
         public UserData(string firstName, string lastName, string userName, bool? isAdmin = false)
-            : this(firstName, lastName, userName, isAdmin, DateTime.Now) { }
+            : this(firstName, lastName, userName, isAdmin, DateTime.Now)
+        {
+        }
     }
 }

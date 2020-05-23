@@ -28,7 +28,7 @@ namespace Mohammad.Helpers
         /// <typeparam name="TEnum"></typeparam>
         /// <returns></returns>
         public static TEnum AddFlag<TEnum>(TEnum enumeration, TEnum item)
-            where TEnum : struct => (TEnum) Enum.ToObject(typeof(TEnum), enumeration.ToInt() | item.ToInt());
+            where TEnum : struct => (TEnum)Enum.ToObject(typeof(TEnum), enumeration.ToInt() | item.ToInt());
 
         public static bool Contains<TEnum>(Enum enumeration, TEnum item)
             where TEnum : struct => item.ToInt() == 0 ? enumeration.ToInt() == 0 : (enumeration.ToInt() | item.ToInt()) == enumeration.ToInt();
@@ -40,7 +40,7 @@ namespace Mohammad.Helpers
         /// <typeparam name="TDestinationEnum"></typeparam>
         /// <returns></returns>
         public static TDestinationEnum Convert<TSourceEnum, TDestinationEnum>(TSourceEnum enumValue)
-            where TDestinationEnum : struct => (TDestinationEnum) Enum.Parse(typeof(TDestinationEnum), enumValue.ToString());
+            where TDestinationEnum : struct => (TDestinationEnum)Enum.Parse(typeof(TDestinationEnum), enumValue.ToString());
 
         /// <summary>
         /// </summary>
@@ -79,7 +79,7 @@ namespace Mohammad.Helpers
         public static object GetItemAttribute<TEnum, TAttribute>(TEnum value)
             where TAttribute : Attribute where TEnum : struct
         {
-            var attributes = (TAttribute[]) value.GetType().GetField(value.ToString()).GetCustomAttributes(typeof(TAttribute), false);
+            var attributes = (TAttribute[])value.GetType().GetField(value.ToString()).GetCustomAttributes(typeof(TAttribute), false);
             return attributes.Length > 0 ? attributes[0] : default;
         }
 
@@ -87,8 +87,11 @@ namespace Mohammad.Helpers
             where TAttribute : Attribute
         {
             if (value == null)
+            {
                 return Enumerable.Empty<TAttribute>();
-            var attributes = (TAttribute[]) value.GetType().GetField(value.ToString()).GetCustomAttributes(typeof(TAttribute), false);
+            }
+
+            var attributes = (TAttribute[])value.GetType().GetField(value.ToString()).GetCustomAttributes(typeof(TAttribute), false);
             return attributes.Length > 0 ? attributes.AsEnumerable() : Enumerable.Empty<TAttribute>();
         }
 
@@ -98,7 +101,10 @@ namespace Mohammad.Helpers
             {
                 var descriptions = GetItemAttributes<LocalizedDescriptionAttribute>(value).ToArray();
                 if (!descriptions.Any())
+                {
                     return value.ToString().SeparateCamelCase();
+                }
+
                 var description = descriptions.FirstOrDefault(desc => cultureName.EqualsTo(desc.CultureName));
                 return description == null ? value.ToString().SeparateCamelCase() : description.Description;
             }
@@ -110,11 +116,12 @@ namespace Mohammad.Helpers
         public static IEnumerable<TEnum> GetItems<TEnum>()
             where TEnum : struct
         {
-            var descs = Enum.GetNames(typeof(TEnum)).Select(name =>
-            {
-                var result = (TEnum) Enum.Parse(typeof(TEnum), name, false);
-                return result;
-            });
+            var descs = Enum.GetNames(typeof(TEnum))
+                .Select(name =>
+                {
+                    var result = (TEnum)Enum.Parse(typeof(TEnum), name, false);
+                    return result;
+                });
             return descs;
         }
 
@@ -127,12 +134,15 @@ namespace Mohammad.Helpers
             where TEnum : struct
         {
             var result = new Collection<MemberInfo<TEnum>>();
-            var names  = Enum.GetNames(typeof(TEnum));
+            var names = Enum.GetNames(typeof(TEnum));
             foreach (var member in from name in names
-                                   let displayMember = GetItemDescription((Enum) Enum.Parse(typeof(TEnum), name), localized)
-                                   let valueMember = (TEnum) Enum.Parse(typeof(TEnum), name)
-                                   select new MemberInfo<TEnum>(displayMember, valueMember, (int) Enum.Parse(typeof(TEnum), name)))
+                                   let displayMember = GetItemDescription((Enum)Enum.Parse(typeof(TEnum), name), localized)
+                                   let valueMember = (TEnum)Enum.Parse(typeof(TEnum), name)
+                                   select new MemberInfo<TEnum>(displayMember, valueMember, (int)Enum.Parse(typeof(TEnum), name)))
+            {
                 result.Add(member);
+            }
+
             return result.AsEnumerable();
         }
 
@@ -145,7 +155,7 @@ namespace Mohammad.Helpers
             where TEnum : struct
         {
             var result = new Collection<TNumberType>();
-            Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ForEach(item => result.Add((TNumberType) item));
+            Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ForEach(item => result.Add((TNumberType)item));
             return result.AsEnumerable();
         }
 
@@ -154,12 +164,14 @@ namespace Mohammad.Helpers
             var type = typeof(T);
 
             if (!type.IsEnum)
+            {
                 throw new ArgumentException("type must be an enumeration type.");
+            }
 
             var pairs = from T t in Enum.GetValues(type)
                         select new
                         {
-                            Value = (T) Enum.ToObject(type, t), Text = Enum.GetName(type, t)
+                            Value = (T)Enum.ToObject(type, t), Text = Enum.GetName(type, t)
                         };
 
             return pairs.ToDictionary(t => t.Value, t => t.Text);
@@ -188,14 +200,8 @@ namespace Mohammad.Helpers
             where TEnum : struct
         {
             var result = Enum.GetValues(typeof(TEnum)).Cast<int>().Aggregate(0, (current, item) => current | item);
-            return (TEnum) Enum.Parse(typeof(TEnum), Enum.GetName(typeof(TEnum), result));
+            return (TEnum)Enum.Parse(typeof(TEnum), Enum.GetName(typeof(TEnum), result));
         }
-
-        private static object Parse(object value) => value is string
-            ? value.ToString().Contains(".")
-                ? value.ToString().Substring(value.ToString().LastIndexOf(".") + 1)
-                : value
-            : value;
 
         public static IEnumerable<TEnum> ParseIf<TEnum>(IEnumerable source)
             where TEnum : struct
@@ -204,7 +210,9 @@ namespace Mohammad.Helpers
             {
                 TEnum result;
                 if (TryParse(item, out result))
+                {
                     yield return result;
+                }
             }
         }
 
@@ -215,7 +223,7 @@ namespace Mohammad.Helpers
         /// <typeparam name="TEnum"></typeparam>
         /// <returns></returns>
         public static TEnum RemoveFlag<TEnum>(TEnum enumeration, TEnum item)
-            where TEnum : struct => (TEnum) Enum.ToObject(typeof(TEnum), enumeration.ToInt() & ~item.ToInt());
+            where TEnum : struct => (TEnum)Enum.ToObject(typeof(TEnum), enumeration.ToInt() & ~item.ToInt());
 
         public static TEnum ToEnum<TEnum>(string value)
             where TEnum : struct => Enum.Parse(typeof(TEnum), value).To<TEnum>();
@@ -233,9 +241,18 @@ namespace Mohammad.Helpers
         {
             result = default;
             if (!IsMemberOf<TEnum>(value))
+            {
                 return false;
+            }
+
             result = Convert<TEnum>(Parse(value));
             return true;
         }
+
+        private static object Parse(object value) => value is string
+            ? value.ToString().Contains(".")
+                ? value.ToString().Substring(value.ToString().LastIndexOf(".") + 1)
+                : value
+            : value;
     }
 }

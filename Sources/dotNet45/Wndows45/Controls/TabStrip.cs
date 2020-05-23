@@ -9,10 +9,10 @@ namespace Mohammad.Win.Controls
     [ToolboxItem(typeof(TabStripToolboxItem))]
     public class TabStrip : ToolStrip
     {
+        private const int EXTRA_PADDING = 0;
         private Font boldFont = new Font(SystemFonts.MenuFont, FontStyle.Bold);
         private Tab currentSelection;
         private int tabOverlap;
-        private const int EXTRA_PADDING = 0;
 
         protected override Padding DefaultPadding
         {
@@ -28,7 +28,7 @@ namespace Mohammad.Win.Controls
 
         public Tab SelectedTab
         {
-            get { return this.currentSelection; }
+            get => this.currentSelection;
             set
             {
                 if (this.currentSelection != value)
@@ -39,7 +39,9 @@ namespace Mohammad.Win.Controls
                     {
                         this.PerformLayout();
                         if (this.currentSelection.TabStripPage != null)
+                        {
                             this.currentSelection.TabStripPage.Activate();
+                        }
                     }
                 }
             }
@@ -58,7 +60,7 @@ namespace Mohammad.Win.Controls
         [DefaultValue(10)]
         public int TabOverlap
         {
-            get { return this.tabOverlap; }
+            get => this.tabOverlap;
             set
             {
                 if (this.tabOverlap != value)
@@ -82,7 +84,20 @@ namespace Mohammad.Win.Controls
             this.ShowItemToolTips = false;
         }
 
-        protected override ToolStripItem CreateDefaultItem(string text, Image image, EventHandler onClick) { return new Tab(text, image, onClick); }
+        public override Size GetPreferredSize(Size proposedSize)
+        {
+            var preferredSize = Size.Empty;
+            proposedSize -= this.Padding.Size;
+
+            foreach (ToolStripItem item in this.Items)
+            {
+                preferredSize = LayoutUtils.UnionSizes(preferredSize, item.GetPreferredSize(proposedSize) + item.Padding.Size);
+            }
+
+            return preferredSize + this.Padding.Size;
+        }
+
+        protected override ToolStripItem CreateDefaultItem(string text, Image image, EventHandler onClick) => new Tab(text, image, onClick);
 
         protected override void OnItemClicked(ToolStripItemClickedEventArgs e)
         {
@@ -91,6 +106,7 @@ namespace Mohammad.Win.Controls
                 var currentTab = this.Items[i] as Tab;
                 this.SuspendLayout();
                 if (currentTab != null)
+                {
                     if (currentTab != e.ClickedItem)
                     {
                         currentTab.Checked = false;
@@ -102,8 +118,11 @@ namespace Mohammad.Win.Controls
                     {
                         currentTab.b_active = true;
                     }
+                }
+
                 this.ResumeLayout();
             }
+
             this.SelectedTab = e.ClickedItem as Tab;
 
             base.OnItemClicked(e);
@@ -113,21 +132,13 @@ namespace Mohammad.Win.Controls
         {
             base.SetDisplayedItems();
             for (var i = 0; i < this.DisplayedItems.Count; i++)
+            {
                 if (this.DisplayedItems[i] == this.SelectedTab)
                 {
                     this.DisplayedItems.Add(this.SelectedTab);
                     break;
                 }
-        }
-
-        public override Size GetPreferredSize(Size proposedSize)
-        {
-            var preferredSize = Size.Empty;
-            proposedSize -= this.Padding.Size;
-
-            foreach (ToolStripItem item in this.Items)
-                preferredSize = LayoutUtils.UnionSizes(preferredSize, item.GetPreferredSize(proposedSize) + item.Padding.Size);
-            return preferredSize + this.Padding.Size;
+            }
         }
 
         private void InitializeComponent()

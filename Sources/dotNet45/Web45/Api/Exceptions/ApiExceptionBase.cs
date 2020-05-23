@@ -36,15 +36,18 @@ namespace Mohammad.Web.Api.Exceptions
 
     public sealed class ApiException : ApiExceptionBase
     {
-        public ApiException(string message, HttpStatusCode statusCode) : base(message, statusCode)
+        public ApiException(string message, HttpStatusCode statusCode)
+            : base(message, statusCode)
         {
         }
 
-        public ApiException(string message, Exception inner) : base(message, inner)
+        public ApiException(string message, Exception inner)
+            : base(message, inner)
         {
         }
 
-        public ApiException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public ApiException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

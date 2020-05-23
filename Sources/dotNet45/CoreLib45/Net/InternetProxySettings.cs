@@ -17,21 +17,23 @@ namespace Mohammad.Net
         public static void SetProxyName(string proxyAddress)
         {
             const string szRegKey = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings\";
-            const string szName   = "ProxyServer";
+            const string szName = "ProxyServer";
 
             _RegUtils.SetKeyValue(RegUtils.RegKeyType.CurrentUser, szRegKey, szName, proxyAddress);
         }
 
         public static void EnableProxy(string proxyAddress)
         {
-            var          szRegKey = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings\";
-            const string szName   = "ProxyEnable";
-            string       szValue;
+            var szRegKey = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings\";
+            const string szName = "ProxyEnable";
+            string szValue;
 
             _RegUtils.GetKeyValue(RegUtils.RegKeyType.CurrentUser, szRegKey, "ProxyServer", out szValue);
 
             if (szValue != proxyAddress)
+            {
                 SetProxyName(proxyAddress);
+            }
 
             _RegUtils.SetKeyValue(RegUtils.RegKeyType.CurrentUser, szRegKey, szName, 1);
 
@@ -43,20 +45,23 @@ namespace Mohammad.Net
             for (var i = 0; i < abValue.Length; i++)
             {
                 if (i == 8)
+                {
                     abValue[i] = 3;
-                aaValue[i] = (char) abValue[i];
+                }
+
+                aaValue[i] = (char)abValue[i];
             }
 
             _RegUtils.SetKeyValue(RegUtils.RegKeyType.CurrentUser,
-                                  szRegKey,
-                                  "DefaultConnectionSettings",
-                                  Encoding.ASCII.GetBytes(new string(aaValue).Replace(szValue, proxyAddress)));
+                szRegKey,
+                "DefaultConnectionSettings",
+                Encoding.ASCII.GetBytes(new string(aaValue).Replace(szValue, proxyAddress)));
         }
 
         public static void DisableProxy(string proxyAddress)
         {
-            var          szRegKey = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings\";
-            const string szName   = "ProxyEnable";
+            var szRegKey = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings\";
+            const string szName = "ProxyEnable";
             _RegUtils.SetKeyValue(RegUtils.RegKeyType.CurrentUser, szRegKey, szName, 0);
 
             byte[] abValue;
@@ -64,11 +69,13 @@ namespace Mohammad.Net
             _RegUtils.GetKeyValue(RegUtils.RegKeyType.CurrentUser, szRegKey, "DefaultConnectionSettings", out abValue);
 
             for (var i = 0; i < abValue.Length; i++)
+            {
                 if (i == 8)
                 {
                     abValue[i] = 0;
                     break;
                 }
+            }
 
             _RegUtils.SetKeyValue(RegUtils.RegKeyType.CurrentUser, szRegKey, "DefaultConnectionSettings", abValue);
         }
@@ -76,8 +83,8 @@ namespace Mohammad.Net
         public static string GetProxyName()
         {
             const string szRegKey = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings\";
-            const string szName   = "ProxyServer";
-            string       szProxyAddress;
+            const string szName = "ProxyServer";
+            string szProxyAddress;
 
             _RegUtils.GetKeyValue(RegUtils.RegKeyType.CurrentUser, szRegKey, szName, out szProxyAddress);
 
@@ -87,8 +94,8 @@ namespace Mohammad.Net
         public static int GetProxyStatus()
         {
             const string szRegKey = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings\";
-            const string szName   = "ProxyEnable";
-            int          iProxyStatus;
+            const string szName = "ProxyEnable";
+            int iProxyStatus;
 
             _RegUtils.GetKeyValue(RegUtils.RegKeyType.CurrentUser, szRegKey, szName, out iProxyStatus);
 

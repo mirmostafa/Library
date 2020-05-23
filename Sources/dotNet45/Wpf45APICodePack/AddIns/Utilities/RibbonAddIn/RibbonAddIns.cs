@@ -5,13 +5,12 @@ using System.Linq;
 using System.Windows.Controls.Ribbon;
 using Mohammad.AddIns;
 using Mohammad.AddIns.Contacts;
-using Mohammad.Primitives;
 using Mohammad.Helpers;
+using Mohammad.Primitives;
 using Mohammad.Wpf.Windows.Controls;
 
 namespace Mohammad.Wpf.AddIns.Utilities.RibbonAddIn
 {
-
     #region Data Structures
 
     public interface IAddInRibbonAppContext : IAddInAppContext
@@ -25,7 +24,9 @@ namespace Mohammad.Wpf.AddIns.Utilities.RibbonAddIn
         string ButtonLabel { get; }
     }
 
-    public class RibbonAction : RibbonAction<LibraryPage> {}
+    public class RibbonAction : RibbonAction<LibraryPage>
+    {
+    }
 
     public class RibbonAction<TPage> : IRibbonAction
         where TPage : LibraryPage
@@ -53,45 +54,74 @@ namespace Mohammad.Wpf.AddIns.Utilities.RibbonAddIn
     public static class RibbonAddInLoader
     {
         public static IEnumerable<RetieveResult<RibbonAction, IAddInRibbonAppContext>> RetrieveAndInitializeAddIns(RibbonApplicationMenuItem addInMenuItem,
-            RibbonTab addInTab, LibFrame contentFrame, IApplicationInjector injector, params string[] files)
+            RibbonTab addInTab,
+            LibFrame contentFrame,
+            IApplicationInjector injector,
+            params string[] files)
             =>
                 RetrieveAndInitializeAddIns(addInMenuItem,
                     addInTab,
                     action => contentFrame.Navigate(action.Page, action),
-                    addIn => { addIn.Initialize(injector); },
+                    addIn =>
+                    {
+                        addIn.Initialize(injector);
+                    },
                     files);
 
         public static IEnumerable<RetieveResult<TAddInAction, TAddInAppContext>> RetrieveAndInitializeAddIns<TAddInAction, TAddInAppContext, TPage>(
-            RibbonApplicationMenuItem addInMenuItem, RibbonTab addInTab, LibFrame contentFrame, IApplicationInjector injector, params string[] files)
+            RibbonApplicationMenuItem addInMenuItem,
+            RibbonTab addInTab,
+            LibFrame contentFrame,
+            IApplicationInjector injector,
+            params string[] files)
             where TAddInAction : RibbonAction<TPage> where TAddInAppContext : class, IAddInRibbonAppContext where TPage : LibraryPage
             =>
                 RetrieveAndInitializeAddIns<TAddInAction, TAddInAppContext>(addInMenuItem,
                     addInTab,
                     action => contentFrame.Navigate(action.Page, action),
-                    addIn => { addIn.Initialize(injector); },
+                    addIn =>
+                    {
+                        addIn.Initialize(injector);
+                    },
                     files);
 
         public static IEnumerable<RetieveResult<TRibbonAction, IAddInRibbonAppContext>> RetrieveAndInitializeAddIns<TRibbonAction, TPage>(
-            RibbonApplicationMenuItem addInMenuItem, RibbonTab addInTab, LibFrame contentFrame, IApplicationInjector injector, params string[] files)
+            RibbonApplicationMenuItem addInMenuItem,
+            RibbonTab addInTab,
+            LibFrame contentFrame,
+            IApplicationInjector injector,
+            params string[] files)
             where TRibbonAction : RibbonAction<TPage> where TPage : LibraryPage
             =>
                 RetrieveAndInitializeAddIns<TRibbonAction>(addInMenuItem,
                     addInTab,
                     action => contentFrame.Navigate(action.Page, action),
-                    addIn => { addIn.Initialize(injector); },
+                    addIn =>
+                    {
+                        addIn.Initialize(injector);
+                    },
                     files);
 
         public static IEnumerable<RetieveResult<RibbonAction, IAddInRibbonAppContext>> RetrieveAndInitializeAddIns(RibbonApplicationMenuItem addInMenuItem,
-            RibbonTab addInTab, Action<RibbonAction> onButtonClick, Action<IAddInRibbonAppContext> onAddInInitialize, params string[] files)
+            RibbonTab addInTab,
+            Action<RibbonAction> onButtonClick,
+            Action<IAddInRibbonAppContext> onAddInInitialize,
+            params string[] files)
             => RetrieveAndInitializeAddIns<RibbonAction, IAddInRibbonAppContext>(addInMenuItem, addInTab, onButtonClick, onAddInInitialize, files);
 
         public static IEnumerable<RetieveResult<TRibbonAction, IAddInRibbonAppContext>> RetrieveAndInitializeAddIns<TRibbonAction>(
-            RibbonApplicationMenuItem addInMenuItem, RibbonTab addInTab, Action<TRibbonAction> onButtonClick, Action<IAddInRibbonAppContext> onAddInInitialize,
+            RibbonApplicationMenuItem addInMenuItem,
+            RibbonTab addInTab,
+            Action<TRibbonAction> onButtonClick,
+            Action<IAddInRibbonAppContext> onAddInInitialize,
             params string[] files) where TRibbonAction : IRibbonAction
             => RetrieveAndInitializeAddIns<TRibbonAction, IAddInRibbonAppContext>(addInMenuItem, addInTab, onButtonClick, onAddInInitialize, files);
 
         public static IEnumerable<RetieveResult<TAddInAction, TAddInAppContext>> RetrieveAndInitializeAddIns<TAddInAction, TAddInAppContext>(
-            RibbonApplicationMenuItem addInMenuItem, RibbonTab addInTab, Action<TAddInAction> onButtonClick, Action<TAddInAppContext> onAddInInitialize,
+            RibbonApplicationMenuItem addInMenuItem,
+            RibbonTab addInTab,
+            Action<TAddInAction> onButtonClick,
+            Action<TAddInAppContext> onAddInInitialize,
             params string[] files) where TAddInAction : IRibbonAction where TAddInAppContext : class, IAddInRibbonAppContext
         {
             var result = new List<RetieveResult<TAddInAction, TAddInAppContext>>();
@@ -99,7 +129,10 @@ namespace Mohammad.Wpf.AddIns.Utilities.RibbonAddIn
             {
                 var ribbonGroup = addInTab.Items.Cast<RibbonGroup>().FirstOrDefault(g => g.Header.ToString() == header);
                 if (ribbonGroup != null)
+                {
                     return ribbonGroup;
+                }
+
                 ribbonGroup = new RibbonGroup {Header = header};
                 addInTab.Items.Add(ribbonGroup);
                 return ribbonGroup;
@@ -109,14 +142,20 @@ namespace Mohammad.Wpf.AddIns.Utilities.RibbonAddIn
             {
                 var addInMenu = addInMenuItem.Items.Cast<RibbonApplicationMenuItem>().FirstOrDefault(g => g.Header.ToString() == header);
                 if (addInMenu != null)
+                {
                     return addInMenu;
+                }
+
                 addInMenu = new RibbonApplicationMenuItem {Header = header};
                 addInMenuItem.Items.Add(addInMenu);
                 return addInMenu;
             };
 
             if (!files.Any())
+            {
                 files = Directory.GetFiles(".", "*.dll");
+            }
+
             var addIns = Composer.Compose<TAddInAppContext, AddInAttribute>(files).ToList();
             addIns.ForEach(addIn =>
             {

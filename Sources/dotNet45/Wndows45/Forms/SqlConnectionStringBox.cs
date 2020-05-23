@@ -13,12 +13,19 @@ namespace Mohammad.Win.Forms
             {
                 box.ConnectionString = connectionString;
                 if (!text.IsNullOrEmpty())
+                {
                     box.Text = text;
+                }
+
                 if (!prompt.IsNullOrEmpty())
+                {
                     box.promptLabel.Text = prompt;
+                }
+
                 result = box.ShowDialog();
                 connectionString = box.ConnectionString;
             }
+
             return result;
         }
     }

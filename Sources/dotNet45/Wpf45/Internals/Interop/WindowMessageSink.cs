@@ -46,23 +46,31 @@ namespace Mohammad.Wpf.Internals.Interop
             // Register the window class
             WinApi.RegisterClass(ref wc);
             if (errorCode != 0)
+            {
                 throw new Win32Exception(errorCode);
+            }
 
             errorCode = Api.GetLastError();
             // Get the message used to indicate the taskbar has been restarted
             // This is used to re-add icons when the taskbar restarts
             this.taskbarRestartMessageId = WinApi.RegisterWindowMessage("TaskbarCreated");
             if (errorCode != 0)
+            {
                 throw new Win32Exception(errorCode);
+            }
 
             errorCode = Api.GetLastError();
             // Create the message window
             this.MessageWindowHandle = WinApi.CreateWindowEx(0, this.WindowId, "", 0, 0, 0, 1, 1, 0, 0, 0, 0);
             if (errorCode != 0)
+            {
                 throw new Win32Exception(errorCode);
+            }
 
             if (this.MessageWindowHandle == IntPtr.Zero)
+            {
                 throw new Win32Exception(Api.GetLastError());
+            }
         }
 
         #endregion
@@ -154,7 +162,9 @@ namespace Mohammad.Wpf.Internals.Interop
             this.CreateMessageWindow();
         }
 
-        private WindowMessageSink() { }
+        private WindowMessageSink()
+        {
+        }
 
         /// <summary>
         ///     Creates a dummy instance that provides an empty
@@ -162,7 +172,7 @@ namespace Mohammad.Wpf.Internals.Interop
         ///     Used at design time.
         /// </summary>
         /// <returns></returns>
-        internal static WindowMessageSink CreateEmpty() { return new WindowMessageSink {MessageWindowHandle = IntPtr.Zero, Version = NotifyIconVersion.Vista}; }
+        internal static WindowMessageSink CreateEmpty() => new WindowMessageSink {MessageWindowHandle = IntPtr.Zero, Version = NotifyIconVersion.Vista};
 
         #endregion
 
@@ -175,7 +185,9 @@ namespace Mohammad.Wpf.Internals.Interop
         {
             if (messageId == this.taskbarRestartMessageId)
                 //recreate the icon if the taskbar was restarted (e.g. due to Win Explorer shutdown)
+            {
                 this.TaskbarCreated();
+            }
 
             //forward message
             this.ProcessWindowMessage(messageId, wparam, lparam);
@@ -197,7 +209,9 @@ namespace Mohammad.Wpf.Internals.Interop
         private void ProcessWindowMessage(uint msg, uint wParam, uint lParam)
         {
             if (msg != CallbackMessageId)
+            {
                 return;
+            }
 
             switch (lParam)
             {
@@ -211,7 +225,10 @@ namespace Mohammad.Wpf.Internals.Interop
 
                 case 0x202:
                     if (!this.isDoubleClick)
+                    {
                         this.MouseEventReceived(MouseEvent.IconLeftMouseUp);
+                    }
+
                     this.isDoubleClick = false;
                     break;
 
@@ -309,7 +326,10 @@ namespace Mohammad.Wpf.Internals.Interop
         ///         this class.
         ///     </para>
         /// </summary>
-        ~WindowMessageSink() { this.Dispose(false); }
+        ~WindowMessageSink()
+        {
+            this.Dispose(false);
+        }
 
         /// <summary>
         ///     Removes the windows hook that receives window
@@ -319,7 +339,10 @@ namespace Mohammad.Wpf.Internals.Interop
         {
             //don't do anything if the component is already disposed
             if (this.IsDisposed || !disposing)
+            {
                 return;
+            }
+
             this.IsDisposed = true;
 
             WinApi.DestroyWindow(this.MessageWindowHandle);

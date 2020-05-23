@@ -18,14 +18,10 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(TextBoxButton),
             new PropertyMetadata(default(object)));
 
-        public object ButtonContent { get { return this.GetValue(ButtonContentProperty); } set { this.SetValue(ButtonContentProperty, value); } }
-
         public static readonly DependencyProperty ButtonStyleProperty = DependencyProperty.Register("ButtonStyle",
             typeof(Style),
             typeof(TextBoxButton),
             new PropertyMetadata(default(Style)));
-
-        public Style ButtonStyle { get { return (Style) this.GetValue(ButtonStyleProperty); } set { this.SetValue(ButtonStyleProperty, value); } }
 
         public static readonly DependencyProperty CommandTargetProperty = ControlHelper.GetDependencyProperty<ILibInputElement, TextBoxButton>("CommandTarget",
             defaultValue: new PropertyMetadata(default(ILibInputElement)));
@@ -35,27 +31,40 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(TextBoxButton),
             new PropertyMetadata(default(bool)));
 
-        public bool IsTextBoxReadOnly { get { return (bool) this.GetValue(IsTextBoxReadOnlyProperty); } set { this.SetValue(IsTextBoxReadOnlyProperty, value); } }
-
         public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text",
             typeof(string),
             typeof(TextBoxButton),
             new PropertyMetadata(default(string)));
 
-        public string Text { get { return (string) this.GetValue(TextProperty); } set { this.SetValue(TextProperty, value); } }
-
-        public TextBoxButton()
+        public object ButtonContent
         {
-            this.InitializeComponent();
-            this.ButtonContent = "…";
-            //this.ButtonStyle = (Style)this.FindResource("IconButton");
+            get => this.GetValue(ButtonContentProperty);
+            set => this.SetValue(ButtonContentProperty, value);
         }
 
-        private void Button_OnClick(object sender, RoutedEventArgs e) { this.OnButtonClick(this, e); }
-        private void OnButtonClick(object sender, RoutedEventArgs e) { this.ButtonClick.Raise(sender, e); }
-        public event EventHandler<RoutedEventArgs> ButtonClick;
+        public Style ButtonStyle
+        {
+            get => (Style)this.GetValue(ButtonStyleProperty);
+            set => this.SetValue(ButtonStyleProperty, value);
+        }
 
-        public ILibCommand Command { get { return this.Button.Command.As<LibCommand>(); } set { this.Button.Command = value; } }
+        public bool IsTextBoxReadOnly
+        {
+            get => (bool)this.GetValue(IsTextBoxReadOnlyProperty);
+            set => this.SetValue(IsTextBoxReadOnlyProperty, value);
+        }
+
+        public string Text
+        {
+            get => (string)this.GetValue(TextProperty);
+            set => this.SetValue(TextProperty, value);
+        }
+
+        public ILibCommand Command
+        {
+            get => this.Button.Command.As<LibCommand>();
+            set => this.Button.Command = value;
+        }
 
         /// <summary>Gets or sets the element on which to raise the specified command.  </summary>
         /// <returns>Element on which to raise a command.</returns>
@@ -63,8 +72,8 @@ namespace Mohammad.Wpf.Windows.Controls
         [Category("Action")]
         public ILibInputElement CommandTarget
         {
-            get { return (ILibInputElement) this.GetValue(CommandTargetProperty); }
-            set { this.SetValue(CommandTargetProperty, value); }
+            get => (ILibInputElement)this.GetValue(CommandTargetProperty);
+            set => this.SetValue(CommandTargetProperty, value);
         }
 
         /// <summary>
@@ -75,6 +84,29 @@ namespace Mohammad.Wpf.Windows.Controls
         [Bindable(true)]
         [Category("Action")]
         [Localizability(LocalizationCategory.NeverLocalize)]
-        public object CommandParameter { get { return this.Button.CommandParameter; } set { this.Button.CommandParameter = value; } }
+        public object CommandParameter
+        {
+            get => this.Button.CommandParameter;
+            set => this.Button.CommandParameter = value;
+        }
+
+        public TextBoxButton()
+        {
+            this.InitializeComponent();
+            this.ButtonContent = "…";
+            //this.ButtonStyle = (Style)this.FindResource("IconButton");
+        }
+
+        private void Button_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.OnButtonClick(this, e);
+        }
+
+        private void OnButtonClick(object sender, RoutedEventArgs e)
+        {
+            this.ButtonClick.Raise(sender, e);
+        }
+
+        public event EventHandler<RoutedEventArgs> ButtonClick;
     }
 }

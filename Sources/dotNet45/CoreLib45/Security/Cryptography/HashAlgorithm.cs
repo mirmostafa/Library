@@ -35,8 +35,8 @@ namespace Mohammad.Security.Cryptography
             //foreach (var hashByte in result)
             //    builder.Append(hashByte.ToString("x2"));
             //return strs.Trim();
-            var sha1      = new SHA1CryptoServiceProvider();
-            var result    = sha1.ComputeHash(Encoding.UTF8.GetBytes(expression));
+            var sha1 = new SHA1CryptoServiceProvider();
+            var result = sha1.ComputeHash(Encoding.UTF8.GetBytes(expression));
             var hexString = BitConverter.ToString(result).Replace("-", "").ToLower();
             return hexString;
         }

@@ -6,11 +6,8 @@ namespace Mohammad.Wpf.Converters
 {
     public class FormatterConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return parameter != null ? string.Format(parameter.ToString(), value) : value;
-        }
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => parameter != null ? string.Format(parameter.ToString(), value) : value;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { return value; }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value;
     }
 }

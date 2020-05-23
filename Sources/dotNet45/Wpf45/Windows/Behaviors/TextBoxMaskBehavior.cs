@@ -28,6 +28,27 @@ namespace Mohammad.Wpf.Windows.Behaviors
             typeof(TextBoxMaskBehavior),
             new FrameworkPropertyMetadata(MaskChangedCallback));
 
+        public static MaskType GetMask(DependencyObject obj) => (MaskType)obj.GetValue(MaskProperty);
+
+        public static void SetMask(DependencyObject obj, MaskType value)
+        {
+            obj.SetValue(MaskProperty, value);
+        }
+
+        public static double GetMaximumValue(DependencyObject obj) => (double)obj.GetValue(MaximumValueProperty);
+
+        public static void SetMaximumValue(DependencyObject obj, double value)
+        {
+            obj.SetValue(MaximumValueProperty, value);
+        }
+
+        public static double GetMinimumValue(DependencyObject obj) => (double)obj.GetValue(MinimumValueProperty);
+
+        public static void SetMinimumValue(DependencyObject obj, double value)
+        {
+            obj.SetValue(MinimumValueProperty, value);
+        }
+
         private static void MaskChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (e.OldValue is TextBox)
@@ -38,9 +59,11 @@ namespace Mohammad.Wpf.Windows.Behaviors
 
             var _this = d as TextBox;
             if (_this == null)
+            {
                 return;
+            }
 
-            if ((MaskType) e.NewValue != MaskType.Any)
+            if ((MaskType)e.NewValue != MaskType.Any)
             {
                 _this.PreviewTextInput += TextBox_OnPreviewTextInput;
                 DataObject.AddPastingHandler(_this, TextBoxPastingEventHandler);
@@ -49,17 +72,11 @@ namespace Mohammad.Wpf.Windows.Behaviors
             ValidateTextBox(_this);
         }
 
-        public static MaskType GetMask(DependencyObject obj) { return (MaskType) obj.GetValue(MaskProperty); }
-        public static void SetMask(DependencyObject obj, MaskType value) { obj.SetValue(MaskProperty, value); }
-
         private static void MaximumValueChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var _this = d as TextBox;
             ValidateTextBox(_this);
         }
-
-        public static double GetMaximumValue(DependencyObject obj) { return (double) obj.GetValue(MaximumValueProperty); }
-        public static void SetMaximumValue(DependencyObject obj, double value) { obj.SetValue(MaximumValueProperty, value); }
 
         private static void MinimumValueChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -67,13 +84,12 @@ namespace Mohammad.Wpf.Windows.Behaviors
             ValidateTextBox(_this);
         }
 
-        public static double GetMinimumValue(DependencyObject obj) { return (double) obj.GetValue(MinimumValueProperty); }
-        public static void SetMinimumValue(DependencyObject obj, double value) { obj.SetValue(MinimumValueProperty, value); }
-
         private static void ValidateTextBox(TextBox _this)
         {
             if (GetMask(_this) != MaskType.Any)
+            {
                 _this.Text = ValidateValue(GetMask(_this), _this.Text);
+            }
         }
 
         private static void TextBoxPastingEventHandler(object sender, DataObjectPastingEventArgs e)
@@ -82,7 +98,10 @@ namespace Mohammad.Wpf.Windows.Behaviors
             var clipboard = e.DataObject.GetData(typeof(string)) as string;
             clipboard = ValidateValue(GetMask(_this), clipboard);
             if (!string.IsNullOrEmpty(clipboard))
+            {
                 _this.Text = clipboard;
+            }
+
             e.CancelCommand();
             e.Handled = true;
         }
@@ -111,11 +130,15 @@ namespace Mohammad.Wpf.Windows.Behaviors
                     {
                         var ind = text.IndexOf(NumberFormatInfo.CurrentInfo.NumberDecimalSeparator);
                         if (ind == -1)
+                        {
                             break;
+                        }
 
                         text = text.Substring(0, ind) + text.Substring(ind + 1);
                         if (caret > ind)
+                        {
                             caret--;
+                        }
                     }
 
                     if (caret == 0)
@@ -144,7 +167,9 @@ namespace Mohammad.Wpf.Windows.Behaviors
                     {
                         text = text.Replace(NumberFormatInfo.CurrentInfo.NegativeSign, string.Empty);
                         if (caret != 0)
+                        {
                             caret--;
+                        }
                     }
                     else
                     {
@@ -164,10 +189,16 @@ namespace Mohammad.Wpf.Windows.Behaviors
                     var val = Convert.ToDouble(text);
                     var newVal = ValidateLimits(GetMinimumValue(_this), GetMaximumValue(_this), val);
                     if (val != newVal)
+                    {
                         text = newVal.ToString();
+                    }
                     else if (val == 0)
+                    {
                         if (!text.Contains(NumberFormatInfo.CurrentInfo.NumberDecimalSeparator))
+                        {
                             text = "0";
+                        }
+                    }
                 }
                 catch
                 {
@@ -178,7 +209,9 @@ namespace Mohammad.Wpf.Windows.Behaviors
                 {
                     text = text.Substring(1);
                     if (caret > 0)
+                    {
                         caret--;
+                    }
                 }
 
                 while (text.Length > 2 && string.Empty + text[0] == NumberFormatInfo.CurrentInfo.NegativeSign && text[1] == '0' &&
@@ -186,11 +219,15 @@ namespace Mohammad.Wpf.Windows.Behaviors
                 {
                     text = NumberFormatInfo.CurrentInfo.NegativeSign + text.Substring(2);
                     if (caret > 1)
+                    {
                         caret--;
+                    }
                 }
 
                 if (caret > text.Length)
+                {
                     caret = text.Length;
+                }
 
                 _this.Text = text;
                 _this.CaretIndex = caret;
@@ -203,7 +240,9 @@ namespace Mohammad.Wpf.Windows.Behaviors
         private static string ValidateValue(MaskType mask, string value)
         {
             if (string.IsNullOrEmpty(value))
+            {
                 return string.Empty;
+            }
 
             value = value.Trim();
             switch (mask)
@@ -214,7 +253,10 @@ namespace Mohammad.Wpf.Windows.Behaviors
                         Convert.ToInt64(value);
                         return value;
                     }
-                    catch {}
+                    catch
+                    {
+                    }
+
                     return string.Empty;
 
                 case MaskType.Decimal:
@@ -224,7 +266,10 @@ namespace Mohammad.Wpf.Windows.Behaviors
 
                         return value;
                     }
-                    catch {}
+                    catch
+                    {
+                    }
+
                     return string.Empty;
             }
 
@@ -234,12 +279,20 @@ namespace Mohammad.Wpf.Windows.Behaviors
         private static double ValidateLimits(double min, double max, double value)
         {
             if (!min.Equals(double.NaN))
+            {
                 if (value < min)
+                {
                     return min;
+                }
+            }
 
             if (!max.Equals(double.NaN))
+            {
                 if (value > max)
+                {
                     return max;
+                }
+            }
 
             return value;
         }
@@ -253,12 +306,18 @@ namespace Mohammad.Wpf.Windows.Behaviors
 
                 case MaskType.Integer:
                     if (str == NumberFormatInfo.CurrentInfo.NegativeSign)
+                    {
                         return true;
+                    }
+
                     break;
 
                 case MaskType.Decimal:
                     if (str == NumberFormatInfo.CurrentInfo.NumberDecimalSeparator || str == NumberFormatInfo.CurrentInfo.NegativeSign)
+                    {
                         return true;
+                    }
+
                     break;
                 //case MaskType.Time:
                 //	if (str == ":")
@@ -267,7 +326,9 @@ namespace Mohammad.Wpf.Windows.Behaviors
             }
 
             if (mask.Equals(MaskType.Integer) || mask.Equals(MaskType.Decimal))
+            {
                 return str.All(char.IsDigit);
+            }
 
             return false;
         }
@@ -277,6 +338,7 @@ namespace Mohammad.Wpf.Windows.Behaviors
     {
         Any,
         Integer,
+
         Decimal
         //Time,
     }

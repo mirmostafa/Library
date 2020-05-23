@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Mohammad.Helpers;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CoreLib45.Test.HelpersTests
 {
@@ -11,7 +8,6 @@ namespace CoreLib45.Test.HelpersTests
         [TestMethod]
         public void TestMethod1()
         {
-            
         }
     }
 }

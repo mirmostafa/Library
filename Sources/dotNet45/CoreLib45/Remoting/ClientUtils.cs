@@ -14,9 +14,9 @@ namespace Mohammad.Remoting
     public static class ClientUtils
     {
         public static TContract GetClassHttp<TContract>(string computername, int portNo, string remotingName) => GetClassHttp<TContract>(computername,
-                                                                                                                                         portNo,
-                                                                                                                                         remotingName,
-                                                                                                                                         false);
+            portNo,
+            remotingName,
+            false);
 
         public static TContract GetClassHttp<TContract>(string computername, int portNo, string remotingName, bool ensureSecurity) =>
             GetClassHttp<TContract>(
@@ -28,7 +28,7 @@ namespace Mohammad.Remoting
         {
             var channel = new HttpChannel();
             ChannelServices.RegisterChannel(channel, ensureSecurity);
-            return (TContract) Activator.GetObject(typeof(TContract), url);
+            return (TContract)Activator.GetObject(typeof(TContract), url);
         }
     }
 }

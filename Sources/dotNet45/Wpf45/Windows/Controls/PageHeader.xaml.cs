@@ -13,17 +13,17 @@ namespace Mohammad.Wpf.Windows.Controls
     /// </summary>
     public partial class PageHeader
     {
-        private bool _AutoVisible;
-        private bool _Loading;
-
         public static readonly DependencyProperty OwnerProperty = DependencyProperty.Register("Owner",
             typeof(IDescriptiveObject),
             typeof(PageHeader),
             new PropertyMetadata(default(IDescriptiveObject)));
 
+        private bool _AutoVisible;
+        private bool _Loading;
+
         public IDescriptiveObject Owner
         {
-            get { return (IDescriptiveObject) this.GetValue(OwnerProperty); }
+            get => (IDescriptiveObject)this.GetValue(OwnerProperty);
             set
             {
                 this.SetValue(OwnerProperty, value);
@@ -34,28 +34,43 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public string AppTitle
         {
-            get { return this.AppTitleBlock.Text; }
+            get => this.AppTitleBlock.Text;
             set
             {
                 if (this.UseWindows8TextingStyle)
+                {
                     value = value.ToUpper();
+                }
+
                 this.AppTitleBlock.Text = value;
             }
         }
 
         public string PageTitle
         {
-            get { return this.PageTitleBlock.Text; }
+            get => this.PageTitleBlock.Text;
             set
             {
                 if (this.AutoVisible)
+                {
                     this.Visibility = value.IsNullOrEmpty() ? Visibility.Collapsed : Visibility.Visible;
+                }
+
                 if (value.IsNullOrEmpty())
+                {
                     return;
+                }
+
                 if (this.UseWindows8TextingStyle)
+                {
                     value = value.ToLower();
+                }
+
                 if (!this._Loading)
+                {
                     this.Animate();
+                }
+
                 this.PageTitleBlock.Text = value;
                 this.PageTitleBlurBlock.Text = value;
             }
@@ -63,26 +78,35 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public bool AutoVisible
         {
-            get { return this._AutoVisible; }
+            get => this._AutoVisible;
             set
             {
                 if (value.Equals(this._AutoVisible))
+                {
                     return;
+                }
+
                 this._AutoVisible = value;
                 this.OnPropertyChanged();
             }
         }
 
-        public string PageDescription { get { return this.PageDescriptionBlock.Text; } set { this.PageDescriptionBlock.Text = value; } }
+        public string PageDescription
+        {
+            get => this.PageDescriptionBlock.Text;
+            set => this.PageDescriptionBlock.Text = value;
+        }
 
         public ImageSource LogoSource
         {
-            get { return this.PageLogoImage.Source; }
+            get => this.PageLogoImage.Source;
             set
             {
                 this.PageLogoImage.Source = value;
                 if (value != null)
+                {
                     this.PageLogoImage.Visibility = Visibility.Visible;
+                }
             }
         }
 
@@ -94,6 +118,23 @@ namespace Mohammad.Wpf.Windows.Controls
             this.UseWindows8TextingStyle = true;
             this._Loading = true;
             this.InitializeComponent();
+        }
+
+        protected virtual void OnOwnerChanged()
+        {
+            this.Owner.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName != "Title" && e.PropertyName != "Description")
+                {
+                    return;
+                }
+
+                var p = sender.As<IDescriptiveObject>();
+                this.PageTitle = p.Title;
+                this.PageDescription = p.Description;
+            };
+            this.PageTitle = this.Owner.Title;
+            this.PageDescription = this.Owner.Description;
         }
 
         private async Task<bool> Animate()
@@ -126,37 +167,37 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        protected virtual void OnOwnerChanged()
-        {
-            this.Owner.PropertyChanged += (sender, e) =>
-            {
-                if (e.PropertyName != "Title" && e.PropertyName != "Description")
-                    return;
-                var p = sender.As<IDescriptiveObject>();
-                this.PageTitle = p.Title;
-                this.PageDescription = p.Description;
-            };
-            this.PageTitle = this.Owner.Title;
-            this.PageDescription = this.Owner.Description;
-        }
-
         private async void PageHeade_OnLoaded(object sender, RoutedEventArgs e)
         {
             if (this.Owner != null)
             {
                 if (this.AppTitle.IsNullOrEmpty())
+                {
                     if (ApplicationHelper.ProductTitle.IsNullOrEmpty() && ApplicationHelper.ApplicationTitle != null)
+                    {
                         this.AppTitle = $"{ApplicationHelper.ProductTitle} - {ApplicationHelper.ApplicationTitle}";
+                    }
                     else if (ApplicationHelper.ProductTitle.IsNullOrEmpty())
+                    {
                         this.AppTitle = ApplicationHelper.ProductTitle;
+                    }
                     else if (ApplicationHelper.ApplicationTitle.IsNullOrEmpty())
+                    {
                         this.AppTitle = ApplicationHelper.ApplicationTitle;
+                    }
+                }
 
                 if (this.PageTitle.IsNullOrEmpty())
+                {
                     this.PageTitle = this.Owner.Title;
+                }
+
                 if (this.PageDescription.IsNullOrEmpty())
+                {
                     this.PageDescription = this.Owner.Description ?? ApplicationHelper.Description;
+                }
             }
+
             if (!await this.Animate())
             {
                 this.PageTitleBlock.Visibility = Visibility.Visible;
@@ -164,13 +205,16 @@ namespace Mohammad.Wpf.Windows.Controls
                 this.AppTitleBlock.Visibility = Visibility.Visible;
                 this.PageDescriptionBlock.Visibility = Visibility.Visible;
             }
+
             this._Loading = false;
         }
 
         private void PageHeader_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
+            {
                 this.Owner.As<Window>()?.DragMove();
+            }
         }
     }
 

@@ -7,6 +7,6 @@ namespace Mohammad.Win.Settings
         where TForm : Form
     {
         public readonly TForm Form;
-        public ApplySettingsEventArgs(TForm form) { this.Form = form; }
+        public ApplySettingsEventArgs(TForm form) => this.Form = form;
     }
 }

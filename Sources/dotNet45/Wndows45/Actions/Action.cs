@@ -27,15 +27,23 @@ namespace Mohammad.Win.Actions
         /// </summary>
         protected internal ActionList ActionList
         {
-            get { return this.actionList; }
+            get => this.actionList;
             set
             {
                 if (this.actionList != value)
+                {
                     this.actionList = value;
+                }
             }
         }
 
         public object Tag { get; set; }
+
+        #region IPermissionalControl Members
+
+        public string PermissionKey { get; set; }
+
+        #endregion
 
         /// <summary>
         ///     Creates a new instance
@@ -53,12 +61,6 @@ namespace Mohammad.Win.Actions
             this.clickEventHandler = this.target_Click;
             this.checkStateChangedEventHandler = this.target_CheckStateChanged;
         }
-
-        #region IPermissionalControl Members
-
-        public string PermissionKey { get; set; }
-
-        #endregion
 
         #region Nested type: ActionWorkingState
 
@@ -96,7 +98,7 @@ namespace Mohammad.Win.Actions
         [Localizable(true)]
         public string Text
         {
-            get { return this._text; }
+            get => this._text;
             set
             {
                 if (this._text != value)
@@ -113,11 +115,13 @@ namespace Mohammad.Win.Actions
         [DefaultValue(false)]
         public bool Checked
         {
-            get { return this.checkState != CheckState.Unchecked; }
+            get => this.checkState != CheckState.Unchecked;
             set
             {
                 if (value != this.Checked)
+                {
                     this.CheckState = value ? CheckState.Checked : CheckState.Unchecked;
+                }
             }
         }
 
@@ -128,7 +132,7 @@ namespace Mohammad.Win.Actions
         [UpdatableProperty]
         public CheckState CheckState
         {
-            get { return this.checkState; }
+            get => this.checkState;
             set
             {
                 if (this.checkState != value)
@@ -149,7 +153,10 @@ namespace Mohammad.Win.Actions
             get
             {
                 if (this.ActionList != null)
+                {
                     return this._enabled && this.ActionList.Enabled;
+                }
+
                 return this._enabled;
             }
             set
@@ -169,7 +176,7 @@ namespace Mohammad.Win.Actions
         [UpdatableProperty]
         public Image Image
         {
-            get { return this.image; }
+            get => this.image;
             set
             {
                 if (this.image != value)
@@ -187,7 +194,7 @@ namespace Mohammad.Win.Actions
         [UpdatableProperty]
         public bool AutoCheck
         {
-            get { return this._AutoCheck; }
+            get => this._AutoCheck;
             set
             {
                 if (this._AutoCheck != value)
@@ -206,14 +213,14 @@ namespace Mohammad.Win.Actions
         [Localizable(true)]
         public Keys ShortcutKeys
         {
-            get { return this.shortcutKeys; }
+            get => this.shortcutKeys;
             set
             {
                 if (this.shortcutKeys != value)
                 {
                     this.shortcutKeys = value;
                     var kc = new KeysConverter();
-                    var s = (string) kc.ConvertTo(value, typeof(string));
+                    var s = (string)kc.ConvertTo(value, typeof(string));
                     this.UpdateAllTargets("ShortcutKeyDisplayString", s);
                 }
             }
@@ -226,7 +233,7 @@ namespace Mohammad.Win.Actions
         [UpdatableProperty]
         public bool Visible
         {
-            get { return this.visible; }
+            get => this.visible;
             set
             {
                 if (this.visible != value)
@@ -245,7 +252,7 @@ namespace Mohammad.Win.Actions
         [Localizable(true)]
         public string ToolTipText
         {
-            get { return this.toolTipText; }
+            get => this.toolTipText;
             set
             {
                 if (this.toolTipText != value)
@@ -274,7 +281,9 @@ namespace Mohammad.Win.Actions
         protected void UpdateAllTargets(string propertyName, object value)
         {
             foreach (var c in this.targets)
+            {
                 this.updateProperty(c, propertyName, value);
+            }
         }
 
         private void updateProperty(Component target, string propertyName, object value)
@@ -283,8 +292,12 @@ namespace Mohammad.Win.Actions
             try
             {
                 if (this.ActionList != null)
+                {
                     if (!this.SpecialUpdateProperty(target, propertyName, value))
+                    {
                         this.ActionList.TypesDescription[target.GetType()].SetValue(propertyName, target, value);
+                    }
+                }
             }
             finally
             {
@@ -306,9 +319,13 @@ namespace Mohammad.Win.Actions
                 var c = target as Control;
 
                 if (c != null && this.ActionList.ToolTip.CanExtend(c))
-                    this.ActionList.ToolTip.SetToolTip(c, (string) value);
+                {
+                    this.ActionList.ToolTip.SetToolTip(c, (string)value);
+                }
+
                 return true;
             }
+
             return false;
         }
 
@@ -317,7 +334,9 @@ namespace Mohammad.Win.Actions
             var properties = TypeDescriptor.GetProperties(this, new Attribute[] {new UpdatablePropertyAttribute()});
 
             foreach (PropertyDescriptor property in properties)
+            {
                 this.updateProperty(target, property.Name, property.GetValue(this));
+            }
         }
 
         #endregion
@@ -335,15 +354,21 @@ namespace Mohammad.Win.Actions
         {
             var clickEvent = extendee.GetType().GetEvent("Click");
             if (clickEvent != null)
+            {
                 clickEvent.AddEventHandler(extendee, this.clickEventHandler);
+            }
 
             var checkStateChangedEvent = extendee.GetType().GetEvent("CheckStateChanged");
             if (checkStateChangedEvent != null)
+            {
                 checkStateChangedEvent.AddEventHandler(extendee, this.checkStateChangedEventHandler);
+            }
 
             var button = extendee as ToolBarButton;
             if (button != null)
+            {
                 button.Parent.ButtonClick += this.toolbar_ButtonClick;
+            }
         }
 
         /// <summary>
@@ -354,15 +379,21 @@ namespace Mohammad.Win.Actions
         {
             var clickEvent = extendee.GetType().GetEvent("Click");
             if (clickEvent != null)
+            {
                 clickEvent.RemoveEventHandler(extendee, this.clickEventHandler);
+            }
 
             var checkStateChangedEvent = extendee.GetType().GetEvent("CheckStateChanged");
             if (checkStateChangedEvent != null)
+            {
                 checkStateChangedEvent.RemoveEventHandler(extendee, this.checkStateChangedEventHandler);
+            }
 
             var button = extendee as ToolBarButton;
             if (button != null)
+            {
                 button.Parent.ButtonClick -= this.toolbar_ButtonClick;
+            }
         }
 
         #endregion
@@ -374,10 +405,15 @@ namespace Mohammad.Win.Actions
         private void toolbar_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
         {
             if (this.targets.Contains(e.Button))
+            {
                 this.handleClick(e.Button, e);
+            }
         }
 
-        private void target_Click(object sender, EventArgs e) { this.handleClick(sender, e); }
+        private void target_Click(object sender, EventArgs e)
+        {
+            this.handleClick(sender, e);
+        }
 
         private void handleClick(object sender, EventArgs e)
         {
@@ -397,14 +433,17 @@ namespace Mohammad.Win.Actions
 
         internal bool InterceptingCheckStateChanged { get; set; }
 
-        private void target_CheckStateChanged(object sender, EventArgs e) { this.handleCheckStateChanged(sender, e); }
+        private void target_CheckStateChanged(object sender, EventArgs e)
+        {
+            this.handleCheckStateChanged(sender, e);
+        }
 
         private void handleCheckStateChanged(object sender, EventArgs e)
         {
             if (this.WorkingState == ActionWorkingState.Listening)
             {
                 var target = sender as Component;
-                this.CheckState = (CheckState) this.ActionList.TypesDescription[sender.GetType()].GetValue("CheckState", target);
+                this.CheckState = (CheckState)this.ActionList.TypesDescription[sender.GetType()].GetValue("CheckState", target);
             }
         }
 
@@ -420,12 +459,17 @@ namespace Mohammad.Win.Actions
         public void PerformExecute()
         {
             if (!this.Enabled)
+            {
                 return;
+            }
 
             var e = new CancelEventArgs();
             this.OnExecuting(e);
             if (e.Cancel)
+            {
                 return;
+            }
+
             this.OnExecute(EventArgs.Empty);
             this.OnExecuted(EventArgs.Empty);
         }
@@ -433,10 +477,15 @@ namespace Mohammad.Win.Actions
         internal void ExecuteShortcut()
         {
             if (!this.Enabled)
+            {
                 return;
+            }
 
             if (this.AutoCheck)
+            {
                 this.Checked = !this.Checked;
+            }
+
             this.PerformExecute();
         }
 
@@ -456,7 +505,9 @@ namespace Mohammad.Win.Actions
         protected virtual void OnExecuting(CancelEventArgs e)
         {
             if (this.Executing != null)
+            {
                 this.Executing(this, e);
+            }
         }
 
         /// <summary>
@@ -471,7 +522,9 @@ namespace Mohammad.Win.Actions
         protected virtual void OnExecute(EventArgs e)
         {
             if (this.Execute != null)
+            {
                 this.Execute(this, e);
+            }
         }
 
         /// <summary>
@@ -486,7 +539,9 @@ namespace Mohammad.Win.Actions
         protected virtual void OnExecuted(EventArgs e)
         {
             if (this.Executed != null)
+            {
                 this.Executed(this, e);
+            }
         }
 
         /// <summary>
@@ -501,13 +556,18 @@ namespace Mohammad.Win.Actions
         protected virtual void OnUpdate(EventArgs e)
         {
             if (this.Update != null)
+            {
                 this.Update(this, e);
+            }
         }
 
         /// <summary>
         ///     Performs Update event
         /// </summary>
-        public void DoUpdate() { this.OnUpdate(EventArgs.Empty); }
+        public void DoUpdate()
+        {
+            this.OnUpdate(EventArgs.Empty);
+        }
 
         #endregion
 
@@ -534,13 +594,17 @@ namespace Mohammad.Win.Actions
         ///     Does nothing
         /// </summary>
         /// <param name="extendee"></param>
-        protected virtual void OnRemovingTarget(Component extendee) { }
+        protected virtual void OnRemovingTarget(Component extendee)
+        {
+        }
 
         /// <summary>
         ///     Does nothing
         /// </summary>
         /// <param name="extendee"></param>
-        protected virtual void OnAddingTarget(Component extendee) { }
+        protected virtual void OnAddingTarget(Component extendee)
+        {
+        }
 
         #endregion
     }

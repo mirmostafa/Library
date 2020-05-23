@@ -19,59 +19,19 @@ namespace Mohammad.Logging.Entities
 
         public StackTrace StackTrace
         {
-            get { return this.Level != LogLevel.Debug && this.Level != LogLevel.Fatal ? null : this._StackTrace; }
-            set { this._StackTrace = value; }
+            get => this.Level != LogLevel.Debug && this.Level != LogLevel.Fatal ? null : this._StackTrace;
+            set => this._StackTrace = value;
         }
 
         public LogLevel Level { get; set; }
         public object Tag { get; set; }
         public string StartDelimiter { get; set; }
         public string EndDelimiter { get; set; } = ", ";
-        public LogEntity() { this.Initialize(); }
 
-        private static string GetDescriptor()
+        public LogEntity()
         {
-            try
-            {
-                var caller = CodeHelper.GetCallerMethod(Utilities.SkipFrameCount() - 1, true);
-                if (caller == null)
-                    return "Lambda Expression!";
-                if (caller.Name.Contains("<"))
-                    if (caller.ReflectedType != null)
-                        caller = caller.ReflectedType.GetMethod(caller.Name.GetPhrase(1,'<', '>'),
-                            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
-
-                var callerDesc = ObjectHelper.GetAttribute(caller, new LogDescriptionAttribute(caller.Name.SeparateCamelCase())).Description ??
-                                 caller.Name.SeparateCamelCase();
-                var classDesc = caller.GetDeclaringTypeAttribute(new LogDescriptionAttribute(caller.GetClassName().SeparateCamelCase())).Description ??
-                                caller.GetClassName().SeparateCamelCase();
-                return $"{classDesc}-{callerDesc}";
-            }
-            catch
-            {
-                return string.Empty;
-            }
+            this.Initialize();
         }
-
-        protected virtual void Initialize()
-        {
-            var caller = CodeHelper.GetCallerMethod(Utilities.SkipFrameCount(), true);
-            if (caller != null)
-                switch (ObjectHelper.GetAttribute(caller, new LogDescriptionAttribute(caller.GetClassName().SeparateCamelCase())).AutoFillTag)
-                {
-                    case AutoFillTag.None:
-                        break;
-                    case AutoFillTag.SenderType:
-                        this.Tag = caller.DeclaringType;
-                        break;
-                }
-            this.Descriptor = GetDescriptor();
-            this.Level = LogLevel.Info;
-            this.Time = PersianDateTime.Now;
-            this.StackTrace = GetStackTrace();
-        }
-
-        private static StackTrace GetStackTrace() { return new StackTrace(Utilities.SkipFrameCount() - 2); }
 
         public override string ToString()
         {
@@ -98,5 +58,59 @@ namespace Mohammad.Logging.Entities
                     Environment.NewLine);
             return result;
         }
+
+        protected virtual void Initialize()
+        {
+            var caller = CodeHelper.GetCallerMethod(Utilities.SkipFrameCount(), true);
+            if (caller != null)
+            {
+                switch (ObjectHelper.GetAttribute(caller, new LogDescriptionAttribute(caller.GetClassName().SeparateCamelCase())).AutoFillTag)
+                {
+                    case AutoFillTag.None:
+                        break;
+                    case AutoFillTag.SenderType:
+                        this.Tag = caller.DeclaringType;
+                        break;
+                }
+            }
+
+            this.Descriptor = GetDescriptor();
+            this.Level = LogLevel.Info;
+            this.Time = PersianDateTime.Now;
+            this.StackTrace = GetStackTrace();
+        }
+
+        private static string GetDescriptor()
+        {
+            try
+            {
+                var caller = CodeHelper.GetCallerMethod(Utilities.SkipFrameCount() - 1, true);
+                if (caller == null)
+                {
+                    return "Lambda Expression!";
+                }
+
+                if (caller.Name.Contains("<"))
+                {
+                    if (caller.ReflectedType != null)
+                    {
+                        caller = caller.ReflectedType.GetMethod(caller.Name.GetPhrase(1, '<', '>'),
+                            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
+                    }
+                }
+
+                var callerDesc = ObjectHelper.GetAttribute(caller, new LogDescriptionAttribute(caller.Name.SeparateCamelCase())).Description ??
+                                 caller.Name.SeparateCamelCase();
+                var classDesc = caller.GetDeclaringTypeAttribute(new LogDescriptionAttribute(caller.GetClassName().SeparateCamelCase())).Description ??
+                                caller.GetClassName().SeparateCamelCase();
+                return $"{classDesc}-{callerDesc}";
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        private static StackTrace GetStackTrace() => new StackTrace(Utilities.SkipFrameCount() - 2);
     }
 }

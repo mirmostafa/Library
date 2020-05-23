@@ -11,16 +11,16 @@ namespace Mohammad.Wpf.Windows.Controls
     /// </summary>
     public partial class ConnectionStringBox
     {
-        private string _PromptProperty;
-
         public static readonly DependencyProperty ConnectionStringProperty = DependencyProperty.Register("ConnectionString",
             typeof(string),
             typeof(ConnectionStringBox),
             new PropertyMetadata(default(string)));
 
+        private string _PromptProperty;
+
         public string ConnectionString
         {
-            get { return (string) this.GetValue(ConnectionStringProperty); }
+            get => (string)this.GetValue(ConnectionStringProperty);
             set
             {
                 try
@@ -29,7 +29,10 @@ namespace Mohammad.Wpf.Windows.Controls
                     {
                         var builder = new SqlConnectionStringBuilder(value);
                         if (!builder.Password.IsNullOrEmpty())
+                        {
                             builder.Password = "******";
+                        }
+
                         this.ConnectionStringTextBox.Text = builder.ConnectionString;
                     }
                     else
@@ -41,6 +44,7 @@ namespace Mohammad.Wpf.Windows.Controls
                 {
                     this.ConnectionStringTextBox.Text = value;
                 }
+
                 this.SetValue(ConnectionStringProperty, value);
                 this.OnPropertyChanged();
             }
@@ -48,7 +52,7 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public string Prompt
         {
-            get { return this._PromptProperty; }
+            get => this._PromptProperty;
             set
             {
                 this._PromptProperty = value;
@@ -56,13 +60,18 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        public ConnectionStringBox() { this.InitializeComponent(); }
+        public ConnectionStringBox()
+        {
+            this.InitializeComponent();
+        }
 
         private void BrowseButton_OnClick(object sender, RoutedEventArgs e)
         {
             var current = this.ConnectionStringTextBox.Text;
             if (ConnectionStringDialog.Show(ref current, this.Prompt) ?? false)
+            {
                 this.ConnectionString = current;
+            }
         }
 
         private void ConnectionStringTextBox_OnTextChanged(object sender, TextChangedEventArgs e)

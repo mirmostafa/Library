@@ -15,13 +15,13 @@ namespace Mohammad.Threading
     internal class AsyncImp : Async
     {
         private readonly IEnumerable _Args;
-        private readonly Delegate    _MethodInfo;
+        private readonly Delegate _MethodInfo;
 
         internal AsyncImp(Delegate method, AsyncPool pool, IEnumerable args)
         {
             this._MethodInfo = method;
-            this._Args       = args;
-            this.Pool        = pool;
+            this._Args = args;
+            this.Pool = pool;
         }
 
         protected override void Execute()

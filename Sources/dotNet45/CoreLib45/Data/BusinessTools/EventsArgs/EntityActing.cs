@@ -30,38 +30,38 @@ namespace Mohammad.Data.BusinessTools.EventsArgs
 
     public enum EntityAction
     {
-        Insert
-      , Update
-      , Delete
+        Insert,
+        Update,
+        Delete
     }
 
     public class EntityValidated<TEntity> : ItemActedEventArgs<TEntity>
     {
+        // Properties
+        public EntityAction Action { get; }
+
         // Methods
         public EntityValidated(TEntity item, EntityAction action)
             : base(item) => this.Action = action;
-
-        // Properties
-        public EntityAction Action { get; }
     }
 
     public class EntityValidating<TEntity> : ItemActingEventArgs<TEntity>
     {
+        // Properties
+        public EntityAction Action { get; }
+
         // Methods
         public EntityValidating(TEntity item, EntityAction action)
             : base(item) => this.Action = action;
-
-        // Properties
-        public EntityAction Action { get; }
     }
 
     public class EntityValidatingByIds : ItemActingEventArgs<IEnumerable<long>>
     {
+        // Properties
+        public EntityAction Action { get; }
+
         // Methods
         public EntityValidatingByIds(IEnumerable<long> items, EntityAction action)
             : base(items) => this.Action = action;
-
-        // Properties
-        public EntityAction Action { get; }
     }
 }

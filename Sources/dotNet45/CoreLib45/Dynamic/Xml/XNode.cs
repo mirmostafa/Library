@@ -18,13 +18,6 @@ namespace Mohammad.Dynamic.Xml
     {
         private readonly XElement _Element;
 
-        public XNode(string name)
-            : this(new XElement(name))
-        {
-        }
-
-        public XNode(XElement element) => this._Element = element;
-
         public string Xml
         {
             get
@@ -36,7 +29,7 @@ namespace Mohammad.Dynamic.Xml
         }
 
         public XNodeList Nodes => new XNodeList(this._Element.Elements());
-        public string    Value => this._Element.Value;
+        public string Value => this._Element.Value;
 
         public XNode Parent
         {
@@ -48,6 +41,13 @@ namespace Mohammad.Dynamic.Xml
         }
 
         public string Name => this._Element.Name.LocalName;
+
+        public XNode(string name)
+            : this(new XElement(name))
+        {
+        }
+
+        public XNode(XElement element) => this._Element = element;
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
@@ -107,11 +107,19 @@ namespace Mohammad.Dynamic.Xml
                          where string.CompareOrdinal(element.Name.LocalName, name) == 0
                          select new XNode(element)).ToList();
             if (!nodes.Any())
+            {
                 return base.TryGetMember(binder, out result);
+            }
+
             if (nodes.HasItemsAtLeast(2))
+            {
                 result = nodes;
+            }
             else
+            {
                 result = nodes.ElementAt(0);
+            }
+
             return true;
         }
 
@@ -142,7 +150,10 @@ namespace Mohammad.Dynamic.Xml
             }
 
             if (string.CompareOrdinal(name, "SelectChildren") != 0)
+            {
                 return base.TryInvokeMember(binder, args, out result);
+            }
+
             {
                 IEnumerable<XElement> selectedElements;
 
@@ -170,7 +181,10 @@ namespace Mohammad.Dynamic.Xml
             var name = binder.Name;
 
             if (string.CompareOrdinal(name, "Value") != 0)
+            {
                 return base.TrySetMember(binder, value);
+            }
+
             this._Element.Value = value?.ToString() ?? string.Empty;
             return true;
         }

@@ -24,37 +24,35 @@ namespace Mohammad.ServiceProcess
     public abstract class WindowsServiceProgramBase<TProgram> : Singleton<TProgram>
         where TProgram : WindowsServiceProgramBase<TProgram>
     {
-        private readonly ManualResetEvent            _HoldeResetEvent = new ManualResetEvent(false);
-        private          LibraryWindowsServiceBase[] _Services;
-        public           bool                        IsConsoleApp    { get; private set; }
-        private          bool                        CanPauseOnEnded { get; set; } = true;
+        private readonly ManualResetEvent _HoldeResetEvent = new ManualResetEvent(false);
+        private LibraryWindowsServiceBase[] _Services;
+        public bool IsConsoleApp { get; private set; }
+        private bool CanPauseOnEnded { get; set; } = true;
 
         public string[] Args { get; private set; }
 
-        private void Startup(WindowsServiceProgramBaseStartupEventArgs e)
+        public void Shutdown()
         {
-            this.OnStartingup(e);
+            this._HoldeResetEvent.Set();
         }
 
         protected virtual void OnStartingup(WindowsServiceProgramBaseStartupEventArgs e)
         {
         }
 
-        private void InitializeComponents()
-        {
-            this.OnInitializing();
-        }
-
         protected static void CallFromMain(params string[] args)
         {
-            args          = (args ?? Enumerable.Empty<string>()).Select(arg => arg.Replace("/", "-").ToLower()).ToArray();
+            args = (args ?? Enumerable.Empty<string>()).Select(arg => arg.Replace("/", "-").ToLower()).ToArray();
             Instance.Args = args;
             try
             {
                 var e = new WindowsServiceProgramBaseStartupEventArgs(args);
                 Instance.Startup(e);
                 if (e.Handled)
+                {
                     return;
+                }
+
                 Instance.IsConsoleApp = e.IsConsoleApp ?? args.Contains("-console", true);
                 if (Instance.IsConsoleApp && e.CanHandleCommandArguments)
                 {
@@ -84,7 +82,7 @@ namespace Mohammad.ServiceProcess
                                 Instance.OnUninstalling();
                                 Exception ex;
                                 if ((ex = Catch(() => ManagedInstallerClass
-                                                   .InstallHelper(new[] {"/u", location}))) != null)
+                                    .InstallHelper(new[] {"/u", location}))) != null)
                                 {
                                     Error(
                                         $"Error: Unable to uninstall. Reinstall operation failure.{Environment.NewLine}{ex.GetBaseException().Message}");
@@ -109,7 +107,7 @@ namespace Mohammad.ServiceProcess
 
                 if (Instance.IsConsoleApp)
                 {
-                    Console.Title      = $"{ApplicationHelper.ApplicationTitle} - {ApplicationHelper.Version}";
+                    Console.Title = $"{ApplicationHelper.ApplicationTitle} - {ApplicationHelper.Version}";
                     Instance._Services = Instance.GetServices().RemoveNulls().ToArray();
                     Inform("Attempting to start services");
                     Instance._Services.ForEach(svc => Catch(() => svc.StartManually(args)));
@@ -131,14 +129,12 @@ namespace Mohammad.ServiceProcess
                 var e = new ItemActingEventArgs<Exception>(ex);
                 Instance.OnUnhandlesExceptionOccurred(e);
                 if (!e.Handled)
+                {
                     throw;
+                }
+
                 WaitForExit(true);
             }
-        }
-
-        private void StopServices()
-        {
-            this._Services.ForEach(svc => Catch(svc.Stop));
         }
 
         protected virtual void OnHelpRequired()
@@ -153,6 +149,44 @@ namespace Mohammad.ServiceProcess
             GetDefaultCommandArguments();
             LineFeed();
             ApplicationHelper.Copyright.WriteLine();
+        }
+
+        protected virtual void OnInstalling()
+        {
+        }
+
+        protected virtual void OnUninstalling()
+        {
+        }
+
+        protected virtual void OnUnhandlesExceptionOccurred(ItemActingEventArgs<Exception> e)
+        {
+            this.UnhandlesExceptionOccurred?.Invoke(this, e);
+        }
+
+        protected virtual void OnInitializing()
+        {
+        }
+
+        protected virtual void OnFinalizing()
+        {
+        }
+
+        protected abstract IEnumerable<LibraryWindowsServiceBase> OnGettingServices();
+
+        private void Startup(WindowsServiceProgramBaseStartupEventArgs e)
+        {
+            this.OnStartingup(e);
+        }
+
+        private void InitializeComponents()
+        {
+            this.OnInitializing();
+        }
+
+        private void StopServices()
+        {
+            this._Services.ForEach(svc => Catch(svc.Stop));
         }
 
         private static void GetDefaultCommandArguments()
@@ -172,7 +206,10 @@ namespace Mohammad.ServiceProcess
             Console.Title = $"{ApplicationHelper.ApplicationTitle} - {ApplicationHelper.Version}";
             var taskList = new TaskList();
             if (!Instance.CanPauseOnEnded && !forcedPause)
+            {
                 return;
+            }
+
             Highlight("Ready. (Press [X] to exit)");
             taskList.Run(WaitForUserToExit);
             taskList.Run(WaitForInternalShutdown);
@@ -189,41 +226,13 @@ namespace Mohammad.ServiceProcess
             While(() => AskKey("", true).Key != ConsoleKey.X);
         }
 
-        protected virtual void OnInstalling()
-        {
-        }
-
-        protected virtual void OnUninstalling()
-        {
-        }
-
-        public event EventHandler<ItemActingEventArgs<Exception>> UnhandlesExceptionOccurred;
-
-        protected virtual void OnUnhandlesExceptionOccurred(ItemActingEventArgs<Exception> e)
-        {
-            this.UnhandlesExceptionOccurred?.Invoke(this, e);
-        }
-
         private void FinalizeComponents()
         {
             this.OnFinalizing();
         }
 
-        protected virtual void OnInitializing()
-        {
-        }
-
-        protected virtual void OnFinalizing()
-        {
-        }
-
         private IEnumerable<LibraryWindowsServiceBase> GetServices() => this.OnGettingServices();
 
-        protected abstract IEnumerable<LibraryWindowsServiceBase> OnGettingServices();
-
-        public void Shutdown()
-        {
-            this._HoldeResetEvent.Set();
-        }
+        public event EventHandler<ItemActingEventArgs<Exception>> UnhandlesExceptionOccurred;
     }
 }

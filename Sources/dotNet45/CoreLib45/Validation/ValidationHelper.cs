@@ -21,17 +21,26 @@ namespace Mohammad.Validation
             where TException : ExceptionBase
         {
             if (isValid == null)
+            {
                 throw new ArgumentNullException(nameof(isValid));
+            }
+
             try
             {
                 if (!isValid())
+                {
                     ExceptionBase.WrapThrow<TException>(message, owner);
+                }
+
                 onIsValid?.Invoke();
             }
             catch (TException ex)
             {
                 if (onIsNotValid != null && onIsNotValid(ex))
+                {
                     return;
+                }
+
                 throw;
             }
         }
@@ -58,40 +67,40 @@ namespace Mohammad.Validation
             where TException : ExceptionBase
         {
             Validate<TException>(isValid,
-                                 message,
-                                 onIsValid,
-                                 ex =>
-                                 {
-                                     onIsNotValid?.Invoke(ex);
-                                     return false;
-                                 },
-                                 owner);
+                message,
+                onIsValid,
+                ex =>
+                {
+                    onIsNotValid?.Invoke(ex);
+                    return false;
+                },
+                owner);
         }
 
         public static void Validate(Func<bool> isValid, string message, Action onIsValid, Action<ValidationException> onIsNotValid, object owner)
         {
             Validate<ValidationException>(isValid,
-                                          message,
-                                          onIsValid,
-                                          ex =>
-                                          {
-                                              onIsNotValid?.Invoke(ex);
-                                              return false;
-                                          },
-                                          owner);
+                message,
+                onIsValid,
+                ex =>
+                {
+                    onIsNotValid?.Invoke(ex);
+                    return false;
+                },
+                owner);
         }
 
         public static void Validate(Func<bool> isValid, string message, Action<ValidationException> onIsNotValid, object owner)
         {
             Validate<ValidationException>(isValid,
-                                          message,
-                                          null,
-                                          ex =>
-                                          {
-                                              onIsNotValid?.Invoke(ex);
-                                              return false;
-                                          },
-                                          owner);
+                message,
+                null,
+                ex =>
+                {
+                    onIsNotValid?.Invoke(ex);
+                    return false;
+                },
+                owner);
         }
 
         public static void Validate(Func<bool> isValid, string message, Action onIsValid, Func<Exception, bool> onIsNotValid, object owner)
@@ -116,39 +125,51 @@ namespace Mohammad.Validation
 
         public static void Validate(Func<bool> isValid, string message)
         {
-            Validate(isValid, message, null, (Action<ValidationException>) null, null);
+            Validate(isValid, message, null, (Action<ValidationException>)null, null);
         }
 
-        public static void ArgumentNotNull(string argument, string argumentName, Action onIsValid = null, Func<Exception, bool> onIsNotValid = null,
-                                           object owner = null)
+        public static void ArgumentNotNull(string argument,
+            string argumentName,
+            Action onIsValid = null,
+            Func<Exception, bool> onIsNotValid = null,
+            object owner = null)
         {
             Validate<NotNullOrZeroValidationException>(() => argument != null, $"'{argumentName}' cannot be null", onIsValid, onIsNotValid, owner);
         }
 
-        public static void ArgumentNotNullOrEmpty(string argument, string argumentName, Action onIsValid = null, Func<Exception, bool> onIsNotValid = null,
-                                                  object owner = null)
+        public static void ArgumentNotNullOrEmpty(string argument,
+            string argumentName,
+            Action onIsValid = null,
+            Func<Exception, bool> onIsNotValid = null,
+            object owner = null)
         {
             Validate<NotNullOrZeroValidationException>(() => !argument.IsNullOrEmpty(),
-                                                       $"'{argumentName}' cannot be null or empty",
-                                                       onIsValid,
-                                                       onIsNotValid,
-                                                       owner);
+                $"'{argumentName}' cannot be null or empty",
+                onIsValid,
+                onIsNotValid,
+                owner);
         }
 
-        public static void ArgumentNotNumer(string argument, string argumentName, Action onIsValid = null, Func<Exception, bool> onIsNotValid = null,
-                                            object owner = null)
+        public static void ArgumentNotNumer(string argument,
+            string argumentName,
+            Action onIsValid = null,
+            Func<Exception, bool> onIsNotValid = null,
+            object owner = null)
         {
             Validate<NotNumberValidationException>(argument.IsNumber, $"'{argumentName}' must be a number", onIsValid, onIsNotValid, owner);
         }
 
-        public static void ArgumentNotZero(IEnumerable enumerable, string argumentName, Action onIsInvalid = null, Func<Exception, bool> onIsNotValid = null,
-                                           object      owner = null)
+        public static void ArgumentNotZero(IEnumerable enumerable,
+            string argumentName,
+            Action onIsInvalid = null,
+            Func<Exception, bool> onIsNotValid = null,
+            object owner = null)
         {
             Validate<NotNullOrZeroValidationException>(() => enumerable != null && enumerable.Any(),
-                                                       $"'{argumentName}' cannot be null or empty",
-                                                       onIsInvalid,
-                                                       onIsNotValid,
-                                                       owner);
+                $"'{argumentName}' cannot be null or empty",
+                onIsInvalid,
+                onIsNotValid,
+                owner);
         }
 
         /// <summary>
@@ -160,7 +181,7 @@ namespace Mohammad.Validation
         ///     The invalid items according to the specific item.
         /// </returns>
         public static IEnumerable<string> FindInvalids(this IEnumerable<string> items, Func<object, bool> isValid) => items.Where(i => !isValid(i))
-                                                                                                                           .Select(i => i);
+            .Select(i => i);
 
         /// <summary>
         ///     Finds null or empty strings.
@@ -186,10 +207,10 @@ namespace Mohammad.Validation
         /// <param name="items">The items.</param>
         /// <returns>The null or empty strings.</returns>
         public static IEnumerable<(string data, string name)> FindNullsOrEmpties(this IEnumerable<(string data, string name)> items) => items
-                                                                                                                                       .Where(
-                                                                                                                                            i => i
-                                                                                                                                                .data
-                                                                                                                                                .IsNullOrEmpty())
-                                                                                                                                       .Select(i => i);
+            .Where(
+                i => i
+                    .data
+                    .IsNullOrEmpty())
+            .Select(i => i);
     }
 }

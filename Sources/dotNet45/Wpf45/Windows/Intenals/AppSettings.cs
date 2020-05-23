@@ -8,7 +8,7 @@ namespace Mohammad.Wpf.Windows.Intenals
 
         public WindowSettings LibraryMainWindow
         {
-            get { return this._LibraryMainWindow ?? (this._LibraryMainWindow = new WindowSettings()); }
+            get => this._LibraryMainWindow ?? (this._LibraryMainWindow = new WindowSettings());
             set
             {
                 this._LibraryMainWindow = value;

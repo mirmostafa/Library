@@ -9,8 +9,8 @@ namespace Mohammad.BusinessModel.MessageExchange
 {
     public interface IActionResult
     {
-        int    StatusCode { get; }
-        string Message    { get; }
+        int StatusCode { get; }
+        string Message { get; }
 
         bool IsSucceed { get; }
     }

@@ -15,7 +15,10 @@ namespace Mohammad.Win.Controls
         /// <summary>
         ///     Constructs a new instance.
         /// </summary>
-        public DialogBoxController() { this.InitializeComponent(); }
+        public DialogBoxController()
+        {
+            this.InitializeComponent();
+        }
 
         /// <summary>
         ///     Constructs a new instance depending on the given container
@@ -24,7 +27,9 @@ namespace Mohammad.Win.Controls
         public DialogBoxController(IContainer container)
         {
             if (container != null)
+            {
                 container.Add(this);
+            }
 
             this.InitializeComponent();
         }
@@ -38,14 +43,18 @@ namespace Mohammad.Win.Controls
             try
             {
                 if (disposing && this.components != null)
+                {
                     this.components.Dispose();
+                }
 
                 if (!this.disposed)
+                {
                     if (disposing)
                     {
                         this.Enable = false;
                         this.Font.Dispose();
                     }
+                }
             }
             finally
             {

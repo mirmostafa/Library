@@ -71,7 +71,9 @@ namespace CoreLib45.Test
 
     internal class SingletonTest1 : Singleton<SingletonTest1>
     {
-        protected SingletonTest1() { }
+        protected SingletonTest1()
+        {
+        }
     }
 
     internal class SingletonTest2 : Singleton<SingletonTest2>
@@ -84,7 +86,10 @@ namespace CoreLib45.Test
         private static readonly Lazy<SingletonTest3> _Instance = ObjectHelper.GenerateLazySingletonInstance<SingletonTest3>();
 
         public static SingletonTest3 Instance => _Instance.Value;
-        private SingletonTest3() { }
+
+        private SingletonTest3()
+        {
+        }
     }
 
     internal class SingletonTest4 : ISingleton<SingletonTest4>
@@ -107,15 +112,17 @@ namespace CoreLib45.Test
     internal class SingletonTest6Base<T> : Singleton<T>
         where T : class, ISingleton<T>
     {
-        protected SingletonTest6Base() { }
+        protected SingletonTest6Base()
+        {
+        }
     }
 
     internal class SingletonTest6 : SingletonTest6Base<SingletonTest6>
     {
         private SingletonTest6()
         {
-            
         }
+
         public string Fake() => "Ali";
     }
 }

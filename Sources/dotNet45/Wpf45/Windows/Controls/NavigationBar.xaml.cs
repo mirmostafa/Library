@@ -20,8 +20,6 @@ namespace Mohammad.Wpf.Windows.Controls
     /// </summary>
     public partial class NavigationBar
     {
-        private bool _IsLoaded;
-
         public static readonly DependencyProperty FrameProperty = DependencyProperty.Register("Frame",
             typeof(LibFrame),
             typeof(NavigationBar),
@@ -30,18 +28,34 @@ namespace Mohammad.Wpf.Windows.Controls
                 {
                     var me = sender.As<NavigationBar>();
                     foreach (var cmd in me.NavigationCommands)
+                    {
                         cmd.Frame = me.Frame;
+                    }
                 }));
-
-        public LibFrame Frame { get => (LibFrame) this.GetValue(FrameProperty); set => this.SetValue(FrameProperty, value); }
 
         public static readonly DependencyProperty ToggleButtonsStyleProperty =
             DependencyProperty.Register("ToggleButtonsStyle", typeof(Style), typeof(NavigationBar), new PropertyMetadata(null));
 
-        public Style ToggleButtonsStyle { get => (Style) this.GetValue(ToggleButtonsStyleProperty); set => this.SetValue(ToggleButtonsStyleProperty, value); }
+        private bool _IsLoaded;
+
+        public LibFrame Frame
+        {
+            get => (LibFrame)this.GetValue(FrameProperty);
+            set => this.SetValue(FrameProperty, value);
+        }
+
+        public Style ToggleButtonsStyle
+        {
+            get => (Style)this.GetValue(ToggleButtonsStyleProperty);
+            set => this.SetValue(ToggleButtonsStyleProperty, value);
+        }
 
         public List<NavigationCommand> NavigationCommands { get; } = new List<NavigationCommand>();
-        public NavigationBar() { this.InitializeComponent(); }
+
+        public NavigationBar()
+        {
+            this.InitializeComponent();
+        }
 
         public override void OnApplyTemplate()
         {
@@ -62,7 +76,10 @@ namespace Mohammad.Wpf.Windows.Controls
                 var btn = new ToggleButton();
                 LibCommand.SetMyCommand(btn, cmd);
                 if (this.ToggleButtonsStyle != null)
+                {
                     btn.Style = this.ToggleButtonsStyle;
+                }
+
                 this.PageButtonPanel.Children.Add(btn);
             }
         }
@@ -70,7 +87,10 @@ namespace Mohammad.Wpf.Windows.Controls
         private void NavigationBar_OnLoaded(object sender, RoutedEventArgs e)
         {
             if (this._IsLoaded)
+            {
                 return;
+            }
+
             this.NavigationCommands.FirstOrDefault(cmd => cmd.IsDefault)?.Execute();
             this._IsLoaded = true;
         }

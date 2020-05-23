@@ -15,14 +15,13 @@ namespace Mohammad.Net
     {
         private long _BytesReceivedLast;
         private long _BytesSentLast;
-        public Nic(NetworkInterface networkInterface) => this.NetworkInterface = networkInterface;
 
         public int BytesSent
         {
             get
             {
                 var interfaceStats = this.NetworkInterface.GetIPv4Statistics();
-                var result         = interfaceStats.BytesSent - this._BytesSentLast;
+                var result = interfaceStats.BytesSent - this._BytesSentLast;
                 this._BytesSentLast = interfaceStats.BytesSent;
                 return result.ToInt() / 1024;
             }
@@ -33,13 +32,14 @@ namespace Mohammad.Net
             get
             {
                 var interfaceStats = this.NetworkInterface.GetIPv4Statistics();
-                var result         = interfaceStats.BytesSent - this._BytesReceivedLast;
+                var result = interfaceStats.BytesSent - this._BytesReceivedLast;
                 this._BytesReceivedLast = interfaceStats.BytesReceived;
                 return result.ToInt();
             }
         }
 
-        public        NetworkInterface              NetworkInterface              { get; }
+        public NetworkInterface NetworkInterface { get; }
+        public Nic(NetworkInterface networkInterface) => this.NetworkInterface = networkInterface;
         public static IEnumerable<NetworkInterface> GetAllNetworkInterfaceCards() => NetworkInterface.GetAllNetworkInterfaces();
     }
 }

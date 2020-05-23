@@ -15,7 +15,10 @@ namespace Mohammad.Compression
         public static byte[] Compress(byte[] bytes)
         {
             if (bytes == null)
+            {
                 return null;
+            }
+
             using (var result = new MemoryStream())
             using (var gZip = new GZipStream(result, CompressionMode.Compress))
             {
@@ -28,12 +31,15 @@ namespace Mohammad.Compression
         public static byte[] Decompress(byte[] bytes)
         {
             if (bytes == null)
+            {
                 return null;
+            }
+
             using (var result = new MemoryStream())
             using (var gZip = new GZipStream(new MemoryStream(bytes), CompressionMode.Decompress))
             {
                 var buffer = new byte[1024];
-                var count  = 1024;
+                var count = 1024;
                 while (count == 1024)
                 {
                     count = gZip.Read(buffer, 0, 1024);

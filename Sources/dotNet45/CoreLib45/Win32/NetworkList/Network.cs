@@ -23,8 +23,6 @@ namespace Mohammad.Win32.NetworkList
     {
         private readonly INetwork network;
 
-        internal Network(INetwork network) => this.network = network;
-
         /// <summary>
         ///     Gets or sets the category of a network. The
         ///     categories are trusted, untrusted, or
@@ -55,7 +53,7 @@ namespace Mohammad.Win32.NetworkList
                 long time = high;
                 // Shift the day info into the high order bits.
                 time <<= 32;
-                time |=  low;
+                time |= low;
                 return DateTime.FromFileTimeUtc(time);
             }
         }
@@ -97,7 +95,7 @@ namespace Mohammad.Win32.NetworkList
                 long time = high;
                 //Shift the value into the high order bits.
                 time <<= 32;
-                time |=  low;
+                time |= low;
                 return DateTime.FromFileTimeUtc(time);
             }
         }
@@ -165,5 +163,7 @@ namespace Mohammad.Win32.NetworkList
         ///     A <see cref="System.Guid" /> value.
         /// </value>
         public Guid NetworkId => this.network.GetNetworkId();
+
+        internal Network(INetwork network) => this.network = network;
     }
 }

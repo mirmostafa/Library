@@ -36,36 +36,53 @@ namespace Mohammad.Helpers
 
         public static void DecryptSection(string appLocation = null, string sectionName = "appSettings")
         {
-            var config  = GetConfiguration(appLocation);
+            var config = GetConfiguration(appLocation);
             var section = config.GetSection(sectionName);
             if (section == null)
+            {
                 return;
+            }
+
             if (section.SectionInformation.IsProtected)
+            {
                 return;
+            }
+
             section.SectionInformation.ProtectSection("DataProtectionConfigurationProvider");
             config.Save();
         }
 
         public static void EncryptConfigFile<TProgram>(bool encrypt)
         {
-            var config                   = GetConfiguration<TProgram>();
+            var config = GetConfiguration<TProgram>();
             var connectionStringsSection = GetConnectionStringSection(config);
 
             if (encrypt)
+            {
                 connectionStringsSection.SectionInformation.UnprotectSection();
+            }
             else
+            {
                 connectionStringsSection.SectionInformation.ProtectSection("DataProtectionConfigurationProvider");
+            }
+
             config.Save();
         }
 
         public static void EncryptSection(string appLocation = null, string sectionName = "appSettings")
         {
-            var config  = GetConfiguration(appLocation);
+            var config = GetConfiguration(appLocation);
             var section = config.GetSection(sectionName);
             if (section == null)
+            {
                 return;
+            }
+
             if (!section.SectionInformation.IsProtected)
+            {
                 return;
+            }
+
             section.SectionInformation.UnprotectSection();
             config.Save();
         }
@@ -73,14 +90,16 @@ namespace Mohammad.Helpers
         public static VersionInfo GetAssemblyVersion(string filePath)
         {
             var file = new FileInfo(filePath);
-            return ((VersionInfo) Assembly.LoadFile(Path.Combine(file.DirectoryName ?? throw new InvalidOperationException(), file.Name)).ToString().Split(',')
-                                          .First(s => s.Trim().StartsWith("Version"))
-                                          .Substring(Assembly.LoadFile(Path.Combine(file.DirectoryName, file.Name))
-                                                             .ToString()
-                                                             .Split(',')
-                                                             .First(s => s.Trim().StartsWith("Version"))
-                                                             .IndexOf("=", StringComparison.Ordinal) + 1))
-               .ToString();
+            return ((VersionInfo)Assembly.LoadFile(Path.Combine(file.DirectoryName ?? throw new InvalidOperationException(), file.Name))
+                    .ToString()
+                    .Split(',')
+                    .First(s => s.Trim().StartsWith("Version"))
+                    .Substring(Assembly.LoadFile(Path.Combine(file.DirectoryName, file.Name))
+                        .ToString()
+                        .Split(',')
+                        .First(s => s.Trim().StartsWith("Version"))
+                        .IndexOf("=", StringComparison.Ordinal) + 1))
+                .ToString();
         }
 
         /// <summary>
@@ -123,25 +142,16 @@ namespace Mohammad.Helpers
         /// <returns> </returns>
         public static NameValueCollection GetConfig() => ConfigurationManager.AppSettings;
 
-        private static Configuration GetConfiguration<TProgram>() =>
-            ConfigurationManager.OpenExeConfiguration(Assembly.GetAssembly(typeof(TProgram)).Location);
-
-        private static Configuration GetConfiguration(string appLocation = null) => appLocation.IsNullOrEmpty()
-            ? ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
-            : ConfigurationManager.OpenExeConfiguration(appLocation);
-
         /// <summary>
         ///     Application Configuration (AppConfig)
         /// </summary>
         /// <returns> </returns>
         public static string GetConnectionString<TProgram>(string name)
         {
-            var config                   = GetConfiguration<TProgram>();
+            var config = GetConfiguration<TProgram>();
             var connectionStringsSection = GetConnectionStringSection(config);
             return connectionStringsSection.ConnectionStrings[name].ConnectionString;
         }
-
-        private static ConnectionStringsSection GetConnectionStringSection(Configuration config) => (ConnectionStringsSection) config.GetSection("connectionStrings");
 
         public static bool IsAssemblyDebugBuild(Assembly assembly)
         {
@@ -158,10 +168,12 @@ namespace Mohammad.Helpers
         public static void Prepare(string cultureName, bool setPersianCalendar = false)
         {
             var culture = new CultureInfo(cultureName);
-            Thread.CurrentThread.CurrentCulture   = culture;
+            Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
             if (setPersianCalendar)
+            {
                 PersianCultureHelper.SetPersianOptions(culture);
+            }
         }
 
         /// <summary>
@@ -169,10 +181,19 @@ namespace Mohammad.Helpers
         /// </summary>
         public static void SetConnectionString<TProgram>(string name, string connectionString)
         {
-            var config                   = GetConfiguration<TProgram>();
+            var config = GetConfiguration<TProgram>();
             var connectionStringsSection = GetConnectionStringSection(config);
             connectionStringsSection.ConnectionStrings[name].ConnectionString = connectionString;
             config.Save();
         }
+
+        private static Configuration GetConfiguration<TProgram>() =>
+            ConfigurationManager.OpenExeConfiguration(Assembly.GetAssembly(typeof(TProgram)).Location);
+
+        private static Configuration GetConfiguration(string appLocation = null) => appLocation.IsNullOrEmpty()
+            ? ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
+            : ConfigurationManager.OpenExeConfiguration(appLocation);
+
+        private static ConnectionStringsSection GetConnectionStringSection(Configuration config) => (ConnectionStringsSection)config.GetSection("connectionStrings");
     }
 }

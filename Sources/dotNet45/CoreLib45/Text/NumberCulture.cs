@@ -2,7 +2,7 @@
 {
     public enum NumberCulture
     {
-        None    = 0,
+        None = 0,
         Persian = 1,
         English = 2
     }

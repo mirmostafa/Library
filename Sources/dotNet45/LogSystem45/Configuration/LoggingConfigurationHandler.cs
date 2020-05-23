@@ -23,7 +23,11 @@ namespace Mohammad.Logging.Configuration
         #region Severity
 
         [ConfigurationProperty("severity", DefaultValue = LoggingSeverity.High)]
-        public LoggingSeverity Severity { get { return (LoggingSeverity) base[_Severity]; } set { base[_Severity] = value; } }
+        public LoggingSeverity Severity
+        {
+            get => (LoggingSeverity)base[_Severity];
+            set => base[_Severity] = value;
+        }
 
         #endregion
 
@@ -33,7 +37,7 @@ namespace Mohammad.Logging.Configuration
 
         #region LoggingConfigurationHandler
 
-        public LoggingConfigurationHandler() { this.Severity = LoggingSeverity.High; }
+        public LoggingConfigurationHandler() => this.Severity = LoggingSeverity.High;
 
         #endregion
 

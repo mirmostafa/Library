@@ -12,7 +12,7 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the solid color to use when the check box is selected and gradients are being used.
         /// </summary>
-        public override Color CheckBackground { get { return _checkBack; } }
+        public override Color CheckBackground => _checkBack;
 
         #endregion
 
@@ -21,7 +21,7 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the starting color of the gradient used in the image margin of a ToolStripDropDownMenu.
         /// </summary>
-        public override Color ImageMarginGradientBegin { get { return _imageMargin; } }
+        public override Color ImageMarginGradientBegin => _imageMargin;
 
         #endregion
 
@@ -30,7 +30,7 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the border color or a MenuStrip.
         /// </summary>
-        public override Color MenuBorder { get { return _menuBorder; } }
+        public override Color MenuBorder => _menuBorder;
 
         #endregion
 
@@ -76,17 +76,17 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the starting color of the gradient used when the button is pressed down.
         /// </summary>
-        public override Color ButtonPressedGradientBegin { get { return _buttonPressedBegin; } }
+        public override Color ButtonPressedGradientBegin => _buttonPressedBegin;
 
         /// <summary>
         ///     Gets the end color of the gradient used when the button is pressed down.
         /// </summary>
-        public override Color ButtonPressedGradientEnd { get { return _buttonPressedEnd; } }
+        public override Color ButtonPressedGradientEnd => _buttonPressedEnd;
 
         /// <summary>
         ///     Gets the middle color of the gradient used when the button is pressed down.
         /// </summary>
-        public override Color ButtonPressedGradientMiddle { get { return _buttonPressedMiddle; } }
+        public override Color ButtonPressedGradientMiddle => _buttonPressedMiddle;
 
         #endregion
 
@@ -95,22 +95,22 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the starting color of the gradient used when the button is selected.
         /// </summary>
-        public override Color ButtonSelectedGradientBegin { get { return _buttonSelectedBegin; } }
+        public override Color ButtonSelectedGradientBegin => _buttonSelectedBegin;
 
         /// <summary>
         ///     Gets the end color of the gradient used when the button is selected.
         /// </summary>
-        public override Color ButtonSelectedGradientEnd { get { return _buttonSelectedEnd; } }
+        public override Color ButtonSelectedGradientEnd => _buttonSelectedEnd;
 
         /// <summary>
         ///     Gets the middle color of the gradient used when the button is selected.
         /// </summary>
-        public override Color ButtonSelectedGradientMiddle { get { return _buttonSelectedMiddle; } }
+        public override Color ButtonSelectedGradientMiddle => _buttonSelectedMiddle;
 
         /// <summary>
         ///     Gets the border color to use with ButtonSelectedHighlight.
         /// </summary>
-        public override Color ButtonSelectedHighlightBorder { get { return _buttonBorder; } }
+        public override Color ButtonSelectedHighlightBorder => _buttonBorder;
 
         #endregion
 
@@ -119,12 +119,12 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the color to use for shadow effects on the grip or move handle.
         /// </summary>
-        public override Color GripDark { get { return _gripDark; } }
+        public override Color GripDark => _gripDark;
 
         /// <summary>
         ///     Gets the color to use for highlight effects on the grip or move handle.
         /// </summary>
-        public override Color GripLight { get { return _gripLight; } }
+        public override Color GripLight => _gripLight;
 
         #endregion
 
@@ -133,27 +133,27 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the starting color of the gradient used when a top-level ToolStripMenuItem is pressed down.
         /// </summary>
-        public override Color MenuItemPressedGradientBegin { get { return _toolStripBegin; } }
+        public override Color MenuItemPressedGradientBegin => _toolStripBegin;
 
         /// <summary>
         ///     Gets the end color of the gradient used when a top-level ToolStripMenuItem is pressed down.
         /// </summary>
-        public override Color MenuItemPressedGradientEnd { get { return _toolStripEnd; } }
+        public override Color MenuItemPressedGradientEnd => _toolStripEnd;
 
         /// <summary>
         ///     Gets the middle color of the gradient used when a top-level ToolStripMenuItem is pressed down.
         /// </summary>
-        public override Color MenuItemPressedGradientMiddle { get { return _toolStripMiddle; } }
+        public override Color MenuItemPressedGradientMiddle => _toolStripMiddle;
 
         /// <summary>
         ///     Gets the starting color of the gradient used when the ToolStripMenuItem is selected.
         /// </summary>
-        public override Color MenuItemSelectedGradientBegin { get { return _menuItemSelectedBegin; } }
+        public override Color MenuItemSelectedGradientBegin => _menuItemSelectedBegin;
 
         /// <summary>
         ///     Gets the end color of the gradient used when the ToolStripMenuItem is selected.
         /// </summary>
-        public override Color MenuItemSelectedGradientEnd { get { return _menuItemSelectedEnd; } }
+        public override Color MenuItemSelectedGradientEnd => _menuItemSelectedEnd;
 
         #endregion
 
@@ -162,12 +162,12 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the starting color of the gradient used in the MenuStrip.
         /// </summary>
-        public override Color MenuStripGradientBegin { get { return _menuToolBack; } }
+        public override Color MenuStripGradientBegin => _menuToolBack;
 
         /// <summary>
         ///     Gets the end color of the gradient used in the MenuStrip.
         /// </summary>
-        public override Color MenuStripGradientEnd { get { return _menuToolBack; } }
+        public override Color MenuStripGradientEnd => _menuToolBack;
 
         #endregion
 
@@ -176,17 +176,17 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the starting color of the gradient used in the ToolStripOverflowButton.
         /// </summary>
-        public override Color OverflowButtonGradientBegin { get { return _overflowBegin; } }
+        public override Color OverflowButtonGradientBegin => _overflowBegin;
 
         /// <summary>
         ///     Gets the end color of the gradient used in the ToolStripOverflowButton.
         /// </summary>
-        public override Color OverflowButtonGradientEnd { get { return _overflowEnd; } }
+        public override Color OverflowButtonGradientEnd => _overflowEnd;
 
         /// <summary>
         ///     Gets the middle color of the gradient used in the ToolStripOverflowButton.
         /// </summary>
-        public override Color OverflowButtonGradientMiddle { get { return _overflowMiddle; } }
+        public override Color OverflowButtonGradientMiddle => _overflowMiddle;
 
         #endregion
 
@@ -195,12 +195,12 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the starting color of the gradient used in the ToolStripContainer.
         /// </summary>
-        public override Color RaftingContainerGradientBegin { get { return _menuToolBack; } }
+        public override Color RaftingContainerGradientBegin => _menuToolBack;
 
         /// <summary>
         ///     Gets the end color of the gradient used in the ToolStripContainer.
         /// </summary>
-        public override Color RaftingContainerGradientEnd { get { return _menuToolBack; } }
+        public override Color RaftingContainerGradientEnd => _menuToolBack;
 
         #endregion
 
@@ -209,12 +209,12 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the color to use to for shadow effects on the ToolStripSeparator.
         /// </summary>
-        public override Color SeparatorDark { get { return _separatorDark; } }
+        public override Color SeparatorDark => _separatorDark;
 
         /// <summary>
         ///     Gets the color to use to for highlight effects on the ToolStripSeparator.
         /// </summary>
-        public override Color SeparatorLight { get { return _separatorLight; } }
+        public override Color SeparatorLight => _separatorLight;
 
         #endregion
 
@@ -223,12 +223,12 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the starting color of the gradient used on the StatusStrip.
         /// </summary>
-        public override Color StatusStripGradientBegin { get { return _statusStripLight; } }
+        public override Color StatusStripGradientBegin => _statusStripLight;
 
         /// <summary>
         ///     Gets the end color of the gradient used on the StatusStrip.
         /// </summary>
-        public override Color StatusStripGradientEnd { get { return _statusStripDark; } }
+        public override Color StatusStripGradientEnd => _statusStripDark;
 
         #endregion
 
@@ -237,47 +237,47 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Gets the border color to use on the bottom edge of the ToolStrip.
         /// </summary>
-        public override Color ToolStripBorder { get { return _toolStripBorder; } }
+        public override Color ToolStripBorder => _toolStripBorder;
 
         /// <summary>
         ///     Gets the starting color of the gradient used in the ToolStripContentPanel.
         /// </summary>
-        public override Color ToolStripContentPanelGradientBegin { get { return _toolStripContentEnd; } }
+        public override Color ToolStripContentPanelGradientBegin => _toolStripContentEnd;
 
         /// <summary>
         ///     Gets the end color of the gradient used in the ToolStripContentPanel.
         /// </summary>
-        public override Color ToolStripContentPanelGradientEnd { get { return _menuToolBack; } }
+        public override Color ToolStripContentPanelGradientEnd => _menuToolBack;
 
         /// <summary>
         ///     Gets the solid background color of the ToolStripDropDown.
         /// </summary>
-        public override Color ToolStripDropDownBackground { get { return _contextMenuBack; } }
+        public override Color ToolStripDropDownBackground => _contextMenuBack;
 
         /// <summary>
         ///     Gets the starting color of the gradient used in the ToolStrip background.
         /// </summary>
-        public override Color ToolStripGradientBegin { get { return _toolStripBegin; } }
+        public override Color ToolStripGradientBegin => _toolStripBegin;
 
         /// <summary>
         ///     Gets the end color of the gradient used in the ToolStrip background.
         /// </summary>
-        public override Color ToolStripGradientEnd { get { return _toolStripEnd; } }
+        public override Color ToolStripGradientEnd => _toolStripEnd;
 
         /// <summary>
         ///     Gets the middle color of the gradient used in the ToolStrip background.
         /// </summary>
-        public override Color ToolStripGradientMiddle { get { return _toolStripMiddle; } }
+        public override Color ToolStripGradientMiddle => _toolStripMiddle;
 
         /// <summary>
         ///     Gets the starting color of the gradient used in the ToolStripPanel.
         /// </summary>
-        public override Color ToolStripPanelGradientBegin { get { return _menuToolBack; } }
+        public override Color ToolStripPanelGradientBegin => _menuToolBack;
 
         /// <summary>
         ///     Gets the end color of the gradient used in the ToolStripPanel.
         /// </summary>
-        public override Color ToolStripPanelGradientEnd { get { return _menuToolBack; } }
+        public override Color ToolStripPanelGradientEnd => _menuToolBack;
 
         #endregion
     }

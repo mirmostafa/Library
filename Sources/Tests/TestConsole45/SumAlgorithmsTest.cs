@@ -58,6 +58,7 @@ namespace TestConsole45
                     this.Info($"Running {actor.Name}");
                     this._Data.Info.Add((Run(actor), actor.Name));
                 }
+
                 this.CurrentOperationIncreased($"Phase {i} of {max}");
             }
         }
@@ -65,16 +66,16 @@ namespace TestConsole45
         private void InitializeActors()
         {
             this._Data = new Data
-                         {
-                             Actors = new List<(Func<IEnumerable<long>, long> Sun, string Name)>
-                                      {
-                                          (SumAlgorithms.Sum1, "Sum1"),
-                                          (SumAlgorithms.Sum2, "Sum2"),
-                                          (SumAlgorithms.Sum3, "Sum3"),
-                                          (SumAlgorithms.Sum4, "Sum4")
-                                      },
-                             Info = new List<(TimeSpan Calc, string Name)>()
-                         };
+            {
+                Actors = new List<(Func<IEnumerable<long>, long> Sun, string Name)>
+                {
+                    (SumAlgorithms.Sum1, "Sum1"),
+                    (SumAlgorithms.Sum2, "Sum2"),
+                    (SumAlgorithms.Sum3, "Sum3"),
+                    (SumAlgorithms.Sum4, "Sum4")
+                },
+                Info = new List<(TimeSpan Calc, string Name)>()
+            };
         }
 
         private static TimeSpan Run((Func<IEnumerable<long>, long> Sun, string Name) actor)
@@ -88,7 +89,10 @@ namespace TestConsole45
             {
                 var result = 0L;
                 foreach (var num in nums)
+                {
                     result += num;
+                }
+
                 return result;
             }
 
@@ -96,7 +100,10 @@ namespace TestConsole45
             {
                 var result = 0L;
                 foreach (var num in nums.AsParallel())
+                {
                     result += num;
+                }
+
                 return result;
             }
 

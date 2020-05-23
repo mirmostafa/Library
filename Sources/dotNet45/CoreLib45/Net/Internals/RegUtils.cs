@@ -16,7 +16,7 @@ namespace Mohammad.Net.Internals
         {
             RegistryKey oRegKey = null;
 
-            switch ((int) keyType)
+            switch ((int)keyType)
             {
                 case 1:
                     oRegKey = Registry.CurrentUser;
@@ -28,7 +28,7 @@ namespace Mohammad.Net.Internals
 
             oRegKey = oRegKey.OpenSubKey(regKey);
 
-            value = (byte[]) oRegKey.GetValue(name);
+            value = (byte[])oRegKey.GetValue(name);
 
             oRegKey.Close();
         }
@@ -38,7 +38,7 @@ namespace Mohammad.Net.Internals
         {
             RegistryKey oRegKey = null;
 
-            switch ((int) keyType)
+            switch ((int)keyType)
             {
                 case 1:
                     oRegKey = Registry.CurrentUser;
@@ -50,7 +50,7 @@ namespace Mohammad.Net.Internals
 
             oRegKey = oRegKey.OpenSubKey(regKey);
 
-            value = (int) oRegKey.GetValue(name, null);
+            value = (int)oRegKey.GetValue(name, null);
 
             oRegKey.Close();
         }
@@ -60,7 +60,7 @@ namespace Mohammad.Net.Internals
         {
             RegistryKey oRegKey = null;
 
-            switch ((int) keyType)
+            switch ((int)keyType)
             {
                 case 1:
                     oRegKey = Registry.CurrentUser;
@@ -72,7 +72,7 @@ namespace Mohammad.Net.Internals
 
             oRegKey = oRegKey.OpenSubKey(regKey);
 
-            value = (string) oRegKey.GetValue(name);
+            value = (string)oRegKey.GetValue(name);
 
             oRegKey.Close();
         }
@@ -82,7 +82,7 @@ namespace Mohammad.Net.Internals
         {
             RegistryKey oRegKey = null;
 
-            switch ((int) keyType)
+            switch ((int)keyType)
             {
                 case 1:
                     oRegKey = Registry.CurrentUser;
@@ -104,7 +104,7 @@ namespace Mohammad.Net.Internals
         {
             RegistryKey oRegKey = null;
 
-            switch ((int) keyType)
+            switch ((int)keyType)
             {
                 case 1:
                     oRegKey = Registry.CurrentUser;
@@ -126,7 +126,7 @@ namespace Mohammad.Net.Internals
         {
             RegistryKey oRegKey = null;
 
-            switch ((int) keyType)
+            switch ((int)keyType)
             {
                 case 1:
                     oRegKey = Registry.CurrentUser;
@@ -145,7 +145,7 @@ namespace Mohammad.Net.Internals
 
         internal enum RegKeyType
         {
-            CurrentUser  = 1,
+            CurrentUser = 1,
             LocalMachine = 2
         }
     }

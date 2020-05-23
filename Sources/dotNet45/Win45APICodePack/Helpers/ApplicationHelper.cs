@@ -8,12 +8,13 @@ namespace Library45.Win.Helpers
 {
     public static class ApplicationHelper
     {
-        public static event EventHandler<ExceptionOccurredEventArgs> ExceptionOccurred;
-
         public static void CatchExceptions(Action<object, Exception> handler = null)
         {
             if (handler == null)
+            {
                 handler = DefualtExecptionHandler;
+            }
+
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (sender, e) =>
             {
@@ -27,9 +28,15 @@ namespace Library45.Win.Helpers
         {
             ExceptionOccurred.Raise(sender, new ExceptionOccurredEventArgs(e));
             if (e.InnerException == null)
+            {
                 MsgBoxEx.Error(text: e.Message);
+            }
             else
+            {
                 MsgBoxEx.Error(text: e.Message, detailsExpandedText: e.GetBaseException().Message);
+            }
         }
+
+        public static event EventHandler<ExceptionOccurredEventArgs> ExceptionOccurred;
     }
 }

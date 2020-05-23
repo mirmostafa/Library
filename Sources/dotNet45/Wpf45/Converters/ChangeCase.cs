@@ -16,10 +16,11 @@ namespace Mohammad.Wpf.Converters
 
                 return strValue.ToUpperInvariant();
             }
+
             return null;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { throw new NotSupportedException(); }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
     }
 
     [ValueConversion(typeof(string), typeof(string))]
@@ -33,10 +34,11 @@ namespace Mohammad.Wpf.Converters
 
                 return strValue.ToLowerInvariant();
             }
+
             return null;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { throw new NotSupportedException(); }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
     }
 
     [ValueConversion(typeof(string), typeof(string))]
@@ -50,9 +52,10 @@ namespace Mohammad.Wpf.Converters
 
                 return strValue.SeparateCamelCase();
             }
+
             return null;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { throw new NotSupportedException(); }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
     }
 }

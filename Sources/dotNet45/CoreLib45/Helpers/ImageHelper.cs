@@ -50,19 +50,19 @@ namespace Mohammad.Helpers
         /// <param name="height">The height.</param>
         /// <returns></returns>
         public static Func<int, (int Width, int Height)> GetResizerBySize(int width, int height) => width < height
-            ? (Func<int, (int Width, int Height)>) (size =>
+            ? (Func<int, (int Width, int Height)>)(size =>
             {
                 var
                     scale
                         = Convert
-                             .ToDouble(
-                                       height) /
+                              .ToDouble(
+                                  height) /
                           Convert
-                             .ToDouble(
-                                       width);
+                              .ToDouble(
+                                  width);
                 return
                     (Convert.ToInt32(size / scale),
-                     size);
+                        size);
             })
             : size =>
             {
@@ -80,7 +80,10 @@ namespace Mohammad.Helpers
 
         public static void ResizeAndSaveImage(string filePath, int size)
         {
-            using (var image = Image.FromFile(filePath)) ResizeAndSaveImage(image, size, filePath);
+            using (var image = Image.FromFile(filePath))
+            {
+                ResizeAndSaveImage(image, size, filePath);
+            }
         }
 
         /// <summary>
@@ -92,7 +95,10 @@ namespace Mohammad.Helpers
         /// <param name="path">The path.</param>
         public static void ResizeAndSaveImage(Image image, int width, int height, string path)
         {
-            using (var newImage = ResizeImage(image, width, height)) newImage.Save(path);
+            using (var newImage = ResizeImage(image, width, height))
+            {
+                newImage.Save(path);
+            }
         }
 
         /// <summary>

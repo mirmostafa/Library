@@ -17,14 +17,6 @@ namespace Mohammad.Helpers.Console
     {
         #region Fields
 
-        protected int Depth;
-        protected int Level;
-        protected int Pos;
-
-        #endregion
-
-        #region Fields
-
         internal readonly TextWriter Log;
 
         #endregion
@@ -37,15 +29,16 @@ namespace Mohammad.Helpers.Console
         internal Dumper(int depth, TextWriter log)
         {
             this.Depth = depth;
-            this.Log   = log;
+            this.Log = log;
         }
-
-        internal abstract void Write(TType element, string prefix);
 
         protected void Write(string s)
         {
             if (s == null)
+            {
                 return;
+            }
+
             this.Log.Write(s);
             this.Pos += s.Length;
         }
@@ -53,10 +46,10 @@ namespace Mohammad.Helpers.Console
         protected void WriteIndent()
         {
             for (var i = 0; i < this.Level; i++)
+            {
                 this.Log.Write("  ");
+            }
         }
-
-        internal abstract void WriteLine(TType element, string prefix);
 
         protected void WriteLine()
         {
@@ -68,7 +61,21 @@ namespace Mohammad.Helpers.Console
         {
             this.Write("  ");
             while (this.Pos % 8 != 0)
+            {
                 this.Write(" ");
+            }
         }
+
+        internal abstract void Write(TType element, string prefix);
+
+        internal abstract void WriteLine(TType element, string prefix);
+
+        #region Fields
+
+        protected int Depth;
+        protected int Level;
+        protected int Pos;
+
+        #endregion
     }
 }

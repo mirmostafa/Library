@@ -16,17 +16,17 @@ namespace Mohammad.Web.Api.Tools
     {
         private readonly HttpPostedFile _File;
 
+        public string Key { get; }
+        public string ContentType => this._File.ContentType;
+        public string FileName => this._File.FileName;
+        public int ContentLength => this._File.ContentLength;
+        public Stream InputStream => this._File.InputStream;
+
         public WebPostedFile(HttpPostedFile file, string key)
         {
             this._File = file ?? throw new ArgumentNullException(nameof(file));
-            this.Key   = key;
+            this.Key = key;
         }
-
-        public string Key           { get; }
-        public string ContentType   => this._File.ContentType;
-        public string FileName      => this._File.FileName;
-        public int    ContentLength => this._File.ContentLength;
-        public Stream InputStream   => this._File.InputStream;
 
         public void Save(string fileName = null)
         {
@@ -36,7 +36,7 @@ namespace Mohammad.Web.Api.Tools
         public string SaveIn(string absolutePath, string fileName = null)
         {
             var filePath = FileSystemHelper.CombineFilePath(absolutePath,
-                                                            fileName ?? $"{this.Key}_{this.FileName}.{Path.GetExtension(this.FileName)}");
+                fileName ?? $"{this.Key}_{this.FileName}.{Path.GetExtension(this.FileName)}");
             this.Save(filePath);
             return filePath;
         }

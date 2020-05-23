@@ -15,9 +15,19 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(LibCheckBox),
             new PropertyMetadata(default(bool)));
 
+        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked",
+            typeof(bool?),
+            typeof(LibCheckBox),
+            new PropertyMetadata(default(bool?)));
+
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text",
+            typeof(string),
+            typeof(LibCheckBox),
+            new PropertyMetadata(default(string)));
+
         public bool AutoFlick
         {
-            get { return (bool) this.GetValue(AutoFlickProperty); }
+            get => (bool)this.GetValue(AutoFlickProperty);
             set
             {
                 this.SetValue(AutoFlickProperty, value);
@@ -25,38 +35,33 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked",
-            typeof(bool?),
-            typeof(LibCheckBox),
-            new PropertyMetadata(default(bool?)));
-
         public bool? IsChecked
         {
-            get { return (bool?) this.GetValue(IsCheckedProperty); }
+            get => (bool?)this.GetValue(IsCheckedProperty);
             set
             {
                 this.SetValue(IsCheckedProperty, value);
                 if (this.AutoFlick)
+                {
                     this.Flick();
+                }
+
                 this.OnPropertyChanged();
                 //this.OnIsCheckedChanged();
             }
         }
 
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text",
-            typeof(string),
-            typeof(LibCheckBox),
-            new PropertyMetadata(default(string)));
-
         public string Text
         {
-            get { return (string) this.GetValue(TextProperty); }
+            get => (string)this.GetValue(TextProperty);
             set
             {
                 this.SetValue(TextProperty, value);
                 this.OnPropertyChanged();
             }
         }
+
+        public FrameworkElement FlickerTextBlock => this.TextBlock;
 
         public LibCheckBox()
         {
@@ -68,8 +73,11 @@ namespace Mohammad.Wpf.Windows.Controls
             };
         }
 
+        protected virtual void OnIsCheckedChanged()
+        {
+            this.IsCheckedChanged.Raise(this);
+        }
+
         public event EventHandler IsCheckedChanged;
-        protected virtual void OnIsCheckedChanged() { this.IsCheckedChanged.Raise(this); }
-        public FrameworkElement FlickerTextBlock => this.TextBlock;
     }
 }

@@ -38,7 +38,10 @@ namespace Mohammad.Remoting
         public static void RegisterClassHttp(int port, bool ensureSecurity, string typeName, string objectUrl, WellKnownObjectMode mode)
         {
             if (typeName == null)
+            {
                 throw new ArgumentNullException(nameof(typeName));
+            }
+
             var channel = new HttpChannel(port);
 
             ChannelServices.RegisterChannel(channel, ensureSecurity);

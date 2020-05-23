@@ -25,9 +25,13 @@ namespace Mohammad.Wpf.Helpers
             {
                 parent = GetParent(parent);
                 if (parent != null)
+                {
                     yield return parent;
+                }
                 else
+                {
                     break;
+                }
             }
         }
 
@@ -41,15 +45,22 @@ namespace Mohammad.Wpf.Helpers
         public static IEnumerable<DependencyObject> AncestorsAndSelf(this DependencyObject dependencyObject)
         {
             if (dependencyObject == null)
+            {
                 throw new ArgumentNullException("dependencyObject");
+            }
 
             var parent = dependencyObject;
             while (true)
             {
                 if (parent != null)
+                {
                     yield return parent;
+                }
                 else
+                {
                     break;
+                }
+
                 parent = GetParent(parent);
             }
         }
@@ -62,7 +73,10 @@ namespace Mohammad.Wpf.Helpers
         public static FrameworkElement GetImplementationRoot(this DependencyObject dependencyObject)
         {
             if (1 != VisualTreeHelper.GetChildrenCount(dependencyObject))
+            {
                 return null;
+            }
+
             return VisualTreeHelper.GetChild(dependencyObject, 0) as FrameworkElement;
         }
 
@@ -74,14 +88,18 @@ namespace Mohammad.Wpf.Helpers
         public static DependencyObject GetParent(this DependencyObject dependencyObject)
         {
             if (dependencyObject == null)
+            {
                 throw new ArgumentNullException("dependencyObject");
+            }
 
             var ce = dependencyObject as ContentElement;
             if (ce != null)
             {
                 var parent = ContentOperations.GetParent(ce);
                 if (parent != null)
+                {
                     return parent;
+                }
 
                 var fce = ce as FrameworkContentElement;
                 return fce != null ? fce.Parent : null;
@@ -100,7 +118,10 @@ namespace Mohammad.Wpf.Helpers
         {
             var root = GetImplementationRoot(dependencyObject);
             if (root == null)
+            {
                 return null;
+            }
+
             return (from @group in VisualStateManager.GetVisualStateGroups(root).OfType<VisualStateGroup>()
                     where string.CompareOrdinal(groupName, @group.Name) == 0
                     select @group).FirstOrDefault();

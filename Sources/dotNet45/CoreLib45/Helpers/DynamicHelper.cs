@@ -26,7 +26,10 @@ namespace Mohammad.Helpers
                 {
                     var value = expando[property.Name];
                     if (DBNull.Value.Equals(value))
+                    {
                         value = null;
+                    }
+
                     property.SetValue(result, value);
                 }
 
@@ -41,6 +44,7 @@ namespace Mohammad.Helpers
             where T : new()
         {
             if (expandos is List<Expando> || expandos is IEnumerable<Expando>)
+            {
                 foreach (var expando in expandos)
                 {
                     var result = new T();
@@ -48,14 +52,20 @@ namespace Mohammad.Helpers
                     {
                         var value = expando[property.Name];
                         if (DBNull.Value.Equals(value))
+                        {
                             value = null;
+                        }
+
                         property.SetValue(result, value);
                     }
 
                     yield return result;
                 }
+            }
             else
+            {
                 throw new Exception("Only a list of library expandos can be used.");
+            }
         }
 
         public static dynamic ToDynamic(this object obj)
@@ -68,7 +78,9 @@ namespace Mohammad.Helpers
         public static IEnumerable<T> ToEnumerable<T>(dynamic dyn)
         {
             foreach (T item in dyn)
+            {
                 yield return item;
+            }
         }
 
         //public static List<T> ToList<T>(dynamic dyn)
@@ -80,7 +92,10 @@ namespace Mohammad.Helpers
         {
             var result = new List<T>();
             foreach (T item in dyn)
+            {
                 result.Add(item);
+            }
+
             return result;
         }
     }

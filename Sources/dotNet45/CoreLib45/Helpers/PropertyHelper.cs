@@ -24,16 +24,16 @@ namespace Mohammad.Helpers
         public static TType Get<TType>(ref TType variable)
             where TType : class, new() => Get(ref variable, () => new TType());
 
-        internal static TType Get<TType>(ref TType variable, TType defaultValue)
-            where TType : class => variable ?? (variable = defaultValue);
-
         public static TType Get<TType>(ref TType variable, Func<TType> creator)
             where TType : class => variable ?? (variable = creator());
 
         public static IEnumerable<TType> Get<TType>(IEnumerable<TType> backingField, Func<IEnumerable<TType>> gatherItems, Action<IList<TType>> initiated)
         {
             if (gatherItems == null)
+            {
                 throw new ArgumentNullException(nameof(gatherItems));
+            }
+
             if (backingField == null)
             {
                 var result = new List<TType>();
@@ -48,7 +48,9 @@ namespace Mohammad.Helpers
             else
             {
                 foreach (var items in backingField)
+                {
                     yield return items;
+                }
             }
         }
 
@@ -58,47 +60,52 @@ namespace Mohammad.Helpers
         {
             var properties = typeof(TTargetType).GetProperties();
             foreach (var property in properties.Where(property => string.Compare(property.Name, propertyName, StringComparison.Ordinal) == 0))
-                return (TReturnType) property.GetValue(target, null);
+            {
+                return (TReturnType)property.GetValue(target, null);
+            }
 
             return default;
         }
 
         public static bool SetValue<TTargetType>(TTargetType target, string propertyName, object propertyValue) => SetValue(target,
-                                                                                                                            propertyName,
-                                                                                                                            propertyValue,
-                                                                                                                            false);
+            propertyName,
+            propertyValue,
+            false);
 
         public static bool SetValue<TTargetType>(TTargetType target, string propertyName, object propertyValue, bool searchAll) => (searchAll
-                                                                                                                                       ? typeof(TTargetType)
-                                                                                                                                          .GetProperties(
-                                                                                                                                                         BindingFlags
-                                                                                                                                                            .Static |
-                                                                                                                                                         BindingFlags
-                                                                                                                                                            .Instance |
-                                                                                                                                                         BindingFlags
-                                                                                                                                                            .Public |
-                                                                                                                                                         BindingFlags
-                                                                                                                                                            .NonPublic)
-                                                                                                                                       : typeof(TTargetType)
-                                                                                                                                          .GetProperties())
-                                                                                                                                  .Where(
-                                                                                                                                         property =>
-                                                                                                                                             string.Compare(
-                                                                                                                                                            property.Name,
-                                                                                                                                                            propertyName,
-                                                                                                                                                            StringComparison
-                                                                                                                                                               .Ordinal) ==
-                                                                                                                                             0)
-                                                                                                                                  .Select(
-                                                                                                                                          property =>
-                                                                                                                                              !CodeHelper
-                                                                                                                                                 .HasException(
-                                                                                                                                                               () =>
-                                                                                                                                                                   property
-                                                                                                                                                                      .SetValue(
-                                                                                                                                                                                target,
-                                                                                                                                                                                propertyValue,
-                                                                                                                                                                                null)))
-                                                                                                                                  .FirstOrDefault();
+                ? typeof(TTargetType)
+                    .GetProperties(
+                        BindingFlags
+                            .Static |
+                        BindingFlags
+                            .Instance |
+                        BindingFlags
+                            .Public |
+                        BindingFlags
+                            .NonPublic)
+                : typeof(TTargetType)
+                    .GetProperties())
+            .Where(
+                property =>
+                    string.Compare(
+                        property.Name,
+                        propertyName,
+                        StringComparison
+                            .Ordinal) ==
+                    0)
+            .Select(
+                property =>
+                    !CodeHelper
+                        .HasException(
+                            () =>
+                                property
+                                    .SetValue(
+                                        target,
+                                        propertyValue,
+                                        null)))
+            .FirstOrDefault();
+
+        internal static TType Get<TType>(ref TType variable, TType defaultValue)
+            where TType : class => variable ?? (variable = defaultValue);
     }
 }

@@ -24,7 +24,8 @@ namespace Mohammad.Web.Api.Exceptions
 
     public sealed class NotFoundException : ApiExceptionBase
     {
-        public NotFoundException(string message) : base(message, HttpStatusCode.NotFound)
+        public NotFoundException(string message)
+            : base(message, HttpStatusCode.NotFound)
         {
         }
 
@@ -36,7 +37,8 @@ namespace Mohammad.Web.Api.Exceptions
 
     public sealed class DuplicateException : ApiExceptionBase
     {
-        public DuplicateException(string message) : base(message, HttpStatusCode.Ambiguous)
+        public DuplicateException(string message)
+            : base(message, HttpStatusCode.Ambiguous)
         {
         }
 
@@ -48,7 +50,8 @@ namespace Mohammad.Web.Api.Exceptions
 
     public sealed class OutOfRangeException : ApiExceptionBase
     {
-        public OutOfRangeException(string message) : base(message, HttpStatusCode.ExpectationFailed)
+        public OutOfRangeException(string message)
+            : base(message, HttpStatusCode.ExpectationFailed)
         {
         }
 

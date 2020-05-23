@@ -12,15 +12,8 @@ namespace Mohammad.Helpers.Console
 {
     public static class MessageBox
     {
-        #region Fields
-
-        private const  ConsoleColor DefaultConstConsoleColor = ConsoleHelper.DEFAULT_CONSTANT_CONSOLE_COLOR;
-        private static int          _Width;
-
-        #endregion
-
-        public static int? DefaultWidth  { get; set; }
-        public static bool InBox         { get; private set; }
+        public static int? DefaultWidth { get; set; }
+        public static bool InBox { get; private set; }
         public static char SeparatorChar { get; set; } = '*';
 
         public static void Close()
@@ -37,9 +30,13 @@ namespace Mohammad.Helpers.Console
         public static void InsertSeparatorLine(int width, object text = null)
         {
             if (text != null)
+            {
                 SeparatorChar.ToString().Repeat(width - text.ToString().Length - 1).WriteLine();
+            }
             else
+            {
                 SeparatorChar.ToString().Repeat(width).WriteLine();
+            }
         }
 
         public static void Open()
@@ -60,7 +57,7 @@ namespace Mohammad.Helpers.Console
         public static void Open(string title, int width)
         {
             _Width = width;
-            InBox  = true;
+            InBox = true;
             string.Concat("*", title).Write();
             InsertSeparatorLine(title);
         }
@@ -82,18 +79,32 @@ namespace Mohammad.Helpers.Console
         public static void Show(object obj, ConsoleColor foregroundColor = DefaultConstConsoleColor)
         {
             if (obj == null)
+            {
                 return;
+            }
+
             var width = DefaultWidth ?? (InBox ? _Width : obj.ToString().Length + 4);
             if (!InBox)
+            {
                 InsertSeparatorLine(width);
+            }
+
             var colorBuffer = System.Console.ForegroundColor;
             if (foregroundColor != DefaultConstConsoleColor)
+            {
                 System.Console.ForegroundColor = foregroundColor;
+            }
+
             foreach (var str in obj.ToString().Split(new[] {Environment.NewLine}, StringSplitOptions.None))
+            {
                 string.Format("{0} {1}{0}", SeparatorChar, str.Add(width - str.Length - 4)).WriteLine();
+            }
+
             System.Console.ForegroundColor = colorBuffer;
             if (!InBox)
+            {
                 InsertSeparatorLine(width);
+            }
         }
 
         public static void WriteInBoxTimeStamp(this string text)
@@ -106,5 +117,12 @@ namespace Mohammad.Helpers.Console
             //string.Format("  [{0}] {1}", PersianDateTime.Now, text).WriteLine(foregroundColor);
             string.Format("[{0}] {1}", PersianDateTime.Now, text).WriteLine(foregroundColor);
         }
+
+        #region Fields
+
+        private const ConsoleColor DefaultConstConsoleColor = ConsoleHelper.DEFAULT_CONSTANT_CONSOLE_COLOR;
+        private static int _Width;
+
+        #endregion
     }
 }

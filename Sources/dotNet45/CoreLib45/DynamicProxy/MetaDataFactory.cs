@@ -32,11 +32,15 @@ namespace Mohammad.DynamicProxy
         public static void Add(Type interfaceType)
         {
             if (interfaceType != null)
+            {
                 lock (_TypeMap.SyncRoot)
                 {
                     if (!_TypeMap.ContainsKey(interfaceType.FullName))
+                    {
                         _TypeMap.Add(interfaceType.FullName, interfaceType);
+                    }
                 }
+            }
         }
 
         /// <summary>
@@ -50,7 +54,7 @@ namespace Mohammad.DynamicProxy
             Type type;
             lock (_TypeMap.SyncRoot)
             {
-                type = (Type) _TypeMap[name];
+                type = (Type)_TypeMap[name];
             }
 
             var methods = type.GetMethods();

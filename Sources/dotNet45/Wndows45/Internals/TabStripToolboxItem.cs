@@ -18,12 +18,19 @@ namespace Mohammad.Win.Internals
     [Serializable]
     internal class TabStripToolboxItem : ToolboxItem
     {
-        public TabStripToolboxItem() { }
+        public TabStripToolboxItem()
+        {
+        }
 
         public TabStripToolboxItem(Type toolType)
-            : base(toolType) { }
+            : base(toolType)
+        {
+        }
 
-        private TabStripToolboxItem(SerializationInfo info, StreamingContext context) { this.Deserialize(info, context); }
+        private TabStripToolboxItem(SerializationInfo info, StreamingContext context)
+        {
+            this.Deserialize(info, context);
+        }
 
         /// <summary>
         ///     this method is called when dragging a TabStrip off the toolbox.
@@ -37,7 +44,7 @@ namespace Mohammad.Win.Internals
             Control parentControl = null;
             ControlDesigner parentControlDesigner = null;
             TabStrip tabStrip = null;
-            var changeSvc = (IComponentChangeService) host.GetService(typeof(IComponentChangeService));
+            var changeSvc = (IComponentChangeService)host.GetService(typeof(IComponentChangeService));
 
             // fish out the parent we're adding the TabStrip to.
             if (components.Length > 0 && components[0] is TabStrip)
@@ -47,7 +54,9 @@ namespace Mohammad.Win.Internals
                 var tabStripDesigner = host.GetDesigner(tabStrip) as ITreeDesigner;
                 parentControlDesigner = tabStripDesigner.Parent as ControlDesigner;
                 if (parentControlDesigner != null)
+                {
                     parentControl = parentControlDesigner.Control;
+                }
             }
 
             // Create a ControlSwitcher on the same parent.
@@ -66,7 +75,10 @@ namespace Mohammad.Win.Internals
                     catch (CheckoutException ex)
                     {
                         if (ex == CheckoutException.Canceled)
+                        {
                             return components;
+                        }
+
                         throw ex;
                     }
 
@@ -91,7 +103,9 @@ namespace Mohammad.Win.Internals
                 finally
                 {
                     if (t != null)
+                    {
                         t.Commit();
+                    }
                 }
 
                 // add the TabPageSwitcher to the list of components that we've created
@@ -115,18 +129,26 @@ namespace Mohammad.Win.Internals
         /// <param name="host"></param>
         private void SetProperties(Component component, Dictionary<string, object> properties, IDesignerHost host)
         {
-            var changeSvc = (IComponentChangeService) host.GetService(typeof(IComponentChangeService));
+            var changeSvc = (IComponentChangeService)host.GetService(typeof(IComponentChangeService));
 
             foreach (var propname in properties.Keys)
             {
                 var propDescriptor = TypeDescriptor.GetProperties(component)[propname];
 
                 if (changeSvc != null)
+                {
                     changeSvc.OnComponentChanging(component, propDescriptor);
+                }
+
                 if (propDescriptor != null)
+                {
                     propDescriptor.SetValue(component, properties[propname]);
+                }
+
                 if (changeSvc != null)
+                {
                     changeSvc.OnComponentChanged(component, propDescriptor, null, null);
+                }
             }
         }
     }

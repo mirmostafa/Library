@@ -16,12 +16,14 @@ namespace Mohammad.Wpf.Windows.Controls
 
         protected Type CommandsStaticClassType
         {
-            get { return this._CommandsStaticClassType; }
+            get => this._CommandsStaticClassType;
             set
             {
                 this._CommandsStaticClassType = value;
                 if (value != null)
+                {
                     LibCommandManager.Initialize(this, this.CommandsStaticClassType);
+                }
             }
         }
 
@@ -30,11 +32,14 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public new string Title
         {
-            get { return base.Title; }
+            get => base.Title;
             set
             {
                 if (value == base.Title)
+                {
                     return;
+                }
+
                 base.Title = value;
                 this.OnTitleChanged();
                 this.OnPropertyChanged();
@@ -43,11 +48,14 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public string Description
         {
-            get { return this._Description; }
+            get => this._Description;
             set
             {
                 if (value == this._Description)
+                {
                     return;
+                }
+
                 this._Description = value;
                 this.OnPropertyChanged();
             }
@@ -55,11 +63,14 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public Window Owner
         {
-            get { return this.Window; }
+            get => this.Window;
             set
             {
                 if (Equals(value, this.Window))
+                {
                     return;
+                }
+
                 this.Window = value;
                 this.OnPropertyChanged();
             }
@@ -68,7 +79,9 @@ namespace Mohammad.Wpf.Windows.Controls
         public LibraryPage()
         {
             if (LibraryApplication.InnerCommandsStaticClassType != null)
+            {
                 LibCommandManager.Initialize(this, LibraryApplication.InnerCommandsStaticClassType);
+            }
 
             this.Commands = new LibCommandDynamicCollection(this);
             this.Controls = new LibUserControlDynamicCollection(this);
@@ -76,7 +89,9 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         protected LibraryPage(Window window)
-            : base(window) { }
+            : base(window)
+        {
+        }
 
         public override void OnApplyTemplate()
         {
@@ -84,24 +99,37 @@ namespace Mohammad.Wpf.Windows.Controls
             base.OnApplyTemplate();
         }
 
+        protected TResource FindResource<TResource>(string resourceKey) => this.FindResource(resourceKey).To<TResource>();
+
         private void LibraryPage_OnLoaded(object sender, RoutedEventArgs e)
         {
             //this.MoveBarsToParent();
             foreach (var command in this.Commands)
+            {
                 command.Initialize(this);
+            }
+
             foreach (var commandBar in this.GetControls<CommandBar>())
             {
                 foreach (var command in commandBar.AppCommands)
+                {
                     command.Initialize(this);
+                }
+
                 foreach (var command in commandBar.PageCommands)
+                {
                     command.Initialize(this);
+                }
             }
         }
 
         private void MoveBarsToParent()
         {
             if (this.Window == null)
+            {
                 return;
+            }
+
             var windowCommandBar = this.Window.GetControls<CommandBar>().FirstOrDefault();
             if (windowCommandBar != null)
             {
@@ -117,10 +145,16 @@ namespace Mohammad.Wpf.Windows.Controls
 
             var windowButtonBar = this.Window.GetControls<ButtonBar>().FirstOrDefault();
             if (windowButtonBar == null)
+            {
                 return;
+            }
+
             var myButtonBar = this.Controls.FirstOrDefault(c => c is ButtonBar).As<ButtonBar>();
             if (myButtonBar == null)
+            {
                 return;
+            }
+
             windowButtonBar.AppButtons.AddRange(myButtonBar.AppButtons);
             windowButtonBar.PageButtons.AddRange(myButtonBar.PageButtons);
 
@@ -136,7 +170,5 @@ namespace Mohammad.Wpf.Windows.Controls
 
             windowButtonBar.AddButtons(myButtonBar.AppButtons, myButtonBar.PageButtons);
         }
-
-        protected TResource FindResource<TResource>(string resourceKey) => this.FindResource(resourceKey).To<TResource>();
     }
 }

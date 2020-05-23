@@ -13,6 +13,6 @@ namespace Mohammad.BusinessModel.Classes
     public sealed class TableAttribute : Attribute
     {
         public string DbSchemaName { get; set; }
-        public string DbTableName  { get; set; }
+        public string DbTableName { get; set; }
     }
 }

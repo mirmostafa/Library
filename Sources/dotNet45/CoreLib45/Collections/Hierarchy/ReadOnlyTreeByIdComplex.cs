@@ -15,8 +15,8 @@ namespace Mohammad.Collections.Hierarchy
 {
     public class ReadOnlyTreeByIdComplex<TItem, TParent> : IEnumerable<TItem>, IReadOnlyTreeByIdComplex<TItem, TParent>
     {
-        public ReadOnlyTreeByIdComplex(List<NodeByIdComplex<TItem, TParent>> nodes) => this.Nodes = nodes;
         protected List<NodeByIdComplex<TItem, TParent>> Nodes { get; }
+        public ReadOnlyTreeByIdComplex(List<NodeByIdComplex<TItem, TParent>> nodes) => this.Nodes = nodes;
 
         public IEnumerator<TItem> GetEnumerator()
         {

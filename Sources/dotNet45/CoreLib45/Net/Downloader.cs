@@ -18,16 +18,20 @@ namespace Mohammad.Net
         public static async Task<string> DownloadPageAsyncTask(string page)
         {
             var request = WebRequest.Create(page);
-            return await request.BeginGetResponse(null, null).AsAwaiter(ar =>
-            {
-                using (var responce = request.EndGetResponse(ar))
+            return await request.BeginGetResponse(null, null)
+                .AsAwaiter(ar =>
                 {
-                    if (responce == null)
-                        return null;
-                    var reader = new StreamReader(responce.GetResponseStream());
-                    return reader.ReadToEnd();
-                }
-            });
+                    using (var responce = request.EndGetResponse(ar))
+                    {
+                        if (responce == null)
+                        {
+                            return null;
+                        }
+
+                        var reader = new StreamReader(responce.GetResponseStream());
+                        return reader.ReadToEnd();
+                    }
+                });
         }
 
         public static AsyncResultAwaiter<TResult> AsAwaiter<TResult>(this IAsyncResult asyncResult, Func<IAsyncResult, TResult> getResult) =>

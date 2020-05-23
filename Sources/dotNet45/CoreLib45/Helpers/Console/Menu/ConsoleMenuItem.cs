@@ -13,10 +13,10 @@ namespace Mohammad.Helpers.Console.Menu
 {
     public class ConsoleMenuItemHotKeyPressedEventArgs : EventArgs
     {
-        public ConsoleMenuItemHotKeyPressedEventArgs(object extraArgs) => this.ExtraArgs = extraArgs;
-        public bool   Back      { get; set; }
-        public bool   Exit      { get; set; }
+        public bool Back { get; set; }
+        public bool Exit { get; set; }
         public object ExtraArgs { get; set; }
+        public ConsoleMenuItemHotKeyPressedEventArgs(object extraArgs) => this.ExtraArgs = extraArgs;
     }
 
     public class ConsoleMenuItem : IEquatable<ConsoleMenuItem>
@@ -27,7 +27,10 @@ namespace Mohammad.Helpers.Console.Menu
 
         #endregion
 
-        public event EventHandler<ConsoleMenuItemHotKeyPressedEventArgs> HotKeyPressed;
+        public ConsoleMenuItemList Children { get; } = new ConsoleMenuItemList();
+        public char HotKey { get; internal set; }
+
+        public string Text { get; }
 
         public ConsoleMenuItem(char hotKey, string text, IEnumerable<ConsoleMenuItem> children)
             : this(hotKey, text, children, null, null)
@@ -44,54 +47,24 @@ namespace Mohammad.Helpers.Console.Menu
         {
         }
 
-        public ConsoleMenuItem(char                                                hotKey,        string text, IEnumerable<ConsoleMenuItem> children,
-                               EventHandler<ConsoleMenuItemHotKeyPressedEventArgs> hotKeyPressed, object extraArgs)
+        public ConsoleMenuItem(char hotKey,
+            string text,
+            IEnumerable<ConsoleMenuItem> children,
+            EventHandler<ConsoleMenuItemHotKeyPressedEventArgs> hotKeyPressed,
+            object extraArgs)
         {
             this._ExtraArgs = extraArgs;
-            this.HotKey     = hotKey;
-            this.Text       = text;
+            this.HotKey = hotKey;
+            this.Text = text;
             if (children != null)
+            {
                 this.Children = new ConsoleMenuItemList(children);
+            }
+
             if (hotKeyPressed != null)
+            {
                 this.HotKeyPressed += hotKeyPressed;
-        }
-
-        public ConsoleMenuItemList Children { get; } = new ConsoleMenuItemList();
-        public char                HotKey   { get; internal set; }
-
-        public string Text { get; }
-
-        private static void AddSeparator()
-        {
-            ConsoleHelper.Inform(" ---------------------------------");
-        }
-
-        private static void DrawItem(KeyValuePair<char, string> item)
-        {
-            "\t".Write();
-            item.Key.Write(ConsoleColor.Green);
-            " - ".Write();
-            ConsoleHelper.Inform(item.Value);
-        }
-
-        public bool Equals(ConsoleMenuItem other) => other == this;
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-                return false;
-            if (ReferenceEquals(this, obj))
-                return true;
-            if (obj.GetType() != this.GetType())
-                return false;
-            return this.Equals((ConsoleMenuItem) obj);
-        }
-
-        public override int GetHashCode() => this.HotKey;
-
-        protected virtual void OnHotKeyPressed(ConsoleMenuItemHotKeyPressedEventArgs e)
-        {
-            this.HotKeyPressed?.Invoke(this, e);
+            }
         }
 
         public static bool operator ==(ConsoleMenuItem menu1, ConsoleMenuItem menu2)
@@ -105,17 +78,46 @@ namespace Mohammad.Helpers.Console.Menu
 
         public static bool operator !=(ConsoleMenuItem menu1, ConsoleMenuItem menu2) => !(menu1 == menu2);
 
-        public static ConsoleMenuItem Show(IEnumerable<ConsoleMenuItem> menuItems, string menuTitle, string choisePrompt = null,
-                                           bool?                        showSelectedKey = null,
-                                           bool                         autoAssignKey   = true)
+        public bool Equals(ConsoleMenuItem other) => other == this;
+
+        public override bool Equals(object obj)
         {
-            var             items           = menuItems as IList<ConsoleMenuItem> ?? menuItems.ToList();
-            var             isExitRequested = false;
-            ConsoleMenuItem selectedItem    = null;
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return this.Equals((ConsoleMenuItem)obj);
+        }
+
+        public override int GetHashCode() => this.HotKey;
+
+        public static ConsoleMenuItem Show(IEnumerable<ConsoleMenuItem> menuItems,
+            string menuTitle,
+            string choisePrompt = null,
+            bool? showSelectedKey = null,
+            bool autoAssignKey = true)
+        {
+            var items = menuItems as IList<ConsoleMenuItem> ?? menuItems.ToList();
+            var isExitRequested = false;
+            ConsoleMenuItem selectedItem = null;
             while (true)
             {
                 if (isExitRequested)
+                {
                     return selectedItem;
+                }
+
                 menuTitle.WriteLine(ConsoleColor.White);
                 ConsoleHelper.WriteSeparatorLine();
                 var index = 0;
@@ -146,7 +148,7 @@ namespace Mohammad.Helpers.Console.Menu
                 }
 
                 var response = ConsoleHelper.AskKey(choisePrompt + " ", !showSelectedKey ?? string.IsNullOrEmpty(choisePrompt));
-                var key      = response.KeyChar;
+                var key = response.KeyChar;
                 ConsoleHelper.LineFeed();
                 selectedItem = items.FirstOrDefault(c => char.ToLower(c.HotKey) == char.ToLower(key));
                 if (selectedItem != null)
@@ -160,9 +162,14 @@ namespace Mohammad.Helpers.Console.Menu
                     var e = new ConsoleMenuItemHotKeyPressedEventArgs(selectedItem._ExtraArgs);
                     selectedItem.OnHotKeyPressed(e);
                     if (e.Exit)
+                    {
                         isExitRequested = true;
+                    }
+
                     if (e.Back)
+                    {
                         return selectedItem;
+                    }
                 }
                 else
                 {
@@ -171,8 +178,10 @@ namespace Mohammad.Helpers.Console.Menu
             }
         }
 
-        public static ConsoleKeyInfo ShowSimpleMenu(IDictionary<char, string> items, string caption = null, string prompt = null,
-                                                    bool?                     showSelectedKey = null)
+        public static ConsoleKeyInfo ShowSimpleMenu(IDictionary<char, string> items,
+            string caption = null,
+            string prompt = null,
+            bool? showSelectedKey = null)
         {
             caption.WriteLine(ConsoleColor.White);
             ConsoleHelper.WriteSeparatorLine();
@@ -190,14 +199,39 @@ namespace Mohammad.Helpers.Console.Menu
             while (true)
             {
                 var result = ConsoleHelper.AskKey(prompt + " ", !showSelectedKey ?? string.IsNullOrEmpty(prompt));
-                var key    = result.KeyChar;
+                var key = result.KeyChar;
                 ConsoleHelper.LineFeed();
                 if (key != '_')
+                {
                     if (items.ContainsKey(key))
+                    {
                         return result;
+                    }
+                }
+
                 ConsoleHelper.Error("Invalid key.");
             }
         }
+
+        protected virtual void OnHotKeyPressed(ConsoleMenuItemHotKeyPressedEventArgs e)
+        {
+            this.HotKeyPressed?.Invoke(this, e);
+        }
+
+        private static void AddSeparator()
+        {
+            ConsoleHelper.Inform(" ---------------------------------");
+        }
+
+        private static void DrawItem(KeyValuePair<char, string> item)
+        {
+            "\t".Write();
+            item.Key.Write(ConsoleColor.Green);
+            " - ".Write();
+            ConsoleHelper.Inform(item.Value);
+        }
+
+        public event EventHandler<ConsoleMenuItemHotKeyPressedEventArgs> HotKeyPressed;
     }
 
     public class ConsoleMenuItemList : List<ConsoleMenuItem>
@@ -211,8 +245,11 @@ namespace Mohammad.Helpers.Console.Menu
         {
         }
 
-        public ConsoleMenuItem Add(char                                                hotKey,        string text, IEnumerable<ConsoleMenuItem> children,
-                                   EventHandler<ConsoleMenuItemHotKeyPressedEventArgs> hotKeyPressed, object extraArgs)
+        public ConsoleMenuItem Add(char hotKey,
+            string text,
+            IEnumerable<ConsoleMenuItem> children,
+            EventHandler<ConsoleMenuItemHotKeyPressedEventArgs> hotKeyPressed,
+            object extraArgs)
         {
             var result = new ConsoleMenuItem(hotKey, text, children, hotKeyPressed, extraArgs);
             this.Add(result);
@@ -242,12 +279,12 @@ namespace Mohammad.Helpers.Console.Menu
 
         public void Add(char separator = '-')
         {
-            this.Add(new ConsoleMenuItem('_', "_", (IEnumerable<ConsoleMenuItem>) null));
+            this.Add(new ConsoleMenuItem('_', "_", (IEnumerable<ConsoleMenuItem>)null));
         }
 
         public void AddSeparator(char separator = '-')
         {
-            this.Add(new ConsoleMenuItem('_', "_", (IEnumerable<ConsoleMenuItem>) null));
+            this.Add(new ConsoleMenuItem('_', "_", (IEnumerable<ConsoleMenuItem>)null));
         }
     }
 }

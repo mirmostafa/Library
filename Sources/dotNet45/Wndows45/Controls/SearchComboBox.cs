@@ -15,7 +15,11 @@ namespace Mohammad.Win.Controls
         public bool SaveMru { get; set; }
 
         [DefaultValue("Search")]
-        public string EmptyText { get { return this._EmptyText.IfNullOrEmpty("Search"); } set { this._EmptyText = value; } }
+        public string EmptyText
+        {
+            get => this._EmptyText.IfNullOrEmpty("Search");
+            set => this._EmptyText = value;
+        }
 
         [DefaultValue(8)]
         public int MaxMruCount { get; set; }
@@ -37,6 +41,7 @@ namespace Mohammad.Win.Controls
                 this.ResetFont();
                 this.ResetText();
             }
+
             base.OnEnter(e);
         }
 
@@ -46,9 +51,13 @@ namespace Mohammad.Win.Controls
             if (this.SaveMru && !this.Text.IsNullOrEmpty())
             {
                 while (this.Items.Count > this.MaxMruCount - 1)
+                {
                     this.Items.RemoveAt(0);
+                }
+
                 this.Items.Add(this.Text);
             }
+
             if (this.Text.IsNullOrEmpty())
             {
                 this.Text = this.EmptyText;

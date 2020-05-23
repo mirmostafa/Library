@@ -50,7 +50,9 @@ namespace Mohammad.Win.Renderers
         ///     Initialize a new instance of the Office2007Renderer class.
         /// </summary>
         public Office2007Renderer()
-            : base(new Office2007BlueColorTable()) {}
+            : base(new Office2007BlueColorTable())
+        {
+        }
 
         /// <summary>
         ///     Initializes a new instance of the Office2007Renderer class.
@@ -59,7 +61,9 @@ namespace Mohammad.Win.Renderers
         ///     A <see cref="BSE.Windows.Forms.ProfessionalColorTable" /> to be used for painting.
         /// </param>
         public Office2007Renderer(ProfessionalColorTable professionalColorTable)
-            : base(professionalColorTable) {}
+            : base(professionalColorTable)
+        {
+        }
 
         #endregion
 
@@ -75,12 +79,22 @@ namespace Mohammad.Win.Renderers
             if (colorTable != null)
             {
                 if (e.Item.Owner.GetType() == typeof(MenuStrip) && e.Item.Selected == false && e.Item.Pressed == false)
+                {
                     if (colorTable.MenuItemText != Color.Empty)
+                    {
                         e.ArrowColor = colorTable.MenuItemText;
+                    }
+                }
+
                 if (e.Item.Owner.GetType() == typeof(StatusStrip) && e.Item.Selected == false && e.Item.Pressed == false)
+                {
                     if (colorTable.StatusStripText != Color.Empty)
+                    {
                         e.ArrowColor = colorTable.StatusStripText;
+                    }
+                }
             }
+
             base.OnRenderArrow(e);
         }
 
@@ -94,12 +108,22 @@ namespace Mohammad.Win.Renderers
             if (colorTable != null)
             {
                 if (e.ToolStrip is MenuStrip && e.Item.Selected == false && e.Item.Pressed == false)
+                {
                     if (colorTable.MenuItemText != Color.Empty)
+                    {
                         e.TextColor = colorTable.MenuItemText;
+                    }
+                }
+
                 if (e.ToolStrip is StatusStrip && e.Item.Selected == false && e.Item.Pressed == false)
+                {
                     if (colorTable.StatusStripText != Color.Empty)
+                    {
                         e.TextColor = colorTable.StatusStripText;
+                    }
+                }
             }
+
             base.OnRenderItemText(e);
         }
 
@@ -114,12 +138,16 @@ namespace Mohammad.Win.Renderers
 
             // Cannot paint a zero sized area
             if (e.ToolStripContentPanel.Width > 0 && e.ToolStripContentPanel.Height > 0)
+            {
                 using (
                     var backBrush = new LinearGradientBrush(e.ToolStripContentPanel.ClientRectangle,
                         this.ColorTable.ToolStripContentPanelGradientBegin,
                         this.ColorTable.ToolStripContentPanelGradientEnd,
                         LinearGradientMode.Vertical))
+                {
                     e.Graphics.FillRectangle(backBrush, e.ToolStripContentPanel.ClientRectangle);
+                }
+            }
         }
 
         /// <summary>
@@ -146,6 +174,7 @@ namespace Mohammad.Win.Renderers
 
                 // Cannot paint a zero sized area
                 if (backRectangle.Width > 0 && backRectangle.Height > 0)
+                {
                     using (
                         var backBrush = new LinearGradientBrush(backRectangle,
                             this.ColorTable.StatusStripGradientBegin,
@@ -155,6 +184,7 @@ namespace Mohammad.Win.Renderers
                         backBrush.Blend = _StatusStripBlend;
                         e.Graphics.FillRectangle(backBrush, backRectangle);
                     }
+                }
             }
             else
             {
@@ -181,13 +211,19 @@ namespace Mohammad.Win.Renderers
 
                 // Reduce so it is inside the border
                 if (bIsRightToLeft == false)
+                {
                     marginRectangle.X += _MarginInset;
+                }
                 else
+                {
                     marginRectangle.X += _MarginInset / 2;
+                }
 
                 // Draw the entire margine area in a solid color
                 using (var backBrush = new SolidBrush(this.ColorTable.ImageMarginGradientBegin))
+                {
                     e.Graphics.FillRectangle(backBrush, marginRectangle);
+                }
             }
             else
             {

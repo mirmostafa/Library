@@ -35,31 +35,34 @@ namespace Mohammad.Threading.Tasks
                 _Timers.CleanNulls();
                 var newTimer = new Timer((_Timers.Any() ? _Timers.Max(t => t.Id) : 0) + 1, tickCount)
                 {
-                    Tag      = tag,
+                    Tag = tag,
                     Interval = interval
                 };
                 var timer = new System.Threading.Timer(delegate(object state)
-                                                       {
-                                                           var t = state.As<Timer>();
-                                                           if (t.IsStopRequested)
-                                                               return;
-                                                           if (tickCount.HasValue)
-                                                           {
-                                                               if (t.TickIndex == tickCount.Value)
-                                                               {
-                                                                   Stop(t);
-                                                                   return;
-                                                               }
+                    {
+                        var t = state.As<Timer>();
+                        if (t.IsStopRequested)
+                        {
+                            return;
+                        }
 
-                                                               t.TickIndex = (t.TickIndex ?? 0) + 1;
-                                                           }
+                        if (tickCount.HasValue)
+                        {
+                            if (t.TickIndex == tickCount.Value)
+                            {
+                                Stop(t);
+                                return;
+                            }
 
-                                                           t.SignalTime = DateTime.Now;
-                                                           action(t);
-                                                       },
-                                                       newTimer,
-                                                       startImmediately ? TimeSpan.FromMilliseconds(0) : TimeSpan.FromMilliseconds(-1),
-                                                       interval);
+                            t.TickIndex = (t.TickIndex ?? 0) + 1;
+                        }
+
+                        t.SignalTime = DateTime.Now;
+                        action(t);
+                    },
+                    newTimer,
+                    startImmediately ? TimeSpan.FromMilliseconds(0) : TimeSpan.FromMilliseconds(-1),
+                    interval);
 
                 newTimer.InnerTimer = timer;
                 _Timers.Add(newTimer);
@@ -71,7 +74,10 @@ namespace Mohammad.Threading.Tasks
             {
                 var timer = _Timers.FirstOrDefault(t => t.Id == id);
                 if (timer == null)
+                {
                     return;
+                }
+
                 Start(timer);
             }
 
@@ -79,7 +85,10 @@ namespace Mohammad.Threading.Tasks
             {
                 var timer = _Timers.FirstOrDefault(t => t.Id == id);
                 if (timer == null)
+                {
                     return;
+                }
+
                 Pause(timer);
             }
 
@@ -87,35 +96,34 @@ namespace Mohammad.Threading.Tasks
             {
                 var timer = _Timers.FirstOrDefault(t => t.Id == id);
                 if (timer == null)
+                {
                     return;
+                }
+
                 Stop(timer);
-            }
-
-            private static void Start(Timer timer)
-            {
-                timer.InnerTimer.Change(TimeSpan.FromMilliseconds(0), timer.Interval);
-            }
-
-            private static void Pause(Timer timer)
-            {
-                timer.InnerTimer.Change(TimeSpan.FromMilliseconds(-1), timer.Interval);
             }
 
             public static void Stop(Timer timer)
             {
                 if (timer == null)
+                {
                     return;
+                }
+
                 LockAndCatch(() =>
-                             {
-                                 timer.IsStopRequested = true;
-                                 timer.Working?.Set();
-                                 if (_Timers.Contains(timer))
-                                     _Timers.Remove(timer);
-                                 timer.InnerTimer?.Change(TimeSpan.FromMilliseconds(-1), timer.Interval);
-                                 timer.InnerTimer?.Dispose();
-                                 GC.Collect();
-                             },
-                             timer);
+                    {
+                        timer.IsStopRequested = true;
+                        timer.Working?.Set();
+                        if (_Timers.Contains(timer))
+                        {
+                            _Timers.Remove(timer);
+                        }
+
+                        timer.InnerTimer?.Change(TimeSpan.FromMilliseconds(-1), timer.Interval);
+                        timer.InnerTimer?.Dispose();
+                        GC.Collect();
+                    },
+                    timer);
             }
 
             public static void WaitForAllToStop()
@@ -131,6 +139,16 @@ namespace Mohammad.Threading.Tasks
             public static Timer GetTimerById(int id) => _Timers.FirstOrDefault(t => t.Id == id);
 
             public static IEnumerable<Timer> GetAll() => _Timers.Select(t => t);
+
+            private static void Start(Timer timer)
+            {
+                timer.InnerTimer.Change(TimeSpan.FromMilliseconds(0), timer.Interval);
+            }
+
+            private static void Pause(Timer timer)
+            {
+                timer.InnerTimer.Change(TimeSpan.FromMilliseconds(-1), timer.Interval);
+            }
         }
     }
 }

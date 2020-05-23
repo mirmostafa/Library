@@ -24,39 +24,10 @@ namespace Mohammad.ServiceModel
     /// </summary>
     public class ServiceHost : IDisposable
     {
-        private static readonly object                          _EventDisposed = new object();
-        private readonly        List<ServiceEndpoint>           _Endpoints     = new List<ServiceEndpoint>();
-        private readonly        Lazy<EventHandlerList>          _Events        = new Lazy<EventHandlerList>();
-        private readonly        System.ServiceModel.ServiceHost _Host;
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ServiceHost&lt;TContract, TService&gt;" /> class.
-        /// </summary>
-        /// <param name="serviceType"> </param>
-        /// <param name="contractType"> </param>
-        /// <param name="singletonServiceInstance"> The instance of the hosted service. </param>
-        /// <param name="binding"> The binding protocol </param>
-        /// <param name="uri"> The service's uri </param>
-        public ServiceHost(Type contractType, Type serviceType, string uri = null, Binding binding = null, object singletonServiceInstance = null)
-        {
-            if (uri == null)
-            {
-                var serviceConfigs = contractType.GetCustomAttributes(typeof(ServiceConfigAttribute), true);
-                if (serviceConfigs.Length > 0)
-                    uri = serviceConfigs[0].As<ServiceConfigAttribute>().ServiceUrl;
-            }
-
-            this.ServiceType  = serviceType;
-            this.ContractType = contractType;
-            this._Host = singletonServiceInstance == null
-                             ? new System.ServiceModel.ServiceHost(serviceType, new Uri(uri))
-                             : new System.ServiceModel.ServiceHost(singletonServiceInstance, new Uri(uri));
-            if (uri.IsNullOrEmpty())
-                return;
-            if (binding == null)
-                binding = WcfHelper.DefaultBinding;
-            this.AddServiceEndpoint(binding, uri);
-        }
+        private static readonly object _EventDisposed = new object();
+        private readonly List<ServiceEndpoint> _Endpoints = new List<ServiceEndpoint>();
+        private readonly Lazy<EventHandlerList> _Events = new Lazy<EventHandlerList>();
+        private readonly System.ServiceModel.ServiceHost _Host;
 
         public ServiceDescription Description => this._Host.Description;
 
@@ -82,6 +53,43 @@ namespace Mohammad.ServiceModel
         protected EventHandlerList Events => this._Events.Value;
 
         /// <summary>
+        ///     Initializes a new instance of the <see cref="ServiceHost&lt;TContract, TService&gt;" /> class.
+        /// </summary>
+        /// <param name="serviceType"> </param>
+        /// <param name="contractType"> </param>
+        /// <param name="singletonServiceInstance"> The instance of the hosted service. </param>
+        /// <param name="binding"> The binding protocol </param>
+        /// <param name="uri"> The service's uri </param>
+        public ServiceHost(Type contractType, Type serviceType, string uri = null, Binding binding = null, object singletonServiceInstance = null)
+        {
+            if (uri == null)
+            {
+                var serviceConfigs = contractType.GetCustomAttributes(typeof(ServiceConfigAttribute), true);
+                if (serviceConfigs.Length > 0)
+                {
+                    uri = serviceConfigs[0].As<ServiceConfigAttribute>().ServiceUrl;
+                }
+            }
+
+            this.ServiceType = serviceType;
+            this.ContractType = contractType;
+            this._Host = singletonServiceInstance == null
+                ? new System.ServiceModel.ServiceHost(serviceType, new Uri(uri))
+                : new System.ServiceModel.ServiceHost(singletonServiceInstance, new Uri(uri));
+            if (uri.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            if (binding == null)
+            {
+                binding = WcfHelper.DefaultBinding;
+            }
+
+            this.AddServiceEndpoint(binding, uri);
+        }
+
+        /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
         /// <filterpriority>2</filterpriority>
@@ -89,17 +97,6 @@ namespace Mohammad.ServiceModel
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        ///     Adds a event handler to listen to the Disposed event on the component.
-        /// </summary>
-        [Browsable(false)]
-        [EditorBrowsable(EditorBrowsableState.Advanced)]
-        public event EventHandler Disposed
-        {
-            add => this.Events.AddHandler(_EventDisposed, value);
-            remove => this.Events.RemoveHandler(_EventDisposed, value);
         }
 
         /// <summary>
@@ -111,36 +108,16 @@ namespace Mohammad.ServiceModel
         {
             this._Endpoints.Add(this._Host.AddServiceEndpoint(this.ContractType, binding, uri));
             if (!(binding is WSHttpBinding))
+            {
                 return;
+            }
+
             var wsEnabledbehavior = new ServiceMetadataBehavior
             {
                 HttpGetEnabled = true,
-                HttpGetUrl     = new Uri(uri)
+                HttpGetUrl = new Uri(uri)
             };
             this._Host.Description.Behaviors.Add(wsEnabledbehavior);
-        }
-
-        /// <summary>
-        ///     Releases unmanaged and - optionally - managed resources
-        /// </summary>
-        /// <param name="disposing">
-        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
-        /// </param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposing)
-                return;
-            lock (this)
-            {
-                if (this._Host != null)
-                {
-                    this.Close();
-                    ((IDisposable) this._Host).Dispose();
-                }
-
-                var handler = (EventHandler) this.Events?[_EventDisposed];
-                handler?.Invoke(this, EventArgs.Empty);
-            }
         }
 
         /// <summary>
@@ -157,6 +134,43 @@ namespace Mohammad.ServiceModel
         public void Close()
         {
             this._Host.Close();
+        }
+
+        /// <summary>
+        ///     Releases unmanaged and - optionally - managed resources
+        /// </summary>
+        /// <param name="disposing">
+        ///     <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
+            lock (this)
+            {
+                if (this._Host != null)
+                {
+                    this.Close();
+                    ((IDisposable)this._Host).Dispose();
+                }
+
+                var handler = (EventHandler)this.Events?[_EventDisposed];
+                handler?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        ///     Adds a event handler to listen to the Disposed event on the component.
+        /// </summary>
+        [Browsable(false)]
+        [EditorBrowsable(EditorBrowsableState.Advanced)]
+        public event EventHandler Disposed
+        {
+            add => this.Events.AddHandler(_EventDisposed, value);
+            remove => this.Events.RemoveHandler(_EventDisposed, value);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Mohammad.Win.Controls
 
         public Color BaseColor
         {
-            get { return this._BaseColor; }
+            get => this._BaseColor;
             set
             {
                 this._BaseColor = value;
@@ -46,7 +46,7 @@ namespace Mohammad.Win.Controls
 
         public Color BaseColorOn
         {
-            get { return this._BaseColorOn; }
+            get => this._BaseColorOn;
             set
             {
                 this._BaseColorOn = value;
@@ -59,7 +59,7 @@ namespace Mohammad.Win.Controls
         [Localizable(true)]
         public string Caption
         {
-            get { return this.S_TXT; }
+            get => this.S_TXT;
             set
             {
                 this.S_TXT = value;
@@ -71,11 +71,13 @@ namespace Mohammad.Win.Controls
 
         public int Opacity
         {
-            get { return this.i_Op; }
+            get => this.i_Op;
             set
             {
                 if ((value < 256) | (value > -1))
+                {
                     this.i_Op = value;
+                }
             }
         }
 
@@ -85,85 +87,6 @@ namespace Mohammad.Win.Controls
             this.timer1.Tick += this.timer1_Tick;
             this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            this.X0 = 0;
-            this.XF = this.Width + this.X0 - 3;
-            this.Y0 = 0;
-            this.YF = this.Height + this.Y0 - 3;
-
-            var P0 = new Point(this.X0, this.Y0);
-            var PF = new Point(this.X0, this.Y0 + this.YF);
-
-            var b1 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 18, this.G0 - 17, this.B0 - 19));
-            var b2 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 39, this.G0 - 24, this.B0 - 3));
-            var b3 = new Pen(Color.FromArgb(this.i_Op, this.R0 + 11, this.G0 + 9, this.B0 + 3));
-            var b4 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 8, this.G0 - 4, this.B0 - 2));
-            var b5 = new Pen(Color.FromArgb(this.i_Op, this.R0, this.G0, this.B0));
-            var b6 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 16, this.G0 - 11, this.B0 - 5));
-            var b8 = new Pen(Color.FromArgb(this.i_Op, this.R0 + 1, this.G0 + +5, this.B0 + 3));
-            var b7 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 22, this.G0 - 10, this.B0));
-
-            this.T = 1;
-            this.DrawArc3(0, 20);
-            e.Graphics.PageUnit = GraphicsUnit.Pixel;
-            var B4 = b4.Brush;
-            e.Graphics.SmoothingMode = SmoothingMode.None;
-            this.X = this.X0;
-            this.Y = this.Y0;
-            this.i_Zero = 180;
-            this.D = 0;
-
-            e.Graphics.FillPath(b5.Brush, this.path);
-            var brocha = new LinearGradientBrush(P0, PF, b6.Color, b8.Color);
-            this.DrawArc2(15, this.YF - 20);
-            e.Graphics.FillPath(brocha, this.path);
-            this.DrawArc2(this.YF - 16, 12);
-            var bdown = new Pen(Color.FromArgb(this.i_Op, this.R0 - 22, this.G0 - 11, this.B0));
-            e.Graphics.FillPath(bdown.Brush, this.path);
-
-            this.T = 6;
-            this.DrawArc();
-            this.DrawArc();
-            e.Graphics.DrawPath(b2, this.path);
-            this.DrawArc();
-            e.Graphics.DrawPath(b3, this.path);
-
-            var P_EX = Cursor.Position;
-            P_EX = this.PointToClient(P_EX);
-
-            var ix = 10 + this.Width / 2 - this.S_TXT.Length * (int) this.Font.Size / 2;
-            var P_TXT = new PointF(ix, this.Height - 20);
-            var pen = new Pen(this.ForeColor);
-            e.Graphics.DrawString(this.S_TXT, this.Font, pen.Brush, P_TXT);
-
-            base.OnPaint(e);
-        }
-
-        protected override void OnMouseEnter(EventArgs e)
-        {
-            var P_EX = Cursor.Position;
-            P_EX = this.PointToClient(P_EX);
-            if ((P_EX.X > 0) | (P_EX.X < this.Width) | (P_EX.Y > 0) | (P_EX.Y < this.Height))
-            {
-                this.i_mode = 0;
-                this.timer1.Start();
-            }
-            base.OnMouseEnter(e);
-        }
-
-        protected override void OnMouseLeave(EventArgs e)
-        {
-            var P_EX = Cursor.Position;
-            P_EX = this.PointToClient(P_EX);
-            if ((P_EX.X < 0) | (P_EX.X >= this.Width) | (P_EX.Y < 0) | (P_EX.Y >= this.Height))
-            {
-                this.i_mode = 1;
-                this.timer1.Start();
-            }
-            base.OnMouseLeave(e);
         }
 
         public void DrawArc()
@@ -230,6 +153,93 @@ namespace Mohammad.Win.Controls
             this.path.AddArc(this.X + this.D, this.Y + this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
         }
 
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            this.X0 = 0;
+            this.XF = this.Width + this.X0 - 3;
+            this.Y0 = 0;
+            this.YF = this.Height + this.Y0 - 3;
+
+            var P0 = new Point(this.X0, this.Y0);
+            var PF = new Point(this.X0, this.Y0 + this.YF);
+
+            var b1 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 18, this.G0 - 17, this.B0 - 19));
+            var b2 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 39, this.G0 - 24, this.B0 - 3));
+            var b3 = new Pen(Color.FromArgb(this.i_Op, this.R0 + 11, this.G0 + 9, this.B0 + 3));
+            var b4 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 8, this.G0 - 4, this.B0 - 2));
+            var b5 = new Pen(Color.FromArgb(this.i_Op, this.R0, this.G0, this.B0));
+            var b6 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 16, this.G0 - 11, this.B0 - 5));
+            var b8 = new Pen(Color.FromArgb(this.i_Op, this.R0 + 1, this.G0 + +5, this.B0 + 3));
+            var b7 = new Pen(Color.FromArgb(this.i_Op, this.R0 - 22, this.G0 - 10, this.B0));
+
+            this.T = 1;
+            this.DrawArc3(0, 20);
+            e.Graphics.PageUnit = GraphicsUnit.Pixel;
+            var B4 = b4.Brush;
+            e.Graphics.SmoothingMode = SmoothingMode.None;
+            this.X = this.X0;
+            this.Y = this.Y0;
+            this.i_Zero = 180;
+            this.D = 0;
+
+            e.Graphics.FillPath(b5.Brush, this.path);
+            var brocha = new LinearGradientBrush(P0, PF, b6.Color, b8.Color);
+            this.DrawArc2(15, this.YF - 20);
+            e.Graphics.FillPath(brocha, this.path);
+            this.DrawArc2(this.YF - 16, 12);
+            var bdown = new Pen(Color.FromArgb(this.i_Op, this.R0 - 22, this.G0 - 11, this.B0));
+            e.Graphics.FillPath(bdown.Brush, this.path);
+
+            this.T = 6;
+            this.DrawArc();
+            this.DrawArc();
+            e.Graphics.DrawPath(b2, this.path);
+            this.DrawArc();
+            e.Graphics.DrawPath(b3, this.path);
+
+            var P_EX = Cursor.Position;
+            P_EX = this.PointToClient(P_EX);
+
+            var ix = 10 + this.Width / 2 - this.S_TXT.Length * (int)this.Font.Size / 2;
+            var P_TXT = new PointF(ix, this.Height - 20);
+            var pen = new Pen(this.ForeColor);
+            e.Graphics.DrawString(this.S_TXT, this.Font, pen.Brush, P_TXT);
+
+            base.OnPaint(e);
+        }
+
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            var P_EX = Cursor.Position;
+            P_EX = this.PointToClient(P_EX);
+            if ((P_EX.X > 0) | (P_EX.X < this.Width) | (P_EX.Y > 0) | (P_EX.Y < this.Height))
+            {
+                this.i_mode = 0;
+                this.timer1.Start();
+            }
+
+            base.OnMouseEnter(e);
+        }
+
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            var P_EX = Cursor.Position;
+            P_EX = this.PointToClient(P_EX);
+            if ((P_EX.X < 0) | (P_EX.X >= this.Width) | (P_EX.Y < 0) | (P_EX.Y >= this.Height))
+            {
+                this.i_mode = 1;
+                this.timer1.Start();
+            }
+
+            base.OnMouseLeave(e);
+        }
+
+        protected override void OnResize(EventArgs eventargs)
+        {
+            this.Refresh();
+            base.OnResize(eventargs);
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             #region Entering
@@ -237,37 +247,67 @@ namespace Mohammad.Win.Controls
             if (this.i_mode == 0)
             {
                 if (Math.Abs(this._BaseColorOn.R - this.R0) > this.Speed)
+                {
                     this.i_fR = this.Speed;
+                }
                 else
+                {
                     this.i_fR = 1;
+                }
+
                 if (Math.Abs(this._BaseColorOn.G - this.G0) > this.Speed)
+                {
                     this.i_fG = this.Speed;
+                }
                 else
+                {
                     this.i_fG = 1;
+                }
+
                 if (Math.Abs(this._BaseColorOn.B - this.B0) > this.Speed)
+                {
                     this.i_fB = this.Speed;
+                }
                 else
+                {
                     this.i_fB = 1;
+                }
 
                 if (this._BaseColorOn.R < this.R0)
+                {
                     this.R0 -= this.i_fR;
+                }
                 else if (this._BaseColorOn.R > this.R0)
+                {
                     this.R0 += this.i_fR;
+                }
 
                 if (this._BaseColorOn.G < this.G0)
+                {
                     this.G0 -= this.i_fG;
+                }
                 else if (this._BaseColorOn.G > this.G0)
+                {
                     this.G0 += this.i_fG;
+                }
 
                 if (this._BaseColorOn.B < this.B0)
+                {
                     this.B0 -= this.i_fB;
+                }
                 else if (this._BaseColorOn.B > this.B0)
+                {
                     this.B0 += this.i_fB;
+                }
 
                 if (this._BaseColorOn == Color.FromArgb(this.R0, this.G0, this.B0))
+                {
                     this.timer1.Stop();
+                }
                 else
+                {
                     this.Refresh();
+                }
             }
 
             #endregion
@@ -277,44 +317,70 @@ namespace Mohammad.Win.Controls
             if (this.i_mode == 1)
             {
                 if (Math.Abs(this._BaseColor.R - this.R0) < this.Speed)
+                {
                     this.i_fR = 1;
+                }
                 else
+                {
                     this.i_fR = this.Speed;
+                }
+
                 if (Math.Abs(this._BaseColor.G - this.G0) < this.Speed)
+                {
                     this.i_fG = 1;
+                }
                 else
+                {
                     this.i_fG = this.Speed;
+                }
+
                 if (Math.Abs(this._BaseColor.B - this.B0) < this.Speed)
+                {
                     this.i_fB = 1;
+                }
                 else
+                {
                     this.i_fB = this.Speed;
+                }
 
                 if (this._BaseColor.R < this.R0)
+                {
                     this.R0 -= this.i_fR;
+                }
                 else if (this._BaseColor.R > this.R0)
+                {
                     this.R0 += this.i_fR;
+                }
+
                 if (this._BaseColor.G < this.G0)
+                {
                     this.G0 -= this.i_fG;
+                }
                 else if (this._BaseColor.G > this.G0)
+                {
                     this.G0 += this.i_fG;
+                }
+
                 if (this._BaseColor.B < this.B0)
+                {
                     this.B0 -= this.i_fB;
+                }
                 else if (this._BaseColor.B > this.B0)
+                {
                     this.B0 += this.i_fB;
+                }
 
                 if (this._BaseColor == Color.FromArgb(this.R0, this.G0, this.B0))
+                {
                     this.timer1.Stop();
+                }
                 else
+                {
                     this.Refresh();
+                }
             }
 
             #endregion
-        }
-
-        protected override void OnResize(EventArgs eventargs)
-        {
-            this.Refresh();
-            base.OnResize(eventargs);
         }
 
         private void InitializeComponent()

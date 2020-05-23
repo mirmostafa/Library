@@ -11,9 +11,16 @@ namespace Mohammad.Wpf.Windows.Controls
     public partial class SeparatorBlock
     {
         public static readonly DependencyProperty HeaderProperty = ControlHelper.GetDependencyProperty<string, SeparatorBlock>("Header",
-            (s, e) => { s.As<SeparatorBlock>().SeparatorLabel.Header.As<TextBlock>().Text = e; });
+            (s, e) =>
+            {
+                s.As<SeparatorBlock>().SeparatorLabel.Header.As<TextBlock>().Text = e;
+            });
 
-        public string Header { get { return (string) this.GetValue(HeaderProperty); } set { this.SetValue(HeaderProperty, value); } }
+        public string Header
+        {
+            get => (string)this.GetValue(HeaderProperty);
+            set => this.SetValue(HeaderProperty, value);
+        }
 
         public SeparatorBlock()
         {

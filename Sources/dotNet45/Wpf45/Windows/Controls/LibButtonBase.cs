@@ -8,6 +8,36 @@ namespace Mohammad.Wpf.Windows.Controls
 {
     public class LibButtonBase : Button, ILibControl, IBindable, ILibSecured
     {
+        public static DependencyProperty SecurityCodeProperty;
+
+        public DependencyProperty BindingFieldProperty => ContentProperty;
+
+        public string SecurityCode
+        {
+            get => (string)this.GetValue(SecurityCodeProperty);
+            set => this.SetValue(SecurityCodeProperty, value);
+        }
+
+        static LibButtonBase()
+        {
+            SecurityCodeProperty = DependencyProperty.Register("SecurityCode", typeof(string), typeof(LibButtonBase));
+            IsEnabledProperty.OverrideMetadata(typeof(LibButtonBase), new FrameworkPropertyMetadata {CoerceValueCallback = CoerceIsEnabledValueCallback});
+        }
+
+        public void SetControlUnSecured()
+        {
+            this.IsEnabled = false;
+            this.OnSettingControlUnSecured();
+        }
+
+        protected virtual void OnIsEnabledValueChanging(ItemActingEventArgs<object> e)
+        {
+        }
+
+        protected virtual void OnSettingControlUnSecured()
+        {
+        }
+
         private static object CoerceIsEnabledValueCallback(DependencyObject d, object value)
         {
             var control = d as LibButtonBase;
@@ -17,36 +47,16 @@ namespace Mohammad.Wpf.Windows.Controls
                 control.OnIsEnabledValueChanging(e);
                 value = e.Item;
                 if (e.Handled)
+                {
                     return value;
+                }
             }
 
-            var element = (UIElement) d;
+            var element = (UIElement)d;
             var method = typeof(UIElement).GetMethod("CoerceIsEnabled", BindingFlags.NonPublic | BindingFlags.Static);
             var value1 = value;
             value = Catch(() => method?.Invoke(element, new[] {d, value1}));
             return value;
-        }
-
-        public static DependencyProperty SecurityCodeProperty;
-
-        static LibButtonBase()
-        {
-            SecurityCodeProperty = DependencyProperty.Register("SecurityCode", typeof(string), typeof(LibButtonBase));
-            IsEnabledProperty.OverrideMetadata(typeof(LibButtonBase), new FrameworkPropertyMetadata {CoerceValueCallback = CoerceIsEnabledValueCallback});
-        }
-
-        protected virtual void OnIsEnabledValueChanging(ItemActingEventArgs<object> e) { }
-
-        protected virtual void OnSettingControlUnSecured() { }
-
-        public DependencyProperty BindingFieldProperty => ContentProperty;
-
-        public string SecurityCode { get { return (string) this.GetValue(SecurityCodeProperty); } set { this.SetValue(SecurityCodeProperty, value); } }
-
-        public void SetControlUnSecured()
-        {
-            this.IsEnabled = false;
-            this.OnSettingControlUnSecured();
         }
     }
 }

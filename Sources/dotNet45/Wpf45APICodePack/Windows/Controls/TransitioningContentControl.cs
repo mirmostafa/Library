@@ -31,17 +31,21 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         private Storyboard CurrentTransition
         {
-            get { return this._currentTransition; }
+            get => this._currentTransition;
             set
             {
                 // decouple event
                 if (this._currentTransition != null)
+                {
                     this._currentTransition.Completed -= this.OnTransitionCompleted;
+                }
 
                 this._currentTransition = value;
 
                 if (this._currentTransition != null)
+                {
                     this._currentTransition.Completed += this.OnTransitionCompleted;
+                }
             }
         }
 
@@ -55,15 +59,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 #endif
 
-        #region Events
-
-        /// <summary>
-        ///     Occurs when the current transition has completed.
-        /// </summary>
-        public event RoutedEventHandler TransitionCompleted;
-
-        #endregion Events
-
         /// <summary>
         ///     Builds the visual tree for the TransitioningContentControl control
         ///     when a new template is applied.
@@ -71,7 +66,9 @@ namespace Mohammad.Wpf.Windows.Controls
         public override void OnApplyTemplate()
         {
             if (this.IsTransitioning)
+            {
                 this.AbortTransition();
+            }
 
             base.OnApplyTemplate();
 
@@ -79,7 +76,9 @@ namespace Mohammad.Wpf.Windows.Controls
             this.CurrentContentPresentationSite = this.GetTemplateChild(CurrentContentPresentationSitePartName) as ContentPresenter;
 
             if (this.CurrentContentPresentationSite != null)
+            {
                 this.CurrentContentPresentationSite.Content = this.Content;
+            }
 
             // hookup currenttransition
             var transition = this.GetStoryboard(this.Transition);
@@ -94,6 +93,20 @@ namespace Mohammad.Wpf.Windows.Controls
             }
 
             VisualStateManager.GoToState(this, NormalState, false);
+        }
+
+        /// <summary>
+        ///     Aborts the transition and releases the previous content.
+        /// </summary>
+        public void AbortTransition()
+        {
+            // go to normal state and release our hold on the old content.
+            VisualStateManager.GoToState(this, NormalState, false);
+            this.IsTransitioning = false;
+            if (this.PreviousContentPresentationSite != null)
+            {
+                this.PreviousContentPresentationSite.Content = null;
+            }
         }
 
         /// <summary>
@@ -150,19 +163,9 @@ namespace Mohammad.Wpf.Windows.Controls
 
             var handler = this.TransitionCompleted;
             if (handler != null)
+            {
                 handler(this, new RoutedEventArgs());
-        }
-
-        /// <summary>
-        ///     Aborts the transition and releases the previous content.
-        /// </summary>
-        public void AbortTransition()
-        {
-            // go to normal state and release our hold on the old content.
-            VisualStateManager.GoToState(this, NormalState, false);
-            this.IsTransitioning = false;
-            if (this.PreviousContentPresentationSite != null)
-                this.PreviousContentPresentationSite.Content = null;
+            }
         }
 
         /// <summary>
@@ -175,10 +178,22 @@ namespace Mohammad.Wpf.Windows.Controls
             var presentationGroup = this.TryGetVisualStateGroup(PresentationGroup);
             Storyboard newStoryboard = null;
             if (presentationGroup != null)
+            {
                 newStoryboard =
                     presentationGroup.States.OfType<VisualState>().Where(state => state.Name == newTransition).Select(state => state.Storyboard).FirstOrDefault();
+            }
+
             return newStoryboard;
         }
+
+        #region Events
+
+        /// <summary>
+        ///     Occurs when the current transition has completed.
+        /// </summary>
+        public event RoutedEventHandler TransitionCompleted;
+
+        #endregion Events
 
         #region Visual state names
 
@@ -248,7 +263,7 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public bool IsTransitioning
         {
-            get { return (bool) this.GetValue(IsTransitioningProperty); }
+            get => (bool)this.GetValue(IsTransitioningProperty);
             private set
             {
                 this._allowIsTransitioningWrite = true;
@@ -256,7 +271,9 @@ namespace Mohammad.Wpf.Windows.Controls
                 this._allowIsTransitioningWrite = false;
 
                 if (this.IsTransitioningChanged != null)
+                {
                     this.IsTransitioningChanged(this, EventArgs.Empty);
+                }
             }
         }
 
@@ -275,11 +292,11 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Event arguments.</param>
         private static void OnIsTransitioningPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var source = (TransitioningContentControl) d;
+            var source = (TransitioningContentControl)d;
 
             if (!source._allowIsTransitioningWrite)
             {
-                source.IsTransitioning = (bool) e.OldValue;
+                source.IsTransitioning = (bool)e.OldValue;
                 throw new InvalidOperationException("IsTransitioning property is read-only.");
             }
         }
@@ -292,7 +309,11 @@ namespace Mohammad.Wpf.Windows.Controls
         ///     Gets or sets the name of the transition to use. These correspond
         ///     directly to the VisualStates inside the PresentationStates group.
         /// </summary>
-        public string Transition { get { return this.GetValue(TransitionProperty) as string; } set { this.SetValue(TransitionProperty, value); } }
+        public string Transition
+        {
+            get => this.GetValue(TransitionProperty) as string;
+            set => this.SetValue(TransitionProperty, value);
+        }
 
         /// <summary>
         ///     Identifies the Transition dependency property.
@@ -309,12 +330,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Event arguments.</param>
         private static void OnTransitionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var source = (TransitioningContentControl) d;
+            var source = (TransitioningContentControl)d;
             var oldTransition = e.NewValue as string;
             var newTransition = e.NewValue as string;
 
             if (source.IsTransitioning)
+            {
                 source.AbortTransition();
+            }
 
             // find new transition
             var newStoryboard = source.GetStoryboard(newTransition);
@@ -322,6 +345,7 @@ namespace Mohammad.Wpf.Windows.Controls
             // unable to find the transition.
             if (newStoryboard == null)
                 // could be during initialization of xaml that presentationgroups was not yet defined
+            {
                 if (source.TryGetVisualStateGroup(PresentationGroup) == null)
                     // will delay check
                 {
@@ -334,8 +358,11 @@ namespace Mohammad.Wpf.Windows.Controls
 
                     throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Transition '{0}' was not defined.", newTransition));
                 }
+            }
             else
+            {
                 source.CurrentTransition = newStoryboard;
+            }
         }
 
         #endregion public string Transition
@@ -348,8 +375,8 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public bool RestartTransitionOnContentChange
         {
-            get { return (bool) this.GetValue(RestartTransitionOnContentChangeProperty); }
-            set { this.SetValue(RestartTransitionOnContentChangeProperty, value); }
+            get => (bool)this.GetValue(RestartTransitionOnContentChangeProperty);
+            set => this.SetValue(RestartTransitionOnContentChangeProperty, value);
         }
 
         /// <summary>
@@ -367,7 +394,7 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Event arguments.</param>
         private static void OnRestartTransitionOnContentChangePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((TransitioningContentControl) d).OnRestartTransitionOnContentChangeChanged((bool) e.OldValue, (bool) e.NewValue);
+            ((TransitioningContentControl)d).OnRestartTransitionOnContentChangeChanged((bool)e.OldValue, (bool)e.NewValue);
         }
 
         /// <summary>
@@ -375,7 +402,9 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         /// <param name="oldValue">The old value of RestartTransitionOnContentChange.</param>
         /// <param name="newValue">The new value of RestartTransitionOnContentChange.</param>
-        protected virtual void OnRestartTransitionOnContentChangeChanged(bool oldValue, bool newValue) {}
+        protected virtual void OnRestartTransitionOnContentChangeChanged(bool oldValue, bool newValue)
+        {
+        }
 
         #endregion public bool RestartTransitionOnContentChange
     }

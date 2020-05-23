@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
-using Mohammad.Primitives;
 using Mohammad.Logging.Gateways;
+using Mohammad.Primitives;
 using Mohammad.Wpf.Windows.Controls;
 using Mohammad.Wpf.Windows.Dialogs;
 using TestWpfApp45.Settings;
@@ -45,6 +45,7 @@ namespace TestWpfApp45
                 this.Shutdown();
                 return;
             }
+
             WatcherPage = new OperationWatcherPage {Logger = Injector.Logger};
             WatcherPage.WatchLogger(Injector.Logger);
             base.OnStartup(e);

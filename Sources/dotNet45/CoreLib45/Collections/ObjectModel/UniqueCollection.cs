@@ -15,7 +15,10 @@ namespace Mohammad.Collections.ObjectModel
         protected override void InsertItem(int index, T item)
         {
             if (this.Contains(item))
+            {
                 return;
+            }
+
             base.InsertItem(index, item);
         }
     }

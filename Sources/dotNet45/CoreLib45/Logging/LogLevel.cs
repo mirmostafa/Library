@@ -18,22 +18,26 @@ namespace Mohammad.Logging
         /// <summary>
         ///     Information
         /// </summary>
-        [Description("Information")] Info = 2,
+        [Description("Information")]
+        Info = 2,
 
         /// <summary>
         ///     Exception
         /// </summary>
-        [Description("Exception")] Error = 4,
+        [Description("Exception")]
+        Error = 4,
 
         /// <summary>
         ///     Warning
         /// </summary>
-        [Description("Warning")] Warning = 8,
+        [Description("Warning")]
+        Warning = 8,
 
         /// <summary>
         ///     Fatal Error
         /// </summary>
-        [Description("Fatal Error")] Fatal = 16,
+        [Description("Fatal Error")]
+        Fatal = 16,
 
         /// <summary>
         ///     An internal log to be used in a program internally.
@@ -43,16 +47,19 @@ namespace Mohammad.Logging
         /// <summary>
         ///     Debug
         /// </summary>
-        [Description("Debug")] Debug = 64,
+        [Description("Debug")]
+        Debug = 64,
 
         /// <summary>
         ///     Status
         /// </summary>
-        [Description("Status")] Status = 128,
+        [Description("Status")]
+        Status = 128,
 
         /// <summary>
         ///     Normal
         /// </summary>
-        [Description("Normal")] Normal = Info | Error | Warning | Internal
+        [Description("Normal")]
+        Normal = Info | Error | Warning | Internal
     }
 }

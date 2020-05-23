@@ -48,16 +48,17 @@ namespace Mohammad.Wpf.Internals.Interop
 
     internal class AppBarInfo
     {
-        private APPBARDATA m_data;
-
         private const int ABE_BOTTOM = 3;
         private const int ABE_LEFT = 0;
         private const int ABE_RIGHT = 2;
         private const int ABE_TOP = 1;
+
         private const int ABM_GETTASKBARPOS = 0x00000005;
+
         // SystemParametersInfo constants
         private const uint SPI_GETWORKAREA = 0x0030;
-        public ScreenEdge Edge { get { return (ScreenEdge) this.m_data.uEdge; } }
+        private APPBARDATA m_data;
+        public ScreenEdge Edge => (ScreenEdge)this.m_data.uEdge;
 
         public Rectangle WorkArea
         {
@@ -67,7 +68,7 @@ namespace Mohammad.Wpf.Internals.Interop
                 var rc = new RECT();
                 var rawRect = Marshal.AllocHGlobal(Marshal.SizeOf(rc));
                 bResult = SystemParametersInfo(SPI_GETWORKAREA, 0, rawRect, 0);
-                rc = (RECT) Marshal.PtrToStructure(rawRect, rc.GetType());
+                rc = (RECT)Marshal.PtrToStructure(rawRect, rc.GetType());
 
                 if (bResult == 1)
                 {
@@ -79,6 +80,33 @@ namespace Mohammad.Wpf.Internals.Interop
             }
         }
 
+        public void GetPosition(string strClassName, string strWindowName)
+        {
+            this.m_data = new APPBARDATA();
+            this.m_data.cbSize = (uint)Marshal.SizeOf(this.m_data.GetType());
+
+            var hWnd = FindWindow(strClassName, strWindowName);
+
+            if (hWnd != IntPtr.Zero)
+            {
+                var uResult = SHAppBarMessage(ABM_GETTASKBARPOS, ref this.m_data);
+
+                if (uResult != 1)
+                {
+                    throw new Exception("Failed to communicate with the given AppBar");
+                }
+            }
+            else
+            {
+                throw new Exception("Failed to find an AppBar that matched the given criteria");
+            }
+        }
+
+        public void GetSystemTaskBarPosition()
+        {
+            this.GetPosition("Shell_TrayWnd", null);
+        }
+
         [DllImport("user32.dll")]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
@@ -88,48 +116,6 @@ namespace Mohammad.Wpf.Internals.Interop
         [DllImport("user32.dll")]
         private static extern int SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
 
-        public void GetPosition(string strClassName, string strWindowName)
-        {
-            this.m_data = new APPBARDATA();
-            this.m_data.cbSize = (uint) Marshal.SizeOf(this.m_data.GetType());
-
-            var hWnd = FindWindow(strClassName, strWindowName);
-
-            if (hWnd != IntPtr.Zero)
-            {
-                var uResult = SHAppBarMessage(ABM_GETTASKBARPOS, ref this.m_data);
-
-                if (uResult != 1)
-                    throw new Exception("Failed to communicate with the given AppBar");
-            }
-            else
-            {
-                throw new Exception("Failed to find an AppBar that matched the given criteria");
-            }
-        }
-
-        public void GetSystemTaskBarPosition() { this.GetPosition("Shell_TrayWnd", null); }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct APPBARDATA
-        {
-            public uint cbSize;
-            public readonly IntPtr hWnd;
-            public readonly uint uCallbackMessage;
-            public readonly uint uEdge;
-            public readonly RECT rc;
-            public readonly int lParam;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct RECT
-        {
-            public readonly int left;
-            public readonly int top;
-            public readonly int right;
-            public readonly int bottom;
-        }
-
         public enum ScreenEdge
         {
             Undefined = -1,
@@ -137,6 +123,26 @@ namespace Mohammad.Wpf.Internals.Interop
             Top = ABE_TOP,
             Right = ABE_RIGHT,
             Bottom = ABE_BOTTOM
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct APPBARDATA
+        {
+            public readonly IntPtr hWnd;
+            public readonly int lParam;
+            public readonly RECT rc;
+            public readonly uint uCallbackMessage;
+            public readonly uint uEdge;
+            public uint cbSize;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct RECT
+        {
+            public readonly int bottom;
+            public readonly int left;
+            public readonly int right;
+            public readonly int top;
         }
     }
 }

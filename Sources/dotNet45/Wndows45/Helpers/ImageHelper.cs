@@ -20,7 +20,9 @@ namespace Mohammad.Win.Helpers
         public static IEnumerable<Color> GetPixels(this Bitmap bitmap)
         {
             if (bitmap == null)
+            {
                 throw new ArgumentNullException("bitmap");
+            }
 
             return bitmap.GetPixels(0, 0, bitmap.Width, bitmap.Height);
         }
@@ -28,7 +30,9 @@ namespace Mohammad.Win.Helpers
         public static IEnumerable<Color> GetPixels(this Bitmap bitmap, int x, int y, int width, int height)
         {
             if (bitmap == null)
+            {
                 throw new ArgumentNullException("bitmap");
+            }
 
             return from x1 in Enumerable.Range(x, width)
                    from y1 in Enumerable.Range(y, height)
@@ -41,15 +45,17 @@ namespace Mohammad.Win.Helpers
             var croppedBitmap = new Bitmap(rect.Width, rect.Height, bitmap.PixelFormat);
 
             using (var gfx = Graphics.FromImage(croppedBitmap))
+            {
                 gfx.DrawImage(bitmap, 0, 0, rect, GraphicsUnit.Pixel);
+            }
 
             return croppedBitmap;
         }
 
         public static Bitmap Resize(this Bitmap bitmap, double ratio, InterpolationMode mode)
         {
-            var width = (int) (bitmap.Width * ratio);
-            var height = (int) (bitmap.Height * ratio);
+            var width = (int)(bitmap.Width * ratio);
+            var height = (int)(bitmap.Height * ratio);
             return bitmap.Resize(width, height, mode);
         }
 
@@ -69,9 +75,14 @@ namespace Mohammad.Win.Helpers
         public static byte[] ToBytes(this Image image, ImageFormat format)
         {
             if (image == null)
+            {
                 throw new ArgumentNullException("image");
+            }
+
             if (format == null)
+            {
                 throw new ArgumentNullException("format");
+            }
 
             using (var stream = new MemoryStream())
             {
@@ -83,7 +94,9 @@ namespace Mohammad.Win.Helpers
         public static ImageCodecInfo GetImageCodecInfo(this ImageFormat imageFormat)
         {
             if (imageFormat == null)
+            {
                 throw new ArgumentNullException("imageFormat");
+            }
 
             return ImageCodecInfo.GetImageEncoders().FirstOrDefault(i => i.Clsid == imageFormat.Guid);
         }

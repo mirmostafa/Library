@@ -17,10 +17,6 @@ namespace Mohammad.Win32.Interop.NetworkList
     [Guid("DCB00005-570F-4A9B-8D69-199FDBA5723B")]
     internal interface INetworkConnection
     {
-        [return: MarshalAs(UnmanagedType.Interface)]
-        [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        INetwork GetNetwork();
-
         bool IsConnectedToInternet
         {
             [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
@@ -32,6 +28,10 @@ namespace Mohammad.Win32.Interop.NetworkList
             [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
             get;
         }
+
+        [return: MarshalAs(UnmanagedType.Interface)]
+        [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+        INetwork GetNetwork();
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         Connectivity GetConnectivity();

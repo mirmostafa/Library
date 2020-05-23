@@ -20,7 +20,7 @@ namespace Mohammad.Security
 
         private string _Password;
 
-        private       string                                _UserName;
+        private string _UserName;
         public static IEqualityComparer<AuthenticationInfo> UserNameDomainComparer { get; } = new UserNameDomainEqualityComparer();
 
         public string UserName
@@ -29,7 +29,10 @@ namespace Mohammad.Security
             set
             {
                 if (value == this._UserName)
+                {
                     return;
+                }
+
                 this._UserName = value;
                 this.OnPropertyChanged();
             }
@@ -41,7 +44,10 @@ namespace Mohammad.Security
             set
             {
                 if (value == this._Password)
+                {
                     return;
+                }
+
                 this._Password = value;
                 this.OnPropertyChanged();
             }
@@ -53,7 +59,10 @@ namespace Mohammad.Security
             set
             {
                 if (value == this._Domain)
+                {
                     return;
+                }
+
                 this._Domain = value;
                 this.OnPropertyChanged();
             }
@@ -78,13 +87,25 @@ namespace Mohammad.Security
             public bool Equals(AuthenticationInfo x, AuthenticationInfo y)
             {
                 if (ReferenceEquals(x, y))
+                {
                     return true;
+                }
+
                 if (ReferenceEquals(x, null))
+                {
                     return false;
+                }
+
                 if (ReferenceEquals(y, null))
+                {
                     return false;
+                }
+
                 if (x.GetType() != y.GetType())
+                {
                     return false;
+                }
+
                 return string.Equals(x.UserName, y.UserName) && string.Equals(x.Domain, y.Domain);
             }
 
@@ -108,7 +129,10 @@ namespace Mohammad.Security
             set
             {
                 if (Equals(value, this._Uri))
+                {
                     return;
+                }
+
                 this._Uri = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.Uri));
@@ -121,7 +145,10 @@ namespace Mohammad.Security
             set
             {
                 if (this.UriAddress == value)
+                {
                     return;
+                }
+
                 this.Uri = new Uri(value);
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(this.UriAddress));

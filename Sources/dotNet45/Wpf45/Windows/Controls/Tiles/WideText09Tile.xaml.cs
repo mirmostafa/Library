@@ -12,41 +12,58 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
             typeof(WideText09Tile),
             new PropertyMetadata(default(string)));
 
-        public string Body
-        {
-            get { return (string) this.GetValue(BodyProperty); }
-            set
-            {
-                if (!this.Set(BodyProperty, value))
-                    return;
-                this.OnPropertyChanged();
-            }
-        }
-
         public static readonly DependencyProperty HeaderProperty = DependencyProperty.Register("Header",
             typeof(string),
             typeof(WideText09Tile),
             new PropertyMetadata(default(string)));
 
-        public string Header
+        public string Body
         {
-            get { return (string) this.GetValue(HeaderProperty); }
+            get => (string)this.GetValue(BodyProperty);
             set
             {
-                if (!this.Set(HeaderProperty, value))
+                if (!this.Set(BodyProperty, value))
+                {
                     return;
+                }
+
                 this.OnPropertyChanged();
             }
         }
 
-        public string Badge { get { return this.textBlockBadge.Text; } set { this.textBlockBadge.Text = value; } }
-        public WideText09Tile() { this.InitializeComponent(); }
+        public string Header
+        {
+            get => (string)this.GetValue(HeaderProperty);
+            set
+            {
+                if (!this.Set(HeaderProperty, value))
+                {
+                    return;
+                }
+
+                this.OnPropertyChanged();
+            }
+        }
+
+        public string Badge
+        {
+            get => this.textBlockBadge.Text;
+            set => this.textBlockBadge.Text = value;
+        }
+
+        public WideText09Tile()
+        {
+            this.InitializeComponent();
+        }
 
         protected override void HookCommand()
         {
             var libCommand = this.Command;
             if (libCommand == null)
+            {
                 return;
+            }
+
             var header = libCommand.Header;
             if (header != null)
             {
@@ -57,6 +74,7 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
                 var s = this.Command.Content.ToString();
                 this.Header = s.StartsWith("_") ? s.Substring(1) : s;
             }
+
             this.Body = libCommand.Body;
         }
     }

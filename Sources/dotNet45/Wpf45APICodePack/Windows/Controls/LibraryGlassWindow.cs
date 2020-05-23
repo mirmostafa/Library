@@ -22,14 +22,10 @@ namespace Mohammad.Wpf.Windows.Controls
 {
     public class LibraryGlassWindow : LibraryWindow
     {
-        private Status _Status;
-        private Windows7Tools _Windows7Tools;
         private static readonly SolidColorBrush _DefaultGlassBackground = new BrushConverter().ConvertFromString("#12000900").To<SolidColorBrush>();
 
         public static readonly DependencyProperty GlassBackgroundProperty = ControlHelper.GetDependencyProperty<Brush, LibraryGlassWindow>("GlassBackground",
             defaultValue: _DefaultGlassBackground);
-
-        public Brush GlassBackground { get { return (Brush) this.GetValue(GlassBackgroundProperty); } set { this.SetValue(GlassBackgroundProperty, value); } }
 
         public static readonly DependencyProperty IsGlassEnabledProperty = ControlHelper.GetDependencyProperty<bool, LibraryGlassWindow>("IsGlassEnabled",
             (me, e) =>
@@ -49,19 +45,35 @@ namespace Mohammad.Wpf.Windows.Controls
             },
             defaultValue: false);
 
+        private Status _Status;
+        private Windows7Tools _Windows7Tools;
+
+        public Brush GlassBackground
+        {
+            get => (Brush)this.GetValue(GlassBackgroundProperty);
+            set => this.SetValue(GlassBackgroundProperty, value);
+        }
+
         //public bool IsAeroGlassEnabled { get; set; }
 
         /// <summary>
         ///     Compatible with Windows 10
         /// </summary>
-        public bool IsGlassEnabled { get { return (bool) this.GetValue(IsGlassEnabledProperty); } set { this.SetValue(IsGlassEnabledProperty, value); } }
+        public bool IsGlassEnabled
+        {
+            get => (bool)this.GetValue(IsGlassEnabledProperty);
+            set => this.SetValue(IsGlassEnabledProperty, value);
+        }
 
         public Status Status
         {
             get
             {
                 if (this._Status != null)
+                {
                     return this._Status;
+                }
+
                 ProgressBar progressBar;
                 StatusBarItem statusBarItem;
                 ISimpleLogger watcher;
@@ -73,19 +85,12 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public static bool AeroGlassCompositionEnabled
         {
-            get { return AeroGlassApi.DwmIsCompositionEnabled(); }
-            set { AeroGlassApi.DwmEnableComposition(value ? CompositionEnable.Enable : CompositionEnable.Disable); }
+            get => AeroGlassApi.DwmIsCompositionEnabled();
+            set => AeroGlassApi.DwmEnableComposition(value ? CompositionEnable.Enable : CompositionEnable.Disable);
         }
 
         public Windows7Tools Windows7Tools => this._Windows7Tools ?? (this._Windows7Tools = new Windows7Tools(this));
-        public LibraryGlassWindow() { this.Loaded += this.LibraryGlassWindow_OnLoaded; }
-
-        private void LibraryGlassWindow_OnLoaded(object sender, RoutedEventArgs e) { }
-
-        private void InitializeAppStatus(out ProgressBar progressBar, out StatusBarItem statusBarItem, out ISimpleLogger watcher)
-        {
-            this.OnInitializingStatus(out progressBar, out statusBarItem, out watcher);
-        }
+        public LibraryGlassWindow() => this.Loaded += this.LibraryGlassWindow_OnLoaded;
 
         protected virtual void OnInitializingStatus(out ProgressBar progressBar, out StatusBarItem statusBarItem, out ISimpleLogger logger)
         {
@@ -104,10 +109,22 @@ namespace Mohammad.Wpf.Windows.Controls
         protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             if (msg != WindowsMessages.WM_DWMCOMPOSITIONCHANGED)
+            {
                 return IntPtr.Zero;
+            }
+
             this.ExtendGlass(new Thickness(-1));
             handled = true;
             return IntPtr.Zero;
+        }
+
+        private void LibraryGlassWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void InitializeAppStatus(out ProgressBar progressBar, out StatusBarItem statusBarItem, out ISimpleLogger watcher)
+        {
+            this.OnInitializingStatus(out progressBar, out statusBarItem, out watcher);
         }
     }
 }

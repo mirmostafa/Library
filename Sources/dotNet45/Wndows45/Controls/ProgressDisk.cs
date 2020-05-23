@@ -31,7 +31,7 @@ namespace Mohammad.Win.Controls
         [DefaultValue(0)]
         public int Value
         {
-            get { return this._Value; }
+            get => this._Value;
             set
             {
                 this._Value = value;
@@ -45,7 +45,7 @@ namespace Mohammad.Win.Controls
         [DefaultValue(typeof(Color), "White")]
         public Color BackgroundColor
         {
-            get { return this.backgroundColor; }
+            get => this.backgroundColor;
             set
             {
                 this.backgroundColor = value;
@@ -59,7 +59,7 @@ namespace Mohammad.Win.Controls
         [DefaultValue(typeof(Color), "Blue")]
         public Color ActiveForeColor1
         {
-            get { return this.activeForeColor1; }
+            get => this.activeForeColor1;
             set
             {
                 this.activeForeColor1 = value;
@@ -73,7 +73,7 @@ namespace Mohammad.Win.Controls
         [DefaultValue(typeof(Color), "LightBlue")]
         public Color ActiveForeColor2
         {
-            get { return this.activeForeColor2; }
+            get => this.activeForeColor2;
             set
             {
                 this.activeForeColor2 = value;
@@ -87,7 +87,7 @@ namespace Mohammad.Win.Controls
         [DefaultValue(typeof(Color), "Green")]
         public Color InactiveForeColor1
         {
-            get { return this.inactiveForeColor1; }
+            get => this.inactiveForeColor1;
             set
             {
                 this.inactiveForeColor1 = value;
@@ -101,7 +101,7 @@ namespace Mohammad.Win.Controls
         [DefaultValue(typeof(Color), "LightGreen")]
         public Color InactiveForeColor2
         {
-            get { return this.inactiveForeColor2; }
+            get => this.inactiveForeColor2;
             set
             {
                 this.inactiveForeColor2 = value;
@@ -115,7 +115,7 @@ namespace Mohammad.Win.Controls
         [DefaultValue(50)]
         public int SquareSize
         {
-            get { return this.size; }
+            get => this.size;
             set
             {
                 this.size = value;
@@ -129,7 +129,7 @@ namespace Mohammad.Win.Controls
         [DefaultValue(typeof(ProgressDiskBlockSize), "Small")]
         public ProgressDiskBlockSize BlockSize
         {
-            get { return this.bs; }
+            get => this.bs;
             set
             {
                 this.bs = value;
@@ -153,8 +153,6 @@ namespace Mohammad.Win.Controls
                     case ProgressDiskBlockSize.XXLarge:
                         this.blockRatio = 0.01f;
                         break;
-                    default:
-                        break;
                 }
             }
         }
@@ -173,8 +171,6 @@ namespace Mohammad.Win.Controls
             this.InitializeComponent();
             this.Render();
         }
-
-        private void timer_Tick(object sender, EventArgs e) { this.Value = (this.Value + 1) % this.SliceCount; }
 
         /// <summary>
         ///     Draws the progress disk
@@ -202,33 +198,6 @@ namespace Mohammad.Win.Controls
             base.OnPaint(e);
         }
 
-        private void Render()
-        {
-            this._BackgroundPath1.Reset();
-            this._BackgroundPath2.Reset();
-            this._ValuePath.Reset();
-            this._FreGroundPath.Reset();
-            this._BackgroundPath1.AddPie(new Rectangle(0, 0, this.size, this.size), 0, 360);
-
-            //just in case...
-            if (this.SliceCount == 0)
-                this.SliceCount = 12;
-
-            float sliceAngle = 360 / this.SliceCount;
-            var sweepAngle = sliceAngle - 5;
-            for (var i = 0; i < this.SliceCount; i++)
-                if (this._Value != i)
-                    this._ValuePath.AddPie(0, 0, this.size, this.size, i * sliceAngle, sweepAngle);
-            this._BackgroundPath2.AddPie(this.size / 2 - this.size * this.blockRatio,
-                this.size / 2 - this.size * this.blockRatio,
-                this.blockRatio * 2 * this.size,
-                this.blockRatio * 2 * this.size,
-                0,
-                360);
-            this._FreGroundPath.AddPie(new Rectangle(0, 0, this.size, this.size), this._Value * sliceAngle, sweepAngle);
-            this.Invalidate();
-        }
-
         /// <summary>
         ///     Re-calculates the boarders.
         /// </summary>
@@ -253,6 +222,45 @@ namespace Mohammad.Win.Controls
             base.OnResize(e);
         }
 
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            this.Value = (this.Value + 1) % this.SliceCount;
+        }
+
+        private void Render()
+        {
+            this._BackgroundPath1.Reset();
+            this._BackgroundPath2.Reset();
+            this._ValuePath.Reset();
+            this._FreGroundPath.Reset();
+            this._BackgroundPath1.AddPie(new Rectangle(0, 0, this.size, this.size), 0, 360);
+
+            //just in case...
+            if (this.SliceCount == 0)
+            {
+                this.SliceCount = 12;
+            }
+
+            float sliceAngle = 360 / this.SliceCount;
+            var sweepAngle = sliceAngle - 5;
+            for (var i = 0; i < this.SliceCount; i++)
+            {
+                if (this._Value != i)
+                {
+                    this._ValuePath.AddPie(0, 0, this.size, this.size, i * sliceAngle, sweepAngle);
+                }
+            }
+
+            this._BackgroundPath2.AddPie(this.size / 2 - this.size * this.blockRatio,
+                this.size / 2 - this.size * this.blockRatio,
+                this.blockRatio * 2 * this.size,
+                this.blockRatio * 2 * this.size,
+                0,
+                360);
+            this._FreGroundPath.AddPie(new Rectangle(0, 0, this.size, this.size), this._Value * sliceAngle, sweepAngle);
+            this.Invalidate();
+        }
+
         #region Interval
 
         private int _Interval = 100;
@@ -263,12 +271,14 @@ namespace Mohammad.Win.Controls
         [DefaultValue(100)]
         public int Interval
         {
-            get { return this._Interval; }
+            get => this._Interval;
             set
             {
                 this._Interval = value;
                 if (this._Timer != null)
+                {
                     this._Timer.Interval = value;
+                }
             }
         }
 
@@ -284,11 +294,14 @@ namespace Mohammad.Win.Controls
         [DefaultValue(false)]
         public bool AutoProgress
         {
-            get { return this._AutoProgress; }
+            get => this._AutoProgress;
             set
             {
                 if (this._AutoProgress == value)
+                {
                     return;
+                }
+
                 this._AutoProgress = value;
                 if (this._AutoProgress)
                 {
@@ -298,6 +311,7 @@ namespace Mohammad.Win.Controls
                         this._Timer.Interval = this.Interval;
                         this._Timer.Tick += this.timer_Tick;
                     }
+
                     this._Timer.Start();
                 }
                 else

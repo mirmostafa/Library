@@ -18,13 +18,13 @@ namespace Mohammad.DynamicProxy
     /// </summary>
     public class ProxyFactory : Singleton<ProxyFactory>
     {
-        private const string PROXY_SUFFIX  = "Proxy";
+        private const string PROXY_SUFFIX = "Proxy";
         private const string ASSEMBLY_NAME = "ProxyAssembly";
-        private const string MODULE_NAME   = "ProxyModule";
-        private const string HANDLER_NAME  = "handler";
+        private const string MODULE_NAME = "ProxyModule";
+        private const string HANDLER_NAME = "handler";
 
         private static readonly Hashtable _OpCodeTypeMapper = new Hashtable();
-        private readonly        Hashtable _TypeMap          = Hashtable.Synchronized(new Hashtable());
+        private readonly Hashtable _TypeMap = Hashtable.Synchronized(new Hashtable());
 
         // Initialize the value type mapper.  This is needed for methods with intrinsic 
         // return types, used in the Emit process.
@@ -47,16 +47,20 @@ namespace Mohammad.DynamicProxy
         public object Create(IProxyInvocationHandler handler, Type objType, bool isObjInterface)
         {
             var typeName = objType.FullName + PROXY_SUFFIX;
-            var type     = (Type) this._TypeMap[typeName];
+            var type = (Type)this._TypeMap[typeName];
 
             // check to see if the type was in the cache.  If the type was not cached, then
             // create a new instance of the dynamic type and add it to the cache.
             if (type == null)
             {
                 if (isObjInterface)
+                {
                     type = this.CreateType(handler, new[] {objType}, typeName);
+                }
                 else
+                {
                     type = this.CreateType(handler, objType.GetInterfaces(), typeName);
+                }
 
                 this._TypeMap.Add(typeName, type);
             }
@@ -73,13 +77,13 @@ namespace Mohammad.DynamicProxy
 
             if (handler != null && interfaces != null)
             {
-                var objType     = typeof(object);
+                var objType = typeof(object);
                 var handlerType = typeof(IProxyInvocationHandler);
 
                 var domain = Thread.GetDomain();
                 var assemblyName = new AssemblyName
                 {
-                    Name    = ASSEMBLY_NAME,
+                    Name = ASSEMBLY_NAME,
                     Version = new Version(1, 0, 0, 0)
                 };
 
@@ -101,7 +105,7 @@ namespace Mohammad.DynamicProxy
 
                 // build a constructor that takes the delegate object as the only argument
                 //ConstructorInfo defaultObjConstructor = objType.GetConstructor( new Type[0] );
-                var superConstructor    = objType.GetConstructor(new Type[0]);
+                var superConstructor = objType.GetConstructor(new Type[0]);
                 var delegateConstructor = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new[] {handlerType});
 
                 #region( "Constructor IL Code" )
@@ -126,7 +130,9 @@ namespace Mohammad.DynamicProxy
                 // for every method that the interfaces define, build a corresponding 
                 // method in the dynamic type that calls the handlers invoke method.  
                 foreach (var interfaceType in interfaces)
+                {
                     this.GenerateMethod(interfaceType, handlerField, typeBuilder);
+                }
 
                 retVal = typeBuilder.CreateType();
             }
@@ -139,25 +145,28 @@ namespace Mohammad.DynamicProxy
             MetaDataFactory.Add(interfaceType);
             var interfaceMethods = interfaceType.GetMethods();
             if (interfaceMethods != null)
+            {
                 for (var i = 0; i < interfaceMethods.Length; i++)
                 {
                     var methodInfo = interfaceMethods[i];
                     // Get the method parameters since we need to create an array
                     // of parameter types                         
-                    var methodParams     = methodInfo.GetParameters();
-                    var numOfParams      = methodParams.Length;
+                    var methodParams = methodInfo.GetParameters();
+                    var numOfParams = methodParams.Length;
                     var methodParameters = new Type[numOfParams];
 
                     // convert the ParameterInfo objects into Type
                     for (var j = 0; j < numOfParams; j++)
+                    {
                         methodParameters[j] = methodParams[j].ParameterType;
+                    }
 
                     // create a new builder for the method in the interface
                     var methodBuilder = typeBuilder.DefineMethod(methodInfo.Name,
-                                                                 MethodAttributes.Public | MethodAttributes.Virtual,
-                                                                 CallingConventions.Standard,
-                                                                 methodInfo.ReturnType,
-                                                                 methodParameters);
+                        MethodAttributes.Public | MethodAttributes.Virtual,
+                        CallingConventions.Standard,
+                        methodInfo.ReturnType,
+                        methodParameters);
 
                     #region( "Handler Method IL Code" )
 
@@ -169,13 +178,17 @@ namespace Mohammad.DynamicProxy
                     {
                         methodIl.DeclareLocal(methodInfo.ReturnType);
                         if (methodInfo.ReturnType.IsValueType && !methodInfo.ReturnType.IsPrimitive)
+                        {
                             methodIl.DeclareLocal(methodInfo.ReturnType);
+                        }
                     }
 
                     // if we have any parameters for the method, then declare an 
                     // Object array local var.
                     if (numOfParams > 0)
+                    {
                         methodIl.DeclareLocal(typeof(object[]));
+                    }
 
                     // declare a label for invoking the handler
                     var handlerLabel = methodIl.DefineLabel();
@@ -193,9 +206,14 @@ namespace Mohammad.DynamicProxy
                     if (!(methodInfo.ReturnType == typeof(void)))
                     {
                         if (methodInfo.ReturnType.IsValueType && !methodInfo.ReturnType.IsPrimitive && !methodInfo.ReturnType.IsEnum)
+                        {
                             methodIl.Emit(OpCodes.Ldloc_1);
+                        }
                         else // load null onto the stack
+                        {
                             methodIl.Emit(OpCodes.Ldnull);
+                        }
+
                         // store the null return value
                         methodIl.Emit(OpCodes.Stloc_0);
                         // jump to return
@@ -236,7 +254,10 @@ namespace Mohammad.DynamicProxy
                             methodIl.Emit(OpCodes.Ldc_I4, j);
                             methodIl.Emit(OpCodes.Ldarg, j + 1);
                             if (methodParameters[j].IsValueType)
+                            {
                                 methodIl.Emit(OpCodes.Box, methodParameters[j]);
+                            }
+
                             methodIl.Emit(OpCodes.Stelem_Ref);
                         }
 
@@ -254,11 +275,17 @@ namespace Mohammad.DynamicProxy
                         {
                             methodIl.Emit(OpCodes.Unbox, methodInfo.ReturnType);
                             if (methodInfo.ReturnType.IsEnum)
+                            {
                                 methodIl.Emit(OpCodes.Ldind_I4);
+                            }
                             else if (!methodInfo.ReturnType.IsPrimitive)
+                            {
                                 methodIl.Emit(OpCodes.Ldobj, methodInfo.ReturnType);
+                            }
                             else
-                                methodIl.Emit((OpCode) _OpCodeTypeMapper[methodInfo.ReturnType]);
+                            {
+                                methodIl.Emit((OpCode)_OpCodeTypeMapper[methodInfo.ReturnType]);
+                            }
                         }
 
                         // store the result
@@ -285,10 +312,13 @@ namespace Mohammad.DynamicProxy
 
                     #endregion
                 }
+            }
 
             // Iterate through the parent interfaces and recursively call this method
             foreach (var parentType in interfaceType.GetInterfaces())
+            {
                 this.GenerateMethod(parentType, handlerField, typeBuilder);
+            }
         }
     }
 }

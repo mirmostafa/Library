@@ -15,19 +15,19 @@ namespace Mohammad.Collections.Hierarchy
 {
     public class ReadOnlyTreeById<T> : IReadOnlyTreeById<T>
     {
+        protected List<NodeById<T>> Nodes { get; }
+        public IEnumerable<T> Roots => this.RootNodes.Select(n => n.Current);
+        public IEnumerable<NodeById<T>> RootNodes => this.Nodes.Where(n => !n.ParentId.HasValue);
         public ReadOnlyTreeById(List<NodeById<T>> nodes) => this.Nodes = nodes;
-        protected List<NodeById<T>>        Nodes                               { get; }
-        public    IEnumerable<T>           Roots                               => this.RootNodes.Select(n => n.Current);
-        public    IEnumerable<NodeById<T>> RootNodes                           => this.Nodes.Where(n => !n.ParentId.HasValue);
-        public    bool                     HasChild(NodeById<T>        parent) => this.GetChildNodesOf(parent).Any();
-        public    IEnumerable<NodeById<T>> GetChildNodesOf(NodeById<T> parent) => this.Nodes.Where(n => n.ParentId            == parent.CurrentId);
-        public    NodeById<T>              GetParentNodeOf(NodeById<T> child)  => this.Nodes.SingleOrDefault(n => n.CurrentId == child.ParentId);
-        public    IEnumerator<T>           GetEnumerator()                     => this.Nodes.Select(n => n.Current).GetEnumerator();
-        IEnumerator IEnumerable.           GetEnumerator()                     => this.GetEnumerator();
-        public IEnumerable<T>              GetChildrenOf(long        parentId) => this.GetChildNodesOf(parentId).Select(node => node.Current);
-        public IEnumerable<NodeById<T>>    GetChildNodesOf(long      parentId) => this.Nodes.Where(n => n.ParentId == parentId);
-        public IEnumerable<T>              GetChildrenOf(NodeById<T> parent)   => this.GetChildNodesOf(parent).Select(node => node.Current);
-        public bool                        HasChild(long             id)       => this.GetChildNodesOf(id).Any();
+        public bool HasChild(NodeById<T> parent) => this.GetChildNodesOf(parent).Any();
+        public IEnumerable<NodeById<T>> GetChildNodesOf(NodeById<T> parent) => this.Nodes.Where(n => n.ParentId == parent.CurrentId);
+        public NodeById<T> GetParentNodeOf(NodeById<T> child) => this.Nodes.SingleOrDefault(n => n.CurrentId == child.ParentId);
+        public IEnumerator<T> GetEnumerator() => this.Nodes.Select(n => n.Current).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        public IEnumerable<T> GetChildrenOf(long parentId) => this.GetChildNodesOf(parentId).Select(node => node.Current);
+        public IEnumerable<NodeById<T>> GetChildNodesOf(long parentId) => this.Nodes.Where(n => n.ParentId == parentId);
+        public IEnumerable<T> GetChildrenOf(NodeById<T> parent) => this.GetChildNodesOf(parent).Select(node => node.Current);
+        public bool HasChild(long id) => this.GetChildNodesOf(id).Any();
 
         public T GetParentOf(long childId)
         {
@@ -53,7 +53,7 @@ namespace Mohammad.Collections.Hierarchy
             return this.Nodes.Where(predicator);
         }
 
-        public T           GetById(long     id) => this.Nodes.Where(n => n.CurrentId == id).Select(n => n.Current).SingleOrDefault();
+        public T GetById(long id) => this.Nodes.Where(n => n.CurrentId == id).Select(n => n.Current).SingleOrDefault();
         public NodeById<T> GetNodeById(long id) => this.Nodes.SingleOrDefault(n => n.CurrentId == id);
     }
 }

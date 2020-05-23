@@ -8,18 +8,15 @@ namespace Mohammad.Wpf.Converters
 {
     public class TextToBrushRequiredFieldValidator : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return StringHelper.IsNullOrEmpty(value) ? Brushes.Red : Brushes.RoyalBlue;
-        }
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => StringHelper.IsNullOrEmpty(value) ? Brushes.Red : Brushes.RoyalBlue;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { throw new NotSupportedException(); }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
     }
 
     public class KeyEqualsValueValidator : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) { return value == parameter; }
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value == parameter;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { throw new NotSupportedException(); }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
     }
 }

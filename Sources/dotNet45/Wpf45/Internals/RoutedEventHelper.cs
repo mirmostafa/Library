@@ -20,9 +20,13 @@ namespace Mohammad.Wpf.Internals
         internal static void RaiseEvent(DependencyObject target, RoutedEventArgs args)
         {
             if (target is UIElement)
+            {
                 (target as UIElement).RaiseEvent(args);
+            }
             else if (target is ContentElement)
+            {
                 (target as ContentElement).RaiseEvent(args);
+            }
         }
 
         /// <summary>
@@ -43,7 +47,9 @@ namespace Mohammad.Wpf.Internals
             {
                 var ce = element as ContentElement;
                 if (ce != null)
+                {
                     ce.AddHandler(routedEvent, handler);
+                }
             }
         }
 
@@ -65,7 +71,9 @@ namespace Mohammad.Wpf.Internals
             {
                 var ce = element as ContentElement;
                 if (ce != null)
+                {
                     ce.RemoveHandler(routedEvent, handler);
+                }
             }
         }
 

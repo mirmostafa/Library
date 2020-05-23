@@ -16,9 +16,9 @@ namespace Mohammad.Text
         public static string Reformat(string jsonText)
         {
             const string indentString = "    ";
-            var          indent       = 0;
-            var          quoted       = false;
-            var          sb           = new StringBuilder();
+            var indent = 0;
+            var quoted = false;
+            var sb = new StringBuilder();
             for (var i = 0; i < jsonText.Length; i++)
             {
                 var ch = jsonText[i];
@@ -47,11 +47,17 @@ namespace Mohammad.Text
                     case '"':
                         sb.Append(ch);
                         var escaped = false;
-                        var index   = i;
+                        var index = i;
                         while (index > 0 && jsonText[--index] == '\\')
+                        {
                             escaped = !escaped;
+                        }
+
                         if (!escaped)
+                        {
                             quoted = !quoted;
+                        }
+
                         break;
                     case ',':
                         sb.Append(ch);
@@ -65,7 +71,10 @@ namespace Mohammad.Text
                     case ':':
                         sb.Append(ch);
                         if (!quoted)
+                        {
                             sb.Append(" ");
+                        }
+
                         break;
                     default:
                         sb.Append(ch);

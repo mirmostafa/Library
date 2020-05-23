@@ -32,27 +32,44 @@ namespace Mohammad.Logging
         {
             var path = Path.Combine(Prepare(relativePath, true), Prepare(fileName, true));
             if (isNotExists && store.FileExists(path))
+            {
                 return path;
+            }
+
             using (var stream = store.CreateFile(path))
+            {
                 stream.Flush();
+            }
+
             return path;
         }
 
-        public static void WriteLine(this IsolatedStorageFile store, string log, string fileName) { WriteLine(store, log, null, fileName); }
+        public static void WriteLine(this IsolatedStorageFile store, string log, string fileName)
+        {
+            WriteLine(store, log, null, fileName);
+        }
 
         public static void WriteLine(this IsolatedStorageFile store, string log, string relativePath, string fileName)
         {
             var path = relativePath.IsNullOrEmpty() ? Prepare(fileName, true) : Path.Combine(Prepare(relativePath, true), Prepare(fileName, true));
             using (var writer = new StreamWriter(store.OpenFile(path, FileMode.Append)))
+            {
                 writer.WriteLine(Prepare(log, false));
+            }
         }
 
         private static string Prepare(string text, bool validatePathChars)
         {
             if (validatePathChars && text.IsNullOrEmpty())
+            {
                 throw new ArgumentNullException(nameof(text));
+            }
+
             if (text.IsNullOrEmpty())
+            {
                 return text;
+            }
+
             if (text.Contains("%now%"))
             {
                 //Path.GetInvalidFileNameChars()
@@ -65,9 +82,13 @@ namespace Mohammad.Logging
                     nowS = Path.GetInvalidFileNameChars().Aggregate(nowS, (current, c) => current.Replace(c, '-'));
                 }
                 else
+                {
                     nowS = now.ToString(CultureInfo.InvariantCulture);
+                }
+
                 text = text.Replace("%now%", nowS);
             }
+
             return text;
         }
     }

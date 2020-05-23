@@ -9,8 +9,15 @@ namespace Library45.Win.Helpers
 {
     public static class MultiStepOperationHelper
     {
-        public static void ShowProgress(this MultiStepOperation operation, Form owner = null, TaskDialog taskDialog = null, string instructionText = null,
-            bool cancelable = true, string cancelButtonText = "Cancel", string donePrompt = null, string exceptionPrompt = null, bool updateTaskbar = true)
+        public static void ShowProgress(this MultiStepOperation operation,
+            Form owner = null,
+            TaskDialog taskDialog = null,
+            string instructionText = null,
+            bool cancelable = true,
+            string cancelButtonText = "Cancel",
+            string donePrompt = null,
+            string exceptionPrompt = null,
+            bool updateTaskbar = true)
         {
             var owned = false;
             TaskDialogButton cancelButton = null;
@@ -30,7 +37,9 @@ namespace Library45.Win.Helpers
                     {
                         taskDialog.Close();
                         if (updateTaskbar)
+                        {
                             TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+                        }
                     };
                 }
             };
@@ -38,7 +47,10 @@ namespace Library45.Win.Helpers
             operation.MainOperationStepIncreased += (sender, e) =>
             {
                 if (updateTaskbar)
+                {
                     TaskbarManager.Instance.SetProgressValue(e.Step.ToInt(), e.Max.ToInt() - 1);
+                }
+
                 taskDialog.ProgressBar.Value = e.Step.ToInt();
             };
             operation.MainOperationEnded += (sender, args) =>
@@ -47,13 +59,20 @@ namespace Library45.Win.Helpers
                 {
                     taskDialog.Close();
                     if (updateTaskbar)
+                    {
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.NoProgress);
+                    }
                 }
                 else
                 {
                     if (args.IsSucceed)
+                    {
                         if (taskDialog != null)
+                        {
                             taskDialog.Text = donePrompt;
+                        }
+                    }
+
                     if (owned)
                     {
                         cancelButton.Text = "OK";
@@ -67,7 +86,9 @@ namespace Library45.Win.Helpers
                 {
                     taskDialog?.Close();
                     if (updateTaskbar)
+                    {
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Error);
+                    }
                 }
                 else
                 {
@@ -77,8 +98,11 @@ namespace Library45.Win.Helpers
                         taskDialog.DetailsExpandedText = args.Exception.GetBaseException().Message;
                         taskDialog.ProgressBar.State = TaskDialogProgressBarState.Error;
                     }
+
                     if (updateTaskbar)
+                    {
                         TaskbarManager.Instance.SetProgressState(TaskbarProgressBarState.Error);
+                    }
                 }
             };
             if (taskDialog != null)
@@ -86,7 +110,10 @@ namespace Library45.Win.Helpers
                 taskDialog.Opened += delegate
                 {
                     if (owned && !cancelable)
+                    {
                         cancelButton.Enabled = false;
+                    }
+
                     operation.Start();
                 };
                 taskDialog.Show();

@@ -71,16 +71,19 @@ namespace Mohammad.Helpers
         public static IEnumerable<T> Select<T>(this DataTable table)
             where T : new()
         {
-            var type        = typeof(T);
-            var properties  = type.GetProperties();
+            var type = typeof(T);
+            var properties = type.GetProperties();
             var columnNames = table.Columns.Cast<DataColumn>().Select(col => col.ColumnName.ToLowerInvariant());
             foreach (var row in table.Select())
             {
-                var t    = new T();
+                var t = new T();
                 var row1 = row;
                 foreach (var property in properties.Where(property => columnNames.Contains(property.Name.ToLowerInvariant()))
-                                                   .Where(property => row1[property.Name] != null && row1[property.Name] != DBNull.Value))
+                    .Where(property => row1[property.Name] != null && row1[property.Name] != DBNull.Value))
+                {
                     property.SetValue(t, row[property.Name], new object[] { });
+                }
+
                 yield return t;
             }
         }
@@ -107,20 +110,26 @@ namespace Mohammad.Helpers
 
         public static Exception CheckConnectionString(string connectionString)
         {
-            using (var conn = new SqlConnection(connectionString)) return conn.TryConnect();
+            using (var conn = new SqlConnection(connectionString))
+            {
+                return conn.TryConnect();
+            }
         }
 
         public static T CheckDbNull<T>(this SqlDataReader reader, string columnName, T defaultValue, Func<object, T> converter) => ObjectHelper.CheckDbNull(
-                                                                                                                                                            reader[columnName],
-                                                                                                                                                            defaultValue,
-                                                                                                                                                            converter);
+            reader[columnName],
+            defaultValue,
+            converter);
 
         public static SqlCommand CreateCommand(this SqlConnection connection, string commandText, Action<SqlParameterCollection> fillParams = null)
         {
             if (connection == null)
+            {
                 throw new ArgumentNullException(nameof(connection));
+            }
+
             var result = connection.CreateCommand();
-            result.CommandText    = commandText;
+            result.CommandText = commandText;
             result.CommandTimeout = connection.ConnectionTimeout;
             fillParams?.Invoke(result.Parameters);
             return result;
@@ -129,21 +138,21 @@ namespace Mohammad.Helpers
         public static void EnsureClosed(this SqlConnection connection, Action<SqlConnection> action, bool openConnection = false)
         {
             connection.EnsureClosed(c =>
-                                    {
-                                        action(c);
-                                        return true;
-                                    },
-                                    openConnection);
+                {
+                    action(c);
+                    return true;
+                },
+                openConnection);
         }
 
         public static void EnsureClosed(this SqlConnection connection, Action action, bool openConnection = false)
         {
             connection.EnsureClosed(c =>
-                                    {
-                                        action();
-                                        return true;
-                                    },
-                                    openConnection);
+                {
+                    action();
+                    return true;
+                },
+                openConnection);
         }
 
         public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<TResult> action, bool openConnection = false)
@@ -154,13 +163,22 @@ namespace Mohammad.Helpers
         public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<SqlConnection, TResult> action, bool openConnection = false)
         {
             if (connection == null)
+            {
                 throw new ArgumentNullException(nameof(connection));
+            }
+
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
+
             try
             {
                 if (openConnection)
+                {
                     connection.Open();
+                }
+
                 return action(connection);
             }
             finally
@@ -169,16 +187,27 @@ namespace Mohammad.Helpers
             }
         }
 
-        public static async Task<TResult> EnsureClosedAsync<TResult>(this SqlConnection connection, Func<SqlConnection, Task<TResult>> actionAsync, bool openConnection = false)
+        public static async Task<TResult> EnsureClosedAsync<TResult>(this SqlConnection connection,
+            Func<SqlConnection, Task<TResult>> actionAsync,
+            bool openConnection = false)
         {
             if (connection == null)
+            {
                 throw new ArgumentNullException(nameof(connection));
+            }
+
             if (actionAsync == null)
+            {
                 throw new ArgumentNullException(nameof(actionAsync));
+            }
+
             try
             {
                 if (openConnection)
+                {
                     connection.Open();
+                }
+
                 return await actionAsync(connection);
             }
             finally
@@ -187,28 +216,56 @@ namespace Mohammad.Helpers
             }
         }
 
-        public static TResult Execute<TResult>(this SqlConnection             connection, Func<SqlCommand, TResult> execute, string sql,
-                                               Action<SqlParameterCollection> fillParams = null)
+        public static TResult Execute<TResult>(this SqlConnection connection,
+            Func<SqlCommand, TResult> execute,
+            string sql,
+            Action<SqlParameterCollection> fillParams = null)
         {
             if (connection == null)
+            {
                 throw new ArgumentNullException(nameof(connection));
+            }
+
             if (execute == null)
+            {
                 throw new ArgumentNullException(nameof(execute));
+            }
+
             if (sql == null)
+            {
                 throw new ArgumentNullException(nameof(sql));
-            using (var command = connection.CreateCommand(sql, fillParams)) return connection.EnsureClosed(conn => execute(command), true);
+            }
+
+            using (var command = connection.CreateCommand(sql, fillParams))
+            {
+                return connection.EnsureClosed(conn => execute(command), true);
+            }
         }
 
-        public static async Task<TResult> ExecuteAsync<TResult>(this SqlConnection             connection, Func<SqlCommand, Task<TResult>> executeAsync, string sql,
-                                               Action<SqlParameterCollection> fillParams = null)
+        public static async Task<TResult> ExecuteAsync<TResult>(this SqlConnection connection,
+            Func<SqlCommand, Task<TResult>> executeAsync,
+            string sql,
+            Action<SqlParameterCollection> fillParams = null)
         {
             if (connection == null)
+            {
                 throw new ArgumentNullException(nameof(connection));
+            }
+
             if (executeAsync == null)
+            {
                 throw new ArgumentNullException(nameof(executeAsync));
+            }
+
             if (sql == null)
+            {
                 throw new ArgumentNullException(nameof(sql));
-            using (var command = connection.CreateCommand(sql, fillParams)) return await connection.EnsureClosedAsync(conn => executeAsync(command), true);
+            }
+
+            using (var command = connection.CreateCommand(sql, fillParams))
+            {
+                return await connection.EnsureClosedAsync(conn => executeAsync(command), true);
+            }
         }
 
         public static int ExecuteNonQuery(this SqlConnection connection, string sql, Action<SqlParameterCollection> fillParams = null)
@@ -216,35 +273,55 @@ namespace Mohammad.Helpers
             return connection.Execute(cmd => cmd.ExecuteNonQuery(), sql, fillParams);
         }
 
-        public static SqlDataReader ExecuteReader(this SqlConnection connection, string sql, Action<SqlParameterCollection> fillParams = null
-                                                , CommandBehavior    behavior = CommandBehavior.Default)
+        public static SqlDataReader ExecuteReader(this SqlConnection connection,
+            string sql,
+            Action<SqlParameterCollection> fillParams = null,
+            CommandBehavior behavior = CommandBehavior.Default)
         {
             if (connection == null)
+            {
                 throw new ArgumentNullException(nameof(connection));
+            }
+
             if (sql == null)
+            {
                 throw new ArgumentNullException(nameof(sql));
+            }
+
             var command = connection.CreateCommand(sql, fillParams);
             connection.StateChange += (_, e) =>
             {
                 if (e.CurrentState == ConnectionState.Closed)
+                {
                     command?.Dispose();
+                }
             };
             connection.Open();
             return command.ExecuteReader(behavior);
         }
 
-        public static async Task<SqlDataReader> ExecuteReaderAsync(this SqlConnection connection, string sql, Action<SqlParameterCollection> fillParams = null
-                                                , CommandBehavior    behavior = CommandBehavior.Default)
+        public static async Task<SqlDataReader> ExecuteReaderAsync(this SqlConnection connection,
+            string sql,
+            Action<SqlParameterCollection> fillParams = null,
+            CommandBehavior behavior = CommandBehavior.Default)
         {
             if (connection == null)
+            {
                 throw new ArgumentNullException(nameof(connection));
+            }
+
             if (sql == null)
+            {
                 throw new ArgumentNullException(nameof(sql));
+            }
+
             var command = connection.CreateCommand(sql, fillParams);
             connection.StateChange += (_, e) =>
             {
                 if (e.CurrentState == ConnectionState.Closed)
+                {
                     command?.Dispose();
+                }
             };
             connection.Open();
             return await command.ExecuteReaderAsync(behavior);
@@ -255,13 +332,15 @@ namespace Mohammad.Helpers
             return connection.Execute(cmd => cmd.ExecuteScalar(), sql, fillParams);
         }
 
-        public static async  Task<object> ExecuteScalarAsync(this SqlConnection connection, string sql, Action<SqlParameterCollection> fillParams = null)
+        public static async Task<object> ExecuteScalarAsync(this SqlConnection connection, string sql, Action<SqlParameterCollection> fillParams = null)
         {
-            return await connection.ExecuteAsync(cmd =>cmd.ExecuteScalarAsync(), sql, fillParams);
+            return await connection.ExecuteAsync(cmd => cmd.ExecuteScalarAsync(), sql, fillParams);
         }
 
-        public static object ExecuteStoredProcedure(this SqlConnection connection, string spName, Action<SqlParameterCollection> fillParams = null,
-                                                    Action<string>     logger = null)
+        public static object ExecuteStoredProcedure(this SqlConnection connection,
+            string spName,
+            Action<SqlParameterCollection> fillParams = null,
+            Action<string> logger = null)
         {
             object result = null;
             using (var cmd = connection.CreateCommand())
@@ -275,60 +354,84 @@ namespace Mohammad.Helpers
                         var parameter = cmd.Parameters[index];
                         cmdText.Append(string.Format("\t{2}{0} = '{1}'", parameter.ParameterName, parameter.Value, Environment.NewLine));
                         if (index != cmd.Parameters.Count - 1)
+                        {
                             cmdText.Append(", ");
+                        }
                     }
                 }
 
                 logger?.Invoke(cmdText.ToString());
                 ExecuteTransactional(connection,
-                                     trans =>
-                                     {
-                                         cmd.Transaction = trans;
-                                         cmd.CommandText = cmdText.ToString();
-                                         result          = cmd.ExecuteScalar();
-                                     });
+                    trans =>
+                    {
+                        cmd.Transaction = trans;
+                        cmd.CommandText = cmdText.ToString();
+                        result = cmd.ExecuteScalar();
+                    });
             }
 
             return result;
         }
 
-        public static void ExecuteTransactional(this SqlConnection             connection, string sql, Action<SqlCommand> executor,
-                                                Action<SqlParameterCollection> fillParams = null)
+        public static void ExecuteTransactional(this SqlConnection connection,
+            string sql,
+            Action<SqlCommand> executor,
+            Action<SqlParameterCollection> fillParams = null)
         {
             if (sql == null)
+            {
                 throw new ArgumentNullException(nameof(sql));
+            }
+
             if (executor == null)
+            {
                 throw new ArgumentNullException(nameof(executor));
+            }
 
             ExecuteTransactional(connection,
-                                 transaction =>
-                                 {
-                                     using (var command = new SqlCommand(sql, connection, transaction))
-                                     {
-                                         fillParams?.Invoke(command.Parameters);
-                                         executor(command);
-                                     }
-                                 });
+                transaction =>
+                {
+                    using (var command = new SqlCommand(sql, connection, transaction))
+                    {
+                        fillParams?.Invoke(command.Parameters);
+                        executor(command);
+                    }
+                });
         }
 
         public static void ExecuteTransactional(this SqlConnection connection, Action executionBlock)
         {
             if (connection == null)
+            {
                 throw new ArgumentNullException(nameof(connection));
+            }
+
             if (executionBlock == null)
+            {
                 throw new ArgumentNullException(nameof(executionBlock));
+            }
+
             ExecuteTransactional(connection, tran => executionBlock());
         }
 
         public static void ExecuteTransactional(this SqlConnection connection, Action<SqlTransaction> executionBlock)
         {
             if (connection == null)
+            {
                 throw new ArgumentNullException(nameof(connection));
+            }
+
             if (executionBlock == null)
+            {
                 throw new ArgumentNullException(nameof(executionBlock));
+            }
+
             var leaveOpen = connection.State == ConnectionState.Open;
             if (!leaveOpen)
+            {
                 connection.Open();
+            }
+
             var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
             try
             {
@@ -343,7 +446,9 @@ namespace Mohammad.Helpers
             finally
             {
                 if (!leaveOpen)
+                {
                     connection.Close();
+                }
             }
         }
 
@@ -356,7 +461,10 @@ namespace Mohammad.Helpers
         public static DataSet FillDataSet(this SqlConnection connection, string sql)
         {
             var result = new DataSet();
-            using (var da = new SqlDataAdapter(sql, connection)) da.Fill(result);
+            using (var da = new SqlDataAdapter(sql, connection))
+            {
+                da.Fill(result);
+            }
 
             return result;
         }
@@ -364,7 +472,10 @@ namespace Mohammad.Helpers
         public static DataTable FillDataTable(this SqlConnection connection, string sql, Action<SqlParameterCollection> fillParams = null)
         {
             var result = new DataTable();
-            using (var command = connection.CreateCommand(sql, fillParams)) EnsureClosed(connection, () => result.Load(command.ExecuteReader()), true);
+            using (var command = connection.CreateCommand(sql, fillParams))
+            {
+                EnsureClosed(connection, () => result.Load(command.ExecuteReader()), true);
+            }
 
             return result;
         }
@@ -417,9 +528,11 @@ namespace Mohammad.Helpers
         /// <param name="defaultValue"> The default value. </param>
         /// <returns> </returns>
         public static T FirstCol<T>(this DataTable table, string columnTitle, Converter<object, T> convertor, T defaultValue) => table
-                                                                                                                                .Select(
-                                                                                                                                        columnTitle, convertor,
-                                                                                                                                        defaultValue).First();
+            .Select(
+                columnTitle,
+                convertor,
+                defaultValue)
+            .First();
 
         /// <summary>
         ///     Gets the column data.
@@ -535,9 +648,15 @@ namespace Mohammad.Helpers
             where T : new()
         {
             if (reader == null)
+            {
                 throw new ArgumentNullException(nameof(reader));
+            }
+
             if (converter == null)
+            {
                 converter = rdr => InnerReaderSelect(rdr, () => new T());
+            }
+
             return While(reader.Read, () => converter(reader));
         }
 
@@ -547,35 +666,50 @@ namespace Mohammad.Helpers
         public static IEnumerable<T> Select<T>(this IDataReader reader, Func<T> creator)
         {
             if (reader == null)
+            {
                 throw new ArgumentNullException(nameof(reader));
+            }
+
             if (creator == null)
+            {
                 throw new ArgumentNullException(nameof(creator));
+            }
+
             return While(reader.Read, () => InnerReaderSelect(reader, creator));
         }
 
-        public static IEnumerable<T> Select<T>(this SqlConnection             connection, string sql, Func<SqlDataReader, T> rowFiller,
-                                               Action<SqlParameterCollection> fillParams = null)
+        public static IEnumerable<T> Select<T>(this SqlConnection connection,
+            string sql,
+            Func<SqlDataReader, T> rowFiller,
+            Action<SqlParameterCollection> fillParams = null)
         {
             if (rowFiller == null)
+            {
                 throw new ArgumentNullException(nameof(rowFiller));
+            }
 
             var reader = ExecuteReader(connection, sql, fillParams, CommandBehavior.CloseConnection);
             return While(reader.Read, () => rowFiller(reader), connection.Close);
         }
 
-        public static DataTable SelectDataTable(this SqlConnection connection, string selectCommandText, Action<SqlParameterCollection> fillParam = null,
-                                                string             tableName = null)
+        public static DataTable SelectDataTable(this SqlConnection connection,
+            string selectCommandText,
+            Action<SqlParameterCollection> fillParam = null,
+            string tableName = null)
         {
             return Execute(connection,
-                           cmd =>
-                           {
-                               var result = new DataTable(tableName);
-                               using (var adapter = new SqlDataAdapter(cmd)) adapter.Fill(result);
+                cmd =>
+                {
+                    var result = new DataTable(tableName);
+                    using (var adapter = new SqlDataAdapter(cmd))
+                    {
+                        adapter.Fill(result);
+                    }
 
-                               return result;
-                           },
-                           selectCommandText,
-                           fillParam);
+                    return result;
+                },
+                selectCommandText,
+                fillParam);
         }
 
         public static Exception TryConnect(this SqlConnection conn) => Catch(() => conn.EnsureClosed(c => c.Open()));
@@ -583,12 +717,15 @@ namespace Mohammad.Helpers
         private static T InnerReaderSelect<T>(IDataReader reader, Func<T> creator)
         {
             var properties = typeof(T).GetProperties();
-            var t          = creator();
+            var t = creator();
             foreach (var property in properties)
             {
                 var value = reader[property.Name];
                 if (DBNull.Value.Equals(value))
+                {
                     value = null;
+                }
+
                 property.SetValue(t, value, new object[] { });
             }
 

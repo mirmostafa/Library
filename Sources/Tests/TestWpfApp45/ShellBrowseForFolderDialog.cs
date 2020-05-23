@@ -35,7 +35,11 @@ namespace TestWpfApp45
         public string FullName { get; private set; }
 
         /// <summary> valid only if RootType is RootTypeOptions.ByPath </summary>
-        public string RootPath { get { return this._RootPath; } set { this._RootPath = value; } }
+        public string RootPath
+        {
+            get => this._RootPath;
+            set => this._RootPath = value;
+        }
 
         public ShellBrowseForFolderDialog()
         {
@@ -53,17 +57,6 @@ namespace TestWpfApp45
                                 WindowsConstants.BIF_SHAREABLE | WindowsConstants.BIF_STATUSTEXT | WindowsConstants.BIF_USENEWUI | WindowsConstants.BIF_VALIDATE;
         }
 
-        private static IMalloc GetMalloc()
-        {
-            IntPtr ptrRet;
-            Api.SHGetMalloc(out ptrRet);
-
-            var obj = Marshal.GetTypedObjectForIUnknown(ptrRet, typeof(IMalloc));
-            var imalloc = (IMalloc) obj;
-
-            return imalloc;
-        }
-
         public bool ShowDialog()
         {
             this.FullName = "";
@@ -76,7 +69,7 @@ namespace TestWpfApp45
 
             if (this._RootType == RootTypeOptions.BySpecialFolder)
             {
-                Api.SHGetFolderLocation(this.hwndOwner, (int) this.RootSpecialFolder, this.UserToken, 0, out pidlRoot);
+                Api.SHGetFolderLocation(this.hwndOwner, (int)this.RootSpecialFolder, this.UserToken, 0, out pidlRoot);
             }
             else // m_RootType = RootTypeOptions.ByPath
             {
@@ -85,15 +78,15 @@ namespace TestWpfApp45
             }
 
             var bi = new BROWSEINFO
-                     {
-                         hwndOwner = this.hwndOwner,
-                         pidlRoot = pidlRoot,
-                         pszDisplayName = new string(' ', 256),
-                         lpszTitle = this.Title,
-                         ulFlags = this.DetailsFlags,
-                         lParam = IntPtr.Zero,
-                         lpfn = null
-                     };
+            {
+                hwndOwner = this.hwndOwner,
+                pidlRoot = pidlRoot,
+                pszDisplayName = new string(' ', 256),
+                lpszTitle = this.Title,
+                ulFlags = this.DetailsFlags,
+                lParam = IntPtr.Zero,
+                lpfn = null
+            };
 
             var pidlSelected = Api.SHBrowseForFolder(ref bi);
 
@@ -108,10 +101,14 @@ namespace TestWpfApp45
             this.FullName = sDisplay;
 
             if (pidlRoot != IntPtr.Zero)
+            {
                 pMalloc.Free(pidlRoot);
+            }
 
             if (pidlSelected != IntPtr.Zero)
+            {
                 pMalloc.Free(pidlSelected);
+            }
 
             Marshal.ReleaseComObject(isf);
             Marshal.ReleaseComObject(pMalloc);
@@ -124,6 +121,17 @@ namespace TestWpfApp45
             return pidlSelected != IntPtr.Zero;
         }
 
+        private static IMalloc GetMalloc()
+        {
+            IntPtr ptrRet;
+            Api.SHGetMalloc(out ptrRet);
+
+            var obj = Marshal.GetTypedObjectForIUnknown(ptrRet, typeof(IMalloc));
+            var imalloc = (IMalloc)obj;
+
+            return imalloc;
+        }
+
         private static IShellFolder GetDesktopFolder()
         {
             IntPtr ptrRet;
@@ -131,7 +139,7 @@ namespace TestWpfApp45
 
             var shellFolderType = typeof(IShellFolder);
             var obj = Marshal.GetTypedObjectForIUnknown(ptrRet, shellFolderType);
-            var ishellFolder = (IShellFolder) obj;
+            var ishellFolder = (IShellFolder)obj;
 
             return ishellFolder;
         }

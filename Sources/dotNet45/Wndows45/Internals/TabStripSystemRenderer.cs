@@ -21,9 +21,15 @@ namespace Mohammad.Win.Internals
             {
                 var tabState = TabItemState.Normal;
                 if (tab.Checked)
+                {
                     tabState |= TabItemState.Selected;
+                }
+
                 if (tab.Selected)
+                {
                     tabState |= TabItemState.Hot;
+                }
+
                 TabRenderer.DrawTabItem(e.Graphics, bounds, tabState);
             }
             else

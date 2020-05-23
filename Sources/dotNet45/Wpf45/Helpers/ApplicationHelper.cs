@@ -22,7 +22,10 @@ namespace Mohammad.Wpf.Helpers
                     {
                         var frame = state as DispatcherFrame;
                         if (frame != null)
+                        {
                             frame.Continue = false;
+                        }
+
                         return null;
                     }
                 }),
@@ -30,32 +33,42 @@ namespace Mohammad.Wpf.Helpers
             Dispatcher.PushFrame(nestedFrame);
 
             if (exitOperation.Status != DispatcherOperationStatus.Completed)
+            {
                 exitOperation.Abort();
+            }
         }
 
-        public static void DoEvents(this Application app) { DoEvents(); }
+        public static void DoEvents(this Application app)
+        {
+            DoEvents();
+        }
 
         public static bool AmIAlone(this Application app)
         {
             var libApp = app as LibraryApplication;
             if (libApp == null)
+            {
                 throw new TypeAccessException("Current App this not inherited form LibraryApplication.");
+            }
+
             return LibraryApplication.AmIAlone;
         }
 
-        public static void RunInUiThread(this Application app, Action action) { app.Dispatcher.Invoke(DispatcherPriority.Render, action); }
-
-        public static TResult RunInUiThread<TResult>(this Application app, Func<TResult> action)
+        public static void RunInUiThread(this Application app, Action action)
         {
-            return app.Dispatcher.Invoke(DispatcherPriority.Render, action).To<TResult>();
+            app.Dispatcher.Invoke(DispatcherPriority.Render, action);
         }
 
-        public static ImageSource GetImageSource(string relativePath) { return GetImageSource(relativePath, true); }
+        public static TResult RunInUiThread<TResult>(this Application app, Func<TResult> action) => app.Dispatcher.Invoke(DispatcherPriority.Render, action).To<TResult>();
+
+        public static ImageSource GetImageSource(string relativePath) => GetImageSource(relativePath, true);
 
         public static ImageSource GetImageSource(string relativePath, bool imageInCallingAssembly)
         {
             if (string.IsNullOrEmpty(relativePath))
+            {
                 return null;
+            }
 
             var path = imageInCallingAssembly ? GetCallingAssemblyPackPath() + relativePath : GetApplicationPackPath() + relativePath;
 
@@ -69,21 +82,7 @@ namespace Mohammad.Wpf.Helpers
             return "pack://application:,,,/" + assemblyName + ";component/";
         }
 
-        public static string GetExecutingAssemblyName() { return Assembly.GetExecutingAssembly().FullName.Split(',')[0]; }
-
-        internal static ImageSource GenerateImage(string relativePath, Stream stream)
-        {
-            BitmapDecoder decoder = null;
-            if (relativePath.ToLower().EndsWith(".gif"))
-                decoder = new GifBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-            else if (relativePath.ToLower().EndsWith(".png"))
-                decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-            else if (relativePath.ToLower().EndsWith(".ico"))
-                decoder = new IconBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-            else if (relativePath.ToLower().EndsWith(".jpg"))
-                decoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-            return decoder?.Frames[0];
-        }
+        public static string GetExecutingAssemblyName() => Assembly.GetExecutingAssembly().FullName.Split(',')[0];
 
         public static string GetCallingAssemblyPackPath()
         {
@@ -94,5 +93,28 @@ namespace Mohammad.Wpf.Helpers
         public static string GetEntryAssemblyName() => Assembly.GetEntryAssembly().FullName.Split(',')[0];
 
         public static int GetThreadCount(this Application current) => Mohammad.Helpers.ApplicationHelper.CurrentThreadCount;
+
+        internal static ImageSource GenerateImage(string relativePath, Stream stream)
+        {
+            BitmapDecoder decoder = null;
+            if (relativePath.ToLower().EndsWith(".gif"))
+            {
+                decoder = new GifBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+            }
+            else if (relativePath.ToLower().EndsWith(".png"))
+            {
+                decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+            }
+            else if (relativePath.ToLower().EndsWith(".ico"))
+            {
+                decoder = new IconBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+            }
+            else if (relativePath.ToLower().EndsWith(".jpg"))
+            {
+                decoder = new JpegBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+            }
+
+            return decoder?.Frames[0];
+        }
     }
 }

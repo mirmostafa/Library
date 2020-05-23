@@ -17,7 +17,11 @@ namespace Mohammad.Wpf.Windows.Controls
         public List<LibCommand> AppCommands { get; } = new List<LibCommand>();
         public List<LibCommand> PageCommands { get; } = new List<LibCommand>();
         public ILibCommandManager CommandManager => this._CommandManager;
-        public CommandBar() { this.InitializeComponent(); }
+
+        public CommandBar()
+        {
+            this.InitializeComponent();
+        }
 
         public LibCommand GetCommandByCommandName(string commandName) => this.Commands.FirstOrDefault(cmd => cmd.CommandName == commandName);
 
@@ -26,7 +30,10 @@ namespace Mohammad.Wpf.Windows.Controls
             base.OnApplyTemplate();
 
             if (ControlHelper.IsDesignTime())
+            {
                 return;
+            }
+
             var appCommands = this.AppCommands;
             var pageCommands = this.PageCommands;
 
@@ -41,7 +48,10 @@ namespace Mohammad.Wpf.Windows.Controls
             {
                 var button = new Button();
                 if (this.ButtonsStyle != null)
+                {
                     button.Style = this.ButtonsStyle;
+                }
+
                 command.Initialize(this, button);
                 this.AppCommandPanel.Children.Add(button);
             }
@@ -50,7 +60,10 @@ namespace Mohammad.Wpf.Windows.Controls
             {
                 var button = new Button();
                 if (this.ButtonsStyle != null)
+                {
                     button.Style = this.ButtonsStyle;
+                }
+
                 command.Initialize(this, button);
                 this.PageCommandPanel.Children.Add(button);
             }

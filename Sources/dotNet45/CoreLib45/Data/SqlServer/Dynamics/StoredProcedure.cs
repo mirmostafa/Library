@@ -24,31 +24,32 @@ namespace Mohammad.Data.SqlServer.Dynamics
 
         #endregion
 
-        public StoredProcedure(Database owner, string name, string schema, string connectionString)
-            : base(owner, name, schema, connectionString: connectionString)
-        {
-        }
-
-        public string   AssemblyName     { get; set; }
-        public string   Body             { get; set; }
-        public DateTime CreateDate       { get; set; }
-        public long     Id               { get; set; }
-        public bool     IsSystemObject   { get; set; }
+        public string AssemblyName { get; set; }
+        public string Body { get; set; }
+        public DateTime CreateDate { get; set; }
+        public long Id { get; set; }
+        public bool IsSystemObject { get; set; }
         public DateTime LastModifiedDate { get; set; }
 
         public StoredProcedureParams Params => this._Params ?? (this._Params =
-                                                   new StoredProcedureParams(from row in
-                                                                                 (from row in this.Owner.AllParams where row.Field<string>("SpName").EqualsTo(this.Name) select row).ToList()
-                                                                             select new StoredProcedureParam(this, row.Field<string>("name"), this.ConnectionString)
-                                                                             {
-                                                                                 DefaultValue     = row.Field("DefaultValue",     Convert.ToString)
-                                                                               , Id               = row.Field("ID",               Convert.ToInt64)
-                                                                               , Length           = row.Field("Length",           Convert.ToInt32)
-                                                                               , NumericPrecision = row.Field("NumericPrecision", Convert.ToInt32)
-                                                                               , SqlDataType      = row.Field("DataType",         Convert.ToString)
-                                                                             }));
+            new StoredProcedureParams(from row in
+                                          (from row in this.Owner.AllParams
+                                           where row.Field<string>("SpName").EqualsTo(this.Name)
+                                           select row).ToList()
+                                      select new StoredProcedureParam(this, row.Field<string>("name"), this.ConnectionString)
+                                      {
+                                          DefaultValue = row.Field("DefaultValue", Convert.ToString),
+                                          Id = row.Field("ID", Convert.ToInt64), Length = row.Field("Length", Convert.ToInt32),
+                                          NumericPrecision = row.Field("NumericPrecision", Convert.ToInt32),
+                                          SqlDataType = row.Field("DataType", Convert.ToString)
+                                      }));
 
         public string Schema { get; set; }
+
+        public StoredProcedure(Database owner, string name, string schema, string connectionString)
+            : base(owner, name, schema, connectionString)
+        {
+        }
 
         public bool Run(params KeyValuePair<string, object>[] args) => true;
 
@@ -67,7 +68,10 @@ namespace Mohammad.Data.SqlServer.Dynamics
                 {
                     builder.AppendLine();
                     foreach (var param in this.Params)
+                    {
                         builder.AppendFormat(" {0}=NULL, ", param.Name);
+                    }
+
                     builder.Remove(builder.Length - 2, 2);
                 }
 
@@ -78,9 +82,15 @@ namespace Mohammad.Data.SqlServer.Dynamics
                 {
                     connection.Open();
                     using (var reader = command.ExecuteReader())
+                    {
                         if (reader.FieldCount > 0)
+                        {
                             for (var i = 0; i < reader.FieldCount; i++)
+                            {
                                 prms.Add(reader.GetName(i), reader.GetFieldType(i).ToString());
+                            }
+                        }
+                    }
 
                     flag = true;
                 }
@@ -92,7 +102,9 @@ namespace Mohammad.Data.SqlServer.Dynamics
                 finally
                 {
                     if (connection.State != ConnectionState.Closed)
+                    {
                         connection.Close();
+                    }
                 }
             }
 

@@ -15,7 +15,10 @@ namespace Mohammad.ServiceModel
         public static void Throw(Exception ex)
         {
             if (ex is FaultException)
+            {
                 throw ex;
+            }
+
             throw new FaultException(new FaultReason(ex.GetBaseException().Message));
         }
 
@@ -27,7 +30,7 @@ namespace Mohammad.ServiceModel
 
         public static void Throw<TDetail>(string message, string reason)
         {
-            Throw(() => (TDetail) typeof(TDetail).GetConstructor(new Type[] { }).Invoke(new object[] {message}), reason);
+            Throw(() => (TDetail)typeof(TDetail).GetConstructor(new Type[] { }).Invoke(new object[] {message}), reason);
         }
 
         public static void Throw<TDetail>(Func<TDetail> creator, string reason)

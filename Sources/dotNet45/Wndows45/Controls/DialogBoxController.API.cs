@@ -6,7 +6,6 @@ namespace Mohammad.Win.Controls
 {
     partial class DialogBoxController
     {
-        private int hHook;
         private const long AW_BLEND = 0x00080000;
         private const long AW_CENTER = 0x00000010;
         private const long AW_HIDE = 0x00010000;
@@ -17,6 +16,7 @@ namespace Mohammad.Win.Controls
         private const long WM_SETFONT = 0x0030;
         private const long WS_EX_RIGHT = 0x00001000L;
         private const long WS_EX_RTLREADING = 0x00002000L;
+        private int hHook;
 
         [DllImport("user32.dll")]
         private static extern int GetWindowLong(int hwnd, int nIndex);

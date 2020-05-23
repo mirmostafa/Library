@@ -10,7 +10,6 @@ using System.Data;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mohammad.Exceptions;
-using Mohammad.Helpers;
 using static Mohammad.Helpers.CodeHelper;
 
 namespace CoreLib45.Test.HelpersTests
@@ -36,7 +35,9 @@ namespace CoreLib45.Test.HelpersTests
         [TestMethod]
         public void TestCatch2()
         {
-            var res = Catch(() => { });
+            var res = Catch(() =>
+            {
+            });
             Assert.IsNull(res);
         }
 
@@ -51,7 +52,11 @@ namespace CoreLib45.Test.HelpersTests
         [ExpectedException(typeof(Exception))]
         public void TestCatch3_1()
         {
-            Catch(() => throw new Exception(), ex => { }, throwException: true);
+            Catch(() => throw new Exception(),
+                ex =>
+                {
+                },
+                throwException: true);
         }
 
         [TestMethod]
@@ -74,7 +79,10 @@ namespace CoreLib45.Test.HelpersTests
         [TestMethod]
         public void TestCatch7()
         {
-            var res = CatchFunc(() => true, finallyAction: () => { });
+            var res = CatchFunc(() => true,
+                finallyAction: () =>
+                {
+                });
             Assert.IsTrue(res);
         }
 
@@ -87,7 +95,10 @@ namespace CoreLib45.Test.HelpersTests
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public void TestCatch9() => CatchSpecExc<NullReferenceException>(() => throw new ArgumentException(), ex => { });
+        public void TestCatch9() => CatchSpecExc<NullReferenceException>(() => throw new ArgumentException(),
+            ex =>
+            {
+            });
 
         [TestMethod]
         public void TestCatch10()
@@ -113,7 +124,7 @@ namespace CoreLib45.Test.HelpersTests
         [TestMethod]
         public void TestCatch14()
         {
-            CatchFunc(() => true, out Exception ex);
+            CatchFunc(() => true, out var ex);
             Assert.IsNull(ex);
         }
 
@@ -128,7 +139,10 @@ namespace CoreLib45.Test.HelpersTests
         public void TestDoWhile()
         {
             var counter = 0;
-            DoWhile(() => { }, () => ++counter < 10);
+            DoWhile(() =>
+                {
+                },
+                () => ++counter < 10);
         }
 
         [TestMethod]
@@ -143,7 +157,10 @@ namespace CoreLib45.Test.HelpersTests
         public void TestWhile()
         {
             var counter = 0;
-            While(() => ++counter < 10, () => { });
+            While(() => ++counter < 10,
+                () =>
+                {
+                });
         }
 
         [TestMethod]
@@ -194,7 +211,10 @@ namespace CoreLib45.Test.HelpersTests
         [TestMethod]
         public void HasExceptionTest()
         {
-            Assert.AreEqual(HasException(() => { }), false);
+            Assert.AreEqual(HasException(() =>
+                {
+                }),
+                false);
             Assert.AreEqual(HasException(() => throw new Exception()), true);
         }
 
@@ -208,8 +228,13 @@ namespace CoreLib45.Test.HelpersTests
         [TestMethod]
         public void DoAndLockTest()
         {
-            void Action() { }
-            void Action1(int _) { }
+            void Action()
+            {
+            }
+
+            void Action1(int _)
+            {
+            }
 
             var actions = GetRepeat(Action, 5);
             Do(actions);
@@ -260,26 +285,33 @@ namespace CoreLib45.Test.HelpersTests
             Assert.IsFalse(Retry(_ => false, 3).IsSucceed);
             Assert.IsTrue(Retry(_ => true, 3).IsSucceed);
 
-            Assert.IsFalse(Retry(() => (isOk:false, result:5), 3).IsSucceed);
+            Assert.IsFalse(Retry(() => (isOk: false, result: 5), 3).IsSucceed);
         }
 
         [TestMethod]
         public void ExecOnDebuggerTest()
         {
-            ExecOnDebugger(() => { });
+            ExecOnDebugger(() =>
+            {
+            });
         }
 
         [TestMethod]
         public void GetRepeatTest()
         {
-            var res = GetRepeat(() => { }, 3);
+            var res = GetRepeat(() =>
+                {
+                },
+                3);
             Assert.AreEqual(res.Count(), 3);
         }
 
         [TestMethod]
         public void RunAndCleanupMemory1Test()
         {
-            RunAndCleanupMemory(() => { });
+            RunAndCleanupMemory(() =>
+            {
+            });
         }
 
         [TestMethod]
@@ -305,20 +337,33 @@ namespace CoreLib45.Test.HelpersTests
         [TestMethod]
         public void Dispose1Test()
         {
-            Dispose(() => new DataTable(), t => { });
+            Dispose(() => new DataTable(),
+                t =>
+                {
+                });
             Dispose(() => new DataTable(), t => 5);
-            Dispose<DataTable>(t => { });
+            Dispose<DataTable>(t =>
+            {
+            });
             Dispose<DataTable, int>(t => 5);
         }
 
         [TestMethod]
         public void IfTest()
         {
-            true.If(() => { });
-            false.If(() => { });
+            true.If(() =>
+            {
+            });
+            false.If(() =>
+            {
+            });
 
-            true.IfTrue(() => { });
-            false.IfFalse(() => { });
+            true.IfTrue(() =>
+            {
+            });
+            false.IfFalse(() =>
+            {
+            });
         }
     }
 }

@@ -11,7 +11,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ProgressBar">
-                    <controls:RelativeAnimatingContentControl HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                    <controls:RelativeAnimatingContentControl HorizontalContentAlignment="Stretch"
+                                                              VerticalContentAlignment="Stretch">
                         <controls:RelativeAnimatingContentControl.Resources>
                             <ExponentialEase
                                 x:Key="ProgressBarEaseOut"

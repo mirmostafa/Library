@@ -32,8 +32,11 @@ namespace Mohammad.ProgressiveOperations
             this.Add(new MultiStepOperationStep(operation, action, description, priorityId));
         }
 
-        public void Add<TArgument>(MultiStepOperation operation, Action<TArgument> action, TArgument argument, string description = null,
-                                   int                priorityId = -1)
+        public void Add<TArgument>(MultiStepOperation operation,
+            Action<TArgument> action,
+            TArgument argument,
+            string description = null,
+            int priorityId = -1)
         {
             this.Add(new MultiStepOperationStep<TArgument>(operation, action, argument, description, priorityId));
         }

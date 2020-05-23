@@ -33,8 +33,10 @@ namespace Mohammad.ServiceProcess
             Run(EnumerableHelper.ToEnumerable(winService), intractiveAction, exceptionHandling, autoStop);
         }
 
-        public static void Run(IEnumerable<ServiceBase> winServices, Action intractiveAction, ExceptionHandling exceptionHandling = null,
-                               bool                     autoStop = false)
+        public static void Run(IEnumerable<ServiceBase> winServices,
+            Action intractiveAction,
+            ExceptionHandling exceptionHandling = null,
+            bool autoStop = false)
         {
             if (!Debugger.IsAttached)
             {
@@ -42,9 +44,15 @@ namespace Mohammad.ServiceProcess
             }
             else
             {
-                var task = Async.Run(() => { Catch(intractiveAction, handling: exceptionHandling); });
+                var task = Async.Run(() =>
+                {
+                    Catch(intractiveAction, handling: exceptionHandling);
+                });
                 if (autoStop)
+                {
                     task.ContinueWith(t => Exit());
+                }
+
                 _Mrs = new ManualResetEvent(false);
                 _Mrs.WaitOne();
                 _Mrs.Dispose();

@@ -24,21 +24,16 @@ namespace Mohammad.Primitives
     public abstract class ApplicationMainThreadBase<TApp> : Singleton<TApp>, IExceptionHandlerContainer, ILoggerContainer
         where TApp : class, ISingleton<TApp>
     {
-        private object                  _ApplicationLogSender;
+        private object _ApplicationLogSender;
         private CancellationTokenSource _CancellationTokenSource;
-        private object                  _DefaultSender;
-        private ExceptionHandling       _ExceptionHandling;
-        private LogProvider             _Log;
-        private ILogger                 _Logger;
+        private object _DefaultSender;
+        private ExceptionHandling _ExceptionHandling;
+        private LogProvider _Log;
+        private ILogger _Logger;
 
-        // ReSharper disable once EmptyConstructor
-        protected ApplicationMainThreadBase()
-        {
-        }
-
-        protected LogProvider            Log               => this._Log ?? (this._Log = this.OnInitializingLogProvider());
-        public    TaskScheduler          MainTaskScheduler { get; private set; }
-        public    SynchronizationContext UiSyncContext     { get; private set; }
+        protected LogProvider Log => this._Log ?? (this._Log = this.OnInitializingLogProvider());
+        public TaskScheduler MainTaskScheduler { get; private set; }
+        public SynchronizationContext UiSyncContext { get; private set; }
 
         public object ApplicationLogSender
         {
@@ -46,9 +41,9 @@ namespace Mohammad.Primitives
             set => this._ApplicationLogSender = value;
         }
 
-        public virtual string AppName                   => ApplicationHelper.ApplicationTitle;
-        public         bool   IsCancellationRequested   => this.CancellationTokenSource.IsCancellationRequested;
-        public         bool   IsApplicationShuttingdown { get; private set; }
+        public virtual string AppName => ApplicationHelper.ApplicationTitle;
+        public bool IsCancellationRequested => this.CancellationTokenSource.IsCancellationRequested;
+        public bool IsApplicationShuttingdown { get; private set; }
 
         protected virtual TextWriter Out
         {
@@ -76,16 +71,9 @@ namespace Mohammad.Primitives
             protected set => this._Logger = value;
         }
 
-        protected virtual LogProvider OnInitializingLogProvider() => new LogProvider(this.Logger, this.DefaultLogSender);
-
-        public event EventHandler Shuttingdown;
-
-        protected virtual ILogger           OnInitializingLogger()        => this._Logger ?? new Logger();
-        protected virtual ExceptionHandling OnExceptionHandlingRequired() => new ExceptionHandling(this.OnExceptionOccurred);
-
-        protected virtual void OnExceptionOccurred(object sender, ExceptionOccurredEventArgs<Exception> e)
+        // ReSharper disable once EmptyConstructor
+        protected ApplicationMainThreadBase()
         {
-            this.Logger.Exception($"An unhanded exception occurred on {this.ApplicationLogSender}", e.Exception, sender);
         }
 
         public void Start()
@@ -104,15 +92,6 @@ namespace Mohammad.Primitives
             }
         }
 
-        private void InitializeComponents()
-        {
-            if (this.MainTaskScheduler == null)
-                this.MainTaskScheduler = CatchFunc(() => TaskScheduler.FromCurrentSynchronizationContext());
-            if (this.UiSyncContext == null)
-                this.UiSyncContext = CatchFunc(() => SynchronizationContext.Current);
-            this.OnInitializing();
-        }
-
         public async Task RunInUi(Action action)
         {
             await Async.Run(action, this.CancellationTokenSource.Token, this.MainTaskScheduler);
@@ -121,14 +100,6 @@ namespace Mohammad.Primitives
         public async Task<TResult> RunInUi<TResult>(Func<TResult> action) =>
             await Async.Run(action, this.CancellationTokenSource.Token, this.MainTaskScheduler);
 
-        protected virtual void OnInitializing()
-        {
-        }
-
-        protected virtual void OnStartingup()
-        {
-        }
-
         public void Shutdown()
         {
             this.Logger.Debug("Shutting down", null, this.ApplicationLogSender);
@@ -136,6 +107,24 @@ namespace Mohammad.Primitives
             this.CancellationTokenSource.Cancel();
             this.OnShuttingdown();
             this.Logger.Debug("Shut down", null, this.ApplicationLogSender);
+        }
+
+        protected virtual LogProvider OnInitializingLogProvider() => new LogProvider(this.Logger, this.DefaultLogSender);
+
+        protected virtual ILogger OnInitializingLogger() => this._Logger ?? new Logger();
+        protected virtual ExceptionHandling OnExceptionHandlingRequired() => new ExceptionHandling(this.OnExceptionOccurred);
+
+        protected virtual void OnExceptionOccurred(object sender, ExceptionOccurredEventArgs<Exception> e)
+        {
+            this.Logger.Exception($"An unhanded exception occurred on {this.ApplicationLogSender}", e.Exception, sender);
+        }
+
+        protected virtual void OnInitializing()
+        {
+        }
+
+        protected virtual void OnStartingup()
+        {
         }
 
         protected virtual void OnShuttingdown()
@@ -180,5 +169,22 @@ namespace Mohammad.Primitives
         //}
 
         protected virtual object OnInitializingDefaultSender() => this.GetType().Name;
+
+        private void InitializeComponents()
+        {
+            if (this.MainTaskScheduler == null)
+            {
+                this.MainTaskScheduler = CatchFunc(() => TaskScheduler.FromCurrentSynchronizationContext());
+            }
+
+            if (this.UiSyncContext == null)
+            {
+                this.UiSyncContext = CatchFunc(() => SynchronizationContext.Current);
+            }
+
+            this.OnInitializing();
+        }
+
+        public event EventHandler Shuttingdown;
     }
 }

@@ -27,19 +27,6 @@ namespace Mohammad.Data.Linq.DataTools
 
         #endregion
 
-        protected DataAccessEntityOnLinq()
-        {
-            this.ExceptionHandling.Reset();
-            try
-            {
-                this.Db.Log = new LinqLogger();
-            }
-            catch (Exception ex)
-            {
-                this.ExceptionHandling.HandleException(ex);
-            }
-        }
-
         protected TDateContext Db
         {
             get
@@ -47,7 +34,10 @@ namespace Mohammad.Data.Linq.DataTools
                 if (this.UseStaticDataContext)
                 {
                     if (Memento.Get("StaticDb") != null)
+                    {
                         return Memento.Get<TDateContext>("StaticDb");
+                    }
+
                     this.ExceptionHandling.Reset();
                     try
                     {
@@ -62,7 +52,10 @@ namespace Mohammad.Data.Linq.DataTools
                 }
 
                 if (this._Db != null)
+                {
                     return this._Db;
+                }
+
                 this.ExceptionHandling.Reset();
                 try
                 {
@@ -79,6 +72,19 @@ namespace Mohammad.Data.Linq.DataTools
 
         protected bool UseStaticDataContext { get; set; }
 
+        protected DataAccessEntityOnLinq()
+        {
+            this.ExceptionHandling.Reset();
+            try
+            {
+                this.Db.Log = new LinqLogger();
+            }
+            catch (Exception ex)
+            {
+                this.ExceptionHandling.HandleException(ex);
+            }
+        }
+
         public void Attach(TEntity entity, bool asModified = true)
         {
             this.OnAttaching(entity, asModified);
@@ -89,14 +95,27 @@ namespace Mohammad.Data.Linq.DataTools
             this.OnAttaching(entity, original);
         }
 
+        public void Refresh(TEntity entity, RefreshMode refreshMode = RefreshMode.OverwriteCurrentValues)
+        {
+            this.Db.Refresh(refreshMode, entity);
+        }
+
+        public void Reset()
+        {
+            this._Db?.Dispose();
+            this._Db = null;
+            Instance = null;
+            GC.Collect();
+        }
+
         protected override void DeleteCore(TEntity entity, bool submitChanges)
         {
             this.Db.DeleteEntity(entity, submitChanges, this.ExceptionHandling);
         }
 
-        protected override TEntity      FillCore(TEntity entity) => throw new NotImplementedException();
+        protected override TEntity FillCore(TEntity entity) => throw new NotImplementedException();
         protected abstract TDateContext GetDb();
-        protected override TEntity      GetNewCore() => Activator.CreateInstance<TEntity>();
+        protected override TEntity GetNewCore() => Activator.CreateInstance<TEntity>();
 
         protected override void InsertCore(TEntity entity, bool submitChanges)
         {
@@ -113,30 +132,19 @@ namespace Mohammad.Data.Linq.DataTools
             this.Db.Attach(entity, original);
         }
 
-        public void Refresh(TEntity entity, RefreshMode refreshMode = RefreshMode.OverwriteCurrentValues)
-        {
-            this.Db.Refresh(refreshMode, entity);
-        }
-
-        public void Reset()
-        {
-            this._Db?.Dispose();
-            this._Db = null;
-            Instance = null;
-            GC.Collect();
-        }
-
         protected override void SaveChangesCore()
         {
             Exception ex;
-            var       changes = this.Db.GetChangeSet();
+            var changes = this.Db.GetChangeSet();
             foreach (var entity in changes.Inserts.Cast<TEntity>())
             {
                 this.ExceptionHandling.Reset();
                 try
                 {
                     if (!this.OnValidating(new EntityValidating<TEntity>(entity, EntityAction.Insert)))
+                    {
                         return;
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -152,7 +160,9 @@ namespace Mohammad.Data.Linq.DataTools
                 try
                 {
                     if (!this.OnValidating(new EntityValidating<TEntity>(entity, EntityAction.Update)))
+                    {
                         return;
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -168,7 +178,9 @@ namespace Mohammad.Data.Linq.DataTools
                 try
                 {
                     if (!this.OnValidating(new EntityValidating<TEntity>(entity, EntityAction.Delete)))
+                    {
                         return;
+                    }
                 }
                 catch (Exception exception3)
                 {
@@ -187,7 +199,10 @@ namespace Mohammad.Data.Linq.DataTools
             {
                 var result = this.Db.GetAll<TEntity>(this.ExceptionHandling);
                 if (this.IsLazy)
+                {
                     return result;
+                }
+
                 return result.ToList();
             }
         }

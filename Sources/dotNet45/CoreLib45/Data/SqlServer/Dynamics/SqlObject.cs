@@ -22,22 +22,6 @@ namespace Mohammad.Data.SqlServer.Dynamics
     public abstract class SqlObject<TSqlObject, TOwner> : DynamicObject, ISqlObject, IExceptionHandlerContainer<Exception>
         where TSqlObject : SqlObject<TSqlObject, TOwner>
     {
-        #region Fields
-
-        private static   ExceptionHandling<Exception> _CommonExceptionHandling;
-        private readonly string                       _ConnectionString;
-        private          ExceptionHandling<Exception> _ExceptionHandling;
-
-        #endregion
-
-        protected SqlObject(TOwner owner, string name, string schema = null, string connectionString = null)
-        {
-            this.Owner             = owner;
-            this.Name              = name;
-            this._ConnectionString = connectionString;
-            this.Schema            = schema;
-        }
-
         public static ExceptionHandling<Exception> CommonExceptionHandling
         {
             get => _CommonExceptionHandling ?? (_CommonExceptionHandling = new ExceptionHandling<Exception>());
@@ -61,6 +45,14 @@ namespace Mohammad.Data.SqlServer.Dynamics
 
         public string Schema { get; }
 
+        protected SqlObject(TOwner owner, string name, string schema = null, string connectionString = null)
+        {
+            this.Owner = owner;
+            this.Name = name;
+            this._ConnectionString = connectionString;
+            this.Schema = schema;
+        }
+
         public override string ToString() => this.Schema.IsNullOrEmpty() ? this.Name : $"{this.Schema}.{this.Name}";
 
         protected IEnumerable<DataRow> GetDataRows(string query) => GetDataRows(this.ConnectionString, query);
@@ -72,9 +64,17 @@ namespace Mohammad.Data.SqlServer.Dynamics
         protected static IEnumerable<DataRow> GetQueryItems(string connectionString, string query) =>
             GetRows(GetSql(connectionString, null).FillDataSet(query));
 
-        protected        Sql GetSql()                                        => GetSql(this.ConnectionString, this.Logger);
+        protected Sql GetSql() => GetSql(this.ConnectionString, this.Logger);
         protected static Sql GetSql(string connectionString, ILogger logger) => new Sql(connectionString) {Logger = logger};
 
         private static IEnumerable<DataRow> GetRows(DataSet ds) => ds.Dispose(ds.GetTables().FirstOrDefault()?.Dispose(t => t?.Select()));
+
+        #region Fields
+
+        private static ExceptionHandling<Exception> _CommonExceptionHandling;
+        private readonly string _ConnectionString;
+        private ExceptionHandling<Exception> _ExceptionHandling;
+
+        #endregion
     }
 }

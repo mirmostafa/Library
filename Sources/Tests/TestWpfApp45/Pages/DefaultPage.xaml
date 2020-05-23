@@ -40,13 +40,16 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <HeaderedPanel IsChildEnabled="{Binding Header.IsChecked, RelativeSource={RelativeSource Self}}" SepratorColor="Teal">
+            <HeaderedPanel IsChildEnabled="{Binding Header.IsChecked, RelativeSource={RelativeSource Self}}"
+                           SepratorColor="Teal">
                 <HeaderedPanel.Header>
                     <LibCheckBox IsChecked="True" Text="Enable Group" />
                 </HeaderedPanel.Header>
                 <StackPanel>
                     <LineControl>
-                        <DescriptiveBox Description="Cortana is the codename for the newly announced intelligent personal assistant and knowledge navigator for Windows Phone 8.1. The technology is expected to be added to Windows 8.x and the Xbox One in the future. It builds off of Microsoft's current voice technology called TellMe, which was purchased by Microsoft in 2009." Header="Cortana">
+                        <DescriptiveBox
+                            Description="Cortana is the codename for the newly announced intelligent personal assistant and knowledge navigator for Windows Phone 8.1. The technology is expected to be added to Windows 8.x and the Xbox One in the future. It builds off of Microsoft's current voice technology called TellMe, which was purchased by Microsoft in 2009."
+                            Header="Cortana">
                             <LibCheckBox Text="Enabled" />
                         </DescriptiveBox>
                     </LineControl>

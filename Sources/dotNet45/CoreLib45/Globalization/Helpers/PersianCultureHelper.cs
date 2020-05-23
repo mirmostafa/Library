@@ -42,9 +42,9 @@ namespace Mohammad.Globalization.Helpers
         /// </summary>
         static PersianCultureHelper()
         {
-            _CalendarId          = typeof(Calendar).GetProperty("ID", BindingFlags.NonPublic                                 | BindingFlags.Instance);
+            _CalendarId = typeof(Calendar).GetProperty("ID", BindingFlags.NonPublic | BindingFlags.Instance);
             _CultureInfoReadOnly = typeof(CultureInfo).GetField("m_isReadOnly", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            _CultureInfoCalendar = typeof(CultureInfo).GetField("calendar", BindingFlags.NonPublic | BindingFlags.Public     | BindingFlags.Instance);
+            _CultureInfoCalendar = typeof(CultureInfo).GetField("calendar", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             _NumberFormatInfoReadOnly =
                 typeof(NumberFormatInfo).GetField("isReadOnly", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             _DateTimeFormatInfoCalendar =
@@ -74,17 +74,25 @@ namespace Mohammad.Globalization.Helpers
         public static void SetPersianCalendar(CultureInfo culture, DateTimeFormatInfo dateTimeFormat)
         {
             if (culture == null || culture.LCID != 1065)
+            {
                 return;
+            }
+
             var calendar = new PersianCalendar();
-            var readOnly = (bool) _CultureInfoReadOnly.GetValue(culture);
+            var readOnly = (bool)_CultureInfoReadOnly.GetValue(culture);
             if (readOnly)
+            {
                 _CultureInfoReadOnly.SetValue(culture, false);
+            }
+
             culture.DateTimeFormat = dateTimeFormat;
             InitPersianDateTimeFormat(dateTimeFormat);
             _CultureInfoCalendar.SetValue(culture, calendar);
             InitPersianNumberFormat(culture);
             if (readOnly)
+            {
                 _CultureInfoReadOnly.SetValue(culture, true);
+            }
         }
 
         /// <summary>
@@ -103,15 +111,23 @@ namespace Mohammad.Globalization.Helpers
         public static void InitPersianNumberFormat(NumberFormatInfo info)
         {
             if (info == null)
+            {
                 return;
-            var readOnly = (bool) _NumberFormatInfoReadOnly.GetValue(info);
+            }
+
+            var readOnly = (bool)_NumberFormatInfoReadOnly.GetValue(info);
             if (readOnly)
+            {
                 _NumberFormatInfoReadOnly.SetValue(info, false);
-            info.NativeDigits             = new[] {"٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"};
+            }
+
+            info.NativeDigits = new[] {"٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"};
             info.CurrencyDecimalSeparator = "/";
-            info.CurrencySymbol           = "ريال";
+            info.CurrencySymbol = "ريال";
             if (readOnly)
+            {
                 _NumberFormatInfoReadOnly.SetValue(info, true);
+            }
         }
 
         /// <summary>
@@ -121,27 +137,35 @@ namespace Mohammad.Globalization.Helpers
         public static void InitPersianDateTimeFormat(DateTimeFormatInfo info)
         {
             if (info == null)
+            {
                 return;
+            }
+
             var calendar = new PersianCalendar();
-            var readOnly = (bool) _DateTimeFormatInfoReadOnly.GetValue(info);
+            var readOnly = (bool)_DateTimeFormatInfoReadOnly.GetValue(info);
             if (readOnly)
+            {
                 _DateTimeFormatInfoReadOnly.SetValue(info, false);
+            }
+
             _DateTimeFormatInfoCalendar.SetValue(info, calendar);
             var obj2 = _DateTimeFormatInfoCultureTableRecord.GetValue(info);
             _CultureTableRecordUseCurrentCalendar.Invoke(obj2, new[] {_CalendarId.GetValue(calendar, null)});
-            info.AbbreviatedDayNames   = new[] {"ی", "د", "س", "چ", "پ", "ج", "ش"};
-            info.ShortestDayNames      = new[] {"ی", "د", "س", "چ", "پ", "ج", "ش"};
-            info.DayNames              = new[] {"یکشنبه", "دوشنبه", "ﺳﻪشنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"};
+            info.AbbreviatedDayNames = new[] {"ی", "د", "س", "چ", "پ", "ج", "ش"};
+            info.ShortestDayNames = new[] {"ی", "د", "س", "چ", "پ", "ج", "ش"};
+            info.DayNames = new[] {"یکشنبه", "دوشنبه", "ﺳﻪشنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"};
             info.AbbreviatedMonthNames = new[] {"فروردین", "ارديبهشت", "خرداد", "تير", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند", ""};
-            info.MonthNames            = new[] {"فروردین", "ارديبهشت", "خرداد", "تير", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند", ""};
-            info.AMDesignator          = "ق.ظ";
-            info.PMDesignator          = "ب.ظ";
-            info.FirstDayOfWeek        = DayOfWeek.Saturday;
-            info.FullDateTimePattern   = "yyyy MMMM dddd, dd HH:mm:ss";
-            info.LongDatePattern       = "yyyy MMMM dddd, dd";
-            info.ShortDatePattern      = "yyyy/MM/dd";
+            info.MonthNames = new[] {"فروردین", "ارديبهشت", "خرداد", "تير", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند", ""};
+            info.AMDesignator = "ق.ظ";
+            info.PMDesignator = "ب.ظ";
+            info.FirstDayOfWeek = DayOfWeek.Saturday;
+            info.FullDateTimePattern = "yyyy MMMM dddd, dd HH:mm:ss";
+            info.LongDatePattern = "yyyy MMMM dddd, dd";
+            info.ShortDatePattern = "yyyy/MM/dd";
             if (readOnly)
+            {
                 _DateTimeFormatInfoReadOnly.SetValue(info, true);
+            }
         }
     }
 }

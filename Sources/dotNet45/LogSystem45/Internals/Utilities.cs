@@ -13,9 +13,7 @@ namespace Mohammad.Logging.Internals
             => new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), ApplicationHelper.Company, "Logs"));
 
         internal static string GernerateFileSpec(DirectoryInfo directory, string prefix, string extension)
-        {
-            return string.Concat(directory.FullName, "\\", prefix, "_", PersianDateTime.Now.ToDateString("-"), extension);
-        }
+            => string.Concat(directory.FullName, "\\", prefix, "_", PersianDateTime.Now.ToDateString("-"), extension);
 
         internal static string GernerateFileSpec(FileInfo file, string extension)
             => string.Concat(file.Directory.FullName, "\\", "_", PersianDateTime.Now.ToDateString("-"), extension);
@@ -29,18 +27,26 @@ namespace Mohammad.Logging.Internals
             {
                 var type = CodeHelper.GetCallerMethod(i).DeclaringType;
                 if (type != null && type.BaseType != typeof(LogEntity))
+                {
                     if (Assembly.GetAssembly(CodeHelper.GetCallerMethod(i).DeclaringType) != Assembly.GetCallingAssembly())
                     {
                         var type1 = CodeHelper.GetCallerMethod(i).DeclaringType;
                         if (type1 != null && !type1.FullName.StartsWith("Library"))
+                        {
                             if (!Assembly.GetAssembly(CodeHelper.GetCallerMethod(i).DeclaringType).GlobalAssemblyCache)
+                            {
                                 return i;
+                            }
+                        }
                     }
+                }
+
                 i++;
             }
+
             return -1;
         }
 
-        internal static string GenerateLogFileSpec() { return Path.Combine(DefaultDirectory.FullName, string.Concat(ApplicationHelper.ProductTitle, ".log")); }
+        internal static string GenerateLogFileSpec() => Path.Combine(DefaultDirectory.FullName, string.Concat(ApplicationHelper.ProductTitle, ".log"));
     }
 }

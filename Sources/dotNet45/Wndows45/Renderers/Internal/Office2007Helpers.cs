@@ -33,7 +33,10 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Revert the SmoothingMode back to original setting.
         /// </summary>
-        public void Dispose() { this._g.SmoothingMode = this._old; }
+        public void Dispose()
+        {
+            this._g.SmoothingMode = this._old;
+        }
 
         #endregion
     }
@@ -69,7 +72,10 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Revert the TextRenderingHint back to original setting.
         /// </summary>
-        public void Dispose() { this._g.TextRenderingHint = this._old; }
+        public void Dispose()
+        {
+            this._g.TextRenderingHint = this._old;
+        }
 
         #endregion
     }
@@ -96,13 +102,21 @@ namespace Mohammad.Win.Renderers.Internal
         public UseClipping(Graphics g, GraphicsPath path)
         {
             if (g != null)
+            {
                 this._g = g;
+            }
+
             if (g != null)
+            {
                 this._old = g.Clip;
+            }
+
             var clip = this._old.Clone();
             clip.Intersect(path);
             if (g != null)
+            {
                 this._g.Clip = clip;
+            }
         }
 
         /// <summary>
@@ -122,7 +136,10 @@ namespace Mohammad.Win.Renderers.Internal
         /// <summary>
         ///     Revert clipping back to origina setting.
         /// </summary>
-        public void Dispose() { this._g.Clip = this._old; }
+        public void Dispose()
+        {
+            this._g.Clip = this._old;
+        }
 
         #endregion
     }

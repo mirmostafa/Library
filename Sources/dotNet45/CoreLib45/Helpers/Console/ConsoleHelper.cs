@@ -20,13 +20,6 @@ namespace Mohammad.Helpers.Console
     {
         #region Fields
 
-        public static ConsoleColor DefaultConsoleColor   = ConsoleColor.Gray;
-        public static ConsoleColor DefaultHighlightColor = ConsoleColor.Magenta;
-
-        #endregion
-
-        #region Fields
-
         internal const ConsoleColor DEFAULT_CONSTANT_CONSOLE_COLOR = ConsoleColor.Cyan;
 
         #endregion
@@ -42,9 +35,15 @@ namespace Mohammad.Helpers.Console
             get
             {
                 if (_Out != null)
+                {
                     return _Out;
-                _Out        =  new Logger("ConsoleHelper.Out");
-                _Out.Logged += (_, e) => { WriteLine(Logger.FormatLogText(e), ConsoleColor.DarkGray); };
+                }
+
+                _Out = new Logger("ConsoleHelper.Out");
+                _Out.Logged += (_, e) =>
+                {
+                    WriteLine(Logger.FormatLogText(e), ConsoleColor.DarkGray);
+                };
 #if DEBUG
                 _Out.IsDebugModeEnabled = true;
 #endif
@@ -80,11 +79,17 @@ namespace Mohammad.Helpers.Console
         public static TResult Exec<TResult>(Func<TResult> func, string startPrompt = null, string endPrompt = "Done")
         {
             if (!startPrompt.IsNullOrEmpty())
+            {
                 startPrompt.Write();
+            }
+
             var result = func.BeginInvoke(null, null);
 
             if (!endPrompt.IsNullOrEmpty())
+            {
                 endPrompt.WriteLine();
+            }
+
             return func.EndInvoke(result);
         }
 
@@ -113,7 +118,10 @@ namespace Mohammad.Helpers.Console
             ConsoleKey key;
             prompter();
             while (!EnumHelper.IsEnumInRange(key = System.Console.ReadKey(true).Key, consoleKeys))
+            {
                 prompter();
+            }
+
             return key;
         }
 
@@ -124,17 +132,22 @@ namespace Mohammad.Helpers.Console
 
         public static bool ProcessCommandArguments(string[] args, IDictionary<string, Action> actions, bool continueOnException = true)
         {
-            var result     = false;
+            var result = false;
             var argsBuffer = (args ?? Enumerable.Empty<string>()).Select(arg => arg.ToLower());
             var actionsBugger = actions.Select(action => new KeyValuePair<string, Action>(action.Key.Replace("/", "-").ToLower(), action.Value))
-                                       .ToDictionary();
+                .ToDictionary();
             foreach (var arg in argsBuffer)
             {
                 if (!actionsBugger.ContainsKey(arg))
+                {
                     continue;
+                }
+
                 result = true;
                 if (HasException(actionsBugger[arg]) && !continueOnException)
+                {
                     break;
+                }
             }
 
             return result;
@@ -160,10 +173,13 @@ namespace Mohammad.Helpers.Console
             while (true)
             {
                 var result = AskKey(prompt + " ", !showSelectedKey ?? string.IsNullOrEmpty(prompt));
-                var key    = result.KeyChar;
+                var key = result.KeyChar;
                 LineFeed();
                 if (items.ContainsKey(key))
+                {
                     return result;
+                }
+
                 Error("Invalid key.");
             }
         }
@@ -200,7 +216,11 @@ namespace Mohammad.Helpers.Console
 
         public static void WriteInLine(this object value, ConsoleColor consoleColor = DEFAULT_CONSTANT_CONSOLE_COLOR, bool canClear = true)
         {
-            if (canClear) ClearCurrentConsoleLine();
+            if (canClear)
+            {
+                ClearCurrentConsoleLine();
+            }
+
             System.Console.Write($"{value}", consoleColor);
         }
 
@@ -230,7 +250,10 @@ namespace Mohammad.Helpers.Console
             var forgroundColor = System.Console.ForegroundColor;
             System.Console.ForegroundColor = consoleColor == DEFAULT_CONSTANT_CONSOLE_COLOR ? DefaultConsoleColor : consoleColor;
             foreach (var item in value)
+            {
                 System.Console.WriteLine(item);
+            }
+
             System.Console.ForegroundColor = forgroundColor;
         }
 
@@ -245,7 +268,9 @@ namespace Mohammad.Helpers.Console
         public static void WriteLine(this IList values, ConsoleColor consoleColor = DEFAULT_CONSTANT_CONSOLE_COLOR)
         {
             foreach (var value in values)
+            {
                 WriteLine(value, consoleColor);
+            }
         }
 
         public static void WriteLine(this string format, object arg0, ConsoleColor consoleColor = DEFAULT_CONSTANT_CONSOLE_COLOR)
@@ -273,20 +298,33 @@ namespace Mohammad.Helpers.Console
         public static void WriteLineDump(object obj, ConsoleColor consoleColor = DEFAULT_CONSTANT_CONSOLE_COLOR)
         {
             if (!(obj is string || !(obj is IEnumerable)))
-                ((IEnumerable) obj).ForEach(item => item.WriteLine(consoleColor));
+            {
+                ((IEnumerable)obj).ForEach(item => item.WriteLine(consoleColor));
+            }
             else
+            {
                 WriteLine(obj, consoleColor);
+            }
         }
 
         public static void WriteLineReflect(object obj)
         {
             foreach (var property in ObjectHelper.ReflectProperties(obj))
+            {
                 $"{property.Key.SeparateCamelCase()} = {property.Value}".WriteLine();
+            }
         }
 
         public static void WriteSeparatorLine(char separatorchar = '=', int count = 20)
         {
             Inform(separatorchar.ToString().Repeat(count));
         }
+
+        #region Fields
+
+        public static ConsoleColor DefaultConsoleColor = ConsoleColor.Gray;
+        public static ConsoleColor DefaultHighlightColor = ConsoleColor.Magenta;
+
+        #endregion
     }
 }

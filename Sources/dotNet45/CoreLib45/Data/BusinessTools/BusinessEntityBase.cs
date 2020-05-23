@@ -15,18 +15,6 @@ namespace Mohammad.Data.BusinessTools
     public abstract class BusinessEntityBase<TBusinessEntity>
         where TBusinessEntity : BusinessEntityBase<TBusinessEntity>, new()
     {
-        #region Fields
-
-        private static TBusinessEntity   _Instance;
-        private        ExceptionHandling _ExceptionHandling;
-
-        #endregion
-
-        protected BusinessEntityBase()
-        {
-            this.Initialize();
-        }
-
         public ExceptionHandling ExceptionHandling
         {
             get => this._ExceptionHandling ?? (this._ExceptionHandling = this.OnExceptionHandlingRequired());
@@ -41,10 +29,9 @@ namespace Mohammad.Data.BusinessTools
 
         protected Validator Validator { get; private set; }
 
-        private void Initialize()
+        protected BusinessEntityBase()
         {
-            this.OnInitializing();
-            this.Validator = new Validator(this.ExceptionHandling);
+            this.Initialize();
         }
 
         protected virtual ExceptionHandling OnExceptionHandlingRequired() => new ExceptionHandling
@@ -55,5 +42,18 @@ namespace Mohammad.Data.BusinessTools
         protected virtual void OnInitializing()
         {
         }
+
+        private void Initialize()
+        {
+            this.OnInitializing();
+            this.Validator = new Validator(this.ExceptionHandling);
+        }
+
+        #region Fields
+
+        private static TBusinessEntity _Instance;
+        private ExceptionHandling _ExceptionHandling;
+
+        #endregion
     }
 }

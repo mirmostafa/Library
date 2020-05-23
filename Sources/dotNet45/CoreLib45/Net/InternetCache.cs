@@ -18,6 +18,11 @@ namespace Mohammad.Net
 {
     public sealed class InternetCache
     {
+        public static IEnumerable<InternetCacheEntryInfo> FindUrlCacheEntries(UrlCacheType type) => FindUrlCacheEntries(type + ":")
+            .Select(entry => new InternetCacheEntryInfo(entry));
+
+        public static IEnumerable<InternetCacheEntryInfo> FindUrlCacheEntries() => FindUrlCacheEntries(UrlCacheType.Visited);
+
         /// <summary>
         ///     UrlCache functionality is taken from:
         ///     Scott McMaster (smcmaste@hotmail.com)
@@ -41,7 +46,7 @@ namespace Mohammad.Net
         {
             var results = new List<INTERNET_CACHE_ENTRY_INFO>();
 
-            var  buffer = IntPtr.Zero;
+            var buffer = IntPtr.Zero;
             uint structSize;
 
             //This call will fail but returns the size required in structSize
@@ -55,19 +60,21 @@ namespace Mohammad.Net
                     switch (lastError)
                     {
                         case Hresults.ERROR_INSUFFICIENT_BUFFER:
-                            buffer = Marshal.AllocHGlobal((int) structSize);
-                            hEnum  = Api.FindFirstUrlCacheEntry(urlPattern, buffer, out structSize);
+                            buffer = Marshal.AllocHGlobal((int)structSize);
+                            hEnum = Api.FindFirstUrlCacheEntry(urlPattern, buffer, out structSize);
                             break;
                         case Hresults.ERROR_NO_TOKEN:
                         case Hresults.ERROR_NO_MORE_ITEMS: return results.AsEnumerable();
                     }
                 }
 
-                var result = (INTERNET_CACHE_ENTRY_INFO) Marshal.PtrToStructure(buffer, typeof(INTERNET_CACHE_ENTRY_INFO));
+                var result = (INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(buffer, typeof(INTERNET_CACHE_ENTRY_INFO));
                 try
                 {
                     if (Regex.IsMatch(result.lpszSourceUrlName, urlPattern, RegexOptions.IgnoreCase))
+                    {
                         results.Add(result);
+                    }
                 }
                 catch (ArgumentException ae)
                 {
@@ -98,7 +105,7 @@ namespace Mohammad.Net
                         switch (lastError)
                         {
                             case Hresults.ERROR_INSUFFICIENT_BUFFER:
-                                buffer = Marshal.AllocHGlobal((int) structSize);
+                                buffer = Marshal.AllocHGlobal((int)structSize);
                                 Api.FindNextUrlCacheEntry(hEnum, buffer, out structSize);
                                 break;
                             case Hresults.ERROR_NO_MORE_ITEMS:
@@ -107,10 +114,15 @@ namespace Mohammad.Net
                     }
 
                     if (buffer == IntPtr.Zero)
+                    {
                         continue;
-                    result = (INTERNET_CACHE_ENTRY_INFO) Marshal.PtrToStructure(buffer, typeof(INTERNET_CACHE_ENTRY_INFO));
+                    }
+
+                    result = (INTERNET_CACHE_ENTRY_INFO)Marshal.PtrToStructure(buffer, typeof(INTERNET_CACHE_ENTRY_INFO));
                     if (Regex.IsMatch(result.lpszSourceUrlName, urlPattern, RegexOptions.IgnoreCase))
+                    {
                         results.Add(result);
+                    }
 
                     try
                     {
@@ -127,8 +139,12 @@ namespace Mohammad.Net
             finally
             {
                 if (hEnum != IntPtr.Zero)
+                {
                     Api.FindCloseUrlCache(hEnum);
+                }
+
                 if (buffer != IntPtr.Zero)
+                {
                     try
                     {
                         Marshal.FreeHGlobal(buffer);
@@ -137,12 +153,8 @@ namespace Mohammad.Net
                     {
                         // ignored
                     }
+                }
             }
         }
-
-        public static IEnumerable<InternetCacheEntryInfo> FindUrlCacheEntries(UrlCacheType type) => FindUrlCacheEntries(type + ":")
-           .Select(entry => new InternetCacheEntryInfo(entry));
-
-        public static IEnumerable<InternetCacheEntryInfo> FindUrlCacheEntries() => FindUrlCacheEntries(UrlCacheType.Visited);
     }
 }

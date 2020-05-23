@@ -11,11 +11,14 @@ namespace Mohammad.Win.Helpers
 
         public bool Enabled
         {
-            get { return this._Enabled; }
+            get => this._Enabled;
             set
             {
                 if (this._Enabled == value)
+                {
                     return;
+                }
+
                 this._Enabled = value;
                 if (this._Enabled)
                 {
@@ -36,16 +39,6 @@ namespace Mohammad.Win.Helpers
             this.Enabled = true;
         }
 
-        private void ListViewColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            this.ListView.SuspendLayout();
-            this._ColIndex = e.Column;
-            this.ListView.Sorting = this.ListView.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
-            if (this.ListView.Items.Count > 0)
-                this.ListView.RedrawItems(0, this.ListView.Items.Count - 1, true);
-            this.ListView.ResumeLayout();
-        }
-
         #region IComparer Members
 
         public int Compare(object x, object y)
@@ -58,5 +51,18 @@ namespace Mohammad.Win.Helpers
         }
 
         #endregion
+
+        private void ListViewColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            this.ListView.SuspendLayout();
+            this._ColIndex = e.Column;
+            this.ListView.Sorting = this.ListView.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+            if (this.ListView.Items.Count > 0)
+            {
+                this.ListView.RedrawItems(0, this.ListView.Items.Count - 1, true);
+            }
+
+            this.ListView.ResumeLayout();
+        }
     }
 }

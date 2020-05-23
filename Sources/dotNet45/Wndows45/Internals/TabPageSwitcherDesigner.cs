@@ -19,7 +19,7 @@ namespace Mohammad.Win.Internals
         /// <summary>
         ///     The TabPageSwitcher we're designing - strongly typed wrapper around Component property.
         /// </summary>
-        public TabPageSwitcher ControlSwitcher { get { return this.Component as TabPageSwitcher; } }
+        public TabPageSwitcher ControlSwitcher => this.Component as TabPageSwitcher;
 
         /// <summary>
         ///     Fetches the selection service from the service provider - from this we can tell what's selected and when selection
@@ -31,9 +31,10 @@ namespace Mohammad.Win.Internals
             {
                 if (this.selectionService == null)
                 {
-                    this.selectionService = (ISelectionService) this.GetService(typeof(ISelectionService));
+                    this.selectionService = (ISelectionService)this.GetService(typeof(ISelectionService));
                     Debug.Assert(this.selectionService != null, "Failed to get Selection Service!");
                 }
+
                 return this.selectionService;
             }
         }
@@ -57,18 +58,6 @@ namespace Mohammad.Win.Internals
         }
 
         /// <summary>
-        ///     when the designer disposes, we need to be careful about
-        ///     unhooking from service events we've subscribed to.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (disposing)
-                this.SelectionService.SelectionChanged -= this.SelectionService_SelectionChanged;
-        }
-
-        /// <summary>
         ///     This is called when the designer is first loaded.
         ///     Usually a good time to hook up to events.  If you want to
         ///     set property defaults, InitializeNewComponent is what you
@@ -81,7 +70,21 @@ namespace Mohammad.Win.Internals
             this.SelectionService.SelectionChanged += this.SelectionService_SelectionChanged;
         }
 
-        public override bool CanParent(Control control) { return control is TabStripPage; }
+        public override bool CanParent(Control control) => control is TabStripPage;
+
+        /// <summary>
+        ///     when the designer disposes, we need to be careful about
+        ///     unhooking from service events we've subscribed to.
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            if (disposing)
+            {
+                this.SelectionService.SelectionChanged -= this.SelectionService_SelectionChanged;
+            }
+        }
 
         /// <summary>
         ///     Method implementation for our "Add TabStripPage verb".
@@ -91,7 +94,7 @@ namespace Mohammad.Win.Internals
         private void OnAdd(object sender, EventArgs eevent)
         {
             // fetch our designer host
-            var host = (IDesignerHost) this.GetService(typeof(IDesignerHost));
+            var host = (IDesignerHost)this.GetService(typeof(IDesignerHost));
             if (host != null)
             {
                 // Create a transaction so we're friendly to undo/redo and serialization
@@ -105,7 +108,10 @@ namespace Mohammad.Win.Internals
                     catch (CheckoutException ex)
                     {
                         if (ex == CheckoutException.Canceled)
+                        {
                             return;
+                        }
+
                         throw ex;
                     }
 
@@ -147,14 +153,16 @@ namespace Mohammad.Win.Internals
                 finally
                 {
                     if (t != null)
+                    {
                         t.Commit();
+                    }
                 }
             }
         }
 
         private void SelectionService_SelectionChanged(object sender, EventArgs e)
         {
-            var selectedComponents = (IList) this.SelectionService.GetSelectedComponents();
+            var selectedComponents = (IList)this.SelectionService.GetSelectedComponents();
             if (selectedComponents.Count == 1)
             {
                 var tab = selectedComponents[0] as Tab;
@@ -170,9 +178,14 @@ namespace Mohammad.Win.Internals
         {
             var propDescriptor = TypeDescriptor.GetProperties(target)[propname];
             if (propDescriptor != null)
+            {
                 propDescriptor.SetValue(target, value);
+            }
         }
 
-        private void SetProperty(string propname, object value) { this.SetProperty(this.ControlSwitcher, propname, value); }
+        private void SetProperty(string propname, object value)
+        {
+            this.SetProperty(this.ControlSwitcher, propname, value);
+        }
     }
 }

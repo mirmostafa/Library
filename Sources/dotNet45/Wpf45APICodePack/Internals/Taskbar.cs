@@ -28,7 +28,7 @@ namespace Mohammad.Wpf.Internals
                 this._ThumbnailClipControl = ctrl;
                 var offset = VisualTreeHelper.GetOffset(ctrl);
                 TaskbarManager.Instance.TabbedThumbnail.SetThumbnailClip(this._Owner.Interop.Handle,
-                    new Rectangle((int) offset.X, (int) offset.Y, (int) ctrl.RenderSize.Width, (int) ctrl.RenderSize.Height));
+                    new Rectangle((int)offset.X, (int)offset.Y, (int)ctrl.RenderSize.Width, (int)ctrl.RenderSize.Height));
             }
             catch (Exception)
             {
@@ -45,7 +45,7 @@ namespace Mohammad.Wpf.Internals
 
         public TaskbarProgressBarState State
         {
-            set { TaskbarManager.Instance.SetProgressState((Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState) value); }
+            set => TaskbarManager.Instance.SetProgressState((Microsoft.WindowsAPICodePack.Taskbar.TaskbarProgressBarState)value);
         }
 
         public int Value
@@ -54,9 +54,14 @@ namespace Mohammad.Wpf.Internals
             set
             {
                 if (IntPtr.Zero == this._WindowHandle)
+                {
                     TaskbarManager.Instance.SetProgressValue(value, this.Maximum);
+                }
                 else
+                {
                     TaskbarManager.Instance.SetProgressValue(value, this.Maximum, this._WindowHandle);
+                }
+
                 this._Value = value;
             }
         }
@@ -67,13 +72,18 @@ namespace Mohammad.Wpf.Internals
             set
             {
                 if (IntPtr.Zero == this._WindowHandle)
+                {
                     TaskbarManager.Instance.SetProgressValue(this.Value, value);
+                }
                 else
+                {
                     TaskbarManager.Instance.SetProgressValue(this.Value, value, this._WindowHandle);
+                }
+
                 this._Maximum = value;
             }
         }
 
-        internal TaskbarProgressBar(IntPtr windowHandle) { this._WindowHandle = windowHandle; }
+        internal TaskbarProgressBar(IntPtr windowHandle) => this._WindowHandle = windowHandle;
     }
 }

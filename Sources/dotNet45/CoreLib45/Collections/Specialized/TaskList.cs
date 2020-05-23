@@ -17,9 +17,9 @@ namespace Mohammad.Collections.Specialized
     public class TaskList : List<Task>
     {
         private readonly CancellationTokenSource _CancellationTokenSource;
+        public bool IsCancellationRequested => this._CancellationTokenSource.IsCancellationRequested;
 
         public TaskList() => this._CancellationTokenSource = new CancellationTokenSource();
-        public bool IsCancellationRequested => this._CancellationTokenSource.IsCancellationRequested;
 
         public IEnumerable<Task> Add(params Task[] items) => items.Select(this.Add);
 

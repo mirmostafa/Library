@@ -10,23 +10,27 @@ namespace Mohammad.Win.Controls
 {
     public partial class ListView : System.Windows.Forms.ListView
     {
+        private const string _Reorder = "Reorder";
         private readonly ListViewColumnSorter _Sorter;
         private bool _AllowRowReorder = true;
-        private const string _Reorder = "Reorder";
 
         [DefaultValue("FileDrop")]
         public string DragDataFormat { get; set; } = DataFormats.FileDrop;
 
         [DefaultValue(false)]
-        public bool Sortable { get { return this._Sorter.Enabled; } set { this._Sorter.Enabled = value; } }
+        public bool Sortable
+        {
+            get => this._Sorter.Enabled;
+            set => this._Sorter.Enabled = value;
+        }
 
         [Browsable(true)]
-        public ListViewPrinter Printer { get; private set; }
+        public ListViewPrinter Printer { get; }
 
         [DefaultValue(true)]
         public bool AllowRowReorder
         {
-            get { return this._AllowRowReorder; }
+            get => this._AllowRowReorder;
             set
             {
                 this._AllowRowReorder = value;
@@ -36,11 +40,9 @@ namespace Mohammad.Win.Controls
 
         public new SortOrder Sorting
         {
-            get { return SortOrder.None; } // ReSharper disable ValueParameterNotUsed
+            get => SortOrder.None; // ReSharper disable ValueParameterNotUsed
             set // ReSharper restore ValueParameterNotUsed
-            {
-                base.Sorting = SortOrder.None;
-            }
+                => base.Sorting = SortOrder.None;
         }
 
         [DefaultValue(false)]
@@ -55,18 +57,30 @@ namespace Mohammad.Win.Controls
             this.AllowRowReorder = true;
         }
 
-        public event EventHandler<AddingDraggedItemsEventArgs> AddingDraggedItems;
+        public new DragDropEffects DoDragDrop(object data, DragDropEffects allowedEffects = DragDropEffects.Copy)
+        {
+            this.OnAddingDraggedItems(new AddingDraggedItemsEventArgs((IEnumerable<string>)data));
+            return DragDropEffects.Copy;
+        }
+
+        public void SelectAll()
+        {
+            this.BeginUpdate();
+            foreach (ListViewItem item in this.Items)
+            {
+                item.Selected = true;
+            }
+
+            this.EndUpdate();
+            this.Update();
+        }
 
         protected virtual void OnAddingDraggedItems(AddingDraggedItemsEventArgs e)
         {
             if (this.AddingDraggedItems != null)
+            {
                 this.AddingDraggedItems(this, e);
-        }
-
-        public new DragDropEffects DoDragDrop(object data, DragDropEffects allowedEffects = DragDropEffects.Copy)
-        {
-            this.OnAddingDraggedItems(new AddingDraggedItemsEventArgs((IEnumerable<string>) data));
-            return DragDropEffects.Copy;
+            }
         }
 
         protected override void OnColumnClick(ColumnClickEventArgs e)
@@ -87,6 +101,7 @@ namespace Mohammad.Win.Controls
                     group = new ListViewGroup(groupName);
                     this.Groups.Add(group);
                 }
+
                 item.Group = group;
             }
         }
@@ -96,14 +111,19 @@ namespace Mohammad.Win.Controls
             base.OnDragEnter(e);
             e.Effect = e.Data.GetDataPresent(this.DragDataFormat)
                 ? DragDropEffects.Copy
-                : (e.Data.GetDataPresent("FileGroupDescriptor") ? DragDropEffects.Copy : DragDropEffects.None);
+                : e.Data.GetDataPresent("FileGroupDescriptor")
+                    ? DragDropEffects.Copy
+                    : DragDropEffects.None;
         }
 
         protected override void OnItemDrag(ItemDragEventArgs e)
         {
             base.OnItemDrag(e);
             if (!this.AllowRowReorder)
+            {
                 return;
+            }
+
             this.DoDragDrop(_Reorder, DragDropEffects.Move);
         }
 
@@ -111,26 +131,27 @@ namespace Mohammad.Win.Controls
         {
             base.OnDragDrop(e);
             if (!e.Data.GetDataPresent(this.DragDataFormat, false))
+            {
                 return;
-            var data = (string[]) e.Data.GetData(this.DragDataFormat);
+            }
+
+            var data = (string[])e.Data.GetData(this.DragDataFormat);
             this.OnAddingDraggedItems(new AddingDraggedItemsEventArgs(data));
         }
 
         private void ListView_KeyUp(object sender, KeyEventArgs e)
         {
             if (!this.MultiSelect || !this.IsSelectAllEnabled)
+            {
                 return;
+            }
+
             if (e.Control && e.KeyCode == Keys.A)
+            {
                 this.SelectAll();
+            }
         }
 
-        public void SelectAll()
-        {
-            this.BeginUpdate();
-            foreach (ListViewItem item in this.Items)
-                item.Selected = true;
-            this.EndUpdate();
-            this.Update();
-        }
+        public event EventHandler<AddingDraggedItemsEventArgs> AddingDraggedItems;
     }
 }

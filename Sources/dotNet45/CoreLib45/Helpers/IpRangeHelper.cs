@@ -26,11 +26,13 @@ namespace Mohammad.Helpers
         public static void FastResolveAndPing(this IEnumerable<IpAddress> range, Action<IpAddress, string> onSucceed)
         {
             range.FastForEachFunc(ip => ip.ResolveAndPing(),
-                                  r =>
-                                  {
-                                      if (r.PingStatus == IPStatus.Success)
-                                          onSucceed(r.Ip, r.MachineName);
-                                  });
+                r =>
+                {
+                    if (r.PingStatus == IPStatus.Success)
+                    {
+                        onSucceed(r.Ip, r.MachineName);
+                    }
+                });
         }
 
         public static void FastResolveAndPing(this IEnumerable<IpAddress> range, Func<ResolveAndPingResult, bool> onResolved)

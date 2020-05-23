@@ -6,6 +6,6 @@ namespace Mohammad.Logging
         where TLog : ILog
     {
         TLog Write(object message, LogLevel level = LogLevel.Info, DateTime? time = null);
-        TLog Write(TLog   log);
+        TLog Write(TLog log);
     }
 }

@@ -6,9 +6,9 @@ namespace Mohammad.Win.Internals
     public class ProChartLine
     {
         public float[] Values { get; }
-        public string Name { get; private set; }
-        public Color Color { get; private set; }
-        public float Avrage { get { return this.Values.Count() == 0 ? 0 : this.Values.Average(); } }
+        public string Name { get; }
+        public Color Color { get; }
+        public float Avrage => this.Values.Count() == 0 ? 0 : this.Values.Average();
 
         public ProChartLine(float[] values, string name, Color color)
         {

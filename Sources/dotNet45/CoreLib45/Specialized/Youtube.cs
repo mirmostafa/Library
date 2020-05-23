@@ -24,14 +24,14 @@ namespace Mohammad.Specialized
 {
     public class YoutubeVideoInfo : INotifyPropertyChanged
     {
-        private string                   _Author;
-        private string                   _FileName;
-        private string                   _Id;
-        private long                     _Length;
+        private string _Author;
+        private string _FileName;
+        private string _Id;
+        private long _Length;
         private List<YoutubeVideoFormat> _SupportedFormats;
-        private string                   _ThumbnailUrl;
-        private string                   _Title;
-        private long                     _ViewCount;
+        private string _ThumbnailUrl;
+        private string _Title;
+        private long _ViewCount;
 
         public string Author
         {
@@ -39,7 +39,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (value == this._Author)
+                {
                     return;
+                }
+
                 this._Author = value;
                 this.OnPropertyChanged();
             }
@@ -51,7 +54,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (this._FileName == value)
+                {
                     return;
+                }
+
                 this._FileName = value;
                 this.OnPropertyChanged();
             }
@@ -63,7 +69,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (Equals(value, this._SupportedFormats))
+                {
                     return;
+                }
+
                 this._SupportedFormats = value;
                 this.OnPropertyChanged();
             }
@@ -75,7 +84,10 @@ namespace Mohammad.Specialized
             set
             {
                 if (value == this._Id)
+                {
                     return;
+                }
+
                 this._Id = value;
                 this.OnPropertyChanged();
             }
@@ -87,7 +99,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (value == this._Length)
+                {
                     return;
+                }
+
                 this._Length = value;
                 this.OnPropertyChanged();
             }
@@ -99,7 +114,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (value == this._ThumbnailUrl)
+                {
                     return;
+                }
+
                 this._ThumbnailUrl = value;
                 this.OnPropertyChanged();
             }
@@ -111,7 +129,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (value == this._Title)
+                {
                     return;
+                }
+
                 this._Title = value;
                 this.OnPropertyChanged();
             }
@@ -125,7 +146,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (value == this._ViewCount)
+                {
                     return;
+                }
+
                 this._ViewCount = value;
                 this.OnPropertyChanged();
             }
@@ -133,31 +157,38 @@ namespace Mohammad.Specialized
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         internal static YoutubeVideoInfo FromVideoInfoPage(string page)
         {
             var values = HttpUtility.ParseQueryString(page);
             var result = new YoutubeVideoInfo
             {
-                Id           = values["video_id"],
-                Title        = values["title"],
+                Id = values["video_id"],
+                Title = values["title"],
                 ThumbnailUrl = values["thumbnail_url"],
-                Length       = long.Parse(values["length_seconds"]),
-                Author       = values["author"],
-                ViewCount    = long.Parse(values["view_count"]),
-                SupportedFormats = values["url_encoded_fmt_stream_map"].Split(',')
-                                                                       .Select(YoutubeVideoFormat.FromFormatStreamMapItem).ToList()
+                Length = long.Parse(values["length_seconds"]),
+                Author = values["author"],
+                ViewCount = long.Parse(values["view_count"]),
+                SupportedFormats = values["url_encoded_fmt_stream_map"]
+                    .Split(',')
+                    .Select(YoutubeVideoFormat.FromFormatStreamMapItem)
+                    .ToList()
             };
             result.FileName = Regex.Replace(result.Title, "[:*?\"<>|\\\\/ \\t]", string.Empty);
             if (string.IsNullOrEmpty(result.FileName))
+            {
                 result.FileName = result.Id;
-            return result;
-        }
+            }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            return result;
         }
     }
 
@@ -165,7 +196,7 @@ namespace Mohammad.Specialized
     {
         private string _Format;
         private string _Resolution;
-        private long   _Size;
+        private long _Size;
 
         public string Format
         {
@@ -173,7 +204,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (value == this._Format)
+                {
                     return;
+                }
+
                 this._Format = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged("OutputFilePath");
@@ -186,7 +220,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (value == this._Resolution)
+                {
                     return;
+                }
+
                 this._Resolution = value;
                 this.OnPropertyChanged();
             }
@@ -198,7 +235,10 @@ namespace Mohammad.Specialized
             internal set
             {
                 if (value == this._Size)
+                {
                     return;
+                }
+
                 this._Size = value;
                 this.OnPropertyChanged();
             }
@@ -208,28 +248,35 @@ namespace Mohammad.Specialized
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        internal static YoutubeVideoFormat FromFormatStreamMapItem(string format)
+        public override string ToString() => string.Format("{0} ({1})", this.Format, this.Resolution);
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            var values = HttpUtility.ParseQueryString(format);
-            if (values["sig"] == null)
-                throw new Exception("Encrypted Signature");
-            return new YoutubeVideoFormat
+            var handler = this.PropertyChanged;
+            if (handler != null)
             {
-                Url        = string.Format("{0}&fallback_host={1}&signature={2}", values["url"], values["fallback_host"], values["sig"]),
-                Resolution = GetResolution(values["itag"]),
-                Format     = GetFormat(values["type"])
-            };
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
 
         private static string GetFormat(string type)
         {
             type = type.ToLower();
             if (type.Contains("video/webm"))
+            {
                 return "WEBM";
+            }
+
             if (type.Contains("video/mp4"))
+            {
                 return "MP4";
+            }
+
             if (type.Contains("video/x-flv"))
+            {
                 return "FLV";
+            }
+
             return type.Contains("video/3gpp") ? "3GP" : "Unknown";
         }
 
@@ -305,33 +352,31 @@ namespace Mohammad.Specialized
             return "Unknown";
         }
 
-        public override string ToString() => string.Format("{0} ({1})", this.Format, this.Resolution);
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        internal static YoutubeVideoFormat FromFormatStreamMapItem(string format)
         {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            var values = HttpUtility.ParseQueryString(format);
+            if (values["sig"] == null)
+            {
+                throw new Exception("Encrypted Signature");
+            }
+
+            return new YoutubeVideoFormat
+            {
+                Url = string.Format("{0}&fallback_host={1}&signature={2}", values["url"], values["fallback_host"], values["sig"]),
+                Resolution = GetResolution(values["itag"]),
+                Format = GetFormat(values["type"])
+            };
         }
     }
 
     public class YoutubeDownloader : LoggerContainer, INotifyPropertyChanged, IDisposable
     {
-        private readonly WebClient          _Client = new WebClient();
-        private          long               _BytesReceived;
-        private          YoutubeVideoFormat _Format;
-        private          int                _Progress;
-        private          long               _TotalBytesReceived;
-        private          YoutubeVideoInfo   _VideoInfo;
-
-        public YoutubeDownloader(TextWriter writer)
-            : this() => this.Out = writer;
-
-        private YoutubeDownloader()
-        {
-            this._Client.DownloadProgressChanged += this.Client_OnDownloadProgressChanged;
-            this._Client.DownloadFileCompleted   += this.Client_OnDownloadFileCompleted;
-        }
+        private readonly WebClient _Client = new WebClient();
+        private long _BytesReceived;
+        private YoutubeVideoFormat _Format;
+        private int _Progress;
+        private long _TotalBytesReceived;
+        private YoutubeVideoInfo _VideoInfo;
 
         public YoutubeVideoFormat Format
         {
@@ -339,7 +384,10 @@ namespace Mohammad.Specialized
             set
             {
                 if (Equals(value, this._Format))
+                {
                     return;
+                }
+
                 this._Format = value;
                 this.OnPropertyChanged();
                 this.OnPropertyChanged("OutputFilePath");
@@ -352,13 +400,16 @@ namespace Mohammad.Specialized
             set
             {
                 if (this._Progress == value)
+                {
                     return;
+                }
+
                 this._Progress = value;
                 this.Logger.Debug(string.Format("[{2}%] {0} of {1}",
-                                                this.BytesReceived.ToMesuranceSystem(),
-                                                this.TotalBytesReceived.ToMesuranceSystem(),
-                                                this.Progress),
-                                  sender: this.VideoInfo.Id);
+                        this.BytesReceived.ToMesuranceSystem(),
+                        this.TotalBytesReceived.ToMesuranceSystem(),
+                        this.Progress),
+                    sender: this.VideoInfo.Id);
                 this.OnPropertyChanged();
                 this.OnProgressChanged();
             }
@@ -370,13 +421,16 @@ namespace Mohammad.Specialized
             set
             {
                 if (this._BytesReceived == value)
+                {
                     return;
+                }
+
                 this._BytesReceived = value;
                 this.Logger.Debug(string.Format("[{2}%] {0} of {1}",
-                                                this.BytesReceived.ToMesuranceSystem(),
-                                                this.TotalBytesReceived.ToMesuranceSystem(),
-                                                this.Progress),
-                                  sender: this.VideoInfo.Id);
+                        this.BytesReceived.ToMesuranceSystem(),
+                        this.TotalBytesReceived.ToMesuranceSystem(),
+                        this.Progress),
+                    sender: this.VideoInfo.Id);
                 this.OnPropertyChanged();
                 this.OnBytesReceivedChanged();
             }
@@ -388,13 +442,16 @@ namespace Mohammad.Specialized
             set
             {
                 if (this._TotalBytesReceived == value)
+                {
                     return;
+                }
+
                 this._TotalBytesReceived = value;
                 this.Logger.Debug(string.Format("[{2}%] {0} of {1}",
-                                                this.BytesReceived.ToMesuranceSystem(),
-                                                this.TotalBytesReceived.ToMesuranceSystem(),
-                                                this.Progress),
-                                  sender: this.VideoInfo.Id);
+                        this.BytesReceived.ToMesuranceSystem(),
+                        this.TotalBytesReceived.ToMesuranceSystem(),
+                        this.Progress),
+                    sender: this.VideoInfo.Id);
                 this.OnPropertyChanged();
                 this.OnTotalBytesReceivedChanged();
             }
@@ -406,13 +463,16 @@ namespace Mohammad.Specialized
             set
             {
                 if (Equals(value, this._VideoInfo))
+                {
                     return;
+                }
+
                 this._VideoInfo = value;
                 if (this.Logger.IsDebugModeEnabled)
                 {
                     var sb = new StringBuilder("Information gathered:");
                     sb.AppendLine();
-                    foreach (var property in ObjectHelper.ReflectProperties(value, false))
+                    foreach (var property in ObjectHelper.ReflectProperties(value))
                     {
                         sb.AppendFormat("{0}:\t{1}", property.Key, property.Value);
                         sb.AppendLine();
@@ -430,68 +490,28 @@ namespace Mohammad.Specialized
             }
         }
 
+        public YoutubeDownloader(TextWriter writer)
+            : this() => this.Out = writer;
+
+        private YoutubeDownloader()
+        {
+            this._Client.DownloadProgressChanged += this.Client_OnDownloadProgressChanged;
+            this._Client.DownloadFileCompleted += this.Client_OnDownloadFileCompleted;
+        }
+
         public void Dispose()
         {
             if (this._Client != null)
+            {
                 this._Client.Dispose();
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public event EventHandler<BytesReceivedChangedEventArgs> BytesReceivedChanged;
-
-        protected virtual void OnBytesReceivedChanged()
-        {
-            var e       = new BytesReceivedChangedEventArgs(this.VideoInfo, this.BytesReceived);
-            var handler = this.BytesReceivedChanged;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        public event EventHandler<TotalBytesToReceiveChangedEventArgs> TotalBytesReceivedChanged;
-
-        protected virtual void OnTotalBytesReceivedChanged()
-        {
-            var e       = new TotalBytesToReceiveChangedEventArgs(this.VideoInfo, this.TotalBytesReceived);
-            var handler = this.TotalBytesReceivedChanged;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        public event EventHandler<ProgressChangedEventArgs>   ProgressChanged;
-        public event EventHandler<DownloadCompletedEventArgs> DownloadCompleted;
-
-        protected virtual void OnProgressChanged()
-        {
-            var handler = this.ProgressChanged;
-            if (handler != null)
-                handler(this, new ProgressChangedEventArgs(this.VideoInfo, this.Progress));
-        }
-
         public void Cancel()
         {
             this._Client.CancelAsync();
-        }
-
-        private void Client_OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
-        {
-            if (e.Error != null)
-                this.Error("Job not completed.", e.Error);
-            else
-                this.Info(string.Format("Job for {0} is {1}.", this.VideoInfo.Id, e.Cancelled ? "canceled" : "done"));
-            this.OnDownloadCompleted(new DownloadCompletedEventArgs(this.VideoInfo, e.Error, e.Cancelled));
-        }
-
-        protected virtual void OnDownloadCompleted(DownloadCompletedEventArgs e)
-        {
-            this.DownloadCompleted.Raise(this, e);
-        }
-
-        private void Client_OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
-        {
-            this.Progress           = e.ProgressPercentage;
-            this.BytesReceived      = e.BytesReceived;
-            this.TotalBytesReceived = e.TotalBytesToReceive;
         }
 
         public void Start()
@@ -502,17 +522,24 @@ namespace Mohammad.Specialized
         public void Start(string outputDirectory, YoutubeVideoFormat format = null)
         {
             if (outputDirectory == null)
+            {
                 throw new ArgumentNullException("outputDirectory");
+            }
+
             var youtubeVideoFile = format ?? this.Format;
             if (youtubeVideoFile == null)
+            {
                 throw new NullReferenceException("Please fill Format type to download.");
+            }
+
             //this._Client.DownloadFileAsync(new Uri(youtubeVideoFile.Url), Path.Combine(outputDirectory, string.Format("{0}.{1}", this.VideoInfo.FileName, this.Format.Format)));
             var uri = new Uri(youtubeVideoFile.Url);
             this.Logger.Debug(string.Format("download url: {0}", uri), sender: this.VideoInfo.Id);
             this._Client.DownloadFileAsync(uri,
-                                           Path.Combine(outputDirectory,
-                                                        string.Format("{0}.{1}", this.VideoInfo.Title.Replace("/", "_").Replace(@"\", "_"),
-                                                                      youtubeVideoFile.Format)));
+                Path.Combine(outputDirectory,
+                    string.Format("{0}.{1}",
+                        this.VideoInfo.Title.Replace("/", "_").Replace(@"\", "_"),
+                        youtubeVideoFile.Format)));
             this.Logger.Debug("Download started.", sender: this.VideoInfo.Id);
         }
 
@@ -521,27 +548,100 @@ namespace Mohammad.Specialized
             var videoInfoClient = new WebClient();
 
             if (logWriter != null)
+            {
                 logWriter.WriteLine("Gathering video information");
+            }
+
             var v = HttpUtility.ParseQueryString(new Uri(url).Query)["v"];
             var page = videoInfoClient.DownloadString(
                 string.Format("http://www.youtube.com/get_video_info?&video_id={0}&el=detailpage&ps=default&eurl=&gl=US&hl=en", v));
             if (logWriter != null)
+            {
                 logWriter.WriteLine("Parsing video information");
+            }
+
             var video = YoutubeVideoInfo.FromVideoInfoPage(page);
             if (logWriter != null)
+            {
                 logWriter.WriteLine("Initializing");
+            }
+
             var result = new YoutubeDownloader(logWriter);
             result.Logger.IsDebugModeEnabled = isDebugModeEnabled;
-            result.VideoInfo                 = video;
-            result.Format                    = video.SupportedFormats.FirstOrDefault();
+            result.VideoInfo = video;
+            result.Format = video.SupportedFormats.FirstOrDefault();
             return result;
+        }
+
+        protected virtual void OnBytesReceivedChanged()
+        {
+            var e = new BytesReceivedChangedEventArgs(this.VideoInfo, this.BytesReceived);
+            var handler = this.BytesReceivedChanged;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        protected virtual void OnTotalBytesReceivedChanged()
+        {
+            var e = new TotalBytesToReceiveChangedEventArgs(this.VideoInfo, this.TotalBytesReceived);
+            var handler = this.TotalBytesReceivedChanged;
+            if (handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        protected virtual void OnProgressChanged()
+        {
+            var handler = this.ProgressChanged;
+            if (handler != null)
+            {
+                handler(this, new ProgressChangedEventArgs(this.VideoInfo, this.Progress));
+            }
+        }
+
+        protected virtual void OnDownloadCompleted(DownloadCompletedEventArgs e)
+        {
+            this.DownloadCompleted.Raise(this, e);
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             var handler = this.PropertyChanged;
             if (handler != null)
+            {
                 handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
+
+        private void Client_OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                this.Error("Job not completed.", e.Error);
+            }
+            else
+            {
+                this.Info(string.Format("Job for {0} is {1}.", this.VideoInfo.Id, e.Cancelled ? "canceled" : "done"));
+            }
+
+            this.OnDownloadCompleted(new DownloadCompletedEventArgs(this.VideoInfo, e.Error, e.Cancelled));
+        }
+
+        private void Client_OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            this.Progress = e.ProgressPercentage;
+            this.BytesReceived = e.BytesReceived;
+            this.TotalBytesReceived = e.TotalBytesToReceive;
+        }
+
+        public event EventHandler<BytesReceivedChangedEventArgs> BytesReceivedChanged;
+
+        public event EventHandler<TotalBytesToReceiveChangedEventArgs> TotalBytesReceivedChanged;
+
+        public event EventHandler<ProgressChangedEventArgs> ProgressChanged;
+        public event EventHandler<DownloadCompletedEventArgs> DownloadCompleted;
     }
 }

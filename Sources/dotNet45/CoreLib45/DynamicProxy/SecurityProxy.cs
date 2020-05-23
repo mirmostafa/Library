@@ -36,19 +36,14 @@ namespace Mohammad.DynamicProxy
         object IProxyInvocationHandler.Invoke(object proxy, MethodInfo method, object[] parameters)
         {
             object retVal = null;
-            var    e      = new ItemActingEventArgs<MethodCallingEventItem>(new MethodCallingEventItem(proxy, method, parameters));
+            var e = new ItemActingEventArgs<MethodCallingEventItem>(new MethodCallingEventItem(proxy, method, parameters));
             this.OnMethodCalling(e);
             if (e.Handled)
+            {
                 retVal = method.Invoke(this._Obj, parameters);
+            }
 
             return retVal;
-        }
-
-        public event EventHandler<ItemActingEventArgs<MethodCallingEventItem>> MethodCalling;
-
-        protected virtual void OnMethodCalling(ItemActingEventArgs<MethodCallingEventItem> e)
-        {
-            this.MethodCalling.Raise(this, e);
         }
 
         /// <summary>
@@ -59,13 +54,20 @@ namespace Mohammad.DynamicProxy
         public static T NewInstance<T>(T obj, out SecurityProxy securityProxy)
         {
             securityProxy = new SecurityProxy(obj);
-            return (T) ProxyFactory.Instance.Create(securityProxy, obj.GetType());
+            return (T)ProxyFactory.Instance.Create(securityProxy, obj.GetType());
         }
 
         /// <summary>
         ///     Factory method to create a new proxy instance.
         /// </summary>
         /// <param name="obj"> Instance of object to be proxied </param>
-        public static T NewInstance<T>(T obj) => (T) ProxyFactory.Instance.Create(new SecurityProxy(obj), obj.GetType());
+        public static T NewInstance<T>(T obj) => (T)ProxyFactory.Instance.Create(new SecurityProxy(obj), obj.GetType());
+
+        protected virtual void OnMethodCalling(ItemActingEventArgs<MethodCallingEventItem> e)
+        {
+            this.MethodCalling.Raise(this, e);
+        }
+
+        public event EventHandler<ItemActingEventArgs<MethodCallingEventItem>> MethodCalling;
     }
 }

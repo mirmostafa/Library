@@ -36,13 +36,6 @@ namespace TestWpfApp45
             TestWpfApp45.Commands.ShowMainWindow.Instance = this;
         }
 
-        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            this.Status.Set($"Setting on {Os.GetVersion()}");
-            //await Run(this.InitializeWatchers);
-            this.Status.Set("Ready", level: LogLevel.Status);
-        }
-
         protected override WindowSettings OnWindowSettingsRequired() => App.Injector.Settings.MainWindow;
 
         protected override void OnInitializingStatus(out ProgressBar progressBar, out StatusBarItem statusBarItem, out ISimpleLogger logger)
@@ -53,8 +46,22 @@ namespace TestWpfApp45
             logger = App.Injector.Logger;
         }
 
-        private void EventNavigation_OnNavigating(object sender, ItemActingEventArgs<object> e) { e.Item = App.WatcherPage; }
-        private void ShowTestPage2_OnExecuted(object sender, EventArgs e) { LibraryDialog.ShowDialog<Page2>(this); }
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            this.Status.Set($"Setting on {Os.GetVersion()}");
+            //await Run(this.InitializeWatchers);
+            this.Status.Set("Ready", level: LogLevel.Status);
+        }
+
+        private void EventNavigation_OnNavigating(object sender, ItemActingEventArgs<object> e)
+        {
+            e.Item = App.WatcherPage;
+        }
+
+        private void ShowTestPage2_OnExecuted(object sender, EventArgs e)
+        {
+            LibraryDialog.ShowDialog<Page2>(this);
+        }
 
         private void CommonTests_OnExecuted(object sender, EventArgs e)
         {
@@ -101,18 +108,30 @@ namespace TestWpfApp45
             }
         }
 
-        private void Watcher_OnRenamed(object sender, ChangedEventArgs<string> e) { this.Status.Set($"{e.OldValue} to {e.NewValue}", detail: "renamed"); }
+        private void Watcher_OnRenamed(object sender, ChangedEventArgs<string> e)
+        {
+            this.Status.Set($"{e.OldValue} to {e.NewValue}", detail: "renamed");
+        }
 
         private void Watcher_OnModified(object sender, ItemActedEventArgs<string> e)
         {
             if (e.Item.EndsWith("Logs.txt"))
+            {
                 return;
+            }
+
             this.Status.Set(e.Item, detail: "modified");
         }
 
-        private void Watcher_OnDeleted(object sender, ItemActedEventArgs<string> e) { this.Status.Set(e.Item, detail: "deleted"); }
+        private void Watcher_OnDeleted(object sender, ItemActedEventArgs<string> e)
+        {
+            this.Status.Set(e.Item, detail: "deleted");
+        }
 
-        private void Watcher_OnAdded(object sender, ItemActedEventArgs<string> e) { this.Status.Set(e.Item, detail: "added"); }
+        private void Watcher_OnAdded(object sender, ItemActedEventArgs<string> e)
+        {
+            this.Status.Set(e.Item, detail: "added");
+        }
         //}
         //        this._Watchers.ForEach(w => CodeHelper.Catch(w.Stop));
         //    else

@@ -20,7 +20,7 @@ namespace Mohammad.Win.Actions
         ///     Creates an new instance
         /// </summary>
         /// <param name="parent">Parent ActionList</param>
-        public ActionCollection(ActionList parent) { this.Parent = parent; }
+        public ActionCollection(ActionList parent) => this.Parent = parent;
 
         /// <summary>
         ///     Clears all of the action lists.
@@ -28,7 +28,9 @@ namespace Mohammad.Win.Actions
         protected override void ClearItems()
         {
             foreach (var action in this)
+            {
                 action.ActionList = null;
+            }
 
             base.ClearItems();
         }
@@ -62,7 +64,10 @@ namespace Mohammad.Win.Actions
         protected override void SetItem(int index, Action item)
         {
             if (this.Count > index)
+            {
                 this[index].ActionList = null;
+            }
+
             base.SetItem(index, item);
 
             item.ActionList = this.Parent;

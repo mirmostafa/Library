@@ -13,37 +13,48 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(SeparatorLabel),
             new PropertyMetadata(default(object)));
 
-        public object Header
-        {
-            get { return this.GetValue(HeaderProperty); }
-            set
-            {
-                if (!this.Set(HeaderProperty, value))
-                    return;
-                this.OnPropertyChanged();
-            }
-        }
-
         public static readonly DependencyProperty HeaderStyleProperty = DependencyProperty.Register("HeaderStyle",
             typeof(Style),
             typeof(SeparatorControl),
             new PropertyMetadata(default(Style)));
-
-        public Style HeaderStyle { get { return (Style) this.GetValue(HeaderStyleProperty); } set { this.SetValue(HeaderStyleProperty, value); } }
 
         public static readonly DependencyProperty SepratorColorProperty = DependencyProperty.Register("SepratorColor",
             typeof(Brush),
             typeof(SeparatorLabel),
             new PropertyMetadata(default(Brush)));
 
-        public Brush SepratorColor { get { return (Brush) this.GetValue(SepratorColorProperty); } set { this.SetValue(SepratorColorProperty, value); } }
+        public object Header
+        {
+            get => this.GetValue(HeaderProperty);
+            set
+            {
+                if (!this.Set(HeaderProperty, value))
+                {
+                    return;
+                }
+
+                this.OnPropertyChanged();
+            }
+        }
+
+        public Style HeaderStyle
+        {
+            get => (Style)this.GetValue(HeaderStyleProperty);
+            set => this.SetValue(HeaderStyleProperty, value);
+        }
+
+        public Brush SepratorColor
+        {
+            get => (Brush)this.GetValue(SepratorColorProperty);
+            set => this.SetValue(SepratorColorProperty, value);
+        }
+
+        public DependencyProperty BindingFieldProperty => HeaderProperty;
 
         public SeparatorControl()
         {
             this.InitializeComponent();
             this.SepratorColor = Brushes.RoyalBlue;
         }
-
-        public DependencyProperty BindingFieldProperty { get { return HeaderProperty; } }
     }
 }

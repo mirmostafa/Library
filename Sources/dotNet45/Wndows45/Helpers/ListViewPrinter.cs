@@ -68,7 +68,10 @@ namespace Mohammad.Win.Helpers
             // WaitFor the standard print dialog box, that lets the user select a printer
             // and change the settings for that printer.
             if (this.m_printDlg.ShowDialog(this.ListView) != DialogResult.OK)
+            {
                 return;
+            }
+
             this.m_printDoc.DocumentName = this.Title;
 
             this.m_bPrintSel = this.m_printDlg.PrinterSettings.PrintRange == PrintRange.Selection;
@@ -79,8 +82,8 @@ namespace Mohammad.Win.Helpers
             this.m_printDoc.Print();
         }
 
-        private int GetItemsCount() { return this.m_bPrintSel ? this.ListView.SelectedItems.Count : this.ListView.Items.Count; }
-        private ListViewItem GetItem(int index) { return this.m_bPrintSel ? this.ListView.SelectedItems[index] : this.ListView.Items[index]; }
+        private int GetItemsCount() => this.m_bPrintSel ? this.ListView.SelectedItems.Count : this.ListView.Items.Count;
+        private ListViewItem GetItem(int index) => this.m_bPrintSel ? this.ListView.SelectedItems[index] : this.ListView.Items[index];
 
         private void PreparePrint()
         {
@@ -99,6 +102,7 @@ namespace Mohammad.Win.Helpers
                 this.m_fListWidth += fWidth;
                 this.m_arColsWidth[i] = fWidth;
             }
+
             this.m_fListWidth += 1; // separator
         }
 
@@ -128,7 +132,10 @@ namespace Mohammad.Win.Helpers
 
         #region Events Handlers
 
-        private void OnBeginPrint(object sender, PrintEventArgs e) { this.PreparePrint(); }
+        private void OnBeginPrint(object sender, PrintEventArgs e)
+        {
+            this.PreparePrint();
+        }
 
         private void OnPrintPage(object sender, PrintPageEventArgs e)
         {
@@ -188,7 +195,9 @@ namespace Mohammad.Win.Helpers
 
             if (this.m_nStartCol == 0 && this.FitToPage && this.m_fListWidth > rectBody.Width)
                 // Calculate scale factor
+            {
                 fScale = rectBody.Width / this.m_fListWidth;
+            }
 
             // Scale the printable area
             rectFull = new RectangleF(rectFull.X / fScale, rectFull.Y / fScale, rectFull.Width / fScale, rectFull.Height / fScale);
@@ -247,12 +256,15 @@ namespace Mohammad.Win.Helpers
                 else
                 {
                     if (i == this.m_nStartCol)
+                    {
                         bUnprintable = true;
+                    }
 
                     nNextStartCol = i;
                     break;
                 }
             }
+
             y += fRowHeight;
 
             // Rows ---------------------------------------------------
@@ -322,7 +334,9 @@ namespace Mohammad.Win.Helpers
             }
 
             if (nNextStartCol == 0)
+            {
                 this.m_nStartRow = nRow;
+            }
 
             this.m_nStartCol = nNextStartCol;
 

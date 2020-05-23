@@ -17,19 +17,34 @@ namespace Mohammad.Wpf.Windows.Controls
     /// </summary>
     public partial class OperationWatcher : ISimpleLogger
     {
-        private readonly TaskScheduler _UiScheduler;
-        private ILogger _Logger;
-        private MultiStepOperation _Operation;
-        private Visibility _StatusBarVisibility = Visibility.Visible;
-
         public static readonly DependencyProperty AutoScrollProperty = DependencyProperty.Register("AutoScroll",
             typeof(bool),
             typeof(OperationWatcher),
             new PropertyMetadata(default(bool)));
 
+        public static readonly DependencyProperty IsPausedProperty = DependencyProperty.Register("IsPaused",
+            typeof(bool),
+            typeof(OperationWatcher),
+            new PropertyMetadata(default(bool)));
+
+        public static readonly DependencyProperty IsToolBarVisibleProperty = DependencyProperty.Register("IsToolBarVisible",
+            typeof(bool),
+            typeof(OperationWatcher),
+            new PropertyMetadata(default(bool)));
+
+        public static readonly DependencyProperty LogAllProperty = DependencyProperty.Register("LogAll",
+            typeof(bool),
+            typeof(OperationWatcher),
+            new PropertyMetadata(default(bool)));
+
+        private readonly TaskScheduler _UiScheduler;
+        private ILogger _Logger;
+        private MultiStepOperation _Operation;
+        private Visibility _StatusBarVisibility = Visibility.Visible;
+
         public bool AutoScroll
         {
-            get { return (bool) this.GetValue(AutoScrollProperty); }
+            get => (bool)this.GetValue(AutoScrollProperty);
             set
             {
                 this.SetValue(AutoScrollProperty, value);
@@ -37,21 +52,15 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        public static readonly DependencyProperty IsPausedProperty = DependencyProperty.Register("IsPaused",
-            typeof(bool),
-            typeof(OperationWatcher),
-            new PropertyMetadata(default(bool)));
-
-        public bool IsPaused { get { return (bool) this.GetValue(IsPausedProperty); } set { this.SetValue(IsPausedProperty, value); } }
-
-        public static readonly DependencyProperty IsToolBarVisibleProperty = DependencyProperty.Register("IsToolBarVisible",
-            typeof(bool),
-            typeof(OperationWatcher),
-            new PropertyMetadata(default(bool)));
+        public bool IsPaused
+        {
+            get => (bool)this.GetValue(IsPausedProperty);
+            set => this.SetValue(IsPausedProperty, value);
+        }
 
         public bool IsToolBarVisible
         {
-            get { return (bool) this.GetValue(IsToolBarVisibleProperty); }
+            get => (bool)this.GetValue(IsToolBarVisibleProperty);
             set
             {
                 this.SetValue(IsToolBarVisibleProperty, value);
@@ -59,20 +68,22 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        public static readonly DependencyProperty LogAllProperty = DependencyProperty.Register("LogAll",
-            typeof(bool),
-            typeof(OperationWatcher),
-            new PropertyMetadata(default(bool)));
-
-        public bool LogAll { get { return (bool) this.GetValue(LogAllProperty); } set { this.SetValue(LogAllProperty, value); } }
+        public bool LogAll
+        {
+            get => (bool)this.GetValue(LogAllProperty);
+            set => this.SetValue(LogAllProperty, value);
+        }
 
         public MultiStepOperation Operation
         {
-            get { return this._Operation; }
+            get => this._Operation;
             set
             {
                 if (this._Operation == value)
+                {
                     return;
+                }
+
                 if (value != null)
                 {
                     value.CurrentOperationCanceled -= this.Operation_OnCurrentOperationCanceled;
@@ -87,9 +98,13 @@ namespace Mohammad.Wpf.Windows.Controls
                     value.MainOperationStepIncreasing -= this.Operation_OnMainOperationStepIncreasing;
                     value.MultiStepErrorOccurred -= this.Operation_OnMultiStepErrorOccurred;
                 }
+
                 this._Operation = value;
                 if (this._Operation == null)
+                {
                     return;
+                }
+
                 this._Operation.CurrentOperationCanceled += this.Operation_OnCurrentOperationCanceled;
                 this._Operation.CurrentOperationEnded += this.Operation_OnCurrentOperationEnded;
                 this._Operation.CurrentOperationStarted += this.Operation_OnCurrentOperationStarted;
@@ -106,11 +121,14 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public ILogger Logger
         {
-            get { return this._Logger; }
+            get => this._Logger;
             set
             {
                 if (Equals(value, this._Logger))
+                {
                     return;
+                }
+
                 this._Logger = value;
                 this._Logger.Logging += this.Logger_OnLogging;
                 this.OnPropertyChanged();
@@ -119,11 +137,14 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public Visibility StatusBarVisibility
         {
-            get { return this._StatusBarVisibility; }
+            get => this._StatusBarVisibility;
             set
             {
                 if (value == this._StatusBarVisibility)
+                {
                     return;
+                }
+
                 this._StatusBarVisibility = value;
                 this.OnPropertyChanged();
             }
@@ -137,39 +158,58 @@ namespace Mohammad.Wpf.Windows.Controls
             this.DataContext = this;
         }
 
-        private void Operation_OnMultiStepErrorOccurred(object sender, MultiStepErrorOccurredEventArgs e)
+        public void Log(object text,
+            object moreInfo = null,
+            object sender = null,
+            LogLevel level = LogLevel.Info,
+            string memberName = "",
+            string sourceFilePath = "",
+            int sourceLineNumber = 0)
         {
-            this.Log(e.Exception.GetBaseException().Message, e.Log, e.Sender, LogLevel.Error);
+            this.Log((text ?? string.Empty).ToString(), moreInfo, sender, DateTime.Now, level);
         }
 
-        public async void Log(string description, object details = null, object sender = null, DateTime dateTime = default(DateTime), LogLevel level = LogLevel.Info)
+        public async void Log(string description, object details = null, object sender = null, DateTime dateTime = default, LogLevel level = LogLevel.Info)
         {
             await Async.Run(() =>
                 {
                     if (this.IsPaused)
+                    {
                         return;
+                    }
+
                     if (Equals(details, "0"))
+                    {
                         return;
+                    }
+
                     if (!this.LogAll && level == LogLevel.Debug)
+                    {
                         return;
+                    }
+
                     if (!this.LogAll && level == LogLevel.Status)
                     {
                         this.StatusBarItem.Content = description;
                         return;
                     }
+
                     if (!this.LogAll && EnumHelper.IsEnumInRange(level, LogLevel.Error, LogLevel.Fatal))
+                    {
                         details = details is Exception ? details.As<Exception>().GetBaseException().Message : null;
+                    }
+
                     var item = new ListViewItem
-                               {
-                                   Content =
-                                       new
-                                       {
-                                           Time = dateTime == default(DateTime) ? DateTime.Now : dateTime,
-                                           Description = description,
-                                           Details = details,
-                                           Sender = sender
-                                       }
-                               };
+                    {
+                        Content =
+                            new
+                            {
+                                Time = dateTime == default ? DateTime.Now : dateTime,
+                                Description = description,
+                                Details = details,
+                                Sender = sender
+                            }
+                    };
                     switch (level)
                     {
                         case LogLevel.Error:
@@ -179,45 +219,77 @@ namespace Mohammad.Wpf.Windows.Controls
                             item.Foreground = Brushes.YellowGreen;
                             break;
                     }
+
                     this.LogListView.Items.Add(item);
                     if (this.AutoScroll)
+                    {
                         item.EnsureVisible();
+                    }
                 },
                 scheduler: this._UiScheduler);
         }
 
         [Obsolete("Incomplete", true)]
-        public async void Log(string description, Brush brush, string details = null, object sender = null, DateTime dateTime = default(DateTime),
+        public async void Log(string description,
+            Brush brush,
+            string details = null,
+            object sender = null,
+            DateTime dateTime = default,
             bool isStatus = false)
         {
             await Async.Run(() =>
                 {
                     this.StatusBarItem.Content = description;
                     if (isStatus)
+                    {
                         return;
+                    }
+
                     var item = new ListViewItem
-                               {
-                                   Content =
-                                       new
-                                       {
-                                           Time = dateTime == default(DateTime) ? DateTime.Now : dateTime,
-                                           Description = description,
-                                           Details = details,
-                                           Sender = sender
-                                       },
-                                   Foreground = brush
-                               };
+                    {
+                        Content =
+                            new
+                            {
+                                Time = dateTime == default ? DateTime.Now : dateTime,
+                                Description = description,
+                                Details = details,
+                                Sender = sender
+                            },
+                        Foreground = brush
+                    };
                     this.LogListView.Items.Add(item);
                     if (this.AutoScroll)
+                    {
                         item.EnsureVisible();
+                    }
                 },
                 scheduler: this._UiScheduler);
+        }
+
+        public void Clear()
+        {
+            this.LogListView.Items.Clear();
+            this.StatusBarItem.Content = string.Empty;
+            this.MainOperationProgressBar.Visibility = Visibility.Collapsed;
+            this.CurrentOperationProgressBar.Visibility = Visibility.Collapsed;
+        }
+
+        public void SetTaskbarThumbnailClip(Action<UIElement> thumbnailClipSetter)
+        {
+            thumbnailClipSetter(this.MainOperationProgressBar);
+        }
+
+        private void Operation_OnMultiStepErrorOccurred(object sender, MultiStepErrorOccurredEventArgs e)
+        {
+            this.Log(e.Exception.GetBaseException().Message, e.Log, e.Sender, LogLevel.Error);
         }
 
         private void Operation_OnMainOperationStepIncreasing(object sender, MultiStepLogEventArgs e)
         {
             if (!StringHelper.IsNullOrEmpty(e.Log))
+            {
                 this.Log(e.Log.ToString(), sender: e.Sender);
+            }
         }
 
         private void Operation_OnMainOperationStepIncreased(object sender, MultiStepLogEventArgs e)
@@ -234,7 +306,9 @@ namespace Mohammad.Wpf.Windows.Controls
             this.MainOperationProgressBar.Maximum = e.Max;
             this.MainOperationProgressBar.Visibility = Visibility.Visible;
             if (!StringHelper.IsNullOrEmpty(e.Log))
+            {
                 this.Log(e.Log.ToString(), sender: e.Sender);
+            }
         }
 
         private void Operation_OnMainOperationEnded(object sender, MultiStepEndedLogEventArgs e)
@@ -243,22 +317,31 @@ namespace Mohammad.Wpf.Windows.Controls
             this.MainOperationProgressBar.Visibility = Visibility.Collapsed;
             this.CurrentOperationProgressBar.Visibility = Visibility.Collapsed;
             if (!StringHelper.IsNullOrEmpty(e.Log))
+            {
                 this.Log(e.Log.ToString(), sender: e.Sender);
+            }
         }
 
-        private void Operation_OnMainOperationCanceled(object sender, EventArgs e) { this.MainOperationProgressBar.Visibility = Visibility.Hidden; }
+        private void Operation_OnMainOperationCanceled(object sender, EventArgs e)
+        {
+            this.MainOperationProgressBar.Visibility = Visibility.Hidden;
+        }
 
         private void Operation_OnCurrentOperationStepIncreasing(object sender, MultiStepLogEventArgs e)
         {
             if (!StringHelper.IsNullOrEmpty(e.Log))
+            {
                 this.Log(e.Log.ToString(), level: LogLevel.Status, sender: e.Sender);
+            }
         }
 
         private void Operation_OnCurrentOperationStepIncreased(object sender, MultiStepLogEventArgs e)
         {
             this.CurrentOperationProgressBar.SetValue(e.Step + 1);
             if (!StringHelper.IsNullOrEmpty(e.Log))
+            {
                 this.Log(e.Log.ToString(), level: LogLevel.Status, sender: e.Sender);
+            }
         }
 
         private void Operation_OnCurrentOperationStarted(object sender, MultiStepStartedLogEventArgs e)
@@ -267,7 +350,9 @@ namespace Mohammad.Wpf.Windows.Controls
             this.CurrentOperationProgressBar.Maximum = e.Max;
             this.CurrentOperationProgressBar.Visibility = Visibility.Visible;
             if (!StringHelper.IsNullOrEmpty(e.Log))
+            {
                 this.Log(e.Log.ToString(), level: LogLevel.Status, sender: e.Sender);
+            }
         }
 
         private void Operation_OnCurrentOperationEnded(object sender, MultiStepEndedLogEventArgs e)
@@ -275,13 +360,8 @@ namespace Mohammad.Wpf.Windows.Controls
             this.CurrentOperationProgressBar.Visibility = Visibility.Collapsed;
         }
 
-        private void Operation_OnCurrentOperationCanceled(object sender, EventArgs e) { this.CurrentOperationProgressBar.Visibility = Visibility.Collapsed; }
-
-        public void Clear()
+        private void Operation_OnCurrentOperationCanceled(object sender, EventArgs e)
         {
-            this.LogListView.Items.Clear();
-            this.StatusBarItem.Content = string.Empty;
-            this.MainOperationProgressBar.Visibility = Visibility.Collapsed;
             this.CurrentOperationProgressBar.Visibility = Visibility.Collapsed;
         }
 
@@ -290,19 +370,19 @@ namespace Mohammad.Wpf.Windows.Controls
             this.Log(e.Log, e.MoreInfo, e.Sender, e.Level, e.MemberName, e.SourceFilePath, e.SourceLineNumber);
         }
 
-        private void CleanButton_OnClick(object sender, RoutedEventArgs e) { this.LogListView.Items.Clear(); }
-        public void SetTaskbarThumbnailClip(Action<UIElement> thumbnailClipSetter) { thumbnailClipSetter(this.MainOperationProgressBar); }
-        internal void WatchLogger(ILogger logger) { logger.Logging += this.logger_OnLogging; }
+        private void CleanButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            this.LogListView.Items.Clear();
+        }
 
         private void logger_OnLogging(object sender, LogEventArgs e)
         {
             this.Log(e.Log, e.MoreInfo, e.Sender, e.Level, e.MemberName, e.SourceFilePath, e.SourceLineNumber);
         }
 
-        public void Log(object text, object moreInfo = null, object sender = null, LogLevel level = LogLevel.Info, string memberName = "", string sourceFilePath = "",
-            int sourceLineNumber = 0)
+        internal void WatchLogger(ILogger logger)
         {
-            this.Log((text ?? string.Empty).ToString(), moreInfo, sender, DateTime.Now, level);
+            logger.Logging += this.logger_OnLogging;
         }
     }
 }

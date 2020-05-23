@@ -26,79 +26,8 @@ namespace Mohammad.Win.Renderers.Internal
         ///     Initialize a color Dictionary with defined colors
         /// </summary>
         /// <param name="rgbTable">Dictionary with defined colors</param>
-        protected virtual void InitColors(ref Dictionary<KnownColors, Color> rgbTable) {}
-
-        #endregion
-
-        #region MethodsPrivate
-
-        private static class DisplayInformation
+        protected virtual void InitColors(ref Dictionary<KnownColors, Color> rgbTable)
         {
-            #region Nested type: NativeMethods
-
-            private static class NativeMethods
-            {
-                [DllImport("uxtheme.dll", CharSet = CharSet.Auto)]
-                public static extern int GetCurrentThemeName(StringBuilder pszThemeFileName, int dwMaxNameChars, StringBuilder pszColorBuff, int dwMaxColorChars,
-                    StringBuilder pszSizeBuff, int cchMaxSizeChars);
-            }
-
-            #endregion
-
-            #region FieldsPrivate
-
-            private const string m_strAeroFileName = "aero.msstyles";
-            private const string m_strLunaFileName = "luna.msstyles";
-
-            [ThreadStatic]
-            private static bool m_bIsLunaTheme;
-
-            [ThreadStatic]
-            private static string m_strColorScheme;
-
-            #endregion
-
-            #region Properties
-
-            public static string ColorScheme { get { return m_strColorScheme; } }
-
-            internal static bool IsLunaTheme { get { return m_bIsLunaTheme; } }
-
-            internal static bool IsAeroTheme { get; private set; }
-
-            #endregion
-
-            #region MethodsPrivate
-
-            static DisplayInformation()
-            {
-                SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
-                SetScheme();
-            }
-
-            private static void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e) { SetScheme(); }
-
-            private static void SetScheme()
-            {
-                m_bIsLunaTheme = false;
-                if (VisualStyleRenderer.IsSupported)
-                {
-                    m_strColorScheme = VisualStyleInformation.ColorScheme;
-
-                    if (!VisualStyleInformation.IsEnabledByUser)
-                        return;
-                    var stringBuilder = new StringBuilder(0x200);
-                    NativeMethods.GetCurrentThemeName(stringBuilder, stringBuilder.Capacity, null, 0, null, 0);
-                    m_bIsLunaTheme = string.Equals(m_strLunaFileName, Path.GetFileName(stringBuilder.ToString()), StringComparison.InvariantCultureIgnoreCase);
-                    IsAeroTheme = string.Equals(m_strAeroFileName, Path.GetFileName(stringBuilder.ToString()), StringComparison.InvariantCultureIgnoreCase);
-                }
-                else
-                {
-                    m_strColorScheme = null;
-                }
-            }
-
-            #endregion
         }
 
         #endregion
@@ -339,6 +268,85 @@ namespace Mohammad.Win.Renderers.Internal
 
         #endregion
 
+        #region MethodsPrivate
+
+        private static class DisplayInformation
+        {
+            #region Nested type: NativeMethods
+
+            private static class NativeMethods
+            {
+                [DllImport("uxtheme.dll", CharSet = CharSet.Auto)]
+                public static extern int GetCurrentThemeName(StringBuilder pszThemeFileName,
+                    int dwMaxNameChars,
+                    StringBuilder pszColorBuff,
+                    int dwMaxColorChars,
+                    StringBuilder pszSizeBuff,
+                    int cchMaxSizeChars);
+            }
+
+            #endregion
+
+            #region FieldsPrivate
+
+            private const string m_strAeroFileName = "aero.msstyles";
+            private const string m_strLunaFileName = "luna.msstyles";
+
+            #endregion
+
+            #region Properties
+
+            [field: ThreadStatic]
+            public static string ColorScheme { get; private set; }
+
+            [field: ThreadStatic]
+            internal static bool IsLunaTheme { get; private set; }
+
+            internal static bool IsAeroTheme { get; private set; }
+
+            #endregion
+
+            #region MethodsPrivate
+
+            static DisplayInformation()
+            {
+                SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+                SetScheme();
+            }
+
+            private static void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+            {
+                SetScheme();
+            }
+
+            private static void SetScheme()
+            {
+                IsLunaTheme = false;
+                if (VisualStyleRenderer.IsSupported)
+                {
+                    ColorScheme = VisualStyleInformation.ColorScheme;
+
+                    if (!VisualStyleInformation.IsEnabledByUser)
+                    {
+                        return;
+                    }
+
+                    var stringBuilder = new StringBuilder(0x200);
+                    NativeMethods.GetCurrentThemeName(stringBuilder, stringBuilder.Capacity, null, 0, null, 0);
+                    IsLunaTheme = string.Equals(m_strLunaFileName, Path.GetFileName(stringBuilder.ToString()), StringComparison.InvariantCultureIgnoreCase);
+                    IsAeroTheme = string.Equals(m_strAeroFileName, Path.GetFileName(stringBuilder.ToString()), StringComparison.InvariantCultureIgnoreCase);
+                }
+                else
+                {
+                    ColorScheme = null;
+                }
+            }
+
+            #endregion
+        }
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -349,7 +357,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ButtonPressedGradientBegin);
+                }
+
                 return base.ButtonPressedGradientBegin;
             }
         }
@@ -362,7 +373,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ButtonPressedGradientEnd);
+                }
+
                 return base.ButtonPressedGradientEnd;
             }
         }
@@ -375,7 +389,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ButtonPressedGradientMiddle);
+                }
+
                 return base.ButtonPressedGradientMiddle;
             }
         }
@@ -388,7 +405,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ButtonSelectedBorder);
+                }
+
                 return base.ButtonSelectedBorder;
             }
         }
@@ -401,7 +421,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ButtonSelectedGradientBegin);
+                }
+
                 return base.ButtonSelectedGradientBegin;
             }
         }
@@ -414,7 +437,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ButtonSelectedGradientEnd);
+                }
+
                 return base.ButtonSelectedGradientEnd;
             }
         }
@@ -427,7 +453,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ButtonSelectedGradientMiddle);
+                }
+
                 return base.ButtonSelectedGradientMiddle;
             }
         }
@@ -440,7 +469,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ButtonSelectedHighlightBorder);
+                }
+
                 return base.ButtonSelectedHighlightBorder;
             }
         }
@@ -453,7 +485,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.CheckBackground);
+                }
+
                 return base.CheckBackground;
             }
         }
@@ -466,7 +501,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.CheckSelectedBackground);
+                }
+
                 return base.CheckSelectedBackground;
             }
         }
@@ -479,7 +517,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.GripDark);
+                }
+
                 return base.GripDark;
             }
         }
@@ -492,7 +533,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.GripLight);
+                }
+
                 return base.GripLight;
             }
         }
@@ -505,7 +549,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ImageMarginGradientBegin);
+                }
+
                 return base.ImageMarginGradientBegin;
             }
         }
@@ -518,7 +565,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuBorder);
+                }
+
                 return base.MenuBorder;
             }
         }
@@ -531,7 +581,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuItemBorder);
+                }
+
                 return base.MenuItemBorder;
             }
         }
@@ -544,7 +597,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuItemPressedGradientBegin);
+                }
+
                 return base.MenuItemPressedGradientBegin;
             }
         }
@@ -557,7 +613,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuItemPressedGradientEnd);
+                }
+
                 return base.MenuItemPressedGradientEnd;
             }
         }
@@ -570,7 +629,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuItemPressedGradientMiddle);
+                }
+
                 return base.MenuItemPressedGradientMiddle;
             }
         }
@@ -583,7 +645,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuItemSelected);
+                }
+
                 return base.MenuItemSelected;
             }
         }
@@ -596,7 +661,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuItemText);
+                }
+
                 //return base.MenuItemSelected;
                 return Color.Empty;
             }
@@ -610,7 +678,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuItemSelectedGradientBegin);
+                }
+
                 return base.MenuItemSelectedGradientBegin;
             }
         }
@@ -623,7 +694,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuItemSelectedGradientEnd);
+                }
+
                 return base.MenuItemSelectedGradientEnd;
             }
         }
@@ -636,7 +710,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuStripGradientBegin);
+                }
+
                 return base.MenuStripGradientBegin;
             }
         }
@@ -649,7 +726,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.MenuStripGradientEnd);
+                }
+
                 return base.MenuStripGradientEnd;
             }
         }
@@ -662,7 +742,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.OverflowButtonGradientBegin);
+                }
+
                 return base.OverflowButtonGradientBegin;
             }
         }
@@ -675,7 +758,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.OverflowButtonGradientEnd);
+                }
+
                 return base.OverflowButtonGradientEnd;
             }
         }
@@ -688,7 +774,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.OverflowButtonGradientMiddle);
+                }
+
                 return base.OverflowButtonGradientMiddle;
             }
         }
@@ -701,7 +790,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.RaftingContainerGradientBegin);
+                }
+
                 return base.RaftingContainerGradientBegin;
             }
         }
@@ -714,7 +806,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.RaftingContainerGradientEnd);
+                }
+
                 return base.RaftingContainerGradientEnd;
             }
         }
@@ -727,7 +822,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.SeparatorDark);
+                }
+
                 return base.SeparatorDark;
             }
         }
@@ -740,7 +838,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.SeparatorLight);
+                }
+
                 return base.SeparatorLight;
             }
         }
@@ -753,7 +854,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.StatusStripGradientBegin);
+                }
+
                 return base.StatusStripGradientBegin;
             }
         }
@@ -766,7 +870,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.StatusStripGradientEnd);
+                }
+
                 return base.StatusStripGradientEnd;
             }
         }
@@ -779,7 +886,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.StatusStripText);
+                }
+
                 //return base.MenuItemSelected;
                 return Color.Empty;
             }
@@ -793,7 +903,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ToolStripBorder);
+                }
+
                 return base.ToolStripBorder;
             }
         }
@@ -806,7 +919,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ToolStripContentPanelGradientBegin);
+                }
+
                 return base.ToolStripContentPanelGradientBegin;
             }
         }
@@ -819,7 +935,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ToolStripContentPanelGradientEnd);
+                }
+
                 return base.ToolStripContentPanelGradientEnd;
             }
         }
@@ -832,7 +951,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ToolStripDropDownBackground);
+                }
+
                 return base.ToolStripDropDownBackground;
             }
         }
@@ -845,7 +967,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ToolStripGradientBegin);
+                }
+
                 return base.ToolStripGradientBegin;
             }
         }
@@ -858,7 +983,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ToolStripGradientEnd);
+                }
+
                 return base.ToolStripGradientEnd;
             }
         }
@@ -871,7 +999,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ToolStripGradientMiddle);
+                }
+
                 return base.ToolStripGradientMiddle;
             }
         }
@@ -884,7 +1015,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ToolStripPanelGradientBegin);
+                }
+
                 return base.ToolStripPanelGradientBegin;
             }
         }
@@ -897,7 +1031,10 @@ namespace Mohammad.Win.Renderers.Internal
             get
             {
                 if (this.UseBaseColorTable == false)
+                {
                     return this.FromKnownColor(KnownColors.ToolStripPanelGradientEnd);
+                }
+
                 return base.ToolStripPanelGradientEnd;
             }
         }
@@ -914,6 +1051,7 @@ namespace Mohammad.Win.Renderers.Internal
                     this.m_dictionaryRGBTable.Clear();
                     this.m_dictionaryRGBTable = null;
                 }
+
                 return flag1;
             }
         }
@@ -924,14 +1062,15 @@ namespace Mohammad.Win.Renderers.Internal
             {
                 if (this.m_dictionaryRGBTable == null)
                 {
-                    this.m_dictionaryRGBTable = new Dictionary<KnownColors, Color>((int) KnownColors.LastKnownColor);
+                    this.m_dictionaryRGBTable = new Dictionary<KnownColors, Color>((int)KnownColors.LastKnownColor);
                     this.InitColors(ref this.m_dictionaryRGBTable);
                 }
+
                 return this.m_dictionaryRGBTable;
             }
         }
 
-        internal Color FromKnownColor(KnownColors color) { return this.ColorTable[color]; }
+        internal Color FromKnownColor(KnownColors color) => this.ColorTable[color];
 
         #endregion
 

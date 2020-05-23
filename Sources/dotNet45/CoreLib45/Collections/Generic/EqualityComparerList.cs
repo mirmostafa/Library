@@ -15,7 +15,18 @@ namespace Mohammad.Collections.Generic
     public class EqualityComparerList<TItem, TIdentity> : IList<TItem>
     {
         private readonly Func<TItem, TIdentity, bool> _Predicator;
-        private readonly List<TItem>                  _Repository;
+        private readonly List<TItem> _Repository;
+
+        public IEnumerable<TItem> this[TIdentity identity] => this._Repository.Where(item => this._Predicator(item, identity));
+
+        public TItem this[int index]
+        {
+            get => this._Repository[index];
+            set => this._Repository[index] = value;
+        }
+
+        public int Count => this._Repository.Count;
+        bool ICollection<TItem>.IsReadOnly => false;
 
         public EqualityComparerList(Func<TItem, TIdentity, bool> predicator)
         {
@@ -35,18 +46,8 @@ namespace Mohammad.Collections.Generic
             this._Repository = new List<TItem>(collection);
         }
 
-        public IEnumerable<TItem> this[TIdentity identity] => this._Repository.Where(item => this._Predicator(item, identity));
-
-        public TItem this[int index]
-        {
-            get => this._Repository[index];
-            set => this._Repository[index] = value;
-        }
-
-        public int                Count           => this._Repository.Count;
-        bool ICollection<TItem>.  IsReadOnly      => false;
         public IEnumerator<TItem> GetEnumerator() => this._Repository.GetEnumerator();
-        IEnumerator IEnumerable.  GetEnumerator() => this.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public void Add(TItem item)
         {
@@ -65,8 +66,8 @@ namespace Mohammad.Collections.Generic
             this._Repository.CopyTo(array, arrayIndex);
         }
 
-        public bool Remove(TItem  item) => this._Repository.Remove(item);
-        public int  IndexOf(TItem item) => this._Repository.IndexOf(item);
+        public bool Remove(TItem item) => this._Repository.Remove(item);
+        public int IndexOf(TItem item) => this._Repository.IndexOf(item);
 
         public void Insert(int index, TItem item)
         {
@@ -86,8 +87,13 @@ namespace Mohammad.Collections.Generic
         public int IndexOf(TIdentity identity)
         {
             for (var index = 0; index < this._Repository.Count; index++)
+            {
                 if (this._Predicator(this._Repository[index], identity))
+                {
                     return index;
+                }
+            }
+
             return -1;
         }
 

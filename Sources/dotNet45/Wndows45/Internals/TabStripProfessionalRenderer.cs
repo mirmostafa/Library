@@ -9,6 +9,10 @@ namespace Mohammad.Win.Internals
 {
     public class TabStripProfessionalRenderer : ToolStripProfessionalRenderer
     {
+        private const int BOTTOM_LEFT = 0;
+        private const int BOTTOM_RIGHT = 3;
+        private const int TOP_LEFT = 1;
+        private const int TOP_RIGHT = 2;
         private readonly int i_Sweep = 90;
         private int D = -1;
         private int i_Zero = 180;
@@ -20,10 +24,6 @@ namespace Mohammad.Win.Internals
         private int Y;
         private int Y0;
         private int YF;
-        private const int BOTTOM_LEFT = 0;
-        private const int BOTTOM_RIGHT = 3;
-        private const int TOP_LEFT = 1;
-        private const int TOP_RIGHT = 2;
         public Color OnColor { get; set; }
         public Color OnBackColor { get; set; }
         public Color BaseColor { get; set; }
@@ -42,10 +42,114 @@ namespace Mohammad.Win.Internals
         public Color SetTransparency(Color color, int transparency)
         {
             if ((transparency >= 0) & (transparency <= 255))
+            {
                 return Color.FromArgb(transparency, color.R, color.G, color.B);
+            }
+
             if (transparency > 255)
+            {
                 return Color.FromArgb(255, color.R, color.G, color.B);
+            }
+
             return Color.FromArgb(0, color.R, color.G, color.B);
+        }
+
+        /// <summary>
+        ///     Control how the border of the toolstrip draws - keep track of if there's
+        ///     a selected tab and make that look "connected" by skipping drawing a line through it.
+        /// </summary>
+        /// <param name="e"></param>
+        /*  protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) {
+             TabStrip tabStrip = e.ToolStrip as TabStrip;
+           
+              using (Pen outerBlueBorderPen = new Pen(Color.Red)) {
+                  using (Pen innerWhiteBorderPen = new Pen(Color.Red))
+                  {
+                      if (tabStrip != null) {
+                          if (tabStrip.SelectedTab != null) {
+                              // left border coords
+                              Point borderStart1 = new Point(0, tabStrip.SelectedTab.Bounds.Bottom);
+                              Point borderStop1 = new Point(tabStrip.SelectedTab.Bounds.Left, tabStrip.SelectedTab.Bounds.Bottom);
+
+                              // right border coords
+                              Point borderStart2 = new Point(tabStrip.SelectedTab.Bounds.Right - 1, tabStrip.SelectedTab.Bounds.Bottom);
+                              Point borderStop2 = new Point(tabStrip.ClientRectangle.Right, tabStrip.SelectedTab.Bounds.Bottom);
+
+                              e.Graphics.DrawLine(outerBlueBorderPen, borderStart1, borderStop1);
+                              e.Graphics.DrawLine(outerBlueBorderPen, borderStart2, borderStop2);
+
+                              // shift all points down one to draw the white line
+                              borderStop1.Offset(0, 1);
+                              borderStart1.Offset(0, 1);
+                              borderStart2.Offset(0, 1);
+                              borderStop2.Offset(0, 1);
+                              e.Graphics.DrawLine(innerWhiteBorderPen, borderStart1, borderStop1);
+                              e.Graphics.DrawLine(innerWhiteBorderPen, borderStart2, borderStop2);
+
+                          }
+                          else {
+                              e.Graphics.DrawLine(outerBlueBorderPen, new Point(0, tabStrip.DisplayRectangle.Bottom), new Point(tabStrip.Width, tabStrip.DisplayRectangle.Bottom));
+                              e.Graphics.DrawLine(innerWhiteBorderPen, new Point(0, tabStrip.DisplayRectangle.Bottom + 1), new Point(tabStrip.Width, tabStrip.DisplayRectangle.Bottom + 1));
+                            
+
+                          }   
+
+                      }
+                  }
+              }
+            
+          }
+       */
+        public void DrawArc(int VOff)
+        {
+            this.i_Zero = 180;
+            this.X0 = this.X0 + this.D;
+            this.XF = this.XF - this.D;
+            this.Y0 = this.Y0 + VOff;
+            this.path = new GraphicsPath();
+            var P0 = new Point(this.X0, this.YF);
+            var PF = new Point(this.X0, this.Y0 + this.T);
+            this.path.AddLine(P0, PF);
+            this.path.AddArc(this.X0, this.Y0, this.T, this.T, this.i_Zero, this.i_Sweep);
+            this.i_Zero += 90;
+            P0 = new Point(this.X0 + this.T, this.Y0);
+            PF = new Point(this.XF - this.T, this.Y0);
+            this.path.AddLine(P0, PF);
+            this.path.AddArc(this.XF - this.T - 1, this.Y0, this.T, this.T, this.i_Zero, this.i_Sweep);
+            P0 = new Point(this.XF - 1, this.Y0 + this.T);
+            PF = new Point(this.XF - 1, this.YF);
+            this.path.AddLine(P0, PF);
+        }
+
+        public void DrawTab(int _X0, int _Y0, int _XF, int _YF)
+        {
+            this.T = 6;
+            this.i_Zero = 90;
+            this.path = new GraphicsPath();
+            var P0 = new Point(_X0, _YF);
+            var PF = new Point(_X0 + this.T, _YF - this.T);
+            this.path.AddArc(_X0, _YF - this.T, this.T, this.T, this.i_Zero, -this.i_Sweep);
+            this.i_Zero = 180; //path.AddLine(P0, PF); // _/
+            this.path.AddArc(_X0 + this.T, _Y0, this.T, this.T, this.i_Zero, this.i_Sweep);
+            this.i_Zero = 270; // path.AddLine(P0, PF); // /-
+            this.path.AddArc(_XF - 2 * this.T, _Y0, this.T, this.T, this.i_Zero, this.i_Sweep);
+            this.i_Zero = 180; // path.AddLine(P0, PF); // /-
+            this.path.AddArc(_XF - this.T, _YF - this.T, this.T, this.T, this.i_Zero, -this.i_Sweep);
+            // path.AddLine(P0, PF); // /-
+        }
+
+        public void DrawHalo(int _X0, int _Y0, int _XF, int _YF)
+        {
+            this.path = new GraphicsPath();
+            var P0 = new Point(_X0 + 5, _YF - 3);
+            var PF = new Point(_X0 + 6, _Y0 + 3);
+            this.path.AddLine(P0, PF);
+            P0 = new Point(_X0 + 7, _Y0);
+            PF = new Point(_XF - 8, _Y0);
+            this.path.AddLine(P0, PF);
+            P0 = new Point(_XF - 7, _Y0 + 3);
+            PF = new Point(_XF - 6, _YF - 3);
+            this.path.AddLine(P0, PF);
         }
 
         /// <summary>
@@ -63,6 +167,7 @@ namespace Mohammad.Win.Internals
                 base.OnRenderButtonBackground(e);
                 return;
             }
+
             var bounds = new Rectangle(Point.Empty, e.Item.Size);
             var g = e.Graphics;
             g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -176,6 +281,7 @@ namespace Mohammad.Win.Internals
 
                     #endregion
                 }
+
                 #endregion
 
                 else if (tab.b_active & !tab.b_selected)
@@ -333,104 +439,6 @@ namespace Mohammad.Win.Internals
             {
                 base.OnRenderButtonBackground(e);
             }
-        }
-
-        /// <summary>
-        ///     Control how the border of the toolstrip draws - keep track of if there's
-        ///     a selected tab and make that look "connected" by skipping drawing a line through it.
-        /// </summary>
-        /// <param name="e"></param>
-        /*  protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) {
-             TabStrip tabStrip = e.ToolStrip as TabStrip;
-           
-              using (Pen outerBlueBorderPen = new Pen(Color.Red)) {
-                  using (Pen innerWhiteBorderPen = new Pen(Color.Red))
-                  {
-                      if (tabStrip != null) {
-                          if (tabStrip.SelectedTab != null) {
-                              // left border coords
-                              Point borderStart1 = new Point(0, tabStrip.SelectedTab.Bounds.Bottom);
-                              Point borderStop1 = new Point(tabStrip.SelectedTab.Bounds.Left, tabStrip.SelectedTab.Bounds.Bottom);
-
-                              // right border coords
-                              Point borderStart2 = new Point(tabStrip.SelectedTab.Bounds.Right - 1, tabStrip.SelectedTab.Bounds.Bottom);
-                              Point borderStop2 = new Point(tabStrip.ClientRectangle.Right, tabStrip.SelectedTab.Bounds.Bottom);
-
-                              e.Graphics.DrawLine(outerBlueBorderPen, borderStart1, borderStop1);
-                              e.Graphics.DrawLine(outerBlueBorderPen, borderStart2, borderStop2);
-
-                              // shift all points down one to draw the white line
-                              borderStop1.Offset(0, 1);
-                              borderStart1.Offset(0, 1);
-                              borderStart2.Offset(0, 1);
-                              borderStop2.Offset(0, 1);
-                              e.Graphics.DrawLine(innerWhiteBorderPen, borderStart1, borderStop1);
-                              e.Graphics.DrawLine(innerWhiteBorderPen, borderStart2, borderStop2);
-
-                          }
-                          else {
-                              e.Graphics.DrawLine(outerBlueBorderPen, new Point(0, tabStrip.DisplayRectangle.Bottom), new Point(tabStrip.Width, tabStrip.DisplayRectangle.Bottom));
-                              e.Graphics.DrawLine(innerWhiteBorderPen, new Point(0, tabStrip.DisplayRectangle.Bottom + 1), new Point(tabStrip.Width, tabStrip.DisplayRectangle.Bottom + 1));
-                            
-
-                          }   
-
-                      }
-                  }
-              }
-            
-          }
-       */
-        public void DrawArc(int VOff)
-        {
-            this.i_Zero = 180;
-            this.X0 = this.X0 + this.D;
-            this.XF = this.XF - this.D;
-            this.Y0 = this.Y0 + VOff;
-            this.path = new GraphicsPath();
-            var P0 = new Point(this.X0, this.YF);
-            var PF = new Point(this.X0, this.Y0 + this.T);
-            this.path.AddLine(P0, PF);
-            this.path.AddArc(this.X0, this.Y0, this.T, this.T, this.i_Zero, this.i_Sweep);
-            this.i_Zero += 90;
-            P0 = new Point(this.X0 + this.T, this.Y0);
-            PF = new Point(this.XF - this.T, this.Y0);
-            this.path.AddLine(P0, PF);
-            this.path.AddArc(this.XF - this.T - 1, this.Y0, this.T, this.T, this.i_Zero, this.i_Sweep);
-            P0 = new Point(this.XF - 1, this.Y0 + this.T);
-            PF = new Point(this.XF - 1, this.YF);
-            this.path.AddLine(P0, PF);
-        }
-
-        public void DrawTab(int _X0, int _Y0, int _XF, int _YF)
-        {
-            this.T = 6;
-            this.i_Zero = 90;
-            this.path = new GraphicsPath();
-            var P0 = new Point(_X0, _YF);
-            var PF = new Point(_X0 + this.T, _YF - this.T);
-            this.path.AddArc(_X0, _YF - this.T, this.T, this.T, this.i_Zero, -this.i_Sweep);
-            this.i_Zero = 180; //path.AddLine(P0, PF); // _/
-            this.path.AddArc(_X0 + this.T, _Y0, this.T, this.T, this.i_Zero, this.i_Sweep);
-            this.i_Zero = 270; // path.AddLine(P0, PF); // /-
-            this.path.AddArc(_XF - 2 * this.T, _Y0, this.T, this.T, this.i_Zero, this.i_Sweep);
-            this.i_Zero = 180; // path.AddLine(P0, PF); // /-
-            this.path.AddArc(_XF - this.T, _YF - this.T, this.T, this.T, this.i_Zero, -this.i_Sweep);
-            // path.AddLine(P0, PF); // /-
-        }
-
-        public void DrawHalo(int _X0, int _Y0, int _XF, int _YF)
-        {
-            this.path = new GraphicsPath();
-            var P0 = new Point(_X0 + 5, _YF - 3);
-            var PF = new Point(_X0 + 6, _Y0 + 3);
-            this.path.AddLine(P0, PF);
-            P0 = new Point(_X0 + 7, _Y0);
-            PF = new Point(_XF - 8, _Y0);
-            this.path.AddLine(P0, PF);
-            P0 = new Point(_XF - 7, _Y0 + 3);
-            PF = new Point(_XF - 6, _YF - 3);
-            this.path.AddLine(P0, PF);
         }
 
         protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e)

@@ -21,33 +21,33 @@ namespace Mohammad.Net
 {
     public class Ftp : IExceptionHandlerContainer, ILoggerContainer
     {
-        private const    int               BUFFER_SIZE = 2048;
-        private readonly string            _Host;
-        private readonly string            _Pass;
-        private readonly string            _User;
-        private          ExceptionHandling _ExceptionHandling;
-
-        public Ftp(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null)
-        {
-            this._Host             = (hostIp ?? string.Empty).Normalize();
-            this._User             = (userName ?? string.Empty).Normalize();
-            this._Pass             = (password ?? string.Empty).Normalize();
-            this.ExceptionHandling = exceptionHandling;
-        }
+        private const int BUFFER_SIZE = 2048;
+        private readonly string _Host;
+        private readonly string _Pass;
+        private readonly string _User;
+        private ExceptionHandling _ExceptionHandling;
 
         public bool UsePassive { get; set; }
 
         public ExceptionHandling ExceptionHandling
         {
             get => this._ExceptionHandling ?? (this._ExceptionHandling = new ExceptionHandling
-                                                  {
-                                                      RaiseExceptions = true
-                                                  });
+            {
+                RaiseExceptions = true
+            });
             private set => this._ExceptionHandling = value;
         }
 
-        public ILogger Logger        { get; set; }
-        public object  DefaultLogSender => "Ftp";
+        public ILogger Logger { get; set; }
+        public object DefaultLogSender => "Ftp";
+
+        public Ftp(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null)
+        {
+            this._Host = (hostIp ?? string.Empty).Normalize();
+            this._User = (userName ?? string.Empty).Normalize();
+            this._Pass = (password ?? string.Empty).Normalize();
+            this.ExceptionHandling = exceptionHandling;
+        }
 
         public bool TryUpload(string ftpPath, string patch, int retryCount = 3, Action<Ftp, int> onTrying = null, int delay = 50)
         {
@@ -59,7 +59,10 @@ namespace Mohammad.Net
                 this.UsePassive = !this.UsePassive;
                 Debug.WriteLine($"Trying to upload {Path.GetFileName(patch)} for {tryCount} time.");
                 if (this.Upload(ftpPath, patch))
+                {
                     return true;
+                }
+
                 Thread.Sleep(delay);
             }
 
@@ -70,15 +73,15 @@ namespace Mohammad.Net
             await Async.Run(() => this.TryUpload(ftpPath, patch, retryCount, onTrying, delay));
 
         public static Ftp CreateInstance(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
-                                                                                                                                                 userName,
-                                                                                                                                                 password,
-                                                                                                                                                 exceptionHandling);
+            userName,
+            password,
+            exceptionHandling);
 
         public static void Validate(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
-                                                                                                                                            userName,
-                                                                                                                                            password,
-                                                                                                                                            exceptionHandling)
-           .Validate();
+                userName,
+                password,
+                exceptionHandling)
+            .Validate();
 
         public void Validate()
         {
@@ -86,14 +89,12 @@ namespace Mohammad.Net
         }
 
         public static bool IsValid(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
-                                                                                                                                           userName,
-                                                                                                                                           password,
-                                                                                                                                           exceptionHandling)
-           .IsValid();
+                userName,
+                password,
+                exceptionHandling)
+            .IsValid();
 
         public bool IsValid() => CodeHelper.Catch(this.Validate) == null;
-
-        public event EventHandler<ItemActedEventArgs<int>> Downloading;
 
         public async Task DownloadAsync(string remoteFile, string localFile) =>
             await Async.Run(() => this.Download(remoteFile, localFile));
@@ -103,17 +104,17 @@ namespace Mohammad.Net
             this.Log($"Starting to download from '{remoteFile}' to '{localFile}'");
             try
             {
-                var ftpRequest = (FtpWebRequest) WebRequest.Create(this._Host + "/" + remoteFile);
+                var ftpRequest = (FtpWebRequest)WebRequest.Create(this._Host + "/" + remoteFile);
                 ftpRequest.Credentials = new NetworkCredential(this._User, this._Pass);
-                ftpRequest.UseBinary   = true;
+                ftpRequest.UseBinary = true;
                 //ftpRequest.UsePassive = true;
                 ftpRequest.UsePassive = false;
-                ftpRequest.KeepAlive  = true;
-                ftpRequest.Method     = WebRequestMethods.Ftp.DownloadFile;
-                var ftpResponse     = (FtpWebResponse) ftpRequest.GetResponse();
-                var ftpStream       = ftpResponse.GetResponseStream();
+                ftpRequest.KeepAlive = true;
+                ftpRequest.Method = WebRequestMethods.Ftp.DownloadFile;
+                var ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+                var ftpStream = ftpResponse.GetResponseStream();
                 var localFileStream = new FileStream(localFile, FileMode.Create);
-                var byteBuffer      = new byte[BUFFER_SIZE];
+                var byteBuffer = new byte[BUFFER_SIZE];
                 if (ftpStream != null)
                 {
                     var bytesRead = ftpStream.Read(byteBuffer, 0, BUFFER_SIZE);
@@ -146,11 +147,6 @@ namespace Mohammad.Net
             }
         }
 
-        private void Log(string log)
-        {
-            this.Logger?.Info(log);
-        }
-
         public async Task<bool> UploadAsync(string remoteFile, string localFile) => await Async.Run(() => this.Upload(remoteFile, localFile));
 
         public bool Upload(string remoteFile, string localFile)
@@ -158,16 +154,16 @@ namespace Mohammad.Net
             this.ExceptionHandling.Reset();
             try
             {
-                var ftpRequest = (FtpWebRequest) WebRequest.Create(this._Host + "/" + remoteFile);
+                var ftpRequest = (FtpWebRequest)WebRequest.Create(this._Host + "/" + remoteFile);
                 ftpRequest.Credentials = new NetworkCredential(this._User, this._Pass);
-                ftpRequest.UseBinary   = true;
-                ftpRequest.UsePassive  = this.UsePassive;
-                ftpRequest.KeepAlive   = true;
-                ftpRequest.Method      = WebRequestMethods.Ftp.UploadFile;
-                var ftpStream       = ftpRequest.GetRequestStream();
+                ftpRequest.UseBinary = true;
+                ftpRequest.UsePassive = this.UsePassive;
+                ftpRequest.KeepAlive = true;
+                ftpRequest.Method = WebRequestMethods.Ftp.UploadFile;
+                var ftpStream = ftpRequest.GetRequestStream();
                 var localFileStream = new FileStream(localFile, FileMode.Open);
-                var byteBuffer      = new byte[BUFFER_SIZE];
-                var bytesSent       = localFileStream.Read(byteBuffer, 0, BUFFER_SIZE);
+                var byteBuffer = new byte[BUFFER_SIZE];
+                var bytesSent = localFileStream.Read(byteBuffer, 0, BUFFER_SIZE);
                 try
                 {
                     while (bytesSent != 0)
@@ -192,14 +188,22 @@ namespace Mohammad.Net
             }
         }
 
-        public static void Upload(string            remoteFile, string localFile, string hostIp, string userName, string password,
-                                  ExceptionHandling exceptionHandling = null)
+        public static void Upload(string remoteFile,
+            string localFile,
+            string hostIp,
+            string userName,
+            string password,
+            ExceptionHandling exceptionHandling = null)
         {
             new Ftp(hostIp, userName, password, exceptionHandling).Upload(remoteFile, localFile);
         }
 
-        public static void Download(string            remoteFile, string localFile, string hostIp, string userName, string password,
-                                    ExceptionHandling exceptionHandling = null)
+        public static void Download(string remoteFile,
+            string localFile,
+            string hostIp,
+            string userName,
+            string password,
+            ExceptionHandling exceptionHandling = null)
         {
             new Ftp(hostIp, userName, password, exceptionHandling).Download(remoteFile, localFile);
         }
@@ -222,55 +226,79 @@ namespace Mohammad.Net
         public string GetFileCreatedDateTime(string fileName) => this.Run(fileName, WebRequestMethods.Ftp.GetDateTimestamp, reader => reader.ReadToEnd());
 
         public string GetFileSize(string fileName) => this.Run(fileName,
-                                                               WebRequestMethods.Ftp.GetFileSize,
-                                                               reader =>
-                                                               {
-                                                                   string fileInfo = null;
-                                                                   while (reader.Peek() != -1)
-                                                                       fileInfo = reader.ReadToEnd();
-                                                                   return fileInfo;
-                                                               });
+            WebRequestMethods.Ftp.GetFileSize,
+            reader =>
+            {
+                string fileInfo = null;
+                while (reader.Peek() != -1)
+                {
+                    fileInfo = reader.ReadToEnd();
+                }
+
+                return fileInfo;
+            });
 
         public string[] DirectoryListSimple(string directory)
         {
             return this.Run(directory,
-                            WebRequestMethods.Ftp.ListDirectory,
-                            reader =>
-                            {
-                                string directoryRaw = null;
-                                while (reader.Peek() != -1)
-                                    directoryRaw += reader.ReadLine() + "|";
-                                var directoryList = directoryRaw?.Split("|".ToCharArray());
-                                return directoryList;
-                            });
+                WebRequestMethods.Ftp.ListDirectory,
+                reader =>
+                {
+                    string directoryRaw = null;
+                    while (reader.Peek() != -1)
+                    {
+                        directoryRaw += reader.ReadLine() + "|";
+                    }
+
+                    var directoryList = directoryRaw?.Split("|".ToCharArray());
+                    return directoryList;
+                });
         }
 
         public string[] DirectoryListDetailed(string directory) => this.Run(directory,
-                                                                            WebRequestMethods.Ftp.ListDirectoryDetails,
-                                                                            reader =>
-                                                                            {
-                                                                                string directoryRaw = null;
-                                                                                while (reader.Peek() != -1)
-                                                                                    directoryRaw += reader.ReadLine() + "|";
-                                                                                var directoryList = directoryRaw.Split("|".ToCharArray());
-                                                                                return directoryList;
-                                                                            },
-                                                                            resultOnException: new[] {""});
+            WebRequestMethods.Ftp.ListDirectoryDetails,
+            reader =>
+            {
+                string directoryRaw = null;
+                while (reader.Peek() != -1)
+                {
+                    directoryRaw += reader.ReadLine() + "|";
+                }
 
-        private void Run(string                path, string method, Action<StreamReader> action = null, Action disposer = null,
-                         Action<FtpWebRequest> initFtpWebRequest = null)
+                var directoryList = directoryRaw.Split("|".ToCharArray());
+                return directoryList;
+            },
+            resultOnException: new[] {""});
+
+        public override string ToString() => $"{nameof(this._Host)}: {this._Host}, {nameof(this._User)}: {this._User}";
+
+        protected virtual void OnBytesRead(ItemActedEventArgs<int> e)
+        {
+            this.Downloading?.Invoke(this, e);
+        }
+
+        private void Log(string log)
+        {
+            this.Logger?.Info(log);
+        }
+
+        private void Run(string path,
+            string method,
+            Action<StreamReader> action = null,
+            Action disposer = null,
+            Action<FtpWebRequest> initFtpWebRequest = null)
         {
             try
             {
-                var ftpRequest = (FtpWebRequest) WebRequest.Create(this._Host + "/" + path);
+                var ftpRequest = (FtpWebRequest)WebRequest.Create(this._Host + "/" + path);
                 ftpRequest.Credentials = new NetworkCredential(this._User, this._Pass);
-                ftpRequest.UseBinary   = true;
+                ftpRequest.UseBinary = true;
                 //ftpRequest.UsePassive = true;
                 ftpRequest.UsePassive = false;
-                ftpRequest.KeepAlive  = true;
-                ftpRequest.Method     = method;
+                ftpRequest.KeepAlive = true;
+                ftpRequest.Method = method;
                 initFtpWebRequest?.Invoke(ftpRequest);
-                using (var ftpResponse = (FtpWebResponse) ftpRequest.GetResponse())
+                using (var ftpResponse = (FtpWebResponse)ftpRequest.GetResponse())
                 using (var ftpStream = ftpResponse.GetResponseStream())
                 using (var ftpReader = new StreamReader(ftpStream))
                 {
@@ -287,19 +315,22 @@ namespace Mohammad.Net
             }
         }
 
-        private TResult Run<TResult>(string  path, string method, Func<StreamReader, TResult> action, Action disposer = null,
-                                     TResult resultOnException = default)
+        private TResult Run<TResult>(string path,
+            string method,
+            Func<StreamReader, TResult> action,
+            Action disposer = null,
+            TResult resultOnException = default)
         {
             try
             {
-                var ftpRequest = (FtpWebRequest) WebRequest.Create(this._Host + "/" + path);
+                var ftpRequest = (FtpWebRequest)WebRequest.Create(this._Host + "/" + path);
                 ftpRequest.Credentials = new NetworkCredential(this._User, this._Pass);
-                ftpRequest.UseBinary   = true;
+                ftpRequest.UseBinary = true;
                 //ftpRequest.UsePassive = true;
                 ftpRequest.UsePassive = false;
-                ftpRequest.KeepAlive  = true;
-                ftpRequest.Method     = method;
-                using (var ftpResponse = (FtpWebResponse) ftpRequest.GetResponse())
+                ftpRequest.KeepAlive = true;
+                ftpRequest.Method = method;
+                using (var ftpResponse = (FtpWebResponse)ftpRequest.GetResponse())
                 using (var ftpStream = ftpResponse.GetResponseStream())
                 using (var ftpReader = new StreamReader(ftpStream))
                 {
@@ -317,11 +348,6 @@ namespace Mohammad.Net
             }
         }
 
-        protected virtual void OnBytesRead(ItemActedEventArgs<int> e)
-        {
-            this.Downloading?.Invoke(this, e);
-        }
-
-        public override string ToString() => $"{nameof(this._Host)}: {this._Host}, {nameof(this._User)}: {this._User}";
+        public event EventHandler<ItemActedEventArgs<int>> Downloading;
     }
 }

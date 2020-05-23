@@ -14,20 +14,20 @@ namespace Mohammad.Primitives
     public interface IApplicationInjector
     {
         IApplication Application { get; }
-        IAppSettings Settings    { get; }
-        ILogger      Logger      { get; }
+        IAppSettings Settings { get; }
+        ILogger Logger { get; }
     }
 
     public abstract class ApplicationInjector<TApplication, TAppSettings, TLogger, TApplicationInjector> : Singleton<TApplicationInjector>,
-                                                                                                           IApplicationInjector
+        IApplicationInjector
         where TApplicationInjector : ApplicationInjector<TApplication, TAppSettings, TLogger, TApplicationInjector>
         where TApplication : IApplication
         where TAppSettings : IAppSettings
         where TLogger : ILogger
     {
         public TApplication Application { get; private set; }
-        public TAppSettings Settings    { get; private set; }
-        public TLogger      Logger      { get; private set; }
+        public TAppSettings Settings { get; private set; }
+        public TLogger Logger { get; private set; }
 
         IApplication IApplicationInjector.Application => this.Application;
 
@@ -35,8 +35,8 @@ namespace Mohammad.Primitives
 
         ILogger IApplicationInjector.Logger => this.Logger;
 
-        public void SetSettings(TAppSettings    settings)    => this.Settings = settings;
-        public void SetLogger(TLogger           logger)      => this.Logger = logger;
+        public void SetSettings(TAppSettings settings) => this.Settings = settings;
+        public void SetLogger(TLogger logger) => this.Logger = logger;
         public void SetApplication(TApplication application) => this.Application = application;
     }
 

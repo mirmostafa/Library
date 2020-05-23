@@ -21,20 +21,20 @@ namespace CoreLib45.Test.HelpersTests
         public void TestDistinct()
         {
             var data = new List<Person>
-                       {
-                           new Person("Ali")
-                           {
-                               Age = 5
-                           },
-                           new Person("Ali")
-                           {
-                               Age = 5
-                           },
-                           new Person("Mohammad")
-                           {
-                               Age = 5
-                           }
-                       };
+            {
+                new Person("Ali")
+                {
+                    Age = 5
+                },
+                new Person("Ali")
+                {
+                    Age = 5
+                },
+                new Person("Mohammad")
+                {
+                    Age = 5
+                }
+            };
             var distinct = data.Distinct((x, y) => x.Name == y.Name).ToList();
             Assert.AreEqual(distinct.Count, 2);
         }
@@ -95,8 +95,8 @@ namespace CoreLib45.Test.HelpersTests
         [TestMethod]
         public void Enumerable3Test()
         {
-            var source = (object) new[] {new object(), new object()};
-            var enumerable = (IEnumerable) source;
+            var source = (object)new[] {new object(), new object()};
+            var enumerable = (IEnumerable)source;
             var arr1 = EnumerableHelper.ToArray(enumerable);
             var arr2 = EnumerableHelper.ToArray(source);
             var enum1 = EnumerableHelper.AsEnuemrable(source);
@@ -119,9 +119,15 @@ namespace CoreLib45.Test.HelpersTests
             Comparison<int> comparison = (i, j) =>
             {
                 if (i == j)
+                {
                     return 0;
+                }
+
                 if (i > j)
+                {
                     return 1;
+                }
+
                 return -1;
             };
             Assert.IsTrue(source.Contains(5, comparison));
@@ -138,7 +144,7 @@ namespace CoreLib45.Test.HelpersTests
             i1 = source.IndexOf(i => i == 5);
             Assert.AreEqual(i1, 5);
 
-            var source1 = new[] {"Dog", "Cat", "Mouse", null,string.Empty};
+            var source1 = new[] {"Dog", "Cat", "Mouse", null, string.Empty};
             Assert.IsTrue(source1.Contains("Cat"));
             source1 = source1.Except("Cat").ToArray();
             Assert.IsFalse(source1.Contains("Cat"));

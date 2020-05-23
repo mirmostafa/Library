@@ -45,21 +45,21 @@ namespace Mohammad.Win32.Natives.IfacesEnumsStructsClasses
 
     public enum ShowCommands
     {
-        SW_HIDE            = 0,
-        SW_SHOWNORMAL      = 1,
-        SW_NORMAL          = 1,
-        SW_SHOWMINIMIZED   = 2,
-        SW_SHOWMAXIMIZED   = 3,
-        SW_MAXIMIZE        = 3,
-        SW_SHOWNOACTIVATE  = 4,
-        SW_SHOW            = 5,
-        SW_MINIMIZE        = 6,
+        SW_HIDE = 0,
+        SW_SHOWNORMAL = 1,
+        SW_NORMAL = 1,
+        SW_SHOWMINIMIZED = 2,
+        SW_SHOWMAXIMIZED = 3,
+        SW_MAXIMIZE = 3,
+        SW_SHOWNOACTIVATE = 4,
+        SW_SHOW = 5,
+        SW_MINIMIZE = 6,
         SW_SHOWMINNOACTIVE = 7,
-        SW_SHOWNA          = 8,
-        SW_RESTORE         = 9,
-        SW_SHOWDEFAULT     = 10,
-        SW_FORCEMINIMIZE   = 11,
-        SW_MAX             = 11
+        SW_SHOWNA = 8,
+        SW_RESTORE = 9,
+        SW_SHOWDEFAULT = 10,
+        SW_FORCEMINIMIZE = 11,
+        SW_MAX = 11
     }
 
     public enum ShellExecuteVerbs
@@ -260,19 +260,19 @@ namespace Mohammad.Win32.Natives.IfacesEnumsStructsClasses
     public enum Reason : uint
     {
         ApplicationIssue = 0x00040000,
-        HardwareIssue    = 0x00010000,
-        SoftwareIssue    = 0x00030000,
-        PlannedShutdown  = 0x80000000
+        HardwareIssue = 0x00010000,
+        SoftwareIssue = 0x00030000,
+        PlannedShutdown = 0x80000000
     }
 
     [Flags]
     public enum ExitFlags
     {
-        Logoff      = 0,
-        Shutdown    = 1,
-        Reboot      = 2,
-        Force       = 4,
-        PowerOff    = 8,
+        Logoff = 0,
+        Shutdown = 1,
+        Reboot = 2,
+        Force = 4,
+        PowerOff = 8,
         ForceIfHung = 16
     }
 
@@ -283,42 +283,42 @@ namespace Mohammad.Win32.Natives.IfacesEnumsStructsClasses
         AW_HOR_NEGATIVE = 0x00000002,
         AW_VER_POSITIVE = 0x00000004,
         AW_VER_NEGATIVE = 0x00000008,
-        AW_CENTER       = 0x00000010,
-        AW_HIDE         = 0x00010000,
-        AW_ACTIVATE     = 0x00020000,
-        AW_SLIDE        = 0x00040000,
-        AW_BLEND        = 0x00080000
+        AW_CENTER = 0x00000010,
+        AW_HIDE = 0x00010000,
+        AW_ACTIVATE = 0x00020000,
+        AW_SLIDE = 0x00040000,
+        AW_BLEND = 0x00080000
     }
 
     public enum ChildWindowFromPointFlags : uint
     {
-        CWP_ALL             = 0x0000,
-        CWP_SKIPINVISIBLE   = 0x0001,
-        CWP_SKIPDISABLED    = 0x0002,
+        CWP_ALL = 0x0000,
+        CWP_SKIPINVISIBLE = 0x0001,
+        CWP_SKIPDISABLED = 0x0002,
         CWP_SKIPTRANSPARENT = 0x0004
     }
 
     public enum GetWindowCommand : uint
     {
-        GW_HWNDFIRST    = 0,
-        GW_HWNDLAST     = 1,
-        GW_HWNDNEXT     = 2,
-        GW_HWNDPREV     = 3,
-        GW_OWNER        = 4,
-        GW_CHILD        = 5,
+        GW_HWNDFIRST = 0,
+        GW_HWNDLAST = 1,
+        GW_HWNDNEXT = 2,
+        GW_HWNDPREV = 3,
+        GW_OWNER = 4,
+        GW_CHILD = 5,
         GW_ENABLEDPOPUP = 6,
-        GW_MAX          = 6
+        GW_MAX = 6
     }
 
     [Flags]
     public enum FormatMessageFlags : uint
     {
         FORMAT_MESSAGE_ALLOCATE_BUFFER = 0x00000100,
-        FORMAT_MESSAGE_IGNORE_INSERTS  = 0x00000200,
-        FORMAT_MESSAGE_FROM_STRING     = 0x00000400,
-        FORMAT_MESSAGE_FROM_HMODULE    = 0x00000800,
-        FORMAT_MESSAGE_FROM_SYSTEM     = 0x00001000,
-        FORMAT_MESSAGE_ARGUMENT_ARRAY  = 0x00002000,
-        FORMAT_MESSAGE_MAX_WIDTH_MASK  = 0x000000FF
+        FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200,
+        FORMAT_MESSAGE_FROM_STRING = 0x00000400,
+        FORMAT_MESSAGE_FROM_HMODULE = 0x00000800,
+        FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000,
+        FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000,
+        FORMAT_MESSAGE_MAX_WIDTH_MASK = 0x000000FF
     }
 }

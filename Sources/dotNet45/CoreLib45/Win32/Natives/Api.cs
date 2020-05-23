@@ -26,17 +26,6 @@ namespace Mohammad.Win32.Natives
 {
     public partial class Api
     {
-        public delegate bool EnumDesktopWindowsDelegate(LPOVERLAPPED hWnd, int lParam);
-
-        /// <summary>
-        ///     The EnumChildProc function is an application-defined callback function used with the EnumChildWindows function. It
-        ///     receives the child window handles. The WNDENUMPROC type defines a pointer to this callback function. EnumChildProc
-        ///     is a placeholder for the application-defined function name.
-        /// </summary>
-        /// <param name="hWnd">[in] Handle to a child window of the parent window specified in EnumChildWindows.</param>
-        /// <param name="lParam">[in] Specifies the application-defined value given in EnumChildWindows.</param>
-        /// <returns>To continue enumeration, the callback function must return TRUE; to stop enumeration, it must return FALSE.</returns>
-        public delegate bool WNDENUMPROC(LPOVERLAPPED hWnd, LPOVERLAPPED lParam);
         // Various important window messages
 
         // FormatMessage constants and structs.
@@ -45,10 +34,10 @@ namespace Mohammad.Win32.Natives
         // App recovery and restart return codes
         internal const uint ResultFailed = 0x80004005;
 
-        internal const uint ResultFalse           = 1;
+        internal const uint ResultFalse = 1;
         internal const uint ResultInvalidArgument = 0x80070057;
-        internal const uint ResultNotFound        = 0x80070490;
-        internal const int  WM_ENTERIDLE          = 0x0121;
+        internal const uint ResultNotFound = 0x80070490;
+        internal const int WM_ENTERIDLE = 0x0121;
 
         internal const int WM_USER = 0x0400;
 
@@ -191,8 +180,8 @@ namespace Mohammad.Win32.Natives
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "l")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "w")]
         [SuppressMessage("Microsoft.Interoperability", "CA1401:PInvokesShouldNotBeVisible")]
-        [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "2#", Justification        = "This is an in/out parameter")]
-        [DllImport("user32.dll", CharSet                                                   = CharSet.Auto, SetLastError = true)]
+        [SuppressMessage("Microsoft.Design", "CA1045:DoNotPassTypesByReference", MessageId = "2#", Justification = "This is an in/out parameter")]
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern LPOVERLAPPED SendMessage(LPOVERLAPPED hWnd, uint msg, ref int wParam, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder lParam);
 
         // Various helpers for forcing binding to proper 
@@ -232,10 +221,12 @@ namespace Mohammad.Win32.Natives
         public static extern LONG_PTR SetWindowLongPtr([In] HWND hWnd, [In] int nIndex, [In] LONG_PTR dwNewLong);
 
         public static LPOVERLAPPED SetWindowLongPtr(HandleRef hWnd, int nIndex, LPOVERLAPPED dwNewLong) => LPOVERLAPPED.Size == 8
-                                                                                                               ? SetWindowLongPtr64(hWnd, nIndex, dwNewLong)
-                                                                                                               : new LPOVERLAPPED(
-                                                                                                                   SetWindowLong32(
-                                                                                                                       hWnd, nIndex, dwNewLong.ToInt32()));
+            ? SetWindowLongPtr64(hWnd, nIndex, dwNewLong)
+            : new LPOVERLAPPED(
+                SetWindowLong32(
+                    hWnd,
+                    nIndex,
+                    dwNewLong.ToInt32()));
 
         [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
         public static extern int SetWindowLong32(HandleRef hWnd, int nIndex, int dwNewLong);
@@ -627,24 +618,39 @@ namespace Mohammad.Win32.Natives
 
         [DllImport("advapi32.dll")]
         public static extern bool InitiateSystemShutdown([MarshalAs(UnmanagedType.LPStr)] string lpMachinename,
-                                                         [MarshalAs(UnmanagedType.LPStr)] string lpMessage, int dwTimeout, bool bForceAppsClosed,
-                                                         bool                                    bRebootAfterShutdown);
+            [MarshalAs(UnmanagedType.LPStr)] string lpMessage,
+            int dwTimeout,
+            bool bForceAppsClosed,
+            bool bRebootAfterShutdown);
 
         [DllImport("kernel32.dll")]
-        public static extern uint FormatMessage(uint dwFlags, LPOVERLAPPED lpSource, uint dwMessageId, uint dwLanguageId, [Out] StringBuilder lpBuffer,
-                                                uint nSize,   LPOVERLAPPED Arguments);
+        public static extern uint FormatMessage(uint dwFlags,
+            LPOVERLAPPED lpSource,
+            uint dwMessageId,
+            uint dwLanguageId,
+            [Out] StringBuilder lpBuffer,
+            uint nSize,
+            LPOVERLAPPED Arguments);
 
         // the version, the sample is built upon:
         [DllImport("Kernel32.dll", SetLastError = true)]
-        public static extern uint FormatMessage(uint         dwFlags, LPOVERLAPPED lpSource, uint dwMessageId, uint dwLanguageId, ref LPOVERLAPPED lpBuffer,
-                                                uint         nSize,
-                                                LPOVERLAPPED pArguments);
+        public static extern uint FormatMessage(uint dwFlags,
+            LPOVERLAPPED lpSource,
+            uint dwMessageId,
+            uint dwLanguageId,
+            ref LPOVERLAPPED lpBuffer,
+            uint nSize,
+            LPOVERLAPPED pArguments);
 
         // the parameters can also be passed as a string array:
         [DllImport("Kernel32.dll", SetLastError = true)]
-        public static extern uint FormatMessage(uint     dwFlags, LPOVERLAPPED lpSource, uint dwMessageId, uint dwLanguageId, ref LPOVERLAPPED lpBuffer,
-                                                uint     nSize,
-                                                string[] Arguments);
+        public static extern uint FormatMessage(uint dwFlags,
+            LPOVERLAPPED lpSource,
+            uint dwMessageId,
+            uint dwLanguageId,
+            ref LPOVERLAPPED lpBuffer,
+            uint nSize,
+            string[] Arguments);
 
         [DllImport("user32.dll")]
         public static extern bool EnumDesktopWindows(LPOVERLAPPED hDesktop, EnumDesktopWindowsDelegate lpfn, LPOVERLAPPED lParam);
@@ -692,21 +698,33 @@ namespace Mohammad.Win32.Natives
         /// <param name="size">Size</param>
         /// <returns>The upper half of the dword.</returns>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "dword")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId   = "HIWORD")]
-        public static int HIWORD(long dword, int size) => (short) (dword >> size);
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "HIWORD")]
+        public static int HIWORD(long dword, int size) => (short)(dword >> size);
 
         /// <summary>
         ///     Gets the LoWord
         /// </summary>
         /// <param name="dword">The value to get the low word from.</param>
         /// <returns>The lower half of the dword.</returns>
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId   = "LOWORD")]
+        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "LOWORD")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "dword")]
-        public static int LOWORD(long dword) => (short) (dword & 0xFFFF);
+        public static int LOWORD(long dword) => (short)(dword & 0xFFFF);
+
+        public delegate bool EnumDesktopWindowsDelegate(LPOVERLAPPED hWnd, int lParam);
+
+        /// <summary>
+        ///     The EnumChildProc function is an application-defined callback function used with the EnumChildWindows function. It
+        ///     receives the child window handles. The WNDENUMPROC type defines a pointer to this callback function. EnumChildProc
+        ///     is a placeholder for the application-defined function name.
+        /// </summary>
+        /// <param name="hWnd">[in] Handle to a child window of the parent window specified in EnumChildWindows.</param>
+        /// <param name="lParam">[in] Specifies the application-defined value given in EnumChildWindows.</param>
+        /// <returns>To continue enumeration, the callback function must return TRUE; to stop enumeration, it must return FALSE.</returns>
+        public delegate bool WNDENUMPROC(LPOVERLAPPED hWnd, LPOVERLAPPED lParam);
 
         public struct LayeredWindowAttributes
         {
-            public const uint LWA_ALPHA    = 0x00000002;
+            public const uint LWA_ALPHA = 0x00000002;
             public const uint LWA_COLORKEY = 0x00000001;
         }
 
@@ -714,19 +732,19 @@ namespace Mohammad.Win32.Natives
         internal struct DWM_BLURBEHIND
         {
             public DwmBlurBehindDwFlags dwFlags;
-            public bool                 fEnable;
-            public LPOVERLAPPED         hRgnBlur;
-            public bool                 fTransitionOnMaximized;
+            public bool fEnable;
+            public bool fTransitionOnMaximized;
+            public LPOVERLAPPED hRgnBlur;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct DWM_PRESENT_PARAMETERS
         {
-            internal int            cbSize;
-            internal bool           fQueue;
-            internal ulong          cRefreshStart;
-            internal uint           cBuffer;
-            internal bool           fUseSourceRate;
+            internal int cbSize;
+            internal uint cBuffer;
+            internal ulong cRefreshStart;
+            internal bool fQueue;
+            internal bool fUseSourceRate;
             internal UNSIGNED_RATIO uiNumerator;
         }
 
@@ -734,17 +752,17 @@ namespace Mohammad.Win32.Natives
         internal struct DWM_THUMBNAIL_PROPERTIES
         {
             internal DwmThumbnailFlags dwFlags;
-            internal RECT              rcDestination;
-            internal RECT              rcSource;
-            internal byte              opacity;
-            internal bool              fVisible;
-            internal bool              fSourceClientAreaOnly;
+            internal bool fSourceClientAreaOnly;
+            internal bool fVisible;
+            internal byte opacity;
+            internal RECT rcDestination;
+            internal RECT rcSource;
         }
 
         internal enum DwmBlurBehindDwFlags : uint
         {
-            DWM_BB_ENABLE                = 0x00000001,
-            DWM_BB_BLURREGION            = 0x00000002,
+            DWM_BB_ENABLE = 0x00000001,
+            DWM_BB_BLURREGION = 0x00000002,
             DWM_BB_TRANSITIONONMAXIMIZED = 0x00000004
         }
 
@@ -754,8 +772,8 @@ namespace Mohammad.Win32.Natives
 
             //Indicates a value for rcDestination has been specified.
             DWM_TNP_RECTSOURCE = 0x00000002, //Indicates a value for rcSource has been specified.
-            DWM_TNP_OPACITY    = 0x00000004, //Indicates a value for opacity has been specified.
-            DWM_TNP_VISIBLE    = 0x00000008, // Indicates a value for fVisible has been specified.
+            DWM_TNP_OPACITY = 0x00000004, //Indicates a value for opacity has been specified.
+            DWM_TNP_VISIBLE = 0x00000008, // Indicates a value for fVisible has been specified.
 
             DWM_TNP_SOURCECLIENTAREAONLY = 0x00000010
             //Indicates a value for fSourceClientAreaOnly has been specified.
@@ -764,10 +782,10 @@ namespace Mohammad.Win32.Natives
         [StructLayout(LayoutKind.Sequential)]
         internal struct MARGINS
         {
-            public int cxLeftWidth;    // width of left border that retains its size
-            public int cxRightWidth;   // width of right border that retains its size
-            public int cyTopHeight;    // height of top border that retains its size
+            public int cxLeftWidth; // width of left border that retains its size
+            public int cxRightWidth; // width of right border that retains its size
             public int cyBottomHeight; // height of bottom border that retains its size
+            public int cyTopHeight; // height of top border that retains its size
         }
 
         /// <summary>
@@ -779,16 +797,16 @@ namespace Mohammad.Win32.Natives
         public struct RECT
         {
             /// <summary>
+            ///     Position of bottom edge
+            /// </summary>
+            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
+            public int bottom;
+
+            /// <summary>
             ///     Position of left edge
             /// </summary>
             [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
             public int left;
-
-            /// <summary>
-            ///     Position of top edge
-            /// </summary>
-            [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-            public int top;
 
             /// <summary>
             ///     Position of right edge
@@ -797,10 +815,10 @@ namespace Mohammad.Win32.Natives
             public int right;
 
             /// <summary>
-            ///     Position of bottom edge
+            ///     Position of top edge
             /// </summary>
             [SuppressMessage("Microsoft.Design", "CA1051:DoNotDeclareVisibleInstanceFields")]
-            public int bottom;
+            public int top;
         }
 
         /// <summary>
@@ -828,56 +846,55 @@ namespace Mohammad.Win32.Natives
         [StructLayout(LayoutKind.Sequential)]
         internal struct UNSIGNED_RATIO
         {
-            internal uint uiNumerator;
             internal uint uiDenominator;
+            internal uint uiNumerator;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct BIND_OPTS3
         {
-            internal uint cbStruct;
-            internal uint grfFlags;
-            internal uint grfMode;
-            internal uint dwTickCountDeadline;
-            internal uint dwTrackFlags;
-            internal uint dwClassContext;
-
-            internal uint locale;
-
             // This will be passed as null, so the type doesn't matter.
             private readonly object pServerInfo;
+            internal uint cbStruct;
+            internal uint dwClassContext;
+            internal uint dwTickCountDeadline;
+            internal uint dwTrackFlags;
+            internal uint grfFlags;
+            internal uint grfMode;
 
             internal LPOVERLAPPED hwnd;
+
+            internal uint locale;
         }
 
         [Flags]
         internal enum CLSCTX
         {
-            CLSCTX_INPROC_SERVER        = 0x1,
-            CLSCTX_INPROC_HANDLER       = 0x2,
-            CLSCTX_LOCAL_SERVER         = 0x4,
-            CLSCTX_REMOTE_SERVER        = 0x10,
-            CLSCTX_NO_CODE_DOWNLOAD     = 0x400,
-            CLSCTX_NO_CUSTOM_MARSHAL    = 0x1000,
+            CLSCTX_INPROC_SERVER = 0x1,
+            CLSCTX_INPROC_HANDLER = 0x2,
+            CLSCTX_LOCAL_SERVER = 0x4,
+            CLSCTX_REMOTE_SERVER = 0x10,
+            CLSCTX_NO_CODE_DOWNLOAD = 0x400,
+            CLSCTX_NO_CUSTOM_MARSHAL = 0x1000,
             CLSCTX_ENABLE_CODE_DOWNLOAD = 0x2000,
-            CLSCTX_NO_FAILURE_LOG       = 0x4000,
-            CLSCTX_DISABLE_AAA          = 0x8000,
-            CLSCTX_ENABLE_AAA           = 0x10000,
+            CLSCTX_NO_FAILURE_LOG = 0x4000,
+            CLSCTX_DISABLE_AAA = 0x8000,
+            CLSCTX_ENABLE_AAA = 0x10000,
             CLSCTX_FROM_DEFAULT_CONTEXT = 0x20000,
-            CLSCTX_INPROC               = CLSCTX_INPROC_SERVER                       | CLSCTX_INPROC_HANDLER,
-            CLSCTX_SERVER               = CLSCTX_INPROC_SERVER | CLSCTX_LOCAL_SERVER | CLSCTX_REMOTE_SERVER,
-            CLSCTX_ALL                  = CLSCTX_SERVER                              | CLSCTX_INPROC_HANDLER
+            CLSCTX_INPROC = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER,
+            CLSCTX_SERVER = CLSCTX_INPROC_SERVER | CLSCTX_LOCAL_SERVER | CLSCTX_REMOTE_SERVER,
+            CLSCTX_ALL = CLSCTX_SERVER | CLSCTX_INPROC_HANDLER
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct MSG
         {
             internal LPOVERLAPPED hwnd;
-            internal uint         message;
-            internal LPOVERLAPPED wParam;
             internal LPOVERLAPPED lParam;
-            internal uint         time;
-            internal POINT        pt;
+            internal uint message;
+            internal POINT pt;
+            internal uint time;
+            internal LPOVERLAPPED wParam;
         }
 
         /// <summary>
@@ -919,23 +936,26 @@ namespace Mohammad.Win32.Natives
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         internal struct WNDCLASSEX
         {
+            internal int cbClsExtra;
             internal uint cbSize;
-            internal uint style;
-
-            [MarshalAs(UnmanagedType.FunctionPtr)] internal WNDPROC lpfnWndProc;
-
-            internal int          cbClsExtra;
-            internal int          cbWndExtra;
-            internal LPOVERLAPPED hInstance;
-            internal LPOVERLAPPED hIcon;
-            internal LPOVERLAPPED hCursor;
+            internal int cbWndExtra;
             internal LPOVERLAPPED hbrBackground;
-
-            [MarshalAs(UnmanagedType.LPTStr)] internal string lpszMenuName;
-
-            [MarshalAs(UnmanagedType.LPTStr)] internal string lpszClassName;
+            internal LPOVERLAPPED hCursor;
+            internal LPOVERLAPPED hIcon;
 
             internal LPOVERLAPPED hIconSm;
+            internal LPOVERLAPPED hInstance;
+
+            [MarshalAs(UnmanagedType.FunctionPtr)]
+            internal WNDPROC lpfnWndProc;
+
+            [MarshalAs(UnmanagedType.LPTStr)]
+            internal string lpszClassName;
+
+            [MarshalAs(UnmanagedType.LPTStr)]
+            internal string lpszMenuName;
+
+            internal uint style;
         }
 
         internal delegate int WNDPROC(LPOVERLAPPED hWnd, uint uMessage, LPOVERLAPPED wParam, LPOVERLAPPED lParam);

@@ -20,9 +20,21 @@ namespace TestConsole45.ProgressiveApproach
 
         protected bool IsCancellationRequested => this.CancellationToken.IsCancellationRequested;
 
-        public void Cancel() { this._CancellationTokenSource.Cancel(); }
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            this._CancellationTokenSource?.Dispose();
+        }
 
-        public void Start(params IStep[] steps) { this.Start(steps.AsEnumerable()); }
+        public void Cancel()
+        {
+            this._CancellationTokenSource.Cancel();
+        }
+
+        public void Start(params IStep[] steps)
+        {
+            this.Start(steps.AsEnumerable());
+        }
 
         public void Start(IEnumerable<IStep> steps)
         {
@@ -32,13 +44,17 @@ namespace TestConsole45.ProgressiveApproach
             {
                 var action = step?.MainAction;
                 if (action == null)
+                {
                     return;
+                }
+
                 var parameters = action.Method.GetParameters();
                 if (!parameters.Any())
                 {
                     action.DynamicInvoke();
                     return;
                 }
+
                 if (parameters.Length == 1)
                 {
                     var parameterInfo = parameters.First();
@@ -47,9 +63,11 @@ namespace TestConsole45.ProgressiveApproach
                         action.DynamicInvoke(this);
                         return;
                     }
+
                     action.DynamicInvoke(step);
                     return;
                 }
+
                 action.DynamicInvoke(this, step);
             }
 
@@ -64,12 +82,17 @@ namespace TestConsole45.ProgressiveApproach
                     this.OnExecutedStep((step, index, max));
                     return;
                 }
+
                 foreach (var child in step.Children.OrderBy(c => c.Priority))
                 {
                     if (this.IsCancellationRequested)
+                    {
                         break;
+                    }
+
                     ExexuteStep(child, step.Children.Count());
                 }
+
                 this.OnExecutedStep((step, index, max));
             }
 
@@ -77,15 +100,15 @@ namespace TestConsole45.ProgressiveApproach
             foreach (var step in currSteps)
             {
                 if (this.IsCancellationRequested)
+                {
                     break;
+                }
+
                 ExexuteStep(step, currSteps.Count);
             }
+
             this.OnExecutionDone();
         }
-
-        protected virtual void OnExecutionDone() { }
-
-        protected virtual void OnExecutionStarted() { }
 
         public static Actor Run(IEnumerable<IStep> steps)
         {
@@ -101,15 +124,25 @@ namespace TestConsole45.ProgressiveApproach
             return actor;
         }
 
+        protected virtual void OnExecutionDone()
+        {
+        }
+
+        protected virtual void OnExecutionStarted()
+        {
+        }
+
+        protected virtual void OnExecutingStep((IStep Step, int Index, int Max) e)
+        {
+            this.ExecutingStep?.Invoke(this, e);
+        }
+
+        protected virtual void OnExecutedStep((IStep Step, int Index, int Max) e)
+        {
+            this.ExecutedStep?.Invoke(this, e);
+        }
+
         public event EventHandler<(IStep Step, int Index, int Max)> ExecutingStep;
         public event EventHandler<(IStep Step, int Index, int Max)> ExecutedStep;
-        protected virtual void OnExecutingStep((IStep Step, int Index, int Max) e) { this.ExecutingStep?.Invoke(this, e); }
-        protected virtual void OnExecutedStep((IStep Step, int Index, int Max) e) { this.ExecutedStep?.Invoke(this, e); }
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            this._CancellationTokenSource?.Dispose();
-        }
     }
 }

@@ -7,6 +7,6 @@ namespace Mohammad.Wpf.EventsArgs
 
     {
         public readonly Window Window;
-        public ApplySettingsEventArgs(Window window) { this.Window = window; }
+        public ApplySettingsEventArgs(Window window) => this.Window = window;
     }
 }

@@ -31,6 +31,39 @@ namespace Mohammad.Win.Renderers
 
         #endregion
 
+        public static void Render(ToolStripContainer toolStripContainer)
+        {
+            var windowsVistaRenderer = new WindowsVistaRenderer();
+
+            foreach (var toolStripContentPanel in toolStripContainer.GetControls<ToolStripContentPanel>())
+            {
+                windowsVistaRenderer.InitializeContentPanel(toolStripContentPanel);
+            }
+
+            foreach (var toolStripPanel in toolStripContainer.GetControls<ToolStripPanel>())
+            foreach (var toolStrip in toolStripPanel.GetControls<ToolStrip>())
+            {
+                windowsVistaRenderer.Initialize(toolStrip);
+                toolStrip.Renderer = windowsVistaRenderer;
+            }
+        }
+
+        public static void Initialize(IContainerControl containerControl)
+        {
+            var windowsVistaRenderer = new WindowsVistaRenderer();
+
+            ToolStripManager.Renderer = windowsVistaRenderer;
+
+            //foreach (ToolStrip toolStrip in ControlHelper.GetControls<ToolStrip>(form))
+            //    toolStrip.Renderer = windowsVistaRenderer;
+
+            //foreach (ToolStripPanel toolStripPanel in ControlHelper.GetControls<ToolStripPanel>(form))
+            //    toolStripPanel.Renderer = windowsVistaRenderer;
+
+            //foreach (ToolStripContentPanel toolStripContentPanel in ControlHelper.GetControls<ToolStripContentPanel>(form))
+            //    toolStripContentPanel.Renderer = windowsVistaRenderer;
+        }
+
         protected override void Initialize(ToolStrip toolStrip)
         {
             base.Initialize(toolStrip);
@@ -55,6 +88,7 @@ namespace Mohammad.Win.Renderers
                 btn.DropDownButtonWidth = 18;
 
                 foreach (ToolStripItem subitem in btn.DropDownItems)
+                {
                     if (subitem is ToolStripMenuItem)
                     {
                         var mnu = subitem as ToolStripMenuItem;
@@ -62,6 +96,7 @@ namespace Mohammad.Win.Renderers
                         mnu.Height = 26;
                         mnu.TextAlign = ContentAlignment.MiddleLeft;
                     }
+                }
             }
 
             if (item is ToolStripDropDownButton)
@@ -70,6 +105,7 @@ namespace Mohammad.Win.Renderers
                 btn.ShowDropDownArrow = false;
 
                 foreach (ToolStripItem subitem in btn.DropDownItems)
+                {
                     if (subitem is ToolStripMenuItem)
                     {
                         var mnu = subitem as ToolStripMenuItem;
@@ -77,6 +113,7 @@ namespace Mohammad.Win.Renderers
                         mnu.Height = 26;
                         mnu.TextAlign = ContentAlignment.MiddleLeft;
                     }
+                }
             }
         }
 
@@ -100,7 +137,9 @@ namespace Mohammad.Win.Renderers
 
                 using (var path = this.GetToolStripRectangle(e.ToolStrip))
                 using (var p = new Pen(this.ColorTable.BackgroundBorder))
+                {
                     e.Graphics.DrawPath(p, path);
+                }
 
                 #endregion
             }
@@ -109,13 +148,17 @@ namespace Mohammad.Win.Renderers
         protected override void OnRenderToolStripBackground(ToolStripRenderEventArgs e)
         {
             if (e.ToolStrip is ToolStripDropDownMenu)
+            {
                 return;
+            }
 
             #region Background
 
             using (var b = new LinearGradientBrush(Point.Empty, new PointF(0, e.ToolStrip.Height), this.ColorTable.BackgroundNorth, this.ColorTable.BackgroundSouth))
             using (var border = this.GetToolStripRectangle(e.ToolStrip))
+            {
                 e.Graphics.FillPath(b, border);
+            }
 
             #endregion
 
@@ -123,12 +166,16 @@ namespace Mohammad.Win.Renderers
 
                 #region Glossy Effect
 
+            {
                 this.DrawGlossyEffect(e.Graphics, e.ToolStrip, 1);
+            }
 
             #endregion
 
             if (!this.BackgroundGlow)
+            {
                 return;
+            }
 
             #region BackroundGlow
 
@@ -141,7 +188,9 @@ namespace Mohammad.Win.Renderers
                     Color.FromArgb(0, this.ColorTable.BackgroundGlow),
                     this.ColorTable.BackgroundGlow))
             using (var border = GraphicsTools.CreateBottomRoundRectangle(glow, this.ToolStripRadius))
+            {
                 e.Graphics.FillPath(b, border);
+            }
 
             #endregion
         }
@@ -149,12 +198,18 @@ namespace Mohammad.Win.Renderers
         protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
         {
             if (e.Item.GetCurrentParent() is ContextMenuStrip || e.Item.GetCurrentParent() is ToolStripDropDownMenu)
+            {
                 e.TextColor = this.ColorTable.ToolStripDropDownMenuText;
+            }
             else
+            {
                 e.TextColor = this.ColorTable.MenuText;
+            }
 
             if (e.Item is ToolStripButton)
+            {
                 e.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+            }
 
             if (e.Item is ToolStripMenuItem)
             {
@@ -165,7 +220,10 @@ namespace Mohammad.Win.Renderers
             base.OnRenderItemText(e);
         }
 
-        protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e) { this.DrawVistaButtonBackground(e); }
+        protected override void OnRenderButtonBackground(ToolStripItemRenderEventArgs e)
+        {
+            this.DrawVistaButtonBackground(e);
+        }
 
         protected override void OnRenderDropDownButtonBackground(ToolStripItemRenderEventArgs e)
         {
@@ -173,7 +231,9 @@ namespace Mohammad.Win.Renderers
 
             var item = e.Item as ToolStripDropDownButton;
             if (item == null)
+            {
                 return;
+            }
 
             var arrowBounds = new Rectangle(item.Width - 18, 0, 18, item.Height);
 
@@ -186,7 +246,9 @@ namespace Mohammad.Win.Renderers
 
             var item = e.Item as ToolStripSplitButton;
             if (item == null)
+            {
                 return;
+            }
 
             var arrowBounds = item.DropDownButtonBounds;
             var buttonBounds = new Rectangle(item.ButtonBounds.Location, new Size(item.ButtonBounds.Width + 2, item.ButtonBounds.Height));
@@ -202,9 +264,13 @@ namespace Mohammad.Win.Renderers
         protected override void OnRenderItemImage(ToolStripItemImageRenderEventArgs e)
         {
             if (!e.Item.Enabled)
+            {
                 base.OnRenderItemImage(e);
+            }
             else if (e.Image != null)
+            {
                 e.Graphics.DrawImage(e.Image, e.ImageRectangle);
+            }
         }
 
         protected override void OnRenderMenuItemBackground(ToolStripItemRenderEventArgs e)
@@ -224,10 +290,14 @@ namespace Mohammad.Win.Renderers
                 //e.Graphics.Clear(ColorTable.MenuBackground);
 
                 using (var p = new Pen(this.ColorTable.MenuDark))
+                {
                     e.Graphics.DrawLine(p, new Point(left, top), new Point(right, top));
+                }
 
                 using (var p = new Pen(this.ColorTable.MenuLight))
+                {
                     e.Graphics.DrawLine(p, new Point(left, top + 1), new Point(right, top + 1));
+                }
             }
             else
             {
@@ -242,7 +312,9 @@ namespace Mohammad.Win.Renderers
                         new Point(Convert.ToInt32(separator.Left), Convert.ToInt32(separator.Bottom)),
                         this.ColorTable.SeparatorNorth,
                         this.ColorTable.SeparatorSouth))
+                {
                     e.Graphics.FillRectangle(b, separator);
+                }
             }
         }
 
@@ -257,37 +329,6 @@ namespace Mohammad.Win.Renderers
                 p.EndCap = LineCap.Round;
                 e.Graphics.DrawPath(p, path);
             }
-        }
-
-        public static void Render(ToolStripContainer toolStripContainer)
-        {
-            var windowsVistaRenderer = new WindowsVistaRenderer();
-
-            foreach (var toolStripContentPanel in toolStripContainer.GetControls<ToolStripContentPanel>())
-                windowsVistaRenderer.InitializeContentPanel(toolStripContentPanel);
-
-            foreach (var toolStripPanel in toolStripContainer.GetControls<ToolStripPanel>())
-            foreach (var toolStrip in toolStripPanel.GetControls<ToolStrip>())
-            {
-                windowsVistaRenderer.Initialize(toolStrip);
-                toolStrip.Renderer = windowsVistaRenderer;
-            }
-        }
-
-        public static void Initialize(IContainerControl containerControl)
-        {
-            var windowsVistaRenderer = new WindowsVistaRenderer();
-
-            ToolStripManager.Renderer = windowsVistaRenderer;
-
-            //foreach (ToolStrip toolStrip in ControlHelper.GetControls<ToolStrip>(form))
-            //    toolStrip.Renderer = windowsVistaRenderer;
-
-            //foreach (ToolStripPanel toolStripPanel in ControlHelper.GetControls<ToolStripPanel>(form))
-            //    toolStripPanel.Renderer = windowsVistaRenderer;
-
-            //foreach (ToolStripContentPanel toolStripContentPanel in ControlHelper.GetControls<ToolStripContentPanel>(form))
-            //    toolStripContentPanel.Renderer = windowsVistaRenderer;
         }
 
         #region Static
@@ -390,9 +431,7 @@ namespace Mohammad.Win.Renderers
         /// <param name="toolStrip"></param>
         /// <returns></returns>
         private GraphicsPath GetToolStripRectangle(ToolStrip toolStrip)
-        {
-            return GraphicsTools.CreateRoundRectangle(new Rectangle(0, 0, toolStrip.Width - 1, toolStrip.Height - 1), this.ToolStripRadius);
-        }
+            => GraphicsTools.CreateRoundRectangle(new Rectangle(0, 0, toolStrip.Width - 1, toolStrip.Height - 1), this.ToolStripRadius);
 
         /// <summary>
         ///     Draws the glossy effect on the toolbar
@@ -422,7 +461,9 @@ namespace Mohammad.Win.Renderers
                     this.ColorTable.GlossyEffectNorth,
                     this.ColorTable.GlossyEffectSouth))
             using (var border = GraphicsTools.CreateTopRoundRectangle(glossyRect, this.ToolStripRadius))
+            {
                 g.FillPath(b, border);
+            }
         }
 
         /// <summary>
@@ -434,7 +475,9 @@ namespace Mohammad.Win.Renderers
             var chk = false;
 
             if (e.Item is ToolStripButton)
+            {
                 chk = (e.Item as ToolStripButton).Checked;
+            }
 
             this.DrawVistaButtonBackground(e.Graphics, new Rectangle(Point.Empty, e.Item.Size), e.Item.Selected, e.Item.Pressed, chk);
         }
@@ -461,20 +504,28 @@ namespace Mohammad.Win.Renderers
                 outerBorder.Bottom);
 
             if (!selected && !pressed && !checkd)
+            {
                 return;
+            }
 
             #region Layers
 
             //Outer border
             using (var path = GraphicsTools.CreateRoundRectangle(outerBorder, this.ButtonRadius))
             using (var p = new Pen(this.ColorTable.ButtonOuterBorder))
+            {
                 g.DrawPath(p, path);
+            }
 
             //Checked fill
             if (checkd)
+            {
                 using (var path = GraphicsTools.CreateRoundRectangle(innerBorder, 2))
                 using (Brush b = new SolidBrush(selected ? this.ColorTable.CheckedButtonFillHot : this.ColorTable.CheckedButtonFill))
+                {
                     g.FillPath(b, path);
+                }
+            }
 
             //Glossy effefct
             using (var path = GraphicsTools.CreateTopRoundRectangle(glossy, this.ButtonRadius))
@@ -483,12 +534,16 @@ namespace Mohammad.Win.Renderers
                     new Point(0, glossy.Bottom),
                     this.ColorTable.GlossyEffectNorth,
                     this.ColorTable.GlossyEffectSouth))
+            {
                 g.FillPath(b, path);
+            }
 
             //Border
             using (var path = GraphicsTools.CreateRoundRectangle(border, this.ButtonRadius))
             using (var p = new Pen(this.ColorTable.ButtonBorder))
+            {
                 g.DrawPath(p, path);
+            }
 
             var fillNorth = pressed ? this.ColorTable.ButtonFillNorthPressed : this.ColorTable.ButtonFillNorth;
             var fillSouth = pressed ? this.ColorTable.ButtonFillSouthPressed : this.ColorTable.ButtonFillSouth;
@@ -496,14 +551,18 @@ namespace Mohammad.Win.Renderers
             //Fill
             using (var path = GraphicsTools.CreateTopRoundRectangle(fill, this.ButtonRadius))
             using (Brush b = new LinearGradientBrush(new Point(0, fill.Top), new Point(0, fill.Bottom), fillNorth, fillSouth))
+            {
                 g.FillPath(b, path);
+            }
 
             var innerBorderColor = pressed || checkd ? this.ColorTable.ButtonInnerBorderPressed : this.ColorTable.ButtonInnerBorder;
 
             //Inner border
             using (var path = GraphicsTools.CreateRoundRectangle(innerBorder, this.ButtonRadius))
             using (var p = new Pen(innerBorderColor))
+            {
                 g.DrawPath(p, path);
+            }
 
             //Glow
             using (var clip = GraphicsTools.CreateRoundRectangle(glow, 2))
@@ -513,7 +572,9 @@ namespace Mohammad.Win.Renderers
                 var glowColor = this.ColorTable.Glow;
 
                 if (checkd)
+                {
                     glowColor = selected ? this.ColorTable.CheckedGlowHot : this.ColorTable.CheckedGlow;
+                }
 
                 using (var brad = CreateBottomRadialPath(glow))
                 using (var pgr = new PathGradientBrush(brad))
@@ -526,8 +587,10 @@ namespace Mohammad.Win.Renderers
                         pgr.CenterColor = Color.FromArgb(opacity, glowColor);
                         pgr.SurroundColors = new[] {Color.FromArgb(0, glowColor)};
                     }
+
                     g.FillPath(pgr, brad);
                 }
+
                 g.ResetClip();
             }
 
@@ -560,10 +623,14 @@ namespace Mohammad.Win.Renderers
             const int left = 22;
 
             using (var p = new Pen(this.ColorTable.MenuDark))
+            {
                 g.DrawLine(p, new Point(r.Left + left, r.Top), new Point(r.Left + left, r.Height - margin));
+            }
 
             using (var p = new Pen(this.ColorTable.MenuLight))
+            {
                 g.DrawLine(p, new Point(r.Left + left + 1, r.Top), new Point(r.Left + left + 1, r.Height - margin));
+            }
 
             #endregion
 
@@ -571,6 +638,7 @@ namespace Mohammad.Win.Renderers
 
                 #region Draw Rectangle
 
+            {
                 using (var path = GraphicsTools.CreateRoundRectangle(new Rectangle(r.X + margin, r.Y + margin, r.Width - margin * 2, r.Height - margin * 2), 3))
                 {
                     using (
@@ -578,11 +646,16 @@ namespace Mohammad.Win.Renderers
                             new Point(0, r.Height - 2),
                             this.ColorTable.MenuHighlightNorth,
                             this.ColorTable.MenuHighlightSouth))
+                    {
                         g.FillPath(b, path);
+                    }
 
                     using (var p = new Pen(this.ColorTable.MenuHighlight))
+                    {
                         g.DrawPath(p, path);
+                    }
                 }
+            }
 
             #endregion
         }
@@ -595,7 +668,9 @@ namespace Mohammad.Win.Renderers
         private void DrawVistaMenuBorder(Graphics g, Rectangle r)
         {
             using (var p = new Pen(this.ColorTable.BackgroundBorder))
+            {
                 g.DrawRectangle(p, new Rectangle(r.Left, r.Top, r.Width - 1, r.Height - 1));
+            }
         }
 
         #endregion

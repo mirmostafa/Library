@@ -38,7 +38,7 @@ namespace Mohammad.Win.Forms.Internals
 
         public string Title
         {
-            get { return this._title; }
+            get => this._title;
             set
             {
                 this.Size = new Size(170, 30);
@@ -48,7 +48,7 @@ namespace Mohammad.Win.Forms.Internals
 
         public string Comment
         {
-            get { return this._comment; }
+            get => this._comment;
             set
             {
                 if (value != "")
@@ -62,7 +62,7 @@ namespace Mohammad.Win.Forms.Internals
 
         public string Picture
         {
-            get { return this._picture; }
+            get => this._picture;
             set
             {
                 if (value != "")
@@ -77,12 +77,18 @@ namespace Mohammad.Win.Forms.Internals
                     {
                         this.img = Image.FromFile(this._picture);
                     }
-                    catch {}
+                    catch
+                    {
+                    }
                 }
             }
         }
 
-        public Color FillColor { get { return this._fillcolor; } set { this._fillcolor = value; } }
+        public Color FillColor
+        {
+            get => this._fillcolor;
+            set => this._fillcolor = value;
+        }
 
         public InfoForm()
         {
@@ -108,7 +114,33 @@ namespace Mohammad.Win.Forms.Internals
             this.timerClos.Tick += this.timerClos_Tick;
         }
 
-        private void timerClos_Tick(object sender, EventArgs e) { this.Close(); }
+        public new void Close()
+        {
+            this.appearing = false;
+            this.timer.Start();
+        }
+
+        public void DrawArc()
+        {
+            this.X = this.X0;
+            this.Y = this.Y0;
+            this.i_Zero = 180;
+            this.D++;
+            this.path = new GraphicsPath();
+            this.path.AddArc(this.X + this.D, this.Y + this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
+            this.i_Zero += 90;
+            this.X += this.XF;
+            this.path.AddArc(this.X - this.D, this.Y + this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
+            this.i_Zero += 90;
+            this.Y += this.YF;
+            this.path.AddArc(this.X - this.D, this.Y - this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
+            this.i_Zero += 90;
+            this.X -= this.XF;
+            this.path.AddArc(this.X + this.D, this.Y - this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
+            this.i_Zero += 90;
+            this.Y -= this.YF;
+            this.path.AddArc(this.X + this.D, this.Y + this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
+        }
 
         protected override void OnLoad(EventArgs e)
         {
@@ -118,35 +150,6 @@ namespace Mohammad.Win.Forms.Internals
             this.shadow.Show();
             this.timer.Start();
             base.OnLoad(e);
-        }
-
-        private void timer_Tick(object sender, EventArgs e)
-        {
-            if (this.appearing)
-                if (this.Opacity == 1)
-                    if (this.j < this.ms)
-                        this.j++;
-                    else
-                        this.appearing = !this.appearing;
-                else
-                    this.Opacity += 0.1;
-            if (!this.appearing)
-                if (this.Opacity == 0)
-                {
-                    this.Close();
-                }
-                else
-                {
-                    this.Opacity -= 0.2;
-                    this.shadow.Close();
-                }
-            this.timerClos.Start();
-        }
-
-        public new void Close()
-        {
-            this.appearing = false;
-            this.timer.Start();
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -175,9 +178,13 @@ namespace Mohammad.Win.Forms.Internals
                     this.ForeColor = Color.FromArgb(220, 220, 220);
                     b = new LinearGradientBrush(rpath, this._fillcolor, Color.FromArgb(60, 60, 60), LinearGradientMode.Vertical);
                 }
+
                 e.Graphics.FillPath(b, this.path);
             }
-            catch {}
+            catch
+            {
+            }
+
             this.T = 6;
             this.D = -1;
             this.X0 = 0;
@@ -209,26 +216,46 @@ namespace Mohammad.Win.Forms.Internals
             base.OnPaint(e);
         }
 
-        public void DrawArc()
+        private void timerClos_Tick(object sender, EventArgs e)
         {
-            this.X = this.X0;
-            this.Y = this.Y0;
-            this.i_Zero = 180;
-            this.D++;
-            this.path = new GraphicsPath();
-            this.path.AddArc(this.X + this.D, this.Y + this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
-            this.i_Zero += 90;
-            this.X += this.XF;
-            this.path.AddArc(this.X - this.D, this.Y + this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
-            this.i_Zero += 90;
-            this.Y += this.YF;
-            this.path.AddArc(this.X - this.D, this.Y - this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
-            this.i_Zero += 90;
-            this.X -= this.XF;
-            this.path.AddArc(this.X + this.D, this.Y - this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
-            this.i_Zero += 90;
-            this.Y -= this.YF;
-            this.path.AddArc(this.X + this.D, this.Y + this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
+            this.Close();
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            if (this.appearing)
+            {
+                if (this.Opacity == 1)
+                {
+                    if (this.j < this.ms)
+                    {
+                        this.j++;
+                    }
+                    else
+                    {
+                        this.appearing = !this.appearing;
+                    }
+                }
+                else
+                {
+                    this.Opacity += 0.1;
+                }
+            }
+
+            if (!this.appearing)
+            {
+                if (this.Opacity == 0)
+                {
+                    this.Close();
+                }
+                else
+                {
+                    this.Opacity -= 0.2;
+                    this.shadow.Close();
+                }
+            }
+
+            this.timerClos.Start();
         }
     }
 
@@ -268,28 +295,6 @@ namespace Mohammad.Win.Forms.Internals
             this.StartPosition = FormStartPosition.Manual;
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            var g = e.Graphics;
-            this.T = 12;
-            this.D = -1;
-            this.X0 = -2;
-            this.Y0 = -2;
-            this.XF = e.ClipRectangle.Width - 14;
-            this.YF = e.ClipRectangle.Height - 14;
-            var rpath = new Rectangle(this.X0, this.Y0, this.XF, this.YF);
-            this.DrawArc();
-            var HBlack = Color.FromArgb(120, 100, 100, 100);
-            var pgb = new PathGradientBrush(this.path);
-            var SBlack = Color.FromArgb(255, 100, 100, 100);
-            pgb.CenterColor = SBlack;
-            pgb.SurroundColors = new[] {HBlack};
-            pgb.FocusScales = new PointF(0.96f, 0.92f);
-            g.FillPath(pgb, this.path);
-        }
-
-        protected override void OnPaintBackground(PaintEventArgs e) { }
-
         public void DrawArc()
         {
             this.X = this.X0;
@@ -310,6 +315,30 @@ namespace Mohammad.Win.Forms.Internals
             this.i_Zero += 90;
             this.Y -= this.YF;
             this.path.AddArc(this.X + this.D, this.Y + this.D, this.T, this.T, this.i_Zero, this.i_Sweep);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            this.T = 12;
+            this.D = -1;
+            this.X0 = -2;
+            this.Y0 = -2;
+            this.XF = e.ClipRectangle.Width - 14;
+            this.YF = e.ClipRectangle.Height - 14;
+            var rpath = new Rectangle(this.X0, this.Y0, this.XF, this.YF);
+            this.DrawArc();
+            var HBlack = Color.FromArgb(120, 100, 100, 100);
+            var pgb = new PathGradientBrush(this.path);
+            var SBlack = Color.FromArgb(255, 100, 100, 100);
+            pgb.CenterColor = SBlack;
+            pgb.SurroundColors = new[] {HBlack};
+            pgb.FocusScales = new PointF(0.96f, 0.92f);
+            g.FillPath(pgb, this.path);
+        }
+
+        protected override void OnPaintBackground(PaintEventArgs e)
+        {
         }
     }
 }

@@ -21,19 +21,15 @@ namespace Mohammad.Data.SqlServer.Dynamics
     {
         #region Fields
 
-        protected SqlConnectionStringBuilder ConnectionStringBuilder = new SqlConnectionStringBuilder();
+        private Databases _Databases;
 
         #endregion
 
         #region Fields
 
-        private Databases _Databases;
+        protected SqlConnectionStringBuilder ConnectionStringBuilder = new SqlConnectionStringBuilder();
 
         #endregion
-
-        protected Server()
-        {
-        }
 
         /// <summary>
         ///     Gets or sets the connection string.
@@ -50,9 +46,13 @@ namespace Mohammad.Data.SqlServer.Dynamics
             {
                 this.ConnectionStringBuilder.ConnectionString = value;
                 if (!this.ConnectionStringBuilder.DataSource.IsNullOrEmpty())
+                {
                     this.Name = this.ConnectionStringBuilder.DataSource;
+                }
                 else
+                {
                     this.ConnectionStringBuilder.DataSource = this.Name;
+                }
             }
         }
 
@@ -65,33 +65,50 @@ namespace Mohammad.Data.SqlServer.Dynamics
                                                      {
                                                          Name = row.Field<string>("InstanceName").IsNullOrEmpty()
                                                              ? row.Field<string>("ServerName")
-                                                             : $@"{row.Field<string>("ServerName")}\{row.Field<string>("InstanceName")}"
-                                                       , Version = row.Field<string>("Version")
+                                                             : $@"{row.Field<string>("ServerName")}\{row.Field<string>("InstanceName")}",
+                                                         Version = row.Field<string>("Version")
                                                      });
 
         public string Version { get; protected set; }
 
+        protected Server()
+        {
+        }
+
+        public static Server GetServer(string connectionString) => new Server
+        {
+            ConnectionString = connectionString
+        };
+
+        public override string ToString() => !this.Version.IsNullOrEmpty() ? $"{this.Name} - {this.Version}" : $"{this.Name}";
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            result = this.Databases[binder.Name];
+            return true;
+        }
+
         protected Databases GetDatabases()
         {
             var helper = new Sql(this.ConnectionString);
-            var items  = new List<Database>();
+            var items = new List<Database>();
             using (var set = helper.FillByTableNames("sys.databases"))
             {
                 var table = set.GetTables().First();
                 Func<DataRow, Database> selector = row => new Database(this, row.Field<string>("name"), this.ConnectionString)
                 {
                     CollationName = row
-                       .Field<string>(
-                                      "collation_name")
-                  , CreateDate = row.Field(
-                                           "create_date",
-                                           Convert.ToDateTime)
-                  , Id = row.Field("database_id",
-                                   Convert.ToInt64)
-                  , IsBrokerEnabled =
+                        .Field<string>(
+                            "collation_name"),
+                    CreateDate = row.Field(
+                        "create_date",
+                        Convert.ToDateTime),
+                    Id = row.Field("database_id",
+                        Convert.ToInt64),
+                    IsBrokerEnabled =
                         row.Field(
-                                  "is_broker_enabled",
-                                  Convert.ToBoolean)
+                            "is_broker_enabled",
+                            Convert.ToBoolean)
                 };
                 items.AddRange(table.Select().Select(selector));
             }
@@ -111,19 +128,6 @@ namespace Mohammad.Data.SqlServer.Dynamics
             Name = name, ConnectionString = connectionString
         };
 
-        public static Server GetServer(string connectionString) => new Server
-        {
-            ConnectionString = connectionString
-        };
-
         internal void SetName(string name) => this.Name = name;
-
-        public override string ToString() => !this.Version.IsNullOrEmpty() ? $"{this.Name} - {this.Version}" : $"{this.Name}";
-
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            result = this.Databases[binder.Name];
-            return true;
-        }
     }
 }

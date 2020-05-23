@@ -14,7 +14,7 @@ namespace Mohammad.Collections.Generic
     {
         private readonly IEnumerable<T> _Items;
         public Enumerable(IEnumerable<T> items) => this._Items = items;
-        public IEnumerator<T>   GetEnumerator() => this._Items.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => this._Items.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

@@ -15,8 +15,12 @@ namespace Mohammad.Win32.Natives
 {
     partial class Api
     {
-        public static IntPtr ShellExecute(IntPtr       hwnd, ShellExecuteVerbs lpOperation, string lpFile, string lpParameters, string lpDirectory,
-                                          ShowCommands nShowCmd)
+        public static IntPtr ShellExecute(IntPtr hwnd,
+            ShellExecuteVerbs lpOperation,
+            string lpFile,
+            string lpParameters,
+            string lpDirectory,
+            ShowCommands nShowCmd)
         {
             string verb;
             switch (lpOperation)
@@ -43,9 +47,12 @@ namespace Mohammad.Win32.Natives
         }
 
         [DllImport("shell32.dll")]
-        public static extern IntPtr ShellExecute(IntPtr                                   hwnd,        [MarshalAs(UnmanagedType.LPTStr)] string lpOperation,
-                                                 [MarshalAs(UnmanagedType.LPTStr)] string lpFile,      [MarshalAs(UnmanagedType.LPTStr)] string lpParameters,
-                                                 [MarshalAs(UnmanagedType.LPTStr)] string lpDirectory, int                                      nShowCmd);
+        public static extern IntPtr ShellExecute(IntPtr hwnd,
+            [MarshalAs(UnmanagedType.LPTStr)] string lpOperation,
+            [MarshalAs(UnmanagedType.LPTStr)] string lpFile,
+            [MarshalAs(UnmanagedType.LPTStr)] string lpParameters,
+            [MarshalAs(UnmanagedType.LPTStr)] string lpDirectory,
+            int nShowCmd);
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         public static extern int SHFileOperation(ref SHFILEOPSTRUCT lpFileOp);
@@ -55,11 +62,11 @@ namespace Mohammad.Win32.Natives
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         public static extern int SHGetMalloc([Out] [MarshalAs(UnmanagedType.LPArray)]
-                                             IMalloc[] ppMalloc);
+            IMalloc[] ppMalloc);
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         public static extern int SHGetMalloc([Out] [MarshalAs(UnmanagedType.LPArray)]
-                                             out IMalloc[] ppMalloc);
+            out IMalloc[] ppMalloc);
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         public static extern int SHGetMalloc([Out] out IntPtr ppMalloc);
@@ -83,8 +90,11 @@ namespace Mohammad.Win32.Natives
         public static extern int SHGetFolderLocation(IntPtr hwndOwner, int nFolder, IntPtr hToken, uint dwReserved, out IntPtr ppidl);
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
-        public static extern int SHParseDisplayName([MarshalAs(UnmanagedType.LPWStr)] string pszName, IntPtr pbc, out IntPtr ppidl, uint sfgaoIn,
-                                                    out                               uint   psfgaoOut);
+        public static extern int SHParseDisplayName([MarshalAs(UnmanagedType.LPWStr)] string pszName,
+            IntPtr pbc,
+            out IntPtr ppidl,
+            uint sfgaoIn,
+            out uint psfgaoOut);
 
         [DllImport("shell32.dll", CharSet = CharSet.Unicode)]
         public static extern int SHGetDesktopFolder(ref IShellFolder ppshf);

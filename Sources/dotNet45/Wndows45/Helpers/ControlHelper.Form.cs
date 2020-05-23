@@ -15,7 +15,7 @@ namespace Mohammad.Win.Helpers
             return ShowDialog(creator, out form);
         }
 
-        public static DialogResult ShowDialog<TForm>(Func<TForm> creator, out TForm form) where TForm : Form { return ShowDialog(creator, null, out form); }
+        public static DialogResult ShowDialog<TForm>(Func<TForm> creator, out TForm form) where TForm : Form => ShowDialog(creator, null, out form);
 
         public static DialogResult ShowDialog<TForm>(Func<TForm> creator, FormSettings<TForm> formSettings, out TForm form) where TForm : Form
         {
@@ -23,8 +23,12 @@ namespace Mohammad.Win.Helpers
             return form.ShowDialog();
         }
 
-        public static TForm Show<TForm>() where TForm : Form, new() { return Show(() => new TForm()); }
-        public static TForm Show<TForm>(Func<TForm> creator) where TForm : Form { return Show(creator, null); }
+        public static TForm Show<TForm>() where TForm : Form, new()
+        {
+            return Show(() => new TForm());
+        }
+
+        public static TForm Show<TForm>(Func<TForm> creator) where TForm : Form => Show(creator, null);
 
         public static TForm Show<TForm>(Func<TForm> creator, FormSettings<TForm> formSettings) where TForm : Form
         {
@@ -33,7 +37,7 @@ namespace Mohammad.Win.Helpers
             return result;
         }
 
-        public static TForm CreateInstance<TForm>() where TForm : Form, new() { return CreateInstance<TForm>(null); }
+        public static TForm CreateInstance<TForm>() where TForm : Form, new() => CreateInstance<TForm>(null);
 
         public static TForm CreateInstance<TForm>(FormSettings<TForm> formSettings) where TForm : Form, new()
         {
@@ -44,23 +48,28 @@ namespace Mohammad.Win.Helpers
         {
             var form = creator();
             if (formSettings != null)
+            {
                 formSettings.SetForm(form);
+            }
+
             return form;
         }
 
-        public static Form CreateInstance(Type formType) { return ObjectHelper.CreateInstance<Form>(formType); }
-        public static TForm ShowSingleton<TForm>() where TForm : Form, new() { return ShowSingleton(() => new TForm()); }
-        public static TForm ShowSingleton<TForm>(Func<TForm> creator) where TForm : Form { return ShowSingleton(creator, null); }
+        public static Form CreateInstance(Type formType) => ObjectHelper.CreateInstance<Form>(formType);
+
+        public static TForm ShowSingleton<TForm>() where TForm : Form, new()
+        {
+            return ShowSingleton(() => new TForm());
+        }
+
+        public static TForm ShowSingleton<TForm>(Func<TForm> creator) where TForm : Form => ShowSingleton(creator, null);
 
         public static TForm ShowSingleton<TForm>(FormSettings<TForm> formSettings) where TForm : Form, new()
         {
             return ShowSingleton(() => new TForm(), formSettings);
         }
 
-        public static TForm ShowSingleton<TForm>(Func<TForm> creator, FormSettings<TForm> formSettings) where TForm : Form
-        {
-            return ShowSingleton(creator, formSettings, null);
-        }
+        public static TForm ShowSingleton<TForm>(Func<TForm> creator, FormSettings<TForm> formSettings) where TForm : Form => ShowSingleton(creator, formSettings, null);
 
         public static TForm ShowSingleton<TForm>(Func<TForm> creator, FormSettings<TForm> formSettings, Predicate<TForm> predicate) where TForm : Form
         {
@@ -68,16 +77,33 @@ namespace Mohammad.Win.Helpers
                 ? Application.OpenForms.Cast<Form>().Where(EqualsTo<TForm>).FirstOrDefault() as TForm
                 : Application.OpenForms.Cast<Form>().FirstOrDefault(frm => EqualsTo<TForm>(frm) && predicate(frm as TForm)) as TForm;
             if (form == null)
+            {
                 return Show(creator, formSettings);
+            }
+
             form.BringToFront();
             if (form.WindowState == FormWindowState.Minimized)
+            {
                 form.WindowState = FormWindowState.Normal;
+            }
+
             return form;
         }
 
-        public static void FadeOut(this Form form) { FadeIn(form, 500); }
-        public static void FadeIn(this Form form, int milliseconds) { FadeIn(form, TimeSpan.FromMilliseconds(milliseconds)); }
-        public static void FadeOut(this Form form, int milliseconds) { FadeIn(form, TimeSpan.FromMilliseconds(milliseconds)); }
+        public static void FadeOut(this Form form)
+        {
+            FadeIn(form, 500);
+        }
+
+        public static void FadeIn(this Form form, int milliseconds)
+        {
+            FadeIn(form, TimeSpan.FromMilliseconds(milliseconds));
+        }
+
+        public static void FadeOut(this Form form, int milliseconds)
+        {
+            FadeIn(form, TimeSpan.FromMilliseconds(milliseconds));
+        }
 
         public static void FadeIn(this Form form, TimeSpan timeout)
         {

@@ -15,24 +15,24 @@ namespace Mohammad.Win32
     {
         HorizentalPositive = 0x00000001,
         HorizentalNegative = 0x00000002,
-        VerticalPositive   = 0x00000004,
-        VerticalNegative   = 0x00000008,
-        Center             = 0x00000010,
-        Hide               = 0x00010000,
-        Activate           = 0x00020000,
-        Slide              = 0x00040000,
-        Blend              = 0x00080000
+        VerticalPositive = 0x00000004,
+        VerticalNegative = 0x00000008,
+        Center = 0x00000010,
+        Hide = 0x00010000,
+        Activate = 0x00020000,
+        Slide = 0x00040000,
+        Blend = 0x00080000
     }
 
     public enum LogonType
     {
-        Interactive      = WindowsConstants.LOGON32_LOGON_INTERACTIVE,
-        Network          = WindowsConstants.LOGON32_LOGON_NETWORK,
-        Batch            = WindowsConstants.LOGON32_LOGON_BATCH,
-        Service          = WindowsConstants.LOGON32_LOGON_SERVICE,
-        Unlock           = WindowsConstants.LOGON32_LOGON_UNLOCK,
+        Interactive = WindowsConstants.LOGON32_LOGON_INTERACTIVE,
+        Network = WindowsConstants.LOGON32_LOGON_NETWORK,
+        Batch = WindowsConstants.LOGON32_LOGON_BATCH,
+        Service = WindowsConstants.LOGON32_LOGON_SERVICE,
+        Unlock = WindowsConstants.LOGON32_LOGON_UNLOCK,
         NetworkClearText = WindowsConstants.LOGON32_LOGON_NETWORK_CLEARTEXT,
-        NewCredentials   = WindowsConstants.LOGON32_LOGON_NEW_CREDENTIALS
+        NewCredentials = WindowsConstants.LOGON32_LOGON_NEW_CREDENTIALS
     }
 
     public enum LogonProvider

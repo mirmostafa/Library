@@ -45,6 +45,6 @@ namespace Mohammad.Win.Internals
         /// <param name="a"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        public static Size UnionSizes(Size a, Size b) { return new Size(Math.Max(a.Width, b.Width), Math.Max(a.Height, b.Height)); }
+        public static Size UnionSizes(Size a, Size b) => new Size(Math.Max(a.Width, b.Width), Math.Max(a.Height, b.Height));
     }
 }

@@ -20,14 +20,17 @@ namespace Mohammad.Win.Controls
         {
             //protected ArrayList List;
             protected OutlookBar parent;
-            public OutlookBar Parent { get { return this.parent; } }
-            public OutlookBarButton this[int index] { get { return (OutlookBarButton) this.List[index]; } }
-            internal OutlookBarButtons(OutlookBar parent) { this.parent = parent; }
+            public OutlookBar Parent => this.parent;
+            public OutlookBarButton this[int index] => (OutlookBarButton)this.List[index];
+            internal OutlookBarButtons(OutlookBar parent) => this.parent = parent;
 
             public void Add(OutlookBarButton item)
             {
                 if (this.List.Count == 0)
+                {
                     this.Parent.SelectedButton = item;
+                }
+
                 this.List.Add(item);
                 item.Parent = this.Parent;
                 this.Parent.ButtonlistChanged();
@@ -42,8 +45,8 @@ namespace Mohammad.Win.Controls
                 return b;
             }
 
-            public OutlookBarButton Add(string text) { return this.Add(text, null); }
-            public OutlookBarButton Add() { return this.Add(); }
+            public OutlookBarButton Add(string text) => this.Add(text, null);
+            public OutlookBarButton Add() => this.Add();
 
             public void Remove(OutlookBarButton button)
             {
@@ -51,13 +54,13 @@ namespace Mohammad.Win.Controls
                 this.Parent.ButtonlistChanged();
             }
 
-            public int IndexOf(object value) { return this.List.IndexOf(value); }
+            public int IndexOf(object value) => this.List.IndexOf(value);
 
             #region handle CollectionBase events
 
             protected override void OnInsertComplete(int index, object value)
             {
-                var b = (OutlookBarButton) value;
+                var b = (OutlookBarButton)value;
                 b.Parent = this.parent;
                 this.Parent.ButtonlistChanged();
                 base.OnInsertComplete(index, value);
@@ -65,7 +68,7 @@ namespace Mohammad.Win.Controls
 
             protected override void OnSetComplete(int index, object oldValue, object newValue)
             {
-                var b = (OutlookBarButton) newValue;
+                var b = (OutlookBarButton)newValue;
                 b.Parent = this.parent;
                 this.Parent.ButtonlistChanged();
                 base.OnSetComplete(index, oldValue, newValue);
@@ -116,39 +119,67 @@ namespace Mohammad.Win.Controls
         [Category("Layout")]
         public int ButtonHeight
         {
-            get { return this.buttonHeight; }
+            get => this.buttonHeight;
             set
             {
                 if (value > 18)
+                {
                     this.buttonHeight = value;
+                }
                 else
+                {
                     this.buttonHeight = 18;
+                }
             }
         }
 
         [Description("Dark gradient color of the button")]
         [Category("Appearance")]
-        public Color GradientButtonNormalDark { get { return this.gradientButtonDark; } set { this.gradientButtonDark = value; } }
+        public Color GradientButtonNormalDark
+        {
+            get => this.gradientButtonDark;
+            set => this.gradientButtonDark = value;
+        }
 
         [Description("Light gradient color of the button")]
         [Category("Appearance")]
-        public Color GradientButtonNormalLight { get { return this.gradientButtonLight; } set { this.gradientButtonLight = value; } }
+        public Color GradientButtonNormalLight
+        {
+            get => this.gradientButtonLight;
+            set => this.gradientButtonLight = value;
+        }
 
         [Description("Dark gradient color of the button when the mouse is moving over it")]
         [Category("Appearance")]
-        public Color GradientButtonHoverDark { get { return this.gradientButtonHoverDark; } set { this.gradientButtonHoverDark = value; } }
+        public Color GradientButtonHoverDark
+        {
+            get => this.gradientButtonHoverDark;
+            set => this.gradientButtonHoverDark = value;
+        }
 
         [Description("Light gradient color of the button when the mouse is moving over it")]
         [Category("Appearance")]
-        public Color GradientButtonHoverLight { get { return this.gradientButtonHoverLight; } set { this.gradientButtonHoverLight = value; } }
+        public Color GradientButtonHoverLight
+        {
+            get => this.gradientButtonHoverLight;
+            set => this.gradientButtonHoverLight = value;
+        }
 
         [Description("Dark gradient color of the seleced button")]
         [Category("Appearance")]
-        public Color GradientButtonSelectedDark { get { return this.gradientButtonSelectedDark; } set { this.gradientButtonSelectedDark = value; } }
+        public Color GradientButtonSelectedDark
+        {
+            get => this.gradientButtonSelectedDark;
+            set => this.gradientButtonSelectedDark = value;
+        }
 
         [Description("Light gradient color of the seleced button")]
         [Category("Appearance")]
-        public Color GradientButtonSelectedLight { get { return this.gradientButtonSelectedLight; } set { this.gradientButtonSelectedLight = value; } }
+        public Color GradientButtonSelectedLight
+        {
+            get => this.gradientButtonSelectedLight;
+            set => this.gradientButtonSelectedLight = value;
+        }
 
         /// <summary>
         ///     when a button is selected programatically, it must update the control
@@ -157,7 +188,7 @@ namespace Mohammad.Win.Controls
         [Browsable(false)]
         public OutlookBarButton SelectedButton
         {
-            get { return this.selectedButton; }
+            get => this.selectedButton;
             set
             {
                 // assign new selected button
@@ -173,7 +204,7 @@ namespace Mohammad.Win.Controls
         /// </summary>
         //[Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public OutlookBarButtons Buttons { get { return this.buttons; } }
+        public OutlookBarButtons Buttons => this.buttons;
 
         #endregion OutlookBar property definitions
 
@@ -194,9 +225,7 @@ namespace Mohammad.Win.Controls
 
             public ButtonClickEventArgs(OutlookBarButton button, MouseEventArgs evt)
                 : base(evt.Button, evt.Clicks, evt.X, evt.Y, evt.Delta)
-            {
-                this.SelectedButton = button;
-            }
+                => this.SelectedButton = button;
         }
 
         #endregion OutlookBar events
@@ -213,7 +242,9 @@ namespace Mohammad.Win.Controls
         private void PaintSelectedButton(OutlookBarButton prevButton, OutlookBarButton newButton)
         {
             if (prevButton == newButton)
+            {
                 return; // no change so return immediately
+            }
 
             var selIdx = -1;
             var valIdx = -1;
@@ -227,11 +258,16 @@ namespace Mohammad.Win.Controls
             var g = Graphics.FromHwnd(this.Handle);
             if (selIdx >= 0)
                 // un-highlight current hovering button
+            {
                 this.buttons[selIdx].PaintButton(g, 1, selIdx * (this.buttonHeight + 1) + 1, false, false);
+            }
 
             if (valIdx >= 0)
                 // highlight newly selected button
+            {
                 this.buttons[valIdx].PaintButton(g, 1, valIdx * (this.buttonHeight + 1) + 1, true, false);
+            }
+
             g.Dispose();
         }
 
@@ -245,7 +281,10 @@ namespace Mohammad.Win.Controls
         {
             var index = (y - 1) / (this.buttonHeight + 1);
             if (index >= 0 && index < this.buttons.Count)
+            {
                 return this.buttons[index];
+            }
+
             return null;
         }
 
@@ -256,7 +295,9 @@ namespace Mohammad.Win.Controls
         private void ButtonlistChanged()
         {
             if (!this.DesignMode) // only set sizes automatically at runtime
+            {
                 this.MaximumSize = new Size(0, this.buttons.Count * (this.buttonHeight + 1) + 1);
+            }
 
             this.Invalidate();
         }
@@ -292,25 +333,36 @@ namespace Mohammad.Win.Controls
         private void OutlookBar_Click(object sender, EventArgs e)
         {
             if (!(e is MouseEventArgs))
+            {
                 return;
+            }
 
             // case to MouseEventArgs so position and mousebutton clicked can be used
-            var mea = (MouseEventArgs) e;
+            var mea = (MouseEventArgs)e;
 
             // only continue if left mouse button was clicked
             if (mea.Button != MouseButtons.Left)
+            {
                 return;
+            }
 
             var index = (mea.Y - 1) / (this.buttonHeight + 1);
 
             if (index < 0 || index >= this.buttons.Count)
+            {
                 return;
+            }
 
             var button = this.buttons[index];
             if (button == null)
+            {
                 return;
+            }
+
             if (!button.Enabled)
+            {
                 return;
+            }
 
             // ok, all checks passed so assign the new selected button
             // and raise the event
@@ -318,7 +370,9 @@ namespace Mohammad.Win.Controls
 
             var bce = new ButtonClickEventArgs(this.selectedButton, mea);
             if (this.Click != null) // only invoke on left mouse click
+            {
                 this.Click.Invoke(this, bce);
+            }
         }
 
         private void OutlookBar_DoubleClick(object sender, EventArgs e)
@@ -352,7 +406,9 @@ namespace Mohammad.Win.Controls
                 if (index >= 0 && index < this.buttons.Count)
                 {
                     if (this.hoveringButtonIndex == index)
+                    {
                         return; // nothing changed so we're done, current button stays highlighted
+                    }
 
                     // so we need to change the hoveringButtonIndex to the new index
                     var g = Graphics.FromHwnd(this.Handle);
@@ -391,14 +447,19 @@ namespace Mohammad.Win.Controls
         {
             // only set sizes automatically at runtime
             if (!this.DesignMode)
+            {
                 if (!this.isResizing)
                 {
                     this.isResizing = true;
                     if ((this.Height - 1) % (this.buttonHeight + 1) > 0)
+                    {
                         this.Height = (this.Height - 1) / (this.buttonHeight + 1) * (this.buttonHeight + 1) + 1;
+                    }
+
                     this.Invalidate();
                     this.isResizing = false;
                 }
+            }
         }
 
         #endregion OutlookBar control event handlers
@@ -422,7 +483,7 @@ namespace Mohammad.Win.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public Image Image
         {
-            get { return this.image; }
+            get => this.image;
             set
             {
                 this.image = value;
@@ -433,16 +494,24 @@ namespace Mohammad.Win.Controls
         [Description("User-defined data to be associated with the button")]
         [Category("Appearance")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
-        public object Tag { get { return this.tag; } set { this.tag = value; } }
+        public object Tag
+        {
+            get => this.tag;
+            set => this.tag = value;
+        }
 
-        internal OutlookBar Parent { get { return this.parent; } set { this.parent = value; } }
+        internal OutlookBar Parent
+        {
+            get => this.parent;
+            set => this.parent = value;
+        }
 
         [Description("The text that will be displayed on the button")]
         [Category("Appearance")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public string Text
         {
-            get { return this.text; }
+            get => this.text;
             set
             {
                 this.text = value;
@@ -450,8 +519,8 @@ namespace Mohammad.Win.Controls
             }
         }
 
-        public int Height { get { return this.parent == null ? 30 : this.parent.ButtonHeight; } }
-        public int Width { get { return this.parent == null ? 60 : this.parent.Width - 2; } }
+        public int Height => this.parent == null ? 30 : this.parent.ButtonHeight;
+        public int Width => this.parent == null ? 60 : this.parent.Width - 2;
 
         public OutlookBarButton()
         {
@@ -478,26 +547,44 @@ namespace Mohammad.Win.Controls
             Brush br;
             var rect = new Rectangle(0, y, this.Width, this.Height);
             if (this.Enabled)
+            {
                 if (IsSelected)
+                {
                     if (IsHovering)
+                    {
                         br = new LinearGradientBrush(rect, this.parent.GradientButtonSelectedDark, this.parent.GradientButtonSelectedLight, 90f);
+                    }
                     else
+                    {
                         br = new LinearGradientBrush(rect, this.parent.GradientButtonSelectedLight, this.parent.GradientButtonSelectedDark, 90f);
+                    }
+                }
                 else if (IsHovering)
+                {
                     br = new LinearGradientBrush(rect, this.parent.GradientButtonHoverLight, this.parent.GradientButtonHoverDark, 90f);
+                }
                 else
+                {
                     br = new LinearGradientBrush(rect, this.parent.GradientButtonNormalLight, this.parent.GradientButtonNormalDark, 90f);
+                }
+            }
             else
+            {
                 br = new LinearGradientBrush(rect, this.parent.GradientButtonNormalLight, this.parent.GradientButtonNormalDark, 90f);
+            }
 
             graphics.FillRectangle(br, x, y, this.Width, this.Height);
             br.Dispose();
 
             if (this.text.Length > 0)
+            {
                 graphics.DrawString(this.Text, this.parent.Font, Brushes.Black, 36, y + this.Height / 2 - this.parent.Font.Height / 2);
+            }
 
             if (this.image != null)
+            {
                 graphics.DrawImage(this.image, 36 / 2 - this.image.Width / 2, y + this.Height / 2 - this.image.Height / 2, this.image.Width, this.image.Height);
+            }
         }
     }
 }

@@ -14,13 +14,29 @@ using Mohammad.Win32.NetworkList;
 namespace Mohammad.Win32.Interop.NetworkList
 {
     [ComImport]
-    [ClassInterface((short) 0)]
+    [ClassInterface((short)0)]
     [Guid("DCB00C01-570F-4A9B-8D69-199FDBA5723B")]
     [ComSourceInterfaces(
         "Microsoft.Windows.NetworkList.Internal.INetworkEvents\0Microsoft.Windows.NetworkList.Internal.INetworkConnectionEvents\0Microsoft.Windows.NetworkList.Internal.INetworkListManagerEvents\0")]
     [TypeLibType(2)]
     internal class NetworkListManagerClass : INetworkListManager
     {
+        [DispId(6)]
+        public virtual extern bool IsConnected
+        {
+            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            [DispId(6)]
+            get;
+        }
+
+        [DispId(5)]
+        public virtual extern bool IsConnectedToInternet
+        {
+            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            [DispId(5)]
+            get;
+        }
+
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         [DispId(7)]
         public virtual extern Connectivity GetConnectivity();
@@ -44,21 +60,5 @@ namespace Mohammad.Win32.Interop.NetworkList
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         [DispId(1)]
         public virtual extern IEnumerable GetNetworks([In] NetworkConnectivityLevels Flags);
-
-        [DispId(6)]
-        public virtual extern bool IsConnected
-        {
-            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-            [DispId(6)]
-            get;
-        }
-
-        [DispId(5)]
-        public virtual extern bool IsConnectedToInternet
-        {
-            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-            [DispId(5)]
-            get;
-        }
     }
 }

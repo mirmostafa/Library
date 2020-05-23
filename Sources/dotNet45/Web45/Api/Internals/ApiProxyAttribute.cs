@@ -14,12 +14,12 @@ namespace Mohammad.Web.Api.Internals
     internal class ApiProxyAttribute : ActionFilterAttribute
     {
         private readonly Action<HttpActionExecutedContext> _OnApiExecuted;
-        private readonly Action<HttpActionContext>         _OnApiExecuting;
+        private readonly Action<HttpActionContext> _OnApiExecuting;
 
         public ApiProxyAttribute(Action<HttpActionContext> onApiExecuting, Action<HttpActionExecutedContext> onApiExecuted)
         {
             this._OnApiExecuting = onApiExecuting;
-            this._OnApiExecuted  = onApiExecuted;
+            this._OnApiExecuted = onApiExecuted;
         }
 
         /// <inheritdoc />

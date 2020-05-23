@@ -8,7 +8,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="windows:LibraryGlassWindow">
-                    <Border Margin="{Binding Source={x:Static shell:SystemParameters2.Current}, Path=WindowNonClientFrameThickness}" Background="{DynamicResource WindowBackground}">
+                    <Border
+                        Margin="{Binding Source={x:Static shell:SystemParameters2.Current}, Path=WindowNonClientFrameThickness}"
+                        Background="{DynamicResource WindowBackground}">
                         <Grid>
                             <Border BorderBrush="{DynamicResource WindowBorder}" BorderThickness="1">
                                 <Grid>

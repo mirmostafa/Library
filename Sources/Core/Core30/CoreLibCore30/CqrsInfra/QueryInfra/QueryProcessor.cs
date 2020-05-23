@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Autofac;
 
 namespace Mohammad.CqrsInfra.QueryInfra
@@ -16,9 +15,9 @@ namespace Mohammad.CqrsInfra.QueryInfra
 
         public Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> query)
         {
-            var     handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
-            dynamic handler     = this._Container.ResolveKeyed("1", handlerType);
-            return handler.HandleAsync((dynamic) query);
+            var handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
+            dynamic handler = this._Container.ResolveKeyed("1", handlerType);
+            return handler.HandleAsync((dynamic)query);
         }
     }
 }

@@ -19,13 +19,19 @@ namespace Mohammad.Wpf.Windows
         {
             get
             {
-                var window = CodeHelper.CatchFunc(() => Current.MainWindow.As<LibraryGlassWindow>(), defaultResult: null);
+                var window = CodeHelper.CatchFunc(() => Current.MainWindow.As<LibraryGlassWindow>());
                 if (window != null)
+                {
                     return window.Status;
+                }
+
                 var task = Async.Run(() => Current.MainWindow.As<LibraryGlassWindow>(), scheduler: MainTaskScheduler);
                 task.Wait();
                 if (task.Result == null)
+                {
                     throw new WindowMismatchException("Application main window is not LibraryGlassWindow.");
+                }
+
                 return task.Result.Status;
             }
         }
@@ -38,17 +44,40 @@ namespace Mohammad.Wpf.Windows
             this.RegisterForRestart();
             this.RegisterForRecovery();
             if (e.Args.Contains("/crashed", true))
+            {
                 this.OnCreashed();
-            await Task.Factory.StartNew(() => { Task.Delay(1000); }).ContinueWith(t =>
+            }
+
+            await Task.Factory.StartNew(() =>
                 {
-                    var jumpList = JumpList.CreateJumpListForIndividualWindow(null, Current.MainWindow);
-                    this.UpdateJumpList(jumpList);
-                },
-                TaskScheduler.FromCurrentSynchronizationContext());
+                    Task.Delay(1000);
+                })
+                .ContinueWith(t =>
+                    {
+                        var jumpList = JumpList.CreateJumpListForIndividualWindow(null, Current.MainWindow);
+                        this.UpdateJumpList(jumpList);
+                    },
+                    TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        protected virtual void OnCreashed() { MsgBoxEx.Error("Application crashed last time"); }
-        protected virtual void OnUpdateJumpList(JumpList jumpList) { }
+        protected virtual void OnCreashed()
+        {
+            MsgBoxEx.Error("Application crashed last time");
+        }
+
+        protected virtual void OnUpdateJumpList(JumpList jumpList)
+        {
+        }
+
+        protected virtual void RegisterForRestart()
+        {
+            ApplicationRestartRecoveryManager.RegisterForApplicationRestart(new RestartSettings("/crashed", RestartRestrictions.None));
+        }
+
+        protected virtual void RegisterForRecovery()
+        {
+            ApplicationRestartRecoveryManager.RegisterForApplicationRecovery(new RecoverySettings(new RecoveryData(RecoveryProcedure, null), 0));
+        }
 
         private void UpdateJumpList(JumpList jumpList)
         {
@@ -78,17 +107,9 @@ namespace Mohammad.Wpf.Windows
 
             this.OnUpdateJumpList(jumpList);
             if (jumpList.MaxSlotsInList > 0)
+            {
                 jumpList.Refresh();
-        }
-
-        protected virtual void RegisterForRestart()
-        {
-            ApplicationRestartRecoveryManager.RegisterForApplicationRestart(new RestartSettings("/crashed", RestartRestrictions.None));
-        }
-
-        protected virtual void RegisterForRecovery()
-        {
-            ApplicationRestartRecoveryManager.RegisterForApplicationRecovery(new RecoverySettings(new RecoveryData(RecoveryProcedure, null), 0));
+            }
         }
 
         private static int RecoveryProcedure(object state)
@@ -96,7 +117,10 @@ namespace Mohammad.Wpf.Windows
             var isCanceled = ApplicationRestartRecoveryManager.ApplicationRecoveryInProgress();
 
             if (isCanceled)
+            {
                 Environment.Exit(2);
+            }
+
             ApplicationRestartRecoveryManager.ApplicationRecoveryFinished(true);
             return 0;
         }
@@ -118,8 +142,10 @@ namespace Mohammad.Wpf.Windows
                 {
                     MsgBoxEx.Exception(e.Exception);
                 }
+
                 e.Handled = true;
             }
+
             base.ExceptionOccurred(sender, e);
         }
     }

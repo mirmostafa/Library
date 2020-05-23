@@ -7,7 +7,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Mohammad.Helpers;
 
 namespace Mohammad.CodeGeneration.Generators
@@ -16,17 +15,18 @@ namespace Mohammad.CodeGeneration.Generators
     {
         private readonly Namespace _Namespace = new Namespace();
         private readonly LanguageDeclarationTemplateBase _Template;
-        public GeneratorBasedOnString(LanguageDeclarationTemplateBase template) { this._Template = template; }
-        public string FindClass(string className) => this._Namespace.Classes.Find(c=>c.Name.EqualsTo(className)).Write(this._Template.Class);
+        public GeneratorBasedOnString(LanguageDeclarationTemplateBase template) => this._Template = template;
+        public string FindClass(string className) => this._Namespace.Classes.Find(c => c.Name.EqualsTo(className)).Write(this._Template.Class);
         public string AddProperty(string classCode, string propName, string propType) => throw new NotImplementedException();
         public string CreateClass(string ownerName, string @namespace = null) => throw new NotImplementedException();
 
-        public void WriteClass(string classCode) { }
+        public void WriteClass(string classCode)
+        {
+        }
     }
 
     public abstract class CodeSnippet
     {
-        
     }
 
     public class Namespace : CodeSnippet
@@ -36,12 +36,12 @@ namespace Mohammad.CodeGeneration.Generators
 
     public class Class : CodeSnippet
     {
-        public Class(string name) { this.Name = name; }
         public string Name { get; }
         public List<Property> Properties { get; } = new List<Property>();
         public List<Field> Fields { get; } = new List<Field>();
         public List<Method> Methods { get; } = new List<Method>();
         public List<Event> Events { get; } = new List<Event>();
+        public Class(string name) => this.Name = name;
     }
 
     public abstract class ClassMember : CodeSnippet
@@ -68,9 +68,13 @@ namespace Mohammad.CodeGeneration.Generators
         public bool IsConst { get; set; }
     }
 
-    public class Method : ClassMember { }
+    public class Method : ClassMember
+    {
+    }
 
-    public class Event : ClassMember { }
+    public class Event : ClassMember
+    {
+    }
 
     public abstract class LanguageDeclarationTemplateBase
     {
@@ -108,11 +112,13 @@ namespace Mohammad.CodeGeneration.Generators
                 @"
 %accessmodifier% %type% %name% { get; set; }",
                 @"%accessmodifier% %type% %name%",
-                null) { }
+                null)
+        {
+        }
     }
 
     public static class CodeSnippetWriter
     {
-        public static string Write(this Class @class, string template) { throw new NotImplementedException(); }
+        public static string Write(this Class @class, string template) => throw new NotImplementedException();
     }
 }

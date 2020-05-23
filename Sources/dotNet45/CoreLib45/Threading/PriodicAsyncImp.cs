@@ -15,7 +15,7 @@ namespace Mohammad.Threading
     public class PriodicAsyncImp : PriodicAsync
     {
         private readonly IEnumerable<object> _Args;
-        private readonly Delegate            _MethodInfo;
+        private readonly Delegate _MethodInfo;
 
         internal PriodicAsyncImp(Delegate method, TimeSpan interval, long maxCount)
             : base(interval, maxCount) => this._MethodInfo = method;
@@ -27,7 +27,7 @@ namespace Mohammad.Threading
             : base(interval)
         {
             this._MethodInfo = method;
-            this._Args       = args;
+            this._Args = args;
         }
 
         protected override void Execute()

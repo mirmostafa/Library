@@ -7,20 +7,42 @@ namespace Library45.Win.Dialogs
 {
     public sealed class MsgBoxEx : InternalMessageBoxEx
     {
-        private MsgBoxEx() { }
+        private MsgBoxEx()
+        {
+        }
 
-        public static TaskDialog GetTaskDialog(string instructionText = null, string text = null, string caption = null,
-            TaskDialogStandardIcon icon = TaskDialogStandardIcon.None, TaskDialogStandardButtons buttons = TaskDialogStandardButtons.None,
-            string detailsExpandedLabel = null, string detailsExpandedText = null, bool cancelable = true, string detailsCollapsedLabel = null,
-            bool detailsExpanded = false, bool? footerCheckBoxChecked = null, string footerCheckBoxText = null,
-            TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None, string footerText = null, bool hyperlinksEnabled = true,
+        public static TaskDialog GetTaskDialog(string instructionText = null,
+            string text = null,
+            string caption = null,
+            TaskDialogStandardIcon icon = TaskDialogStandardIcon.None,
+            TaskDialogStandardButtons buttons = TaskDialogStandardButtons.None,
+            string detailsExpandedLabel = null,
+            string detailsExpandedText = null,
+            bool cancelable = true,
+            string detailsCollapsedLabel = null,
+            bool detailsExpanded = false,
+            bool? footerCheckBoxChecked = null,
+            string footerCheckBoxText = null,
+            TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
+            string footerText = null,
+            bool hyperlinksEnabled = true,
             TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
-            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None, int progressbarMinValue = 0, int progressbarMaxValue = 0,
-            int? progressbarCurrValue = null, Action<TaskDialog> action = null, Form form = null, TimeSpan timeout = default(TimeSpan), Action timeoutAction = null,
-            TaskDialogResult timeoutDialogResult = TaskDialogResult.Close, params TaskDialogControl[] controls)
+            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None,
+            int progressbarMinValue = 0,
+            int progressbarMaxValue = 0,
+            int? progressbarCurrValue = null,
+            Action<TaskDialog> action = null,
+            Form form = null,
+            TimeSpan timeout = default,
+            Action timeoutAction = null,
+            TaskDialogResult timeoutDialogResult = TaskDialogResult.Close,
+            params TaskDialogControl[] controls)
         {
             if (form == null)
+            {
                 form = Application.OpenForms[0];
+            }
+
             return GetTaskDialog(instructionText,
                 text,
                 caption,
@@ -49,15 +71,32 @@ namespace Library45.Win.Dialogs
                 controls);
         }
 
-        public static TaskDialogResult Show(string instructionText = null, string text = null, string caption = null,
-            TaskDialogStandardIcon icon = TaskDialogStandardIcon.None, TaskDialogStandardButtons buttons = TaskDialogStandardButtons.None,
-            string detailsExpandedLabel = null, string detailsExpandedText = null, bool cancelable = true, string detailsCollapsedLabel = null,
-            bool detailsExpanded = false, bool? footerCheckBoxChecked = null, string footerCheckBoxText = null,
-            TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None, string footerText = null, bool hyperlinksEnabled = true,
+        public static TaskDialogResult Show(string instructionText = null,
+            string text = null,
+            string caption = null,
+            TaskDialogStandardIcon icon = TaskDialogStandardIcon.None,
+            TaskDialogStandardButtons buttons = TaskDialogStandardButtons.None,
+            string detailsExpandedLabel = null,
+            string detailsExpandedText = null,
+            bool cancelable = true,
+            string detailsCollapsedLabel = null,
+            bool detailsExpanded = false,
+            bool? footerCheckBoxChecked = null,
+            string footerCheckBoxText = null,
+            TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
+            string footerText = null,
+            bool hyperlinksEnabled = true,
             TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
-            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None, int progressbarMinValue = 0, int progressbarMaxValue = 0,
-            int? progressbarCurrValue = null, Action<TaskDialog> action = null, Form form = null, TimeSpan timeout = default(TimeSpan), Action timeoutAction = null,
-            TaskDialogResult timeoutDialogResult = TaskDialogResult.Close, params TaskDialogControl[] controls)
+            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None,
+            int progressbarMinValue = 0,
+            int progressbarMaxValue = 0,
+            int? progressbarCurrValue = null,
+            Action<TaskDialog> action = null,
+            Form form = null,
+            TimeSpan timeout = default,
+            Action timeoutAction = null,
+            TaskDialogResult timeoutDialogResult = TaskDialogResult.Close,
+            params TaskDialogControl[] controls)
         {
             TaskDialogResult result;
             using (
@@ -87,17 +126,35 @@ namespace Library45.Win.Dialogs
                     timeoutAction,
                     timeoutDialogResult,
                     controls))
+            {
                 result = dialog.Show();
+            }
 
             return result;
         }
 
-        public static void Inform(string instructionText = null, string text = null, string caption = null, string detailsExpandedLabel = null,
-            string detailsExpandedText = null, bool cancelable = false, string detailsCollapsedLabel = null, bool detailsExpanded = false,
-            bool? footerCheckBoxChecked = false, string footerCheckBoxText = null, TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
-            string footerText = null, bool hyperlinksEnabled = true, TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
-            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None, int progressbarMinValue = 0, int progressbarMaxValue = 0,
-            int? progressbarCurrValue = null, Action<TaskDialog> action = null, Form form = null, TimeSpan timeout = default(TimeSpan), Action timeoutAction = null,
+        public static void Inform(string instructionText = null,
+            string text = null,
+            string caption = null,
+            string detailsExpandedLabel = null,
+            string detailsExpandedText = null,
+            bool cancelable = false,
+            string detailsCollapsedLabel = null,
+            bool detailsExpanded = false,
+            bool? footerCheckBoxChecked = false,
+            string footerCheckBoxText = null,
+            TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
+            string footerText = null,
+            bool hyperlinksEnabled = true,
+            TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
+            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None,
+            int progressbarMinValue = 0,
+            int progressbarMaxValue = 0,
+            int? progressbarCurrValue = null,
+            Action<TaskDialog> action = null,
+            Form form = null,
+            TimeSpan timeout = default,
+            Action timeoutAction = null,
             params TaskDialogControl[] controls)
         {
             Show(instructionText,
@@ -128,12 +185,28 @@ namespace Library45.Win.Dialogs
                 controls);
         }
 
-        public static void Alert(string instructionText = null, string text = null, string caption = null, string detailsExpandedLabel = null,
-            string detailsExpandedText = null, bool cancelable = false, string detailsCollapsedLabel = null, bool detailsExpanded = false,
-            bool? footerCheckBoxChecked = false, string footerCheckBoxText = null, TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
-            string footerText = null, bool hyperlinksEnabled = true, TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
-            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None, int progressbarMinValue = 0, int progressbarMaxValue = 0,
-            int? progressbarCurrValue = null, Action<TaskDialog> action = null, Form form = null, TimeSpan timeout = default(TimeSpan), Action timeoutAction = null,
+        public static void Alert(string instructionText = null,
+            string text = null,
+            string caption = null,
+            string detailsExpandedLabel = null,
+            string detailsExpandedText = null,
+            bool cancelable = false,
+            string detailsCollapsedLabel = null,
+            bool detailsExpanded = false,
+            bool? footerCheckBoxChecked = false,
+            string footerCheckBoxText = null,
+            TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
+            string footerText = null,
+            bool hyperlinksEnabled = true,
+            TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
+            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None,
+            int progressbarMinValue = 0,
+            int progressbarMaxValue = 0,
+            int? progressbarCurrValue = null,
+            Action<TaskDialog> action = null,
+            Form form = null,
+            TimeSpan timeout = default,
+            Action timeoutAction = null,
             params TaskDialogControl[] controls)
         {
             Show(instructionText,
@@ -164,15 +237,31 @@ namespace Library45.Win.Dialogs
                 controls);
         }
 
-        public static TaskDialogResult AskWithWarn(string instructionText = null, string text = null, string caption = null, string detailsExpandedLabel = null,
-            string detailsExpandedText = null, bool cancelable = false, string detailsCollapsedLabel = null, bool detailsExpanded = false,
-            bool? footerCheckBoxChecked = false, string footerCheckBoxText = null, TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
-            string footerText = null, bool hyperlinksEnabled = true, TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
-            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None, int progressbarMinValue = 0, int progressbarMaxValue = 0,
-            int? progressbarCurrValue = null, Action<TaskDialog> action = null, Form form = null, TimeSpan timeout = default(TimeSpan), Action timeoutAction = null,
-            TaskDialogResult timeoutDialogResult = TaskDialogResult.Close, params TaskDialogControl[] controls)
-        {
-            return Show(instructionText,
+        public static TaskDialogResult AskWithWarn(string instructionText = null,
+            string text = null,
+            string caption = null,
+            string detailsExpandedLabel = null,
+            string detailsExpandedText = null,
+            bool cancelable = false,
+            string detailsCollapsedLabel = null,
+            bool detailsExpanded = false,
+            bool? footerCheckBoxChecked = false,
+            string footerCheckBoxText = null,
+            TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
+            string footerText = null,
+            bool hyperlinksEnabled = true,
+            TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
+            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None,
+            int progressbarMinValue = 0,
+            int progressbarMaxValue = 0,
+            int? progressbarCurrValue = null,
+            Action<TaskDialog> action = null,
+            Form form = null,
+            TimeSpan timeout = default,
+            Action timeoutAction = null,
+            TaskDialogResult timeoutDialogResult = TaskDialogResult.Close,
+            params TaskDialogControl[] controls)
+            => Show(instructionText,
                 text,
                 caption,
                 TaskDialogStandardIcon.Warning,
@@ -198,17 +287,32 @@ namespace Library45.Win.Dialogs
                 timeoutAction,
                 timeoutDialogResult,
                 controls);
-        }
 
-        public static TaskDialogResult Ask(string instructionText = null, string text = null, string caption = null, string detailsExpandedLabel = null,
-            string detailsExpandedText = null, bool cancelable = false, string detailsCollapsedLabel = null, bool detailsExpanded = false,
-            bool? footerCheckBoxChecked = false, string footerCheckBoxText = null, TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
-            string footerText = null, bool hyperlinksEnabled = true, TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
-            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None, int progressbarMinValue = 0, int progressbarMaxValue = 0,
-            int? progressbarCurrValue = null, Action<TaskDialog> action = null, Form form = null, TimeSpan timeout = default(TimeSpan), Action timeoutAction = null,
-            TaskDialogResult timeoutDialogResult = TaskDialogResult.Close, params TaskDialogControl[] controls)
-        {
-            return Show(instructionText,
+        public static TaskDialogResult Ask(string instructionText = null,
+            string text = null,
+            string caption = null,
+            string detailsExpandedLabel = null,
+            string detailsExpandedText = null,
+            bool cancelable = false,
+            string detailsCollapsedLabel = null,
+            bool detailsExpanded = false,
+            bool? footerCheckBoxChecked = false,
+            string footerCheckBoxText = null,
+            TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
+            string footerText = null,
+            bool hyperlinksEnabled = true,
+            TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
+            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None,
+            int progressbarMinValue = 0,
+            int progressbarMaxValue = 0,
+            int? progressbarCurrValue = null,
+            Action<TaskDialog> action = null,
+            Form form = null,
+            TimeSpan timeout = default,
+            Action timeoutAction = null,
+            TaskDialogResult timeoutDialogResult = TaskDialogResult.Close,
+            params TaskDialogControl[] controls)
+            => Show(instructionText,
                 text,
                 caption,
                 TaskDialogStandardIcon.Information,
@@ -234,14 +338,29 @@ namespace Library45.Win.Dialogs
                 timeoutAction,
                 timeoutDialogResult,
                 controls);
-        }
 
-        public static void Error(string instructionText = null, string text = null, string caption = null, string detailsExpandedLabel = null,
-            string detailsExpandedText = null, bool cancelable = false, string detailsCollapsedLabel = null, bool detailsExpanded = false,
-            bool? footerCheckBoxChecked = false, string footerCheckBoxText = null, TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
-            string footerText = null, bool hyperlinksEnabled = true, TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
-            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None, int progressbarMinValue = 0, int progressbarMaxValue = 0,
-            int? progressbarCurrValue = null, Action<TaskDialog> action = null, Form form = null, TimeSpan timeout = default(TimeSpan), Action timeoutAction = null,
+        public static void Error(string instructionText = null,
+            string text = null,
+            string caption = null,
+            string detailsExpandedLabel = null,
+            string detailsExpandedText = null,
+            bool cancelable = false,
+            string detailsCollapsedLabel = null,
+            bool detailsExpanded = false,
+            bool? footerCheckBoxChecked = false,
+            string footerCheckBoxText = null,
+            TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
+            string footerText = null,
+            bool hyperlinksEnabled = true,
+            TaskDialogStartupLocation startupLocation = TaskDialogStartupLocation.CenterOwner,
+            TaskDialogProgressBarState progressBarState = TaskDialogProgressBarState.None,
+            int progressbarMinValue = 0,
+            int progressbarMaxValue = 0,
+            int? progressbarCurrValue = null,
+            Action<TaskDialog> action = null,
+            Form form = null,
+            TimeSpan timeout = default,
+            Action timeoutAction = null,
             params TaskDialogControl[] controls)
         {
             Show(instructionText,

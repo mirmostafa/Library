@@ -22,12 +22,12 @@ namespace Mohammad.Win.Internals
         /// <summary>
         ///     specify the default size for the control
         /// </summary>
-        protected override Size DefaultSize { get { return new Size(100, 60); } }
+        protected override Size DefaultSize => new Size(100, 60);
 
         /// <summary>
         ///     specify a default padding to give a border around the control
         /// </summary>
-        protected override Padding DefaultPadding { get { return new Padding(4, 0, 4, 2); } }
+        protected override Padding DefaultPadding => new Padding(4, 0, 4, 2);
 
         /// <summary>
         ///     The associated TabStrip
@@ -39,7 +39,7 @@ namespace Mohammad.Win.Internals
         /// </summary>
         public TabStripPage SelectedTabStripPage
         {
-            get { return this.selectedTabStripPage; }
+            get => this.selectedTabStripPage;
             set
             {
                 if (this.selectedTabStripPage != value)
@@ -47,25 +47,24 @@ namespace Mohammad.Win.Internals
                     this.selectedTabStripPage = value;
 
                     if (this.selectedTabStripPage != null)
+                    {
                         if (!this.Controls.Contains(value))
+                        {
                             this.Controls.Add(this.selectedTabStripPage);
+                        }
                         else
+                        {
                             this.selectedTabStripPage.BringToFront();
+                        }
+                    }
                 }
             }
         }
 
-        public TabPageSwitcher() { this.ResetBackColor(); }
-
-        /// <summary>
-        ///     Expose a Load event
-        /// </summary>
-        public event EventHandler Load;
-
-        /// <summary>
-        ///     Occurs when the selected tab has changed
-        /// </summary>
-        public event EventHandler SelectedTabStripPageChanged;
+        public TabPageSwitcher()
+        {
+            this.ResetBackColor();
+        }
 
         /// <summary>
         ///     Handle the OnHandleCreated event to fire the Load event.
@@ -75,7 +74,9 @@ namespace Mohammad.Win.Internals
         {
             base.OnHandleCreated(e);
             if (!this.RecreatingHandle)
+            {
                 this.OnLoad(EventArgs.Empty);
+            }
         }
 
         /// <summary>
@@ -85,14 +86,18 @@ namespace Mohammad.Win.Internals
         protected virtual void OnLoad(EventArgs e)
         {
             if (this.Load != null)
+            {
                 this.Load(this, e);
+            }
 
             if (!this.DesignMode)
+            {
                 if (this.TabStrip.Items.Count != 0)
                 {
-                    this.TabStrip.SelectedTab = (Tab) this.TabStrip.Items[0];
-                    ((Tab) this.TabStrip.Items[0]).b_active = true;
+                    this.TabStrip.SelectedTab = (Tab)this.TabStrip.Items[0];
+                    ((Tab)this.TabStrip.Items[0]).b_active = true;
                 }
+            }
         }
 
         /// <summary>
@@ -112,14 +117,29 @@ namespace Mohammad.Win.Internals
         protected virtual void OnSelectedTabStripPageChanged(EventArgs e)
         {
             if (this.SelectedTabStripPageChanged != null)
+            {
                 this.SelectedTabStripPageChanged(this, EventArgs.Empty);
+            }
         }
+
+        /// <summary>
+        ///     Expose a Load event
+        /// </summary>
+        public event EventHandler Load;
+
+        /// <summary>
+        ///     Occurs when the selected tab has changed
+        /// </summary>
+        public event EventHandler SelectedTabStripPageChanged;
 
         #region DesignerSerialization Friendliness
 
-        private bool ShouldSerializeBackColor() { return this.BackColor != Color.FromArgb(191, 219, 255); }
+        private bool ShouldSerializeBackColor() => this.BackColor != Color.FromArgb(191, 219, 255);
 
-        public override void ResetBackColor() { this.BackColor = Color.FromArgb(191, 219, 255); }
+        public override void ResetBackColor()
+        {
+            this.BackColor = Color.FromArgb(191, 219, 255);
+        }
 
         #endregion
     }

@@ -29,27 +29,35 @@ namespace Mohammad.Collections.ObjectModel
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             if (SynchronizationContext.Current == this._SynchronizationContext)
+            {
                 this.RaiseCollectionChanged(e);
+            }
             else
+            {
                 this._SynchronizationContext.Post(this.RaiseCollectionChanged, e);
-        }
-
-        private void RaiseCollectionChanged(object param)
-        {
-            base.OnCollectionChanged((NotifyCollectionChangedEventArgs) param);
+            }
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             if (SynchronizationContext.Current == this._SynchronizationContext)
+            {
                 this.RaisePropertyChanged(e);
+            }
             else
+            {
                 this._SynchronizationContext.Post(this.RaisePropertyChanged, e);
+            }
+        }
+
+        private void RaiseCollectionChanged(object param)
+        {
+            base.OnCollectionChanged((NotifyCollectionChangedEventArgs)param);
         }
 
         private void RaisePropertyChanged(object param)
         {
-            base.OnPropertyChanged((PropertyChangedEventArgs) param);
+            base.OnPropertyChanged((PropertyChangedEventArgs)param);
         }
     }
 }

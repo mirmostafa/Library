@@ -27,7 +27,10 @@ namespace Mohammad.BusinessModel.Classes
             internal set
             {
                 if (Equals(value, this._OriginalValue))
+                {
                     return;
+                }
+
                 this._OriginalValue = value;
                 this.OnPropertyChanged();
             }
@@ -39,11 +42,16 @@ namespace Mohammad.BusinessModel.Classes
             set
             {
                 if (Equals(value, this._Value))
+                {
                     return;
+                }
+
                 this._Value = value;
                 this.OnPropertyChanged();
             }
         }
+
+        public static implicit operator TColumnType(Column<TColumnType> column) => column.Value;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -51,31 +59,17 @@ namespace Mohammad.BusinessModel.Classes
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        public static implicit operator TColumnType(Column<TColumnType> column) => column.Value;
     }
 
     public sealed class ColumnStructure
     {
-        private bool   _AllowNull;
+        private bool _AllowNull;
         private string _ColumnName;
         private string _ForiegnKeyColumn;
         private string _ForiegnKeyTable;
-        private bool   _IsForiegnKey;
-        private bool   _IsIdentity;
-        private bool   _IsPrimaryKey;
-
-        public ColumnStructure(string columnName, bool allowNull, bool isIdentity, bool isPrimaryKey, bool isForiegnKey, string foriegnKeyTable,
-                               string foriegnKeyColumn)
-        {
-            this.AllowNull        = allowNull;
-            this.IsPrimaryKey     = isPrimaryKey;
-            this.IsForiegnKey     = isForiegnKey;
-            this.IsIdentity       = isIdentity;
-            this.ColumnName       = columnName;
-            this.ForiegnKeyColumn = foriegnKeyColumn;
-            this.ForiegnKeyTable  = foriegnKeyTable;
-        }
+        private bool _IsForiegnKey;
+        private bool _IsIdentity;
+        private bool _IsPrimaryKey;
 
         public bool AllowNull
         {
@@ -83,7 +77,10 @@ namespace Mohammad.BusinessModel.Classes
             private set
             {
                 if (value.Equals(this._AllowNull))
+                {
                     return;
+                }
+
                 this._AllowNull = value;
                 this.OnPropertyChanged();
             }
@@ -95,7 +92,10 @@ namespace Mohammad.BusinessModel.Classes
             private set
             {
                 if (value.Equals(this._IsPrimaryKey))
+                {
                     return;
+                }
+
                 this._IsPrimaryKey = value;
                 this.OnPropertyChanged();
             }
@@ -107,7 +107,10 @@ namespace Mohammad.BusinessModel.Classes
             private set
             {
                 if (value.Equals(this._IsForiegnKey))
+                {
                     return;
+                }
+
                 this._IsForiegnKey = value;
                 this.OnPropertyChanged();
             }
@@ -119,7 +122,10 @@ namespace Mohammad.BusinessModel.Classes
             private set
             {
                 if (value.Equals(this._IsIdentity))
+                {
                     return;
+                }
+
                 this._IsIdentity = value;
                 this.OnPropertyChanged();
             }
@@ -131,7 +137,10 @@ namespace Mohammad.BusinessModel.Classes
             private set
             {
                 if (value == this._ColumnName)
+                {
                     return;
+                }
+
                 this._ColumnName = value;
                 this.OnPropertyChanged();
             }
@@ -143,7 +152,10 @@ namespace Mohammad.BusinessModel.Classes
             private set
             {
                 if (value == this._ForiegnKeyColumn)
+                {
                     return;
+                }
+
                 this._ForiegnKeyColumn = value;
                 this.OnPropertyChanged();
             }
@@ -155,17 +167,37 @@ namespace Mohammad.BusinessModel.Classes
             private set
             {
                 if (value == this._ForiegnKeyTable)
+                {
                     return;
+                }
+
                 this._ForiegnKeyTable = value;
                 this.OnPropertyChanged();
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public ColumnStructure(string columnName,
+            bool allowNull,
+            bool isIdentity,
+            bool isPrimaryKey,
+            bool isForiegnKey,
+            string foriegnKeyTable,
+            string foriegnKeyColumn)
+        {
+            this.AllowNull = allowNull;
+            this.IsPrimaryKey = isPrimaryKey;
+            this.IsForiegnKey = isForiegnKey;
+            this.IsIdentity = isIdentity;
+            this.ColumnName = columnName;
+            this.ForiegnKeyColumn = foriegnKeyColumn;
+            this.ForiegnKeyTable = foriegnKeyTable;
+        }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

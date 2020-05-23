@@ -13,14 +13,17 @@ namespace Mohammad.Collections.Generic
 {
     public class SynchronizedCircularQueue<T>
     {
-        private static readonly Queue<T> _Queue      = new Queue<T>();
-        private static readonly object   _LockObject = new object();
-        private readonly        int      _TotalItems;
+        private static readonly Queue<T> _Queue = new Queue<T>();
+        private static readonly object _LockObject = new object();
+        private readonly int _TotalItems;
 
         public SynchronizedCircularQueue(int maxCount = int.MaxValue)
         {
             if (maxCount <= 0)
+            {
                 throw new ArgumentException("maxCount can not be less than or equal to zero");
+            }
+
             this._TotalItems = maxCount;
         }
 
@@ -43,7 +46,10 @@ namespace Mohammad.Collections.Generic
             lock (_LockObject)
             {
                 if (_Queue.Count >= this._TotalItems)
+                {
                     _Queue.Dequeue();
+                }
+
                 _Queue.Enqueue(input);
             }
         }

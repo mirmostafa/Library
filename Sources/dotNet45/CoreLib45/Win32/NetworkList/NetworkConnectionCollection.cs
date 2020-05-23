@@ -29,7 +29,9 @@ namespace Mohammad.Win32.NetworkList
         public IEnumerator<NetworkConnection> GetEnumerator()
         {
             foreach (INetworkConnection networkConnection in this.networkConnectionEnumerable)
+            {
                 yield return new NetworkConnection(networkConnection);
+            }
         }
 
         /// <summary>
@@ -41,7 +43,9 @@ namespace Mohammad.Win32.NetworkList
         IEnumerator IEnumerable.GetEnumerator()
         {
             foreach (INetworkConnection networkConnection in this.networkConnectionEnumerable)
+            {
                 yield return new NetworkConnection(networkConnection);
+            }
         }
     }
 }

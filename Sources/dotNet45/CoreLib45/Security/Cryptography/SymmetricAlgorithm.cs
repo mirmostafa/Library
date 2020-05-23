@@ -87,13 +87,18 @@ namespace Mohammad.Security.Cryptography
         private string DoSymmetric(string input, bool isEncrypt)
         {
             if (this.PublicKey == null)
+            {
                 throw new CryptographicException("Key is null.");
+            }
 
             byte[] toEncryptArray;
 
             if (isEncrypt)
+            {
                 toEncryptArray = Encoding.UTF8.GetBytes(input);
+            }
             else
+            {
                 try
                 {
                     toEncryptArray = Convert.FromBase64String(input);
@@ -102,22 +107,26 @@ namespace Mohammad.Security.Cryptography
                 {
                     throw new CryptographicException("Original data has been changed.");
                 }
+            }
 
-            var hashmd5  = new MD5CryptoServiceProvider();
+            var hashmd5 = new MD5CryptoServiceProvider();
             var keyArray = hashmd5.ComputeHash(this.PublicKey.ToArray());
             hashmd5.Clear();
             var tdes = new TripleDESCryptoServiceProvider
             {
-                Key     = keyArray,
-                Mode    = CipherMode.ECB,
+                Key = keyArray,
+                Mode = CipherMode.ECB,
                 Padding = PaddingMode.PKCS7
             };
 
             byte[] resultArray;
 
             if (isEncrypt)
+            {
                 resultArray = tdes.CreateEncryptor().TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
+            }
             else
+            {
                 try
                 {
                     resultArray = tdes.CreateDecryptor().TransformFinalBlock(toEncryptArray, 0, toEncryptArray.Length);
@@ -126,6 +135,7 @@ namespace Mohammad.Security.Cryptography
                 {
                     throw new CryptographicException("Original data has been changed.", ex);
                 }
+            }
 
             tdes.Clear();
 

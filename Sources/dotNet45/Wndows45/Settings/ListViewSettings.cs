@@ -14,10 +14,13 @@ namespace Mohammad.Win.Settings
             get
             {
                 if (this._ColumnsSettings == null)
+                {
                     this._ColumnsSettings = new Collection<ListViewColumnSettings>();
+                }
+
                 return this._ColumnsSettings;
             }
-            set { this._ColumnsSettings = value; }
+            set => this._ColumnsSettings = value;
         }
 
         public View View { get; set; }
@@ -28,13 +31,15 @@ namespace Mohammad.Win.Settings
             this.View = listView.View;
             this.ColumnsSettings.Clear();
             foreach (ColumnHeader column in listView.Columns)
+            {
                 this.ColumnsSettings.Add(new ListViewColumnSettings
-                                         {
-                                             ColumnIndex = column.Index,
-                                             DisplayIndex = column.DisplayIndex,
-                                             Text = column.Text,
-                                             Width = column.Width
-                                         });
+                {
+                    ColumnIndex = column.Index,
+                    DisplayIndex = column.DisplayIndex,
+                    Text = column.Text,
+                    Width = column.Width
+                });
+            }
         }
 
         public void Load(ListView listView)
@@ -43,7 +48,10 @@ namespace Mohammad.Win.Settings
             {
                 var columnSettings = this.ColumnsSettings.Where(cs => cs.ColumnIndex.Equals(column.Index)).FirstOrDefault();
                 if (columnSettings == null)
+                {
                     continue;
+                }
+
                 column.DisplayIndex = columnSettings.DisplayIndex;
                 column.Text = columnSettings.Text;
                 column.Width = columnSettings.Width;

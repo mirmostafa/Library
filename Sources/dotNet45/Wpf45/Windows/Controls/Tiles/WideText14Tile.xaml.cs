@@ -14,7 +14,7 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
 
         public string Body
         {
-            get { return (string) this.GetValue(BodyProperty); }
+            get => (string)this.GetValue(BodyProperty);
             set
             {
                 this.SetValue(BodyProperty, value);
@@ -22,15 +22,31 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
             }
         }
 
-        public string Header { get { return this.textBlock1.Text; } set { this.textBlock1.Text = value; } }
-        public string Badge { get { return this.textBlockBadge.Text; } set { this.textBlockBadge.Text = value; } }
-        public WideText14Tile() { this.InitializeComponent(); }
+        public string Header
+        {
+            get => this.textBlock1.Text;
+            set => this.textBlock1.Text = value;
+        }
+
+        public string Badge
+        {
+            get => this.textBlockBadge.Text;
+            set => this.textBlockBadge.Text = value;
+        }
+
+        public WideText14Tile()
+        {
+            this.InitializeComponent();
+        }
 
         protected override void HookCommand()
         {
             var libCommand = this.Command;
             if (libCommand == null)
+            {
                 return;
+            }
+
             var header = libCommand.Header;
             if (header != null)
             {
@@ -41,6 +57,7 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
                 var s = this.Command.Content.ToString();
                 this.Header = s.StartsWith("_") ? s.Substring(1) : s;
             }
+
             this.Body = libCommand.Body;
         }
     }

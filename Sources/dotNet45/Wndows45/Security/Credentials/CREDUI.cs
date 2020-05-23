@@ -23,8 +23,16 @@ namespace Mohammad.Win.Security.Credentials
         ///     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/secauthn/security/creduipromptforcredentials.asp
         /// </summary>
         [DllImport("credui", EntryPoint = "CredUIPromptForCredentialsW", CharSet = CharSet.Unicode)]
-        public static extern ReturnCodes PromptForCredentials(ref INFO creditUR, string targetName, IntPtr reserved1, int iError, StringBuilder userName,
-            int maxUserName, StringBuilder password, int maxPassword, ref int iSave, FLAGS flags);
+        public static extern ReturnCodes PromptForCredentials(ref INFO creditUR,
+            string targetName,
+            IntPtr reserved1,
+            int iError,
+            StringBuilder userName,
+            int maxUserName,
+            StringBuilder password,
+            int maxPassword,
+            ref int iSave,
+            FLAGS flags);
 
         /// <summary>
         ///     http://www.pinvoke.net/default.aspx/credui.CredUIConfirmCredentials
@@ -32,27 +40,6 @@ namespace Mohammad.Win.Security.Credentials
         /// </summary>
         [DllImport("credui.dll", EntryPoint = "CredUIConfirmCredentialsW", CharSet = CharSet.Unicode)]
         public static extern ReturnCodes ConfirmCredentials(string targetName, bool confirm);
-
-        #region Nested type: INFO
-
-        /// <summary>
-        ///     http://www.pinvoke.net/default.aspx/Structures.CREDUI_INFO
-        ///     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/secauthn/security/credui_info.asp
-        /// </summary>
-        public struct INFO
-        {
-            public int cbSize;
-            public IntPtr hbmBanner;
-            public IntPtr hwndParent;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pszCaptionText;
-
-            [MarshalAs(UnmanagedType.LPWStr)]
-            public string pszMessageText;
-        }
-
-        #endregion
 
         #region FLAGS enum
 
@@ -100,6 +87,27 @@ namespace Mohammad.Win.Security.Credentials
             ERROR_CANCELLED = 1223,
             ERROR_NO_SUCH_LOGON_SESSION = 1312,
             ERROR_INVALID_ACCOUNT_NAME = 1315
+        }
+
+        #endregion
+
+        #region Nested type: INFO
+
+        /// <summary>
+        ///     http://www.pinvoke.net/default.aspx/Structures.CREDUI_INFO
+        ///     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/secauthn/security/credui_info.asp
+        /// </summary>
+        public struct INFO
+        {
+            public int cbSize;
+            public IntPtr hbmBanner;
+            public IntPtr hwndParent;
+
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pszCaptionText;
+
+            [MarshalAs(UnmanagedType.LPWStr)]
+            public string pszMessageText;
         }
 
         #endregion

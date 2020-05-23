@@ -14,6 +14,12 @@ namespace Mohammad.Wpf.Windows.Controls
     public class RelativeAnimatingContentControl : ContentControl
     {
         /// <summary>
+        ///     A simple Epsilon-style value used for trying to determine if a double
+        ///     has an identifying value.
+        /// </summary>
+        private const double SIMPLE_DOUBLE_COMPARISON_EPSILON = 0.000009;
+
+        /// <summary>
         ///     The last known height of the control.
         /// </summary>
         private double _KnownHeight;
@@ -30,16 +36,10 @@ namespace Mohammad.Wpf.Windows.Controls
         private List<AnimationValueAdapter> _SpecialAnimations;
 
         /// <summary>
-        ///     A simple Epsilon-style value used for trying to determine if a double
-        ///     has an identifying value.
-        /// </summary>
-        private const double SIMPLE_DOUBLE_COMPARISON_EPSILON = 0.000009;
-
-        /// <summary>
         ///     Initializes a new instance of the RelativeAnimatingContentControl
         ///     type.
         /// </summary>
-        public RelativeAnimatingContentControl() { this.SizeChanged += this.OnSizeChanged; }
+        public RelativeAnimatingContentControl() => this.SizeChanged += this.OnSizeChanged;
 
         /// <summary>
         ///     Handles the size changed event.
@@ -77,7 +77,10 @@ namespace Mohammad.Wpf.Windows.Controls
                     foreach (VisualStateGroup group in VisualStateManager.GetVisualStateGroups(this))
                     {
                         if (group == null)
+                        {
                             continue;
+                        }
+
                         foreach (VisualState state in group.States)
                         {
                             var sb = state?.Storyboard;
@@ -86,15 +89,21 @@ namespace Mohammad.Wpf.Windows.Controls
                                 // Examine all children of the storyboards,
                                 // looking for either type of double
                                 // animation.
+                            {
                                 foreach (var timeline in sb.Children)
                                 {
                                     var da = timeline as DoubleAnimation;
                                     var dakeys = timeline as DoubleAnimationUsingKeyFrames;
                                     if (da != null)
+                                    {
                                         this.ProcessDoubleAnimation(da);
+                                    }
                                     else if (dakeys != null)
+                                    {
                                         this.ProcessDoubleAnimationWithKeys(dakeys);
+                                    }
                                 }
+                            }
                         }
                     }
                 }
@@ -106,9 +115,14 @@ namespace Mohammad.Wpf.Windows.Controls
                 foreach (VisualStateGroup group in VisualStateManager.GetVisualStateGroups(this))
                 {
                     if (group == null)
+                    {
                         continue;
+                    }
+
                     foreach (VisualState state in group.States)
+                    {
                         state?.Storyboard?.Begin(this);
+                    }
                 }
             }
         }
@@ -120,7 +134,9 @@ namespace Mohammad.Wpf.Windows.Controls
         private void UpdateKnownAnimations()
         {
             foreach (var adapter in this._SpecialAnimations)
+            {
                 adapter.UpdateWithNewDimension(this._KnownWidth, this._KnownHeight);
+            }
         }
 
         /// <summary>
@@ -135,7 +151,9 @@ namespace Mohammad.Wpf.Windows.Controls
             {
                 var d = DoubleAnimationFrameAdapter.GetDimensionFromIdentifyingValue(frame.Value);
                 if (d.HasValue)
+                {
                     this._SpecialAnimations.Add(new DoubleAnimationFrameAdapter(d.Value, frame));
+                }
             }
         }
 
@@ -150,7 +168,9 @@ namespace Mohammad.Wpf.Windows.Controls
             {
                 var d = DoubleAnimationToAdapter.GetDimensionFromIdentifyingValue(da.To.Value);
                 if (d.HasValue)
+                {
                     this._SpecialAnimations.Add(new DoubleAnimationToAdapter(d.Value, da));
+                }
             }
 
             // Look for a special value in the From property.
@@ -158,7 +178,9 @@ namespace Mohammad.Wpf.Windows.Controls
             {
                 var d = DoubleAnimationFromAdapter.GetDimensionFromIdentifyingValue(da.To.Value);
                 if (d.HasValue)
+                {
                     this._SpecialAnimations.Add(new DoubleAnimationFromAdapter(d.Value, da));
+                }
             }
         }
 
@@ -185,7 +207,7 @@ namespace Mohammad.Wpf.Windows.Controls
             ///     Initializes a new instance of the AnimationValueAdapter type.
             /// </summary>
             /// <param name="dimension">The dimension of interest for updates.</param>
-            public AnimationValueAdapter(DoubleAnimationDimension dimension) { this.Dimension = dimension; }
+            public AnimationValueAdapter(DoubleAnimationDimension dimension) => this.Dimension = dimension;
 
             /// <summary>
             ///     Updates the original instance based on new dimension information
@@ -225,19 +247,24 @@ namespace Mohammad.Wpf.Windows.Controls
             /// <param name="dimension">The dimension of interest.</param>
             /// <param name="frame">The instance of the animation type.</param>
             public DoubleAnimationFrameAdapter(DoubleAnimationDimension dimension, DoubleKeyFrame frame)
-                : base(dimension, frame) { }
+                : base(dimension, frame)
+            {
+            }
 
             /// <summary>
             ///     Gets the value of the underlying property of interest.
             /// </summary>
             /// <returns>Returns the value of the property.</returns>
-            protected override double GetValue() { return this.Instance.Value; }
+            protected override double GetValue() => this.Instance.Value;
 
             /// <summary>
             ///     Sets the value for the underlying property of interest.
             /// </summary>
             /// <param name="newValue">The new value for the property.</param>
-            protected override void SetValue(double newValue) { this.Instance.Value = newValue; }
+            protected override void SetValue(double newValue)
+            {
+                this.Instance.Value = newValue;
+            }
         }
 
         /// <summary>
@@ -252,19 +279,24 @@ namespace Mohammad.Wpf.Windows.Controls
             /// <param name="dimension">The dimension of interest.</param>
             /// <param name="instance">The instance of the animation type.</param>
             public DoubleAnimationFromAdapter(DoubleAnimationDimension dimension, DoubleAnimation instance)
-                : base(dimension, instance) { }
+                : base(dimension, instance)
+            {
+            }
 
             /// <summary>
             ///     Gets the value of the underlying property of interest.
             /// </summary>
             /// <returns>Returns the value of the property.</returns>
-            protected override double GetValue() { return (double) this.Instance.From; }
+            protected override double GetValue() => (double)this.Instance.From;
 
             /// <summary>
             ///     Sets the value for the underlying property of interest.
             /// </summary>
             /// <param name="newValue">The new value for the property.</param>
-            protected override void SetValue(double newValue) { this.Instance.From = newValue; }
+            protected override void SetValue(double newValue)
+            {
+                this.Instance.From = newValue;
+            }
         }
 
         /// <summary>
@@ -278,19 +310,24 @@ namespace Mohammad.Wpf.Windows.Controls
             /// <param name="dimension">The dimension of interest.</param>
             /// <param name="instance">The instance of the animation type.</param>
             public DoubleAnimationToAdapter(DoubleAnimationDimension dimension, DoubleAnimation instance)
-                : base(dimension, instance) { }
+                : base(dimension, instance)
+            {
+            }
 
             /// <summary>
             ///     Gets the value of the underlying property of interest.
             /// </summary>
             /// <returns>Returns the value of the property.</returns>
-            protected override double GetValue() { return (double) this.Instance.To; }
+            protected override double GetValue() => (double)this.Instance.To;
 
             /// <summary>
             ///     Sets the value for the underlying property of interest.
             /// </summary>
             /// <param name="newValue">The new value for the property.</param>
-            protected override void SetValue(double newValue) { this.Instance.To = newValue; }
+            protected override void SetValue(double newValue)
+            {
+                this.Instance.To = newValue;
+            }
         }
 
         private abstract class GeneralAnimationValueAdapter<T> : AnimationValueAdapter
@@ -329,18 +366,6 @@ namespace Mohammad.Wpf.Windows.Controls
             }
 
             /// <summary>
-            ///     Gets the value of the underlying property of interest.
-            /// </summary>
-            /// <returns>Returns the value of the property.</returns>
-            protected abstract double GetValue();
-
-            /// <summary>
-            ///     Sets the value for the underlying property of interest.
-            /// </summary>
-            /// <param name="newValue">The new value for the property.</param>
-            protected abstract void SetValue(double newValue);
-
-            /// <summary>
             ///     Approximately removes the identifying value from a value.
             /// </summary>
             /// <param name="number">The initial number.</param>
@@ -348,7 +373,7 @@ namespace Mohammad.Wpf.Windows.Controls
             ///     Returns a double with an adjustment for the identifying
             ///     value portion of the number.
             /// </returns>
-            public double StripIdentifyingValueOff(double number) { return this.Dimension == DoubleAnimationDimension.Width ? number - .1 : number - .2; }
+            public double StripIdentifyingValueOff(double number) => this.Dimension == DoubleAnimationDimension.Width ? number - .1 : number - .2;
 
             /// <summary>
             ///     Retrieves the dimension, if any, from the number. If the number
@@ -365,9 +390,15 @@ namespace Mohammad.Wpf.Windows.Controls
                 var remainder = number - floor;
 
                 if (remainder >= .1 - SIMPLE_DOUBLE_COMPARISON_EPSILON && remainder <= .1 + SIMPLE_DOUBLE_COMPARISON_EPSILON)
+                {
                     return DoubleAnimationDimension.Width;
+                }
+
                 if (remainder >= .2 - SIMPLE_DOUBLE_COMPARISON_EPSILON && remainder <= .2 + SIMPLE_DOUBLE_COMPARISON_EPSILON)
+                {
                     return DoubleAnimationDimension.Height;
+                }
+
                 return null;
             }
 
@@ -384,13 +415,28 @@ namespace Mohammad.Wpf.Windows.Controls
             }
 
             /// <summary>
+            ///     Gets the value of the underlying property of interest.
+            /// </summary>
+            /// <returns>Returns the value of the property.</returns>
+            protected abstract double GetValue();
+
+            /// <summary>
+            ///     Sets the value for the underlying property of interest.
+            /// </summary>
+            /// <param name="newValue">The new value for the property.</param>
+            protected abstract void SetValue(double newValue);
+
+            /// <summary>
             ///     Updates the value of the property.
             /// </summary>
             /// <param name="sizeToUse">
             ///     The size of interest to use with a ratio
             ///     computation.
             /// </param>
-            private void UpdateValue(double sizeToUse) { this.SetValue(sizeToUse * this._Ratio); }
+            private void UpdateValue(double sizeToUse)
+            {
+                this.SetValue(sizeToUse * this._Ratio);
+            }
         }
 
         #endregion

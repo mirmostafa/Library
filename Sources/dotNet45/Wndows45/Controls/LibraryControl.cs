@@ -4,6 +4,9 @@ namespace Mohammad.Win.Controls
 {
     public partial class LibraryControl : UserControl
     {
-        public LibraryControl() { this.InitializeComponent(); }
+        public LibraryControl()
+        {
+            this.InitializeComponent();
+        }
     }
 }

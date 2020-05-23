@@ -16,19 +16,7 @@ namespace Mohammad.Primitives
     public class AppCache
     {
         private static ObjectCache _DefaultCacheContainer;
-        private        ObjectCache _CacheContainer;
-
-        public AppCache()
-        {
-        }
-
-        public AppCache(ObjectCache cacheContainer)
-            : this() => this._CacheContainer = cacheContainer;
-
-        public AppCache(string name)
-            : this(new MemoryCache(name))
-        {
-        }
+        private ObjectCache _CacheContainer;
 
         public ObjectCache CacheContainer => this._CacheContainer ?? (this._CacheContainer = new MemoryCache(Guid.NewGuid().ToString()));
 
@@ -43,13 +31,16 @@ namespace Mohammad.Primitives
             set => InnerSetToCache(this.CacheContainer, key, value, expirationDate);
         }
 
-        private static void InnerSetToCache(ObjectCache cacheContainer, string key, object value, DateTime? expirationDate)
+        public AppCache()
         {
-            cacheContainer.Set(new CacheItem(key, value),
-                               new CacheItemPolicy
-                               {
-                                   AbsoluteExpiration = expirationDate ?? DateTime.MaxValue
-                               });
+        }
+
+        public AppCache(ObjectCache cacheContainer)
+            : this() => this._CacheContainer = cacheContainer;
+
+        public AppCache(string name)
+            : this(new MemoryCache(name))
+        {
         }
 
         public static void InitializeCacheContainer(ObjectCache defaultCacheContainer)
@@ -71,7 +62,10 @@ namespace Mohammad.Primitives
         {
             var result = Get(key);
             if (result == null)
+            {
                 return default;
+            }
+
             return result.To<TValue>();
         }
 
@@ -81,12 +75,24 @@ namespace Mohammad.Primitives
             {
                 var result = Get<TValue>(key);
                 if (!Equals(nullValue, result))
+                {
                     return result;
+                }
+
                 Set(key, creator());
                 return Get(key).To<TValue>();
             });
         }
 
         public static object Get(string key) => DefaultCacheContainer[key];
+
+        private static void InnerSetToCache(ObjectCache cacheContainer, string key, object value, DateTime? expirationDate)
+        {
+            cacheContainer.Set(new CacheItem(key, value),
+                new CacheItemPolicy
+                {
+                    AbsoluteExpiration = expirationDate ?? DateTime.MaxValue
+                });
+        }
     }
 }

@@ -16,11 +16,14 @@ namespace Mohammad.Win.Controls
 
         public string ConnectionString
         {
-            get { return this._ConnectionString; }
+            get => this._ConnectionString;
             set
             {
                 if (value == this._ConnectionString)
+                {
                     return;
+                }
+
                 this._ConnectionString = value;
                 this.textBox.Text = value;
                 this.ReformatConnectionStringTextBox();
@@ -30,29 +33,44 @@ namespace Mohammad.Win.Controls
 
         public string DialogPrompt { get; set; }
         public string DialogText { get; set; }
-        public ConnectionStringBox() { this.InitializeComponent(); }
-        public event EventHandler ConnectionStringChanged;
-        protected virtual void OnConnectionStringChanged(EventArgs e) { this.ConnectionStringChanged.Raise(this, e); }
+
+        public ConnectionStringBox()
+        {
+            this.InitializeComponent();
+        }
+
+        protected virtual void OnConnectionStringChanged(EventArgs e)
+        {
+            this.ConnectionStringChanged.Raise(this, e);
+        }
 
         private void button_Click(object sender, EventArgs e)
         {
             var connectionString = this.ConnectionString;
             if (SqlConnectionStringBox.Show(ref connectionString, this.DialogPrompt, this.DialogText) == DialogResult.OK)
+            {
                 this.ConnectionString = connectionString;
+            }
         }
 
         private void ReformatConnectionStringTextBox()
         {
             var scsb = new SqlConnectionStringBuilder(this.ConnectionString);
             if (!scsb.Password.IsNullOrEmpty())
+            {
                 scsb.Password = "*****";
+            }
+
             this.textBox.Text = scsb.ConnectionString;
         }
 
         private void ConnectionStringBox_Validated(object sender, EventArgs e)
         {
             if (this._InternallyChanging)
+            {
                 return;
+            }
+
             this._InternallyChanging = true;
             try
             {
@@ -67,7 +85,10 @@ namespace Mohammad.Win.Controls
         private void textBox_TextChanged(object sender, EventArgs e)
         {
             if (this._InternallyChanging)
+            {
                 return;
+            }
+
             this._InternallyChanging = true;
             try
             {
@@ -79,5 +100,7 @@ namespace Mohammad.Win.Controls
                 this._InternallyChanging = false;
             }
         }
+
+        public event EventHandler ConnectionStringChanged;
     }
 }

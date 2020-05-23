@@ -18,6 +18,18 @@ namespace Mohammad.Win32.Interop.NetworkList
     [Guid("DCB00002-570F-4A9B-8D69-199FDBA5723B")]
     internal interface INetwork
     {
+        bool IsConnectedToInternet
+        {
+            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
+        bool IsConnected
+        {
+            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            get;
+        }
+
         [return: MarshalAs(UnmanagedType.BStr)]
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         string GetName();
@@ -43,20 +55,10 @@ namespace Mohammad.Win32.Interop.NetworkList
         IEnumerable GetNetworkConnections();
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-        void GetTimeCreatedAndConnected(out uint pdwLowDateTimeCreated, out uint pdwHighDateTimeCreated, out uint pdwLowDateTimeConnected,
-                                        out uint pdwHighDateTimeConnected);
-
-        bool IsConnectedToInternet
-        {
-            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-            get;
-        }
-
-        bool IsConnected
-        {
-            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-            get;
-        }
+        void GetTimeCreatedAndConnected(out uint pdwLowDateTimeCreated,
+            out uint pdwHighDateTimeCreated,
+            out uint pdwLowDateTimeConnected,
+            out uint pdwHighDateTimeConnected);
 
         [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
         Connectivity GetConnectivity();

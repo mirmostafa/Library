@@ -24,9 +24,15 @@ namespace Mohammad.Win32.Natives
         /// </summary>
         [DllImport("Netapi32", CharSet = CharSet.Auto, SetLastError = true)]
         [SuppressUnmanagedCodeSecurity]
-        public static extern uint NetServerEnum(IntPtr   serverName, uint level, ref IntPtr siPtr, uint prefmaxlen, ref uint entriesread,
-                                                ref uint totalentries,
-                                                uint     servertype, [MarshalAs(UnmanagedType.LPWStr)] string domain, IntPtr resumeHandle);
+        public static extern uint NetServerEnum(IntPtr serverName,
+            uint level,
+            ref IntPtr siPtr,
+            uint prefmaxlen,
+            ref uint entriesread,
+            ref uint totalentries,
+            uint servertype,
+            [MarshalAs(UnmanagedType.LPWStr)] string domain,
+            IntPtr resumeHandle);
 
         /// <summary>
         ///     Netapi32.dll : The NetApiBufferFree function frees

@@ -17,19 +17,19 @@ namespace Mohammad.Globalization.DataTypes
     [StructLayout(LayoutKind.Sequential)]
     internal struct PersianDateTimeData
     {
-        internal int Year;
-        internal int Month;
         internal int Day;
-        internal int Hour;
-        internal int Minute;
-        internal int Second;
 
         internal bool HasDate;
         internal bool HasTime;
+        internal int Hour;
+        internal int Minute;
+        internal int Month;
+        internal int Second;
+        internal int Year;
 
         internal void Init()
         {
-            this.Year    = this.Month = this.Day = this.Hour = this.Minute = this.Second = -1;
+            this.Year = this.Month = this.Day = this.Hour = this.Minute = this.Second = -1;
             this.HasDate = true;
             this.HasTime = true;
         }
@@ -37,64 +37,83 @@ namespace Mohammad.Globalization.DataTypes
 
     public enum PersianMonth
     {
-        [LocalizedDescription("fa-IR", "ÝÑÑæÏíä")] [LocalizedDescription("en-US", "Farvardin")]
+        [LocalizedDescription("fa-IR", "ÝÑÑæÏíä")]
+        [LocalizedDescription("en-US", "Farvardin")]
         Farvardin,
 
-        [LocalizedDescription("fa-IR", "ÇÑÏíÈåÔÊ")] [LocalizedDescription("en-US", "Ordibehesht")]
+        [LocalizedDescription("fa-IR", "ÇÑÏíÈåÔÊ")]
+        [LocalizedDescription("en-US", "Ordibehesht")]
         Ordibehesht,
 
-        [LocalizedDescription("fa-IR", "ÎÑÏÇÏ")] [LocalizedDescription("en-US", "Khordad")]
+        [LocalizedDescription("fa-IR", "ÎÑÏÇÏ")]
+        [LocalizedDescription("en-US", "Khordad")]
         Khordad,
 
-        [LocalizedDescription("fa-IR", "ÊíÑ")] [LocalizedDescription("en-US", "Tir")]
+        [LocalizedDescription("fa-IR", "ÊíÑ")]
+        [LocalizedDescription("en-US", "Tir")]
         Tir,
 
-        [LocalizedDescription("fa-IR", "ãÑÏÇÏ")] [LocalizedDescription("en-US", "Mordad")]
+        [LocalizedDescription("fa-IR", "ãÑÏÇÏ")]
+        [LocalizedDescription("en-US", "Mordad")]
         Mordad,
 
-        [LocalizedDescription("fa-IR", "ÔåÑíæÑ")] [LocalizedDescription("en-US", "Shahrivar")]
+        [LocalizedDescription("fa-IR", "ÔåÑíæÑ")]
+        [LocalizedDescription("en-US", "Shahrivar")]
         Sharivar,
 
-        [LocalizedDescription("fa-IR", "ãåÑ")] [LocalizedDescription("en-US", "Mehr")]
+        [LocalizedDescription("fa-IR", "ãåÑ")]
+        [LocalizedDescription("en-US", "Mehr")]
         Mehr,
 
-        [LocalizedDescription("fa-IR", "ÂÈÇä")] [LocalizedDescription("en-US", "Aban")]
+        [LocalizedDescription("fa-IR", "ÂÈÇä")]
+        [LocalizedDescription("en-US", "Aban")]
         Aban,
 
-        [LocalizedDescription("fa-IR", "ÂÐÑ")] [LocalizedDescription("en-US", "Azar")]
+        [LocalizedDescription("fa-IR", "ÂÐÑ")]
+        [LocalizedDescription("en-US", "Azar")]
         Azar,
 
-        [LocalizedDescription("fa-IR", "Ïí")] [LocalizedDescription("en-US", "Dey")]
+        [LocalizedDescription("fa-IR", "Ïí")]
+        [LocalizedDescription("en-US", "Dey")]
         Dey,
 
-        [LocalizedDescription("fa-IR", "Èåãä")] [LocalizedDescription("en-US", "Bahman")]
+        [LocalizedDescription("fa-IR", "Èåãä")]
+        [LocalizedDescription("en-US", "Bahman")]
         Bahman,
 
-        [LocalizedDescription("fa-IR", "ÇÓÝäÏ")] [LocalizedDescription("en-US", "Esfand")]
+        [LocalizedDescription("fa-IR", "ÇÓÝäÏ")]
+        [LocalizedDescription("en-US", "Esfand")]
         Esfand
     }
 
     public enum PersianDayOfWeek
     {
-        [LocalizedDescription("fa-IR", "í˜ÔäÈå")] [LocalizedDescription("en-US", "YekShanbeh")]
+        [LocalizedDescription("fa-IR", "í˜ÔäÈå")]
+        [LocalizedDescription("en-US", "YekShanbeh")]
         YekShanbeh,
 
-        [LocalizedDescription("fa-IR", "ÏæÔäÈå")] [LocalizedDescription("en-US", "DoShanbeh")]
+        [LocalizedDescription("fa-IR", "ÏæÔäÈå")]
+        [LocalizedDescription("en-US", "DoShanbeh")]
         DoShanbeh,
 
-        [LocalizedDescription("fa-IR", "ÓåþÔäÈå")] [LocalizedDescription("en-US", "SehShanbeh")]
+        [LocalizedDescription("fa-IR", "ÓåþÔäÈå")]
+        [LocalizedDescription("en-US", "SehShanbeh")]
         SeShanbeh,
 
-        [LocalizedDescription("fa-IR", "åÇÑÔäÈå")] [LocalizedDescription("en-US", "ChaharShanbeh")]
+        [LocalizedDescription("fa-IR", "åÇÑÔäÈå")]
+        [LocalizedDescription("en-US", "ChaharShanbeh")]
         ChaharShanbeh,
 
-        [LocalizedDescription("fa-IR", "äÌÔäÈå")] [LocalizedDescription("en-US", "PanjShanbeh")]
+        [LocalizedDescription("fa-IR", "äÌÔäÈå")]
+        [LocalizedDescription("en-US", "PanjShanbeh")]
         PanjShanbeh,
 
-        [LocalizedDescription("fa-IR", "ÌãÚå")] [LocalizedDescription("en-US", "Jomeh")]
+        [LocalizedDescription("fa-IR", "ÌãÚå")]
+        [LocalizedDescription("en-US", "Jomeh")]
         Jomeh,
 
-        [LocalizedDescription("fa-IR", "ÔäÈå")] [LocalizedDescription("en-US", "Shanbeh")]
+        [LocalizedDescription("fa-IR", "ÔäÈå")]
+        [LocalizedDescription("en-US", "Shanbeh")]
         Shanbeh
     }
 
@@ -109,18 +128,18 @@ namespace Mohammad.Globalization.DataTypes
     [Serializable]
     public sealed class NumericFormatInfo
     {
+        public NumberFormat Number { get; }
+        public PercentFormat Percent { get; }
+        public CurrencyFormat Currency { get; }
+        public CostFormat Cost { get; set; }
+
         public NumericFormatInfo(NumberFormat number, PercentFormat percent, CurrencyFormat currency, CostFormat cost)
         {
-            this.Number   = number;
-            this.Percent  = percent;
+            this.Number = number;
+            this.Percent = percent;
             this.Currency = currency;
-            this.Cost     = cost;
+            this.Cost = cost;
         }
-
-        public NumberFormat   Number   { get; }
-        public PercentFormat  Percent  { get; }
-        public CurrencyFormat Currency { get; }
-        public CostFormat     Cost     { get; set; }
 
         public static NumberFormatInfo MapToNumberFormatInfo(NumericFormatInfo numericFormatInfo)
         {
@@ -143,98 +162,98 @@ namespace Mohammad.Globalization.DataTypes
 
         public static void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo, NumericFormatInfo numericFormatInfo)
         {
-            numberFormatInfo.CurrencyDecimalDigits    = numericFormatInfo.Currency.DecimalDigits;
-            numberFormatInfo.CurrencyGroupSeparator   = numericFormatInfo.Currency.GroupSeparator.ToString();
-            numberFormatInfo.CurrencySymbol           = numericFormatInfo.Currency.Symbol;
+            numberFormatInfo.CurrencyDecimalDigits = numericFormatInfo.Currency.DecimalDigits;
+            numberFormatInfo.CurrencyGroupSeparator = numericFormatInfo.Currency.GroupSeparator.ToString();
+            numberFormatInfo.CurrencySymbol = numericFormatInfo.Currency.Symbol;
             numberFormatInfo.CurrencyDecimalSeparator = numericFormatInfo.Currency.DecimalSeparator.ToString();
-            numberFormatInfo.CurrencyNegativePattern  = numericFormatInfo.Currency.NegativePattern;
-            numberFormatInfo.NumberNegativePattern    = numericFormatInfo.Number.NegativePattern;
-            numberFormatInfo.NumberDecimalDigits      = numericFormatInfo.Number.DecimalDigits;
-            numberFormatInfo.NumberDecimalSeparator   = numericFormatInfo.Number.DecimalSeparator.ToString();
-            numberFormatInfo.NumberGroupSeparator     = numericFormatInfo.Number.GroupSeparator.ToString();
-            numberFormatInfo.PercentDecimalDigits     = numericFormatInfo.Percent.DecimalDigits;
-            numberFormatInfo.PercentDecimalSeparator  = numericFormatInfo.Percent.DecimalSeparator.ToString();
-            numberFormatInfo.PercentNegativePattern   = numericFormatInfo.Percent.NegativePattern;
-            numberFormatInfo.PercentSymbol            = numericFormatInfo.Percent.Symbol;
-            numberFormatInfo.PercentGroupSeparator    = numericFormatInfo.Percent.GroupSeparator.ToString();
-            numberFormatInfo.NegativeSign             = numericFormatInfo.Number.NegativeSign;
-            numberFormatInfo.PositiveSign             = numericFormatInfo.Number.PositiveSign;
+            numberFormatInfo.CurrencyNegativePattern = numericFormatInfo.Currency.NegativePattern;
+            numberFormatInfo.NumberNegativePattern = numericFormatInfo.Number.NegativePattern;
+            numberFormatInfo.NumberDecimalDigits = numericFormatInfo.Number.DecimalDigits;
+            numberFormatInfo.NumberDecimalSeparator = numericFormatInfo.Number.DecimalSeparator.ToString();
+            numberFormatInfo.NumberGroupSeparator = numericFormatInfo.Number.GroupSeparator.ToString();
+            numberFormatInfo.PercentDecimalDigits = numericFormatInfo.Percent.DecimalDigits;
+            numberFormatInfo.PercentDecimalSeparator = numericFormatInfo.Percent.DecimalSeparator.ToString();
+            numberFormatInfo.PercentNegativePattern = numericFormatInfo.Percent.NegativePattern;
+            numberFormatInfo.PercentSymbol = numericFormatInfo.Percent.Symbol;
+            numberFormatInfo.PercentGroupSeparator = numericFormatInfo.Percent.GroupSeparator.ToString();
+            numberFormatInfo.NegativeSign = numericFormatInfo.Number.NegativeSign;
+            numberFormatInfo.PositiveSign = numericFormatInfo.Number.PositiveSign;
         }
     }
 
     public interface INumericFormat
     {
-        int    DecimalDigits    { get; set; }
-        char   DecimalSeparator { get; set; }
-        char   GroupSeparator   { get; set; }
-        int    NegativePattern  { get; set; }
-        string FormatString     { get; }
+        int DecimalDigits { get; set; }
+        char DecimalSeparator { get; set; }
+        char GroupSeparator { get; set; }
+        int NegativePattern { get; set; }
+        string FormatString { get; }
     }
 
     [Serializable]
     public abstract class NumericFormatBase : INumericFormat
     {
-        public          int    DecimalDigits    { get; set; }
-        public          char   DecimalSeparator { get; set; }
-        public          char   GroupSeparator   { get; set; }
-        public          int    NegativePattern  { get; set; }
-        public abstract string FormatString     { get; }
+        public int DecimalDigits { get; set; }
+        public char DecimalSeparator { get; set; }
+        public char GroupSeparator { get; set; }
+        public int NegativePattern { get; set; }
+        public abstract string FormatString { get; }
     }
 
     [Serializable]
     public sealed class NumberFormat : NumericFormatBase
     {
-        public static readonly int    DefaultDecimalDigits    = 2;
-        public static readonly char   DefaultDecimalSeparator = '.';
-        public static readonly char   DefaultGroupSeparator   = ',';
-        public static readonly int    DefaultNegativePattern  = NumberNegativePattern.Value1.ToInt();
-        public static readonly string DefaultNegativeSign     = "-";
-        public static readonly string DefaultPositiveSign     = "+";
-        public override        string FormatString => "N";
-        public                 string NegativeSign { get; set; }
-        public                 string PositiveSign { get; set; }
+        public static readonly int DefaultDecimalDigits = 2;
+        public static readonly char DefaultDecimalSeparator = '.';
+        public static readonly char DefaultGroupSeparator = ',';
+        public static readonly int DefaultNegativePattern = NumberNegativePattern.Value1.ToInt();
+        public static readonly string DefaultNegativeSign = "-";
+        public static readonly string DefaultPositiveSign = "+";
+        public override string FormatString => "N";
+        public string NegativeSign { get; set; }
+        public string PositiveSign { get; set; }
     }
 
     [Serializable]
     public sealed class PercentFormat : NumericFormatBase
     {
-        public static readonly string DefaultSymbol           = "";
-        public static readonly int    DefaultDecimalDigits    = 2;
-        public static readonly char   DefaultDecimalSeparator = '.';
-        public static readonly int    DefaultNegativePattern  = PercentNegativePattern.Value1.ToInt();
-        public static readonly int    DefaultPositivePattern  = PercentPositivePattern.Value1.ToInt();
-        public static readonly char   DefaultGroupSeparator   = ',';
-        public                 string Symbol          { get; set; }
-        public                 int    PositivePattern { get; set; }
-        public override        string FormatString    => "P";
+        public static readonly string DefaultSymbol = "";
+        public static readonly int DefaultDecimalDigits = 2;
+        public static readonly char DefaultDecimalSeparator = '.';
+        public static readonly int DefaultNegativePattern = PercentNegativePattern.Value1.ToInt();
+        public static readonly int DefaultPositivePattern = PercentPositivePattern.Value1.ToInt();
+        public static readonly char DefaultGroupSeparator = ',';
+        public string Symbol { get; set; }
+        public int PositivePattern { get; set; }
+        public override string FormatString => "P";
     }
 
     [Serializable]
     public sealed class CurrencyFormat : NumericFormatBase
     {
-        public static readonly string DefaultSymbol           = "Rls";
-        public static readonly int    DefaultDecimalDigits    = 2;
-        public static readonly char   DefaultDecimalSeparator = '.';
-        public static readonly int    DefaultNegativePattern  = CurrencyNegativePattern.Value5.ToInt();
-        public static readonly int    DefaultPositivePattern  = CurrencyPositivePattern.Value1.ToInt();
-        public static readonly char   DefaultGroupSeparator   = ',';
-        public                 string Symbol          { get; set; }
-        public                 int    PositivePattern { get; set; }
-        public override        string FormatString    => "C";
+        public static readonly string DefaultSymbol = "Rls";
+        public static readonly int DefaultDecimalDigits = 2;
+        public static readonly char DefaultDecimalSeparator = '.';
+        public static readonly int DefaultNegativePattern = CurrencyNegativePattern.Value5.ToInt();
+        public static readonly int DefaultPositivePattern = CurrencyPositivePattern.Value1.ToInt();
+        public static readonly char DefaultGroupSeparator = ',';
+        public string Symbol { get; set; }
+        public int PositivePattern { get; set; }
+        public override string FormatString => "C";
     }
 
     [Serializable]
     public sealed class CostFormat : NumericFormatBase
     {
-        public static readonly string DefaultSymbol           = "Rls";
-        public static readonly int    DefaultDecimalDigits    = 8;
-        public static readonly char   DefaultDecimalSeparator = '.';
-        public static readonly int    DefaultNegativePattern  = CurrencyNegativePattern.Value5.ToInt();
-        public static readonly int    DefaultPositivePattern  = CurrencyPositivePattern.Value3.ToInt();
-        public static readonly char   DefaultGroupSeparator   = ',';
-        public                 string Symbol          { get; set; }
-        public                 int    PositivePattern { get; set; }
-        public override        string FormatString    => "Co";
+        public static readonly string DefaultSymbol = "Rls";
+        public static readonly int DefaultDecimalDigits = 8;
+        public static readonly char DefaultDecimalSeparator = '.';
+        public static readonly int DefaultNegativePattern = CurrencyNegativePattern.Value5.ToInt();
+        public static readonly int DefaultPositivePattern = CurrencyPositivePattern.Value3.ToInt();
+        public static readonly char DefaultGroupSeparator = ',';
+        public string Symbol { get; set; }
+        public int PositivePattern { get; set; }
+        public override string FormatString => "Co";
     }
 
     public enum PercentNegativePattern
@@ -242,12 +261,14 @@ namespace Mohammad.Globalization.DataTypes
         /// <summary>
         ///     -n %
         /// </summary>
-        [Description("-n %")] Value0 = 0,
+        [Description("-n %")]
+        Value0 = 0,
 
         /// <summary>
         ///     -n%
         /// </summary>
-        [Description("-n%")] Value1 = 1
+        [Description("-n%")]
+        Value1 = 1
     }
 
     public enum CurrencyNegativePattern
@@ -255,82 +276,98 @@ namespace Mohammad.Globalization.DataTypes
         /// <summary>
         ///     $n
         /// </summary>
-        [Description("($n)")] Value0 = 0,
+        [Description("($n)")]
+        Value0 = 0,
 
         /// <summary>
         ///     -$n
         /// </summary>
-        [Description("-$n")] Value1 = 1,
+        [Description("-$n")]
+        Value1 = 1,
 
         /// <summary>
         ///     $-n
         /// </summary>
-        [Description("$-n")] Value2 = 2,
+        [Description("$-n")]
+        Value2 = 2,
 
         /// <summary>
         ///     $n-
         /// </summary>
-        [Description("$n-")] Value3 = 3,
+        [Description("$n-")]
+        Value3 = 3,
 
         /// <summary>
         ///     (n$)
         /// </summary>
-        [Description("(n$)")] Value4 = 4,
+        [Description("(n$)")]
+        Value4 = 4,
 
         /// <summary>
         ///     -n$
         /// </summary>
-        [Description("-n$")] Value5 = 5,
+        [Description("-n$")]
+        Value5 = 5,
 
         /// <summary>
         ///     n-$
         /// </summary>
-        [Description("n-$")] Value6 = 6,
+        [Description("n-$")]
+        Value6 = 6,
 
         /// <summary>
         ///     n$-
         /// </summary>
-        [Description("n$-")] Value7 = 7,
+        [Description("n$-")]
+        Value7 = 7,
 
         /// <summary>
         ///     -n $
         /// </summary>
-        [Description("-n $")] Value8 = 8,
+        [Description("-n $")]
+        Value8 = 8,
 
         /// <summary>
         ///     -$ n
         /// </summary>
-        [Description("-$ n")] Value9 = 9,
+        [Description("-$ n")]
+        Value9 = 9,
 
         /// <summary>
         ///     n $-
         /// </summary>
-        [Description("n $-")] Value10 = 10,
+        [Description("n $-")]
+        Value10 = 10,
 
         /// <summary>
         ///     $ n-
         /// </summary>
-        [Description("$ n-")] Value11 = 11,
+        [Description("$ n-")]
+        Value11 = 11,
 
         /// <summary>
         ///     $ -n
         /// </summary>
-        [Description("$ -n")] Value12 = 12,
+        [Description("$ -n")]
+        Value12 = 12,
 
         /// <summary>
         ///     n- $
         /// </summary>
-        [Description("n- $")] Value13 = 13,
+        [Description("n- $")]
+        Value13 = 13,
 
         /// <summary>
         ///     ($ n)
         /// </summary>
-        [Description("($ n)")] Value14 = 14,
+        [Description("($ n)")]
+        Value14 = 14,
 
         /// <summary>
         ///     (n $)
         /// </summary>
-        [Description("(n $)")] Value15 = 15
+        [Description("(n $)")]
+        Value15 = 15
     }
 
     public enum CurrencyPositivePattern
@@ -338,22 +375,26 @@ namespace Mohammad.Globalization.DataTypes
         /// <summary>
         ///     $n
         /// </summary>
-        [Description("$n")] Value0 = 0,
+        [Description("$n")]
+        Value0 = 0,
 
         /// <summary>
         ///     n$
         /// </summary>
-        [Description("n$")] Value1 = 1,
+        [Description("n$")]
+        Value1 = 1,
 
         /// <summary>
         ///     $ n
         /// </summary>
-        [Description("$ n")] Value2 = 2,
+        [Description("$ n")]
+        Value2 = 2,
 
         /// <summary>
         ///     n $
         /// </summary>
-        [Description("n $")] Value3 = 3
+        [Description("n $")]
+        Value3 = 3
     }
 
     public enum NumberNegativePattern
@@ -361,27 +402,32 @@ namespace Mohammad.Globalization.DataTypes
         /// <summary>
         ///     (n)
         /// </summary>
-        [Description("(n)")] Value0 = 0,
+        [Description("(n)")]
+        Value0 = 0,
 
         /// <summary>
         ///     -n
         /// </summary>
-        [Description("-n")] Value1 = 1,
+        [Description("-n")]
+        Value1 = 1,
 
         /// <summary>
         ///     - n
         /// </summary>
-        [Description("- n")] Value2 = 2,
+        [Description("- n")]
+        Value2 = 2,
 
         /// <summary>
         ///     n-
         /// </summary>
-        [Description("n-")] Value3 = 3,
+        [Description("n-")]
+        Value3 = 3,
 
         /// <summary>
         ///     n -
         /// </summary>
-        [Description("n -")] Value4 = 4
+        [Description("n -")]
+        Value4 = 4
     }
 
     public enum PercentPositivePattern
@@ -389,21 +435,25 @@ namespace Mohammad.Globalization.DataTypes
         /// <summary>
         ///     n %
         /// </summary>
-        [Description("n %")] Value0 = 0,
+        [Description("n %")]
+        Value0 = 0,
 
         /// <summary>
         ///     n%
         /// </summary>
-        [Description("n%")] Value1 = 1,
+        [Description("n%")]
+        Value1 = 1,
 
         /// <summary>
         ///     %n
         /// </summary>
-        [Description("%n")] Value2 = 2,
+        [Description("%n")]
+        Value2 = 2,
 
         /// <summary>
         ///     % n
         /// </summary>
-        [Description("% n")] Value3 = 3
+        [Description("% n")]
+        Value3 = 3
     }
 }

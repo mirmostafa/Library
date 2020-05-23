@@ -40,7 +40,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public string Category
         {
-            get { return this._Category; }
+            get => this._Category;
             set
             {
                 this._Category = value;
@@ -52,11 +52,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public Style PathStyle
         {
-            get { return this._PathStyle; }
+            get => this._PathStyle;
             set
             {
                 if (value == this._PathStyle)
+                {
                     return;
+                }
+
                 this._PathStyle = value;
                 this.OnPropChanged(value);
             }
@@ -64,7 +67,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public bool IsDefault
         {
-            get { return this._IsDefault; }
+            get => this._IsDefault;
             set
             {
                 this._IsDefault = value;
@@ -74,7 +77,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public bool IsCancel
         {
-            get { return this._IsCancel; }
+            get => this._IsCancel;
             set
             {
                 this._IsCancel = value;
@@ -84,11 +87,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public string ToolTip
         {
-            get { return this._ToolTip; }
+            get => this._ToolTip;
             set
             {
                 if (value.Equals(this._ToolTip))
+                {
                     return;
+                }
+
                 this._ToolTip = value;
                 this.OnPropChanged(value);
             }
@@ -98,11 +104,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public Path Path
         {
-            get { return this._Path; }
+            get => this._Path;
             set
             {
                 if (value.Equals(this._Path))
+                {
                     return;
+                }
+
                 this._Path = value;
                 this.OnPropChanged(value);
             }
@@ -110,11 +119,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public Brush PathFill
         {
-            get { return this._PathFill; }
+            get => this._PathFill;
             set
             {
                 if (value.Equals(this._PathFill))
+                {
                     return;
+                }
+
                 this._PathFill = value;
                 this.OnPropChanged(value);
             }
@@ -122,11 +134,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public string Header
         {
-            get { return this._Header; }
+            get => this._Header;
             set
             {
                 if (this._Header == value)
+                {
                     return;
+                }
+
                 this._Header = value;
                 this.OnPropChanged(value);
             }
@@ -134,11 +149,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public string Body
         {
-            get { return this._Body; }
+            get => this._Body;
             set
             {
                 if (this._Body == value)
+                {
                     return;
+                }
+
                 this._Body = value;
                 this.OnPropChanged(value);
             }
@@ -148,11 +166,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public bool? IsChecked
         {
-            get { return this._IsChecked; }
+            get => this._IsChecked;
             set
             {
                 if (this._IsChecked == value)
+                {
                     return;
+                }
+
                 this._IsChecked = value;
                 this.OnPropChanged(value);
                 this.OnIsCheckedChanged(new ItemActedEventArgs<bool?>(this._IsChecked));
@@ -163,8 +184,55 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public object Parameter { get; set; }
 
+        public object Content
+        {
+            get => this._Content;
+            set
+            {
+                if (value == this._Content)
+                {
+                    return;
+                }
+
+                this._Content = value;
+                this.OnPropChanged(value);
+            }
+        }
+
+        public bool IsEnabled
+        {
+            get => this._IsEnabled;
+            set
+            {
+                if (value.Equals(this._IsEnabled))
+                {
+                    return;
+                }
+
+                this._IsEnabled = value;
+                this.OnPropChanged(value);
+            }
+        }
+
+        public Visibility Visibility
+        {
+            get => this._Visibility;
+            set
+            {
+                if (value.Equals(this._Visibility))
+                {
+                    return;
+                }
+
+                this._Visibility = value;
+                this.OnPropChanged(value);
+            }
+        }
+
         public LibCommand(string text)
-            : this(text, null) {}
+            : this(text, null)
+        {
+        }
 
         public LibCommand(string text, string commandName)
         {
@@ -172,7 +240,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
             this._CommandBinding = new CommandBinding(this);
         }
 
-        public LibCommand() { this._CommandBinding = new CommandBinding(this); }
+        public LibCommand() => this._CommandBinding = new CommandBinding(this);
 
         public LibCommand(string text, string name, Type ownerType)
             : base(text, name, ownerType)
@@ -188,30 +256,41 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
             this._CommandBinding = new CommandBinding(this);
         }
 
-        public event EventHandler<ItemActedEventArgs<bool?>> IsCheckedChanged;
-        public static void SetMyCommand(UIElement element, LibCommand value) { value.AddElement(element); }
+        public IEnumerator<UIElement> GetEnumerator()
+        {
+            return this.Controllers.Select(c => c.Element).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public static void SetMyCommand(UIElement element, LibCommand value)
+        {
+            value.AddElement(element);
+        }
 
         [AttachedPropertyBrowsableForType(typeof(Button))]
         public static LibCommand GetMyCommand(UIElement element) => null;
-
-        private void Initailize(string content, string commandName)
-        {
-            this.Content = content;
-            this.CommandName = commandName;
-        }
 
         public bool CanExecute() => this.OnCanExecute();
 
         public void Execute()
         {
             if (!this.CanExecute())
+            {
                 return;
+            }
+
             try
             {
                 var ing = new ActingEventArgs();
                 this.Executing.Raise(this, ing);
                 if (ing.Handled)
+                {
                     return;
+                }
+
                 this.OnExecuted();
                 this.Executed.Raise(this, EventArgs.Empty);
             }
@@ -220,12 +299,63 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
                 var exin = new ItemActingEventArgs<Exception>(ex);
                 this.ExceptionOccurred.Raise(this, exin);
                 if (exin.Handled)
+                {
                     return;
+                }
+
                 throw;
             }
         }
 
-        protected virtual bool OnCanExecute() { return this.IsEnabled; }
+        public override string ToString() => $"CommandName: {this.CommandName}, Content: {this.Content}";
+
+        public void AddElement(params UIElement[] elements)
+        {
+            if (elements == null)
+            {
+                throw new ArgumentNullException(nameof(elements));
+            }
+
+            foreach (var element in elements)
+            {
+                this.OnAddingElement(element);
+            }
+        }
+
+        public void AddElement(IEnumerable<UIElement> elements)
+        {
+            this.AddElement(elements.ToArray());
+        }
+
+        public void Initialize(UIElement parent, params UIElement[] elements)
+        {
+            this.Initialize(parent, null, elements);
+        }
+
+        public void Initialize(UIElement parent, EventHandler<EventArgs> executed = null, params UIElement[] elements)
+        {
+            if (executed != null)
+            {
+                this.Executed += executed;
+            }
+
+            this.AddElement(elements);
+
+            this._CommandBinding.Command = this;
+            this._CommandBinding.Executed -= this.OnCommandBindingOnExecuted;
+            this._CommandBinding.Executed += this.OnCommandBindingOnExecuted;
+            parent.CommandBindings.Add(this._CommandBinding);
+
+            var keyGesture = this.KeyGesture;
+            if (keyGesture != null)
+            {
+                parent.InputBindings.Add(new KeyBinding(this, keyGesture));
+            }
+
+            this.Parent = parent;
+        }
+
+        protected virtual bool OnCanExecute() => this.IsEnabled;
 
         protected virtual void HandleEvents(UIElement element)
         {
@@ -245,8 +375,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
             {
                 var btn = element as ToggleButton;
                 btn.Command = this;
-                btn.Checked += (sender, _) => { this.IsChecked = ((ToggleButton) sender).IsChecked; };
-                btn.Unchecked += (sender, _) => { this.IsChecked = ((ToggleButton) sender).IsChecked; };
+                btn.Checked += (sender, _) =>
+                {
+                    this.IsChecked = ((ToggleButton)sender).IsChecked;
+                };
+                btn.Unchecked += (sender, _) =>
+                {
+                    this.IsChecked = ((ToggleButton)sender).IsChecked;
+                };
             }
             else if (element is ButtonBase)
             {
@@ -274,19 +410,25 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
             }
         }
 
-        public override string ToString() => $"CommandName: {this.CommandName}, Content: {this.Content}";
-
         protected virtual void OnPropChanged(object value, [CallerMemberName] string propertyName = null)
         {
             if (propertyName.IsNullOrEmpty())
+            {
                 return;
+            }
+
             this.ForEach(c =>
             {
                 var prop = typeof(UIElementController).GetProperty(propertyName);
                 if (prop == null)
+                {
                     return;
+                }
+
                 foreach (var controller in this.Controllers)
+                {
                     prop.SetValue(controller, value);
+                }
             });
             this.OnPropertyChanged(propertyName);
         }
@@ -296,101 +438,49 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
             this.PropertyChanged.Raise(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void AddElement(params UIElement[] elements)
-        {
-            if (elements == null)
-                throw new ArgumentNullException(nameof(elements));
-            foreach (var element in elements)
-                this.OnAddingElement(element);
-        }
-
-        public void AddElement(IEnumerable<UIElement> elements) { this.AddElement(elements.ToArray()); }
-
         protected virtual void OnAddingElement(UIElement element)
         {
             var controller = new UIElementController(element)
-                             {
-                                 IsEnabled = this.IsEnabled,
-                                 Visibility = this.Visibility,
-                                 Content = this.Content,
-                                 PathStyle = this.PathStyle,
-                                 PathFill = this.PathFill,
-                                 Path = this.Path,
-                                 ToolTip = this.ToolTip,
-                                 IsCancel = this.IsCancel,
-                                 IsDefault = this.IsDefault,
-                                 IsChecked = this.IsChecked
-                             };
+            {
+                IsEnabled = this.IsEnabled,
+                Visibility = this.Visibility,
+                Content = this.Content,
+                PathStyle = this.PathStyle,
+                PathFill = this.PathFill,
+                Path = this.Path,
+                ToolTip = this.ToolTip,
+                IsCancel = this.IsCancel,
+                IsDefault = this.IsDefault,
+                IsChecked = this.IsChecked
+            };
             this.Controllers.Add(controller);
             this.HandleEvents(element);
         }
 
+        protected virtual void OnExecuted()
+        {
+        }
+
+        protected virtual void OnIsCheckedChanged(ItemActedEventArgs<bool?> e)
+        {
+            this.IsCheckedChanged?.Invoke(this, e);
+        }
+
+        private void Initailize(string content, string commandName)
+        {
+            this.Content = content;
+            this.CommandName = commandName;
+        }
+
+        private void OnCommandBindingOnExecuted(object _, ExecutedRoutedEventArgs __)
+        {
+            this.OnExecuted();
+        }
+
+        public event EventHandler<ItemActedEventArgs<bool?>> IsCheckedChanged;
+
         public event EventHandler<EventArgs> Executed;
         public event EventHandler<ActingEventArgs> Executing;
         public event EventHandler<ItemActingEventArgs<Exception>> ExceptionOccurred;
-        protected virtual void OnExecuted() { }
-        public void Initialize(UIElement parent, params UIElement[] elements) { this.Initialize(parent, null, elements); }
-
-        public void Initialize(UIElement parent, EventHandler<EventArgs> executed = null, params UIElement[] elements)
-        {
-            if (executed != null)
-                this.Executed += executed;
-            this.AddElement(elements);
-
-            this._CommandBinding.Command = this;
-            this._CommandBinding.Executed -= this.OnCommandBindingOnExecuted;
-            this._CommandBinding.Executed += this.OnCommandBindingOnExecuted;
-            parent.CommandBindings.Add(this._CommandBinding);
-
-            var keyGesture = this.KeyGesture;
-            if (keyGesture != null)
-                parent.InputBindings.Add(new KeyBinding(this, keyGesture));
-
-            this.Parent = parent;
-        }
-
-        private void OnCommandBindingOnExecuted(object _, ExecutedRoutedEventArgs __) { this.OnExecuted(); }
-
-        protected virtual void OnIsCheckedChanged(ItemActedEventArgs<bool?> e) { this.IsCheckedChanged?.Invoke(this, e); }
-        public IEnumerator<UIElement> GetEnumerator() { return this.Controllers.Select(c => c.Element).GetEnumerator(); }
-        IEnumerator IEnumerable.GetEnumerator() { return this.GetEnumerator(); }
-
-        public object Content
-        {
-            get { return this._Content; }
-            set
-            {
-                if (value == this._Content)
-                    return;
-                this._Content = value;
-                this.OnPropChanged(value);
-            }
-        }
-
-        public bool IsEnabled
-        {
-            get { return this._IsEnabled; }
-            set
-            {
-                if (value.Equals(this._IsEnabled))
-                    return;
-                this._IsEnabled = value;
-                this.OnPropChanged(value);
-            }
-        }
-
-        public Visibility Visibility
-        {
-            get { return this._Visibility; }
-            set
-            {
-                if (value.Equals(this._Visibility))
-                    return;
-                this._Visibility = value;
-                this.OnPropChanged(value);
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

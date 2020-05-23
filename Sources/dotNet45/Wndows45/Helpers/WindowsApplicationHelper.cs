@@ -19,72 +19,82 @@ namespace Mohammad.Win.Helpers
     {
         private static readonly Mutex _Mutex = new Mutex(false, Application.ProductName);
 
-        public static string AssemblyName
-        {
-            get { return Assembly.GetCallingAssembly().FullName.Substring(0, Assembly.GetCallingAssembly().FullName.IndexOf(',')); }
-        }
+        public static string AssemblyName => Assembly.GetCallingAssembly().FullName.Substring(0, Assembly.GetCallingAssembly().FullName.IndexOf(','));
 
         /// <summary>
         ///     Gets current application company
         /// </summary>
         /// <value></value>
-        public static string CompanyName { get { return GetProp<AssemblyCompanyAttribute>("Company"); } }
+        public static string CompanyName => GetProp<AssemblyCompanyAttribute>("Company");
 
         /// <summary>
         ///     Gets current application version
         /// </summary>
         /// <value></value>
-        public static string Version
-        {
-            get
-            {
-                //return GetProp<AssemblyVersionAttribute>("Version");
-                return Application.ProductVersion;
-            }
-        }
+        //return GetProp<AssemblyVersionAttribute>("Version");
+        public static string Version => Application.ProductVersion;
 
         /// <summary>
         ///     Gets current application title
         /// </summary>
         /// <value></value>
-        public static string Title { get { return GetProp<AssemblyTitleAttribute>("Title"); } }
+        public static string Title => GetProp<AssemblyTitleAttribute>("Title");
 
         /// <summary>
         ///     Gets current application Guid
         /// </summary>
         /// <value></value>
-        public static string Guid { get { return GetProp<GuidAttribute>("Value"); } }
+        public static string Guid => GetProp<GuidAttribute>("Value");
 
         /// <summary>
         ///     Gets current application product name
         /// </summary>
         /// <value></value>
-        public static string ProductName { get { return GetProp<AssemblyProductAttribute>("Product"); } }
+        public static string ProductName => GetProp<AssemblyProductAttribute>("Product");
 
-        public static string Description { get { return GetProp<AssemblyDescriptionAttribute>("Description"); } }
+        public static string Description => GetProp<AssemblyDescriptionAttribute>("Description");
 
-        public static void PrepareApplication(string cultureName = "fa-IR", EventHandler<ExceptionOccurredEventArgs<Exception>> exceptionHandler = null,
-            bool withDefaultEventHandle = false, bool setPersianCalendar = false, bool registerMe = false)
+        public static void PrepareApplication(string cultureName = "fa-IR",
+            EventHandler<ExceptionOccurredEventArgs<Exception>> exceptionHandler = null,
+            bool withDefaultEventHandle = false,
+            bool setPersianCalendar = false,
+            bool registerMe = false)
         {
             if (registerMe)
+            {
                 AppReg.RegisterMe();
+            }
+
             var culture = new CultureInfo(cultureName);
             Application.CurrentCulture = culture;
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
             if (setPersianCalendar)
+            {
                 PersianCultureHelper.SetPersianOptions(culture);
+            }
+
             if (exceptionHandler == null)
+            {
                 if (!withDefaultEventHandle)
+                {
                     return;
+                }
+            }
+
             exceptionHandler = delegate(object sender, ExceptionOccurredEventArgs<Exception> e)
             {
                 var ex = e.Exception;
                 while (ex.InnerException != null)
+                {
                     ex = ex.InnerException;
+                }
+
                 MsgBox.Error(ex.Message);
                 if (!(ex is IException))
+                {
                     Application.Exit();
+                }
             };
             Application.ThreadException += (sender, e) => exceptionHandler.Raise(sender, new ExceptionOccurredEventArgs<Exception>(e.Exception));
 
@@ -94,7 +104,7 @@ namespace Mohammad.Win.Helpers
                 (sender, e) => exceptionHandler.Raise(sender, new ExceptionOccurredEventArgs<Exception>(e.ExceptionObject as Exception));
         }
 
-        public static bool AmIAlone() { return _Mutex.WaitOne(TimeSpan.FromSeconds(5), false); }
+        public static bool AmIAlone() => _Mutex.WaitOne(TimeSpan.FromSeconds(5), false);
 
         /// <summary>
         /// </summary>
@@ -104,8 +114,11 @@ namespace Mohammad.Win.Helpers
         {
             var assembly = Assembly.GetEntryAssembly();
             if (!Attribute.IsDefined(assembly, typeof(TAttribute)))
+            {
                 return null;
-            return (TAttribute) assembly.GetCustomAttributes(typeof(TAttribute), false)[0];
+            }
+
+            return (TAttribute)assembly.GetCustomAttributes(typeof(TAttribute), false)[0];
         }
 
         /// <summary>

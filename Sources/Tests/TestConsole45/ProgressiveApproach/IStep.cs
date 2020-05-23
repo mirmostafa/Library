@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace TestConsole45.ProgressiveApproach {
+namespace TestConsole45.ProgressiveApproach
+{
     public interface IStep
     {
         Delegate MainAction { get; }

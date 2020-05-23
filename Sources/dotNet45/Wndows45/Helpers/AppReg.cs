@@ -17,8 +17,6 @@ namespace Mohammad.Win.Helpers
         }
 
         private static RegistryKey GetProductsKey()
-        {
-            return Registry.LocalMachine.OpenSubKey("SOFTWARE", true).CreateSubKey(WindowsApplicationHelper.CompanyName).CreateSubKey("Products");
-        }
+            => Registry.LocalMachine.OpenSubKey("SOFTWARE", true).CreateSubKey(WindowsApplicationHelper.CompanyName).CreateSubKey("Products");
     }
 }

@@ -40,110 +40,25 @@ namespace Mohammad.Web.Api
 
         public DateTime AppStartTime { get; private set; }
 
-        private void ApiExecuted(HttpActionExecutedContext httpActionExecutedContext)
-        {
-            this.OnApiExecuted(httpActionExecutedContext);
-        }
-
-        private void ApiExecuting(HttpActionContext actionContext)
-        {
-            this.OnApiExecuting(actionContext);
-            try
-            {
-                this.OnRequestReceived(actionContext.Request);
-
-                if (actionContext.ActionArguments != null)
-                    foreach (var argument in actionContext.ActionArguments)
-                    {
-                        var e = (actionContext.ActionArguments, argument);
-                        if (this.IsValidArgument(e))
-                            continue;
-
-                        if (argument.Value != null)
-                            continue;
-
-                        var argumentBinding = actionContext.ActionDescriptor?.ActionBinding.ParameterBindings.FirstOrDefault(pb => pb.Descriptor.ParameterName == argument.Key);
-
-                        if (argumentBinding?.Descriptor?.IsOptional ?? true)
-                            continue;
-                        WebApiApplication.Current.CompleteRequest();
-                        actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, $"Arguments value for {argument.Key} cannot be null");
-                        return;
-                    }
-
-                if (actionContext.ModelState.IsValid)
-                    return;
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, actionContext.ModelState);
-                foreach (var state in actionContext.ModelState.Values)
-                foreach (var error in state.Errors)
-                    Debug.WriteLine($"Validator: {error.ErrorMessage}");
-            }
-            finally
-            {
-                this.OnResponseReceived(actionContext.Response);
-            }
-        }
-
-        private void HandleException(HttpActionExecutedContext actionExecutedContext)
-        {
-            (HttpStatusCode code, string message) error = (HttpStatusCode.BadRequest, actionExecutedContext.Exception?.GetBaseException().Message);
-
-            switch (actionExecutedContext.Exception)
-            {
-                case ObjectNotFoundException ex:
-                    error = (HttpStatusCode.NotFound, ex.GetBaseException().Message);
-                    break;
-                case ObjectDuplicateException ex:
-                    error = (HttpStatusCode.Ambiguous, ex.GetBaseException().Message);
-                    break;
-                case ValidationException ex:
-                    error = (HttpStatusCode.ExpectationFailed, ex.GetBaseException().Message);
-                    break;
-                case ApiExceptionBase ex:
-                    error = ex.Info;
-                    break;
-                case PairMessageStatusCodeExceptionBase<HttpStatusCode> ex:
-                    error = (ex.StatusCode, ex.GetBaseException().Message);
-                    break;
-                case ExceptionBase ex:
-                    error = (HttpStatusCode.BadRequest, ex.GetBaseException().Message);
-                    break;
-                case NotImplementedException ex:
-                    error = (HttpStatusCode.NotImplemented, ex.GetBaseException().Message);
-                    break;
-                case HttpResponseException ex when(ex.Message == "Processing of the HTTP request resulted in an exception. Please see the HTTP response returned by the 'Response' property of this exception for details."):
-                    error = (HttpStatusCode.InternalServerError, "Test");
-                    break;
-                case Exception ex:
-                    error = (HttpStatusCode.InternalServerError, ex.GetBaseException().Message);
-                    break;
-            }
-
-            actionExecutedContext.Response = this.OnHandedException(actionExecutedContext, error);
-        }
-
-        protected virtual bool IsValidArgument((IEnumerable<KeyValuePair<string, object>> Arguments, KeyValuePair<string, object> CurrentArgument) e) => true;
-
         public static void Log(string log, LogLevel level = LogLevel.Debug)
         {
             Instance.OnLogging(log, level);
         }
 
-        private static void LogException(ExceptionLoggerContext context)
-        {   
-            var exception = context.Exception;
-            if (!(exception is ExceptionBase))
-                CodeHelper.LockAndCatch(() =>
-                {
-                    var filePath = $@"Logs\WebAPI.Bugs.{DateTime.Now.ToShortDateString().Replace("\\", "-").Replace("/", "-")}.log";
-                    filePath = string.Concat(Debugger.IsAttached ? HttpRuntime.AppDomainAppPath : @".\", filePath);
-                    var logFile = new FileInfo(filePath);
-                    if (!logFile.Directory.Exists)
-                        logFile.Directory.Create();
-                    File.AppendAllText(logFile.FullName, $@"[{DateTime.Now}]{context.Request.RequestUri}{Environment.NewLine}{exception}");
-                }, _WebApiConfigHelperLockObject);
-            Log(exception.GetBaseException().Message);
+        public static void Register(HttpConfiguration config)
+        {
+            Instance.OnInitializing(config);
+
+            Instance.AppStartTime = DateTime.Now;
+            Diag.RedirectDebugsToOutputPane(true);
+
+            config.MapHttpAttributeRoutes();
+            config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{action}/{id}", new {id = RouteParameter.Optional});
+
+            Instance.OnInitialized(config);
         }
+
+        protected virtual bool IsValidArgument((IEnumerable<KeyValuePair<string, object>> Arguments, KeyValuePair<string, object> CurrentArgument) e) => true;
 
         protected virtual void OnApiExecuted(HttpActionExecutedContext httpActionExecutedContext)
         {
@@ -178,17 +93,127 @@ namespace Mohammad.Web.Api
         {
         }
 
-        public static void Register(HttpConfiguration config)
+        private void ApiExecuted(HttpActionExecutedContext httpActionExecutedContext)
         {
-            Instance.OnInitializing(config);
+            this.OnApiExecuted(httpActionExecutedContext);
+        }
 
-            Instance.AppStartTime = DateTime.Now;
-            Diag.RedirectDebugsToOutputPane(true);
+        private void ApiExecuting(HttpActionContext actionContext)
+        {
+            this.OnApiExecuting(actionContext);
+            try
+            {
+                this.OnRequestReceived(actionContext.Request);
 
-            config.MapHttpAttributeRoutes();
-            config.Routes.MapHttpRoute("DefaultApi", "api/{controller}/{action}/{id}", new {id = RouteParameter.Optional});
+                if (actionContext.ActionArguments != null)
+                {
+                    foreach (var argument in actionContext.ActionArguments)
+                    {
+                        var e = (actionContext.ActionArguments, argument);
+                        if (this.IsValidArgument(e))
+                        {
+                            continue;
+                        }
 
-            Instance.OnInitialized(config);
+                        if (argument.Value != null)
+                        {
+                            continue;
+                        }
+
+                        var argumentBinding =
+                            actionContext.ActionDescriptor?.ActionBinding.ParameterBindings.FirstOrDefault(pb => pb.Descriptor.ParameterName == argument.Key);
+
+                        if (argumentBinding?.Descriptor?.IsOptional ?? true)
+                        {
+                            continue;
+                        }
+
+                        WebApiApplication.Current.CompleteRequest();
+                        actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, $"Arguments value for {argument.Key} cannot be null");
+                        return;
+                    }
+                }
+
+                if (actionContext.ModelState.IsValid)
+                {
+                    return;
+                }
+
+                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, actionContext.ModelState);
+                foreach (var state in actionContext.ModelState.Values)
+                foreach (var error in state.Errors)
+                {
+                    Debug.WriteLine($"Validator: {error.ErrorMessage}");
+                }
+            }
+            finally
+            {
+                this.OnResponseReceived(actionContext.Response);
+            }
+        }
+
+        private void HandleException(HttpActionExecutedContext actionExecutedContext)
+        {
+            (HttpStatusCode code, string message) error = (HttpStatusCode.BadRequest, actionExecutedContext.Exception?.GetBaseException().Message);
+
+            switch (actionExecutedContext.Exception)
+            {
+                case ObjectNotFoundException ex:
+                    error = (HttpStatusCode.NotFound, ex.GetBaseException().Message);
+                    break;
+                case ObjectDuplicateException ex:
+                    error = (HttpStatusCode.Ambiguous, ex.GetBaseException().Message);
+                    break;
+                case ValidationException ex:
+                    error = (HttpStatusCode.ExpectationFailed, ex.GetBaseException().Message);
+                    break;
+                case ApiExceptionBase ex:
+                    error = ex.Info;
+                    break;
+                case PairMessageStatusCodeExceptionBase<HttpStatusCode> ex:
+                    error = (ex.StatusCode, ex.GetBaseException().Message);
+                    break;
+                case ExceptionBase ex:
+                    error = (HttpStatusCode.BadRequest, ex.GetBaseException().Message);
+                    break;
+                case NotImplementedException ex:
+                    error = (HttpStatusCode.NotImplemented, ex.GetBaseException().Message);
+                    break;
+                case HttpResponseException ex
+                    when ex.Message ==
+                         "Processing of the HTTP request resulted in an exception. Please see the HTTP response returned by the 'Response' property of this exception for details."
+                    :
+                    error = (HttpStatusCode.InternalServerError, "Test");
+                    break;
+                case Exception ex:
+                    error = (HttpStatusCode.InternalServerError, ex.GetBaseException().Message);
+                    break;
+            }
+
+            actionExecutedContext.Response = this.OnHandedException(actionExecutedContext, error);
+        }
+
+        private static void LogException(ExceptionLoggerContext context)
+        {
+            var exception = context.Exception;
+            if (!(exception is ExceptionBase))
+            {
+                CodeHelper.LockAndCatch(() =>
+                    {
+                        var filePath = $@"Logs\WebAPI.Bugs.{DateTime.Now.ToShortDateString().Replace("\\", "-").Replace("/", "-")}.log";
+                        filePath = string.Concat(Debugger.IsAttached ? HttpRuntime.AppDomainAppPath : @".\", filePath);
+                        var logFile = new FileInfo(filePath);
+                        if (!logFile.Directory.Exists)
+                        {
+                            logFile.Directory.Create();
+                        }
+
+                        File.AppendAllText(logFile.FullName, $@"[{DateTime.Now}]{context.Request.RequestUri}{Environment.NewLine}{exception}");
+                    },
+                    _WebApiConfigHelperLockObject);
+            }
+
+            Log(exception.GetBaseException().Message);
         }
     }
 }

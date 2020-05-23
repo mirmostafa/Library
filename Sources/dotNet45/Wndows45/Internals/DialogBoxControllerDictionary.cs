@@ -24,14 +24,6 @@ namespace Mohammad.Win.Internals
     /// </summary>
     public class DialogBoxControllerDict
     {
-        internal Dictionary<string, string> GetDictionary()
-        {
-            var result = new Dictionary<string, string>();
-            foreach (var property in this.GetType().GetProperties())
-                result.Add(((SourceAttrinute) property.GetCustomAttributes(typeof(SourceAttrinute), false)[0]).Text, property.GetValue(this, null).ToString());
-            return result;
-        }
-
         #region OpenDialog
 
         /// <summary>
@@ -391,5 +383,16 @@ namespace Mohammad.Win.Internals
         public string Status { get; set; } = "Ê÷⁄Ì :";
 
         #endregion
+
+        internal Dictionary<string, string> GetDictionary()
+        {
+            var result = new Dictionary<string, string>();
+            foreach (var property in this.GetType().GetProperties())
+            {
+                result.Add(((SourceAttrinute)property.GetCustomAttributes(typeof(SourceAttrinute), false)[0]).Text, property.GetValue(this, null).ToString());
+            }
+
+            return result;
+        }
     }
 }

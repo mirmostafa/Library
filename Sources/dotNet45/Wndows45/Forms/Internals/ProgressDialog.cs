@@ -4,6 +4,9 @@ namespace Mohammad.Win.Forms.Internals
 {
     internal partial class ProgressDialog : LibraryForm
     {
-        public ProgressDialog() { this.InitializeComponent(); }
+        public ProgressDialog()
+        {
+            this.InitializeComponent();
+        }
     }
 }

@@ -5,10 +5,10 @@ namespace Mohammad.Wpf.EventsArgs
 {
     public class SettingStatusEventArgs : EventArgs
     {
-        public string Status { get; private set; }
-        public bool? IsWorking { get; private set; }
-        public string Detail { get; private set; }
-        public LogLevel Level { get; private set; }
+        public string Status { get; }
+        public bool? IsWorking { get; }
+        public string Detail { get; }
+        public LogLevel Level { get; }
 
         public SettingStatusEventArgs(string status, bool? isWorking, string detail, LogLevel level)
         {

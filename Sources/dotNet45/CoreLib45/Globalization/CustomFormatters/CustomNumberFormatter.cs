@@ -15,6 +15,10 @@ namespace Mohammad.Globalization.CustomFormatters
     [Serializable]
     public class CustomNumberFormatter : IFormatProvider, ICustomFormatter
     {
+        public NumberFormatInfo Engine { get; }
+
+        public NumericFormatInfo Info { get; }
+
         // Fields
         // Methods
         public CustomNumberFormatter(NumericFormatInfo numericFormatInfo)
@@ -25,13 +29,9 @@ namespace Mohammad.Globalization.CustomFormatters
         public CustomNumberFormatter(NumberFormatInfo numberFormatInfo, NumericFormatInfo numericFormatInfo)
         {
             this.Engine = numberFormatInfo;
-            this.Info   = numericFormatInfo;
+            this.Info = numericFormatInfo;
             this.Info.MapToNumberFormatInfo(this.Engine);
         }
-
-        public NumberFormatInfo Engine { get; }
-
-        public NumericFormatInfo Info { get; }
 
         public string Format(string format, object arg, IFormatProvider formatProvider)
         {
@@ -40,13 +40,16 @@ namespace Mohammad.Globalization.CustomFormatters
             {
                 var temp = this.Engine.Clone() as NumberFormatInfo;
                 if (temp == null)
+                {
                     return null;
-                temp.CurrencyDecimalDigits    = this.Info.Cost.DecimalDigits;
+                }
+
+                temp.CurrencyDecimalDigits = this.Info.Cost.DecimalDigits;
                 temp.CurrencyDecimalSeparator = this.Info.Cost.DecimalSeparator.ToString();
-                temp.CurrencyGroupSeparator   = this.Info.Cost.GroupSeparator.ToString();
-                temp.CurrencyNegativePattern  = this.Info.Cost.NegativePattern;
-                temp.CurrencyPositivePattern  = this.Info.Cost.PositivePattern;
-                temp.CurrencySymbol           = this.Info.Cost.Symbol;
+                temp.CurrencyGroupSeparator = this.Info.Cost.GroupSeparator.ToString();
+                temp.CurrencyNegativePattern = this.Info.Cost.NegativePattern;
+                temp.CurrencyPositivePattern = this.Info.Cost.PositivePattern;
+                temp.CurrencySymbol = this.Info.Cost.Symbol;
                 return string.Format(temp, "{0:C}", arg);
             }
 
@@ -59,13 +62,16 @@ namespace Mohammad.Globalization.CustomFormatters
         {
             var temp = this.Engine.Clone() as NumberFormatInfo;
             if (temp == null)
+            {
                 return 0.0;
-            temp.CurrencyDecimalDigits    = this.Info.Cost.DecimalDigits;
+            }
+
+            temp.CurrencyDecimalDigits = this.Info.Cost.DecimalDigits;
             temp.CurrencyDecimalSeparator = this.Info.Cost.DecimalSeparator.ToString();
-            temp.CurrencyGroupSeparator   = this.Info.Cost.GroupSeparator.ToString();
-            temp.CurrencyNegativePattern  = this.Info.Cost.NegativePattern;
-            temp.CurrencyPositivePattern  = this.Info.Cost.PositivePattern;
-            temp.CurrencySymbol           = this.Info.Cost.Symbol;
+            temp.CurrencyGroupSeparator = this.Info.Cost.GroupSeparator.ToString();
+            temp.CurrencyNegativePattern = this.Info.Cost.NegativePattern;
+            temp.CurrencyPositivePattern = this.Info.Cost.PositivePattern;
+            temp.CurrencySymbol = this.Info.Cost.Symbol;
             return double.Parse(formattedNumber, NumberStyles.Any, temp);
         }
     }

@@ -8,9 +8,13 @@ namespace Mohammad.Logging.FileBased.Text
     public sealed class FileLogger : FileLogger<LogEntity>
     {
         public FileLogger(FileWriter<LogEntity> writer, bool raiseEventOnly)
-            : base(writer, raiseEventOnly) { }
+            : base(writer, raiseEventOnly)
+        {
+        }
 
         public FileLogger(FileWriter<LogEntity> writer)
-            : base(writer) { }
+            : base(writer)
+        {
+        }
     }
 }

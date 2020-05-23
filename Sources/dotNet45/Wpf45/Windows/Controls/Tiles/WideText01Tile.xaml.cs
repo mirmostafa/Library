@@ -5,11 +5,34 @@
     /// </summary>
     public partial class WideText01Tile
     {
-        public string Header { get { return this.textBlock1.Text; } set { this.textBlock1.Text = value; } }
-        public string Body1 { get { return this.textBlock2.Text; } set { this.textBlock2.Text = value; } }
-        public string Body2 { get { return this.textBlock3.Text; } set { this.textBlock3.Text = value; } }
-        public string Body3 { get { return this.textBlock4.Text; } set { this.textBlock4.Text = value; } }
-        public WideText01Tile() { this.InitializeComponent(); }
+        public string Header
+        {
+            get => this.textBlock1.Text;
+            set => this.textBlock1.Text = value;
+        }
+
+        public string Body1
+        {
+            get => this.textBlock2.Text;
+            set => this.textBlock2.Text = value;
+        }
+
+        public string Body2
+        {
+            get => this.textBlock3.Text;
+            set => this.textBlock3.Text = value;
+        }
+
+        public string Body3
+        {
+            get => this.textBlock4.Text;
+            set => this.textBlock4.Text = value;
+        }
+
+        public WideText01Tile()
+        {
+            this.InitializeComponent();
+        }
 
         protected override void HookCommand()
         {

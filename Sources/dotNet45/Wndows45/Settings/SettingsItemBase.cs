@@ -9,6 +9,7 @@ namespace Mohammad.Win.Settings
         public virtual void Reset()
         {
             foreach (var item in this.GetType().GetProperties().Where(item => item.CanWrite))
+            {
                 try
                 {
                     item.SetValue(this, null, null);
@@ -19,8 +20,11 @@ namespace Mohammad.Win.Settings
                     {
                         item.SetValue(this, 0, null);
                     }
-                    catch {}
+                    catch
+                    {
+                    }
                 }
+            }
         }
     }
 }

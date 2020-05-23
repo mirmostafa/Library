@@ -10,9 +10,18 @@ namespace Mohammad.Logging.FileBased.Xml
     public class XmlLogger<TLogEntity> : Logger<XmlWriter<TLogEntity>, TLogEntity>, IStorageReadable
         where TLogEntity : LogEntity, new()
     {
-        public XmlLogger(DirectoryInfo logPath = null, bool useLogRotation = false) { this.Initialize(logPath, useLogRotation); }
+        #region IStorageReadable Members
 
-        public override string ToString() { return this.StorageFilePath; }
+        public string StorageFilePath => this.Writer.Log.FullName;
+
+        #endregion
+
+        public XmlLogger(DirectoryInfo logPath = null, bool useLogRotation = false)
+        {
+            this.Initialize(logPath, useLogRotation);
+        }
+
+        public override string ToString() => this.StorageFilePath;
 
         private void Initialize(DirectoryInfo logPath, bool useLogRotation)
         {
@@ -25,13 +34,9 @@ namespace Mohammad.Logging.FileBased.Xml
                 : string.Concat(logPath != null ? Path.Combine(logPath.FullName, asm.FullName.Substring(0, asm.FullName.IndexOf(','))) : asm.Location, ".log.xml");
             this.Writer = new XmlWriter<TLogEntity>(storageName);
             if (LoadLastLogOnInitialize)
+            {
                 this.Writer.LoadLastLog();
+            }
         }
-
-        #region IStorageReadable Members
-
-        public string StorageFilePath { get { return this.Writer.Log.FullName; } }
-
-        #endregion
     }
 }

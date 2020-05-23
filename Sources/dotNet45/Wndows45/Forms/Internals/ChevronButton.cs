@@ -59,13 +59,13 @@ namespace Mohammad.Win.Forms.Internals
 
         public bool IsFocusedByKey { get; private set; }
 
-        private bool _IsPressed { get { return this._IsKeyDown || this._IsMouseDown && this._IsHovered; } }
+        private bool _IsPressed => this._IsKeyDown || this._IsMouseDown && this._IsHovered;
 
         #endregion
 
         #region Focused
 
-        public override bool Focused { get { return false; } }
+        public override bool Focused => false;
 
         #endregion
 
@@ -73,7 +73,7 @@ namespace Mohammad.Win.Forms.Internals
 
         public bool Expanded
         {
-            get { return this._Expanded; }
+            get => this._Expanded;
             set
             {
                 this._Expanded = value;
@@ -92,11 +92,17 @@ namespace Mohammad.Win.Forms.Internals
         private void SetImage()
         {
             if (this._IsPressed)
+            {
                 this.Image = this._Expanded ? Resources.chevronlesspressed : Resources.chevronmorepressed;
+            }
             else if (this._IsHovered || this._IsFocused)
+            {
                 this.Image = this._Expanded ? Resources.chevronlesshovered : Resources.chevronmorehovered;
+            }
             else
+            {
                 this.Image = this._Expanded ? Resources.chevronless : Resources.chevronmore;
+            }
         }
 
         #endregion
@@ -110,6 +116,7 @@ namespace Mohammad.Win.Forms.Internals
                 this._IsMouseDown = false;
                 this.SetImage();
             }
+
             base.OnMouseUp(mevent);
         }
 
@@ -121,6 +128,7 @@ namespace Mohammad.Win.Forms.Internals
         {
             base.OnMouseMove(mevent);
             if (mevent.Button != MouseButtons.None)
+            {
                 if (!this.ClientRectangle.Contains(mevent.X, mevent.Y))
                 {
                     if (this._IsHovered)
@@ -134,6 +142,7 @@ namespace Mohammad.Win.Forms.Internals
                     this._IsHovered = true;
                     this.SetImage();
                 }
+            }
         }
 
         #endregion
@@ -170,6 +179,7 @@ namespace Mohammad.Win.Forms.Internals
                 this.IsFocusedByKey = false;
                 this.SetImage();
             }
+
             base.OnMouseDown(mevent);
         }
 
@@ -198,6 +208,7 @@ namespace Mohammad.Win.Forms.Internals
                 this._IsKeyDown = false;
                 this.SetImage();
             }
+
             base.OnKeyUp(kevent);
         }
 
@@ -212,6 +223,7 @@ namespace Mohammad.Win.Forms.Internals
                 this._IsKeyDown = true;
                 this.SetImage();
             }
+
             base.OnKeyDown(kevent);
         }
 
@@ -271,7 +283,9 @@ namespace Mohammad.Win.Forms.Internals
             try
             {
                 if (disposing && this.components != null)
+                {
                     this.components.Dispose();
+                }
             }
             finally
             {

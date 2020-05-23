@@ -9,6 +9,8 @@ namespace Mohammad.Logging.FileBased.Xml
     public sealed class XmlLogger : XmlLogger<LogEntity>
     {
         public XmlLogger(DirectoryInfo logPath = null, bool useLogRotation = false)
-            : base(logPath, useLogRotation) { }
+            : base(logPath, useLogRotation)
+        {
+        }
     }
 }

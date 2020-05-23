@@ -9,13 +9,22 @@ namespace Mohammad.Logging.Internals
     public abstract class Writer<TLog, TLogEntity> : IWriter<TLogEntity>
         where TLogEntity : LogEntity
     {
-        private readonly ReaderWriterLock _StructureHolderLock = new ReaderWriterLock();
         private const int _DefaultTimeout = 2500;
         private static int _ReaderLockAcquireTimeout = _DefaultTimeout;
+        private readonly ReaderWriterLock _StructureHolderLock = new ReaderWriterLock();
         public virtual TLog Log { get; protected set; }
-        protected Writer(TLog log) { this.Log = log; }
-        protected static void SetLockTimeouts(int readerTimeout, int writerTimeout) { _ReaderLockAcquireTimeout = readerTimeout; }
-        protected static void ResetLockTimeouts() { _ReaderLockAcquireTimeout = _DefaultTimeout; }
+        protected Writer(TLog log) => this.Log = log;
+
+        protected static void SetLockTimeouts(int readerTimeout, int writerTimeout)
+        {
+            _ReaderLockAcquireTimeout = readerTimeout;
+        }
+
+        protected static void ResetLockTimeouts()
+        {
+            _ReaderLockAcquireTimeout = _DefaultTimeout;
+        }
+
         protected abstract void InnerWrite(TLogEntity logEntity);
 
         #region IWriter<TLogEntity> Members
@@ -28,7 +37,10 @@ namespace Mohammad.Logging.Internals
             try
             {
                 if (this.ShowInDebuggerTracer)
+                {
                     Trace.WriteLine(logEntity);
+                }
+
                 this.InnerWrite(logEntity);
             }
             finally

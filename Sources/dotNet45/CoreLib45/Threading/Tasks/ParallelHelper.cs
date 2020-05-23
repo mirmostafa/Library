@@ -18,14 +18,17 @@ namespace Mohammad.Threading.Tasks
         public static void ForProcessor(int fromInclusive, int toExclusive, Action<int> action)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
+
             Parallel.For(fromInclusive,
-                         toExclusive,
-                         new ParallelOptions
-                         {
-                             MaxDegreeOfParallelism = Environment.ProcessorCount
-                         },
-                         action);
+                toExclusive,
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = Environment.ProcessorCount
+                },
+                action);
         }
 
         /// <summary>
@@ -38,13 +41,16 @@ namespace Mohammad.Threading.Tasks
         public static void ForEachProcessor<T>(this IEnumerable<T> source, Action<T> action)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
+
             Parallel.ForEach(source,
-                             new ParallelOptions
-                             {
-                                 MaxDegreeOfParallelism = Environment.ProcessorCount
-                             },
-                             action);
+                new ParallelOptions
+                {
+                    MaxDegreeOfParallelism = Environment.ProcessorCount
+                },
+                action);
         }
 
         /// <summary>
@@ -72,7 +78,7 @@ namespace Mohammad.Threading.Tasks
         /// <returns></returns>
         public static async Task<List<TResult>> ForEachAsync<T, TResult>(this IEnumerable<T> source, Func<T, TResult> function)
         {
-            var tasks  = source.Select(item1 => Task.Run(() => function(item1))).ToList();
+            var tasks = source.Select(item1 => Task.Run(() => function(item1))).ToList();
             var result = await Task.WhenAll(tasks);
             return result.ToList();
         }
@@ -94,11 +100,13 @@ namespace Mohammad.Threading.Tasks
         {
             var items = source as T[] ?? source.ToArray();
             Parallel.ForEach(Partitioner.Create(0, items.Length),
-                             range =>
-                             {
-                                 for (var i = range.Item1; i < range.Item2; i++)
-                                     action(items[i]);
-                             });
+                range =>
+                {
+                    for (var i = range.Item1; i < range.Item2; i++)
+                    {
+                        action(items[i]);
+                    }
+                });
         }
 
         public static void FastWhere<T>(this IEnumerable<T> source, Func<T, bool> predictor, Action<T> action)
@@ -113,15 +121,18 @@ namespace Mohammad.Threading.Tasks
             //    });
 
             Parallel.ForEach(Partitioner.Create(source),
-                             item =>
-                             {
-                                 if (predictor(item))
-                                     action(item);
-                             });
+                item =>
+                {
+                    if (predictor(item))
+                    {
+                        action(item);
+                    }
+                });
         }
 
-        public static void FastSelect<TSource, TDestination>(this IEnumerable<TSource> source, Func<TSource, TDestination> selector,
-                                                             Action<TDestination>      action)
+        public static void FastSelect<TSource, TDestination>(this IEnumerable<TSource> source,
+            Func<TSource, TDestination> selector,
+            Action<TDestination> action)
         {
             Parallel.ForEach(Partitioner.Create(source), item => action(selector(item)));
         }
@@ -130,35 +141,43 @@ namespace Mohammad.Threading.Tasks
         {
             var items = source as IList<T> ?? source.ToList();
             Parallel.ForEach(Partitioner.Create(0, items.Count),
-                             range =>
-                             {
-                                 for (var i = range.Item1; i < range.Item2; i++)
-                                     if (!action(items[i]))
-                                         break;
-                             });
+                range =>
+                {
+                    for (var i = range.Item1; i < range.Item2; i++)
+                    {
+                        if (!action(items[i]))
+                        {
+                            break;
+                        }
+                    }
+                });
         }
 
         public static void FastForEach<T>(this IEnumerable<T> source, Action<T, ParallelLoopState> action)
         {
             var items = source as IList<T> ?? source.ToList();
             Parallel.ForEach(Partitioner.Create(0, items.Count),
-                             (range, loopState) =>
-                             {
-                                 for (var i = range.Item1; i < range.Item2; i++)
-                                     action(items[i], loopState);
-                             });
+                (range, loopState) =>
+                {
+                    for (var i = range.Item1; i < range.Item2; i++)
+                    {
+                        action(items[i], loopState);
+                    }
+                });
         }
 
         public static TResult[] FastForEachFunc<T, TResult>(this IEnumerable<T> source, Func<T, TResult> action)
         {
-            var items  = source as IList<T> ?? source.ToList();
+            var items = source as IList<T> ?? source.ToList();
             var result = new TResult[items.Count];
             Parallel.ForEach(Partitioner.Create(0, items.Count),
-                             range =>
-                             {
-                                 for (var i = range.Item1; i < range.Item2; i++)
-                                     result[i] = action(items[i]);
-                             });
+                range =>
+                {
+                    for (var i = range.Item1; i < range.Item2; i++)
+                    {
+                        result[i] = action(items[i]);
+                    }
+                });
             return result;
         }
 
@@ -166,23 +185,27 @@ namespace Mohammad.Threading.Tasks
         {
             var items = source as IList<TItem> ?? source.ToList();
             Parallel.ForEach(Partitioner.Create(0, items.Count),
-                             range =>
-                             {
-                                 for (var i = range.Item1; i < range.Item2; i++)
-                                     onGotResult(action(items[i]));
-                             });
+                range =>
+                {
+                    for (var i = range.Item1; i < range.Item2; i++)
+                    {
+                        onGotResult(action(items[i]));
+                    }
+                });
         }
 
         public static TResult[] FastForEachFunc<T, TResult>(this IEnumerable<T> source, Func<T, ParallelLoopState, TResult> action)
         {
-            var items  = source as T[] ?? source.ToArray();
+            var items = source as T[] ?? source.ToArray();
             var result = new TResult[items.Length];
             Parallel.ForEach(Partitioner.Create(0, items.Length),
-                             (range, loopState) =>
-                             {
-                                 for (var i = range.Item1; i < range.Item2; i++)
-                                     result[i] = action(items[i], loopState);
-                             });
+                (range, loopState) =>
+                {
+                    for (var i = range.Item1; i < range.Item2; i++)
+                    {
+                        result[i] = action(items[i], loopState);
+                    }
+                });
             return result;
         }
 

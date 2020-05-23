@@ -9,12 +9,12 @@ namespace Mohammad.Internals
     [SuppressUnmanagedCodeSecurity]
     internal class EnableThemingInScope : IDisposable
     {
-        private uint cookie;
         // Private data
         private const int ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID = 0x004;
         private static ACTCTX enableThemingActivationContext;
         private static IntPtr hActCtx;
         private static bool contextCreationSucceeded;
+        private uint cookie;
 
         public EnableThemingInScope(bool enable)
         {
@@ -22,20 +22,36 @@ namespace Mohammad.Internals
             //if (enable && OSFeature.Feature.IsPresent(OSFeature.Themes))
             {
                 if (this.EnsureActivateContextCreated())
+                {
                     if (!ActivateActCtx(hActCtx, out this.cookie))
                         // Be sure cookie always zero if activation failed
+                    {
                         this.cookie = 0;
+                    }
+                }
             }
         }
 
-        ~EnableThemingInScope() { this.Dispose(false); }
+        ~EnableThemingInScope()
+        {
+            this.Dispose(false);
+        }
+
+        void IDisposable.Dispose()
+        {
+            this.Dispose(true);
+        }
 
         private void Dispose(bool disposing)
         {
             if (this.cookie != 0)
+            {
                 if (DeactivateActCtx(0, this.cookie))
                     // deactivation succeeded...
+                {
                     this.cookie = 0;
+                }
+            }
         }
 
         private bool EnsureActivateContextCreated()
@@ -106,8 +122,6 @@ namespace Mohammad.Internals
 
         [DllImport("Kernel32.dll")]
         private static extern bool DeactivateActCtx(uint dwFlags, uint lpCookie);
-
-        void IDisposable.Dispose() { this.Dispose(true); }
 
         private struct ACTCTX
         {

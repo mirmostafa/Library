@@ -47,45 +47,73 @@ namespace Mohammad.Helpers
         public static void AddMany<T>(this ICollection<T> collection, IEnumerable<T> newItems)
         {
             if (collection == null)
+            {
                 throw new ArgumentNullException(nameof(collection));
+            }
+
             if (newItems == null)
+            {
                 throw new ArgumentNullException(nameof(newItems));
+            }
 
             foreach (var item in newItems)
+            {
                 collection.Add(item);
+            }
         }
 
         public static void AddMany<T>(this ICollection<T> collection, params T[] newItems)
         {
             if (collection == null)
+            {
                 throw new ArgumentNullException(nameof(collection));
+            }
+
             if (newItems == null)
+            {
                 throw new ArgumentNullException(nameof(newItems));
+            }
 
             foreach (var item in newItems)
+            {
                 collection.Add(item);
+            }
         }
 
         public static void AddMany<T>(this List<T> collection, params T[] newItems)
         {
             if (collection == null)
+            {
                 throw new ArgumentNullException(nameof(collection));
+            }
+
             if (newItems == null)
+            {
                 throw new ArgumentNullException(nameof(newItems));
+            }
 
             foreach (var item in newItems)
+            {
                 collection.Add(item);
+            }
         }
 
         public static void AddMany(this IList list, IEnumerable newItems)
         {
             if (list == null)
+            {
                 throw new ArgumentNullException(nameof(list));
+            }
+
             if (newItems == null)
+            {
                 throw new ArgumentNullException(nameof(newItems));
+            }
 
             foreach (var item in newItems)
+            {
                 list.Add(item);
+            }
         }
 
         /// <summary>
@@ -99,12 +127,19 @@ namespace Mohammad.Helpers
         public static void AddMany<TKey, TValue>(this IDictionary<TKey, TValue> dict, IEnumerable<KeyValuePair<TKey, TValue>> pairs)
         {
             if (dict == null)
+            {
                 throw new ArgumentNullException(nameof(dict));
+            }
+
             if (pairs == null)
+            {
                 throw new ArgumentNullException(nameof(pairs));
+            }
 
             foreach (var pair in pairs)
+            {
                 dict.Add(pair);
+            }
         }
 
         /// <summary>
@@ -121,16 +156,29 @@ namespace Mohammad.Helpers
         public static void AddMany<T, TKey, TValue>(this IDictionary<TKey, TValue> dict, IEnumerable<T> newItems, Func<T, TKey> key, Func<T, TValue> value)
         {
             if (dict == null)
+            {
                 throw new ArgumentNullException(nameof(dict));
+            }
+
             if (newItems == null)
+            {
                 throw new ArgumentNullException(nameof(newItems));
+            }
+
             if (key == null)
+            {
                 throw new ArgumentNullException(nameof(key));
+            }
+
             if (value == null)
+            {
                 throw new ArgumentNullException(nameof(value));
+            }
 
             foreach (var item in newItems)
+            {
                 dict.Add(key(item), value(item));
+            }
         }
 
         public static bool Any(this IEnumerable source) => Enumerable.Any(source.Cast<object>());
@@ -153,23 +201,39 @@ namespace Mohammad.Helpers
         public static IEnumerable AsEnuemrable(object source)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             var items = source as IEnumerable;
             if (items == null)
+            {
                 throw new InvalidCastException();
+            }
+
             foreach (var item in items)
+            {
                 yield return item;
+            }
         }
 
         public static IEnumerable<T> AsEnuemrable<T>(object source)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             var items = source as IEnumerable<T>;
             if (items == null)
+            {
                 throw new InvalidCastException();
+            }
+
             foreach (var item in items)
+            {
                 yield return item;
+            }
         }
 
         /// <summary>
@@ -183,20 +247,36 @@ namespace Mohammad.Helpers
         /// <param name="addToRoots"> The add to roots. </param>
         /// <param name="addChild"> The add to children. </param>
         /// <exception cref="ArgumentNullException">getChildren</exception>
-        public static void BuildTree<TSource, TItem>(this IEnumerable<TSource>           rootElements, Func<TSource, TItem> getNewItem,
-                                                     Func<TSource, IEnumerable<TSource>> getChildren,  Action<TItem>        addToRoots,
-                                                     Action<TItem, TItem>                addChild)
+        public static void BuildTree<TSource, TItem>(this IEnumerable<TSource> rootElements,
+            Func<TSource, TItem> getNewItem,
+            Func<TSource, IEnumerable<TSource>> getChildren,
+            Action<TItem> addToRoots,
+            Action<TItem, TItem> addChild)
         {
             if (getChildren == null)
+            {
                 throw new ArgumentNullException(nameof(getChildren));
+            }
+
             if (getNewItem == null)
+            {
                 throw new ArgumentNullException(nameof(getNewItem));
+            }
+
             if (addToRoots == null)
+            {
                 throw new ArgumentNullException(nameof(addToRoots));
+            }
+
             if (addChild == null)
+            {
                 throw new ArgumentNullException(nameof(addChild));
+            }
+
             if (rootElements == null)
+            {
                 throw new ArgumentNullException(nameof(rootElements));
+            }
 
             void AddChildren(TSource siteMap, TItem parent)
             {
@@ -227,11 +307,19 @@ namespace Mohammad.Helpers
         public static IEnumerable<TOutput> Cast<TInput, TOutput>(this IEnumerable<TInput> input, Converter<TInput, TOutput> converter)
         {
             if (converter == null)
+            {
                 throw new ArgumentNullException(nameof(converter));
+            }
+
             if (input == null)
+            {
                 yield break;
+            }
+
             foreach (var item in input)
+            {
                 yield return converter(item);
+            }
         }
 
         /// <summary>
@@ -245,11 +333,19 @@ namespace Mohammad.Helpers
         public static IEnumerable<TOutput> Cast<TOutput>(this IEnumerable input, Converter<object, TOutput> converter)
         {
             if (converter == null)
+            {
                 throw new ArgumentNullException(nameof(converter));
+            }
+
             if (input == null)
+            {
                 yield break;
+            }
+
             foreach (var item in input)
+            {
                 yield return converter(item);
+            }
         }
 
         public static IEnumerable<T> CastOrNull<T>(this IEnumerable source)
@@ -261,10 +357,15 @@ namespace Mohammad.Helpers
         public static IEnumerable<T> Combine<T>(this IEnumerable<T> items, params IEnumerable<T>[] others)
         {
             foreach (var item in items)
+            {
                 yield return item;
+            }
+
             foreach (var other in others)
             foreach (var item in other)
+            {
                 yield return item;
+            }
         }
 
         /// <summary>
@@ -278,10 +379,10 @@ namespace Mohammad.Helpers
         ///     <c>true</c> if the specified source contains the given item; otherwise, <c>false</c> .
         /// </returns>
         public static bool Contains<TSource>(this IEnumerable<TSource> source, TSource item, Comparison<TSource> comparison) => source.Any(
-                                                                                                                                           currItem => comparison(currItem, item) == 0);
+            currItem => comparison(currItem, item) == 0);
 
         public static bool Contains<TSource>(this IEnumerable<TSource> source, TSource item, Func<TSource, TSource, bool> comparer) => source.Any(
-                                                                                                                                                  currItem => comparer(currItem, item));
+            currItem => comparer(currItem, item));
 
         public static IEnumerable<TSource> Copy<TSource>(this ICollection<TSource> source)
         {
@@ -320,8 +421,7 @@ namespace Mohammad.Helpers
             where TSource : class => source.Where(s => s == item).Count();
 
         public static IEnumerable<T> Distinct<T>(this IEnumerable<T> source, Func<T, T, bool> comparer, Func<T, int> getHashCode = null) => source.Distinct(
-                                                                                                                                                            new LibEqualityComparer<T>(comparer
-                                                                                                                                                                                     , getHashCode));
+            new LibEqualityComparer<T>(comparer, getHashCode));
 
         public static IEnumerable<T> Distinct<T>(this IEnumerable<T> source, Func<T, object> getProp) => source.GroupBy(getProp).Select(x => x.First());
 
@@ -338,9 +438,15 @@ namespace Mohammad.Helpers
             foreach (var item in source)
             {
                 if (counter == index)
+                {
                     return item;
+                }
+
                 if (counter > index)
+                {
                     break;
+                }
+
                 counter++;
             }
 
@@ -365,83 +471,124 @@ namespace Mohammad.Helpers
             yield return first;
             var current = first;
             while ((current = getNext(current)) != null)
+            {
                 yield return current;
+            }
         }
 
         public static IEnumerable<T> FlattenTreeNode<T>(this IEnumerable<T> e, Func<T, IEnumerable<T>> getChildren) =>
             e.ToList().FlattenTreeNode(getChildren);
 
         public static IEnumerable<T> FlattenTreeNode<T>(this IList<T> e, Func<T, IEnumerable<T>> getChildren) => e
-                                                                                                                .SelectMany(
-                                                                                                                            c => getChildren(c)
-                                                                                                                               .FlattenTreeNode(getChildren))
-                                                                                                                .Concat(e);
+            .SelectMany(
+                c => getChildren(c)
+                    .FlattenTreeNode(getChildren))
+            .Concat(e);
 
         public static void For<TSource>(this IEnumerable<TSource> source, Action<TSource, int> actor)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             if (actor == null)
+            {
                 throw new ArgumentNullException(nameof(actor));
+            }
+
             var items = source.ToArray();
             for (var i = 0; i < items.LongLength; i++)
+            {
                 actor(items[i], i);
+            }
         }
 
         public static void For(int min, int max, Action<int> action, int step = 1)
         {
             for (var i = min; i < max; i += step)
+            {
                 action(i);
+            }
         }
 
         public static void For(int max, Action<int> action, int min = 0, int step = 1)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
+
             for (var i = min; i < max; i += step)
+            {
                 action(i);
+            }
         }
 
         public static void For(int max, Action action, int min = 0, int step = 1)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
+
             for (var i = min; i < max; i += step)
+            {
                 action();
+            }
         }
 
         public static IEnumerable<TResult> For<TResult>(int count, Func<int, TResult> selector)
         {
             for (var index = 0; index < count; index++)
+            {
                 yield return selector(index);
+            }
         }
 
         public static IEnumerable<TResult> For<TObject, TResult>(TObject o, int count, Func<TObject, int, TResult> selector)
         {
             for (var index = 0; index < count; index++)
+            {
                 yield return selector(o, index);
+            }
         }
 
         public static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource> actor)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             if (actor == null)
+            {
                 throw new ArgumentNullException(nameof(actor));
+            }
+
             foreach (var item in source)
+            {
                 actor(item);
+            }
         }
 
         public static void ForEach<TSource>(this IEnumerable<TSource> source, Action<TSource, int> actor)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             if (actor == null)
+            {
                 throw new ArgumentNullException(nameof(actor));
+            }
 
             var index = 0;
             foreach (var item in source)
+            {
                 actor(item, index++);
+            }
         }
 
         /// <summary>
@@ -458,11 +605,19 @@ namespace Mohammad.Helpers
         public static void ForEach(this IEnumerable source, Action<object> actor)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             if (actor == null)
+            {
                 throw new ArgumentNullException(nameof(actor));
+            }
+
             foreach (var item in source)
+            {
                 actor(item);
+            }
         }
 
         /// <summary>
@@ -473,23 +628,35 @@ namespace Mohammad.Helpers
         public static void ForEach(this IDictionary source, Action<object, object> actor)
         {
             foreach (var key in source.Keys)
+            {
                 actor(key, source[key]);
+            }
         }
 
         public static void ForEach<TKey, TValue>(this IDictionary<TKey, TValue> source, Action<TKey, TValue> actor)
         {
             foreach (var key in source.Keys)
+            {
                 actor(key, source[key]);
+            }
         }
 
         public static IEnumerable<TDestination> ForEachFunc<TSource, TDestination>(this IEnumerable<TSource> source, Func<TSource, TDestination> actor)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             if (actor == null)
+            {
                 throw new ArgumentNullException(nameof(actor));
+            }
+
             foreach (var item in source)
+            {
                 yield return actor(item);
+            }
         }
 
         public static void ForEachTreeNode<T>(this IEnumerable<T> roots, Func<T, IEnumerable<T>> getChildren, Action<T> rootAction, Action<T, T> childAction)
@@ -499,13 +666,17 @@ namespace Mohammad.Helpers
             where T : class
         {
             if (root == null)
-                return;
-            rootAction?.Invoke(root);
-            getChildren(root).ForEach(c =>
             {
-                childAction?.Invoke(c, root);
-                ForEachTreeNode(c, getChildren, rootAction, childAction);
-            });
+                return;
+            }
+
+            rootAction?.Invoke(root);
+            getChildren(root)
+                .ForEach(c =>
+                {
+                    childAction?.Invoke(c, root);
+                    ForEachTreeNode(c, getChildren, rootAction, childAction);
+                });
         }
 
         /// <summary>
@@ -518,21 +689,31 @@ namespace Mohammad.Helpers
         public static IEnumerable<T> Generate<T>(Func<T> generator, int count)
         {
             for (var i = 0; i < count; i++)
+            {
                 yield return generator();
+            }
         }
 
         public static IEnumerable<T> Generate<T>(Func<int, T> generator, int count)
         {
             for (var i = 0; i < count; i++)
+            {
                 yield return generator(i);
+            }
         }
 
         public static IEnumerable<T> GetAll<T>(Func<IEnumerable<T>> getRootElements, Func<T, IEnumerable<T>> getChildren)
         {
             if (getRootElements == null)
+            {
                 throw new ArgumentNullException(nameof(getRootElements));
+            }
+
             if (getChildren == null)
+            {
                 throw new ArgumentNullException(nameof(getChildren));
+            }
+
             var result = new List<T>();
 
             void FindChildren(T item)
@@ -560,19 +741,22 @@ namespace Mohammad.Helpers
         }
 
         public static bool HasDuplicates<TEnum, TPropType>(this IEnumerable<TEnum> source, Func<TEnum, TPropType> fieldSelector) => source
-                                                                                                                                   .GroupBy(fieldSelector)
-                                                                                                                                   .Any(
-                                                                                                                                        grp =>
-                                                                                                                                            grp
-                                                                                                                                               .ElementAtOrDefault(
-                                                                                                                                                                   1) !=
-                                                                                                                                            null);
+            .GroupBy(fieldSelector)
+            .Any(
+                grp =>
+                    grp
+                        .ElementAtOrDefault(
+                            1) !=
+                    null);
 
         public static bool HasDuplicates<T>(this IEnumerable<T> source, Func<T, T, bool> comparer, Func<T, int> getHashCode = null)
         {
             if (comparer == null)
+            {
                 throw new ArgumentNullException(nameof(comparer));
-            var items            = source as T[] ?? source.ToArray();
+            }
+
+            var items = source as T[] ?? source.ToArray();
             var equalityComparer = new LibEqualityComparer<T>(comparer, getHashCode);
             return items.Distinct(equalityComparer).Count() != items.Count();
         }
@@ -580,9 +764,12 @@ namespace Mohammad.Helpers
         public static bool HasItemsAtLeast(this IEnumerable source, uint count)
         {
             var enumerator = source.GetEnumerator();
-            var index      = 0;
+            var index = 0;
             while (enumerator.MoveNext() && index < count)
+            {
                 index++;
+            }
+
             return index == count;
         }
 
@@ -599,17 +786,25 @@ namespace Mohammad.Helpers
         public static int? IndexOf<T>(this IEnumerable<T> source, Func<T, bool> predicate)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             var list = source as IList<T> ?? source.ToList();
             if (!list.Any())
+            {
                 return -1;
+            }
+
             int? result = 0;
             bool found;
             using (var enumerator = list.GetEnumerator())
             {
                 found = false;
                 while (enumerator.MoveNext() && !(found = predicate(enumerator.Current)))
+                {
                     result++;
+                }
             }
 
             return found ? result : null;
@@ -618,15 +813,23 @@ namespace Mohammad.Helpers
         public static int? IndexOf<T>(this IEnumerable<T> source, T item)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             var index = 0;
             using (var enumerator = source.GetEnumerator())
+            {
                 while (enumerator.MoveNext())
                 {
                     if (Equals(enumerator.Current, item))
+                    {
                         return index;
+                    }
+
                     index++;
                 }
+            }
 
             return null;
         }
@@ -635,14 +838,20 @@ namespace Mohammad.Helpers
         {
             var result = creator();
             for (var i = 0; i < result.Length; i++)
+            {
                 result[i] = action();
+            }
+
             return result;
         }
 
         public static bool IsLast<T>(this IEnumerable<T> source, T item)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             var list = source as IList<T> ?? source.ToList();
             return list.Count() - 1 == list.IndexOf(item);
         }
@@ -656,8 +865,12 @@ namespace Mohammad.Helpers
         public static IEnumerable<TSource> Iterate<TSource>(this IEnumerable<TSource> source)
         {
             using (var enumerator = source.GetEnumerator())
+            {
                 while (enumerator.MoveNext())
+                {
                     yield return enumerator.Current;
+                }
+            }
         }
 
         /// <summary>
@@ -672,14 +885,18 @@ namespace Mohammad.Helpers
             where TSource : class
         {
             if (steps < 2)
+            {
                 throw new ArgumentOutOfRangeException($"{nameof(steps)} must be greater than 2");
+            }
 
             var index = 0;
             foreach (var item in source.Iterate())
             {
                 index++;
                 if (index % steps == 0)
+                {
                     yield return item;
+                }
             }
         }
 
@@ -696,15 +913,26 @@ namespace Mohammad.Helpers
         public static IEnumerable<T> Lookup<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> getChildren, Func<T, bool> predicate = null)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             if (getChildren == null)
+            {
                 throw new ArgumentNullException(nameof(getChildren));
+            }
+
             foreach (var item in source)
             {
                 if (predicate?.Invoke(item) == true)
+                {
                     yield return item;
+                }
+
                 foreach (var child in Lookup(getChildren(item), getChildren, predicate))
+                {
                     yield return child;
+                }
             }
         }
 
@@ -712,14 +940,23 @@ namespace Mohammad.Helpers
             where T : class
         {
             if (getParent == null)
+            {
                 throw new ArgumentNullException(nameof(getParent));
+            }
+
             var parent = getParent(node);
             if (predicate == null)
+            {
                 predicate = p => true;
+            }
+
             while (parent != null)
             {
                 if (predicate(parent))
+                {
                     yield return parent;
+                }
+
                 parent = getParent(parent);
             }
         }
@@ -730,28 +967,36 @@ namespace Mohammad.Helpers
             where T : TResult => source.SelectMany(items => items.Cast<TResult>());
 
         public static IEnumerable<T> Paginate<T>(this IEnumerable<T> query, (int PageCount, int? PageIndex) paging) => query.Paginate(paging.PageCount,
-                                                                                                                                      paging.PageIndex);
+            paging.PageIndex);
 
         public static IEnumerable<T> Paginate<T>(this IEnumerable<T> query, int pageCount, int? pageIndex)
         {
             if (!pageIndex.HasValue)
+            {
                 return query;
+            }
+
             return query.Skip(pageCount * pageIndex.Value).Take(pageCount);
         }
 
         public static IEnumerable<IEnumerable<TSource>> Partition<TSource>(this IEnumerable<TSource> items, int partitionCount)
         {
-            var result  = Repeat(() => new List<TSource>(), partitionCount).ToArray();
+            var result = Repeat(() => new List<TSource>(), partitionCount).ToArray();
             var counter = 0;
             foreach (var item in items)
+            {
                 result[counter++ % partitionCount].Add(item);
+            }
+
             return result;
         }
 
         public static IEnumerable<int> Range(int start, int count, int step)
         {
             for (var number = start; number < start + count; number += step)
+            {
                 yield return number;
+            }
         }
 
         public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource defaultValue = default) =>
@@ -763,13 +1008,13 @@ namespace Mohammad.Helpers
         public static void RemoveRange<TEntity>(this ICollection<TEntity> source, IEnumerable<TEntity> entities) => entities.ForEach(e => source.Remove(e));
 
         public static void RemoveRange<TEntity>(this ICollection<TEntity> source, Predicate<TEntity> match) => RemoveRange(source,
-                                                                                                                           source.Where(
-                                                                                                                                        entity => match(entity)));
+            source.Where(
+                entity => match(entity)));
 
         public static void RemoveRange<TEntity>(this IList<TEntity> source, IEnumerable<TEntity> entities) => entities.ForEach(e => source.Remove(e));
 
         public static void RemoveRange<TEntity>(this IList<TEntity> source, Predicate<TEntity> match) => RemoveRange(source,
-                                                                                                                     source.Where(entity => match(entity)));
+            source.Where(entity => match(entity)));
 
         /// <summary>
         ///     Repeats the specified items.
@@ -780,13 +1025,17 @@ namespace Mohammad.Helpers
         public static void Repeat<T>(this IEnumerable<T> items, Action<T> actor)
         {
             foreach (var item in items)
+            {
                 actor(item);
+            }
         }
 
         public static IEnumerable<TSource> Repeat<TSource>(Func<TSource> action, int count)
         {
             for (var i = 0; i < count; i++)
+            {
                 yield return action();
+            }
         }
 
         public static void RunAll(this IEnumerable<Action> actions) => actions?.ForEach(a => a());
@@ -798,7 +1047,10 @@ namespace Mohammad.Helpers
             foreach (var action in actions)
             {
                 if (!predicate())
+                {
                     break;
+                }
+
                 action();
             }
         }
@@ -814,9 +1066,14 @@ namespace Mohammad.Helpers
         public static IEnumerable<T> SelectManyRecursive<T>(this IEnumerable<T> items, Func<T, IEnumerable<T>> selector)
         {
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
+
             if (selector == null)
+            {
                 throw new ArgumentNullException(nameof(selector));
+            }
 
             var children = items.SelectMany(selector);
             return children.Any() ? items.Concat(SelectManyRecursive(children, selector)) : items.Concat(children);
@@ -833,7 +1090,9 @@ namespace Mohammad.Helpers
         {
             yield return root;
             foreach (var child in InnerSelectTreeDynamic(root, getNext))
+            {
                 yield return child;
+            }
         }
 
         /// <summary>
@@ -846,7 +1105,9 @@ namespace Mohammad.Helpers
             var buffer = new List<T>();
             buffer.AddMany(source);
             foreach (var item in buffer.Where(item => item == null))
+            {
                 source.Remove(item);
+            }
         }
 
         /// <summary>
@@ -865,13 +1126,19 @@ namespace Mohammad.Helpers
         public static IEnumerable<IEnumerable<T>> TakeGroups<T>(this IEnumerable<T> items, int groupSize, int takeEvery)
         {
             if (items == null)
+            {
                 throw new ArgumentNullException(nameof(items));
+            }
+
             if (takeEvery > groupSize)
+            {
                 throw new ArgumentOutOfRangeException(nameof(takeEvery), "Argument takeEvery must be less than or equal to groupSize.");
+            }
 
             var group = new Queue<T>(groupSize);
 
             foreach (var t in items)
+            {
                 if (group.Count < groupSize)
                 {
                     group.Enqueue(t);
@@ -882,13 +1149,20 @@ namespace Mohammad.Helpers
                     yield return group.ToList();
 
                     if (groupSize == takeEvery)
+                    {
                         group.Clear();
+                    }
                     else
+                    {
                         for (var x = 0; x < takeEvery; x++)
+                        {
                             group.Dequeue();
+                        }
+                    }
 
                     group.Enqueue(t);
                 }
+            }
 
             yield return group;
         }
@@ -911,7 +1185,10 @@ namespace Mohammad.Helpers
         {
             var arrayList = new ArrayList();
             foreach (var item in source)
+            {
                 arrayList.Add(item);
+            }
+
             return arrayList.ToArray();
         }
 
@@ -945,8 +1222,8 @@ namespace Mohammad.Helpers
         }
 
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs) => pairs.ToDictionary(
-                                                                                                                                                    pair => pair.Key,
-                                                                                                                                                    pair => pair.Value);
+            pair => pair.Key,
+            pair => pair.Value);
 
         public static IDictionary<T, T> ToDictionary<T>(this IEnumerable<T> items)
         {
@@ -988,23 +1265,49 @@ namespace Mohammad.Helpers
 
         public static void Enumerate<T>(this IEnumerable<T> source, Func<T, int, bool> moveNext)
         {
-            if (source   == null) throw new ArgumentNullException(nameof(source));
-            if (moveNext == null) throw new ArgumentNullException(nameof(moveNext));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (moveNext == null)
+            {
+                throw new ArgumentNullException(nameof(moveNext));
+            }
+
             var index = 0;
             using (var enumerator = source.GetEnumerator())
+            {
                 while (enumerator.MoveNext())
+                {
                     if (!moveNext(enumerator.Current, index++))
+                    {
                         break;
+                    }
+                }
+            }
         }
 
         public static void Enumerate<T>(this IEnumerable<T> source, Action<T, int> moveNext)
         {
-            if (source   == null) throw new ArgumentNullException(nameof(source));
-            if (moveNext == null) throw new ArgumentNullException(nameof(moveNext));
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (moveNext == null)
+            {
+                throw new ArgumentNullException(nameof(moveNext));
+            }
+
             var index = 0;
             using (var enumerator = source.GetEnumerator())
+            {
                 while (enumerator.MoveNext())
+                {
                     moveNext(enumerator.Current, index++);
+                }
+            }
         }
     }
 }

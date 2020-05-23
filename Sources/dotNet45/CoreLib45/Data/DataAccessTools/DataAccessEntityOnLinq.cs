@@ -26,19 +26,6 @@ namespace Mohammad.Data.DataAccessTools
 
         #endregion
 
-        protected DataAccessEntityOnLinq()
-        {
-            this.ExceptionHandling.Reset();
-            try
-            {
-                this.Db.Log = new LinqLogger();
-            }
-            catch (Exception ex)
-            {
-                this.ExceptionHandling.HandleException(ex);
-            }
-        }
-
         protected TDateContext Db
         {
             get
@@ -46,7 +33,10 @@ namespace Mohammad.Data.DataAccessTools
                 if (this.UseStaticDataContext)
                 {
                     if (Memento.Get("StaticDb") != null)
+                    {
                         return Memento.Get<TDateContext>("StaticDb");
+                    }
+
                     this.ExceptionHandling.Reset();
                     try
                     {
@@ -61,7 +51,10 @@ namespace Mohammad.Data.DataAccessTools
                 }
 
                 if (this._Db != null)
+                {
                     return this._Db;
+                }
+
                 this.ExceptionHandling.Reset();
                 try
                 {
@@ -78,6 +71,25 @@ namespace Mohammad.Data.DataAccessTools
 
         protected bool UseStaticDataContext { get; set; }
 
+        protected DataAccessEntityOnLinq()
+        {
+            this.ExceptionHandling.Reset();
+            try
+            {
+                this.Db.Log = new LinqLogger();
+            }
+            catch (Exception ex)
+            {
+                this.ExceptionHandling.HandleException(ex);
+            }
+        }
+
+        public void Dispose()
+        {
+            this._Db?.Dispose();
+            this._Db = null;
+        }
+
         public void Attach(TEntity entity, bool asModified = true)
         {
             this.OnAttaching(entity, asModified);
@@ -88,15 +100,22 @@ namespace Mohammad.Data.DataAccessTools
             this.OnAttaching(entity, original);
         }
 
-        protected override void DeleteCore(TEntity entity, bool submitChanges)
+        public void Refresh(TEntity entity, RefreshMode refreshMode = RefreshMode.OverwriteCurrentValues)
         {
-            this.Db.DeleteEntity(entity, submitChanges, this.ExceptionHandling);
+            this.Db.Refresh(refreshMode, entity);
         }
 
-        public void Dispose()
+        public void Reset()
         {
             this._Db?.Dispose();
             this._Db = null;
+            Instance = null;
+            GC.Collect();
+        }
+
+        protected override void DeleteCore(TEntity entity, bool submitChanges)
+        {
+            this.Db.DeleteEntity(entity, submitChanges, this.ExceptionHandling);
         }
 
         protected override TEntity FillCore(TEntity entity) => throw new NotImplementedException();
@@ -120,30 +139,19 @@ namespace Mohammad.Data.DataAccessTools
             this.Db.Attach(entity, original);
         }
 
-        public void Refresh(TEntity entity, RefreshMode refreshMode = RefreshMode.OverwriteCurrentValues)
-        {
-            this.Db.Refresh(refreshMode, entity);
-        }
-
-        public void Reset()
-        {
-            this._Db?.Dispose();
-            this._Db = null;
-            Instance = null;
-            GC.Collect();
-        }
-
         protected override void SaveChangesCore()
         {
             Exception ex;
-            var       changes = this.Db.GetChangeSet();
+            var changes = this.Db.GetChangeSet();
             foreach (var entity in changes.Inserts.Cast<TEntity>())
             {
                 this.ExceptionHandling.Reset();
                 try
                 {
                     if (!this.OnValidating(new EntityValidating<TEntity>(entity, EntityAction.Insert)))
+                    {
                         return;
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -159,7 +167,9 @@ namespace Mohammad.Data.DataAccessTools
                 try
                 {
                     if (!this.OnValidating(new EntityValidating<TEntity>(entity, EntityAction.Update)))
+                    {
                         return;
+                    }
                 }
                 catch (Exception exception)
                 {
@@ -175,7 +185,9 @@ namespace Mohammad.Data.DataAccessTools
                 try
                 {
                     if (!this.OnValidating(new EntityValidating<TEntity>(entity, EntityAction.Delete)))
+                    {
                         return;
+                    }
                 }
                 catch (Exception exception3)
                 {
@@ -194,7 +206,10 @@ namespace Mohammad.Data.DataAccessTools
             {
                 var result = this.Db.GetAll<TEntity>(this.ExceptionHandling);
                 if (this.IsLazy)
+                {
                     return result;
+                }
+
                 return result.ToList();
             }
         }

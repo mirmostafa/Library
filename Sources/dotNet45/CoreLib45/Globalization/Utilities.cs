@@ -15,17 +15,17 @@ namespace Mohammad.Globalization
 {
     public static class GlobalizationUtilities
     {
-        private static DateTimeFormatInfo  GregorianDateTimeFormatInfo       => CultureInfo.InvariantCulture.DateTimeFormat;
-        public static  IEnumerable<string> GetPersianAbbreviatedDayNames()   => new[] {"Sh", "Ye", "Do", "Se", "Ch", "Pa", "Jo"}.AsEnumerable();
-        public static  IEnumerable<string> GetGregorianAbbreviatedDayNames() => GregorianDateTimeFormatInfo.AbbreviatedDayNames.AsEnumerable();
-        public static  IEnumerable<string> GetPersianDayNames()              => EnumHelper.GetDescriptions(EnumHelper.GetItems<PersianDayOfWeek>());
+        private static DateTimeFormatInfo GregorianDateTimeFormatInfo => CultureInfo.InvariantCulture.DateTimeFormat;
+        public static IEnumerable<string> GetPersianAbbreviatedDayNames() => new[] {"Sh", "Ye", "Do", "Se", "Ch", "Pa", "Jo"}.AsEnumerable();
+        public static IEnumerable<string> GetGregorianAbbreviatedDayNames() => GregorianDateTimeFormatInfo.AbbreviatedDayNames.AsEnumerable();
+        public static IEnumerable<string> GetPersianDayNames() => EnumHelper.GetDescriptions(EnumHelper.GetItems<PersianDayOfWeek>());
 
         public static IEnumerable<string> GetPersianDayNames(string cultureName) => EnumHelper.GetDescriptions(EnumHelper.GetItems<PersianDayOfWeek>(),
-                                                                                                               cultureName);
+            cultureName);
 
         public static IEnumerable<string> GetPersianShortestDayNames() => new[] {"Ye", "Do", "Se", "Ch", "Pa", "Jo", "Sh"}.AsEnumerable();
-        public static string              GetPersianPmDesignator()     => "È.Ù";
-        public static string              GetPersianAmDesignator()     => "Þ.Ù";
+        public static string GetPersianPmDesignator() => "È.Ù";
+        public static string GetPersianAmDesignator() => "Þ.Ù";
 
         public static IEnumerable<string> GetPersianMonthGenitiveNames() => new[]
         {
@@ -95,16 +95,16 @@ namespace Mohammad.Globalization
             ""
         }.AsEnumerable();
 
-        public static IEnumerable<string> GetGregorianDayNames()           => GregorianDateTimeFormatInfo.DayNames.AsEnumerable();
-        public static IEnumerable<string> GetGregorianShortestDayNames()   => GregorianDateTimeFormatInfo.ShortestDayNames.AsEnumerable();
-        public static string              GetGregorianAmDesignator()       => GregorianDateTimeFormatInfo.AMDesignator;
-        public static string              GetGregorianPmDesignator()       => GregorianDateTimeFormatInfo.PMDesignator;
+        public static IEnumerable<string> GetGregorianDayNames() => GregorianDateTimeFormatInfo.DayNames.AsEnumerable();
+        public static IEnumerable<string> GetGregorianShortestDayNames() => GregorianDateTimeFormatInfo.ShortestDayNames.AsEnumerable();
+        public static string GetGregorianAmDesignator() => GregorianDateTimeFormatInfo.AMDesignator;
+        public static string GetGregorianPmDesignator() => GregorianDateTimeFormatInfo.PMDesignator;
         public static IEnumerable<string> GetGregorianMonthGenitiveNames() => GregorianDateTimeFormatInfo.MonthGenitiveNames.AsEnumerable();
 
         public static IEnumerable<string> GetGregorianAbbreviatedMonthGenitiveNames() =>
             GregorianDateTimeFormatInfo.AbbreviatedMonthGenitiveNames.AsEnumerable();
 
-        public static IEnumerable<string> GetGregorianMonthNames()            => GregorianDateTimeFormatInfo.MonthNames.AsEnumerable();
+        public static IEnumerable<string> GetGregorianMonthNames() => GregorianDateTimeFormatInfo.MonthNames.AsEnumerable();
         public static IEnumerable<string> GetGregorianAbbreviatedMonthNames() => GregorianDateTimeFormatInfo.AbbreviatedMonthNames.AsEnumerable();
     }
 }

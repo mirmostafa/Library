@@ -10,16 +10,23 @@ namespace TestWpfApp45.Settings
 
         public DateTime? LastExecutionTime
         {
-            get { return this._LastExecutionTime; }
+            get => this._LastExecutionTime;
             set
             {
                 if (value.Equals(this._LastExecutionTime))
+                {
                     return;
+                }
+
                 this._LastExecutionTime = value;
                 this.OnPropertyChanged();
             }
         }
 
-        public WindowSettings MainWindow { get { return this._MainWindow ?? (this._MainWindow = new WindowSettings()); } set { this._MainWindow = value; } }
+        public WindowSettings MainWindow
+        {
+            get => this._MainWindow ?? (this._MainWindow = new WindowSettings());
+            set => this._MainWindow = value;
+        }
     }
 }

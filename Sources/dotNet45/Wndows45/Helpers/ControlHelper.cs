@@ -17,7 +17,7 @@ namespace Mohammad.Win.Helpers
     public static partial class ControlHelper
     {
         private static readonly Collection<TabPageInfo> _TabPages = new Collection<TabPageInfo>();
-        public static bool IsDesignMode { get { return LicenseManager.UsageMode == LicenseUsageMode.Designtime; } }
+        public static bool IsDesignMode => LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         /// <summary>
         ///     Binds a combo box to an enumeration.
@@ -27,7 +27,7 @@ namespace Mohammad.Win.Helpers
         public static void Bind<TEnum>(this ComboBox comboBox) where TEnum : struct
         {
             var members =
-                EnumHelper.GetMembers<TEnum>(false)
+                EnumHelper.GetMembers<TEnum>()
                     .Where(item => EnumHelper.GetItemAttribute<TEnum, NonSerializedAttribute>(item.ValueMember) == null)
                     .ToCollection();
             comboBox.DisplayMember = "DisplayMember";
@@ -57,11 +57,17 @@ namespace Mohammad.Win.Helpers
             comboBox.DisplayMember = displayMember;
             comboBox.ValueMember = valueMember;
             if (selectedItem != null && comboBox.Items.Contains(comboBox.SelectedItem = selectedItem))
+            {
                 comboBox.SelectedItem = selectedItem;
+            }
         }
 
-        public static void Bind<TSource, TKey>(this ComboBox comboBox, IQueryable<TSource> dataSource, string displayMember, string valueMember,
-            Func<TSource, TKey> orderBy, object selectedItem = null)
+        public static void Bind<TSource, TKey>(this ComboBox comboBox,
+            IQueryable<TSource> dataSource,
+            string displayMember,
+            string valueMember,
+            Func<TSource, TKey> orderBy,
+            object selectedItem = null)
         {
             comboBox.Bind(dataSource.OrderBy(orderBy).ToList(), displayMember, valueMember, selectedItem);
         }
@@ -79,11 +85,17 @@ namespace Mohammad.Win.Helpers
             {
                 T buffer;
                 if ((buffer = childControl as T) != null)
+                {
                     yield return buffer;
+                }
 
                 if (childControl.Controls.Count > 0)
+                {
                     foreach (var t in GetControls<T>(childControl))
+                    {
                         yield return t;
+                    }
+                }
             }
         }
 
@@ -100,23 +112,16 @@ namespace Mohammad.Win.Helpers
                 yield return childControl;
 
                 if (childControl.Controls.Count > 0)
+                {
                     foreach (var t in GetControls(childControl))
+                    {
                         yield return t;
+                    }
+                }
             }
         }
 
-        public static IEnumerable<TreeNode> GetAllNodes(this TreeView treeView) { return treeView.Nodes.GetAllNodes(); }
-
-        private static IEnumerable<TreeNode> GetAllNodes(this TreeNodeCollection treeNodeCollection)
-        {
-            foreach (TreeNode treeNode in treeNodeCollection)
-            {
-                yield return treeNode;
-                if (treeNode.Nodes.Count > 0)
-                    foreach (var node in GetAllNodes(treeNode.Nodes))
-                        yield return node;
-            }
-        }
+        public static IEnumerable<TreeNode> GetAllNodes(this TreeView treeView) => treeView.Nodes.GetAllNodes();
 
         /// <summary>
         /// </summary>
@@ -128,8 +133,11 @@ namespace Mohammad.Win.Helpers
         {
             var attr = target.GetType().GetProperty(propertyName).GetCustomAttributes(typeof(DefaultValueAttribute), true);
             if (attr.GetLength(0) < 1 || attr[0] == null)
-                return default(TDefaultValueType);
-            return (TDefaultValueType) ((DefaultValueAttribute) attr[0]).Value;
+            {
+                return default;
+            }
+
+            return (TDefaultValueType)((DefaultValueAttribute)attr[0]).Value;
         }
 
         /// <summary>
@@ -140,7 +148,9 @@ namespace Mohammad.Win.Helpers
         public static void SetProperty(this Control target, string properyName, object properyValue)
         {
             foreach (Control control in target.Controls)
+            {
                 PropertyHelper.SetValue(control, properyName, properyValue);
+            }
         }
 
         /// <summary>
@@ -165,7 +175,7 @@ namespace Mohammad.Win.Helpers
             listView.SuspendLayout();
 
             for (short i = 0; i <= listView.Items.Count - 1; i++)
-            for (var j = (short) (i + 1); j <= listView.Items.Count - 1; j++)
+            for (var j = (short)(i + 1); j <= listView.Items.Count - 1; j++)
             {
                 string tempVar;
                 var iText = string.IsNullOrEmpty(listView.Items[i].SubItems[cololumnIndex].Text)
@@ -177,12 +187,14 @@ namespace Mohammad.Win.Helpers
                 if (ascending)
                 {
                     if (string.Compare(iText, jText, false) > 0)
+                    {
                         for (short k = 0; k <= listView.Columns.Count - 1; k++)
                         {
                             tempVar = listView.Items[i].SubItems[k].Text;
                             listView.Items[i].SubItems[k].Text = listView.Items[j].SubItems[k].Text;
                             listView.Items[j].SubItems[k].Text = tempVar;
                         }
+                    }
                 }
                 else if (string.Compare(iText, jText, false) > 0)
                 {
@@ -194,6 +206,7 @@ namespace Mohammad.Win.Helpers
                     }
                 }
             }
+
             listView.ResumeLayout();
         }
 
@@ -207,14 +220,24 @@ namespace Mohammad.Win.Helpers
             control.GetControls<ListView>().ForEach(listView => listView.DoubleBuffered(true));
         }
 
-        public static void DoubleBuffered(this ListView listView, bool doubleBuffered) { ObjectHelper.SetProperty(listView, "DoubleBuffered", true); }
-        public static void DoubleBuffered(this TreeView treeView, bool doubleBuffered) { ObjectHelper.SetProperty(treeView, "DoubleBuffered", true); }
+        public static void DoubleBuffered(this ListView listView, bool doubleBuffered)
+        {
+            ObjectHelper.SetProperty(listView, "DoubleBuffered", true);
+        }
+
+        public static void DoubleBuffered(this TreeView treeView, bool doubleBuffered)
+        {
+            ObjectHelper.SetProperty(treeView, "DoubleBuffered", true);
+        }
 
         public static DialogResult ShowDialog<TForm>(FormSettings formSettings, out TForm form) where TForm : Form, new()
         {
             form = new TForm();
             if (formSettings == null)
+            {
                 formSettings = new FormSettings();
+            }
+
             formSettings.SetForm(form);
             var result = form.ShowDialog();
             return result;
@@ -225,9 +248,15 @@ namespace Mohammad.Win.Helpers
             DialogResult result;
             var types = new Type[args.Length];
             for (var counter = 0; counter < args.Length; counter++)
+            {
                 types[counter] = args[counter].GetType();
+            }
+
             using (var form = ObjectHelper.CreateInstance<TForm>(types, args))
+            {
                 result = form.ShowDialog();
+            }
+
             return result;
         }
 
@@ -235,13 +264,16 @@ namespace Mohammad.Win.Helpers
         {
             var types = new Type[args.Length];
             for (var counter = 0; counter < args.Length; counter++)
+            {
                 types[counter] = args[counter].GetType();
+            }
+
             ObjectHelper.CreateInstance<TForm>(types, args).Show();
         }
 
         public static void ShowSingleton<TForm>(Control parent, Func<TForm> creator) where TForm : Form
         {
-            var form = (TForm) Application.OpenForms.Cast<Form>().Where(EqualsTo<TForm>).SingleOrDefault();
+            var form = (TForm)Application.OpenForms.Cast<Form>().Where(EqualsTo<TForm>).SingleOrDefault();
             if (form == null)
             {
                 form = creator();
@@ -249,27 +281,34 @@ namespace Mohammad.Win.Helpers
                 form.Parent = parent;
                 form.Show();
             }
+
             form.BringToFront();
             if (form.WindowState == FormWindowState.Minimized)
+            {
                 form.WindowState = FormWindowState.Normal;
+            }
         }
 
         public static void ShowSingleton<TForm>(FormSettings formSettings) where TForm : Form, new()
         {
-            var form = (TForm) Application.OpenForms.Cast<Form>().Where(EqualsTo<TForm>).SingleOrDefault();
+            var form = (TForm)Application.OpenForms.Cast<Form>().Where(EqualsTo<TForm>).SingleOrDefault();
             if (form == null)
             {
                 form = new TForm();
                 if (formSettings == null)
+                {
                     formSettings = new FormSettings();
+                }
+
                 formSettings.SetForm(form);
             }
+
             form.BringToFront();
             if (form.WindowState == FormWindowState.Minimized)
+            {
                 form.WindowState = FormWindowState.Normal;
+            }
         }
-
-        private static bool EqualsTo<TForm>(Form openForm) where TForm : Form { return openForm is TForm; }
 
         public static void ShowSingleton<TForm>(Predicate<TForm> perdicate) where TForm : Form, new()
         {
@@ -278,70 +317,100 @@ namespace Mohammad.Win.Helpers
             form.Show();
             form.BringToFront();
             if (form.WindowState == FormWindowState.Minimized)
+            {
                 form.WindowState = FormWindowState.Normal;
+            }
         }
 
         public static void ShowSingleton<TForm>(Predicate<TForm> perdicate, params object[] args) where TForm : Form
         {
-            var form = Application.OpenForms.Cast<Form>().Where(openForm => EqualsTo<TForm>(openForm) && perdicate((TForm) openForm)).SingleOrDefault() as TForm;
+            var form = Application.OpenForms.Cast<Form>().Where(openForm => EqualsTo<TForm>(openForm) && perdicate((TForm)openForm)).SingleOrDefault() as TForm;
             if (form == null)
             {
                 var types = new Type[args.Length];
                 for (var counter = 0; counter < args.Length; counter++)
+                {
                     types[counter] = args[counter].GetType();
+                }
+
                 form = ObjectHelper.CreateInstance<TForm>(types, args);
             }
+
             form.Show();
             form.BringToFront();
             if (form.WindowState == FormWindowState.Minimized)
+            {
                 form.WindowState = FormWindowState.Normal;
+            }
         }
 
         public static void ShowSingleton<TForm>(Predicate<TForm> perdicate, FormSettings formSettings, params object[] args) where TForm : Form
         {
-            var form = Application.OpenForms.Cast<Form>().Where(openForm => EqualsTo<TForm>(openForm) && perdicate((TForm) openForm)).SingleOrDefault() as TForm;
+            var form = Application.OpenForms.Cast<Form>().Where(openForm => EqualsTo<TForm>(openForm) && perdicate((TForm)openForm)).SingleOrDefault() as TForm;
             if (form == null)
             {
                 var types = new Type[args.Length];
                 for (var counter = 0; counter < args.Length; counter++)
+                {
                     types[counter] = args[counter].GetType();
+                }
+
                 form = ObjectHelper.CreateInstance<TForm>(types, args);
                 if (formSettings == null)
+                {
                     formSettings = new FormSettings();
+                }
+
                 formSettings.SetForm(form);
                 form.Show();
             }
+
             form.BringToFront();
             if (form.WindowState == FormWindowState.Minimized)
+            {
                 form.WindowState = FormWindowState.Normal;
+            }
         }
 
         public static void ShowSingleton<TForm>(Func<TForm> creator, Predicate<TForm> perdicate, FormSettings<TForm> formSettings) where TForm : Form
         {
-            var form = Application.OpenForms.Cast<Form>().Where(openForm => EqualsTo<TForm>(openForm) && perdicate((TForm) openForm)).SingleOrDefault() as TForm;
+            var form = Application.OpenForms.Cast<Form>().Where(openForm => EqualsTo<TForm>(openForm) && perdicate((TForm)openForm)).SingleOrDefault() as TForm;
             if (form == null)
             {
                 form = creator();
                 if (formSettings != null)
+                {
                     formSettings.SetForm(form);
+                }
+
                 form.Show();
             }
+
             form.BringToFront();
             if (form.WindowState == FormWindowState.Minimized)
+            {
                 form.WindowState = FormWindowState.Normal;
+            }
         }
 
         public static void Regroup(this ListView listView, bool recreateGroups, int columnIndex)
         {
             listView.SuspendLayout();
             if (recreateGroups)
+            {
                 listView.Groups.Clear();
+            }
+
             foreach (ListViewItem item in listView.Items)
             {
                 if (!listView.Groups.ContainsName(item.SubItems[columnIndex].Text))
+                {
                     listView.Groups.Add(item.SubItems[columnIndex].Text, item.SubItems[columnIndex].Text);
+                }
+
                 item.Group = listView.Groups[item.SubItems[columnIndex].Text];
             }
+
             listView.ResumeLayout();
         }
 
@@ -365,7 +434,9 @@ namespace Mohammad.Win.Helpers
             else
             {
                 foreach (ListViewItem lvi in listView.Items)
+                {
                     lvi.BackColor = lvi.Index % 2 == 0 ? listView.BackColor : rowBackColor;
+                }
             }
         }
 
@@ -379,7 +450,9 @@ namespace Mohammad.Win.Helpers
         public static void RemoveSelectedItems(this ListBox listBox)
         {
             while (listBox.SelectedIndex != -1)
+            {
                 listBox.Items.RemoveAt(listBox.SelectedIndex);
+            }
         }
 
         public static bool RunInCurrentThread(this Control control, Action action)
@@ -389,9 +462,151 @@ namespace Mohammad.Win.Helpers
                 control.Invoke(action);
                 return false;
             }
+
             action();
             return true;
         }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="dataGridViews"></param>
+        public static void FormatGrid(params DataGridView[] dataGridViews)
+        {
+            dataGridViews.ForEach(
+                dataGridView =>
+                    dataGridView.Columns.ForEach(column => ((DataGridViewColumn)column).HeaderText = ((DataGridViewColumn)column).HeaderText.SeparateCamelCase()));
+        }
+
+        public static void SetVisible(this TabPage tabPage, bool visible)
+        {
+            if (visible)
+            {
+                TabPageInfo info;
+                if ((info = Find(tabPage)) == null)
+                {
+                    return;
+                }
+
+                info.Parent.TabPages.Insert(Find(tabPage).Index, tabPage);
+                _TabPages.Remove(info);
+            }
+            else
+            {
+                if (Find(tabPage) != null)
+                {
+                    return;
+                }
+
+                var parent = (TabControl)tabPage.Parent;
+                _TabPages.Add(CreateInfo(tabPage));
+                parent.TabPages.Remove(tabPage);
+            }
+        }
+
+        public static bool GetVisible(this TabPage tabPage) => Find(tabPage) == null;
+
+        public static void CallOnDataChanged(this Form form, EventHandler handler)
+        {
+            if (handler == null)
+            {
+                throw new ArgumentNullException("handler");
+            }
+
+            form.GetControls<TextBox>().ForEach(control => control.TextChanged += handler);
+            form.GetControls<CheckBox>().ForEach(control => control.CheckedChanged += handler);
+            form.GetControls<ComboBox>().ForEach(control => control.SelectedIndexChanged += handler);
+            form.GetControls<CheckedListBox>().ForEach(control => control.ItemCheck += (sender, e) => handler(sender, EventArgs.Empty));
+        }
+
+        public static IEnumerable<TEntity> GetTagEntities<TEntity>(this ListView listView)
+        {
+            return listView.Items.Cast<ListViewItem>().Select(item => (TEntity)item.Tag);
+        }
+
+        public static IEnumerable<ListViewItem> GetItems(this ListView listView) => listView.Items.Cast<ListViewItem>();
+
+        public static void RemoveRange(this ListView.ListViewItemCollection listViewItems, IEnumerable<ListViewItem> items, Action<ListViewItem> removed = null)
+        {
+            if (EnumerableHelper.Count(items) == 0)
+            {
+                return;
+            }
+
+            var listView = ((ListViewItem)EnumerableHelper.ElementAt(items, 0)).ListView;
+            listView.BeginUpdate();
+            if (removed == null)
+            {
+                items.ForEach(item => listView.Items.Remove(item));
+            }
+            else
+            {
+                items.ForEach(item =>
+                {
+                    listView.Items.Remove(item);
+                    removed(item);
+                });
+            }
+
+            listView.EndUpdate();
+            listView.Update();
+        }
+
+        public static IEnumerable<TEntity> GetEntities<TEntity>(this ListView listView)
+        {
+            return listView.Items.Cast<ListViewItem>().Select(item => (TEntity)item.Tag);
+        }
+
+        public static IEnumerable<TEntity> GetSelectedEntities<TEntity>(this ListView listView)
+        {
+            return listView.SelectedItems.Cast<ListViewItem>().Select(item => (TEntity)item.Tag);
+        }
+
+        public static IEnumerable<ListViewItem> GetSelectedItems(this ListView listView) => listView.SelectedItems.Cast<ListViewItem>();
+        public static IEnumerable<TabPage> GetTabPages(this TabControl tabControl) => tabControl.TabPages.Cast<TabPage>();
+
+        public static void Clear(params Control[] controls)
+        {
+            foreach (var control in controls)
+            {
+                if (control is ComboBox)
+                {
+                    (control as ComboBox).DataSource = null;
+                    (control as ComboBox).Items.Clear();
+                }
+                else if (control is TextBox)
+                {
+                    (control as TextBox).Text = string.Empty;
+                }
+            }
+        }
+
+        private static IEnumerable<TreeNode> GetAllNodes(this TreeNodeCollection treeNodeCollection)
+        {
+            foreach (TreeNode treeNode in treeNodeCollection)
+            {
+                yield return treeNode;
+                if (treeNode.Nodes.Count > 0)
+                {
+                    foreach (var node in GetAllNodes(treeNode.Nodes))
+                    {
+                        yield return node;
+                    }
+                }
+            }
+        }
+
+        private static bool EqualsTo<TForm>(Form openForm) where TForm : Form => openForm is TForm;
+
+        private static TabPageInfo CreateInfo(TabPage tabPage)
+        {
+            var parent = (TabControl)tabPage.Parent;
+            return new TabPageInfo(parent, tabPage, parent.TabPages.IndexOf(tabPage));
+        }
+
+        private static TabPageInfo Find(TabPage tabPage) => (from tab in _TabPages
+                                                             where tab.TabPage == tabPage
+                                                             select tab).Take(1)
+            .SingleOrDefault();
 
         //public static bool RunInCurrentThread<T>(this Control control, Action<T> action, T t)
         //{
@@ -414,114 +629,7 @@ namespace Mohammad.Win.Helpers
                 .ForEach(
                     dataGridView =>
                         dataGridView.Columns.ForEach(
-                            column => ((DataGridViewColumn) column).HeaderText = ((DataGridViewColumn) column).HeaderText.SeparateCamelCase()));
-        }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="dataGridViews"></param>
-        public static void FormatGrid(params DataGridView[] dataGridViews)
-        {
-            dataGridViews.ForEach(
-                dataGridView =>
-                    dataGridView.Columns.ForEach(column => ((DataGridViewColumn) column).HeaderText = ((DataGridViewColumn) column).HeaderText.SeparateCamelCase()));
-        }
-
-        private static TabPageInfo CreateInfo(TabPage tabPage)
-        {
-            var parent = (TabControl) tabPage.Parent;
-            return new TabPageInfo(parent, tabPage, parent.TabPages.IndexOf(tabPage));
-        }
-
-        public static void SetVisible(this TabPage tabPage, bool visible)
-        {
-            if (visible)
-            {
-                TabPageInfo info;
-                if ((info = Find(tabPage)) == null)
-                    return;
-                info.Parent.TabPages.Insert(Find(tabPage).Index, tabPage);
-                _TabPages.Remove(info);
-            }
-            else
-            {
-                if (Find(tabPage) != null)
-                    return;
-                var parent = (TabControl) tabPage.Parent;
-                _TabPages.Add(CreateInfo(tabPage));
-                parent.TabPages.Remove(tabPage);
-            }
-        }
-
-        public static bool GetVisible(this TabPage tabPage) { return Find(tabPage) == null; }
-
-        private static TabPageInfo Find(TabPage tabPage)
-        {
-            return (from tab in _TabPages
-                    where tab.TabPage == tabPage
-                    select tab).Take(1).SingleOrDefault();
-        }
-
-        public static void CallOnDataChanged(this Form form, EventHandler handler)
-        {
-            if (handler == null)
-                throw new ArgumentNullException("handler");
-            form.GetControls<TextBox>().ForEach(control => control.TextChanged += handler);
-            form.GetControls<CheckBox>().ForEach(control => control.CheckedChanged += handler);
-            form.GetControls<ComboBox>().ForEach(control => control.SelectedIndexChanged += handler);
-            form.GetControls<CheckedListBox>().ForEach(control => control.ItemCheck += (sender, e) => handler(sender, EventArgs.Empty));
-        }
-
-        public static IEnumerable<TEntity> GetTagEntities<TEntity>(this ListView listView)
-        {
-            return listView.Items.Cast<ListViewItem>().Select(item => (TEntity) item.Tag);
-        }
-
-        public static IEnumerable<ListViewItem> GetItems(this ListView listView) { return listView.Items.Cast<ListViewItem>(); }
-
-        public static void RemoveRange(this ListView.ListViewItemCollection listViewItems, IEnumerable<ListViewItem> items, Action<ListViewItem> removed = null)
-        {
-            if (EnumerableHelper.Count(items) == 0)
-                return;
-            var listView = ((ListViewItem) EnumerableHelper.ElementAt(items, 0)).ListView;
-            listView.BeginUpdate();
-            if (removed == null)
-                items.ForEach(item => listView.Items.Remove(item));
-            else
-                items.ForEach(item =>
-                {
-                    listView.Items.Remove(item);
-                    removed(item);
-                });
-            listView.EndUpdate();
-            listView.Update();
-        }
-
-        public static IEnumerable<TEntity> GetEntities<TEntity>(this ListView listView)
-        {
-            return listView.Items.Cast<ListViewItem>().Select(item => (TEntity) item.Tag);
-        }
-
-        public static IEnumerable<TEntity> GetSelectedEntities<TEntity>(this ListView listView)
-        {
-            return listView.SelectedItems.Cast<ListViewItem>().Select(item => (TEntity) item.Tag);
-        }
-
-        public static IEnumerable<ListViewItem> GetSelectedItems(this ListView listView) { return listView.SelectedItems.Cast<ListViewItem>(); }
-        public static IEnumerable<TabPage> GetTabPages(this TabControl tabControl) { return tabControl.TabPages.Cast<TabPage>(); }
-
-        public static void Clear(params Control[] controls)
-        {
-            foreach (var control in controls)
-                if (control is ComboBox)
-                {
-                    (control as ComboBox).DataSource = null;
-                    (control as ComboBox).Items.Clear();
-                }
-                else if (control is TextBox)
-                {
-                    (control as TextBox).Text = string.Empty;
-                }
+                            column => ((DataGridViewColumn)column).HeaderText = ((DataGridViewColumn)column).HeaderText.SeparateCamelCase()));
         }
 
         #region Nested type: TabPageInfo

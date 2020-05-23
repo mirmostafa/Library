@@ -19,20 +19,31 @@ namespace Mohammad.Wpf.Windows.Controls
             get
             {
                 foreach (var button in this.AppButtons)
+                {
                     yield return button;
+                }
+
                 foreach (var button in this.PageButtons)
+                {
                     yield return button;
+                }
             }
         }
 
-        public ButtonBar() { this.InitializeComponent(); }
+        public ButtonBar()
+        {
+            this.InitializeComponent();
+        }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
             if (ControlHelper.IsDesignTime())
+            {
                 return;
+            }
+
             var appButtons = this.AppButtons;
             var pageButtons = this.PageButtons;
             this.AddButtons(appButtons, pageButtons);
@@ -43,14 +54,20 @@ namespace Mohammad.Wpf.Windows.Controls
             foreach (var button in appButtons)
             {
                 if (this.ButtonsStyle != null)
+                {
                     button.Style = this.ButtonsStyle;
+                }
+
                 this.AppButtonPanel.Children.Add(button);
             }
 
             foreach (var button in pageButtons)
             {
                 if (this.ButtonsStyle != null)
+                {
                     button.Style = this.ButtonsStyle;
+                }
+
                 this.PageButtonPanel.Children.Add(button);
             }
         }

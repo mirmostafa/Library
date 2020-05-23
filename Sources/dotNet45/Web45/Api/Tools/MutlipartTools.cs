@@ -31,8 +31,9 @@ namespace Mohammad.Web.Api.Tools
 
         public static IEnumerable<WebPostedFile> Get(params string[] keys)
         {
-            return keys.Select(key => new {key, postedFile = HttpContext.Current?.Request.Files[key]}).Where(data => data.postedFile?.ContentLength > 0)
-                       .Select(data => new WebPostedFile(data.postedFile, data.key));
+            return keys.Select(key => new {key, postedFile = HttpContext.Current?.Request.Files[key]})
+                .Where(data => data.postedFile?.ContentLength > 0)
+                .Select(data => new WebPostedFile(data.postedFile, data.key));
         }
 
         public static IEnumerable<string> GetKeys()
@@ -40,9 +41,14 @@ namespace Mohammad.Web.Api.Tools
             var httpFiles = HttpContext.Current?.Request.Files;
 
             if (httpFiles == null)
+            {
                 yield break;
+            }
+
             foreach (string fileKey in httpFiles)
+            {
                 yield return fileKey;
+            }
         }
 
         public static IEnumerable<WebPostedFile> GetByContentType(params string[] contentTypes)
@@ -55,14 +61,20 @@ namespace Mohammad.Web.Api.Tools
         public static (bool IsFound, int Index) FindMultipartKeyIndex(string key)
         {
             if (HttpContext.Current?.Request == null)
+            {
                 return (false, -1);
+            }
+
             var result = -1;
-            var found  = false;
+            var found = false;
             foreach (string formKey in HttpContext.Current?.Request.Form.Keys)
             {
                 result++;
                 if (formKey != key)
+                {
                     continue;
+                }
+
                 found = true;
                 break;
             }
@@ -72,7 +84,7 @@ namespace Mohammad.Web.Api.Tools
 
         public static string GetMultipartValue(string key)
         {
-            (var isFound, var index) = FindMultipartKeyIndex(key);
+            var (isFound, index) = FindMultipartKeyIndex(key);
             return !isFound ? null : HttpContext.Current?.Request.Form[index];
         }
 
@@ -83,7 +95,10 @@ namespace Mohammad.Web.Api.Tools
             foreach (var property in typeof(TModel).GetProperties())
             {
                 if (ObjectHelper.GetAttribute<JsonIgnoreAttribute>(property) != null)
+                {
                     continue;
+                }
+
                 property.SetValue(result, GetMultipartValue(property.Name));
             }
 

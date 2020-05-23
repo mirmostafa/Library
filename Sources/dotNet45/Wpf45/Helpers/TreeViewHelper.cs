@@ -117,12 +117,15 @@ namespace Mohammad.Wpf.Helpers
                     ConvertMethod = convertMethod,
                     OnSelected = delegate(ItemsControl container, SetSelectedInfo<T> info)
                     {
-                        var treeItem = (TreeViewItem) container;
+                        var treeItem = (TreeViewItem)container;
                         treeItem.IsSelected = true;
                         treeItem.BringIntoView();
                     },
                     OnNeedMoreItems =
-                        delegate(ItemsControl container, SetSelectedInfo<T> info) { ((TreeViewItem) container).IsExpanded = true; }
+                        delegate(ItemsControl container, SetSelectedInfo<T> info)
+                        {
+                            ((TreeViewItem)container).IsExpanded = true;
+                        }
                 });
         }
     }
@@ -150,14 +153,18 @@ namespace Mohammad.Wpf.Helpers
                     // Convert the item if a conversion method exists. Otherwise
                     // just cast the item to the desired type.
                     if (info.ConvertMethod != null)
+                    {
                         convertedItem = info.ConvertMethod(item);
+                    }
                     else
-                        convertedItem = (T) item;
+                    {
+                        convertedItem = (T)item;
+                    }
 
                     // Compare the converted item with the item in the chain
                     if (info.CompareMethod != null && info.CompareMethod(convertedItem, currentItem))
                     {
-                        var container = (ItemsControl) control.ItemContainerGenerator.ContainerFromItem(item);
+                        var container = (ItemsControl)control.ItemContainerGenerator.ContainerFromItem(item);
 
                         // Replace with the remaining items in the chain
                         info.Items = info.Items.Skip(1);
@@ -167,7 +174,9 @@ namespace Mohammad.Wpf.Helpers
                         {
                             // Select the last item
                             if (info.OnSelected != null)
+                            {
                                 info.OnSelected(container, info);
+                            }
                         }
                         else
                             // Request more items and continue the search

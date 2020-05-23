@@ -12,6 +12,10 @@ namespace Mohammad.Collections.Generic
     [Serializable]
     public class TripleValue<T1, T2, T3>
     {
+        public T1 Value1 { get; set; }
+        public T2 Value2 { get; set; }
+        public T3 Value3 { get; set; }
+
         public TripleValue()
         {
         }
@@ -22,9 +26,5 @@ namespace Mohammad.Collections.Generic
             this.Value2 = value2;
             this.Value3 = value3;
         }
-
-        public T1 Value1 { get; set; }
-        public T2 Value2 { get; set; }
-        public T3 Value3 { get; set; }
     }
 }

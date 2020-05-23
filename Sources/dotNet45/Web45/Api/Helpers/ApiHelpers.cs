@@ -37,7 +37,10 @@ namespace Mohammad.Web.Api.Helpers
         {
             var value = actionContext.GetArgumentValue(key)?.ToString();
             if (value.IsNullOrEmpty())
+            {
                 value = actionContext.GetHeaderValue(key);
+            }
+
             return (value, !value.IsNullOrEmpty());
         }
     }

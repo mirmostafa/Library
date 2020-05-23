@@ -14,20 +14,20 @@ namespace Mohammad.Security.Principals
 {
     public class CaptchaImage
     {
+        public string Text { get; set; }
+        public Size ImageSize { get; set; }
+        public Font Font { get; set; }
+
         public CaptchaImage()
         {
         }
 
         public CaptchaImage(string text, Size imageSize, Font font)
         {
-            this.Text      = text;
+            this.Text = text;
             this.ImageSize = imageSize;
-            this.Font      = font;
+            this.Font = font;
         }
-
-        public string Text      { get; set; }
-        public Size   ImageSize { get; set; }
-        public Font   Font      { get; set; }
 
         public Bitmap GenerateImage() => GenerateImage(this.Text, this.ImageSize, this.Font);
 
@@ -45,7 +45,7 @@ namespace Mohammad.Security.Principals
 
             SizeF sizeF;
             float fontSize = rect.Height + 1;
-            Font  fontF;
+            Font fontF;
             do
             {
                 fontSize--;
@@ -55,20 +55,20 @@ namespace Mohammad.Security.Principals
 
             var format = new StringFormat
             {
-                Alignment     = StringAlignment.Center,
+                Alignment = StringAlignment.Center,
                 LineAlignment = StringAlignment.Center
             };
 
             var path = new GraphicsPath();
-            path.AddString(text, fontF.FontFamily, (int) fontF.Style, fontF.Size, rect, format);
+            path.AddString(text, fontF.FontFamily, (int)fontF.Style, fontF.Size, rect, format);
             const float v = 4F;
             PointF[] points =
             {
-                new PointF(random.Next(rect.Width)                                            / v, random.Next(rect.Height) / v),
+                new PointF(random.Next(rect.Width) / v, random.Next(rect.Height) / v),
                 new PointF(rect.Width - random.Next(rect.Width) / v, random.Next(rect.Height) / v),
-                new PointF(random.Next(rect.Width)                                            / v, rect.Height - random.Next(rect.Height) / v),
-                new PointF(rect.Width  - random.Next(rect.Width)  / v,
-                           rect.Height - random.Next(rect.Height) / v)
+                new PointF(random.Next(rect.Width) / v, rect.Height - random.Next(rect.Height) / v),
+                new PointF(rect.Width - random.Next(rect.Width) / v,
+                    rect.Height - random.Next(rect.Height) / v)
             };
             var matrix = new Matrix();
             matrix.Translate(0F, 0F);
@@ -78,7 +78,7 @@ namespace Mohammad.Security.Principals
             graphics.FillPath(hatchBrush, path);
 
             var max = Math.Max(rect.Width, rect.Height);
-            for (var i = 0; i < (int) (rect.Width * rect.Height / 30F); i++)
+            for (var i = 0; i < (int)(rect.Width * rect.Height / 30F); i++)
             {
                 var x = random.Next(rect.Width);
                 var y = random.Next(rect.Height);

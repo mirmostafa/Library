@@ -27,7 +27,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "D:\\Mirmostafa\\Sources\\Satrap\\Shared": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net45": {
@@ -80,7 +80,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "D:\\Mirmostafa\\Sources\\Satrap\\Shared": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net45": {
@@ -105,7 +105,7 @@
             },
             "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[12.0.2, )"
+              "version": "[12.0.3, )"
             },
             "System.ValueTuple": {
               "target": "Package",

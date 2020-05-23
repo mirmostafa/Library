@@ -22,7 +22,10 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
             set
             {
                 if (value == this._HeadingFontSize)
+                {
                     return;
+                }
+
                 this._HeadingFontSize = value;
                 this.OnPropertyChanged();
             }
@@ -34,7 +37,10 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
             set
             {
                 if (value == this._BodyFontSize)
+                {
                     return;
+                }
+
                 this._BodyFontSize = value;
                 this.OnPropertyChanged();
             }
@@ -46,7 +52,10 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
             set
             {
                 if (value == this._BadgeFontSize)
+                {
                     return;
+                }
+
                 this._BadgeFontSize = value;
                 this.OnPropertyChanged();
             }
@@ -128,6 +137,7 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
                         break;
                     default: throw new ArgumentOutOfRangeException(nameof(value));
                 }
+
                 this.OnPropertyChanged();
             }
         }
@@ -141,16 +151,20 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
             set
             {
                 if (this._Command == value)
+                {
                     return;
+                }
+
                 this._Command = value;
                 var libCommand = this._Command;
                 if (libCommand != null)
+                {
                     libCommand.PropertyChanged += this.Command_OnPropertyChanged;
+                }
+
                 this.OnCommandChanged();
             }
         }
-
-        private void Command_OnPropertyChanged(object sender, PropertyChangedEventArgs e) { this.OnCommandChanged(); }
 
         protected virtual void OnCommandChanged()
         {
@@ -161,11 +175,13 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
                 this.ToolTip = this.Command.ToolTip;
                 this.Visibility = this.Command.Visibility;
             }
+
             this.HookCommand();
         }
 
-        protected virtual void HookCommand() { }
-        public event EventHandler Click;
+        protected virtual void HookCommand()
+        {
+        }
 
         protected virtual void OnClick()
         {
@@ -209,6 +225,13 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
             base.OnMouseUp(e);
             this.OnClick();
         }
+
+        private void Command_OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            this.OnCommandChanged();
+        }
+
+        public event EventHandler Click;
     }
 
     public enum TileScale

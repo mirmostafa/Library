@@ -11,17 +11,13 @@ namespace Mohammad.Logging.FileBased.Text
         public string LogFormat { get; set; }
 
         public FileWriter(string textLogFileSpec)
-            : base(new FileInfo(textLogFileSpec)) { }
-
-        private string FormatLogEntity(TLogEntity logEntity)
+            : base(new FileInfo(textLogFileSpec))
         {
-            if (string.IsNullOrEmpty(this.LogFormat))
-                return logEntity.ToString();
+        }
 
-            var result = this.LogFormat;
-
-            ObjectHelper.ReflectProperties(logEntity).ForEach(prop => result = result.Replace(prop.Key, prop.Value != null ? prop.Value.ToString() : ""));
-            return result;
+        public override void LoadLastLog()
+        {
+            //throw new NotSupportedException("This operation is not supported.");
         }
 
         protected override void InnerWrite(TLogEntity logEntity)
@@ -34,8 +30,12 @@ namespace Mohammad.Logging.FileBased.Text
                     this.Log.Directory.Create();
                     this.Log.Create().Close();
                 }
+
                 if (!this.Log.Exists)
+                {
                     this.Log.Create().Close();
+                }
+
                 using (var writer = this.Log.AppendText())
                 {
                     writer.WriteLine(this.FormatLogEntity(logEntity));
@@ -44,9 +44,17 @@ namespace Mohammad.Logging.FileBased.Text
             }
         }
 
-        public override void LoadLastLog()
+        private string FormatLogEntity(TLogEntity logEntity)
         {
-            //throw new NotSupportedException("This operation is not supported.");
+            if (string.IsNullOrEmpty(this.LogFormat))
+            {
+                return logEntity.ToString();
+            }
+
+            var result = this.LogFormat;
+
+            ObjectHelper.ReflectProperties(logEntity).ForEach(prop => result = result.Replace(prop.Key, prop.Value != null ? prop.Value.ToString() : ""));
+            return result;
         }
     }
 }

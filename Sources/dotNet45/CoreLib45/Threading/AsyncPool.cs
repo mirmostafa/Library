@@ -20,8 +20,40 @@ namespace Mohammad.Threading
     public class AsyncPool
     {
         private readonly UniqueCollection<object> _Groups = new UniqueCollection<object>();
-        private          bool                     _Aborted;
-        private          ExceptionHandling        _ExceptionHandling;
+        private bool _Aborted;
+        private ExceptionHandling _ExceptionHandling;
+
+        public ExceptionHandling ExceptionHandling
+        {
+            get => this._ExceptionHandling;
+            set
+            {
+                this._ExceptionHandling = value;
+                this.AsyncsQ.ForEach(async1 => async1.ExceptionHandling = value);
+            }
+        }
+
+        public IEnumerable<Async> Asyncs => this.AsyncsQ.AsEnumerable();
+        protected virtual Queue<Async> AsyncsQ { get; }
+        public string Name { get; }
+        public uint MaximumCount { get; set; }
+        protected Collection<Async> Stocks { get; }
+        public IEnumerable<Async> Jobs => this.Stocks.AsEnumerable();
+
+        public bool Aborted
+        {
+            get => this._Aborted;
+            private set
+            {
+                if (this._Aborted == value)
+                {
+                    return;
+                }
+
+                this._Aborted = value;
+                this.AbortedChanged.RaiseAsync(this);
+            }
+        }
 
         public AsyncPool(uint maximumCount)
             : this(maximumCount, string.Empty)
@@ -40,47 +72,12 @@ namespace Mohammad.Threading
 
         public AsyncPool(uint maximumCount, string name, ExceptionHandling exceptionHandling)
         {
-            this.MaximumCount      = maximumCount;
-            this.Stocks            = new Collection<Async>();
-            this.AsyncsQ           = new Queue<Async>();
-            this.Name              = name;
+            this.MaximumCount = maximumCount;
+            this.Stocks = new Collection<Async>();
+            this.AsyncsQ = new Queue<Async>();
+            this.Name = name;
             this.ExceptionHandling = exceptionHandling;
         }
-
-        public ExceptionHandling ExceptionHandling
-        {
-            get => this._ExceptionHandling;
-            set
-            {
-                this._ExceptionHandling = value;
-                this.AsyncsQ.ForEach(async1 => async1.ExceptionHandling = value);
-            }
-        }
-
-        public            IEnumerable<Async> Asyncs       => this.AsyncsQ.AsEnumerable();
-        protected virtual Queue<Async>       AsyncsQ      { get; }
-        public            string             Name         { get; }
-        public            uint               MaximumCount { get; set; }
-        protected         Collection<Async>  Stocks       { get; }
-        public            IEnumerable<Async> Jobs         => this.Stocks.AsEnumerable();
-
-        public bool Aborted
-        {
-            get => this._Aborted;
-            private set
-            {
-                if (this._Aborted == value)
-                    return;
-                this._Aborted = value;
-                this.AbortedChanged.RaiseAsync(this);
-            }
-        }
-
-        public event EventHandler<ItemActedEventArgs<object>> AsyncGroupEnded;
-        public event EventHandler<ItemActedEventArgs<object>> AsyncGroupStarted;
-        public event EventHandler                             QuequeChanged;
-        public event EventHandler                             JobsChanged;
-        public event EventHandler                             AbortedChanged;
 
         public AsyncPool AbortAllAsyncs()
         {
@@ -97,30 +94,15 @@ namespace Mohammad.Threading
             return pool;
         }
 
-        internal void Register(Async myAsync)
-        {
-            if (myAsync == null)
-                throw new ArgumentNullException("myAsync");
-            if (this.Aborted)
-                return;
-            this.AsyncsQ.Enqueue(myAsync);
-            this.QuequeChanged.RaiseAsync(this);
-        }
-
-        internal void Start()
-        {
-            if (this.Aborted)
-                return;
-            if (this.Stocks.Count >= this.MaximumCount)
-                return;
-            this.Aborted = false;
-            this.Refresh();
-        }
+        public override string ToString() => string.Format("{0} Asyncs: {1}, Jobs: {2}", this.Name, this.AsyncsQ.Count, this.Stocks.Count);
 
         private void Refresh()
         {
             if (this.Aborted)
+            {
                 return;
+            }
+
             while (this.Stocks.Count <= this.MaximumCount && this.AsyncsQ.Count > 0)
             {
                 var item = this.AsyncsQ.Dequeue();
@@ -131,29 +113,71 @@ namespace Mohammad.Threading
                     this.Stocks.Remove(a);
                     this.JobsChanged.RaiseAsync(this);
                     if (a != null)
+                    {
                         if (a.Group != null)
                         {
                             this._Groups.Remove(a.Group);
                             if (!this._Groups.Contains(a.Group))
+                            {
                                 this.AsyncGroupEnded.Raise(this, new ItemActedEventArgs<object>(a.Group));
+                            }
                         }
+                    }
 
                     this.Refresh();
                 };
                 this.Stocks.Add(item);
                 this.JobsChanged.RaiseAsync(this);
                 CodeHelper.Catch(() =>
-                                 {
-                                     item.InnerStart();
-                                     this._Groups.Add(item.Group);
-                                     if (!this._Groups.Contains(item.Group))
-                                         this.AsyncGroupStarted.Raise(this, new ItemActedEventArgs<object>(item.Group));
-                                 },
-                                 handling: this.ExceptionHandling);
+                    {
+                        item.InnerStart();
+                        this._Groups.Add(item.Group);
+                        if (!this._Groups.Contains(item.Group))
+                        {
+                            this.AsyncGroupStarted.Raise(this, new ItemActedEventArgs<object>(item.Group));
+                        }
+                    },
+                    handling: this.ExceptionHandling);
             }
         }
 
-        public override string ToString() => string.Format("{0} Asyncs: {1}, Jobs: {2}", this.Name, this.AsyncsQ.Count, this.Stocks.Count);
+        public event EventHandler<ItemActedEventArgs<object>> AsyncGroupEnded;
+        public event EventHandler<ItemActedEventArgs<object>> AsyncGroupStarted;
+        public event EventHandler QuequeChanged;
+        public event EventHandler JobsChanged;
+        public event EventHandler AbortedChanged;
+
+        internal void Register(Async myAsync)
+        {
+            if (myAsync == null)
+            {
+                throw new ArgumentNullException("myAsync");
+            }
+
+            if (this.Aborted)
+            {
+                return;
+            }
+
+            this.AsyncsQ.Enqueue(myAsync);
+            this.QuequeChanged.RaiseAsync(this);
+        }
+
+        internal void Start()
+        {
+            if (this.Aborted)
+            {
+                return;
+            }
+
+            if (this.Stocks.Count >= this.MaximumCount)
+            {
+                return;
+            }
+
+            this.Aborted = false;
+            this.Refresh();
+        }
 
         internal void Unregister(Async myAsync)
         {

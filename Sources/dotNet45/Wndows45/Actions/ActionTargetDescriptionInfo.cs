@@ -24,19 +24,25 @@ namespace Mohammad.Win.Actions
             this.TargetType = targetType;
 
             foreach (var property in targetType.GetProperties())
+            {
                 this.properties.Add(property.Name, property);
+            }
         }
 
         internal void SetValue(string propertyName, object target, object value)
         {
             if (this.properties.ContainsKey(propertyName))
+            {
                 this.properties[propertyName].SetValue(target, value, null);
+            }
         }
 
         internal object GetValue(string propertyName, object source)
         {
             if (this.properties.ContainsKey(propertyName))
+            {
                 return this.properties[propertyName].GetValue(source, null);
+            }
 
             return null;
         }

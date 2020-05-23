@@ -18,11 +18,15 @@ namespace Mohammad.Win.Settings
 
         public Collection<ListViewSettings> ListViewsSettings
         {
-            get { return this._ListViewsSettings ?? (this._ListViewsSettings = new Collection<ListViewSettings>()); }
-            set { this._ListViewsSettings = value; }
+            get => this._ListViewsSettings ?? (this._ListViewsSettings = new Collection<ListViewSettings>());
+            set => this._ListViewsSettings = value;
         }
 
-        public bool ApplyListViews { get { return this._ApplyListViews; } set { this._ApplyListViews = value; } }
+        public bool ApplyListViews
+        {
+            get => this._ApplyListViews;
+            set => this._ApplyListViews = value;
+        }
 
         [XmlIgnore]
         public TForm Form { get; private set; }
@@ -43,7 +47,10 @@ namespace Mohammad.Win.Settings
             {
                 var listView = listViews.Where(lv => lv.Name.Equals(setting.ListViewName)).FirstOrDefault();
                 if (listView == null)
+                {
                     continue;
+                }
+
                 setting.Load(listView);
             }
         }
@@ -59,12 +66,6 @@ namespace Mohammad.Win.Settings
             }
         }
 
-        public event EventHandler<ApplySettingsEventArgs<TForm>> ApplyingToForm;
-        public event EventHandler<ApplySettingsEventArgs<TForm>> ApplyedToForm;
-        public event EventHandler<ApplySettingsEventArgs<TForm>> ApplyingToSettings;
-        public event EventHandler<ApplySettingsEventArgs<TForm>> ApplyedToSettings;
-        public event EventHandler FormSet;
-
         public void SetForm(TForm form)
         {
             this.Form = form;
@@ -76,11 +77,16 @@ namespace Mohammad.Win.Settings
         public virtual void LoadState(TForm form)
         {
             if (!this.Initiated)
+            {
                 return;
+            }
+
             this.ApplyingToForm.Raise(this, new ApplySettingsEventArgs<TForm>(form));
             form.WindowState = this.WindowState;
             if (this.WindowState == FormWindowState.Maximized)
+            {
                 return;
+            }
 
             form.Left = this.Left;
             form.Top = this.Top;
@@ -88,7 +94,9 @@ namespace Mohammad.Win.Settings
             form.Height = this.Height;
 
             if (this.ApplyListViews)
+            {
                 this.LoadListViewsSettings();
+            }
 
             this.ApplyedToForm.Raise(this, new ApplySettingsEventArgs<TForm>(form));
         }
@@ -99,7 +107,10 @@ namespace Mohammad.Win.Settings
             this.ApplyingToSettings.Raise(this, new ApplySettingsEventArgs<TForm>(form));
             this.WindowState = form.WindowState;
             if (form.WindowState == FormWindowState.Maximized)
+            {
                 return;
+            }
+
             this.Left = form.Left;
             this.Top = form.Top;
             this.Width = form.Width;
@@ -107,12 +118,27 @@ namespace Mohammad.Win.Settings
             ToolStripManager.SaveSettings(form);
 
             if (this.ApplyListViews)
+            {
                 this.SaveListViewsSettings();
+            }
 
             this.ApplyedToSettings.Raise(this, new ApplySettingsEventArgs<TForm>(form));
         }
 
-        private void Form_OnClosed(object sender, FormClosedEventArgs e) { this.SaveState((TForm) sender); }
-        private void Form_OnShown(object sender, EventArgs e) { this.LoadState((TForm) sender); }
+        private void Form_OnClosed(object sender, FormClosedEventArgs e)
+        {
+            this.SaveState((TForm)sender);
+        }
+
+        private void Form_OnShown(object sender, EventArgs e)
+        {
+            this.LoadState((TForm)sender);
+        }
+
+        public event EventHandler<ApplySettingsEventArgs<TForm>> ApplyingToForm;
+        public event EventHandler<ApplySettingsEventArgs<TForm>> ApplyedToForm;
+        public event EventHandler<ApplySettingsEventArgs<TForm>> ApplyingToSettings;
+        public event EventHandler<ApplySettingsEventArgs<TForm>> ApplyedToSettings;
+        public event EventHandler FormSet;
     }
 }

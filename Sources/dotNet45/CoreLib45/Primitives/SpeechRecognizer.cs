@@ -27,7 +27,7 @@ namespace Mohammad.Primitives
                     result = e.Result.Text;
                     await Task.Run(() => speech.Speak(result));
                 };
-                recognizer.AudioStateChanged         += (_, e) => e.AudioState.WriteLine();
+                recognizer.AudioStateChanged += (_, e) => e.AudioState.WriteLine();
                 recognizer.EmulateRecognizeCompleted += (_, e) => e.Result.WriteLine();
                 recognizer.SetInputToDefaultAudioDevice();
                 recognizer.RecognizeAsync(RecognizeMode.Multiple);

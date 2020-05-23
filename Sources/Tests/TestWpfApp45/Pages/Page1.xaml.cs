@@ -2,6 +2,9 @@
 {
     public partial class Page1
     {
-        public Page1() { this.InitializeComponent(); }
+        public Page1()
+        {
+            this.InitializeComponent();
+        }
     }
 }

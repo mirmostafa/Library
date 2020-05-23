@@ -20,7 +20,7 @@ namespace Mohammad.Helpers
         public static string GetClassDescription(this MethodBase method, bool getClassNameIfNotFound)
         {
             var attributes = method.DeclaringType.GetCustomAttributes(typeof(DescriptionAttribute), false);
-            var result     = string.Empty;
+            var result = string.Empty;
             foreach (var attribute in attributes.Where(attribute => attribute is DescriptionAttribute))
             {
                 result = (attribute as DescriptionAttribute).Description;
@@ -28,7 +28,10 @@ namespace Mohammad.Helpers
             }
 
             if (string.IsNullOrEmpty(result) && getClassNameIfNotFound)
+            {
                 result = GetClassName(method);
+            }
+
             return result;
         }
 
@@ -36,7 +39,10 @@ namespace Mohammad.Helpers
         {
             var result = classInstance == null ? defaultValue : classInstance is string ? classInstance.ToString() : classInstance.GetType().ToString();
             if (result.LastIndexOf(".", StringComparison.Ordinal) > 0)
+            {
                 result = result.Substring(result.LastIndexOf(".", StringComparison.Ordinal) + 1);
+            }
+
             return result;
         }
 
@@ -59,7 +65,10 @@ namespace Mohammad.Helpers
         {
             var result = ObjectHelper.GetDescription(classInstance);
             if (string.IsNullOrEmpty(result))
+            {
                 result = defaultValue;
+            }
+
             return result;
         }
     }

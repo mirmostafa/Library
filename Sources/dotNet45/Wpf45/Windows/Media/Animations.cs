@@ -73,7 +73,10 @@ namespace Mohammad.Wpf.Windows.Media
         public static void Flick(FrameworkElement element, int duration = 500)
         {
             while (element is IFlickable)
+            {
                 element = element.As<IFlickable>().FlickerTextBlock;
+            }
+
             AnimateDouble(element, UIElement.OpacityProperty, 0, 1, duration, true);
         }
 

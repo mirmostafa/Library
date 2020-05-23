@@ -39,7 +39,9 @@ namespace Mohammad.Win32.NetworkList
         IEnumerator IEnumerable.GetEnumerator()
         {
             foreach (INetwork network in this._NetworkEnumerable)
+            {
                 yield return new Network(network);
+            }
         }
     }
 }

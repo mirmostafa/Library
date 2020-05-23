@@ -27,7 +27,7 @@ namespace Mohammad.Win.Controls
         ///     The tip which will be shown on MouseOver.
         /// </summary>
         [Description("The tip which will be shown on MouseOver.")]
-        public ToolTip ToolTip { get; private set; }
+        public ToolTip ToolTip { get; }
 
         /// <summary>
         ///     Gets or sets whether client controls and menu items are enabled.
@@ -36,11 +36,14 @@ namespace Mohammad.Win.Controls
         [DefaultValue(true)]
         public bool Enabled
         {
-            get { return this._Enabled; }
+            get => this._Enabled;
             set
             {
                 if (this._Enabled == value)
+                {
                     return;
+                }
+
                 this._Enabled = value;
                 this.refreshActions();
             }
@@ -63,21 +66,36 @@ namespace Mohammad.Win.Controls
         /// </summary>
         public ContainerControl ContainerControl
         {
-            get { return this._ContainerControl; }
+            get => this._ContainerControl;
             set
             {
                 if (this._ContainerControl == value)
+                {
                     return;
+                }
+
                 this._ContainerControl = value;
                 if (this.DesignMode)
+                {
                     return;
+                }
+
                 Form containerForm;
                 if ((containerForm = this._ContainerControl as Form) == null)
+                {
                     containerForm = this._ContainerControl.ParentForm;
+                }
+
                 if (containerForm == null)
+                {
                     return;
+                }
+
                 if (this.ContainerControl is IActionListContainer)
+                {
                     (this.ContainerControl as IActionListContainer).RegisterActionList(this);
+                }
+
                 containerForm.KeyPreview = true;
                 containerForm.KeyDown += this.form_KeyDown;
             }
@@ -86,24 +104,32 @@ namespace Mohammad.Win.Controls
         /// <summary>
         /// </summary>
         [Browsable(false)]
-        public Control ActiveControl { get { return this.getActiveControl(this.ContainerControl); } }
+        public Control ActiveControl => this.getActiveControl(this.ContainerControl);
 
         /// <summary>
         /// </summary>
         public override ISite Site
         {
-            get { return base.Site; }
+            get => base.Site;
             set
             {
                 base.Site = value;
                 if (value == null)
+                {
                     return;
+                }
+
                 var host1 = value.GetService(typeof(IDesignerHost)) as IDesignerHost;
                 if (host1 == null)
+                {
                     return;
+                }
+
                 var container = host1.RootComponent as ContainerControl;
                 if (container != null)
+                {
                     this.ContainerControl = container;
+                }
             }
         }
 
@@ -119,30 +145,31 @@ namespace Mohammad.Win.Controls
             this.ToolTip = new ToolTip();
 
             if (this.DesignMode)
+            {
                 return;
+            }
+
             Application.Idle += this.Application_Idle;
         }
 
-        private void Application_Idle(object sender, EventArgs e) { this.OnUpdate(EventArgs.Empty); }
+        #region IExtenderProvider Members
 
-        /// <summary>
-        ///     Occurs when the application is idle so that the action list can update a specific action in the list.
-        /// </summary>
-        [Description("Occurs when the application is idle so that the action list can update a specific action in the list.")]
-        public event EventHandler Update;
-
-        /// <summary>
-        ///     Generates an Update event.
-        /// </summary>
-        /// <param name="eventArgs"></param>
-        protected virtual void OnUpdate(EventArgs eventArgs)
+        bool IExtenderProvider.CanExtend(object extendee)
         {
-            if (this.Update != null)
-                this.Update(this, eventArgs);
+            var targetType = extendee.GetType();
 
-            foreach (var action in this.Actions)
-                action.DoUpdate();
+            foreach (var t in this.GetSupportedTypes())
+            {
+                if (t.IsAssignableFrom(targetType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
+
+        #endregion
 
         /// <summary>
         ///     Return the action assigned to a component
@@ -150,10 +177,7 @@ namespace Mohammad.Win.Controls
         /// <param name="extendee">Component</param>
         /// <returns>asssigned action</returns>
         [DefaultValue(null)]
-        public Action GetAction(Component extendee)
-        {
-            return this._Targets.ContainsKey(extendee) ? this._Targets[extendee] : null;
-        }
+        public Action GetAction(Component extendee) => this._Targets.ContainsKey(extendee) ? this._Targets[extendee] : null;
 
         /// <summary>
         ///     Assigns the acction to component
@@ -165,9 +189,14 @@ namespace Mohammad.Win.Controls
             if (!this._Initializing)
             {
                 if (extendee == null)
+                {
                     throw new ArgumentNullException("extendee");
+                }
+
                 if (action != null && action.ActionList != this)
+                {
                     throw new ArgumentException("The Action you selected is owned by another ActionList");
+                }
             }
 
             if (this._Targets.ContainsKey(extendee))
@@ -177,12 +206,34 @@ namespace Mohammad.Win.Controls
             }
 
             if (action == null)
+            {
                 return;
+            }
+
             if (!this.TypesDescription.ContainsKey(extendee.GetType()))
+            {
                 this.TypesDescription.Add(extendee.GetType(), new ActionTargetDescriptionInfo(extendee.GetType()));
+            }
 
             this._Targets.Add(extendee, action);
             action.InternalAddTarget(extendee);
+        }
+
+        /// <summary>
+        ///     Generates an Update event.
+        /// </summary>
+        /// <param name="eventArgs"></param>
+        protected virtual void OnUpdate(EventArgs eventArgs)
+        {
+            if (this.Update != null)
+            {
+                this.Update(this, eventArgs);
+            }
+
+            foreach (var action in this.Actions)
+            {
+                action.DoUpdate();
+            }
         }
 
         /// <summary>
@@ -194,15 +245,24 @@ namespace Mohammad.Win.Controls
             return new[] {typeof(ButtonBase), typeof(ToolStripButton), typeof(ToolStripMenuItem), typeof(ToolBarButton), typeof(MenuItem)};
         }
 
+        private void Application_Idle(object sender, EventArgs e)
+        {
+            this.OnUpdate(EventArgs.Empty);
+        }
+
         private void refreshActions()
         {
             /* questo metodo effettua il refresh dello stato Enabled e CheckState
              * di ogni action */
             if (this.DesignMode)
+            {
                 return;
+            }
 
             foreach (var action in this.Actions)
+            {
                 action.RefreshEnabledCheckState();
+            }
         }
 
         private void checkInternalCollections()
@@ -211,40 +271,45 @@ namespace Mohammad.Win.Controls
              * appartenga a questa actionList e che abbia la proprietà
              * ActionList correttamente impostata */
             foreach (var action in this._Targets.Values)
+            {
                 if (!this.Actions.Contains(action) || action.ActionList != this)
+                {
                     throw new InvalidOperationException("Action owned by another action list or invalid Action.ActionList");
+                }
+            }
         }
 
         private Control getActiveControl(IContainerControl containerControl)
         {
             if (containerControl == null)
+            {
                 return null;
+            }
+
             if (containerControl.ActiveControl is ContainerControl)
-                return this.getActiveControl((ContainerControl) containerControl.ActiveControl);
+            {
+                return this.getActiveControl((ContainerControl)containerControl.ActiveControl);
+            }
+
             return containerControl.ActiveControl;
         }
 
         private void form_KeyDown(object sender, KeyEventArgs e)
         {
             foreach (var action in this.Actions)
+            {
                 if (action.ShortcutKeys == e.KeyData)
+                {
                     action.ExecuteShortcut();
+                }
+            }
         }
 
-        #region IExtenderProvider Members
-
-        bool IExtenderProvider.CanExtend(object extendee)
-        {
-            var targetType = extendee.GetType();
-
-            foreach (var t in this.GetSupportedTypes())
-                if (t.IsAssignableFrom(targetType))
-                    return true;
-
-            return false;
-        }
-
-        #endregion
+        /// <summary>
+        ///     Occurs when the application is idle so that the action list can update a specific action in the list.
+        /// </summary>
+        [Description("Occurs when the application is idle so that the action list can update a specific action in the list.")]
+        public event EventHandler Update;
 
         #region ISupportInitialize Members
 

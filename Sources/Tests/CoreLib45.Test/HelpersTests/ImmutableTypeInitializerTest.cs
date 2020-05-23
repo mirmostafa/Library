@@ -28,10 +28,10 @@ namespace CoreLib45.Test.HelpersTests
         public void TestObjectInitializer()
         {
             var a2 = new ImmutableTypeInitializer<Person>
-                     {
-                         ["Name"] = "Ali",
-                         ["Age"] = 15
-                     };
+            {
+                ["Name"] = "Ali",
+                ["Age"] = 15
+            };
             Person p2 = a2;
             Assert.AreEqual(p2.Name, "Ali");
         }
@@ -40,10 +40,10 @@ namespace CoreLib45.Test.HelpersTests
         public void TestObjectOriented()
         {
             var p2 = new ImmutableTypeInitializer<Person>
-                     {
-                         ["Name"] = "Ali",
-                         ["Age"] = 15
-                     }.Build();
+            {
+                ["Name"] = "Ali",
+                ["Age"] = 15
+            }.Build();
             Assert.AreEqual(p2.Name, "Ali");
         }
 

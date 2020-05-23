@@ -7,10 +7,8 @@
 
 using System.Collections.Generic;
 using Mohammad.CodeGeneration.Exceptions;
-using Mohammad.CodeGeneration.Generators;
 using Mohammad.Data.SqlServer.Dynamics;
 using Mohammad.Exceptions;
-using Mohammad.Helpers;
 
 namespace Mohammad.CodeGeneration
 {
@@ -23,11 +21,16 @@ namespace Mohammad.CodeGeneration
         public IEnumerable<Table> GetDabaseTables() => this._Database.Tables;
         public IEnumerable<StoredProcedure> GetDabaseStoredProcedures() => this._Database.StoredProcedures;
 
-        public static void Generate(IEnumerable<ISqlObject> sqlObjects, string baseClassName, string languageCompnentsFolder, string outputFileFolder,
-            bool allInOneFile, string @namespace)
+        public static void Generate(IEnumerable<ISqlObject> sqlObjects,
+            string baseClassName,
+            string languageCompnentsFolder,
+            string outputFileFolder,
+            bool allInOneFile,
+            string @namespace)
         {
             //var generator = new GeneratorBasedOnFile(outputFileFolder, allInOneFile);
             foreach (var o in sqlObjects)
+            {
                 switch (o)
                 {
                     case Table t: break;
@@ -46,6 +49,7 @@ namespace Mohammad.CodeGeneration
                         ExceptionBase.WrapThrow<UnsupportedSqlObjectException>();
                         break;
                 }
+            }
         }
     }
 }

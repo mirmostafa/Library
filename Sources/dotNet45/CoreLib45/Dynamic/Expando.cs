@@ -20,14 +20,6 @@ namespace Mohammad.Dynamic
     {
         protected readonly Dictionary<string, object> Properties = new Dictionary<string, object>();
 
-        public Expando()
-        {
-        }
-
-        protected Expando(SerializationInfo info, StreamingContext context) => this.Properties =
-                                                                                   (Dictionary<string, object>) info.GetValue(
-                                                                                       "Properties", typeof(Dictionary<string, object>));
-
         public virtual object this[string index]
         {
             get => this.Properties.ContainsKey(index) ? this.Properties[index] : null;
@@ -36,7 +28,10 @@ namespace Mohammad.Dynamic
                 if (this.Properties.ContainsKey(index))
                 {
                     if (this.Properties[index] == value)
+                    {
                         return;
+                    }
+
                     this.Properties[index] = value;
                 }
                 else
@@ -48,13 +43,24 @@ namespace Mohammad.Dynamic
             }
         }
 
+        public Expando()
+        {
+        }
+
+        protected Expando(SerializationInfo info, StreamingContext context) => this.Properties =
+            (Dictionary<string, object>)info.GetValue(
+                "Properties",
+                typeof(Dictionary<string, object>));
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
+            {
                 throw new ArgumentNullException(nameof(info));
+            }
 
             this.GetProperties(info, context);
         }
@@ -75,7 +81,9 @@ namespace Mohammad.Dynamic
         protected virtual void GetProperties(SerializationInfo info, StreamingContext context)
         {
             foreach (var kvp in this.Properties)
+            {
                 info.AddValue(kvp.Key, kvp.Value);
+            }
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

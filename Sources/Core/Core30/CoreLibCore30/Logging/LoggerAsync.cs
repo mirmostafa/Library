@@ -5,15 +5,15 @@ namespace Mohammad.Logging
 {
     public class LoggerAsync : ILoggerAsync, IEventLoggerAsync, ISupportSilence
     {
-        #region Implementation of IEventLoggerAsync
-
-        public event EventHandler<ILog> Logged;
-
-        #endregion
-
         #region Implementation of ISupportSilence
 
         public bool IsSilent { get; set; }
+
+        #endregion
+
+        #region Implementation of IEventLoggerAsync
+
+        public event EventHandler<ILog> Logged;
 
         #endregion
 
@@ -30,7 +30,10 @@ namespace Mohammad.Logging
         public async Task WriteAsync(ILog log)
         {
             await Task.Yield();
-            if (!this.IsSilent) this.OnLogged(log);
+            if (!this.IsSilent)
+            {
+                this.OnLogged(log);
+            }
         }
 
         #endregion

@@ -13,6 +13,9 @@ namespace Mohammad.Validation.Exceptions
     [Serializable]
     public class NotLessThanValueValidationException : ValidationExceptionBase
     {
+        public string ParameterName { get; set; }
+        public object Value { get; set; }
+
         public NotLessThanValueValidationException()
         {
         }
@@ -31,7 +34,7 @@ namespace Mohammad.Validation.Exceptions
             : this()
         {
             this.ParameterName = parameterName;
-            this.Value         = value;
+            this.Value = value;
         }
 
         public NotLessThanValueValidationException(string message, Exception inner, string instruction)
@@ -43,8 +46,5 @@ namespace Mohammad.Validation.Exceptions
             : base(message, instruction)
         {
         }
-
-        public string ParameterName { get; set; }
-        public object Value         { get; set; }
     }
 }

@@ -13,9 +13,19 @@ namespace Mohammad.Web.Asp.UI.WebControls.Tiles
         [Category("Appearance")]
         [DefaultValue("")]
         [Localizable(true)]
-        public string Title { get { return this.TitleLabel.Text; } set { this.TitleLabel.Text = value; } }
+        public string Title
+        {
+            get => this.TitleLabel.Text;
+            set => this.TitleLabel.Text = value;
+        }
 
-        protected override void RenderContents(HtmlTextWriter output) { output.Write(this.Title); }
-        protected void Page_Load(object sender, EventArgs e) { }
+        protected override void RenderContents(HtmlTextWriter output)
+        {
+            output.Write(this.Title);
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+        }
     }
 }

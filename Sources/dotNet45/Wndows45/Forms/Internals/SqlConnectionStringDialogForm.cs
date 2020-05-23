@@ -31,20 +31,35 @@ namespace Mohammad.Win.Forms.Internals
             }
         }
 
-        public SqlConnectionStringDialogForm() { this.InitializeComponent(); }
+        public SqlConnectionStringDialogForm()
+        {
+            this.InitializeComponent();
+        }
 
         private SqlConnectionStringBuilder ParseConnectionString(bool full)
         {
             var scsb = new SqlConnectionStringBuilder();
             if (!this.serversComboBox.Text.IsNullOrEmpty())
+            {
                 scsb.DataSource = this.serversComboBox.Text;
+            }
+
             scsb.IntegratedSecurity = this.authWindowsRadioButton.Checked;
             if (this.authUserPassRadioButton.Checked && !this.userNameTextBox.Text.IsNullOrEmpty())
+            {
                 scsb.UserID = this.userNameTextBox.Text;
+            }
+
             if (this.authUserPassRadioButton.Checked && !this.passwordTextBox.Text.IsNullOrEmpty() && this.savePassCheckBox.Checked)
+            {
                 scsb.Password = this.passwordTextBox.Text;
+            }
+
             if (full && !this.dbsComboBox.Text.IsNullOrEmpty())
+            {
                 scsb.InitialCatalog = this.dbsComboBox.Text;
+            }
+
             return scsb;
         }
 
@@ -54,9 +69,14 @@ namespace Mohammad.Win.Forms.Internals
             {
                 this.serversComboBox.AssertNotNull("Server name");
                 if (this.authUserPassRadioButton.Checked)
+                {
                     this.userNameTextBox.AssertNotNull("User name");
+                }
+
                 if (full)
+                {
                     this.dbsComboBox.AssertNotNull("Database name");
+                }
             }
             catch (NotNullOrZeroValidationException ex)
             {
@@ -68,15 +88,24 @@ namespace Mohammad.Win.Forms.Internals
         private void serversComboBox_DropDown(object sender, EventArgs e)
         {
             if (this.serversComboBox.Items.Count == 0)
+            {
                 this.RefreshServers();
+            }
         }
 
         private void RefreshServers()
         {
             if (!this.refreshButton.Enabled)
+            {
                 return;
+            }
+
             string[] servers = null;
-            var refreshServers = Async.GetAsyncInstance(() => { servers = Server.Servers.Select(server => server.Name).ToArray(); }, "Refreshing Servers");
+            var refreshServers = Async.GetAsyncInstance(() =>
+                {
+                    servers = Server.Servers.Select(server => server.Name).ToArray();
+                },
+                "Refreshing Servers");
             refreshServers.Ended += (sender, e) => this.RunInCurrentThread(() =>
             {
                 this.serversComboBox.Items.Clear();
@@ -87,9 +116,20 @@ namespace Mohammad.Win.Forms.Internals
             this.refreshButton.Enabled = false;
         }
 
-        private void refreshButton_Click(object sender, EventArgs e) { this.RefreshServers(); }
-        private void authWindowsRadioButton_CheckedChanged(object sender, EventArgs e) { this.UpdateUi(); }
-        private void authUserPassRadioButton_CheckedChanged(object sender, EventArgs e) { this.UpdateUi(); }
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            this.RefreshServers();
+        }
+
+        private void authWindowsRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            this.UpdateUi();
+        }
+
+        private void authUserPassRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            this.UpdateUi();
+        }
 
         private void UpdateUi()
         {
@@ -97,7 +137,10 @@ namespace Mohammad.Win.Forms.Internals
             this.selectDbGroupBox.Enabled = this.authWindowsRadioButton.Checked || !this.userNameTextBox.Text.IsNullOrEmpty();
         }
 
-        private void userNameTextBox_TextChanged(object sender, EventArgs e) { this.UpdateUi(); }
+        private void userNameTextBox_TextChanged(object sender, EventArgs e)
+        {
+            this.UpdateUi();
+        }
 
         private void dbsComboBox_DropDown(object sender, EventArgs e)
         {
@@ -111,10 +154,16 @@ namespace Mohammad.Win.Forms.Internals
         {
             this.DoValidation(true);
             using (var conn = new SqlConnection(this.ConnectionString))
+            {
                 conn.Open();
+            }
+
             MsgBox.Inform("Connected Successfully");
         }
 
-        private void showPassCheckBox_CheckedChanged(object sender, EventArgs e) { this.passwordTextBox.UseSystemPasswordChar = !this.showPassCheckBox.Checked; }
+        private void showPassCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            this.passwordTextBox.UseSystemPasswordChar = !this.showPassCheckBox.Checked;
+        }
     }
 }

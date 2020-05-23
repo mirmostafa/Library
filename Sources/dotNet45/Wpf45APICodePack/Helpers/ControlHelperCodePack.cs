@@ -14,7 +14,10 @@ namespace Mohammad.Wpf.Helpers
         public static void ExtendGlass(this Window window, Thickness thikness)
         {
             if (Environment.OSVersion.Version.Major >= 6 && Environment.OSVersion.Version.Minor >= 2)
+            {
                 return;
+            }
+
             try
             {
                 var isGlassEnabled = 0;
@@ -33,12 +36,12 @@ namespace Mohammad.Wpf.Helpers
 
                     // Set Margins
                     var margins = new MARGINS
-                                  {
-                                      cxLeftWidth = (int) (thikness.Left * dpiX),
-                                      cxRightWidth = (int) (thikness.Right * dpiX),
-                                      cyBottomHeight = (int) (thikness.Bottom * dpiY),
-                                      cyTopHeight = (int) (thikness.Top * dpiY)
-                                  };
+                    {
+                        cxLeftWidth = (int)(thikness.Left * dpiX),
+                        cxRightWidth = (int)(thikness.Right * dpiX),
+                        cyBottomHeight = (int)(thikness.Bottom * dpiY),
+                        cyTopHeight = (int)(thikness.Top * dpiY)
+                    };
 
                     window.Background = Brushes.Transparent;
                     AeroGlassApi.DwmExtendFrameIntoClientArea(mainWindowSrc.Handle, ref margins);
@@ -48,7 +51,9 @@ namespace Mohammad.Wpf.Helpers
                     window.Background = SystemColors.WindowBrush;
                 }
             }
-            catch (DllNotFoundException) {}
+            catch (DllNotFoundException)
+            {
+            }
         }
     }
 }

@@ -8,7 +8,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace TestConsole45
@@ -68,21 +67,26 @@ namespace TestConsole45
 
         #region Nested
 
-        [XmlRoot(ElementName ="food")]
-        public class Food {
-            [XmlElement(ElementName ="name")]
+        [XmlRoot(ElementName = "food")]
+        public class Food
+        {
+            [XmlElement(ElementName = "name")]
             public string Name { get; set; }
-            [XmlElement(ElementName ="price")]
+
+            [XmlElement(ElementName = "price")]
             public string Price { get; set; }
-            [XmlElement(ElementName ="description")]
+
+            [XmlElement(ElementName = "description")]
             public string Description { get; set; }
-            [XmlElement(ElementName ="calories")]
+
+            [XmlElement(ElementName = "calories")]
             public string Calories { get; set; }
         }
 
-        [XmlRoot(ElementName ="breakfast_menu")]
-        public class Breakfast_menu {
-            [XmlElement(ElementName ="food")]
+        [XmlRoot(ElementName = "breakfast_menu")]
+        public class Breakfast_menu
+        {
+            [XmlElement(ElementName = "food")]
             public List<Food> Food { get; set; }
         }
 
@@ -91,17 +95,24 @@ namespace TestConsole45
             public static TResult DeserializeText<TResult>(string xml)
             {
                 if (xml == null)
+                {
                     throw new ArgumentNullException(nameof(xml));
+                }
 
                 var serializer = new XmlSerializer(typeof(TResult));
 
-                using (var reader = new StringReader(xml)) return (TResult) serializer.Deserialize(reader);
+                using (var reader = new StringReader(xml))
+                {
+                    return (TResult)serializer.Deserialize(reader);
+                }
             }
 
             public static string SerializeToText(object value, params Type[] extraTypes)
             {
                 if (value == null)
+                {
                     throw new ArgumentNullException(nameof(value));
+                }
 
                 var serializer = new XmlSerializer(value.GetType(), extraTypes);
 
@@ -126,7 +137,7 @@ namespace TestConsole45
 
     public class Person
     {
-        public int    Age  { get; set; }
+        public int Age { get; set; }
         public string Name { get; set; }
     }
 }

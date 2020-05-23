@@ -39,15 +39,20 @@ namespace CoreLib45.Test.HelpersTests
         [TestMethod]
         public void GetPhraseTest()
         {
-            if("I:'Hi'He:'How is going?'I:'Just fine.'".GetPhrases('\'').Count()!=3)
+            if ("I:'Hi'He:'How is going?'I:'Just fine.'".GetPhrases('\'').Count() != 3)
+            {
                 Assert.Fail("GetPhrases result corrupted.");
+            }
         }
+
         [TestMethod]
         public void GetKeyValuesTest()
         {
             const string str = "Key1=Val1;Key2=Val2;Key3=Val3;Key4=Val4;Key5=Val5";
-            if(str.GetKeyValues().Count()!=5)
+            if (str.GetKeyValues().Count() != 5)
+            {
                 Assert.Fail("GetKeyValues result corrupted.");
+            }
         }
 
         [TestMethod]
@@ -55,8 +60,20 @@ namespace CoreLib45.Test.HelpersTests
         {
             Assert.AreEqual("".If(string.IsNullOrEmpty, true, false), true);
             Assert.AreEqual("".If(string.IsNullOrEmpty, _ => true, _ => false), true);
-            "".If(string.IsNullOrEmpty, _ => { }, _ => { });
-            "Test".If(string.IsNullOrEmpty, _ => { }, _ => { });
+            "".If(string.IsNullOrEmpty,
+                _ =>
+                {
+                },
+                _ =>
+                {
+                });
+            "Test".If(string.IsNullOrEmpty,
+                _ =>
+                {
+                },
+                _ =>
+                {
+                });
         }
     }
 }

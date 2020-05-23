@@ -31,9 +31,14 @@ namespace Mohammad.Collections.Hierarchy
         {
             var children = this.Nodes.Where(n => n.ParentId == parentId).ToList();
             foreach (var child in children)
+            {
                 this.Nodes.Remove(child);
+            }
+
             this.Nodes.Remove(this.GetNodeOfParernt(parentId));
         }
+
+        public ReadOnlyTreeByIdComplex<TItem, TParent> AsReadOnly() => new ReadOnlyTreeByIdComplex<TItem, TParent>(this.Nodes);
 
         private NodeByIdComplex<TItem, TParent> GetNodeOfItem(long currentId)
         {
@@ -44,7 +49,5 @@ namespace Mohammad.Collections.Hierarchy
         {
             return this.Nodes.SingleOrDefault(n => n.ParentId == currentId);
         }
-
-        public ReadOnlyTreeByIdComplex<TItem, TParent> AsReadOnly() => new ReadOnlyTreeByIdComplex<TItem, TParent>(this.Nodes);
     }
 }

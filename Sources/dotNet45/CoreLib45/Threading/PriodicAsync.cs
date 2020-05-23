@@ -16,6 +16,18 @@ namespace Mohammad.Threading
     public abstract class PriodicAsync : Async
     {
         private AsyncPool _PriodPool;
+
+        public long? MaxCount { get; set; }
+        public long Count { get; protected set; }
+        public virtual TimeSpan Interval { get; set; }
+        public bool ContinueOnError { get; set; }
+
+        public AsyncPool PriodPool
+        {
+            get => this._PriodPool ?? (this._PriodPool = this.Pool);
+            set => this._PriodPool = value;
+        }
+
         protected PriodicAsync(TimeSpan interval) => this.Interval = interval;
 
         protected PriodicAsync(TimeSpan interval, long maxCount)
@@ -24,25 +36,24 @@ namespace Mohammad.Threading
             this.MaxCount = maxCount;
         }
 
-        public         long?    MaxCount        { get; set; }
-        public         long     Count           { get; protected set; }
-        public virtual TimeSpan Interval        { get; set; }
-        public         bool     ContinueOnError { get; set; }
-
-        public AsyncPool PriodPool
+        public static PriodicAsync GetPriodicAsyncInstance(Delegate methodInfo, TimeSpan interval, long maxCount)
         {
-            get => this._PriodPool ?? (this._PriodPool = this.Pool);
-            set => this._PriodPool = value;
+            var result = new PriodicAsyncImp(methodInfo, interval, maxCount);
+            return result;
         }
 
-        public event EventHandler                  PriodEnded;
-        public event EventHandler<ActingEventArgs> PriodStarting;
+        public static PriodicAsync GetPriodicAsyncInstance(Delegate methodInfo, TimeSpan interval)
+        {
+            var result = new PriodicAsyncImp(methodInfo, interval);
+            return result;
+        }
 
         protected override void AsyncStart()
         {
             try
             {
                 if (this.OnStarting())
+                {
                     while (this.Status == AsyncStatus.Running)
                     {
                         try
@@ -51,13 +62,17 @@ namespace Mohammad.Threading
                             {
                                 this.Count++;
                                 if (this.OnPriodStarting())
+                                {
                                     this.Execute();
+                                }
                             }
                             catch (Exception ex)
                             {
                                 this.ExceptionHandling.HandleException(ex);
                                 if (!this.ContinueOnError)
+                                {
                                     return;
+                                }
                             }
                         }
                         finally
@@ -66,9 +81,13 @@ namespace Mohammad.Threading
                         }
 
                         if (this.MaxCount.HasValue && this.MaxCount.Value <= this.Count)
+                        {
                             break;
+                        }
+
                         Thread.Sleep(this.Interval);
                     }
+                }
             }
             finally
             {
@@ -98,20 +117,14 @@ namespace Mohammad.Threading
         {
             var result = base.OnStarting();
             if (result)
+            {
                 this.Status = AsyncStatus.Running;
+            }
+
             return result;
         }
 
-        public static PriodicAsync GetPriodicAsyncInstance(Delegate methodInfo, TimeSpan interval, long maxCount)
-        {
-            var result = new PriodicAsyncImp(methodInfo, interval, maxCount);
-            return result;
-        }
-
-        public static PriodicAsync GetPriodicAsyncInstance(Delegate methodInfo, TimeSpan interval)
-        {
-            var result = new PriodicAsyncImp(methodInfo, interval);
-            return result;
-        }
+        public event EventHandler PriodEnded;
+        public event EventHandler<ActingEventArgs> PriodStarting;
     }
 }

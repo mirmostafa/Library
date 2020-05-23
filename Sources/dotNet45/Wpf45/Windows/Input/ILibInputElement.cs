@@ -2,5 +2,7 @@
 
 namespace Mohammad.Wpf.Windows.Input
 {
-    public interface ILibInputElement : IInputElement {}
+    public interface ILibInputElement : IInputElement
+    {
+    }
 }

@@ -2,7 +2,9 @@
 
 namespace Mohammad.Wpf.Windows.Controls
 {
-    public interface ILibControl {}
+    public interface ILibControl
+    {
+    }
 
     public interface IBindable
     {

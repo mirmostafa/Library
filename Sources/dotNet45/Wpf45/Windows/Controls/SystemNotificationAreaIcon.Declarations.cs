@@ -76,7 +76,7 @@ namespace Mohammad.Wpf.Windows.Controls
         ///     <see cref="TrayPopup" />.
         /// </summary>
         [Category(CATEGORY_NAME)]
-        public Popup TrayPopupResolved { get { return (Popup) this.GetValue(TrayPopupResolvedProperty); } }
+        public Popup TrayPopupResolved => (Popup)this.GetValue(TrayPopupResolvedProperty);
 
         /// <summary>
         ///     Provides a secure method for setting the TrayPopupResolved property.
@@ -115,7 +115,7 @@ namespace Mohammad.Wpf.Windows.Controls
         [Category(CATEGORY_NAME)]
         [Browsable(true)]
         [Bindable(true)]
-        public ToolTip TrayToolTipResolved { get { return (ToolTip) this.GetValue(TrayToolTipResolvedProperty); } }
+        public ToolTip TrayToolTipResolved => (ToolTip)this.GetValue(TrayToolTipResolvedProperty);
 
         /// <summary>
         ///     Provides a secure method for setting the <see cref="TrayToolTipResolved" />
@@ -145,7 +145,7 @@ namespace Mohammad.Wpf.Windows.Controls
         ///     A custom popup that is being displayed in the tray area in order
         ///     to display messages to the user.
         /// </summary>
-        public Popup CustomBalloon { get { return (Popup) this.GetValue(CustomBalloonProperty); } }
+        public Popup CustomBalloon => (Popup)this.GetValue(CustomBalloonProperty);
 
         /// <summary>
         ///     Provides a secure method for setting the <see cref="CustomBalloon" /> property.
@@ -179,7 +179,7 @@ namespace Mohammad.Wpf.Windows.Controls
         [Browsable(false)]
         internal Icon Icon
         {
-            get { return this._Icon; }
+            get => this._Icon;
             set
             {
                 this._Icon = value;
@@ -196,7 +196,11 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         [Category(CATEGORY_NAME)]
         [Description("Sets the displayed taskbar icon.")]
-        public ImageSource IconSource { get { return (ImageSource) this.GetValue(IconSourceProperty); } set { this.SetValue(IconSourceProperty, value); } }
+        public ImageSource IconSource
+        {
+            get => (ImageSource)this.GetValue(IconSourceProperty);
+            set => this.SetValue(IconSourceProperty, value);
+        }
 
         /// <summary>
         ///     A static callback listener which is being invoked if the
@@ -208,7 +212,7 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Provides information about the updated property.</param>
         private static void IconSourcePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var owner = (NotifyIcon) d;
+            var owner = (NotifyIcon)d;
             owner.OnIconSourcePropertyChanged(e);
         }
 
@@ -221,11 +225,13 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Provides information about the updated property.</param>
         private void OnIconSourcePropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            var newValue = (ImageSource) e.NewValue;
+            var newValue = (ImageSource)e.NewValue;
 
             //resolving the ImageSource at design time is unlikely to work
             if (!Util.IsDesignMode)
+            {
                 this.Icon = newValue.ToIcon();
+            }
         }
 
         #endregion
@@ -249,7 +255,11 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         [Category(CATEGORY_NAME)]
         [Description("Alternative to a fully blown ToolTip, which is only displayed on Vista and above.")]
-        public string ToolTipText { get { return (string) this.GetValue(ToolTipTextProperty); } set { this.SetValue(ToolTipTextProperty, value); } }
+        public string ToolTipText
+        {
+            get => (string)this.GetValue(ToolTipTextProperty);
+            set => this.SetValue(ToolTipTextProperty, value);
+        }
 
         /// <summary>
         ///     A static callback listener which is being invoked if the
@@ -261,7 +271,7 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Provides information about the updated property.</param>
         private static void ToolTipTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var owner = (NotifyIcon) d;
+            var owner = (NotifyIcon)d;
             owner.OnToolTipTextPropertyChanged(e);
         }
 
@@ -276,7 +286,9 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             //only recreate tooltip if we're not using a custom control
             if (this.TrayToolTipResolved == null || this.TrayToolTipResolved.Content is string)
+            {
                 this.CreateCustomToolTip();
+            }
 
             this.WriteToolTipSettings();
         }
@@ -304,7 +316,11 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         [Category(CATEGORY_NAME)]
         [Description("Custom UI element that is displayed as a tooltip. Only on Vista and above")]
-        public UIElement TrayToolTip { get { return (UIElement) this.GetValue(TrayToolTipProperty); } set { this.SetValue(TrayToolTipProperty, value); } }
+        public UIElement TrayToolTip
+        {
+            get => (UIElement)this.GetValue(TrayToolTipProperty);
+            set => this.SetValue(TrayToolTipProperty, value);
+        }
 
         /// <summary>
         ///     A static callback listener which is being invoked if the
@@ -316,7 +332,7 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Provides information about the updated property.</param>
         private static void TrayToolTipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var owner = (NotifyIcon) d;
+            var owner = (NotifyIcon)d;
             owner.OnTrayToolTipPropertyChanged(e);
         }
 
@@ -334,11 +350,15 @@ namespace Mohammad.Wpf.Windows.Controls
 
             if (e.OldValue != null)
                 //remove the taskbar icon reference from the previously used element
-                SetParentTaskbarIcon((DependencyObject) e.OldValue, null);
+            {
+                SetParentTaskbarIcon((DependencyObject)e.OldValue, null);
+            }
 
             if (e.NewValue != null)
                 //set this taskbar icon as a reference to the new tooltip element
-                SetParentTaskbarIcon((DependencyObject) e.NewValue, this);
+            {
+                SetParentTaskbarIcon((DependencyObject)e.NewValue, this);
+            }
 
             //update tooltip settings - needed to make sure a string is set, even
             //if the ToolTipText property is not set. Otherwise, the event that
@@ -365,7 +385,11 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         [Category(CATEGORY_NAME)]
         [Description("Displayed as a Popup if the user clicks on the taskbar icon.")]
-        public UIElement TrayPopup { get { return (UIElement) this.GetValue(TrayPopupProperty); } set { this.SetValue(TrayPopupProperty, value); } }
+        public UIElement TrayPopup
+        {
+            get => (UIElement)this.GetValue(TrayPopupProperty);
+            set => this.SetValue(TrayPopupProperty, value);
+        }
 
         /// <summary>
         ///     A static callback listener which is being invoked if the
@@ -377,7 +401,7 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Provides information about the updated property.</param>
         private static void TrayPopupPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var owner = (NotifyIcon) d;
+            var owner = (NotifyIcon)d;
             owner.OnTrayPopupPropertyChanged(e);
         }
 
@@ -392,11 +416,15 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             if (e.OldValue != null)
                 //remove the taskbar icon reference from the previously used element
-                SetParentTaskbarIcon((DependencyObject) e.OldValue, null);
+            {
+                SetParentTaskbarIcon((DependencyObject)e.OldValue, null);
+            }
 
             if (e.NewValue != null)
                 //set this taskbar icon as a reference to the new tooltip element
-                SetParentTaskbarIcon((DependencyObject) e.NewValue, this);
+            {
+                SetParentTaskbarIcon((DependencyObject)e.NewValue, this);
+            }
 
             //create a pop
             this.CreatePopup();
@@ -425,8 +453,8 @@ namespace Mohammad.Wpf.Windows.Controls
         [Description("Defines what mouse events display the context menu.")]
         public PopupActivationMode MenuActivation
         {
-            get { return (PopupActivationMode) this.GetValue(MenuActivationProperty); }
-            set { this.SetValue(MenuActivationProperty, value); }
+            get => (PopupActivationMode)this.GetValue(MenuActivationProperty);
+            set => this.SetValue(MenuActivationProperty, value);
         }
 
         #endregion
@@ -452,8 +480,8 @@ namespace Mohammad.Wpf.Windows.Controls
         [Description("Defines what mouse events display the TaskbarIconPopup.")]
         public PopupActivationMode PopupActivation
         {
-            get { return (PopupActivationMode) this.GetValue(PopupActivationProperty); }
-            set { this.SetValue(PopupActivationProperty, value); }
+            get => (PopupActivationMode)this.GetValue(PopupActivationProperty);
+            set => this.SetValue(PopupActivationProperty, value);
         }
 
         #endregion
@@ -470,7 +498,7 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Provides information about the updated property.</param>
         private static void VisibilityPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var owner = (NotifyIcon) d;
+            var owner = (NotifyIcon)d;
             owner.OnVisibilityPropertyChanged(e);
         }
 
@@ -483,13 +511,17 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Provides information about the updated property.</param>
         private void OnVisibilityPropertyChanged(DependencyPropertyChangedEventArgs e)
         {
-            var newValue = (Visibility) e.NewValue;
+            var newValue = (Visibility)e.NewValue;
 
             //update
             if (newValue == Visibility.Visible)
+            {
                 this.CreateTaskbarIcon();
+            }
             else
+            {
                 this.RemoveTaskbarIcon();
+            }
         }
 
         #endregion
@@ -508,14 +540,18 @@ namespace Mohammad.Wpf.Windows.Controls
             //if there is no target or it's data context is determined through a binding
             //of its own, keep it
             if (target == null || target.IsDataContextDataBound())
+            {
                 return;
+            }
 
             //if the target's data context is the NotifyIcon's old DataContext or the NotifyIcon itself,
             //update it
             if (ReferenceEquals(this, target.DataContext) || Equals(oldDataContextValue, target.DataContext))
                 //assign own data context, if available. If there is no data
                 //context at all, assign NotifyIcon itself.
+            {
                 target.DataContext = newDataContextValue ?? this;
+            }
         }
 
         /// <summary>
@@ -528,7 +564,7 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Provides information about the updated property.</param>
         private static void DataContextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var owner = (NotifyIcon) d;
+            var owner = (NotifyIcon)d;
             owner.OnDataContextPropertyChanged(e);
         }
 
@@ -565,7 +601,7 @@ namespace Mohammad.Wpf.Windows.Controls
         /// <param name="e">Provides information about the updated property.</param>
         private static void ContextMenuPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var owner = (NotifyIcon) d;
+            var owner = (NotifyIcon)d;
             owner.OnContextMenuPropertyChanged(e);
         }
 
@@ -579,13 +615,17 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             if (e.OldValue != null)
                 //remove the taskbar icon reference from the previously used element
-                SetParentTaskbarIcon((DependencyObject) e.OldValue, null);
+            {
+                SetParentTaskbarIcon((DependencyObject)e.OldValue, null);
+            }
 
             if (e.NewValue != null)
                 //set this taskbar icon as a reference to the new tooltip element
-                SetParentTaskbarIcon((DependencyObject) e.NewValue, this);
+            {
+                SetParentTaskbarIcon((DependencyObject)e.NewValue, this);
+            }
 
-            this.UpdateDataContext((ContextMenu) e.NewValue, null, this.DataContext);
+            this.UpdateDataContext((ContextMenu)e.NewValue, null, this.DataContext);
         }
 
         #endregion
@@ -609,8 +649,8 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public ICommand DoubleClickCommand
         {
-            get { return (ICommand) this.GetValue(DoubleClickCommandProperty); }
-            set { this.SetValue(DoubleClickCommandProperty, value); }
+            get => (ICommand)this.GetValue(DoubleClickCommandProperty);
+            set => this.SetValue(DoubleClickCommandProperty, value);
         }
 
         #endregion
@@ -632,8 +672,8 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public object DoubleClickCommandParameter
         {
-            get { return this.GetValue(DoubleClickCommandParameterProperty); }
-            set { this.SetValue(DoubleClickCommandParameterProperty, value); }
+            get => this.GetValue(DoubleClickCommandParameterProperty);
+            set => this.SetValue(DoubleClickCommandParameterProperty, value);
         }
 
         #endregion
@@ -655,8 +695,8 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public IInputElement DoubleClickCommandTarget
         {
-            get { return (IInputElement) this.GetValue(DoubleClickCommandTargetProperty); }
-            set { this.SetValue(DoubleClickCommandTargetProperty, value); }
+            get => (IInputElement)this.GetValue(DoubleClickCommandTargetProperty);
+            set => this.SetValue(DoubleClickCommandTargetProperty, value);
         }
 
         #endregion
@@ -680,8 +720,8 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public ICommand LeftClickCommand
         {
-            get { return (ICommand) this.GetValue(LeftClickCommandProperty); }
-            set { this.SetValue(LeftClickCommandProperty, value); }
+            get => (ICommand)this.GetValue(LeftClickCommandProperty);
+            set => this.SetValue(LeftClickCommandProperty, value);
         }
 
         #endregion
@@ -703,8 +743,8 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public object LeftClickCommandParameter
         {
-            get { return this.GetValue(LeftClickCommandParameterProperty); }
-            set { this.SetValue(LeftClickCommandParameterProperty, value); }
+            get => this.GetValue(LeftClickCommandParameterProperty);
+            set => this.SetValue(LeftClickCommandParameterProperty, value);
         }
 
         #endregion
@@ -726,8 +766,8 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public IInputElement LeftClickCommandTarget
         {
-            get { return (IInputElement) this.GetValue(LeftClickCommandTargetProperty); }
-            set { this.SetValue(LeftClickCommandTargetProperty, value); }
+            get => (IInputElement)this.GetValue(LeftClickCommandTargetProperty);
+            set => this.SetValue(LeftClickCommandTargetProperty, value);
         }
 
         #endregion
@@ -748,8 +788,8 @@ namespace Mohammad.Wpf.Windows.Controls
         [Category(CATEGORY_NAME)]
         public event RoutedEventHandler TrayLeftMouseDown
         {
-            add { this.AddHandler(TrayLeftMouseDownEvent, value); }
-            remove { this.RemoveHandler(TrayLeftMouseDownEvent, value); }
+            add => this.AddHandler(TrayLeftMouseDownEvent, value);
+            remove => this.RemoveHandler(TrayLeftMouseDownEvent, value);
         }
 
         /// <summary>
@@ -768,7 +808,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayLeftMouseDownEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayLeftMouseDownEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -792,17 +834,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayRightMouseDown
         {
-            add { this.AddHandler(TrayRightMouseDownEvent, value); }
-            remove { this.RemoveHandler(TrayRightMouseDownEvent, value); }
+            add => this.AddHandler(TrayRightMouseDownEvent, value);
+            remove => this.RemoveHandler(TrayRightMouseDownEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayRightMouseDown event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayRightMouseDownEvent()
-        {
-            return RaiseTrayRightMouseDownEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayRightMouseDownEvent() => RaiseTrayRightMouseDownEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayRightMouseDown event on a target element.
@@ -811,7 +850,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayRightMouseDownEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayRightMouseDownEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -835,17 +876,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayMiddleMouseDown
         {
-            add { this.AddHandler(TrayMiddleMouseDownEvent, value); }
-            remove { this.RemoveHandler(TrayMiddleMouseDownEvent, value); }
+            add => this.AddHandler(TrayMiddleMouseDownEvent, value);
+            remove => this.RemoveHandler(TrayMiddleMouseDownEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayMiddleMouseDown event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayMiddleMouseDownEvent()
-        {
-            return RaiseTrayMiddleMouseDownEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayMiddleMouseDownEvent() => RaiseTrayMiddleMouseDownEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayMiddleMouseDown event on a target element.
@@ -854,7 +892,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayMiddleMouseDownEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayMiddleMouseDownEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -878,17 +918,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayLeftMouseUp
         {
-            add { this.AddHandler(TrayLeftMouseUpEvent, value); }
-            remove { this.RemoveHandler(TrayLeftMouseUpEvent, value); }
+            add => this.AddHandler(TrayLeftMouseUpEvent, value);
+            remove => this.RemoveHandler(TrayLeftMouseUpEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayLeftMouseUp event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayLeftMouseUpEvent()
-        {
-            return RaiseTrayLeftMouseUpEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayLeftMouseUpEvent() => RaiseTrayLeftMouseUpEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayLeftMouseUp event on a target element.
@@ -897,7 +934,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayLeftMouseUpEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayLeftMouseUpEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -921,17 +960,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayRightMouseUp
         {
-            add { this.AddHandler(TrayRightMouseUpEvent, value); }
-            remove { this.RemoveHandler(TrayRightMouseUpEvent, value); }
+            add => this.AddHandler(TrayRightMouseUpEvent, value);
+            remove => this.RemoveHandler(TrayRightMouseUpEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayRightMouseUp event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayRightMouseUpEvent()
-        {
-            return RaiseTrayRightMouseUpEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayRightMouseUpEvent() => RaiseTrayRightMouseUpEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayRightMouseUp event on a target element.
@@ -940,7 +976,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayRightMouseUpEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayRightMouseUpEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -964,17 +1002,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayMiddleMouseUp
         {
-            add { this.AddHandler(TrayMiddleMouseUpEvent, value); }
-            remove { this.RemoveHandler(TrayMiddleMouseUpEvent, value); }
+            add => this.AddHandler(TrayMiddleMouseUpEvent, value);
+            remove => this.RemoveHandler(TrayMiddleMouseUpEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayMiddleMouseUp event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayMiddleMouseUpEvent()
-        {
-            return RaiseTrayMiddleMouseUpEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayMiddleMouseUpEvent() => RaiseTrayMiddleMouseUpEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayMiddleMouseUp event on a target element.
@@ -983,7 +1018,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayMiddleMouseUpEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayMiddleMouseUpEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1007,8 +1044,8 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayMouseDoubleClick
         {
-            add { this.AddHandler(TrayMouseDoubleClickEvent, value); }
-            remove { this.RemoveHandler(TrayMouseDoubleClickEvent, value); }
+            add => this.AddHandler(TrayMouseDoubleClickEvent, value);
+            remove => this.RemoveHandler(TrayMouseDoubleClickEvent, value);
         }
 
         /// <summary>
@@ -1028,7 +1065,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayMouseDoubleClickEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayMouseDoubleClickEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1052,17 +1091,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayMouseMove
         {
-            add { this.AddHandler(TrayMouseMoveEvent, value); }
-            remove { this.RemoveHandler(TrayMouseMoveEvent, value); }
+            add => this.AddHandler(TrayMouseMoveEvent, value);
+            remove => this.RemoveHandler(TrayMouseMoveEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayMouseMove event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayMouseMoveEvent()
-        {
-            return RaiseTrayMouseMoveEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayMouseMoveEvent() => RaiseTrayMouseMoveEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayMouseMove event on a target element.
@@ -1071,7 +1107,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayMouseMoveEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayMouseMoveEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1095,17 +1133,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayBalloonTipShown
         {
-            add { this.AddHandler(TrayBalloonTipShownEvent, value); }
-            remove { this.RemoveHandler(TrayBalloonTipShownEvent, value); }
+            add => this.AddHandler(TrayBalloonTipShownEvent, value);
+            remove => this.RemoveHandler(TrayBalloonTipShownEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayBalloonTipShown event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayBalloonTipShownEvent()
-        {
-            return RaiseTrayBalloonTipShownEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayBalloonTipShownEvent() => RaiseTrayBalloonTipShownEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayBalloonTipShown event on a target element.
@@ -1114,7 +1149,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayBalloonTipShownEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayBalloonTipShownEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1138,17 +1175,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayBalloonTipClosed
         {
-            add { this.AddHandler(TrayBalloonTipClosedEvent, value); }
-            remove { this.RemoveHandler(TrayBalloonTipClosedEvent, value); }
+            add => this.AddHandler(TrayBalloonTipClosedEvent, value);
+            remove => this.RemoveHandler(TrayBalloonTipClosedEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayBalloonTipClosed event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayBalloonTipClosedEvent()
-        {
-            return RaiseTrayBalloonTipClosedEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayBalloonTipClosedEvent() => RaiseTrayBalloonTipClosedEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayBalloonTipClosed event on a target element.
@@ -1157,7 +1191,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayBalloonTipClosedEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayBalloonTipClosedEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1181,17 +1217,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayBalloonTipClicked
         {
-            add { this.AddHandler(TrayBalloonTipClickedEvent, value); }
-            remove { this.RemoveHandler(TrayBalloonTipClickedEvent, value); }
+            add => this.AddHandler(TrayBalloonTipClickedEvent, value);
+            remove => this.RemoveHandler(TrayBalloonTipClickedEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayBalloonTipClicked event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayBalloonTipClickedEvent()
-        {
-            return RaiseTrayBalloonTipClickedEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayBalloonTipClickedEvent() => RaiseTrayBalloonTipClickedEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayBalloonTipClicked event on a target element.
@@ -1200,7 +1233,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayBalloonTipClickedEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayBalloonTipClickedEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1232,17 +1267,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayContextMenuOpen
         {
-            add { this.AddHandler(TrayContextMenuOpenEvent, value); }
-            remove { this.RemoveHandler(TrayContextMenuOpenEvent, value); }
+            add => this.AddHandler(TrayContextMenuOpenEvent, value);
+            remove => this.RemoveHandler(TrayContextMenuOpenEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayContextMenuOpen event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayContextMenuOpenEvent()
-        {
-            return RaiseTrayContextMenuOpenEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayContextMenuOpenEvent() => RaiseTrayContextMenuOpenEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayContextMenuOpen event on a target element.
@@ -1251,7 +1283,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayContextMenuOpenEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayContextMenuOpenEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1263,17 +1297,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler PreviewTrayContextMenuOpen
         {
-            add { this.AddHandler(PreviewTrayContextMenuOpenEvent, value); }
-            remove { this.RemoveHandler(PreviewTrayContextMenuOpenEvent, value); }
+            add => this.AddHandler(PreviewTrayContextMenuOpenEvent, value);
+            remove => this.RemoveHandler(PreviewTrayContextMenuOpenEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the PreviewTrayContextMenuOpen event.
         /// </summary>
-        protected RoutedEventArgs RaisePreviewTrayContextMenuOpenEvent()
-        {
-            return RaisePreviewTrayContextMenuOpenEvent(this);
-        }
+        protected RoutedEventArgs RaisePreviewTrayContextMenuOpenEvent() => RaisePreviewTrayContextMenuOpenEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the PreviewTrayContextMenuOpen event on a target element.
@@ -1282,7 +1313,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaisePreviewTrayContextMenuOpenEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = PreviewTrayContextMenuOpenEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1314,17 +1347,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayPopupOpen
         {
-            add { this.AddHandler(TrayPopupOpenEvent, value); }
-            remove { this.RemoveHandler(TrayPopupOpenEvent, value); }
+            add => this.AddHandler(TrayPopupOpenEvent, value);
+            remove => this.RemoveHandler(TrayPopupOpenEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayPopupOpen event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayPopupOpenEvent()
-        {
-            return RaiseTrayPopupOpenEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayPopupOpenEvent() => RaiseTrayPopupOpenEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayPopupOpen event on a target element.
@@ -1333,7 +1363,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayPopupOpenEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayPopupOpenEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1345,17 +1377,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler PreviewTrayPopupOpen
         {
-            add { this.AddHandler(PreviewTrayPopupOpenEvent, value); }
-            remove { this.RemoveHandler(PreviewTrayPopupOpenEvent, value); }
+            add => this.AddHandler(PreviewTrayPopupOpenEvent, value);
+            remove => this.RemoveHandler(PreviewTrayPopupOpenEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the PreviewTrayPopupOpen event.
         /// </summary>
-        protected RoutedEventArgs RaisePreviewTrayPopupOpenEvent()
-        {
-            return RaisePreviewTrayPopupOpenEvent(this);
-        }
+        protected RoutedEventArgs RaisePreviewTrayPopupOpenEvent() => RaisePreviewTrayPopupOpenEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the PreviewTrayPopupOpen event on a target element.
@@ -1364,7 +1393,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaisePreviewTrayPopupOpenEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = PreviewTrayPopupOpenEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1396,17 +1427,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayToolTipOpen
         {
-            add { this.AddHandler(TrayToolTipOpenEvent, value); }
-            remove { this.RemoveHandler(TrayToolTipOpenEvent, value); }
+            add => this.AddHandler(TrayToolTipOpenEvent, value);
+            remove => this.RemoveHandler(TrayToolTipOpenEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayToolTipOpen event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayToolTipOpenEvent()
-        {
-            return RaiseTrayToolTipOpenEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayToolTipOpenEvent() => RaiseTrayToolTipOpenEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayToolTipOpen event on a target element.
@@ -1415,7 +1443,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayToolTipOpenEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayToolTipOpenEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1427,17 +1457,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler PreviewTrayToolTipOpen
         {
-            add { this.AddHandler(PreviewTrayToolTipOpenEvent, value); }
-            remove { this.RemoveHandler(PreviewTrayToolTipOpenEvent, value); }
+            add => this.AddHandler(PreviewTrayToolTipOpenEvent, value);
+            remove => this.RemoveHandler(PreviewTrayToolTipOpenEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the PreviewTrayToolTipOpen event.
         /// </summary>
-        protected RoutedEventArgs RaisePreviewTrayToolTipOpenEvent()
-        {
-            return RaisePreviewTrayToolTipOpenEvent(this);
-        }
+        protected RoutedEventArgs RaisePreviewTrayToolTipOpenEvent() => RaisePreviewTrayToolTipOpenEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the PreviewTrayToolTipOpen event on a target element.
@@ -1446,7 +1473,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaisePreviewTrayToolTipOpenEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = PreviewTrayToolTipOpenEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1478,17 +1507,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler TrayToolTipClose
         {
-            add { this.AddHandler(TrayToolTipCloseEvent, value); }
-            remove { this.RemoveHandler(TrayToolTipCloseEvent, value); }
+            add => this.AddHandler(TrayToolTipCloseEvent, value);
+            remove => this.RemoveHandler(TrayToolTipCloseEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the TrayToolTipClose event.
         /// </summary>
-        protected RoutedEventArgs RaiseTrayToolTipCloseEvent()
-        {
-            return RaiseTrayToolTipCloseEvent(this);
-        }
+        protected RoutedEventArgs RaiseTrayToolTipCloseEvent() => RaiseTrayToolTipCloseEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the TrayToolTipClose event on a target element.
@@ -1497,7 +1523,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseTrayToolTipCloseEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = TrayToolTipCloseEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1509,17 +1537,14 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public event RoutedEventHandler PreviewTrayToolTipClose
         {
-            add { this.AddHandler(PreviewTrayToolTipCloseEvent, value); }
-            remove { this.RemoveHandler(PreviewTrayToolTipCloseEvent, value); }
+            add => this.AddHandler(PreviewTrayToolTipCloseEvent, value);
+            remove => this.RemoveHandler(PreviewTrayToolTipCloseEvent, value);
         }
 
         /// <summary>
         ///     A helper method to raise the PreviewTrayToolTipClose event.
         /// </summary>
-        protected RoutedEventArgs RaisePreviewTrayToolTipCloseEvent()
-        {
-            return RaisePreviewTrayToolTipCloseEvent(this);
-        }
+        protected RoutedEventArgs RaisePreviewTrayToolTipCloseEvent() => RaisePreviewTrayToolTipCloseEvent(this);
 
         /// <summary>
         ///     A static helper method to raise the PreviewTrayToolTipClose event on a target element.
@@ -1528,7 +1553,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaisePreviewTrayToolTipCloseEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = PreviewTrayToolTipCloseEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1574,7 +1601,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaisePopupOpenedEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = PopupOpenedEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1620,7 +1649,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseToolTipOpenedEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = ToolTipOpenedEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1666,7 +1697,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseToolTipCloseEvent(DependencyObject target)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs {RoutedEvent = ToolTipCloseEvent};
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1715,7 +1748,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseBalloonShowingEvent(DependencyObject target, NotifyIcon source)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs(BalloonShowingEvent, source);
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1764,7 +1799,9 @@ namespace Mohammad.Wpf.Windows.Controls
         internal static RoutedEventArgs RaiseBalloonClosingEvent(DependencyObject target, NotifyIcon source)
         {
             if (target == null)
+            {
                 return null;
+            }
 
             var args = new RoutedEventArgs(BalloonClosingEvent, source);
             RoutedEventHelper.RaiseEvent(target, args);
@@ -1786,10 +1823,7 @@ namespace Mohammad.Wpf.Windows.Controls
         ///     Gets the ParentTaskbarIcon property.  This dependency property
         ///     indicates ....
         /// </summary>
-        public static NotifyIcon GetParentTaskbarIcon(DependencyObject d)
-        {
-            return (NotifyIcon) d.GetValue(ParentTaskbarIconProperty);
-        }
+        public static NotifyIcon GetParentTaskbarIcon(DependencyObject d) => (NotifyIcon)d.GetValue(ParentTaskbarIconProperty);
 
         /// <summary>
         ///     Sets the ParentTaskbarIcon property.  This dependency property

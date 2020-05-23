@@ -28,11 +28,6 @@ namespace Mohammad.Data.SqlServer
 
         #endregion
 
-        public event EventHandler<LogEventArgs> Logging;
-        public event EventHandler<LogEventArgs> Logged;
-
-        public Sql(string connectionString) => this.ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
-
         public string ConnectionString { get; }
 
         public object DefaultLogSender { get; } = "Sql";
@@ -43,21 +38,29 @@ namespace Mohammad.Data.SqlServer
             set
             {
                 if (this._Logger == value)
+                {
                     return;
+                }
+
                 if (this._Logger != null)
                 {
-                    this._Logger.Logged  -= this.Logger_OnLogged;
+                    this._Logger.Logged -= this.Logger_OnLogged;
                     this._Logger.Logging -= this.Logger_OnLogging;
                 }
 
                 this._Logger = value;
                 var logger = this._Logger;
                 if (logger == null)
+                {
                     return;
-                logger.Logged  += this.Logger_OnLogged;
+                }
+
+                logger.Logged += this.Logger_OnLogged;
                 logger.Logging += this.Logger_OnLogging;
             }
         }
+
+        public Sql(string connectionString) => this.ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
 
         public int ExecuteNonQuery(string sql, Action<SqlParameterCollection> fillParams = null)
         {
@@ -83,7 +86,10 @@ namespace Mohammad.Data.SqlServer
 
         public object ExecuteStoredProcedure(string spName, Action<SqlParameterCollection> fillParams = null)
         {
-            using (var conn = new SqlConnection(this.ConnectionString)) return conn.ExecuteStoredProcedure(spName, fillParams);
+            using (var conn = new SqlConnection(this.ConnectionString))
+            {
+                return conn.ExecuteStoredProcedure(spName, fillParams);
+            }
         }
 
         public async Task<DataSet> FillByQueryAsync(string query)
@@ -95,7 +101,10 @@ namespace Mohammad.Data.SqlServer
         {
             var result = this.FillDataSet(tableNames.Select(t => SqlStatementBuilder.CreateSelect(t)).Merge(Environment.NewLine));
             for (var i = 0; i < tableNames.Length; i++)
+            {
                 result.Tables[i].TableName = tableNames[i];
+            }
+
             return result;
         }
 
@@ -160,11 +169,14 @@ namespace Mohammad.Data.SqlServer
         public SqlCommand GetCommand(string query)
         {
             var connection = new SqlConnection(this.ConnectionString);
-            var result     = connection.CreateCommand(query);
+            var result = connection.CreateCommand(query);
             result.Disposed += delegate
             {
                 if (connection.State != ConnectionState.Closed)
+                {
                     connection.Close();
+                }
+
                 connection.Dispose();
             };
             return result;
@@ -181,7 +193,10 @@ namespace Mohammad.Data.SqlServer
                     {
                         var dynRow = new Expando();
                         foreach (DataColumn column in table.Columns)
+                        {
                             dynRow[column.ColumnName] = row[column];
+                        }
+
                         dynRows.Add(dynRow);
                     }
 
@@ -194,21 +209,28 @@ namespace Mohammad.Data.SqlServer
         {
             dynamic result = new Expando();
             using (var ds = this.FillByTableNames(types.Select(t => t.Name).ToArray()))
+            {
                 foreach (var type in types)
                 {
                     var table = ds.Tables[type.Name];
-                    var rows  = new ArrayList();
+                    var rows = new ArrayList();
                     foreach (DataRow row in table.Rows)
                     {
                         var constructor = type.GetConstructor(new Type[] { });
                         if (constructor == null)
+                        {
                             continue;
+                        }
+
                         var newRow = constructor.Invoke(null);
                         foreach (DataColumn column in table.Columns)
                         {
                             var value = row[column];
                             if (DBNull.Value.Equals(value))
+                            {
                                 value = null;
+                            }
+
                             type.GetProperty(column.ColumnName)?.SetValue(newRow, value);
                         }
 
@@ -217,6 +239,7 @@ namespace Mohammad.Data.SqlServer
 
                     result[type.Name] = rows;
                 }
+            }
 
             return result;
         }
@@ -224,27 +247,39 @@ namespace Mohammad.Data.SqlServer
         public IEnumerable<T> Select<T>(string query, Func<SqlDataReader, T> rowFiller)
         {
             this.Logger.Debug(query);
-            using (var conn = new SqlConnection(this.ConnectionString)) return conn.Select(query, rowFiller).ToList();
+            using (var conn = new SqlConnection(this.ConnectionString))
+            {
+                return conn.Select(query, rowFiller).ToList();
+            }
         }
 
         public IEnumerable<T> Select<T>(string query, Func<IDataReader, T> convertor)
             where T : new()
         {
             this.Logger.Debug(query);
-            using (var conn = new SqlConnection(this.ConnectionString)) return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select(convertor);
+            using (var conn = new SqlConnection(this.ConnectionString))
+            {
+                return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select(convertor);
+            }
         }
 
         public IEnumerable<T> Select<T>(string query, Func<T> creator)
         {
             this.Logger.Debug(query);
-            using (var conn = new SqlConnection(this.ConnectionString)) return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select(creator);
+            using (var conn = new SqlConnection(this.ConnectionString))
+            {
+                return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select(creator);
+            }
         }
 
         public IEnumerable<T> Select<T>(string query)
             where T : new()
         {
             this.Logger.Debug(query);
-            using (var conn = new SqlConnection(this.ConnectionString)) return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>();
+            using (var conn = new SqlConnection(this.ConnectionString))
+            {
+                return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>();
+            }
         }
 
         public IEnumerable<dynamic> Select(string query)
@@ -252,13 +287,21 @@ namespace Mohammad.Data.SqlServer
             this.Logger.Debug(query);
             using (var conn = new SqlConnection(this.ConnectionString))
             {
-                var reader  = conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
+                var reader = conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
                 var columns = new List<string>();
-                for (var i = 0; i < reader.FieldCount; i++) columns.Add(reader.GetName(i));
+                for (var i = 0; i < reader.FieldCount; i++)
+                {
+                    columns.Add(reader.GetName(i));
+                }
+
                 while (reader.Read())
                 {
-                    var result                                     = new Expando();
-                    foreach (var column in columns) result[column] = reader[column];
+                    var result = new Expando();
+                    foreach (var column in columns)
+                    {
+                        result[column] = reader[column];
+                    }
+
                     yield return result;
                 }
             }
@@ -267,13 +310,19 @@ namespace Mohammad.Data.SqlServer
         public IEnumerable<dynamic> Select(string query, Func<SqlDataReader, dynamic> rowFiller)
         {
             this.Logger.Debug(query);
-            using (var conn = new SqlConnection(this.ConnectionString)) return conn.Select(query, rowFiller).ToList();
+            using (var conn = new SqlConnection(this.ConnectionString))
+            {
+                return conn.Select(query, rowFiller).ToList();
+            }
         }
 
         public void TransactionalCommand(string cmdText, Action<SqlCommand> executor = null, Action<SqlParameterCollection> fillParams = null)
         {
             if (cmdText == null)
+            {
                 throw new ArgumentNullException(nameof(cmdText));
+            }
+
             using (var connection = new SqlConnection(this.ConnectionString))
             {
                 connection.Open();
@@ -286,9 +335,14 @@ namespace Mohammad.Data.SqlServer
                     {
                         this.Logger.Debug(cmdText);
                         if (executor != null)
+                        {
                             executor(command);
+                        }
                         else
+                        {
                             command.ExecuteNonQuery();
+                        }
+
                         transaction.Commit();
                     }
                     catch
@@ -300,7 +354,7 @@ namespace Mohammad.Data.SqlServer
             }
         }
 
-        private void Logger_OnLogged(object  sender, LogEventArgs e) => this.OnLogging(e);
+        private void Logger_OnLogged(object sender, LogEventArgs e) => this.OnLogging(e);
         private void Logger_OnLogging(object sender, LogEventArgs e) => this.OnLogged(e);
 
         private void OnLogged(LogEventArgs e)
@@ -314,5 +368,8 @@ namespace Mohammad.Data.SqlServer
             var handler = this.Logging;
             handler?.Invoke(this, e);
         }
+
+        public event EventHandler<LogEventArgs> Logging;
+        public event EventHandler<LogEventArgs> Logged;
     }
 }

@@ -626,7 +626,8 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListBoxItem">
-                                <RadioButton Focusable="False" IsChecked="{Binding Path=IsSelected, RelativeSource={x:Static RelativeSource.TemplatedParent}, Mode=TwoWay}">
+                                <RadioButton Focusable="False"
+                                             IsChecked="{Binding Path=IsSelected, RelativeSource={x:Static RelativeSource.TemplatedParent}, Mode=TwoWay}">
                                     <ContentPresenter />
                                 </RadioButton>
                             </ControlTemplate>
@@ -656,7 +657,8 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListBoxItem">
-                                <CheckBox Focusable="False" IsChecked="{Binding Path=IsSelected, RelativeSource={x:Static RelativeSource.TemplatedParent}, Mode=TwoWay}">
+                                <CheckBox Focusable="False"
+                                          IsChecked="{Binding Path=IsSelected, RelativeSource={x:Static RelativeSource.TemplatedParent}, Mode=TwoWay}">
                                     <ContentPresenter />
                                 </CheckBox>
                             </ControlTemplate>

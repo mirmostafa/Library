@@ -27,9 +27,35 @@ namespace Mohammad.Validation
         {
             foreach (var property in obj.GetType().GetProperties())
             {
-                (var isOk, var exception) = this.TryValidByAttributes(obj, property, translate(property.Name));
+                var (isOk, exception) = this.TryValidByAttributes(obj, property, translate(property.Name));
                 if (!isOk)
+                {
                     yield return exception;
+                }
+            }
+        }
+
+        public void Validate(object obj, Func<string, string> translate)
+        {
+            foreach (var property in obj.GetType().GetProperties())
+            {
+                this.ValidByAttributes(obj, property, translate);
+            }
+        }
+
+        public void ValidateByPropNames(object obj, Func<string, string> translate, params string[] propNames)
+        {
+            foreach (var property in obj.GetType().GetProperties().Where(prop => prop.Name.IsInRange(propNames)))
+            {
+                this.ValidByAttributes(obj, property, translate);
+            }
+        }
+
+        public void ValidateExcept(object obj, Func<string, string> translate, params string[] propNames)
+        {
+            foreach (var property in obj.GetType().GetProperties().Where(prop => !prop.Name.IsInRange(propNames)))
+            {
+                this.ValidByAttributes(obj, property, translate);
             }
         }
 
@@ -44,24 +70,6 @@ namespace Mohammad.Validation
             {
                 return (false, e);
             }
-        }
-
-        public void Validate(object obj, Func<string, string> translate)
-        {
-            foreach (var property in obj.GetType().GetProperties())
-                this.ValidByAttributes(obj, property, translate);
-        }
-
-        public void ValidateByPropNames(object obj, Func<string, string> translate, params string[] propNames)
-        {
-            foreach (var property in obj.GetType().GetProperties().Where(prop => prop.Name.IsInRange(propNames)))
-                this.ValidByAttributes(obj, property, translate);
-        }
-
-        public void ValidateExcept(object obj, Func<string, string> translate, params string[] propNames)
-        {
-            foreach (var property in obj.GetType().GetProperties().Where(prop => !prop.Name.IsInRange(propNames)))
-                this.ValidByAttributes(obj, property, translate);
         }
 
         protected void ValidByAttributes(object obj, PropertyInfo property, Func<string, string> translate)

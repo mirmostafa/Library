@@ -33,19 +33,19 @@ namespace Mohammad.Helpers
         /// <param name="controlType">Type of the control.</param>
         public static void AddDirectorySecurity(string folderName, string account, FileSystemRights rights, AccessControlType controlType)
         {
-            var directoryInfo     = new DirectoryInfo(folderName);
+            var directoryInfo = new DirectoryInfo(folderName);
             var directorySecurity = directoryInfo.GetAccessControl();
             directorySecurity.AddAccessRule(new FileSystemAccessRule(account,
-                                                                     rights,
-                                                                     InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
-                                                                     PropagationFlags.None,
-                                                                     controlType));
+                rights,
+                InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                PropagationFlags.None,
+                controlType));
             directoryInfo.SetAccessControl(directorySecurity);
         }
 
         public static string AddPrefixToName(string fileFullPath, string suffix) => Path.Combine(
-                                                                                                 Path.GetDirectoryName(fileFullPath) ?? string.Empty,
-                                                                                                 $"{Path.GetFileNameWithoutExtension(fileFullPath)}{suffix}{Path.GetExtension(fileFullPath)}");
+            Path.GetDirectoryName(fileFullPath) ?? string.Empty,
+            $"{Path.GetFileNameWithoutExtension(fileFullPath)}{suffix}{Path.GetExtension(fileFullPath)}");
 
         /// <summary>
         ///     Adds the security.
@@ -68,15 +68,27 @@ namespace Mohammad.Helpers
         public static string CombineFilePath(string absolutePath, string fileName, string ext = null, bool createDirIfNotExists = true)
         {
             if (absolutePath == null)
+            {
                 throw new ArgumentNullException(nameof(absolutePath));
+            }
+
             if (fileName == null)
+            {
                 throw new ArgumentNullException(nameof(fileName));
+            }
+
             if (ext.IsNullOrEmpty())
+            {
                 ext = Path.GetExtension(fileName);
+            }
+
             ext = ext.Remove(".");
             var filePath = Path.Combine(absolutePath, $"{Path.GetFileNameWithoutExtension(fileName)}.{ext}");
             if (createDirIfNotExists && !Directory.Exists(Path.GetDirectoryName(filePath)))
+            {
                 Directory.CreateDirectory(Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException());
+            }
+
             return filePath;
         }
 
@@ -90,20 +102,30 @@ namespace Mohammad.Helpers
         /// </param>
         /// <param name="onCopy">Will be called before copying each file. The file won't be copied if returns false.</param>
         /// <param name="retryOnException"></param>
-        public static void Copy(this DirectoryInfo              source, DirectoryInfo destination, bool overwrite = true,
-                                Predicate<FileSystemInfo>       onCopy           = null,
-                                Func<FileInfo, Exception, bool> retryOnException = null)
+        public static void Copy(this DirectoryInfo source,
+            DirectoryInfo destination,
+            bool overwrite = true,
+            Predicate<FileSystemInfo> onCopy = null,
+            Func<FileInfo, Exception, bool> retryOnException = null)
         {
             foreach (var file in source.GetFiles().Where(file => onCopy?.Invoke(file) != false))
+            {
                 Copy(file, destination, overwrite, retryOnException);
+            }
+
             foreach (var dir in source.GetDirectories())
+            {
                 if (onCopy?.Invoke(dir) != false)
                 {
                     var info = new DirectoryInfo(string.Concat(destination.FullName, "\\", dir.Name));
                     if (!info.Exists)
+                    {
                         info.Create();
+                    }
+
                     dir.Copy(info, overwrite, onCopy, retryOnException);
                 }
+            }
         }
 
         /// <summary>
@@ -115,8 +137,10 @@ namespace Mohammad.Helpers
         ///     if set to <c>true</c> the file will be overwritten if exists.
         /// </param>
         /// <param name="retryOnException">Will be called before copying each file. The file won't be copied if returns false.</param>
-        public static void Copy(this FileInfo                   file, DirectoryInfo destination, bool overwrite = true,
-                                Func<FileInfo, Exception, bool> retryOnException = null)
+        public static void Copy(this FileInfo file,
+            DirectoryInfo destination,
+            bool overwrite = true,
+            Func<FileInfo, Exception, bool> retryOnException = null)
         {
             try
             {
@@ -124,7 +148,9 @@ namespace Mohammad.Helpers
                 if (!overwrite)
                 {
                     if (!File.Exists(dest))
+                    {
                         file.CopyTo(dest);
+                    }
                 }
                 else
                 {
@@ -135,14 +161,14 @@ namespace Mohammad.Helpers
             {
                 var fileSecurity = file.GetAccessControl();
                 fileSecurity.AddAccessRule(
-                                           new FileSystemAccessRule(WindowsIdentity.GetCurrent().Name, FileSystemRights.FullControl, AccessControlType.Allow));
+                    new FileSystemAccessRule(WindowsIdentity.GetCurrent().Name, FileSystemRights.FullControl, AccessControlType.Allow));
                 file.SetAccessControl(fileSecurity);
                 file.Attributes &= ~FileAttributes.ReadOnly;
 
                 var directorySecurity = destination.GetAccessControl();
                 directorySecurity.AddAccessRule(new FileSystemAccessRule(WindowsIdentity.GetCurrent().Name,
-                                                                         FileSystemRights.FullControl,
-                                                                         AccessControlType.Allow));
+                    FileSystemRights.FullControl,
+                    AccessControlType.Allow));
                 destination.SetAccessControl(directorySecurity);
                 destination.Attributes &= ~FileAttributes.ReadOnly;
 
@@ -156,7 +182,9 @@ namespace Mohammad.Helpers
                     if (retryOnException != null)
                     {
                         if (retryOnException(file, ex))
+                        {
                             Copy(file, destination, overwrite, retryOnException);
+                        }
                     }
                     else
                     {
@@ -169,17 +197,27 @@ namespace Mohammad.Helpers
         public static void CopyDirectory(string source, string destination, bool overwrite = true, bool copySubDirs = true)
         {
             if (source == null)
+            {
                 throw new ArgumentNullException(nameof(source));
+            }
+
             if (destination == null)
+            {
                 throw new ArgumentNullException(nameof(destination));
-            var dir  = new DirectoryInfo(source);
+            }
+
+            var dir = new DirectoryInfo(source);
             var dirs = dir.GetDirectories();
 
             if (!dir.Exists)
+            {
                 throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + source);
+            }
 
             if (!Directory.Exists(destination))
+            {
                 Directory.CreateDirectory(destination);
+            }
 
             var files = dir.GetFiles();
 
@@ -190,7 +228,10 @@ namespace Mohammad.Helpers
             }
 
             if (!copySubDirs)
+            {
                 return;
+            }
+
             foreach (var subdir in dirs)
             {
                 var temppath = Path.Combine(destination, subdir.Name);
@@ -211,14 +252,20 @@ namespace Mohammad.Helpers
         {
             var result = new FileInfo(Path.Combine(dir.FullName, file));
             if (!result.Exists)
+            {
                 result.Create().Close();
+            }
+
             return result;
         }
 
         public static DirectoryInfo DeleteDirectory(this DirectoryInfo dir)
         {
             if (dir.Exists)
+            {
                 dir.Delete(true);
+            }
+
             return dir;
         }
 
@@ -239,7 +286,10 @@ namespace Mohammad.Helpers
         public static bool ExploreFile(string filePath)
         {
             if (!File.Exists(filePath))
+            {
                 return false;
+            }
+
             Process.Start("explorer.exe", $"/select,\"{filePath}\"");
             return true;
         }
@@ -260,14 +310,22 @@ namespace Mohammad.Helpers
             catch (Exception)
             {
                 if (!catchExceptions)
+                {
                     throw;
+                }
+
                 yield break;
             }
 
             foreach (var fileName in directories.Select(dir => dir.FullName))
+            {
                 yield return fileName;
+            }
+
             foreach (var fileName in directories.SelectMany(dir => dir.GetAllDirectories(catchExceptions)))
+            {
                 yield return fileName;
+            }
         }
 
         /// <summary>
@@ -294,25 +352,35 @@ namespace Mohammad.Helpers
             catch (Exception)
             {
                 if (!catchExceptions)
+                {
                     throw;
+                }
+
                 yield break;
             }
 
             Diag.DebugWriteLine($"Looking in: {directory.FullName}", "GetAllFiles");
             foreach (var fileName in files.Select(file =>
+                {
+                    try
+                    {
+                        return file.FullName;
+                    }
+                    catch (Exception)
+                    {
+                        if (!catchExceptions)
+                        {
+                            throw;
+                        }
+
+                        return string.Empty;
+                    }
+                })
+                .Where(fileName => fileName != null))
             {
-                try
-                {
-                    return file.FullName;
-                }
-                catch (Exception)
-                {
-                    if (!catchExceptions)
-                        throw;
-                    return string.Empty;
-                }
-            }).Where(fileName => fileName != null))
                 yield return fileName;
+            }
+
             DirectoryInfo[] directories;
             try
             {
@@ -321,12 +389,17 @@ namespace Mohammad.Helpers
             catch (Exception)
             {
                 if (!catchExceptions)
+                {
                     throw;
+                }
+
                 yield break;
             }
 
             foreach (var fileName in directories.SelectMany(dir => dir.GetAllFiles(searchPattern, catchExceptions)))
+            {
                 yield return fileName;
+            }
         }
 
         /// <summary>
@@ -337,7 +410,7 @@ namespace Mohammad.Helpers
         /// <param name="catchExceptions"></param>
         /// <returns></returns>
         public static IEnumerable<string> GetAllFiles(string path, string searchPattern = null, bool catchExceptions = false) => new DirectoryInfo(path)
-           .GetAllFiles(searchPattern, catchExceptions);
+            .GetAllFiles(searchPattern, catchExceptions);
 
         /// <summary>
         ///     Gets all file systems.
@@ -350,9 +423,14 @@ namespace Mohammad.Helpers
             {
                 yield return dir.FullName;
                 foreach (var file in dir.GetFiles())
+                {
                     yield return file.FullName;
+                }
+
                 foreach (var fileSystem in dir.GetAllFileSystems())
+                {
                     yield return fileSystem;
+                }
             }
         }
 
@@ -366,15 +444,18 @@ namespace Mohammad.Helpers
         public static DirectoryInfo GetDirectory(string path, bool createIfNotExists = true)
         {
             var result = new DirectoryInfo(path);
-            if(createIfNotExists && !result.Exists)
+            if (createIfNotExists && !result.Exists)
+            {
                 result.Create();
+            }
+
             return result;
         }
 
         public static IEnumerable<string> GetFiles(string path, params string[] searchPatterns) => searchPatterns
-                                                                                                  .SelectMany(searchPattern =>
-                                                                                                                  Directory.GetFiles(path, searchPattern))
-                                                                                                  .ToList();
+            .SelectMany(searchPattern =>
+                Directory.GetFiles(path, searchPattern))
+            .ToList();
 
         /// <summary>
         ///     Gets the image files.
@@ -438,7 +519,9 @@ namespace Mohammad.Helpers
             {
                 Task<string> line;
                 while ((line = sr.ReadLineAsync()) != null)
+                {
                     result.Add(line);
+                }
             }
 
             return await Task.WhenAll(result);
@@ -452,7 +535,9 @@ namespace Mohammad.Helpers
             {
                 string line;
                 while ((line = sr.ReadLine()) != null)
+                {
                     yield return line;
+                }
             }
         }
 
@@ -474,24 +559,30 @@ namespace Mohammad.Helpers
             {
                 Task<string> line;
                 while ((line = sr.ReadLineAsync()) != null)
+                {
                     yield return line;
+                }
             }
         }
 
         public static IEnumerable<string> ReadTest(string path)
         {
             const int MAX_BUFFER = 33554432; //32MB
-            var       buffer     = new byte[MAX_BUFFER];
+            var buffer = new byte[MAX_BUFFER];
 
             using (var fs = File.Open(path, FileMode.Open, FileAccess.Read))
             using (var bs = new BufferedStream(fs))
+            {
                 while (bs.Read(buffer, 0, MAX_BUFFER) != 0) //reading only 32mb chunks at a time
                 {
-                    var    stream = new StreamReader(new MemoryStream(buffer));
+                    var stream = new StreamReader(new MemoryStream(buffer));
                     string line;
                     while ((line = stream.ReadLine()) != null)
+                    {
                         yield return line;
+                    }
                 }
+            }
         }
 
         /// <summary>
@@ -503,7 +594,7 @@ namespace Mohammad.Helpers
         /// <param name="controlType">Type of the control.</param>
         public static void RemoveDirectorySecurity(string folderName, string account, FileSystemRights rights, AccessControlType controlType)
         {
-            var directoryInfo     = new DirectoryInfo(folderName);
+            var directoryInfo = new DirectoryInfo(folderName);
             var directorySecurity = directoryInfo.GetAccessControl();
             directorySecurity.RemoveAccessRule(new FileSystemAccessRule(account, rights, controlType));
             directoryInfo.SetAccessControl(directorySecurity);
@@ -529,8 +620,9 @@ namespace Mohammad.Helpers
         /// <param name="sendToRecycleBin">
         ///     if set to <c>true</c> sends to recycle bin.
         /// </param>
-        public static void SafeDelete(this IEnumerable<FileInfo> files, EventHandler<ItemActingEventArgs<FileInfo>> onFileDeleting = null,
-                                      bool                       sendToRecycleBin = false)
+        public static void SafeDelete(this IEnumerable<FileInfo> files,
+            EventHandler<ItemActingEventArgs<FileInfo>> onFileDeleting = null,
+            bool sendToRecycleBin = false)
         {
             files.ForEach(file => file.SafeDelete(onFileDeleting, sendToRecycleBin));
         }
@@ -550,13 +642,15 @@ namespace Mohammad.Helpers
                 var e = new ItemActingEventArgs<FileInfo>(file);
                 onFileDeleting(null, e);
                 if (e.Handled)
+                {
                     return;
+                }
             }
 
             file.Attributes = FileAttributes.Normal;
             FileSystem.DeleteFile(file.FullName,
-                                  UIOption.OnlyErrorDialogs,
-                                  sendToRecycleBin ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently);
+                UIOption.OnlyErrorDialogs,
+                sendToRecycleBin ? RecycleOption.SendToRecycleBin : RecycleOption.DeletePermanently);
         }
 
         /// <summary>
@@ -568,9 +662,10 @@ namespace Mohammad.Helpers
         /// <param name="sendToRecycleBin">
         ///     if set to <c>true</c> sends to recycle bin.
         /// </param>
-        public static void SafeDelete(this IEnumerable<DirectoryInfo>                  directories,
-                                      EventHandler<ItemActingEventArgs<DirectoryInfo>> onDirectoryDeleting = null,
-                                      EventHandler<ItemActingEventArgs<FileInfo>>      onFileDeleting      = null, bool sendToRecycleBin = false)
+        public static void SafeDelete(this IEnumerable<DirectoryInfo> directories,
+            EventHandler<ItemActingEventArgs<DirectoryInfo>> onDirectoryDeleting = null,
+            EventHandler<ItemActingEventArgs<FileInfo>> onFileDeleting = null,
+            bool sendToRecycleBin = false)
         {
             directories.ForEach(dir => dir.SafeDelete(onDirectoryDeleting, onFileDeleting, sendToRecycleBin));
         }
@@ -584,17 +679,20 @@ namespace Mohammad.Helpers
         /// <param name="sendToRecycleBin">
         ///     if set to <c>true</c> sends to recycle bin.
         /// </param>
-        public static void SafeDelete(this FileSystemInfo                               fileSystem,
-                                      EventHandler<ItemActingEventArgs<FileSystemInfo>> onFileSystemDeleting = null,
-                                      EventHandler<ItemActingEventArgs<FileInfo>>       onFileDeleting       = null,
-                                      bool                                              sendToRecycleBin     = false)
+        public static void SafeDelete(this FileSystemInfo fileSystem,
+            EventHandler<ItemActingEventArgs<FileSystemInfo>> onFileSystemDeleting = null,
+            EventHandler<ItemActingEventArgs<FileInfo>> onFileDeleting = null,
+            bool sendToRecycleBin = false)
         {
             if (IsDirectory(fileSystem.FullName))
             {
                 var onDirectoryDeleting = new EventHandler<ItemActingEventArgs<DirectoryInfo>>(delegate(object sender, ItemActingEventArgs<DirectoryInfo> e)
                 {
                     if (e == null)
+                    {
                         return;
+                    }
+
                     var args = new ItemActingEventArgs<FileSystemInfo>(e.Item);
                     onFileSystemDeleting?.Invoke(sender, args);
                     e.Handled = args.Handled;
@@ -606,7 +704,10 @@ namespace Mohammad.Helpers
                 var handler = new EventHandler<ItemActingEventArgs<FileInfo>>(delegate(object sender, ItemActingEventArgs<FileInfo> e)
                 {
                     if (e == null)
+                    {
                         return;
+                    }
+
                     var args = new ItemActingEventArgs<FileSystemInfo>(e.Item);
                     onFileSystemDeleting?.Invoke(sender, args);
                     e.Handled = args.Handled;
@@ -624,13 +725,16 @@ namespace Mohammad.Helpers
         /// <param name="sendToRecycleBin">
         ///     if set to <c>true</c> sends to recycle bin.
         /// </param>
-        public static void SafeDelete(this DirectoryInfo                               directory,
-                                      EventHandler<ItemActingEventArgs<DirectoryInfo>> onDirectoryDeleting = null,
-                                      EventHandler<ItemActingEventArgs<FileInfo>>      onFileDeleting      = null,
-                                      bool                                             sendToRecycleBin    = false)
+        public static void SafeDelete(this DirectoryInfo directory,
+            EventHandler<ItemActingEventArgs<DirectoryInfo>> onDirectoryDeleting = null,
+            EventHandler<ItemActingEventArgs<FileInfo>> onFileDeleting = null,
+            bool sendToRecycleBin = false)
         {
             if (!directory.Exists)
+            {
                 return;
+            }
+
             foreach (var info in directory.GetFiles())
             {
                 if (onFileDeleting != null)
@@ -638,7 +742,9 @@ namespace Mohammad.Helpers
                     var e = new ItemActingEventArgs<FileInfo>(info);
                     onFileDeleting(null, e);
                     if (e.Handled)
+                    {
                         continue;
+                    }
                 }
 
                 info.SafeDelete(onFileDeleting, sendToRecycleBin);
@@ -651,7 +757,9 @@ namespace Mohammad.Helpers
                     var args2 = new ItemActingEventArgs<DirectoryInfo>(info2);
                     onDirectoryDeleting(null, args2);
                     if (args2.Handled)
+                    {
                         continue;
+                    }
                 }
 
                 info2.SafeDelete(onDirectoryDeleting, onFileDeleting, sendToRecycleBin);
@@ -691,18 +799,27 @@ namespace Mohammad.Helpers
         /// <param name="createNoWindow">
         ///     if set to <c>true</c> [create no window].
         /// </param>
-        public static void Start(string command, string args = null, string workingDirectory = null, bool waitForExit = false, bool useShellExecute = false,
-                                 bool   createNoWindow = true)
+        public static void Start(string command,
+            string args = null,
+            string workingDirectory = null,
+            bool waitForExit = false,
+            bool useShellExecute = false,
+            bool createNoWindow = true)
         {
             if (workingDirectory.IsNullOrEmpty())
+            {
                 workingDirectory = GetSystem32Dir();
+            }
+
             var startInfo = new ProcessStartInfo
             {
                 WorkingDirectory = workingDirectory, UseShellExecute = useShellExecute, FileName = command, Arguments = args, CreateNoWindow = createNoWindow
             };
             var result = Process.Start(startInfo);
             if (waitForExit)
+            {
                 result?.WaitForExit();
+            }
         }
 
         public static FileInfo Write(this FileInfo file, string text)

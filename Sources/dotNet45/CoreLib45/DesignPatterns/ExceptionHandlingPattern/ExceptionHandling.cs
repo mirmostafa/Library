@@ -15,6 +15,11 @@ namespace Mohammad.DesignPatterns.ExceptionHandlingPattern
     public class ExceptionHandling<TException>
         where TException : Exception
     {
+        public TException LastException { get; private set; }
+        public bool HasException => this.LastException != null;
+        public bool RaiseExceptions { get; set; }
+        private object Sender { get; set; }
+
         public ExceptionHandling(EventHandler<ExceptionOccurredEventArgs<TException>> exceptionOccurredHandler)
             : this() => this.ExceptionOccurred += exceptionOccurredHandler;
 
@@ -22,10 +27,7 @@ namespace Mohammad.DesignPatterns.ExceptionHandlingPattern
         {
         }
 
-        public  TException LastException   { get; private set; }
-        public  bool       HasException    => this.LastException != null;
-        public  bool       RaiseExceptions { get; set; }
-        private object     Sender          { get; set; }
+        public override string ToString() => this.LastException?.ToString() ?? "No error";
 
         public event EventHandler<ExceptionOccurredEventArgs<TException>> ExceptionOccurred;
 
@@ -39,7 +41,10 @@ namespace Mohammad.DesignPatterns.ExceptionHandlingPattern
             this.LastException = ex;
             this.ExceptionOccurred.Raise(sender, new ExceptionOccurredEventArgs<TException>(ex));
             if (this.RaiseExceptions)
+            {
                 throw ex;
+            }
+
             //CodeHelper.Break();
         }
 
@@ -49,7 +54,10 @@ namespace Mohammad.DesignPatterns.ExceptionHandlingPattern
             this.LastException = ex;
             this.ExceptionOccurred.Raise(sender, new ExceptionOccurredEventArgs<TException>(ex, moreInfo));
             if (this.RaiseExceptions)
+            {
                 throw ex;
+            }
+
             //CodeHelper.Break();
         }
 
@@ -62,8 +70,6 @@ namespace Mohammad.DesignPatterns.ExceptionHandlingPattern
         {
             this.Sender = sender;
         }
-
-        public override string ToString() => this.LastException?.ToString() ?? "No error";
     }
 
     public class ExceptionHandling : ExceptionHandling<Exception>

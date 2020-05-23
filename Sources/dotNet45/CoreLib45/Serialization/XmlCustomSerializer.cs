@@ -17,8 +17,8 @@ namespace Mohammad.Serialization
 {
     public class XmlCustomSerializer
     {
-        public bool     ShowEmptyMembers { get; set; }
-        public Encoding Encoding         { get; set; } = Encoding.UTF8;
+        public bool ShowEmptyMembers { get; set; }
+        public Encoding Encoding { get; set; } = Encoding.UTF8;
 
         public string Serialize(object t, string rootname = "Root")
         {
@@ -33,7 +33,9 @@ namespace Mohammad.Serialization
                     if (value == null)
                     {
                         if (this.ShowEmptyMembers)
+                        {
                             container.Add(new XElement(property.Name, null));
+                        }
                     }
                     else
                     {
@@ -47,7 +49,7 @@ namespace Mohammad.Serialization
             }
             else
             {
-                var source = (IEnumerable) t;
+                var source = (IEnumerable)t;
                 source.ForEach(item =>
                 {
                     var element = new XElement(item.GetType().Name);
@@ -61,11 +63,11 @@ namespace Mohammad.Serialization
             doc.InsertBefore(doc.CreateXmlDeclaration("1.0", this.Encoding.HeaderName, "yes"), doc.FirstChild);
             var builder = new StringBuilder();
             using (var writer = XmlWriter.Create(builder,
-                                                 new XmlWriterSettings
-                                                 {
-                                                     Indent   = true,
-                                                     Encoding = this.Encoding
-                                                 }))
+                new XmlWriterSettings
+                {
+                    Indent = true,
+                    Encoding = this.Encoding
+                }))
             {
                 doc.Save(writer);
             }
@@ -81,7 +83,10 @@ namespace Mohammad.Serialization
             doc.LoadXml(xml);
             var result = new T();
             foreach (XmlNode node in doc.ChildNodes.Cast<XmlNode>().First().ChildNodes.Cast<XmlNode>().First())
+            {
                 result.GetType().GetProperty(node.Name)?.SetValue(result, node.Value, new object[] { });
+            }
+
             return result;
         }
     }

@@ -26,7 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "D:\\Mirmostafa\\Sources\\Satrap\\Shared": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.0": {
@@ -44,19 +44,21 @@
           "dependencies": {
             "MSTest.TestAdapter": {
               "target": "Package",
-              "version": "[1.4.0, )"
+              "version": "[2.1.1, )"
             },
             "MSTest.TestFramework": {
               "target": "Package",
-              "version": "[1.4.0, )"
+              "version": "[2.1.1, )"
             },
             "Microsoft.NET.Test.Sdk": {
               "target": "Package",
-              "version": "[16.2.0, )"
+              "version": "[16.6.1, )"
             },
             "coverlet.collector": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
               "target": "Package",
-              "version": "[1.0.1, )"
+              "version": "[1.2.1, )"
             }
           },
           "imports": [

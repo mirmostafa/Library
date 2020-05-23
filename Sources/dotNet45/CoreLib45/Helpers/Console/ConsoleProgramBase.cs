@@ -21,23 +21,15 @@ namespace Mohammad.Helpers.Console
     public abstract class ConsoleProgramBase<TProgram> : ApplicationMainThreadBase<TProgram>
         where TProgram : ConsoleProgramBase<TProgram>
     {
-        #region Fields
-
-        private          bool             _IsPaused;
-        private readonly ManualResetEvent _ResetEvent = new ManualResetEvent(true);
-        private          Task             _Task;
-
-        #endregion
-
-        public IReadOnlyList<string> Args            { get; private set; }
-        public bool                  CatchExceptions { get; set; }
-        public object                CommandsObject  { get; set; }
-        public bool                  RunInTask       { get; set; } = true;
+        public IReadOnlyList<string> Args { get; private set; }
+        public bool CatchExceptions { get; set; }
+        public object CommandsObject { get; set; }
+        public bool RunInTask { get; set; } = true;
 
         public static void CallMeOnMain(params string[] args)
         {
             Instance.CatchExceptions = true;
-            Instance.Args            = new List<string>(args.Merge(" ").Split('-', '/').Compact().Select(arg => arg.Trim())).AsReadOnly();
+            Instance.Args = new List<string>(args.Merge(" ").Split('-', '/').Compact().Select(arg => arg.Trim())).AsReadOnly();
             Instance.Start();
         }
 
@@ -94,11 +86,13 @@ namespace Mohammad.Helpers.Console
                 run = () =>
                 {
                     var commands = this.CommandsObject
-                                       .GetType()
-                                       .GetMethods()
-                                       .Where(m => m.GetCustomAttributes(typeof(ProgramCommandAttribute), true).Length == 1)
-                                       .ToDictionary(m => char.ToLower(m.GetCustomAttributes(typeof(ProgramCommandAttribute), true).First()
-                                                                        .As<ProgramCommandAttribute>().ShortKey));
+                        .GetType()
+                        .GetMethods()
+                        .Where(m => m.GetCustomAttributes(typeof(ProgramCommandAttribute), true).Length == 1)
+                        .ToDictionary(m => char.ToLower(m.GetCustomAttributes(typeof(ProgramCommandAttribute), true)
+                            .First()
+                            .As<ProgramCommandAttribute>()
+                            .ShortKey));
                     var respKey = System.Console.ReadKey(true);
                     while (commands.ContainsKey(char.ToLower(respKey.KeyChar)))
                     {
@@ -108,9 +102,9 @@ namespace Mohammad.Helpers.Console
                 };
             }
 
-            System.Console.WindowWidth        = System.Console.LargestWindowWidth - 3;
-            System.Console.BackgroundColor    = ConsoleColor.DarkBlue;
-            System.Console.ForegroundColor    = ConsoleColor.White;
+            System.Console.WindowWidth = System.Console.LargestWindowWidth - 3;
+            System.Console.BackgroundColor = ConsoleColor.DarkBlue;
+            System.Console.ForegroundColor = ConsoleColor.White;
             ConsoleHelper.DefaultConsoleColor = System.Console.ForegroundColor;
             System.Console.Clear();
 
@@ -118,7 +112,10 @@ namespace Mohammad.Helpers.Console
             this.Run(run);
             ConsoleHelper.LineFeed();
             if (!this.RunInTask)
+            {
                 "Ready.".WriteLine(ConsoleColor.Gray);
+            }
+
             var key = this.IsApplicationShuttingdown ? new ConsoleKeyInfo() : System.Console.ReadKey(true);
             while (!this.IsApplicationShuttingdown && key.Key != ConsoleKey.X)
             {
@@ -129,7 +126,10 @@ namespace Mohammad.Helpers.Console
                         break;
                     case ConsoleKey.S:
                         if (!this.RunInTask)
+                        {
                             break;
+                        }
+
                         if (this._Task?.Status != TaskStatus.Running)
                         {
                             "No task is running.".WriteLine(ConsoleColor.Red);
@@ -146,7 +146,10 @@ namespace Mohammad.Helpers.Console
                         break;
                     case ConsoleKey.P:
                         if (!this.RunInTask)
+                        {
                             break;
+                        }
+
                         if (this._Task?.Status != TaskStatus.Running)
                         {
                             "No task is running.".WriteLine(ConsoleColor.Red);
@@ -170,15 +173,23 @@ namespace Mohammad.Helpers.Console
                 }
 
                 if (!this.IsApplicationShuttingdown)
+                {
                     key = System.Console.ReadKey(true);
+                }
             }
 
             this.Shutdown();
         }
 
+        protected void WaitIfRequired()
+        {
+            this._ResetEvent.WaitOne();
+        }
+
         private void Run(Action run)
         {
             if (this.CatchExceptions)
+            {
                 try
                 {
                     run();
@@ -187,13 +198,19 @@ namespace Mohammad.Helpers.Console
                 {
                     this.ExceptionHandling.HandleException(ex);
                 }
+            }
             else
+            {
                 run();
+            }
         }
 
-        protected void WaitIfRequired()
-        {
-            this._ResetEvent.WaitOne();
-        }
+        #region Fields
+
+        private bool _IsPaused;
+        private readonly ManualResetEvent _ResetEvent = new ManualResetEvent(true);
+        private Task _Task;
+
+        #endregion
     }
 }

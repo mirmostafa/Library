@@ -14,23 +14,42 @@ namespace Mohammad.Data.Ado
 {
     public class AdoQueryWatcher
     {
-        #region Fields
-
-        private static   SqlDependency _Dependency;
-        private static   DataTable     _TempTable;
-        private readonly string        _Query;
-
-        #endregion
-
-        public event EventHandler<SqlNotificationEventArgs> Changed;
+        public string ConnectionString { get; }
 
         public AdoQueryWatcher(string connectionString, string query)
         {
             this.ConnectionString = connectionString;
-            this._Query           = query;
+            this._Query = query;
         }
 
-        public string ConnectionString { get; }
+        public void Start()
+        {
+            SqlDependency.Start(this.ConnectionString);
+            if (_Dependency != null)
+            {
+                _Dependency.OnChange -= this.OnDependencyChange;
+                _Dependency = null;
+            }
+
+            var connection = new SqlConnection(this.ConnectionString);
+            connection.Open();
+            var command = new SqlCommand(this._Query, connection)
+            {
+                Notification = null
+            };
+
+            _Dependency = new SqlDependency(command);
+            _Dependency.OnChange += this.OnDependencyChange;
+            _TempTable?.Dispose();
+            _TempTable = new DataTable();
+            _TempTable.Load(command.ExecuteReader(CommandBehavior.CloseConnection));
+            connection.Close();
+        }
+
+        public void Stop()
+        {
+            SqlDependency.Stop(this.ConnectionString);
+        }
 
         protected virtual async void OnChanged(SqlNotificationEventArgs e)
         {
@@ -43,33 +62,14 @@ namespace Mohammad.Data.Ado
             this.Start();
         }
 
-        public void Start()
-        {
-            SqlDependency.Start(this.ConnectionString);
-            if (_Dependency != null)
-            {
-                _Dependency.OnChange -= this.OnDependencyChange;
-                _Dependency          =  null;
-            }
+        public event EventHandler<SqlNotificationEventArgs> Changed;
 
-            var connection = new SqlConnection(this.ConnectionString);
-            connection.Open();
-            var command = new SqlCommand(this._Query, connection)
-            {
-                Notification = null
-            };
+        #region Fields
 
-            _Dependency          =  new SqlDependency(command);
-            _Dependency.OnChange += this.OnDependencyChange;
-            _TempTable?.Dispose();
-            _TempTable = new DataTable();
-            _TempTable.Load(command.ExecuteReader(CommandBehavior.CloseConnection));
-            connection.Close();
-        }
+        private static SqlDependency _Dependency;
+        private static DataTable _TempTable;
+        private readonly string _Query;
 
-        public void Stop()
-        {
-            SqlDependency.Stop(this.ConnectionString);
-        }
+        #endregion
     }
 }

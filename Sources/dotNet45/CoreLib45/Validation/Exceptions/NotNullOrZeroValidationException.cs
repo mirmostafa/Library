@@ -13,6 +13,8 @@ namespace Mohammad.Validation.Exceptions
     [Serializable]
     public class NotNullOrZeroValidationException : ValidationExceptionBase
     {
+        public string ParameterName { get; set; }
+
         public NotNullOrZeroValidationException()
         {
         }
@@ -39,7 +41,5 @@ namespace Mohammad.Validation.Exceptions
             : base(message, inner, instruction)
         {
         }
-
-        public string ParameterName { get; set; }
     }
 }

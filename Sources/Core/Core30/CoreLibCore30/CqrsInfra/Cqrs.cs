@@ -7,14 +7,6 @@ namespace Mohammad.CqrsInfra
 {
     public static class Cqrs
     {
-        #region Fields
-
-        private static Assembly _Assembly;
-
-        private static IContainer _container;
-
-        #endregion
-
         public static void Init(Assembly assembly)
         {
             _Assembly = assembly;
@@ -28,7 +20,7 @@ namespace Mohammad.CqrsInfra
 
         public static (IQueryProcessor queryProcessor, ICommandProcessor commandProcessor) GetProcessors()
         {
-            var queryProcessor   = _container.Resolve<IQueryProcessor>();
+            var queryProcessor = _container.Resolve<IQueryProcessor>();
             var commandProcessor = _container.Resolve<ICommandProcessor>();
             return (queryProcessor, commandProcessor);
         }
@@ -36,15 +28,15 @@ namespace Mohammad.CqrsInfra
         private static ContainerBuilder AddQueries(ContainerBuilder builder)
         {
             builder
-               .RegisterType<QueryProcessor>()
-               .As<IQueryProcessor>()
-               .InstancePerLifetimeScope();
+                .RegisterType<QueryProcessor>()
+                .As<IQueryProcessor>()
+                .InstancePerLifetimeScope();
 
             builder
-               .RegisterAssemblyTypes(_Assembly)
-               .AsClosedTypesOf(typeof(IQueryHandler<,>), "1")
-               .AsImplementedInterfaces()
-               .InstancePerLifetimeScope();
+                .RegisterAssemblyTypes(_Assembly)
+                .AsClosedTypesOf(typeof(IQueryHandler<,>), "1")
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
 
             return builder;
         }
@@ -53,33 +45,41 @@ namespace Mohammad.CqrsInfra
         {
             var assembly = _Assembly;
             builder
-               .RegisterType<CommandProcessor>()
-               .As<ICommandProcessor>()
-               .InstancePerLifetimeScope();
+                .RegisterType<CommandProcessor>()
+                .As<ICommandProcessor>()
+                .InstancePerLifetimeScope();
 
             builder
-               .RegisterAssemblyTypes(assembly)
-               .AsClosedTypesOf(typeof(ICommandHandler<,>), "1")
-               .AsImplementedInterfaces()
-               .InstancePerLifetimeScope();
+                .RegisterAssemblyTypes(assembly)
+                .AsClosedTypesOf(typeof(ICommandHandler<,>), "1")
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
 
             builder
-               .RegisterAssemblyTypes(assembly)
-               .AssignableTo<ICommandResult>()
-               .AsImplementedInterfaces()
-               .InstancePerRequest();
+                .RegisterAssemblyTypes(assembly)
+                .AssignableTo<ICommandResult>()
+                .AsImplementedInterfaces()
+                .InstancePerRequest();
 
             builder
-               .RegisterAssemblyTypes(assembly)
-               .AsClosedTypesOf(typeof(ICommandValidator<>))
-               .AsImplementedInterfaces()
-               .InstancePerLifetimeScope();
+                .RegisterAssemblyTypes(assembly)
+                .AsClosedTypesOf(typeof(ICommandValidator<>))
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
 
             builder
-               .RegisterGenericDecorator(typeof(ValidationCommandHandlerDecorator<,>), typeof(ICommandHandler<,>), "1", "2")
-               .InstancePerLifetimeScope();
+                .RegisterGenericDecorator(typeof(ValidationCommandHandlerDecorator<,>), typeof(ICommandHandler<,>), "1", "2")
+                .InstancePerLifetimeScope();
 
             return builder;
         }
+
+        #region Fields
+
+        private static Assembly _Assembly;
+
+        private static IContainer _container;
+
+        #endregion
     }
 }

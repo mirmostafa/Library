@@ -36,7 +36,9 @@ namespace Mohammad.Helpers
             {
                 yield return item;
                 foreach (var child in InnerSelectTreeDynamic(item, getNext))
+                {
                     yield return child;
+                }
             }
         }
     }

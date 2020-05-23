@@ -2,6 +2,38 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.5.2": {
+      "Microsoft.WindowsAPICodePack-Core/1.1.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/Microsoft.WindowsAPICodePack.dll": {}
+        },
+        "runtime": {
+          "lib/Microsoft.WindowsAPICodePack.dll": {}
+        }
+      },
+      "Microsoft.WindowsAPICodePack-Shell/1.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.WindowsAPICodePack-Core": "1.1.0"
+        },
+        "compile": {
+          "lib/Microsoft.WindowsAPICodePack.Shell.dll": {},
+          "lib/Microsoft.WindowsAPICodePack.ShellExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/Microsoft.WindowsAPICodePack.Shell.dll": {},
+          "lib/Microsoft.WindowsAPICodePack.ShellExtensions.dll": {}
+        }
+      },
+      "System.ValueTuple/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        }
+      },
       "CoreLib45/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
@@ -43,6 +75,38 @@
       }
     },
     ".NETFramework,Version=v4.5.2/win": {
+      "Microsoft.WindowsAPICodePack-Core/1.1.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/Microsoft.WindowsAPICodePack.dll": {}
+        },
+        "runtime": {
+          "lib/Microsoft.WindowsAPICodePack.dll": {}
+        }
+      },
+      "Microsoft.WindowsAPICodePack-Shell/1.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.WindowsAPICodePack-Core": "1.1.0"
+        },
+        "compile": {
+          "lib/Microsoft.WindowsAPICodePack.Shell.dll": {},
+          "lib/Microsoft.WindowsAPICodePack.ShellExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/Microsoft.WindowsAPICodePack.Shell.dll": {},
+          "lib/Microsoft.WindowsAPICodePack.ShellExtensions.dll": {}
+        }
+      },
+      "System.ValueTuple/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        }
+      },
       "CoreLib45/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
@@ -84,6 +148,38 @@
       }
     },
     ".NETFramework,Version=v4.5.2/win-x64": {
+      "Microsoft.WindowsAPICodePack-Core/1.1.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/Microsoft.WindowsAPICodePack.dll": {}
+        },
+        "runtime": {
+          "lib/Microsoft.WindowsAPICodePack.dll": {}
+        }
+      },
+      "Microsoft.WindowsAPICodePack-Shell/1.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.WindowsAPICodePack-Core": "1.1.0"
+        },
+        "compile": {
+          "lib/Microsoft.WindowsAPICodePack.Shell.dll": {},
+          "lib/Microsoft.WindowsAPICodePack.ShellExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/Microsoft.WindowsAPICodePack.Shell.dll": {},
+          "lib/Microsoft.WindowsAPICodePack.ShellExtensions.dll": {}
+        }
+      },
+      "System.ValueTuple/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        }
+      },
       "CoreLib45/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
@@ -125,6 +221,38 @@
       }
     },
     ".NETFramework,Version=v4.5.2/win-x86": {
+      "Microsoft.WindowsAPICodePack-Core/1.1.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/Microsoft.WindowsAPICodePack.dll": {}
+        },
+        "runtime": {
+          "lib/Microsoft.WindowsAPICodePack.dll": {}
+        }
+      },
+      "Microsoft.WindowsAPICodePack-Shell/1.1.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.WindowsAPICodePack-Core": "1.1.0"
+        },
+        "compile": {
+          "lib/Microsoft.WindowsAPICodePack.Shell.dll": {},
+          "lib/Microsoft.WindowsAPICodePack.ShellExtensions.dll": {}
+        },
+        "runtime": {
+          "lib/Microsoft.WindowsAPICodePack.Shell.dll": {},
+          "lib/Microsoft.WindowsAPICodePack.ShellExtensions.dll": {}
+        }
+      },
+      "System.ValueTuple/4.5.0": {
+        "type": "package",
+        "compile": {
+          "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.ValueTuple.dll": {}
+        }
+      },
       "CoreLib45/1.0.0": {
         "type": "project",
         "framework": ".NETFramework,Version=v4.5",
@@ -167,6 +295,81 @@
     }
   },
   "libraries": {
+    "Microsoft.WindowsAPICodePack-Core/1.1.0.2": {
+      "sha512": "rfcfF2KwFVLt/zAaJfkqFPk/WPRAgFIamvGw+SSC0lYWNKMT+hTtIcNNifc/ZFDmoozYtldDgrHsj4qbsLQZtQ==",
+      "type": "package",
+      "path": "microsoft.windowsapicodepack-core/1.1.0.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/Microsoft.WindowsAPICodePack.XML",
+        "lib/Microsoft.WindowsAPICodePack.dll",
+        "lib/Microsoft.WindowsAPICodePack.pdb",
+        "microsoft.windowsapicodepack-core.1.1.0.2.nupkg.sha512",
+        "microsoft.windowsapicodepack-core.nuspec"
+      ]
+    },
+    "Microsoft.WindowsAPICodePack-Shell/1.1.0": {
+      "sha512": "8WvLG0TNTylzMB8gnZeZDG68/DsagAF64K35RC2Y/zocHp4e03Uj/kba6egQlq1+0uVv04FpLG+CmENEIN53rg==",
+      "type": "package",
+      "path": "microsoft.windowsapicodepack-shell/1.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/Microsoft.WindowsAPICodePack.Shell.dll",
+        "lib/Microsoft.WindowsAPICodePack.Shell.pdb",
+        "lib/Microsoft.WindowsAPICodePack.Shell.xml",
+        "lib/Microsoft.WindowsAPICodePack.ShellExtensions.XML",
+        "lib/Microsoft.WindowsAPICodePack.ShellExtensions.dll",
+        "lib/Microsoft.WindowsAPICodePack.ShellExtensions.pdb",
+        "microsoft.windowsapicodepack-shell.1.1.0.nupkg.sha512",
+        "microsoft.windowsapicodepack-shell.nuspec"
+      ]
+    },
+    "System.ValueTuple/4.5.0": {
+      "sha512": "okurQJO6NRE/apDIP23ajJ0hpiNmJ+f0BwOlB/cSqTLQlw5upkf+5+96+iG2Jw40G1fCVCyPz/FhIABUjMR+RQ==",
+      "type": "package",
+      "path": "system.valuetuple/4.5.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.TXT",
+        "THIRD-PARTY-NOTICES.TXT",
+        "lib/MonoAndroid10/_._",
+        "lib/MonoTouch10/_._",
+        "lib/net461/System.ValueTuple.dll",
+        "lib/net461/System.ValueTuple.xml",
+        "lib/net47/System.ValueTuple.dll",
+        "lib/net47/System.ValueTuple.xml",
+        "lib/netcoreapp2.0/_._",
+        "lib/netstandard1.0/System.ValueTuple.dll",
+        "lib/netstandard1.0/System.ValueTuple.xml",
+        "lib/netstandard2.0/_._",
+        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
+        "lib/portable-net40+sl4+win8+wp8/System.ValueTuple.xml",
+        "lib/uap10.0.16299/_._",
+        "lib/xamarinios10/_._",
+        "lib/xamarinmac20/_._",
+        "lib/xamarintvos10/_._",
+        "lib/xamarinwatchos10/_._",
+        "ref/MonoAndroid10/_._",
+        "ref/MonoTouch10/_._",
+        "ref/net461/System.ValueTuple.dll",
+        "ref/net47/System.ValueTuple.dll",
+        "ref/netcoreapp2.0/_._",
+        "ref/netstandard2.0/_._",
+        "ref/portable-net40+sl4+win8+wp8/System.ValueTuple.dll",
+        "ref/uap10.0.16299/_._",
+        "ref/xamarinios10/_._",
+        "ref/xamarinmac20/_._",
+        "ref/xamarintvos10/_._",
+        "ref/xamarinwatchos10/_._",
+        "system.valuetuple.4.5.0.nupkg.sha512",
+        "system.valuetuple.nuspec",
+        "useSharedDesignerContext.txt",
+        "version.txt"
+      ]
+    },
     "CoreLib45/1.0.0": {
       "type": "project",
       "path": "../CoreLib45/CoreLib45.csproj",
@@ -220,7 +423,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "D:\\Mirmostafa\\Sources\\Satrap\\Shared": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net452": {
@@ -267,43 +470,5 @@
         "#import": []
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1101",
-      "level": "Error",
-      "message": "Unable to find package Microsoft.WindowsAPICodePack-Core. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages, Stimul",
-      "libraryId": "Microsoft.WindowsAPICodePack-Core",
-      "targetGraphs": [
-        ".NETFramework,Version=v4.5.2",
-        ".NETFramework,Version=v4.5.2/win",
-        ".NETFramework,Version=v4.5.2/win-x64",
-        ".NETFramework,Version=v4.5.2/win-x86"
-      ]
-    },
-    {
-      "code": "NU1101",
-      "level": "Error",
-      "message": "Unable to find package Microsoft.WindowsAPICodePack-Shell. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages, Stimul",
-      "libraryId": "Microsoft.WindowsAPICodePack-Shell",
-      "targetGraphs": [
-        ".NETFramework,Version=v4.5.2",
-        ".NETFramework,Version=v4.5.2/win",
-        ".NETFramework,Version=v4.5.2/win-x64",
-        ".NETFramework,Version=v4.5.2/win-x86"
-      ]
-    },
-    {
-      "code": "NU1101",
-      "level": "Error",
-      "message": "Unable to find package System.ValueTuple. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages, Stimul",
-      "libraryId": "System.ValueTuple",
-      "targetGraphs": [
-        ".NETFramework,Version=v4.5.2",
-        ".NETFramework,Version=v4.5.2/win",
-        ".NETFramework,Version=v4.5.2/win-x64",
-        ".NETFramework,Version=v4.5.2/win-x86"
-      ]
-    }
-  ]
+  }
 }

@@ -1,7 +1,8 @@
 using System.Dynamic;
 using System.Web;
 
-namespace Mohammad.Web.Asp.Helpers {
+namespace Mohammad.Web.Asp.Helpers
+{
     public class Session : DynamicObject
     {
         public override bool TryGetMember(GetMemberBinder binder, out object result)

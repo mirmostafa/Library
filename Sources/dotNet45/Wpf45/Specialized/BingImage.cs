@@ -20,31 +20,12 @@ namespace Mohammad.Wpf.Specialized
 
         private static BitmapImage _CachedBingImage;
 
-        private static async void OnUseBingImageChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        public static bool GetUseBingImage(DependencyObject o) => (bool)o.GetValue(UseBingImageProperty);
+
+        public static void SetUseBingImage(DependencyObject o, bool value)
         {
-            var newValue = (bool) e.NewValue;
-            var image = o as Image;
-            var imageBrush = o as ImageBrush;
-
-            if (!newValue || image == null && imageBrush == null)
-                return;
-
-            if (_CachedBingImage == null)
-            {
-                var url = await Async.Run(BingService.GetCurrentBingImageUrl);
-                if (url != null)
-                    _CachedBingImage = new BitmapImage(url);
-            }
-
-            if (_CachedBingImage != null)
-                if (image != null)
-                    image.Source = _CachedBingImage;
-                else
-                    imageBrush.ImageSource = _CachedBingImage;
+            o.SetValue(UseBingImageProperty, value);
         }
-
-        public static bool GetUseBingImage(DependencyObject o) { return (bool) o.GetValue(UseBingImageProperty); }
-        public static void SetUseBingImage(DependencyObject o, bool value) { o.SetValue(UseBingImageProperty, value); }
 
         public static async Task<BitmapImage> GetBingImageAsync()
         {
@@ -60,9 +41,43 @@ namespace Mohammad.Wpf.Specialized
                     _CachedBingImage.EndInit();
                 }
             }
+
             return _CachedBingImage;
         }
 
-        public static ImageSource GetBingImage() { return GetBingImageAsync().Result; }
+        public static ImageSource GetBingImage() => GetBingImageAsync().Result;
+
+        private static async void OnUseBingImageChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
+        {
+            var newValue = (bool)e.NewValue;
+            var image = o as Image;
+            var imageBrush = o as ImageBrush;
+
+            if (!newValue || image == null && imageBrush == null)
+            {
+                return;
+            }
+
+            if (_CachedBingImage == null)
+            {
+                var url = await Async.Run(BingService.GetCurrentBingImageUrl);
+                if (url != null)
+                {
+                    _CachedBingImage = new BitmapImage(url);
+                }
+            }
+
+            if (_CachedBingImage != null)
+            {
+                if (image != null)
+                {
+                    image.Source = _CachedBingImage;
+                }
+                else
+                {
+                    imageBrush.ImageSource = _CachedBingImage;
+                }
+            }
+        }
     }
 }

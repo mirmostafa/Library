@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Mohammad.Collections.ObjectModel;
-using Mohammad.Data.SqlServer.Dynamics;
 using Mohammad.Diagnostics;
 using Mohammad.Helpers;
 using Mohammad.Helpers.Console;
@@ -39,12 +38,12 @@ namespace TestConsole45
                 var line = html.Split('\n').First(s => s.Contains(item));
                 return
                     int.Parse(
-                        line.Substring(line.LastIndexOf(">", StringComparison.Ordinal)                          + 1,
-                                 line.Length - line.LastIndexOf(">", StringComparison.Ordinal) - "</td>".Length - 1)
+                        line.Substring(line.LastIndexOf(">", StringComparison.Ordinal) + 1,
+                                line.Length - line.LastIndexOf(">", StringComparison.Ordinal) - "</td>".Length - 1)
                             .Replace(",", ""));
             };
             "Downloading...".WriteLine();
-            var client   = new WebClient();
+            var client = new WebClient();
             var siteHtml = client.DownloadString("http://www.tala.ir/webservice/price_live.php");
             "Downloaded.".WriteLine();
             ConsoleHelper.WriteLine();
@@ -63,8 +62,8 @@ namespace TestConsole45
 
         private static void Puya()
         {
-            string[] lines  = null;
-            Action   action = () => lines = File.ReadAllLines(@"E:\match.txt");
+            string[] lines = null;
+            Action action = () => lines = File.ReadAllLines(@"E:\match.txt");
             Diag.RunDebug(action, "Read match file records");
             $"Lines count: {lines.Length}".WriteLine();
             var data = new SortedList<int, int>(lines.Length);

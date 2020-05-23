@@ -31,20 +31,30 @@ namespace Mohammad.Wpf.Drawing
                 //find encoding from StreamSource as MemoryStream 
                 var bitmapImage = image;
                 if (!(bitmapImage.StreamSource is MemoryStream))
+                {
                     throw new Exception("undefined format type");
-                var stream = (MemoryStream) bitmapImage.StreamSource;
+                }
+
+                var stream = (MemoryStream)bitmapImage.StreamSource;
                 var bytes = stream.ToArray();
                 byte[] uncompressed;
                 var encoding = GetImageEncoding(bytes, out uncompressed);
                 return ConvertToBinary(image, encoding);
             }
+
             var metadata = source.Metadata as BitmapMetadata;
             if (metadata != null)
                 //find encoding from Metadate format
+            {
                 return ConvertToBinary(source, GetImageEncoding(metadata.Format));
+            }
+
             if (source.Format == PixelFormats.BlackWhite)
                 //set BMP Encoding for BlackAndWhite formats
+            {
                 return ConvertToBinary(source, ImageEncoding.Bmp);
+            }
+
             throw new Exception("undefined format type");
         }
 
@@ -52,17 +62,24 @@ namespace Mohammad.Wpf.Drawing
         {
             var bitmapSource = source as BitmapSource;
             if (bitmapSource != null)
+            {
                 return ConvertToBinary(bitmapSource, encoding);
+            }
+
             throw new ArgumentException($"{nameof(bitmapSource)} must be a BitmapSource");
         }
 
         public static ImageSource LoadImage(string path, bool isResource, bool canThrowException)
         {
             if (!string.IsNullOrEmpty(path))
+            {
                 try
                 {
                     if (isResource)
+                    {
                         return ApplicationHelper.GetImageSource(path);
+                    }
+
                     var bmImage = new BitmapImage();
                     bmImage.BeginInit();
                     var fullPath = AppDomain.CurrentDomain.BaseDirectory + "\\" + path.Replace("/", "\\");
@@ -73,9 +90,14 @@ namespace Mohammad.Wpf.Drawing
                 catch (Exception)
                 {
                     if (canThrowException)
+                    {
                         throw;
+                    }
+
                     return null;
                 }
+            }
+
             return null;
         }
 
@@ -86,8 +108,13 @@ namespace Mohammad.Wpf.Drawing
                 bitmapImage = ConvertToBitmapImage(source, encoding);
                 return true;
             }
-            catch (FileFormatException) {}
-            catch (NotSupportedException) {}
+            catch (FileFormatException)
+            {
+            }
+            catch (NotSupportedException)
+            {
+            }
+
             bitmapImage = null;
             return false;
         }
@@ -109,17 +136,12 @@ namespace Mohammad.Wpf.Drawing
             return bitmapSource;
         }
 
-        private static BitmapSource ConvertToBitmapSource(Bitmap image)
-        {
-            return Imaging.CreateBitmapSourceFromHBitmap(image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-        }
-
         public static BitmapSource ConvertToBitmapSource(string imagePath)
         {
             var imageStreamSource = new FileStream(imagePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             var result = new byte[imageStreamSource.Length];
             imageStreamSource.Seek(0, SeekOrigin.Begin);
-            imageStreamSource.Read(result, 0, (int) imageStreamSource.Length);
+            imageStreamSource.Read(result, 0, (int)imageStreamSource.Length);
             imageStreamSource.Seek(0, SeekOrigin.Begin);
             byte[] uncompressed;
             var decoder = GetProperDecoder(GetImageEncoding(result, out uncompressed), imageStreamSource);
@@ -135,7 +157,7 @@ namespace Mohammad.Wpf.Drawing
             return ConvertToBitmapImage(unCompressedBytes, encoding, isBlackWhite);
         }
 
-        public static BitmapImage ConvertToBitmapImage(byte[] bytes, ImageEncoding encoding) { return ConvertToBitmapImage(bytes, encoding, false); }
+        public static BitmapImage ConvertToBitmapImage(byte[] bytes, ImageEncoding encoding) => ConvertToBitmapImage(bytes, encoding, false);
 
         public static BitmapImage ConvertToBitmapImage(byte[] bytes, ImageEncoding encoding, bool isBlackAndWhite)
         {
@@ -149,14 +171,6 @@ namespace Mohammad.Wpf.Drawing
             {
                 throw new LibraryException("Caspian.Banking.Infra.Common.ImageCorruptionException", ex);
             }
-        }
-
-        private static BitmapImage ConvertToBitmapImage(Bitmap image, ImageEncoding encoding, bool isBlackAndWhite)
-        {
-            var bitmapSource = ConvertToBitmapSource(image);
-            if (isBlackAndWhite)
-                bitmapSource = ConvertToBlackAndWhite(bitmapSource);
-            return ConvertToBitmapImage(bitmapSource, encoding);
         }
 
         public static BitmapImage ConvertToBitmapImage(BitmapSource bitmapSource, ImageEncoding encoding)
@@ -177,14 +191,54 @@ namespace Mohammad.Wpf.Drawing
             return bitmapImage;
         }
 
+        public static BitmapSource ConvertToBlackAndWhite(Image image)
+        {
+            var bitmap = new Bitmap(image);
+            var bitmapSource = ConvertToBitmapSource(bitmap);
+
+            return ConvertToBlackAndWhite(bitmapSource);
+        }
+
+        public static BitmapSource ConvertToBlackAndWhite(BitmapSource bitmapSource)
+        {
+            var newFormatedBitmapSource = new FormatConvertedBitmap();
+            newFormatedBitmapSource.BeginInit();
+            newFormatedBitmapSource.Source = bitmapSource;
+            newFormatedBitmapSource.DestinationFormat = PixelFormats.BlackWhite;
+            newFormatedBitmapSource.EndInit();
+            return newFormatedBitmapSource;
+        }
+
+        private static BitmapSource ConvertToBitmapSource(Bitmap image)
+            => Imaging.CreateBitmapSourceFromHBitmap(image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+
+        private static BitmapImage ConvertToBitmapImage(Bitmap image, ImageEncoding encoding, bool isBlackAndWhite)
+        {
+            var bitmapSource = ConvertToBitmapSource(image);
+            if (isBlackAndWhite)
+            {
+                bitmapSource = ConvertToBlackAndWhite(bitmapSource);
+            }
+
+            return ConvertToBitmapImage(bitmapSource, encoding);
+        }
+
         [DllImport(@"urlmon.dll", CharSet = CharSet.Auto)]
-        private static extern uint FindMimeFromData(uint pBc, [MarshalAs(UnmanagedType.LPStr)] string pwzUrl, [MarshalAs(UnmanagedType.LPArray)] byte[] pBuffer,
-            uint cbSize, [MarshalAs(UnmanagedType.LPStr)] string pwzMimeProposed, uint dwMimeFlags, out uint ppwzMimeOut, uint dwReserverd);
+        private static extern uint FindMimeFromData(uint pBc,
+            [MarshalAs(UnmanagedType.LPStr)] string pwzUrl,
+            [MarshalAs(UnmanagedType.LPArray)] byte[] pBuffer,
+            uint cbSize,
+            [MarshalAs(UnmanagedType.LPStr)] string pwzMimeProposed,
+            uint dwMimeFlags,
+            out uint ppwzMimeOut,
+            uint dwReserverd);
 
         private static string GetMimeType(byte[] bytes)
         {
             if (bytes == null)
+            {
                 throw new ArgumentNullException(nameof(bytes));
+            }
 
             var buffer = new byte[256];
             Array.Copy(bytes, buffer, bytes.Length > 256 ? 256 : bytes.Length);
@@ -211,6 +265,7 @@ namespace Mohammad.Wpf.Drawing
                 bytes = ByteCompressor.Decompress(bytes);
                 mimeType = GetMimeType(bytes);
             }
+
             unCompressedBytes = bytes;
             return GetImageEncoding(mimeType);
         }
@@ -219,15 +274,30 @@ namespace Mohammad.Wpf.Drawing
         {
             formatOrMimeType = formatOrMimeType.ToLower();
             if (string.IsNullOrEmpty(formatOrMimeType))
+            {
                 throw new InvalidOperationException("undefined mime type");
+            }
+
             if (formatOrMimeType.Contains("png"))
+            {
                 return ImageEncoding.Png;
+            }
+
             if (formatOrMimeType.Contains("jpg") || formatOrMimeType.Contains("jpeg"))
+            {
                 return ImageEncoding.Jpeg;
+            }
+
             if (formatOrMimeType.Contains("tif"))
+            {
                 return ImageEncoding.Tiff;
+            }
+
             if (formatOrMimeType.Contains("gif"))
+            {
                 return ImageEncoding.Gif;
+            }
+
             return ImageEncoding.Bmp;
         }
 
@@ -235,15 +305,26 @@ namespace Mohammad.Wpf.Drawing
         {
             BitmapEncoder encoder;
             if (encoding == ImageEncoding.Jpeg)
+            {
                 encoder = new JpegBitmapEncoder();
+            }
             else if (encoding == ImageEncoding.Png)
+            {
                 encoder = new PngBitmapEncoder();
+            }
             else if (encoding == ImageEncoding.Gif)
+            {
                 encoder = new GifBitmapEncoder();
+            }
             else if (encoding == ImageEncoding.Tiff)
+            {
                 encoder = new TiffBitmapEncoder();
+            }
             else //if (encoding == ImageEncoding.BMP)
+            {
                 encoder = new BmpBitmapEncoder();
+            }
+
             //else
             //{
             //    throw new NotImplementedException("BitmapEncoder");
@@ -255,38 +336,31 @@ namespace Mohammad.Wpf.Drawing
         {
             BitmapDecoder decoder;
             if (encoding == ImageEncoding.Jpeg)
+            {
                 decoder = new JpegBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+            }
             else if (encoding == ImageEncoding.Gif)
+            {
                 decoder = new GifBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+            }
             else if (encoding == ImageEncoding.Png)
+            {
                 decoder = new PngBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+            }
             else if (encoding == ImageEncoding.Tiff)
+            {
                 decoder = new TiffBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+            }
             else //if (encoding == ImageEncoding.BMP)
+            {
                 decoder = new BmpBitmapDecoder(imageStreamSource, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+            }
+
             //else
             //{
             //    throw new NotImplementedException("BitmapEncoder");
             //}
             return decoder;
-        }
-
-        public static BitmapSource ConvertToBlackAndWhite(Image image)
-        {
-            var bitmap = new Bitmap(image);
-            var bitmapSource = ConvertToBitmapSource(bitmap);
-
-            return ConvertToBlackAndWhite(bitmapSource);
-        }
-
-        public static BitmapSource ConvertToBlackAndWhite(BitmapSource bitmapSource)
-        {
-            var newFormatedBitmapSource = new FormatConvertedBitmap();
-            newFormatedBitmapSource.BeginInit();
-            newFormatedBitmapSource.Source = bitmapSource;
-            newFormatedBitmapSource.DestinationFormat = PixelFormats.BlackWhite;
-            newFormatedBitmapSource.EndInit();
-            return newFormatedBitmapSource;
         }
     }
 }

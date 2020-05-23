@@ -16,11 +16,31 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(DescriptiveBox),
             new PropertyMetadata(default(object)));
 
+        public static readonly DependencyProperty DescriptionProperty = DependencyProperty.Register("Description",
+            typeof(string),
+            typeof(DescriptiveBox),
+            new PropertyMetadata(default(string)));
+
+        public static readonly DependencyProperty DescriptionStyleProperty = DependencyProperty.Register("DescriptionStyle",
+            typeof(Style),
+            typeof(DescriptiveBox),
+            new PropertyMetadata(default(Style)));
+
+        public static readonly DependencyProperty HeaderProperty = DependencyProperty.Register("Header",
+            typeof(string),
+            typeof(DescriptiveBox),
+            new PropertyMetadata(default(string)));
+
+        public static readonly DependencyProperty HeaderStyleProperty = DependencyProperty.Register("HeaderStyle",
+            typeof(Style),
+            typeof(DescriptiveBox),
+            new PropertyMetadata(default(Style)));
+
         [Bindable(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public object Child
         {
-            get { return this.GetValue(ChildProperty); }
+            get => this.GetValue(ChildProperty);
             set
             {
                 this.SetValue(ChildProperty, value);
@@ -28,14 +48,9 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        public static readonly DependencyProperty DescriptionProperty = DependencyProperty.Register("Description",
-            typeof(string),
-            typeof(DescriptiveBox),
-            new PropertyMetadata(default(string)));
-
         public string Description
         {
-            get { return (string) this.GetValue(DescriptionProperty); }
+            get => (string)this.GetValue(DescriptionProperty);
             set
             {
                 this.SetValue(DescriptionProperty, value);
@@ -43,21 +58,15 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        public static readonly DependencyProperty DescriptionStyleProperty = DependencyProperty.Register("DescriptionStyle",
-            typeof(Style),
-            typeof(DescriptiveBox),
-            new PropertyMetadata(default(Style)));
-
-        public Style DescriptionStyle { get { return (Style) this.GetValue(DescriptionStyleProperty); } set { this.SetValue(DescriptionStyleProperty, value); } }
-
-        public static readonly DependencyProperty HeaderProperty = DependencyProperty.Register("Header",
-            typeof(string),
-            typeof(DescriptiveBox),
-            new PropertyMetadata(default(string)));
+        public Style DescriptionStyle
+        {
+            get => (Style)this.GetValue(DescriptionStyleProperty);
+            set => this.SetValue(DescriptionStyleProperty, value);
+        }
 
         public string Header
         {
-            get { return (string) this.GetValue(HeaderProperty); }
+            get => (string)this.GetValue(HeaderProperty);
             set
             {
                 this.SetValue(HeaderProperty, value);
@@ -65,14 +74,9 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        public static readonly DependencyProperty HeaderStyleProperty = DependencyProperty.Register("HeaderStyle",
-            typeof(Style),
-            typeof(DescriptiveBox),
-            new PropertyMetadata(default(Style)));
-
         public Style HeaderStyle
         {
-            get { return (Style) this.GetValue(HeaderStyleProperty); }
+            get => (Style)this.GetValue(HeaderStyleProperty);
             set
             {
                 this.SetValue(HeaderStyleProperty, value);

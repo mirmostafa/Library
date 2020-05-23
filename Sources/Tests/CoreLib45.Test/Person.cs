@@ -13,8 +13,9 @@ namespace CoreLib45.Test
     {
         public int Age { get; set; }
         public string Name { get; }
-        public Person(string name) => this.Name = name ?? throw new NullReferenceException(nameof(name));
         public string Address { get; set; }
+        public Person(string name) => this.Name = name ?? throw new NullReferenceException(nameof(name));
+
         /// <inheritdoc />
         public override int GetHashCode() => this.Name?.GetHashCode() ?? 0;
     }
@@ -25,7 +26,8 @@ namespace CoreLib45.Test
 
         /// <inheritdoc />
         public Student(string name)
-            : base(name) { }
+            : base(name)
+        {
+        }
     }
-
 }

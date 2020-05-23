@@ -17,7 +17,10 @@ namespace TestWpfApp45.Pages
     /// </summary>
     public partial class DefaultPage
     {
-        public DefaultPage() { this.InitializeComponent(); }
+        public DefaultPage()
+        {
+            this.InitializeComponent();
+        }
 
         private async void OperationWatcherTest_OnExecuted(object sender, RoutedEventArgs e)
         {
@@ -42,6 +45,7 @@ namespace TestWpfApp45.Pages
                     Thread.Sleep(60);
                     operation.CurrentOperationIncreased($"{arg} - {++index}");
                 }
+
                 operation.EndCurrentOperation();
             };
             steps.Add(operation, sumlation, "Step 1", "Initializing...");
@@ -69,15 +73,26 @@ namespace TestWpfApp45.Pages
             await operation.Start();
         }
 
-        private void CommonTestsButton_OnClick(object sender, RoutedEventArgs e) { }
+        private void CommonTestsButton_OnClick(object sender, RoutedEventArgs e)
+        {
+        }
 
-        private void DefaultPage_OnLoaded(object sender, RoutedEventArgs e) { }
+        private void DefaultPage_OnLoaded(object sender, RoutedEventArgs e)
+        {
+        }
 
-        private void CalloutTextBox_OnTextChanged(object sender, EventArgs e) { }
+        private void CalloutTextBox_OnTextChanged(object sender, EventArgs e)
+        {
+        }
 
-        private void Watch_OnExecuted(object sender, EventArgs e) { }
+        private void Watch_OnExecuted(object sender, EventArgs e)
+        {
+        }
 
-        private void MsgBoxCheckButton_OnClick(object sender, RoutedEventArgs e) { MsgBox.Error("This is an error", "Hello", this.Window); }
+        private void MsgBoxCheckButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            MsgBox.Error("This is an error", "Hello", this.Window);
+        }
 
         private void ShowProgressTestButton_OnClick(object sender, RoutedEventArgs e)
         {
@@ -88,12 +103,19 @@ namespace TestWpfApp45.Pages
                 for (var i = 0; i < 100; i++)
                 {
                     if (isCancelled())
+                    {
                         break;
+                    }
+
                     if (dlg.ProgressBar != null)
+                    {
                         dlg.Set(DateTime.Now.ToLongTimeString(), prograssValue: ++counter, details: $"{counter} of 100 is done.");
+                    }
+
                     LibraryApplicationCodePack.Status.SetProgressStep(counter, 100);
                     Thread.Sleep(500);
                 }
+
                 dlg.Set(text: isCancelled() ? "Cancelled by user." : "Done.");
                 LibraryApplicationCodePack.Status.Set(false);
                 //dlg.Close();

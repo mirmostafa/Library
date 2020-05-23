@@ -15,12 +15,17 @@ namespace Mohammad.Security.Principals
 {
     public sealed class Authentication : IDisposable
     {
-        private IntPtr        _Token;
-        public  string        Username      { get; set; }
-        public  string        Domain        { get; set; }
-        public  string        Password      { get; set; }
-        public  LogonType     LogonType     { get; set; }
-        public  LogonProvider LogonProvider { get; set; }
+        private IntPtr _Token;
+        public string Username { get; set; }
+        public string Domain { get; set; }
+        public string Password { get; set; }
+        public LogonType LogonType { get; set; }
+        public LogonProvider LogonProvider { get; set; }
+
+        ~Authentication()
+        {
+            this.Dispose(false);
+        }
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -32,29 +37,12 @@ namespace Mohammad.Security.Principals
             GC.SuppressFinalize(this);
         }
 
-        ~Authentication()
-        {
-            this.Dispose(false);
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (!disposing)
-                return;
-            lock (this)
-            {
-                if (this._Token != IntPtr.Zero)
-                    Api.CloseHandle(this._Token);
-                this._Token = IntPtr.Zero;
-            }
-        }
-
         public bool LogonUser() => Api.LogonUser(this.Username,
-                                                 this.Domain,
-                                                 this.Password,
-                                                 this.LogonType.ToInt(),
-                                                 this.LogonProvider.ToInt(),
-                                                 ref this._Token);
+            this.Domain,
+            this.Password,
+            this.LogonType.ToInt(),
+            this.LogonProvider.ToInt(),
+            ref this._Token);
 
         public bool ImpersonateLoggedOnUser() => Api.ImpersonateLoggedOnUser(this._Token);
 
@@ -64,10 +52,10 @@ namespace Mohammad.Security.Principals
         {
             using (var result = new Authentication
             {
-                Username      = username,
-                Password      = password,
-                Domain        = domain,
-                LogonType     = logonType,
+                Username = username,
+                Password = password,
+                Domain = domain,
+                LogonType = logonType,
                 LogonProvider = logonProvider
             })
             {
@@ -80,10 +68,10 @@ namespace Mohammad.Security.Principals
         {
             var result = new Authentication
             {
-                Username      = username,
-                Password      = password,
-                Domain        = domain,
-                LogonType     = logonType,
+                Username = username,
+                Password = password,
+                Domain = domain,
+                LogonType = logonType,
                 LogonProvider = logonProvider
             };
             result.LogonUser();
@@ -93,10 +81,31 @@ namespace Mohammad.Security.Principals
         public void Run(Action action)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
+
             using (this.Impersonate())
             {
                 action();
+            }
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (!disposing)
+            {
+                return;
+            }
+
+            lock (this)
+            {
+                if (this._Token != IntPtr.Zero)
+                {
+                    Api.CloseHandle(this._Token);
+                }
+
+                this._Token = IntPtr.Zero;
             }
         }
     }

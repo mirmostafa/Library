@@ -22,7 +22,7 @@ namespace Mohammad.Specialized.BingInternals
 
         public TranslationService(string clientId = "hamed324210", string clientSecret = "TCI30W5vO6E9C8sR9c/2sZlqfXVOzqhch0fag6+VjVU=")
         {
-            this._ClientId     = clientId;
+            this._ClientId = clientId;
             this._ClientSecret = clientSecret;
         }
 
@@ -30,11 +30,11 @@ namespace Mohammad.Specialized.BingInternals
         {
             LibrarySupervisor.Logger.Debug($"Translating {text} from {from}, to {to}");
             var auth = new AdmAuthentication(this._ClientId, this._ClientSecret);
-            var uri  = "http://api.microsofttranslator.com/v2/Http.svc/Translate?text=" + HttpUtility.UrlEncode(text) + "&from=" + from + "&to=" + to;
+            var uri = "http://api.microsofttranslator.com/v2/Http.svc/Translate?text=" + HttpUtility.UrlEncode(text) + "&from=" + from + "&to=" + to;
             LibrarySupervisor.Logger.Debug("Getting access token");
             var authToken = "Bearer" + " " + auth.GetAccessToken().access_token;
 
-            var httpWebRequest = (HttpWebRequest) WebRequest.Create(uri);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
             httpWebRequest.Headers.Add("Authorization", authToken);
 
             try
@@ -43,8 +43,8 @@ namespace Mohammad.Specialized.BingInternals
                 var response = httpWebRequest.GetResponse();
                 using (var stream = response.GetResponseStream())
                 {
-                    var dcs         = new DataContractSerializer(Type.GetType("System.String"));
-                    var translation = (string) dcs.ReadObject(stream);
+                    var dcs = new DataContractSerializer(Type.GetType("System.String"));
+                    var translation = (string)dcs.ReadObject(stream);
                     LibrarySupervisor.Logger.Debug($"Translation text is: {translation}");
                     return translation;
                 }
@@ -60,13 +60,17 @@ namespace Mohammad.Specialized.BingInternals
     [DataContract]
     internal class AdmAccessToken
     {
-        [DataMember] internal string access_token { get; set; }
+        [DataMember]
+        internal string access_token { get; set; }
 
-        [DataMember] internal string token_type { get; set; }
+        [DataMember]
+        internal string token_type { get; set; }
 
-        [DataMember] internal string expires_in { get; set; }
+        [DataMember]
+        internal string expires_in { get; set; }
 
-        [DataMember] internal string scope { get; set; }
+        [DataMember]
+        internal string scope { get; set; }
     }
 
     internal class AdmAuthentication
@@ -74,11 +78,11 @@ namespace Mohammad.Specialized.BingInternals
         //Access token expires every 10 minutes. Renew it every 9 minutes only.
         private const int RefreshTokenDuration = 9;
 
-        internal static readonly string         DatamarketAccessUri = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13";
-        private readonly         Timer          accessTokenRenewer;
-        private readonly         string         clientId;
-        private readonly         string         request;
-        private                  AdmAccessToken token;
+        internal static readonly string DatamarketAccessUri = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13";
+        private readonly Timer accessTokenRenewer;
+        private readonly string clientId;
+        private readonly string request;
+        private AdmAccessToken token;
 
         internal AdmAuthentication(string clientId, string clientSecret)
         {
@@ -91,8 +95,6 @@ namespace Mohammad.Specialized.BingInternals
             this.accessTokenRenewer =
                 new Timer(this.OnTokenExpiredCallback, this, TimeSpan.FromMinutes(RefreshTokenDuration), TimeSpan.FromMilliseconds(-1));
         }
-
-        internal AdmAccessToken GetAccessToken() => this.token;
 
         private void RenewAccessToken()
         {
@@ -131,7 +133,7 @@ namespace Mohammad.Specialized.BingInternals
             //Prepare OAuth request 
             var webRequest = WebRequest.Create(datamarketAccessUri);
             webRequest.ContentType = "application/x-www-form-urlencoded";
-            webRequest.Method      = "POST";
+            webRequest.Method = "POST";
             var bytes = Encoding.ASCII.GetBytes(requestDetails);
             webRequest.ContentLength = bytes.Length;
             using (var outputStream = webRequest.GetRequestStream())
@@ -143,9 +145,11 @@ namespace Mohammad.Specialized.BingInternals
             {
                 var serializer = new DataContractJsonSerializer(typeof(AdmAccessToken));
                 //Get deserialized object from JSON stream
-                var token = (AdmAccessToken) serializer.ReadObject(webResponse.GetResponseStream());
+                var token = (AdmAccessToken)serializer.ReadObject(webResponse.GetResponseStream());
                 return token;
             }
         }
+
+        internal AdmAccessToken GetAccessToken() => this.token;
     }
 }

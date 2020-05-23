@@ -50,15 +50,23 @@ namespace Mohammad.Globalization
 
         public static int[] GetParts(string persianDate)
         {
-            var parts = persianDate.Split('/').Select(s =>
-            {
-                s = s.Trim();
-                if (s.Contains(" "))
-                    s = s.Substring(0, s.IndexOf(" ", StringComparison.Ordinal));
-                return Convert.ToInt32(s);
-            }).ToArray();
+            var parts = persianDate.Split('/')
+                .Select(s =>
+                {
+                    s = s.Trim();
+                    if (s.Contains(" "))
+                    {
+                        s = s.Substring(0, s.IndexOf(" ", StringComparison.Ordinal));
+                    }
+
+                    return Convert.ToInt32(s);
+                })
+                .ToArray();
             if (parts.Length == 3)
+            {
                 return parts;
+            }
+
             var result = new int[3];
             result[0] = GetPersianYear(DateTime.Now);
             result[1] = parts[0];
@@ -67,13 +75,19 @@ namespace Mohammad.Globalization
         }
 
         public static DateTime ToDateTime(int? year, int? month, int? day) => AllHaveValue(year, month, day)
-                                                                                  ? _PersianCalendar.ToDateTime(
-                                                                                      year.Value, month.Value, day.Value, 0, 0, 0, 0)
-                                                                                  : DefaulDate;
+            ? _PersianCalendar.ToDateTime(
+                year.Value,
+                month.Value,
+                day.Value,
+                0,
+                0,
+                0,
+                0)
+            : DefaulDate;
 
         public static Tuple<int, int, int> GetPersianDateParts(DateTime date) => Tuple.Create(GetPersianYear(date),
-                                                                                              GetPersianMonth(date),
-                                                                                              GetPersianDayOfMonth(date));
+            GetPersianMonth(date),
+            GetPersianDayOfMonth(date));
 
         public static DateTime ToDateTime(string persianDateText)
         {
@@ -83,15 +97,18 @@ namespace Mohammad.Globalization
 
         public static bool AllHaveValue(int? year, int? month, int? day) => year != null && month != null && day != null;
 
-        public static int GetPersianDayOfMonth(this DateTime? dateTime)        => _PersianCalendar.GetDayOfMonth(dateTime ?? DefaulDate);
-        public static int GetPersianMonth(this      DateTime? dateTime)        => _PersianCalendar.GetMonth(dateTime      ?? DefaulDate);
-        public static int GetPersianYear(this       DateTime? dateTime)        => _PersianCalendar.GetYear(dateTime       ?? DefaulDate);
-        public static int GetPersianDaysCountInMonth(int      year, int month) => _PersianCalendar.GetDaysInMonth(year, month);
+        public static int GetPersianDayOfMonth(this DateTime? dateTime) => _PersianCalendar.GetDayOfMonth(dateTime ?? DefaulDate);
+        public static int GetPersianMonth(this DateTime? dateTime) => _PersianCalendar.GetMonth(dateTime ?? DefaulDate);
+        public static int GetPersianYear(this DateTime? dateTime) => _PersianCalendar.GetYear(dateTime ?? DefaulDate);
+        public static int GetPersianDaysCountInMonth(int year, int month) => _PersianCalendar.GetDaysInMonth(year, month);
 
         public static DateTime GetPersianFirstDayOfMonth(this DateTime current)
         {
             while (GetPersianDayOfMonth(current) != 1)
+            {
                 current = current.AddDays(-1);
+            }
+
             return current;
         }
 
@@ -99,7 +116,7 @@ namespace Mohammad.Globalization
         {
             current = GetPersianFirstDayOfMonth(current);
             var startIndex = Convert.ToInt32(current.DayOfWeek) + 1;
-            var endIndex   = startIndex                         + GetPersianDaysCountInMonth(GetPersianYear(current), GetPersianDayOfMonth(current));
+            var endIndex = startIndex + GetPersianDaysCountInMonth(GetPersianYear(current), GetPersianDayOfMonth(current));
             for (var index = startIndex; index < endIndex; index++)
             {
                 yield return current;

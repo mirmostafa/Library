@@ -10,9 +10,18 @@ namespace TestWpfApp45.Pages
     /// </summary>
     public partial class SettingsPage
     {
-        public SettingsPage() { this.InitializeComponent(); }
-        private void SettingsPage_OnCommonDialogClosing(object sender, CancelEventArgs e) { }
-        private void SettingsPage_OnLoaded(object sender, RoutedEventArgs e) { }
+        public SettingsPage()
+        {
+            this.InitializeComponent();
+        }
+
+        private void SettingsPage_OnCommonDialogClosing(object sender, CancelEventArgs e)
+        {
+        }
+
+        private void SettingsPage_OnLoaded(object sender, RoutedEventArgs e)
+        {
+        }
 
         private void SettingsPage_OnOkButtonClicked(object sender, ActingEventArgs e)
         {

@@ -20,10 +20,8 @@ namespace Mohammad.Wpf.Internals
         /// </summary>
         public static bool IsDesignMode { get; }
 
-        static Util()
-        {
-            IsDesignMode = (bool) DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty, typeof(FrameworkElement)).Metadata.DefaultValue;
-        }
+        static Util() => IsDesignMode =
+            (bool)DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty, typeof(FrameworkElement)).Metadata.DefaultValue;
 
         /// <summary>
         ///     Creates an transparent window without dimension that
@@ -31,10 +29,8 @@ namespace Mohammad.Wpf.Internals
         ///     be used as a window message sink.
         /// </summary>
         /// <returns>Empty window.</returns>
-        public static Window CreateHelperWindow()
-        {
-            return new Window {Width = 0, Height = 0, ShowInTaskbar = false, WindowStyle = WindowStyle.None, AllowsTransparency = true, Opacity = 0};
-        }
+        public static Window CreateHelperWindow() => new Window
+            {Width = 0, Height = 0, ShowInTaskbar = false, WindowStyle = WindowStyle.None, AllowsTransparency = true, Opacity = 0};
 
         /// <summary>
         ///     Updates the taskbar icons with data provided by a given
@@ -44,10 +40,7 @@ namespace Mohammad.Wpf.Internals
         /// <param name="command">Operation on the icon (e.g. delete the icon).</param>
         /// <returns>True if the data was successfully written.</returns>
         /// <remarks>See Shell_NotifyIcon documentation on MSDN for details.</remarks>
-        public static bool WriteIconData(ref NotifyIconData data, NotifyCommand command)
-        {
-            return WriteIconData(ref data, command, data.ValidMembers);
-        }
+        public static bool WriteIconData(ref NotifyIconData data, NotifyCommand command) => WriteIconData(ref data, command, data.ValidMembers);
 
         /// <summary>
         ///     Updates the taskbar icons with data provided by a given
@@ -65,7 +58,9 @@ namespace Mohammad.Wpf.Internals
         {
             //do nothing if in design mode
             if (IsDesignMode)
+            {
                 return true;
+            }
 
             data.ValidMembers = flags;
             lock (SyncRoot)
@@ -109,7 +104,9 @@ namespace Mohammad.Wpf.Internals
         public static Icon ToIcon(this ImageSource imageSource)
         {
             if (imageSource == null)
+            {
                 return null;
+            }
 
             var uri = new Uri(imageSource.ToString());
             var streamInfo = Application.GetResourceStream(uri);
@@ -147,11 +144,17 @@ namespace Mohammad.Wpf.Internals
         public static bool Is<T>(this T value, params T[] candidates)
         {
             if (candidates == null)
+            {
                 return false;
+            }
 
             foreach (var t in candidates)
+            {
                 if (value.Equals(t))
+                {
                     return true;
+                }
+            }
 
             return false;
         }
@@ -197,14 +200,18 @@ namespace Mohammad.Wpf.Internals
         public static void ExecuteIfEnabled(this ICommand command, object commandParameter, IInputElement target)
         {
             if (command == null)
+            {
                 return;
+            }
 
             var rc = command as RoutedCommand;
             if (rc != null)
             {
                 //routed commands work on a target
                 if (rc.CanExecute(commandParameter, target))
+                {
                     rc.Execute(commandParameter, target);
+                }
             }
             else if (command.CanExecute(commandParameter))
             {
@@ -228,7 +235,10 @@ namespace Mohammad.Wpf.Internals
         public static bool IsDataContextDataBound(this FrameworkElement element)
         {
             if (element == null)
+            {
                 throw new ArgumentNullException("element");
+            }
+
             return element.GetBindingExpression(FrameworkElement.DataContextProperty) != null;
         }
     }

@@ -14,25 +14,42 @@ namespace Mohammad.Win.Controls
             {
                 GetClassName(wParam, strBuffer, strBuffer.Capacity);
             }
-            catch {}
+            catch
+            {
+            }
+
             if (strBuffer.ToString() != "#32770")
+            {
                 return 0;
+            }
+
             this.myEnumProc = this.EnumWinProc;
 
             if (uMsg != HCBT_ACTIVATE)
+            {
                 return 0;
+            }
+
             if (this.Translate)
             {
                 GetWindowText(wParam, strBuffer, strBuffer.Capacity);
                 var dictionary = this.Dictionary.GetDictionary();
                 if (dictionary.ContainsKey(strBuffer.ToString()))
+                {
                     SetWindowText(wParam, dictionary[strBuffer.ToString()]);
+                }
             }
+
             EnumChildWindows(wParam, this.myEnumProc, 0);
             if (this.RightToLeft == RightToLeft.Yes)
-                SetWindowLong(wParam, GWL_EXSTYLE, GetWindowLong(wParam, GWL_EXSTYLE) | (int) WS_EX_RTLREADING | (int) WS_EX_RIGHT);
+            {
+                SetWindowLong(wParam, GWL_EXSTYLE, GetWindowLong(wParam, GWL_EXSTYLE) | (int)WS_EX_RTLREADING | (int)WS_EX_RIGHT);
+            }
+
             if (this.Fade)
-                AnimateWindow(wParam, 150, (int) AW_CENTER | (int) AW_BLEND);
+            {
+                AnimateWindow(wParam, 150, (int)AW_CENTER | (int)AW_BLEND);
+            }
 
             return 0;
         }
@@ -47,12 +64,20 @@ namespace Mohammad.Win.Controls
                 var dictionary = this.Dictionary.GetDictionary();
                 GetWindowText(hWnd, strBuffer, strBuffer.Capacity);
                 if (string.Compare(ss, "STATIC", true) == 0 || string.Compare(ss, "BUTTON", true) == 0)
+                {
                     if (dictionary.ContainsKey(strBuffer.ToString()))
+                    {
                         SetWindowText(hWnd, dictionary[strBuffer.ToString()]);
-                SendMessage(hWnd, (int) WM_SETFONT, this.Font.ToHfont(), 0);
+                    }
+                }
+
+                SendMessage(hWnd, (int)WM_SETFONT, this.Font.ToHfont(), 0);
             }
+
             if (this.RightToLeft == RightToLeft.Yes)
-                SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | (int) WS_EX_RTLREADING);
+            {
+                SetWindowLong(hWnd, GWL_EXSTYLE, GetWindowLong(hWnd, GWL_EXSTYLE) | (int)WS_EX_RTLREADING);
+            }
 
             return 1;
         }

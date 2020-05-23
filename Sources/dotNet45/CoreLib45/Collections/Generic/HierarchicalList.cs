@@ -16,6 +16,17 @@ namespace Mohammad.Collections.Generic
     public class HierarchicalList<TData> : IList<HierarchicalItem<TData>>, IIndexerEnumerable<HierarchicalItem<TData>>
     {
         private readonly List<HierarchicalItem<TData>> _InnerList;
+
+        public HierarchicalItem<TData> this[TData data] => this._InnerList.FirstOrDefault(item => item.Data.Equals(data));
+        public int Count => this._InnerList.Count;
+        bool ICollection<HierarchicalItem<TData>>.IsReadOnly => throw new NotSupportedException();
+
+        public HierarchicalItem<TData> this[int index]
+        {
+            get => this._InnerList[index];
+            set => this._InnerList[index] = value;
+        }
+
         public HierarchicalList(List<HierarchicalItem<TData>> innerList) => this._InnerList = innerList;
 
         public HierarchicalList()
@@ -29,9 +40,8 @@ namespace Mohammad.Collections.Generic
             this._InnerList.AddRange(rawData.Select(data => new HierarchicalItem<TData>(data)));
         }
 
-        public HierarchicalItem<TData> this[TData data] => this._InnerList.FirstOrDefault(item => item.Data.Equals(data));
         public IEnumerator<HierarchicalItem<TData>> GetEnumerator() => this._InnerList.GetEnumerator();
-        IEnumerator IEnumerable.                    GetEnumerator() => this.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         public void Add(HierarchicalItem<TData> item)
         {
@@ -50,10 +60,8 @@ namespace Mohammad.Collections.Generic
             this._InnerList.CopyTo(array, arrayIndex);
         }
 
-        public bool                               Remove(HierarchicalItem<TData> item)  => this._InnerList.Remove(item);
-        public int                                Count                                 => this._InnerList.Count;
-        bool ICollection<HierarchicalItem<TData>>.IsReadOnly                            => throw new NotSupportedException();
-        public int                                IndexOf(HierarchicalItem<TData> item) => this._InnerList.IndexOf(item);
+        public bool Remove(HierarchicalItem<TData> item) => this._InnerList.Remove(item);
+        public int IndexOf(HierarchicalItem<TData> item) => this._InnerList.IndexOf(item);
 
         public void Insert(int index, HierarchicalItem<TData> item)
         {
@@ -63,12 +71,6 @@ namespace Mohammad.Collections.Generic
         public void RemoveAt(int index)
         {
             this._InnerList.RemoveAt(index);
-        }
-
-        public HierarchicalItem<TData> this[int index]
-        {
-            get => this._InnerList[index];
-            set => this._InnerList[index] = value;
         }
 
         public HierarchicalItem<TData> Add(TData data, TData parent = default)
@@ -81,7 +83,10 @@ namespace Mohammad.Collections.Generic
         public IEnumerable<HierarchicalItem<TData>> GetChildren(HierarchicalItem<TData> item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
+
             return this.Where(itm => itm.Parent != null && itm.Parent.Data.Equals(item.Data));
         }
 
@@ -93,7 +98,7 @@ namespace Mohammad.Collections.Generic
             this.GetRootElements().BuildTree(getNewItem, this.GetChildren, addToRoots, addChild);
         }
 
-        public IEnumerable<TData>                   GetRootElements() => this.GetRootItems().Select(item => item.Data);
-        public IEnumerable<HierarchicalItem<TData>> GetRootItems()    => this.Where(item => item.Parent == null);
+        public IEnumerable<TData> GetRootElements() => this.GetRootItems().Select(item => item.Data);
+        public IEnumerable<HierarchicalItem<TData>> GetRootItems() => this.Where(item => item.Parent == null);
     }
 }

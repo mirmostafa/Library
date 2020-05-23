@@ -21,7 +21,10 @@ namespace Mohammad.Data.SqlServer.Dynamics.Collections
         public Server GetCurrent()
         {
             if (!this.Items.Any())
+            {
                 return null;
+            }
+
             var builder = new SqlConnectionStringBuilder(this[0].ConnectionString);
             return base[builder.DataSource];
         }

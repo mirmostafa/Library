@@ -23,14 +23,24 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
                 this.Instance.Focus();
                 return;
             }
+
             if (this.WindowType.IsAssignableFrom(typeof(Window)))
+            {
                 throw new ParseException(string.Format("Cannot convert '{0}' to 'Window'", this.WindowType));
-            var constructor = this.WindowType.GetConstructor(new Type[] {});
+            }
+
+            var constructor = this.WindowType.GetConstructor(new Type[] { });
             if (constructor == null)
+            {
                 return;
-            this.Instance = (Window) constructor.Invoke(null);
+            }
+
+            this.Instance = (Window)constructor.Invoke(null);
             if (!Equals(this.Instance, this.Parent))
+            {
                 this.Instance.Owner = this.Parent as Window;
+            }
+
             this.Instance.Closed += (_, __) => this.Instance = null;
             this.Instance.ShowDialog();
         }

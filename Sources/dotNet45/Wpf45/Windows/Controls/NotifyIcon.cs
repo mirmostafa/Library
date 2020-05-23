@@ -57,7 +57,7 @@ namespace Mohammad.Wpf.Windows.Controls
         ///     on the OS. Windows Vista or higher is required in order to
         ///     support this feature.
         /// </summary>
-        public bool SupportsCustomToolTips { get { return this._MessageSink.Version == NotifyIconVersion.Vista; } }
+        public bool SupportsCustomToolTips => this._MessageSink.Version == NotifyIconVersion.Vista;
 
         /// <summary>
         ///     Checks whether a non-tooltip popup is currently opened.
@@ -107,7 +107,42 @@ namespace Mohammad.Wpf.Windows.Controls
 
             //register listener in order to get notified when the application closes
             if (Application.Current != null)
+            {
                 Application.Current.Exit += this.OnExit;
+            }
+        }
+
+        /// <summary>
+        ///     This destructor will run only if the <see cref="Dispose()" />
+        ///     method does not get called. This gives this base class the
+        ///     opportunity to finalize.
+        ///     <para>
+        ///         Important: Do not provide destructors in types derived from
+        ///         this class.
+        ///     </para>
+        /// </summary>
+        ~NotifyIcon()
+        {
+            this.Dispose(false);
+        }
+
+        /// <summary>
+        ///     Disposes the object.
+        /// </summary>
+        /// <remarks>
+        ///     This method is not virtual by design. Derived classes
+        ///     should override <see cref="Dispose(bool)" />.
+        /// </remarks>
+        public void Dispose()
+        {
+            this.Dispose(true);
+
+            // This object will be cleaned up by the Dispose method.
+            // Therefore, you should call GC.SupressFinalize to
+            // take this object off the finalization queue 
+            // and prevent finalization code for this object
+            // from executing a second time.
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -133,7 +168,10 @@ namespace Mohammad.Wpf.Windows.Controls
             }
 
             if (balloon == null)
+            {
                 throw new ArgumentNullException("balloon");
+            }
+
             if (timeout.HasValue && timeout < 500)
             {
                 var msg = "Invalid timeout of {0} milliseconds. Timeout must be at least 500 ms";
@@ -190,7 +228,9 @@ namespace Mohammad.Wpf.Windows.Controls
 
             if (timeout.HasValue)
                 //register timer to close the popup
+            {
                 this._BalloonCloseTimer.Change(timeout.Value, Timeout.Infinite);
+            }
         }
 
         /// <summary>
@@ -203,7 +243,9 @@ namespace Mohammad.Wpf.Windows.Controls
         public void ResetBalloonCloseTimer()
         {
             if (this.IsDisposed)
+            {
                 return;
+            }
 
             lock (this)
             {
@@ -219,7 +261,9 @@ namespace Mohammad.Wpf.Windows.Controls
         public void CloseBalloon()
         {
             if (this.IsDisposed)
+            {
                 return;
+            }
 
             if (!Application.Current.Dispatcher.CheckAccess())
             {
@@ -251,7 +295,9 @@ namespace Mohammad.Wpf.Windows.Controls
 
                         //reset attached property
                         if (element != null)
+                        {
                             SetParentTaskbarIcon(element, null);
+                        }
                     }
 
                     //remove custom balloon anyway
@@ -261,13 +307,66 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
+        ///     Displays a balloon tip with the specified title,
+        ///     text, and icon in the taskbar for the specified time period.
+        /// </summary>
+        /// <param name="title">The title to display on the balloon tip.</param>
+        /// <param name="message">The text to display on the balloon tip.</param>
+        /// <param name="symbol">A symbol that indicates the severity.</param>
+        public void ShowBalloonTip(string title, string message, BalloonIcon symbol)
+        {
+            lock (this)
+            {
+                this.ShowBalloonTip(title, message, symbol.GetBalloonFlag(), IntPtr.Zero);
+            }
+        }
+
+        /// <summary>
+        ///     Displays a balloon tip with the specified title,
+        ///     text, and a custom icon in the taskbar for the specified time period.
+        /// </summary>
+        /// <param name="title">The title to display on the balloon tip.</param>
+        /// <param name="message">The text to display on the balloon tip.</param>
+        /// <param name="customIcon">A custom icon.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     If <paramref name="customIcon" />
+        ///     is a null reference.
+        /// </exception>
+        public void ShowBalloonTip(string title, string message, Icon customIcon)
+        {
+            if (customIcon == null)
+            {
+                throw new ArgumentNullException("customIcon");
+            }
+
+            lock (this)
+            {
+                this.ShowBalloonTip(title, message, BalloonFlags.User, customIcon.Handle);
+            }
+        }
+
+        /// <summary>
+        ///     Hides a balloon ToolTip, if any is displayed.
+        /// </summary>
+        public void HideBalloonTip()
+        {
+            this.EnsureNotDisposed();
+
+            //reset balloon by just setting the info to an empty string
+            this._IconData.BalloonText = this._IconData.BalloonTitle = string.Empty;
+            Util.WriteIconData(ref this._IconData, NotifyCommand.Modify, IconDataMembers.Info);
+        }
+
+        /// <summary>
         ///     Timer-invoke event which closes the currently open balloon and
         ///     resets the <see cref="CustomBalloon" /> dependency property.
         /// </summary>
         private void CloseBalloonCallback(object state)
         {
             if (this.IsDisposed)
+            {
                 return;
+            }
 
             //switch to UI thread
             Action action = this.CloseBalloon;
@@ -284,7 +383,9 @@ namespace Mohammad.Wpf.Windows.Controls
         private void OnMouseEvent(MouseEvent me)
         {
             if (this.IsDisposed)
+            {
                 return;
+            }
 
             switch (me)
             {
@@ -331,6 +432,7 @@ namespace Mohammad.Wpf.Windows.Controls
 
             //show popup, if requested
             if (me.IsMatch(this.PopupActivation))
+            {
                 if (me == MouseEvent.IconLeftMouseUp)
                 {
                     //show popup once we are sure it's not a double click
@@ -347,9 +449,11 @@ namespace Mohammad.Wpf.Windows.Controls
                 {
                     this.ShowTrayPopup(cursorPosition);
                 }
+            }
 
             //show context menu, if requested
             if (me.IsMatch(this.MenuActivation))
+            {
                 if (me == MouseEvent.IconLeftMouseUp)
                 {
                     //show context menu once we are sure it's not a double click
@@ -366,6 +470,7 @@ namespace Mohammad.Wpf.Windows.Controls
                 {
                     this.ShowContextMenu(cursorPosition);
                 }
+            }
 
             //make sure the left click command is invoked on mouse clicks
             if (me == MouseEvent.IconLeftMouseUp && !isLeftClickCommandInvoked)
@@ -385,23 +490,31 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             //if we don't have a tooltip, there's nothing to do here...
             if (this.TrayToolTipResolved == null)
+            {
                 return;
+            }
 
             if (visible)
             {
                 if (this.IsPopupOpen)
                     //ignore if we are already displaying something down there
+                {
                     return;
+                }
 
                 var args = this.RaisePreviewTrayToolTipOpenEvent();
                 if (args.Handled)
+                {
                     return;
+                }
 
                 this.TrayToolTipResolved.IsOpen = true;
 
                 //raise attached event first
                 if (this.TrayToolTip != null)
+                {
                     RaiseToolTipOpenedEvent(this.TrayToolTip);
+                }
 
                 //bubble routed event
                 this.RaiseTrayToolTipOpenEvent();
@@ -410,11 +523,15 @@ namespace Mohammad.Wpf.Windows.Controls
             {
                 var args = this.RaisePreviewTrayToolTipCloseEvent();
                 if (args.Handled)
+                {
                     return;
+                }
 
                 //raise attached event first
                 if (this.TrayToolTip != null)
+                {
                     RaiseToolTipCloseEvent(this.TrayToolTip);
+                }
 
                 this.TrayToolTipResolved.IsOpen = false;
 
@@ -473,7 +590,9 @@ namespace Mohammad.Wpf.Windows.Controls
             //the tooltip explicitly gets the DataContext of this instance.
             //If there is no DataContext, the NotifyIcon assigns itself
             if (tt != null)
+            {
                 this.UpdateDataContext(tt, null, this.DataContext);
+            }
 
             //store a reference to the used tooltip
             this.SetTrayToolTipResolved(tt);
@@ -491,10 +610,14 @@ namespace Mohammad.Wpf.Windows.Controls
             if (this._MessageSink.Version == NotifyIconVersion.Vista)
                 //we need to set a tooltip text to get tooltip events from the
                 //taskbar icon
+            {
                 if (string.IsNullOrEmpty(this._IconData.ToolTipText) && this.TrayToolTipResolved != null)
                     //if we have not tooltip text but a custom tooltip, we
                     //need to set a dummy value (we're displaying the ToolTip control, not the string)
+                {
                     this._IconData.ToolTipText = "ToolTip";
+                }
+            }
 
             //update the tooltip text
             Util.WriteIconData(ref this._IconData, NotifyCommand.Modify, flags);
@@ -547,7 +670,9 @@ namespace Mohammad.Wpf.Windows.Controls
             //the popup explicitly gets the DataContext of this instance.
             //If there is no DataContext, the NotifyIcon assigns itself
             if (popup != null)
+            {
                 this.UpdateDataContext(popup, null, this.DataContext);
+            }
 
             //store a reference to the used tooltip
             this.SetTrayPopupResolved(popup);
@@ -560,13 +685,17 @@ namespace Mohammad.Wpf.Windows.Controls
         private void ShowTrayPopup(Point cursorPosition)
         {
             if (this.IsDisposed)
+            {
                 return;
+            }
 
             //raise preview event no matter whether popup is currently set
             //or not (enables client to set it on demand)
             var args = this.RaisePreviewTrayPopupOpenEvent();
             if (args.Handled)
+            {
                 return;
+            }
 
             if (this.TrayPopup != null)
             {
@@ -585,7 +714,9 @@ namespace Mohammad.Wpf.Windows.Controls
                 //raise attached event - item should never be null unless developers
                 //changed the CustomPopup directly...
                 if (this.TrayPopup != null)
+                {
                     RaisePopupOpenedEvent(this.TrayPopup);
+                }
 
                 //bubble routed event
                 this.RaiseTrayPopupOpenEvent();
@@ -599,13 +730,17 @@ namespace Mohammad.Wpf.Windows.Controls
         private void ShowContextMenu(Point cursorPosition)
         {
             if (this.IsDisposed)
+            {
                 return;
+            }
 
             //raise preview event no matter whether context menu is currently set
             //or not (enables client to set it on demand)
             var args = this.RaisePreviewTrayContextMenuOpenEvent();
             if (args.Handled)
+            {
                 return;
+            }
 
             if (this.ContextMenu != null)
             {
@@ -635,45 +770,12 @@ namespace Mohammad.Wpf.Windows.Controls
         private void OnBalloonToolTipChanged(bool visible)
         {
             if (visible)
+            {
                 this.RaiseTrayBalloonTipShownEvent();
-            else
-                this.RaiseTrayBalloonTipClosedEvent();
-        }
-
-        /// <summary>
-        ///     Displays a balloon tip with the specified title,
-        ///     text, and icon in the taskbar for the specified time period.
-        /// </summary>
-        /// <param name="title">The title to display on the balloon tip.</param>
-        /// <param name="message">The text to display on the balloon tip.</param>
-        /// <param name="symbol">A symbol that indicates the severity.</param>
-        public void ShowBalloonTip(string title, string message, BalloonIcon symbol)
-        {
-            lock (this)
-            {
-                this.ShowBalloonTip(title, message, symbol.GetBalloonFlag(), IntPtr.Zero);
             }
-        }
-
-        /// <summary>
-        ///     Displays a balloon tip with the specified title,
-        ///     text, and a custom icon in the taskbar for the specified time period.
-        /// </summary>
-        /// <param name="title">The title to display on the balloon tip.</param>
-        /// <param name="message">The text to display on the balloon tip.</param>
-        /// <param name="customIcon">A custom icon.</param>
-        /// <exception cref="ArgumentNullException">
-        ///     If <paramref name="customIcon" />
-        ///     is a null reference.
-        /// </exception>
-        public void ShowBalloonTip(string title, string message, Icon customIcon)
-        {
-            if (customIcon == null)
-                throw new ArgumentNullException("customIcon");
-
-            lock (this)
+            else
             {
-                this.ShowBalloonTip(title, message, BalloonFlags.User, customIcon.Handle);
+                this.RaiseTrayBalloonTipClosedEvent();
             }
         }
 
@@ -701,18 +803,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     Hides a balloon ToolTip, if any is displayed.
-        /// </summary>
-        public void HideBalloonTip()
-        {
-            this.EnsureNotDisposed();
-
-            //reset balloon by just setting the info to an empty string
-            this._IconData.BalloonText = this._IconData.BalloonTitle = string.Empty;
-            Util.WriteIconData(ref this._IconData, NotifyCommand.Modify, IconDataMembers.Info);
-        }
-
-        /// <summary>
         ///     Performs a delayed action if the user requested an action
         ///     based on a single click of the left mouse.<br />
         ///     This method is invoked by the <see cref="_SingleClickTimer" />.
@@ -720,7 +810,9 @@ namespace Mohammad.Wpf.Windows.Controls
         private void DoSingleClickAction(object state)
         {
             if (this.IsDisposed)
+            {
                 return;
+            }
 
             //run action
             var action = this._DelayedTimerAction;
@@ -739,23 +831,25 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         private void SetVersion()
         {
-            this._IconData.VersionOrTimeout = (uint) NotifyIconVersion.Vista;
+            this._IconData.VersionOrTimeout = (uint)NotifyIconVersion.Vista;
             var status = WinApi.Shell_NotifyIcon(NotifyCommand.SetVersion, ref this._IconData);
 
             if (!status)
             {
-                this._IconData.VersionOrTimeout = (uint) NotifyIconVersion.Win2000;
+                this._IconData.VersionOrTimeout = (uint)NotifyIconVersion.Win2000;
                 status = Util.WriteIconData(ref this._IconData, NotifyCommand.SetVersion);
             }
 
             if (!status)
             {
-                this._IconData.VersionOrTimeout = (uint) NotifyIconVersion.Win95;
+                this._IconData.VersionOrTimeout = (uint)NotifyIconVersion.Win95;
                 status = Util.WriteIconData(ref this._IconData, NotifyCommand.SetVersion);
             }
 
             if (!status)
+            {
                 Debug.Fail("Could not set version");
+            }
         }
 
         /// <summary>
@@ -783,11 +877,13 @@ namespace Mohammad.Wpf.Windows.Controls
                     //write initial configuration
                     var status = Util.WriteIconData(ref this._IconData, NotifyCommand.Add, members);
                     if (!status)
+                    {
                         throw new Win32Exception("Could not create icon data");
+                    }
 
                     //set to most recent version
                     this.SetVersion();
-                    this._MessageSink.Version = (NotifyIconVersion) this._IconData.VersionOrTimeout;
+                    this._MessageSink.Version = (NotifyIconVersion)this._IconData.VersionOrTimeout;
 
                     this.IsTaskbarIconCreated = true;
                 }
@@ -817,24 +913,18 @@ namespace Mohammad.Wpf.Windows.Controls
         private void EnsureNotDisposed()
         {
             if (this.IsDisposed)
+            {
                 throw new ObjectDisposedException(this.Name ?? this.GetType().FullName);
+            }
         }
 
         /// <summary>
         ///     Disposes the class if the application exits.
         /// </summary>
-        private void OnExit(object sender, EventArgs e) { this.Dispose(); }
-
-        /// <summary>
-        ///     This destructor will run only if the <see cref="Dispose()" />
-        ///     method does not get called. This gives this base class the
-        ///     opportunity to finalize.
-        ///     <para>
-        ///         Important: Do not provide destructors in types derived from
-        ///         this class.
-        ///     </para>
-        /// </summary>
-        ~NotifyIcon() { this.Dispose(false); }
+        private void OnExit(object sender, EventArgs e)
+        {
+            this.Dispose();
+        }
 
         /// <summary>
         ///     Closes the tray and releases all resources.
@@ -859,7 +949,9 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             //don't do anything if the component is already disposed
             if (this.IsDisposed || !disposing)
+            {
                 return;
+            }
 
             lock (this)
             {
@@ -878,25 +970,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 //remove icon
                 this.RemoveTaskbarIcon();
             }
-        }
-
-        /// <summary>
-        ///     Disposes the object.
-        /// </summary>
-        /// <remarks>
-        ///     This method is not virtual by design. Derived classes
-        ///     should override <see cref="Dispose(bool)" />.
-        /// </remarks>
-        public void Dispose()
-        {
-            this.Dispose(true);
-
-            // This object will be cleaned up by the Dispose method.
-            // Therefore, you should call GC.SupressFinalize to
-            // take this object off the finalization queue 
-            // and prevent finalization code for this object
-            // from executing a second time.
-            GC.SuppressFinalize(this);
         }
     }
 }

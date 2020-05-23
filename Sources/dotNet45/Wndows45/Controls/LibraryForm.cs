@@ -12,32 +12,41 @@ namespace Mohammad.Win.Controls
     /// </summary>
     public partial class LibraryForm : Form
     {
+        private static readonly Font _DefaultFont = new Font("Tahoma", 8.25f, FontStyle.Regular, GraphicsUnit.Point, 178, false);
         private bool _IsDataChanged;
         private bool _IsFormLoading;
-        private static readonly Font _DefaultFont = new Font("Tahoma", 8.25f, FontStyle.Regular, GraphicsUnit.Point, 178, false);
 
         public override Font Font
         {
-            get { return base.Font; }
+            get => base.Font;
             set
             {
                 if (value == null)
+                {
                     base.Font = _DefaultFont;
+                }
                 else if (value == DefaultFont)
+                {
                     base.Font = _DefaultFont;
+                }
                 else
+                {
                     base.Font = value;
+                }
             }
         }
 
         [Browsable(false)]
         public bool IsFormLoading
         {
-            get { return this._IsFormLoading; }
+            get => this._IsFormLoading;
             private set
             {
                 if (this._IsFormLoading == value)
+                {
                     return;
+                }
+
                 this._IsFormLoading = value;
                 this.IsFormLoadingChanged.RaiseAsync(this);
             }
@@ -46,11 +55,14 @@ namespace Mohammad.Win.Controls
         [Browsable(false)]
         public bool IsDataChanged
         {
-            get { return this._IsDataChanged; }
+            get => this._IsDataChanged;
             set
             {
                 if (this._IsDataChanged == value)
+                {
                     return;
+                }
+
                 this._IsDataChanged = value;
                 this.DataChanged.RaiseAsync(this);
             }
@@ -65,7 +77,10 @@ namespace Mohammad.Win.Controls
             {
                 var createParams = base.CreateParams;
                 if (!this.DesignMode && this.DropShadow)
+                {
                     createParams.ClassStyle |= 0x00020000;
+                }
+
                 return createParams;
             }
         }
@@ -87,10 +102,10 @@ namespace Mohammad.Win.Controls
             this.Font = _DefaultFont;
         }
 
-        public override void ResetFont() { this.Font = null; }
-        private bool ShouldSerializeFont() { return !this.Font.Equals(_DefaultFont); }
-        public event EventHandler LoadSettings;
-        public event EventHandler SaveSettings;
+        public override void ResetFont()
+        {
+            this.Font = null;
+        }
 
         protected virtual void OnLoadSettings(EventArgs e)
         {
@@ -104,7 +119,10 @@ namespace Mohammad.Win.Controls
             this.OnSaveSettings(EventArgs.Empty);
         }
 
-        protected virtual void OnSaveSettings(EventArgs e) { this.SaveSettings.Raise(this, e); }
+        protected virtual void OnSaveSettings(EventArgs e)
+        {
+            this.SaveSettings.Raise(this, e);
+        }
 
         protected override void OnLoad(EventArgs e)
         {
@@ -112,23 +130,33 @@ namespace Mohammad.Win.Controls
             base.OnLoad(e);
         }
 
-        public event EventHandler IsFormLoadingChanged;
-        public event EventHandler DataChanged;
-
-        private void SetText()
-        {
-            if (!this.DesignMode && this.AutoSetText && !this.Text.EndsWith(Application.ProductVersion))
-                this.Text = this.Text.IsNullOrEmpty()
-                    ? string.Format("{0} ({1})", Application.ProductName, Application.ProductVersion)
-                    : string.Format("{0} - {1} ({2})", this.Text, Application.ProductName, Application.ProductVersion);
-        }
-
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
             this.IsFormLoading = false;
             this.SetText();
-            this.CallOnDataChanged(delegate { this.IsDataChanged = true; });
+            this.CallOnDataChanged(delegate
+            {
+                this.IsDataChanged = true;
+            });
         }
+
+        private bool ShouldSerializeFont() => !this.Font.Equals(_DefaultFont);
+
+        private void SetText()
+        {
+            if (!this.DesignMode && this.AutoSetText && !this.Text.EndsWith(Application.ProductVersion))
+            {
+                this.Text = this.Text.IsNullOrEmpty()
+                    ? string.Format("{0} ({1})", Application.ProductName, Application.ProductVersion)
+                    : string.Format("{0} - {1} ({2})", this.Text, Application.ProductName, Application.ProductVersion);
+            }
+        }
+
+        public event EventHandler LoadSettings;
+        public event EventHandler SaveSettings;
+
+        public event EventHandler IsFormLoadingChanged;
+        public event EventHandler DataChanged;
     }
 }

@@ -16,8 +16,8 @@ namespace Mohammad.Collections.ObjectModel
 {
     public abstract class SpecialCollection<T>
     {
-        protected SpecialCollection() => this.InnerItems = new EventualCollection<T>();
         protected EventualCollection<T> InnerItems { get; }
+        protected SpecialCollection() => this.InnerItems = new EventualCollection<T>();
 
         protected IEnumerable<T1> Pick<T1>()
         {

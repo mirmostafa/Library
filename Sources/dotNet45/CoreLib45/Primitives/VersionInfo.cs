@@ -24,6 +24,80 @@ namespace Mohammad.Primitives
         private int _Minor;
         private int _Revision;
 
+        [XmlAttribute]
+        public int Major
+        {
+            get => this._Major;
+            set
+            {
+                if (value == this._Major)
+                {
+                    return;
+                }
+
+                CheckIfNotNeg(value);
+                this._Major = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public int Minor
+        {
+            get => this._Minor;
+            set
+            {
+                if (value == this._Minor)
+                {
+                    return;
+                }
+
+                CheckIfNotNeg(value);
+                this._Minor = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public int Build
+        {
+            get => this._Build;
+            set
+            {
+                if (value == this._Build)
+                {
+                    return;
+                }
+
+                CheckIfNotNeg(value);
+                this._Build = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public int Revision
+        {
+            get => this._Revision;
+            set
+            {
+                if (value == this._Revision)
+                {
+                    return;
+                }
+
+                CheckIfNotNeg(value);
+                this._Revision = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        [XmlAttribute]
+        public short MajorRevision => (short)(this._Revision >> 16);
+
+        [XmlAttribute]
+        public short MinorRevision => (short)(this._Revision & ushort.MaxValue);
+
         /// <summary>
         ///     For serialization purposes.
         /// </summary>
@@ -38,96 +112,86 @@ namespace Mohammad.Primitives
 
         public VersionInfo(int major = 0, int minor = 0, int build = 0, int revision = 0)
         {
-            this.Build    = build;
-            this.Major    = major;
-            this.Minor    = minor;
+            this.Build = build;
+            this.Major = major;
+            this.Minor = minor;
             this.Revision = revision;
         }
 
-        [XmlAttribute]
-        public int Major
+        public static bool operator ==(VersionInfo left, VersionInfo right) => Equals(left, right);
+        public static bool operator !=(VersionInfo left, VersionInfo right) => !Equals(left, right);
+
+        public static bool operator <(VersionInfo v1, VersionInfo v2)
         {
-            get => this._Major;
-            set
+            if (v1 == null)
             {
-                if (value == this._Major)
-                    return;
-                CheckIfNotNeg(value);
-                this._Major = value;
-                this.OnPropertyChanged();
+                throw new ArgumentNullException(nameof(v1));
             }
+
+            return v1.CompareTo(v2) < 0;
         }
 
-        [XmlAttribute]
-        public int Minor
+        public static bool operator >(VersionInfo v1, VersionInfo v2) => v2 < v1;
+
+        public static bool operator <=(VersionInfo v1, VersionInfo v2)
         {
-            get => this._Minor;
-            set
+            if (v1 == null)
             {
-                if (value == this._Minor)
-                    return;
-                CheckIfNotNeg(value);
-                this._Minor = value;
-                this.OnPropertyChanged();
+                throw new ArgumentNullException(nameof(v1));
             }
+
+            return v1.CompareTo(v2) <= 0;
         }
 
-        [XmlAttribute]
-        public int Build
-        {
-            get => this._Build;
-            set
-            {
-                if (value == this._Build)
-                    return;
-                CheckIfNotNeg(value);
-                this._Build = value;
-                this.OnPropertyChanged();
-            }
-        }
+        public static bool operator >=(VersionInfo v1, VersionInfo v2) => v2 <= v1;
+        public static implicit operator string(VersionInfo version) => version?.ToString();
+        public static implicit operator VersionInfo(string version) => Parse(version);
 
-        [XmlAttribute]
-        public int Revision
-        {
-            get => this._Revision;
-            set
-            {
-                if (value == this._Revision)
-                    return;
-                CheckIfNotNeg(value);
-                this._Revision = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        [XmlAttribute] public short MajorRevision => (short) (this._Revision >> 16);
-
-        [XmlAttribute] public short MinorRevision => (short) (this._Revision & ushort.MaxValue);
-
-        public object Clone()               => new VersionInfo(this._Build, this._Major, this._Minor, this._Revision);
-        public int    CompareTo(object obj) => this.CompareTo(obj.As<VersionInfo>());
+        public object Clone() => new VersionInfo(this._Build, this._Major, this._Minor, this._Revision);
+        public int CompareTo(object obj) => this.CompareTo(obj.As<VersionInfo>());
 
         public int CompareTo(VersionInfo other)
         {
             if (other == null)
+            {
                 return 1;
+            }
+
             if (this._Major != other._Major)
+            {
                 return this._Major > other._Major ? 1 : -1;
+            }
+
             if (this._Minor != other._Minor)
+            {
                 return this._Minor > other._Minor ? 1 : -1;
+            }
+
             if (this._Build != other._Build)
+            {
                 return this._Build > other._Build ? 1 : -1;
+            }
+
             if (this._Revision == other._Revision)
+            {
                 return 0;
+            }
+
             return this._Revision > other._Revision ? 1 : -1;
         }
 
         public bool Equals(VersionInfo other)
         {
             if (ReferenceEquals(null, other))
+            {
                 return false;
+            }
+
             if (ReferenceEquals(this, other))
+            {
                 return true;
+            }
+
             return this.CompareTo(other) == 0;
         }
 
@@ -138,10 +202,16 @@ namespace Mohammad.Primitives
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
+            {
                 return false;
+            }
+
             if (ReferenceEquals(this, obj))
+            {
                 return true;
-            return obj.GetType() == this.GetType() && this.Equals((VersionInfo) obj);
+            }
+
+            return obj.GetType() == this.GetType() && this.Equals((VersionInfo)obj);
         }
 
         public override int GetHashCode()
@@ -156,39 +226,14 @@ namespace Mohammad.Primitives
             }
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged.Raise(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public static bool operator ==(VersionInfo left, VersionInfo right) => Equals(left, right);
-        public static bool operator !=(VersionInfo left, VersionInfo right) => !Equals(left, right);
-
-        public static bool operator <(VersionInfo v1, VersionInfo v2)
-        {
-            if (v1 == null)
-                throw new ArgumentNullException(nameof(v1));
-            return v1.CompareTo(v2) < 0;
-        }
-
-        public static bool operator >(VersionInfo v1, VersionInfo v2) => v2 < v1;
-
-        public static bool operator <=(VersionInfo v1, VersionInfo v2)
-        {
-            if (v1 == null)
-                throw new ArgumentNullException(nameof(v1));
-            return v1.CompareTo(v2) <= 0;
-        }
-
-        public static                   bool operator >=(VersionInfo v1, VersionInfo v2) => v2 <= v1;
-        public static implicit operator string(VersionInfo           version) => version?.ToString();
-        public static implicit operator VersionInfo(string           version) => Parse(version);
-
         public static VersionInfo Parse(string input)
         {
             VersionInfo result;
             if (TryParse(input, out result))
+            {
                 return result;
+            }
+
             throw new ParseException(input, typeof(VersionInfo));
         }
 
@@ -196,33 +241,51 @@ namespace Mohammad.Primitives
         {
             version = null;
             if (input.IsNullOrEmpty())
+            {
                 return false;
+            }
+
             var parts = input.Split('.');
             if (parts.Length == 0 || parts.Length > 4)
+            {
                 return false;
+            }
+
             int buffer;
             if (!int.TryParse(parts[0], out buffer))
+            {
                 return false;
+            }
+
             version = new VersionInfo(buffer);
 
             if (parts.Length > 1)
             {
                 if (!int.TryParse(parts[1], out buffer))
+                {
                     return false;
+                }
+
                 version.Minor = buffer;
             }
 
             if (parts.Length > 2)
             {
                 if (!int.TryParse(parts[2], out buffer))
+                {
                     return false;
+                }
+
                 version.Build = buffer;
             }
 
             if (parts.Length > 3)
             {
                 if (!int.TryParse(parts[3], out buffer))
+                {
                     return false;
+                }
+
                 version.Revision = buffer;
             }
 
@@ -257,16 +320,25 @@ namespace Mohammad.Primitives
             return resut;
         }
 
-        private static void CheckIfNotNeg(int value, [CallerMemberName] string propertyName = null)
-        {
-            if (value < 0)
-                throw new ArgumentOutOfRangeException(propertyName, string.Concat(value, " cannot be negative."));
-        }
-
         public void PerformProperyChanged(string propertyName)
         {
             if (propertyName != null)
+            {
                 this.OnPropertyChanged(propertyName);
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged.Raise(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private static void CheckIfNotNeg(int value, [CallerMemberName] string propertyName = null)
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(propertyName, string.Concat(value, " cannot be negative."));
+            }
         }
     }
 }

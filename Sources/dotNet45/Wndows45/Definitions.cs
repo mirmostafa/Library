@@ -78,7 +78,7 @@ namespace Mohammad.Win
         /// <summary>
         ///     Count of rows in each page. -1: all rows (no paging)
         /// </summary>
-        public int PageRowCount { get; private set; }
+        public int PageRowCount { get; }
 
         #endregion
 
@@ -87,7 +87,7 @@ namespace Mohammad.Win
         /// <summary>
         ///     Property description
         /// </summary>
-        public int CurrentPageIndex { get; private set; }
+        public int CurrentPageIndex { get; }
 
         #endregion
 
@@ -110,7 +110,9 @@ namespace Mohammad.Win
         /// <summary>
         ///     Constructor
         ///     <summary>
-        internal ReportGeneratingEventArgs() { }
+        internal ReportGeneratingEventArgs()
+        {
+        }
 
         #endregion
     }

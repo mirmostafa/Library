@@ -8,11 +8,22 @@ namespace Mohammad.Wpf.Windows.Dialogs
     public class BrowseForFolderDialog
     {
         public CommonOpenFileDialog Dialog { get; set; }
-        public string DefaultDirectory { get { return this.Dialog.DefaultDirectory; } set { this.Dialog.DefaultDirectory = value; } }
-        public string Title { get { return this.Dialog.Title; } set { this.Dialog.Title = value; } }
-        public IEnumerable<string> SelectedFolders { get { return this.Dialog.FileNames; } }
-        public string SelectedFolder { get { return this.Dialog.FileName; } }
-        public BrowseForFolderDialog() { this.Dialog = new CommonOpenFileDialog {IsFolderPicker = true}; }
+
+        public string DefaultDirectory
+        {
+            get => this.Dialog.DefaultDirectory;
+            set => this.Dialog.DefaultDirectory = value;
+        }
+
+        public string Title
+        {
+            get => this.Dialog.Title;
+            set => this.Dialog.Title = value;
+        }
+
+        public IEnumerable<string> SelectedFolders => this.Dialog.FileNames;
+        public string SelectedFolder => this.Dialog.FileName;
+        public BrowseForFolderDialog() => this.Dialog = new CommonOpenFileDialog {IsFolderPicker = true};
 
         public static bool? ShowDialog(out string selectedFolder, string title = null, string defaultDirectory = null)
         {

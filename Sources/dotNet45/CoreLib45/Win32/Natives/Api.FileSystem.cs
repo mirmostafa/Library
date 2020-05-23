@@ -32,15 +32,25 @@ namespace Mohammad.Win32.Natives
         public static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr CreateFile(string lpFileName,            uint dwDesiredAccess,      uint   dwShareMode, IntPtr lpSecurityAttributes,
-                                               uint   dwCreationDisposition, uint dwFlagsAndAttributes, IntPtr hTemplateFile);
+        public static extern IntPtr CreateFile(string lpFileName,
+            uint dwDesiredAccess,
+            uint dwShareMode,
+            IntPtr lpSecurityAttributes,
+            uint dwCreationDisposition,
+            uint dwFlagsAndAttributes,
+            IntPtr hTemplateFile);
 
         [DllImport("kernel32.dll", EntryPoint = "CloseHandle", SetLastError = true, CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         public static extern bool CloseHandle(IntPtr handle);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, ExactSpelling = true, SetLastError = true)]
-        public static extern bool ReadDirectoryChangesW(IntPtr   hDirectory, IntPtr lpBuffer, uint nBufferLength, bool bWatchSubtree,
-                                                        uint     dwNotifyFilter,
-                                                        out uint lpBytesReturned, IntPtr lpOverlapped, IntPtr lpCompletionRoutine);
+        public static extern bool ReadDirectoryChangesW(IntPtr hDirectory,
+            IntPtr lpBuffer,
+            uint nBufferLength,
+            bool bWatchSubtree,
+            uint dwNotifyFilter,
+            out uint lpBytesReturned,
+            IntPtr lpOverlapped,
+            IntPtr lpCompletionRoutine);
     }
 }

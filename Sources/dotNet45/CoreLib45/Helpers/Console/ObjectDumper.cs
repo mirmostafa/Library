@@ -48,6 +48,30 @@ namespace Mohammad.Helpers.Console
             {
             }
 
+            private void WriteValue(object o)
+            {
+                if (o == null)
+                {
+                    this.Write("null");
+                }
+                else if (o is DateTime)
+                {
+                    this.Write(((DateTime)o).ToShortDateString());
+                }
+                else if (o is ValueType || o is string)
+                {
+                    this.Write(o.ToString());
+                }
+                else if (o is IEnumerable)
+                {
+                    this.Write(string.Format("{0}...", o));
+                }
+                else
+                {
+                    this.Write(string.Concat(o, " { }"));
+                }
+            }
+
             internal override void Write(object element, string prefix)
             {
                 if (element == null || element is ValueType || element is string)
@@ -63,6 +87,7 @@ namespace Mohammad.Helpers.Console
                     if (enumerableElement != null)
                     {
                         foreach (var item in enumerableElement)
+                        {
                             if (item is IEnumerable && !(item is string))
                             {
                                 this.WriteIndent();
@@ -80,6 +105,7 @@ namespace Mohammad.Helpers.Console
                             {
                                 this.Write(item, prefix);
                             }
+                        }
                     }
                     else
                     {
@@ -94,24 +120,39 @@ namespace Mohammad.Helpers.Console
                             if (f != null || p != null)
                             {
                                 if (propWritten)
+                                {
                                     this.WriteTab();
+                                }
                                 else
+                                {
                                     propWritten = true;
+                                }
+
                                 this.Write(m.Name);
                                 this.Write("=");
                                 var t = f != null ? f.FieldType : p.PropertyType;
                                 if (t.IsValueType || t == typeof(string))
+                                {
                                     this.WriteValue(f != null ? f.GetValue(element) : p.GetValue(element, null));
+                                }
                                 else if (typeof(IEnumerable).IsAssignableFrom(t))
+                                {
                                     this.Write(string.Format("{0}...", f));
+                                }
                                 else
+                                {
                                     this.Write(string.Concat(f, " { }"));
+                                }
                             }
                         }
 
                         if (propWritten)
+                        {
                             this.WriteLine();
+                        }
+
                         if (this.Level < this.Depth)
+                        {
                             foreach (var m in members)
                             {
                                 var f = m as FieldInfo;
@@ -131,6 +172,7 @@ namespace Mohammad.Helpers.Console
                                     }
                                 }
                             }
+                        }
                     }
                 }
             }
@@ -150,6 +192,7 @@ namespace Mohammad.Helpers.Console
                     if (enumerableElement != null)
                     {
                         foreach (var item in enumerableElement)
+                        {
                             if (item is IEnumerable && !(item is string))
                             {
                                 this.WriteIndent();
@@ -167,6 +210,7 @@ namespace Mohammad.Helpers.Console
                             {
                                 this.WriteLine(item, prefix);
                             }
+                        }
                     }
                     else
                     {
@@ -181,25 +225,41 @@ namespace Mohammad.Helpers.Console
                             if (f != null || p != null)
                             {
                                 if (propWritten)
+                                {
                                     this.WriteTab();
+                                }
                                 else
+                                {
                                     propWritten = true;
+                                }
+
                                 this.Write(m.Name);
                                 this.Write("=");
                                 var t = f != null ? f.FieldType : p.PropertyType;
                                 if (t.IsValueType || t == typeof(string))
+                                {
                                     this.WriteValue(f != null ? f.GetValue(element) : p.GetValue(element, null));
+                                }
                                 else if (typeof(IEnumerable).IsAssignableFrom(t))
+                                {
                                     this.Write(string.Format("{0}...", f));
+                                }
                                 else
+                                {
                                     this.Write(string.Concat(f, " { }"));
+                                }
+
                                 this.WriteLine();
                             }
                         }
 
                         if (propWritten)
+                        {
                             this.WriteLine();
+                        }
+
                         if (this.Level < this.Depth)
+                        {
                             foreach (var m in members)
                             {
                                 var f = m as FieldInfo;
@@ -220,22 +280,9 @@ namespace Mohammad.Helpers.Console
                                     }
                                 }
                             }
+                        }
                     }
                 }
-            }
-
-            private void WriteValue(object o)
-            {
-                if (o == null)
-                    this.Write("null");
-                else if (o is DateTime)
-                    this.Write(((DateTime) o).ToShortDateString());
-                else if (o is ValueType || o is string)
-                    this.Write(o.ToString());
-                else if (o is IEnumerable)
-                    this.Write(string.Format("{0}...", o));
-                else
-                    this.Write(string.Concat(o, " { }"));
             }
         }
 

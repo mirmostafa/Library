@@ -25,7 +25,7 @@ namespace Mohammad.Security.Cryptography
                 using (var alg = Rijndael.Create())
                 {
                     alg.Key = key;
-                    alg.IV  = iv;
+                    alg.IV = iv;
                     using (var cs = new CryptoStream(ms, alg.CreateEncryptor(), CryptoStreamMode.Write))
                     {
                         cs.Write(clearData, 0, clearData.Length);
@@ -41,7 +41,7 @@ namespace Mohammad.Security.Cryptography
 
         public static string Encrypt(string clearText, string password)
         {
-            var    clearBytes = Encoding.Unicode.GetBytes(clearText);
+            var clearBytes = Encoding.Unicode.GetBytes(clearText);
             byte[] encryptedData;
             using (var pdb = new Rfc2898DeriveBytes(password, _SaltSize))
             {
@@ -68,12 +68,12 @@ namespace Mohammad.Security.Cryptography
                 using (var alg = Rijndael.Create())
                 {
                     alg.Key = pdb.GetBytes(32);
-                    alg.IV  = pdb.GetBytes(16);
+                    alg.IV = pdb.GetBytes(16);
                     using (var cs = new CryptoStream(fsOut, alg.CreateEncryptor(), CryptoStreamMode.Write))
                     {
                         const int bufferLen = 4096;
-                        var       buffer    = new byte[bufferLen];
-                        int       bytesRead;
+                        var buffer = new byte[bufferLen];
+                        int bytesRead;
                         do
                         {
                             bytesRead = fsIn.Read(buffer, 0, bufferLen);
@@ -90,7 +90,7 @@ namespace Mohammad.Security.Cryptography
 
         public static byte[] Decrypt(byte[] cipherData, byte[] key, byte[] iv)
         {
-            Contract.Requires(cipherData        != null);
+            Contract.Requires(cipherData != null);
             Contract.Requires(cipherData.Length > 0);
 
             using (var memoryStream = new MemoryStream())
@@ -98,7 +98,7 @@ namespace Mohammad.Security.Cryptography
                 using (var rijndael = Rijndael.Create())
                 {
                     rijndael.Key = key;
-                    rijndael.IV  = iv;
+                    rijndael.IV = iv;
                     using (var cryptoStream = new CryptoStream(memoryStream, rijndael.CreateDecryptor(), CryptoStreamMode.Write))
                     {
                         cryptoStream.Write(cipherData, 0, cipherData.Length);
@@ -112,10 +112,10 @@ namespace Mohammad.Security.Cryptography
 
         public static string Decrypt(string cipherText, string password)
         {
-            Contract.Requires(cipherText        != null);
+            Contract.Requires(cipherText != null);
             Contract.Requires(cipherText.Length > 0);
 
-            var    cipherBytes = Convert.FromBase64String(cipherText);
+            var cipherBytes = Convert.FromBase64String(cipherText);
             byte[] decryptedData;
             using (var pdb = new Rfc2898DeriveBytes(password, _SaltSize))
             {
@@ -127,7 +127,7 @@ namespace Mohammad.Security.Cryptography
 
         public static byte[] Decrypt(byte[] cipherData, string password)
         {
-            Contract.Requires(cipherData        != null);
+            Contract.Requires(cipherData != null);
             Contract.Requires(cipherData.Length > 0);
             using (var pdb = new Rfc2898DeriveBytes(password, _SaltSize))
             {
@@ -144,12 +144,12 @@ namespace Mohammad.Security.Cryptography
                 using (var alg = Rijndael.Create())
                 {
                     alg.Key = pdb.GetBytes(32);
-                    alg.IV  = pdb.GetBytes(16);
+                    alg.IV = pdb.GetBytes(16);
                     using (var cs = new CryptoStream(fsOut, alg.CreateDecryptor(), CryptoStreamMode.Write))
                     {
                         const int bufferLen = 4096;
-                        var       buffer    = new byte[bufferLen];
-                        int       bytesRead;
+                        var buffer = new byte[bufferLen];
+                        int bytesRead;
                         do
                         {
                             bytesRead = fsIn.Read(buffer, 0, bufferLen);

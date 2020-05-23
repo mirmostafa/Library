@@ -19,8 +19,8 @@ namespace Mohammad.ProgressiveOperations
 {
     public abstract class Progressive<T> : IProgressiveOperation<T>
     {
-        public             CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
-        protected abstract Action[]                Steps                   { get; set; }
+        public CancellationTokenSource CancellationTokenSource { get; } = new CancellationTokenSource();
+        protected abstract Action[] Steps { get; set; }
 
         protected virtual T Data { get; set; }
 
@@ -28,24 +28,24 @@ namespace Mohammad.ProgressiveOperations
 
         public event EventHandler<ProgressiveOperationEventArgs<T>> ProgressChanged;
 
-        protected virtual void OnProgressChanged(ProgressiveOperationEventArgs<T> e)
-        {
-            this.ProgressChanged?.Invoke(this, e);
-        }
-
         public void Start()
         {
             for (var index = 0; index < this.Steps.Length; index++)
             {
                 if (this.CancellationTokenSource.IsCancellationRequested)
+                {
                     return;
+                }
+
                 var step = this.Steps[index];
                 CodeHelper.Catch(() => step?.Invoke(), this.OnExceptionOccurred);
                 var index1 = index;
                 CodeHelper.Catch(() => this.OnProgressChanged(new ProgressiveOperationEventArgs<T>(index1, this.Steps.Length, this.Data)));
             }
 
-            this.Steps.ForEach(step => { });
+            this.Steps.ForEach(step =>
+            {
+            });
         }
 
         public async Task StartAsync()
@@ -53,13 +53,7 @@ namespace Mohammad.ProgressiveOperations
             await Async.Run(this.Start);
         }
 
-        protected virtual void OnExceptionOccurred(Exception ex)
-        {
-            if (this.CanThrowExceptions)
-                throw ex;
-        }
-
-        public static Progressive<T>     Get(params        Action[] steps) => new SimpleProgressive<T>(steps);
+        public static Progressive<T> Get(params Action[] steps) => new SimpleProgressive<T>(steps);
         public static Progressive<TData> Get<TData>(params Action[] steps) => new SimpleProgressive<TData>(steps);
 
         public static void Start(params Action[] steps)
@@ -72,33 +66,50 @@ namespace Mohammad.ProgressiveOperations
             await Get(steps).StartAsync();
         }
 
-        public static Progressive<T> Get(IEnumerable<Action> steps, EventHandler<ProgressiveOperationEventArgs<T>> onProgressChanged, T data,
-                                         bool                canThrowExceptions)
+        public static Progressive<T> Get(IEnumerable<Action> steps,
+            EventHandler<ProgressiveOperationEventArgs<T>> onProgressChanged,
+            T data,
+            bool canThrowExceptions)
         {
             var result = Get(steps.ToArray());
-            result.CanThrowExceptions =  canThrowExceptions;
-            result.Data               =  data;
-            result.ProgressChanged    += onProgressChanged;
+            result.CanThrowExceptions = canThrowExceptions;
+            result.Data = data;
+            result.ProgressChanged += onProgressChanged;
             return result;
         }
 
-        public static void Start(IEnumerable<Action> steps, EventHandler<ProgressiveOperationEventArgs<T>> onProgressChanged, T data,
-                                 bool                canThrowExceptions)
+        public static void Start(IEnumerable<Action> steps,
+            EventHandler<ProgressiveOperationEventArgs<T>> onProgressChanged,
+            T data,
+            bool canThrowExceptions)
         {
             var result = Get(steps, onProgressChanged, data, canThrowExceptions);
             result.Start();
+        }
+
+        protected virtual void OnProgressChanged(ProgressiveOperationEventArgs<T> e)
+        {
+            this.ProgressChanged?.Invoke(this, e);
+        }
+
+        protected virtual void OnExceptionOccurred(Exception ex)
+        {
+            if (this.CanThrowExceptions)
+            {
+                throw ex;
+            }
         }
     }
 
     internal class SimpleProgressive<T> : Progressive<T>
     {
-        internal SimpleProgressive(Action[] steps) => this.Steps = steps;
         protected sealed override Action[] Steps { get; set; }
+        internal SimpleProgressive(Action[] steps) => this.Steps = steps;
     }
 
     public class Progressive : Progressive<object>
     {
-        public Progressive(Action[] steps) => this.Steps = steps;
         protected sealed override Action[] Steps { get; set; }
+        public Progressive(Action[] steps) => this.Steps = steps;
     }
 }

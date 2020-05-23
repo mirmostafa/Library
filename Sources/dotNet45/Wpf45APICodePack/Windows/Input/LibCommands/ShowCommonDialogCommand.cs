@@ -17,7 +17,12 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
         public bool IsDialog { get; set; }
         public bool? DialogResult { get; private set; }
         public bool ShowCommandBar { get; set; }
-        public Window OwnerWindow { get { return this.Parent as Window; } set { this.Parent = value; } }
+
+        public Window OwnerWindow
+        {
+            get => this.Parent as Window;
+            set => this.Parent = value;
+        }
 
         protected override void OnExecuted()
         {
@@ -28,37 +33,60 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
                 this.Dialog.Focus();
                 return;
             }
+
             if (this.PageType.IsAssignableFrom(typeof(LibraryCommonPage)))
+            {
                 throw new ParseException($"Cannot convert '{this.PageType}' to 'LibraryCommonPage'");
-            var constructor = this.PageType.GetConstructor(new Type[] {});
+            }
+
+            var constructor = this.PageType.GetConstructor(new Type[] { });
             if (constructor == null)
+            {
                 return;
-            var page = (LibraryCommonPage) constructor.Invoke(null);
+            }
+
+            var page = (LibraryCommonPage)constructor.Invoke(null);
             this.Dialog = new LibraryCommonDialog {IsDialog = this.IsDialog, ShowStatusBar = this.ShowStatusBar, ShowCommandBar = this.ShowCommandBar, Page = page};
             var window = (this.OwnerWindow ?? this.Parent) as Window;
             if (!Equals(window, this.Dialog))
+            {
                 this.Dialog.Owner = window;
+            }
+
             if (!this.Title.IsNullOrEmpty())
+            {
                 this.Dialog.Title = this.Title;
+            }
+
             var dialog = this.Dialog;
             this.Dialog.Closed += (_, __) => this.Dialog = null;
             try
             {
                 var parent = this.Parent as Window;
                 if (parent != null)
+                {
                     parent.Opacity = .75;
+                }
+
                 this.DialogResult = this.Dialog.ShowDialog();
             }
             finally
             {
                 var parent = this.Parent as Window;
                 if (parent != null)
+                {
                     parent.Opacity = 1;
+                }
+
                 this.OnDialogClosed(dialog);
             }
         }
 
+        private void OnDialogClosed(LibraryCommonDialog dialog)
+        {
+            this.DialogClosed.Raise(this, new ItemActedEventArgs<LibraryCommonDialog>(dialog));
+        }
+
         public event EventHandler<ItemActedEventArgs<LibraryCommonDialog>> DialogClosed;
-        private void OnDialogClosed(LibraryCommonDialog dialog) { this.DialogClosed.Raise(this, new ItemActedEventArgs<LibraryCommonDialog>(dialog)); }
     }
 }

@@ -18,30 +18,8 @@ namespace Mohammad.Collections.ObjectModel
     public class DelayedCollection<T> : ICollection<T>
     {
         private readonly Lazy<IList<T>> _ActualBackingList;
-        private readonly int            _InitialCount;
+        private readonly int _InitialCount;
         private readonly IEnumerable<T> _Source;
-
-        /// <summary>
-        ///     Initializes a new instance of the DelayedCollection class.
-        /// </summary>
-        /// <param name="source">The source.</param>
-        public DelayedCollection(IEnumerable<T> source)
-        {
-            this._ActualBackingList = new Lazy<IList<T>>(() => this._Source.ToList());
-            this._Source            = source;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the DelayedCollection class.
-        /// </summary>
-        /// <param name="source">The source.</param>
-        /// <param name="initialCount">The initial count of the list.</param>
-        public DelayedCollection(IEnumerable<T> source, int initialCount)
-        {
-            this._ActualBackingList = new Lazy<IList<T>>(() => this._Source.ToList());
-            this._InitialCount      = initialCount;
-            this._Source            = source;
-        }
 
         private IList<T> BackingList => this._ActualBackingList.Value;
 
@@ -53,6 +31,46 @@ namespace Mohammad.Collections.ObjectModel
         {
             get => this.BackingList[index];
             set => this.BackingList[index] = value;
+        }
+
+        /// <summary>
+        ///     Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
+        /// </summary>
+        /// <value></value>
+        /// <returns>
+        ///     The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
+        /// </returns>
+        public int Count => this._ActualBackingList == null ? this._InitialCount : this.BackingList.Count;
+
+        /// <summary>
+        ///     Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
+        /// </summary>
+        /// <value></value>
+        /// <returns>
+        ///     true if the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only; otherwise, false.
+        /// </returns>
+        public bool IsReadOnly => false;
+
+        /// <summary>
+        ///     Initializes a new instance of the DelayedCollection class.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        public DelayedCollection(IEnumerable<T> source)
+        {
+            this._ActualBackingList = new Lazy<IList<T>>(() => this._Source.ToList());
+            this._Source = source;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the DelayedCollection class.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="initialCount">The initial count of the list.</param>
+        public DelayedCollection(IEnumerable<T> source, int initialCount)
+        {
+            this._ActualBackingList = new Lazy<IList<T>>(() => this._Source.ToList());
+            this._InitialCount = initialCount;
+            this._Source = source;
         }
 
         /// <summary>
@@ -130,24 +148,6 @@ namespace Mohammad.Collections.ObjectModel
         {
             this.BackingList.CopyTo(array, arrayIndex);
         }
-
-        /// <summary>
-        ///     Gets the number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </summary>
-        /// <value></value>
-        /// <returns>
-        ///     The number of elements contained in the <see cref="T:System.Collections.Generic.ICollection`1" />.
-        /// </returns>
-        public int Count => this._ActualBackingList == null ? this._InitialCount : this.BackingList.Count;
-
-        /// <summary>
-        ///     Gets a value indicating whether the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only.
-        /// </summary>
-        /// <value></value>
-        /// <returns>
-        ///     true if the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only; otherwise, false.
-        /// </returns>
-        public bool IsReadOnly => false;
 
         /// <summary>
         ///     Removes the first occurrence of a specific object from the

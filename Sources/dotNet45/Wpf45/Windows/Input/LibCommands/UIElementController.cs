@@ -30,7 +30,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public bool IsCancel
         {
-            get { return this._IsCancel; }
+            get => this._IsCancel;
             set
             {
                 this._IsCancel = value;
@@ -40,7 +40,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public bool IsDefault
         {
-            get { return this._IsDefault; }
+            get => this._IsDefault;
             set
             {
                 this._IsDefault = value;
@@ -50,7 +50,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public object Content
         {
-            get { return this._Content; }
+            get => this._Content;
             set
             {
                 this._Content = value;
@@ -60,7 +60,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public Visibility Visibility
         {
-            get { return this._Visibility; }
+            get => this._Visibility;
             set
             {
                 this._Visibility = value;
@@ -70,7 +70,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public string ToolTip
         {
-            get { return this._ToolTip; }
+            get => this._ToolTip;
             set
             {
                 this._ToolTip = value;
@@ -80,7 +80,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public bool IsEnabled
         {
-            get { return this._IsEnabled; }
+            get => this._IsEnabled;
             set
             {
                 this._IsEnabled = value;
@@ -90,7 +90,7 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public bool? IsChecked
         {
-            get { return this._IsChecked; }
+            get => this._IsChecked;
             set
             {
                 this._IsChecked = value;
@@ -100,11 +100,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public string Text
         {
-            get { return this._Text; }
+            get => this._Text;
             set
             {
                 if (value == this._Text)
+                {
                     return;
+                }
+
                 this._Text = value;
                 this.OnPropertyChanged();
             }
@@ -112,11 +115,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public bool IsReadOnly
         {
-            get { return this._IsReadOnly; }
+            get => this._IsReadOnly;
             set
             {
                 if (value.Equals(this._IsReadOnly))
+                {
                     return;
+                }
+
                 this._IsReadOnly = value;
                 this.OnPropertyChanged();
             }
@@ -124,11 +130,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public Style PathStyle
         {
-            get { return this._PathStyle; }
+            get => this._PathStyle;
             set
             {
                 if (value == null || value.Equals(this._PathStyle))
+                {
                     return;
+                }
+
                 this._PathStyle = value;
                 this.OnPropertyChanged();
             }
@@ -136,11 +145,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public Path Path
         {
-            get { return this._Path; }
+            get => this._Path;
             set
             {
                 if (value == null || value.Equals(this._Path))
+                {
                     return;
+                }
+
                 this._Path = value;
                 this.OnPropertyChanged();
             }
@@ -148,11 +160,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
         public Brush PathFill
         {
-            get { return this._PathFill; }
+            get => this._PathFill;
             set
             {
                 if (value == null || value.Equals(this._PathFill))
+                {
                     return;
+                }
+
                 this._PathFill = value;
                 this.OnPropertyChanged();
             }
@@ -162,6 +177,14 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
         {
             this.Element = element;
             this.ReAssignProps();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.ReAssignProps();
+            this.PropertyChanged.Raise(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void ReAssignProps()
@@ -177,8 +200,12 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
                 if (this.PathFill != null)
                 {
                     path.Fill = this.PathFill;
-                    path.IsEnabledChanged += (sende, e) => { sende.As<Path>().Fill = sende.As<Path>().IsEnabled ? this.PathFill : Brushes.Gray; };
+                    path.IsEnabledChanged += (sende, e) =>
+                    {
+                        sende.As<Path>().Fill = sende.As<Path>().IsEnabled ? this.PathFill : Brushes.Gray;
+                    };
                 }
+
                 content = path;
             }
             else if (this.Path != null)
@@ -203,8 +230,12 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
                         button.Header = this.Content.ToString().Replace("_", "");
                     }
                 }
+
                 if (!this.ToolTip.IsNullOrEmpty())
+                {
                     button.ToolTip = this.ToolTip;
+                }
+
                 button.IsChecked = this.IsChecked ?? false;
             }
 
@@ -222,20 +253,28 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
                         button.Label = button.Label.Replace("_", "");
                     }
                 }
+
                 if (!this.ToolTip.IsNullOrEmpty())
+                {
                     button.ToolTip = this.ToolTip;
+                }
             }
+
             if (this.Element is ToggleButton)
             {
                 var btn = this.Element.As<ToggleButton>();
                 btn.IsChecked = this.IsChecked;
             }
+
             if (this.Element is ButtonBase)
             {
                 var buttonBase = this.Element as ButtonBase;
                 buttonBase.Content = content;
                 if (!this.ToolTip.IsNullOrEmpty())
+                {
                     buttonBase.ToolTip = this.ToolTip;
+                }
+
                 if (this.Element is Button)
                 {
                     var button = this.Element as Button;
@@ -256,9 +295,15 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
             {
                 var menuItem = this.Element as MenuItem;
                 if (this.Content != null)
+                {
                     menuItem.Header = this.Content;
+                }
+
                 if (!this.ToolTip.IsNullOrEmpty())
+                {
                     menuItem.ToolTip = this.ToolTip;
+                }
+
                 menuItem.IsEnabled = this.IsEnabled;
             }
 
@@ -269,7 +314,10 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
                 var buttonBase = textBoxButton.Button;
                 buttonBase.Content = content;
                 if (!this.ToolTip.IsNullOrEmpty())
+                {
                     buttonBase.ToolTip = this.ToolTip;
+                }
+
                 buttonBase.IsCancel = this.IsCancel;
                 buttonBase.IsDefault = this.IsDefault;
 
@@ -280,13 +328,5 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 
             this.Element.UpdateLayout();
         }
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.ReAssignProps();
-            this.PropertyChanged.Raise(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

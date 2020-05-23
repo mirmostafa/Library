@@ -21,8 +21,6 @@ namespace Mohammad.Win32.NetworkList
     {
         private readonly INetworkConnection networkConnection;
 
-        internal NetworkConnection(INetworkConnection networkConnection) => this.networkConnection = networkConnection;
-
         /// <summary>
         ///     Retrieves an object that represents the network
         ///     associated with this connection.
@@ -84,5 +82,7 @@ namespace Mohammad.Win32.NetworkList
         ///     A <see cref="System.Boolean" /> value.
         /// </value>
         public bool IsConnected => this.networkConnection.IsConnected;
+
+        internal NetworkConnection(INetworkConnection networkConnection) => this.networkConnection = networkConnection;
     }
 }

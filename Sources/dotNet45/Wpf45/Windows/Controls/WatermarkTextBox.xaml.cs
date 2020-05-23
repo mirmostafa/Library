@@ -11,6 +11,10 @@ namespace Mohammad.Wpf.Windows.Controls
         public string Watermark { get; set; }
         public Style GotFocusStyle { get; set; }
         public Style LostFocusStyle { get; set; }
-        public WatermarkTextBox() { this.InitializeComponent(); }
+
+        public WatermarkTextBox()
+        {
+            this.InitializeComponent();
+        }
     }
 }

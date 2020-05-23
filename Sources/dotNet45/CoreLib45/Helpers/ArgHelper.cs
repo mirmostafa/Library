@@ -16,12 +16,6 @@ namespace Mohammad.Helpers
     /// </summary>
     public static class ArgHelper
     {
-        internal static void AssertBiggerThan(int arg, int min, string argName)
-        {
-            if (arg <= min)
-                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The argument {0}(={1}) cannot be lass than {2}", argName, arg, min));
-        }
-
         public static void AssertNotNull<T>(T arg, string argName)
             where T : class
         {
@@ -31,6 +25,14 @@ namespace Mohammad.Helpers
                     throw new ArgumentNullException(argName);
                 case string _ when arg.ToString().IsNullOrEmpty():
                     throw new ArgumentNullException(argName);
+            }
+        }
+
+        internal static void AssertBiggerThan(int arg, int min, string argName)
+        {
+            if (arg <= min)
+            {
+                throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The argument {0}(={1}) cannot be lass than {2}", argName, arg, min));
             }
         }
     }

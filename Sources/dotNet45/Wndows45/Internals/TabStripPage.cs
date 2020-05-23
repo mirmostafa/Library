@@ -26,7 +26,9 @@ namespace Mohammad.Win.Internals
                     var xf = tabPageSwitcher.TabStrip.SelectedTab.Bounds.Right;
                     tabPageSwitcher.SelectedTabStripPage.LinePos(x0, xf, true);
                 }
-                catch {}
+                catch
+                {
+                }
             }
         }
     }

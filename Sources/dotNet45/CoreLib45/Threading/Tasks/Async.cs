@@ -26,7 +26,7 @@ namespace Mohammad.Threading.Tasks
             actions.Select(action => Task.Factory.StartNew(action)).ToArray(),
             timeout);
 
-        public static void WaitAll(params Task[]     tasks) => Task.WaitAll(tasks);
+        public static void WaitAll(params Task[] tasks) => Task.WaitAll(tasks);
         public static void WaitAll(IEnumerable<Task> tasks) => Task.WaitAll(tasks.ToArray());
 
         public static void WaitAll(params Action[] actions)
@@ -43,25 +43,41 @@ namespace Mohammad.Threading.Tasks
             return tasks.WaitAll(timeout);
         }
 
-        public static void WaitAny(params Task[]   tasks)   => Task.WaitAny(tasks);
+        public static void WaitAny(params Task[] tasks) => Task.WaitAny(tasks);
         public static void WaitAny(params Action[] actions) => Task.WaitAny(actions.Select(action => Task.Factory.StartNew(action)).ToArray());
 
-        public static async Task Run(Action action, CancellationToken token = default, TaskScheduler scheduler = null, Action onEnded = null,
-                                     string actionName = "")
+        public static async Task Run(Action action,
+            CancellationToken token = default,
+            TaskScheduler scheduler = null,
+            Action onEnded = null,
+            string actionName = "")
         {
             if (!actionName.IsNullOrEmpty())
+            {
                 LibrarySupervisor.Logger.Debug($"{actionName} running...");
+            }
+
             if (scheduler != null)
+            {
                 await Task.Factory.StartNew(action, token.Equals(default) ? CancellationToken.None : token, TaskCreationOptions.None, scheduler);
+            }
             else
+            {
                 await Task.Factory.StartNew(action, token.Equals(default) ? CancellationToken.None : token);
+            }
+
             onEnded?.Invoke();
             if (!actionName.IsNullOrEmpty())
+            {
                 LibrarySupervisor.Logger.Debug($"{actionName} done.");
+            }
         }
 
-        public static async Task<TResult> Run<TResult>(Func<TResult>   action,        CancellationToken token      = default, TaskScheduler scheduler = null,
-                                                       Action<TResult> onDone = null, string            actionName = "")
+        public static async Task<TResult> Run<TResult>(Func<TResult> action,
+            CancellationToken token = default,
+            TaskScheduler scheduler = null,
+            Action<TResult> onDone = null,
+            string actionName = "")
         {
             var result = default(TResult);
             await Run(() => result = action(), token, scheduler, () => onDone?.Invoke(result));
@@ -79,11 +95,17 @@ namespace Mohammad.Threading.Tasks
         public static async Task<bool> Run(Action<Task> action, TimeSpan timeout, bool cancelOnTimeout = true, Action onDone = null, Action onNotDone = null)
         {
             if (action == null)
+            {
                 throw new ArgumentNullException(nameof(action));
+            }
+
             using (var source = new CancellationTokenSource())
             {
                 var watcher = Task.Delay(timeout, source.Token);
-                var task    = new Task(() => { }, source.Token);
+                var task = new Task(() =>
+                    {
+                    },
+                    source.Token);
                 task = task.ContinueWith(action, source.Token);
                 task.Start();
                 await Task.WhenAny(watcher, task);
@@ -94,28 +116,52 @@ namespace Mohammad.Threading.Tasks
                 else
                 {
                     if (cancelOnTimeout)
+                    {
                         source.Cancel();
+                    }
+
                     onNotDone?.Invoke();
                 }
 
                 if (task.Exception != null)
+                {
                     throw task.Exception;
+                }
+
                 return task.IsCompleted;
             }
         }
 
-        public static async Task<TResult> Run<TResult>(Func<TResult> action, TimeSpan timeout, bool cancelOnTimeout = true,
-                                                       Action        onTimeout     = null,
-                                                       TResult       defaultResult = default, Action<TResult> onEnd = null, Action onNotEnded = null)
+        public static async Task<TResult> Run<TResult>(Func<TResult> action,
+            TimeSpan timeout,
+            bool cancelOnTimeout = true,
+            Action onTimeout = null,
+            TResult defaultResult = default,
+            Action<TResult> onEnd = null,
+            Action onNotEnded = null)
         {
             var result = defaultResult;
-            if (await Run(_ => { result = action(); }, timeout, cancelOnTimeout, () => onEnd?.Invoke(result), onNotEnded))
+            if (await Run(_ =>
+                {
+                    result = action();
+                },
+                timeout,
+                cancelOnTimeout,
+                () => onEnd?.Invoke(result),
+                onNotEnded))
+            {
                 return result;
+            }
+
             return defaultResult;
         }
 
-        public static async Task<bool> Run<T>(Action<T> action, T arg, TimeSpan timeout, bool cancelOnTimeout = true, Action onDone = null,
-                                              Action    onNotDone = null)
+        public static async Task<bool> Run<T>(Action<T> action,
+            T arg,
+            TimeSpan timeout,
+            bool cancelOnTimeout = true,
+            Action onDone = null,
+            Action onNotDone = null)
         {
             return await Run(_ => action(arg), timeout, cancelOnTimeout, onDone, onNotDone);
         }
@@ -125,11 +171,13 @@ namespace Mohammad.Threading.Tasks
         public static async Task Run(IEnumerable<Action> actions)
         {
             foreach (var action in actions)
+            {
                 await Task.Factory.StartNew(action);
+            }
         }
 
-        public static async Task<RunCancellableResult<TResult>> RunCancellable<TResult>(Func<TResult>           action,
-                                                                                        CancellationTokenSource cancellationTokenSource)
+        public static async Task<RunCancellableResult<TResult>> RunCancellable<TResult>(Func<TResult> action,
+            CancellationTokenSource cancellationTokenSource)
         {
             var result = new RunCancellableResult<TResult>
             {
@@ -147,9 +195,15 @@ namespace Mohammad.Threading.Tasks
                     isDoneWaitHandle.Set();
                 });
                 t.Start();
-                await Run(() => { WaitHandle.WaitAny(new[] {cancellationTokenSource.Token.WaitHandle, isDoneWaitHandle}); });
+                await Run(() =>
+                {
+                    WaitHandle.WaitAny(new[] {cancellationTokenSource.Token.WaitHandle, isDoneWaitHandle});
+                });
                 if (result.IsDone)
+                {
                     return result;
+                }
+
                 Catch(t.Abort);
                 LibrarySupervisor.Logger.Debug("Action cancelled");
                 return result;
@@ -171,21 +225,21 @@ namespace Mohammad.Threading.Tasks
         public static async Task<RunCancellableResult> RunCancellable(Action action, CancellationTokenSource cancellationTokenSource)
         {
             return await RunCancellable(() =>
-                                        {
-                                            action();
-                                            return true;
-                                        },
-                                        cancellationTokenSource);
+                {
+                    action();
+                    return true;
+                },
+                cancellationTokenSource);
         }
 
         public static async Task<RunCancellableResult> RunCancellable(Action action, TimeSpan? timeout = null)
         {
             return await RunCancellable(() =>
-                                        {
-                                            action();
-                                            return true;
-                                        },
-                                        timeout);
+                {
+                    action();
+                    return true;
+                },
+                timeout);
         }
 
         public static CancellationTokenSource RunCancellationTokenSource(Action action, TimeSpan? timeout = null)

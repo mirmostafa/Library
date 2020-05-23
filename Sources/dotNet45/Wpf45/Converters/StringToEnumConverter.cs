@@ -14,6 +14,6 @@ namespace Mohammad.Wpf.Converters
             return Enum.GetNames(targetType).FirstOrDefault(e => e == ObjectHelper.ToString(value));
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) { return ObjectHelper.ToString(value); }
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => ObjectHelper.ToString(value);
     }
 }

@@ -14,14 +14,8 @@ namespace Mohammad.Logging
 {
     public abstract class LoggerContainer : ILoggerContainer
     {
-        private object  _DefaultSender;
+        private object _DefaultSender;
         private ILogger _Logger;
-
-        protected LoggerContainer()
-        {
-            this.Logger.Logged  += (_, e) => this.OnLogged(e);
-            this.Logger.Logging += (_, e) => this.OnLogging(e);
-        }
 
         public bool EnableRaisingEvents
         {
@@ -35,7 +29,9 @@ namespace Mohammad.Logging
             set
             {
                 if (this.Logger != null)
+                {
                     this.Logger.Out = value;
+                }
             }
         }
 
@@ -43,9 +39,13 @@ namespace Mohammad.Logging
 
         public ILogger Logger => this._Logger ?? (this._Logger = this.OnInitializingLogger());
 
-        protected virtual object                OnInitializingDefaultSender() => this.GetType().Name;
-        public event EventHandler<LogEventArgs> Logged;
-        public event EventHandler<LogEventArgs> Logging;
+        protected LoggerContainer()
+        {
+            this.Logger.Logged += (_, e) => this.OnLogged(e);
+            this.Logger.Logging += (_, e) => this.OnLogging(e);
+        }
+
+        protected virtual object OnInitializingDefaultSender() => this.GetType().Name;
 
         protected virtual void OnLogged(LogEventArgs e)
         {
@@ -59,47 +59,68 @@ namespace Mohammad.Logging
 
         protected virtual ILogger OnInitializingLogger() => new Logger();
 
-        protected void Log(object                    text, object detials = null, object sender = null,
-                           LogLevel                  level            = LogLevel.Internal,
-                           [CallerMemberName] string memberName       = "", [CallerFilePath] string sourceFilePath = "",
-                           [CallerLineNumber] int    sourceLineNumber = 0)
+        protected void Log(object text,
+            object detials = null,
+            object sender = null,
+            LogLevel level = LogLevel.Internal,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string sourceFilePath = "",
+            [CallerLineNumber] int sourceLineNumber = 0)
         {
             this.Logger.Log(text, detials, sender ?? this.DefaultLogSender, level, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        protected void Debug(object                    text, Exception detials = null, object sender = null,
-                             [CallerMemberName] string memberName     = "",
-                             [CallerFilePath]   string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        protected void Debug(object text,
+            Exception detials = null,
+            object sender = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string sourceFilePath = "",
+            [CallerLineNumber] int sourceLineNumber = 0)
         {
             this.Logger.Debug(text, detials, sender ?? this.DefaultLogSender, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        protected void Info(object                    text, object detials = null, object sender = null,
-                            [CallerMemberName] string memberName     = "",
-                            [CallerFilePath]   string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        protected void Info(object text,
+            object detials = null,
+            object sender = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string sourceFilePath = "",
+            [CallerLineNumber] int sourceLineNumber = 0)
         {
             this.Logger.Info(text, detials, sender ?? this.DefaultLogSender, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        protected void Warn(object                    text, object detials = null, object sender = null,
-                            [CallerMemberName] string memberName     = "",
-                            [CallerFilePath]   string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        protected void Warn(object text,
+            object detials = null,
+            object sender = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string sourceFilePath = "",
+            [CallerLineNumber] int sourceLineNumber = 0)
         {
             this.Logger.Warn(text, detials, sender ?? this.DefaultLogSender, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        protected void Fatal(object                    text, Exception exception = null, object sender = null,
-                             [CallerMemberName] string memberName     = "",
-                             [CallerFilePath]   string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        protected void Fatal(object text,
+            Exception exception = null,
+            object sender = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string sourceFilePath = "",
+            [CallerLineNumber] int sourceLineNumber = 0)
         {
             this.Logger.Fatal(text, exception, sender ?? this.DefaultLogSender, memberName, sourceFilePath, sourceLineNumber);
         }
 
-        protected void Error(object                    text, object detials = null, object sender = null,
-                             [CallerMemberName] string memberName     = "",
-                             [CallerFilePath]   string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)
+        protected void Error(object text,
+            object detials = null,
+            object sender = null,
+            [CallerMemberName] string memberName = "",
+            [CallerFilePath] string sourceFilePath = "",
+            [CallerLineNumber] int sourceLineNumber = 0)
         {
             this.Logger.Warn(text, detials, sender ?? this.DefaultLogSender, memberName, sourceFilePath, sourceLineNumber);
         }
+
+        public event EventHandler<LogEventArgs> Logged;
+        public event EventHandler<LogEventArgs> Logging;
     }
 }

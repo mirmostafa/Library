@@ -26,7 +26,9 @@ namespace Mohammad.Helpers
             where T : class, IComparable<T>
         {
             if (left == null)
+            {
                 return false;
+            }
 
             return left.CompareTo(right) > 0;
         }
@@ -43,7 +45,9 @@ namespace Mohammad.Helpers
             where T : class, IComparable<T>
         {
             if (left == null)
+            {
                 return right == null ? true : false;
+            }
 
             return left.CompareTo(right) >= 0;
         }
@@ -59,7 +63,9 @@ namespace Mohammad.Helpers
             where T : class, IComparable<T>
         {
             if (left == null)
+            {
                 return right != null;
+            }
 
             return left.CompareTo(right) < 0;
         }
@@ -76,7 +82,10 @@ namespace Mohammad.Helpers
             where T : class, IComparable<T>
         {
             if (left == null)
+            {
                 return true;
+            }
+
             return left.CompareTo(right) <= 0;
         }
     }

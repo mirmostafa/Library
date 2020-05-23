@@ -13,6 +13,10 @@ namespace Mohammad.Validation.Exceptions
     [Serializable]
     public class OutOfRanageValidationException : ValidationExceptionBase
     {
+        public object Value { get; set; }
+        public object MinValue { get; set; }
+        public object MaxValue { get; set; }
+
         public OutOfRanageValidationException()
         {
         }
@@ -34,7 +38,7 @@ namespace Mohammad.Validation.Exceptions
 
         public OutOfRanageValidationException(object value, object minValue, object maxValue)
         {
-            this.Value    = value;
+            this.Value = value;
             this.MinValue = minValue;
             this.MaxValue = maxValue;
         }
@@ -48,9 +52,5 @@ namespace Mohammad.Validation.Exceptions
             : base(message, inner, instruction)
         {
         }
-
-        public object Value    { get; set; }
-        public object MinValue { get; set; }
-        public object MaxValue { get; set; }
     }
 }

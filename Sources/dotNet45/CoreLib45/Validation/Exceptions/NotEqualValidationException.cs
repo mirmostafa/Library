@@ -13,6 +13,9 @@ namespace Mohammad.Validation.Exceptions
     [Serializable]
     public class NotEqualValidationException : ValidationExceptionBase
     {
+        public object Obj1Name { get; set; }
+        public object Obj2Name { get; set; }
+
         public NotEqualValidationException()
         {
         }
@@ -43,9 +46,6 @@ namespace Mohammad.Validation.Exceptions
             : base(message, instruction)
         {
         }
-
-        public object Obj1Name { get; set; }
-        public object Obj2Name { get; set; }
     }
 
     [Serializable]

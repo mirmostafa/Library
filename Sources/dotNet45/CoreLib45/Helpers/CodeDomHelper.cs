@@ -57,37 +57,60 @@ namespace Mohammad.Helpers
             result.Comments.Add(new CodeCommentStatement(string.Format("<summary>{0}</summary>", docComments), true));
         }
 
-        public static CodeMemberField AddField(this CodeTypeDeclaration typeDeclaration, Type type, string name, string defaultValue, bool isStatic,
-                                               bool                     isConst,         bool isPublic)
+        public static CodeMemberField AddField(this CodeTypeDeclaration typeDeclaration,
+            Type type,
+            string name,
+            string defaultValue,
+            bool isStatic,
+            bool isConst,
+            bool isPublic)
         {
-            var              result     = new CodeMemberField(new CodeTypeReference(type), name);
+            var result = new CodeMemberField(new CodeTypeReference(type), name);
             MemberAttributes attributes = 0;
             if (isStatic)
+            {
                 attributes |= MemberAttributes.Static;
+            }
+
             if (isConst)
+            {
                 attributes |= MemberAttributes.Const;
+            }
+
             if (isPublic)
+            {
                 attributes |= MemberAttributes.Public;
-            result.Attributes     = attributes;
+            }
+
+            result.Attributes = attributes;
             result.InitExpression = new CodeSnippetExpression(defaultValue);
             typeDeclaration.Members.Add(result);
             return result;
         }
 
-        public static CodeMemberMethod AddMethod(this CodeTypeDeclaration   typeDeclaration, string name,
-                                                 Dictionary<string, string> nameTypeParams = null,
-                                                 string                     returnName     = null,
-                                                 MemberAttributes           attributes     = MemberAttributes.Public | MemberAttributes.Final)
+        public static CodeMemberMethod AddMethod(this CodeTypeDeclaration typeDeclaration,
+            string name,
+            Dictionary<string, string> nameTypeParams = null,
+            string returnName = null,
+            MemberAttributes attributes = MemberAttributes.Public | MemberAttributes.Final)
         {
             var result = new CodeMemberMethod
             {
                 Name = name
             };
             if (returnName != null)
+            {
                 result.ReturnType = new CodeTypeReference(returnName);
+            }
+
             if (nameTypeParams != null)
+            {
                 foreach (var param in nameTypeParams)
+                {
                     result.Parameters.Add(new CodeParameterDeclarationExpression(param.Value, param.Key));
+                }
+            }
+
             result.Attributes = attributes;
             typeDeclaration.Members.Add(result);
             result.Statements.Add(new CodeMethodInvokeExpression(null, "throw new NotImplementedException"));
@@ -108,7 +131,7 @@ namespace Mohammad.Helpers
 
         public static CodeMemberProperty AddPropertyWithBackingField(this CodeTypeDeclaration typeDeclaration, Type type, string name)
         {
-            var result       = CreateProperty(type, name);
+            var result = CreateProperty(type, name);
             var backingField = new CodeMemberField(new CodeTypeReference(type), "_" + result.Name);
             typeDeclaration.Members.Add(backingField);
 
@@ -118,14 +141,19 @@ namespace Mohammad.Helpers
             return result;
         }
 
-        public static CodeMemberProperty AddPropertyWithBackingField(this CodeTypeDeclaration typeDeclaration,          string typeName, string name,
-                                                                     string                   backingFieldValue = null, bool   isReadOnly = false)
+        public static CodeMemberProperty AddPropertyWithBackingField(this CodeTypeDeclaration typeDeclaration,
+            string typeName,
+            string name,
+            string backingFieldValue = null,
+            bool isReadOnly = false)
         {
-            var result       = CreateProperty(typeName, name);
+            var result = CreateProperty(typeName, name);
             var backingField = new CodeMemberField(new CodeTypeReference(typeName), "_" + result.Name);
 
             if (!backingFieldValue.IsNullOrEmpty())
+            {
                 backingField.InitExpression = new CodeSnippetExpression(backingFieldValue);
+            }
 
             typeDeclaration.Members.Add(backingField);
 
@@ -170,8 +198,8 @@ namespace Mohammad.Helpers
             {
                 Attributes = MemberAttributes.Public, Type = eventArgs.Name == null
                     ? new CodeTypeReference("System.EventHandler")
-                    : new CodeTypeReference(string.Format("System.EventHandler<{0}>", eventArgs.Name))
-              , Name = name
+                    : new CodeTypeReference(string.Format("System.EventHandler<{0}>", eventArgs.Name)),
+                Name = name
             };
             return propertyChanged;
         }
@@ -195,13 +223,11 @@ namespace Mohammad.Helpers
         }
 
         public static CodeMethodReturnStatement CreatePropGet(CodeMemberField backingField) => new CodeMethodReturnStatement(
-                                                                                                                             new CodeFieldReferenceExpression(new CodeThisReferenceExpression()
-                                                                                                                                                            , backingField.Name));
+            new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), backingField.Name));
 
         public static CodeAssignStatement CreatePropSet(CodeMemberField backingField) => new CodeAssignStatement(
-                                                                                                                 new CodeFieldReferenceExpression(new CodeThisReferenceExpression()
-                                                                                                                                                , backingField.Name),
-                                                                                                                 new CodePropertySetValueReferenceExpression());
+            new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), backingField.Name),
+            new CodePropertySetValueReferenceExpression());
 
         public static void GenerateCSharpCode(this CodeCompileUnit unit, FileInfo outputFile)
         {
@@ -211,11 +237,17 @@ namespace Mohammad.Helpers
                 BracingStyle = "C"
             };
             if (!outputFile.Exists)
+            {
                 outputFile.CreateText().Close();
+            }
+
             outputFile.Attributes = EnumHelper.RemoveFlag(outputFile.Attributes, FileAttributes.ReadOnly);
             outputFile.Attributes = EnumHelper.RemoveFlag(outputFile.Attributes, FileAttributes.System);
             outputFile.Attributes = EnumHelper.RemoveFlag(outputFile.Attributes, FileAttributes.Hidden);
-            using (var sourceWriter = new StreamWriter(outputFile.FullName)) provider.GenerateCodeFromCompileUnit(unit, sourceWriter, options);
+            using (var sourceWriter = new StreamWriter(outputFile.FullName))
+            {
+                provider.GenerateCodeFromCompileUnit(unit, sourceWriter, options);
+            }
         }
 
         public static void GenerateCSharpCode(this CodeCompileUnit unit, TextWriter writer)
@@ -235,43 +267,69 @@ namespace Mohammad.Helpers
                 IsClass = true, TypeAttributes = TypeAttributes.Public, IsPartial = true
             };
             if (!docComments.IsNullOrEmpty())
+            {
                 result.AddDocComment(docComments);
+            }
+
             if (parent != null)
+            {
                 parent.Types.Add(result);
+            }
+
             baseTypeNames.Compact().ForEach(result.BaseTypes.Add);
             return result;
         }
 
-        public static CodeMemberField InitField(MemberAttributes modifiers, string initValue, Type type, string docComment, CodeTypeDeclaration parent,
-                                                string           name)
+        public static CodeMemberField InitField(MemberAttributes modifiers,
+            string initValue,
+            Type type,
+            string docComment,
+            CodeTypeDeclaration parent,
+            string name)
         {
             var result = new CodeMemberField
             {
                 Attributes = modifiers
             };
             if (!initValue.IsNullOrEmpty())
+            {
                 result.InitExpression = new CodeSnippetExpression(initValue);
+            }
+
             result.Name = name;
             result.Type = new CodeTypeReference(type);
             if (!string.IsNullOrEmpty(docComment))
+            {
                 result.AddDocComment(docComment);
+            }
+
             parent.Members.Add(result);
             return result;
         }
 
-        public static CodeMemberField InitField(MemberAttributes modifiers, string initValue, string typeName, string docComment, CodeTypeDeclaration parent,
-                                                string           name)
+        public static CodeMemberField InitField(MemberAttributes modifiers,
+            string initValue,
+            string typeName,
+            string docComment,
+            CodeTypeDeclaration parent,
+            string name)
         {
             var result = new CodeMemberField
             {
                 Attributes = modifiers
             };
             if (!initValue.IsNullOrEmpty())
+            {
                 result.InitExpression = new CodeSnippetExpression(initValue);
+            }
+
             result.Name = name;
             result.Type = new CodeTypeReference(typeName);
             if (!docComment.IsNullOrEmpty())
+            {
                 result.AddDocComment(docComment);
+            }
+
             parent.Members.Add(result);
             return result;
         }
@@ -283,24 +341,39 @@ namespace Mohammad.Helpers
                 TypeAttributes = TypeAttributes.Public, IsInterface = true
             };
             if (!docComments.IsNullOrEmpty())
+            {
                 result.AddDocComment(docComments);
+            }
+
             parent.Types.Add(result);
             return result;
         }
 
         public static CodeNamespace InitNamespace(string name) => new CodeNamespace(name);
 
-        public static CodeMemberProperty InitProperty(MemberAttributes    modifiers, bool   hasGet, bool   hasSet, Type type, string docComment,
-                                                      CodeTypeDeclaration parent,    string name,   string backingFieldName)
+        public static CodeMemberProperty InitProperty(MemberAttributes modifiers,
+            bool hasGet,
+            bool hasSet,
+            Type type,
+            string docComment,
+            CodeTypeDeclaration parent,
+            string name,
+            string backingFieldName)
         {
             if (string.IsNullOrEmpty(backingFieldName))
+            {
                 backingFieldName = string.Concat("_", name);
+            }
+
             var result = new CodeMemberProperty
             {
                 Attributes = modifiers, Name = name, HasGet = hasGet, HasSet = hasSet, Type = new CodeTypeReference(type)
             };
             if (!docComment.IsNullOrEmpty())
+            {
                 result.AddDocComment(docComment);
+            }
+
             if (hasGet)
             {
                 //CodeMethodReturnStatement t = new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), backingFieldName));
@@ -313,23 +386,38 @@ namespace Mohammad.Helpers
             }
 
             if (hasSet)
+            {
                 result.SetStatements.Add(new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), backingFieldName),
-                                                                 new CodePropertySetValueReferenceExpression()));
+                    new CodePropertySetValueReferenceExpression()));
+            }
+
             parent.Members.Add(result);
             return result;
         }
 
-        public static CodeMemberProperty InitProperty(MemberAttributes    modifiers, bool   hasGet, bool   hasSet, string typeName, string docComment,
-                                                      CodeTypeDeclaration parent,    string name,   string backingFieldName)
+        public static CodeMemberProperty InitProperty(MemberAttributes modifiers,
+            bool hasGet,
+            bool hasSet,
+            string typeName,
+            string docComment,
+            CodeTypeDeclaration parent,
+            string name,
+            string backingFieldName)
         {
             if (string.IsNullOrEmpty(backingFieldName))
+            {
                 backingFieldName = string.Concat("_", name);
+            }
+
             var result = new CodeMemberProperty
             {
                 Attributes = modifiers, Name = name, HasGet = hasGet, HasSet = hasSet, Type = new CodeTypeReference(typeName)
             };
             if (!docComment.IsNullOrEmpty())
+            {
                 result.AddDocComment(docComment);
+            }
+
             if (hasGet)
             {
                 //CodeMethodReturnStatement getMethod = new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), backingFieldName));
@@ -343,7 +431,7 @@ namespace Mohammad.Helpers
             if (hasSet)
             {
                 var setMethod = new CodeAssignStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), backingFieldName),
-                                                        new CodePropertySetValueReferenceExpression());
+                    new CodePropertySetValueReferenceExpression());
                 result.SetStatements.Add(setMethod);
             }
 

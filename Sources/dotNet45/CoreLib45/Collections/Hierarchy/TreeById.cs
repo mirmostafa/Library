@@ -36,15 +36,18 @@ namespace Mohammad.Collections.Hierarchy
         {
             var children = this.Nodes.Where(n => n.ParentId == parentId).ToList();
             foreach (var child in children)
+            {
                 this.Nodes.Remove(child);
+            }
+
             this.Nodes.Remove(this.GetNodeOf(parentId));
         }
+
+        public ReadOnlyTreeById<T> AsReadOnly() => new ReadOnlyTreeById<T>(this.Nodes);
 
         private NodeById<T> GetNodeOf(long currentId)
         {
             return this.Nodes.SingleOrDefault(n => n.CurrentId == currentId);
         }
-
-        public ReadOnlyTreeById<T> AsReadOnly() => new ReadOnlyTreeById<T>(this.Nodes);
     }
 }

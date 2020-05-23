@@ -33,7 +33,10 @@ namespace TestConsole45
                 if (this.UseStaticDataContext)
                 {
                     if (Memento.Get("StaticDb") != null)
+                    {
                         return Memento.Get<TDateContext>("StaticDb");
+                    }
+
                     this.ExceptionHandling.Reset();
                     try
                     {
@@ -46,8 +49,12 @@ namespace TestConsole45
                         return null;
                     }
                 }
+
                 if (this._Db != null)
+                {
                     return this._Db;
+                }
+
                 this.ExceptionHandling.Reset();
                 try
                 {
@@ -62,11 +69,26 @@ namespace TestConsole45
             }
         }
 
-        protected override void DeleteCore(TEntity entity, bool submitChanges) { this.DataContext.DeleteEntity(entity, submitChanges, this.ExceptionHandling); }
+        public void Dispose()
+        {
+            var dataContext = this.DataContext;
+            dataContext?.Dispose();
+        }
+
+        protected override void DeleteCore(TEntity entity, bool submitChanges)
+        {
+            this.DataContext.DeleteEntity(entity, submitChanges, this.ExceptionHandling);
+        }
+
         protected override TEntity FillCore(TEntity entity) => throw new NotImplementedException();
         protected abstract TDateContext GetDb();
         protected override TEntity GetNewCore() => Activator.CreateInstance<TEntity>();
-        protected override void InsertCore(TEntity entity, bool submitChanges) { this.DataContext.InsertEntity(entity, submitChanges, this.ExceptionHandling); }
+
+        protected override void InsertCore(TEntity entity, bool submitChanges)
+        {
+            this.DataContext.InsertEntity(entity, submitChanges, this.ExceptionHandling);
+        }
+
         protected override IEnumerable<TEntity> SelectCore() => this.DataContext.GetAll<TEntity>();
 
         protected override void SaveChangesCore()
@@ -74,12 +96,9 @@ namespace TestConsole45
             CodeHelper.Catch(() => this.DataContext.SaveChanges(), throwException: true, handling: this.ExceptionHandling);
         }
 
-        protected override void UpdateCore(TEntity entity, bool submitChanges) { this.DataContext.UpdateEntity(entity, submitChanges); }
-
-        public void Dispose()
+        protected override void UpdateCore(TEntity entity, bool submitChanges)
         {
-            var dataContext = this.DataContext;
-            dataContext?.Dispose();
+            this.DataContext.UpdateEntity(entity, submitChanges);
         }
     }
 
@@ -107,7 +126,9 @@ namespace TestConsole45
                     db.Refresh(RefreshMode.ClientWins, entity);
                     db.CreateObjectSet<TEntity>().DeleteObject(entity);
                     if (submitChanges)
+                    {
                         db.SaveChanges();
+                    }
                 },
                 handling: exceptionHandling);
         }
@@ -122,7 +143,9 @@ namespace TestConsole45
                 {
                     db.CreateObjectSet<TEntity>().AddObject(entity);
                     if (submitChanges)
+                    {
                         db.SaveChanges();
+                    }
                 },
                 handling: exceptionHandling);
         }
@@ -135,7 +158,9 @@ namespace TestConsole45
                     CodeHelper.Catch(() => db.CreateObjectSet<TEntity>().Attach(entity));
                     db.Refresh(RefreshMode.ClientWins, entity);
                     if (submitChanges)
+                    {
                         db.SaveChanges();
+                    }
                 },
                 handling: exceptionHandling);
         }

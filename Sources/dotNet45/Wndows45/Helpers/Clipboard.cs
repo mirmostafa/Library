@@ -42,15 +42,23 @@ namespace Mohammad.Win.Helpers
             cut = false;
             var data = Clipboard.GetDataObject();
             if (data == null)
+            {
                 return Enumerable.Empty<string>();
-            if (!data.GetDataPresent(DataFormats.FileDrop))
-                return Enumerable.Empty<string>();
+            }
 
-            var files = (string[]) data.GetData(DataFormats.FileDrop);
-            var stream = (MemoryStream) data.GetData("Preferred DropEffect", true);
+            if (!data.GetDataPresent(DataFormats.FileDrop))
+            {
+                return Enumerable.Empty<string>();
+            }
+
+            var files = (string[])data.GetData(DataFormats.FileDrop);
+            var stream = (MemoryStream)data.GetData("Preferred DropEffect", true);
             var flag = stream.ReadByte();
             if (flag != 2 && flag != 5)
+            {
                 return Enumerable.Empty<string>();
+            }
+
             cut = flag == 2;
             return files;
         }

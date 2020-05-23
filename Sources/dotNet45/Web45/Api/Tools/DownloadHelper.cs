@@ -14,6 +14,7 @@ namespace Mohammad.Web.Api.Tools
                 HttpContext.Current.Response.ContentType = "application/octet-stream";
                 HttpContext.Current.Response.AddHeader("Content-Disposition", "attachment; filename=" + filename);
                 while (bytesToRead > 0)
+                {
                     if (HttpContext.Current.Response.IsClientConnected)
                     {
                         var buffer = new byte[10000];
@@ -26,6 +27,7 @@ namespace Mohammad.Web.Api.Tools
                     {
                         bytesToRead = -1;
                     }
+                }
             }
         }
     }

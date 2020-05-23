@@ -27,27 +27,33 @@ namespace Mohammad.Web.Api
 
         protected virtual IHttpActionResult CreateHttpActionResult<TResult>(Func<IActionResult<TResult>> createResponseMessage)
         {
-            if (createResponseMessage == null) throw new ArgumentNullException(nameof(createResponseMessage));
+            if (createResponseMessage == null)
+            {
+                throw new ArgumentNullException(nameof(createResponseMessage));
+            }
 
             return this.CreateHttpActionResult(createResponseMessage());
         }
 
         protected virtual IHttpActionResult CreateHttpActionResult(Func<IActionResult> createResponseMessage)
         {
-            if (createResponseMessage == null) throw new ArgumentNullException(nameof(createResponseMessage));
+            if (createResponseMessage == null)
+            {
+                throw new ArgumentNullException(nameof(createResponseMessage));
+            }
 
             return this.CreateHttpActionResult(createResponseMessage());
         }
 
         protected virtual IHttpActionResult CreateHttpActionResult<TResult>(IActionResult<TResult> result) =>
             result.IsSucceed
-                ? new ResponseMessageResult(this.Request.CreateResponse((HttpStatusCode) result.StatusCode, result, new JsonMediaTypeFormatter()))
-                : new ResponseMessageResult(this.Request.CreateErrorResponse((HttpStatusCode) result.StatusCode, result.Message));
+                ? new ResponseMessageResult(this.Request.CreateResponse((HttpStatusCode)result.StatusCode, result, new JsonMediaTypeFormatter()))
+                : new ResponseMessageResult(this.Request.CreateErrorResponse((HttpStatusCode)result.StatusCode, result.Message));
 
         protected virtual IHttpActionResult CreateHttpActionResult(IActionResult result) =>
             result.IsSucceed
-                ? new ResponseMessageResult(this.Request.CreateResponse((HttpStatusCode) result.StatusCode, result))
-                : new ResponseMessageResult(this.Request.CreateErrorResponse((HttpStatusCode) result.StatusCode, result.Message));
+                ? new ResponseMessageResult(this.Request.CreateResponse((HttpStatusCode)result.StatusCode, result))
+                : new ResponseMessageResult(this.Request.CreateErrorResponse((HttpStatusCode)result.StatusCode, result.Message));
 
         protected virtual async Task<IHttpActionResult> CreateHttpActionResultAsync(Func<IActionResult> createResponseMessage)
         {
@@ -96,14 +102,14 @@ namespace Mohammad.Web.Api
             try
             {
                 var (result, message) = action();
-                buffer.Result         = result;
-                buffer.Message        = message;
-                buffer.IsSucceed      = true;
+                buffer.Result = result;
+                buffer.Message = message;
+                buffer.IsSucceed = true;
             }
             catch (NotImplementedException ex)
             {
-                buffer.Code      = HttpStatusCode.NotImplemented.ToInt();
-                buffer.Message   = this.GetLocalizedString(ex.GetBaseException().Message);
+                buffer.Code = HttpStatusCode.NotImplemented.ToInt();
+                buffer.Message = this.GetLocalizedString(ex.GetBaseException().Message);
                 buffer.IsSucceed = false;
             }
 
@@ -115,13 +121,13 @@ namespace Mohammad.Web.Api
             (int Code, string Message, bool IsSucceed) buffer = (200, null, true);
             try
             {
-                buffer.Message   = action();
+                buffer.Message = action();
                 buffer.IsSucceed = true;
             }
             catch (NotImplementedException ex)
             {
-                buffer.Code      = HttpStatusCode.NotImplemented.ToInt();
-                buffer.Message   = this.GetLocalizedString(ex.GetBaseException().Message);
+                buffer.Code = HttpStatusCode.NotImplemented.ToInt();
+                buffer.Message = this.GetLocalizedString(ex.GetBaseException().Message);
                 buffer.IsSucceed = false;
             }
 

@@ -50,23 +50,28 @@ namespace Mohammad.Exceptions
         {
         }
 
-        protected CommonExceptionBase(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected CommonExceptionBase(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
 
-        protected CommonExceptionBase(string message) : base(message)
+        protected CommonExceptionBase(string message)
+            : base(message)
         {
         }
 
-        protected CommonExceptionBase(string message, Exception inner) : base(message, inner)
+        protected CommonExceptionBase(string message, Exception inner)
+            : base(message, inner)
         {
         }
 
-        protected CommonExceptionBase(string message, string instruction) : base(message, instruction)
+        protected CommonExceptionBase(string message, string instruction)
+            : base(message, instruction)
         {
         }
 
-        protected CommonExceptionBase(string message, Exception inner, string instruction) : base(message, inner, instruction)
+        protected CommonExceptionBase(string message, Exception inner, string instruction)
+            : base(message, inner, instruction)
         {
         }
     }
