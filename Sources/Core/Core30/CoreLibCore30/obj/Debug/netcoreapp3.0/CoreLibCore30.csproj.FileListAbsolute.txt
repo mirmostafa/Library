@@ -1,0 +1,8 @@
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Core\Core30\CoreLibCore30\bin\Debug\netcoreapp3.0\LibCore30.Core.deps.json
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Core\Core30\CoreLibCore30\bin\Debug\netcoreapp3.0\LibCore30.Core.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Core\Core30\CoreLibCore30\bin\Debug\netcoreapp3.0\LibCore30.Core.pdb
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\CoreLibCore30.csproj.CoreCompileInputs.cache
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\CoreLibCore30.AssemblyInfoInputs.cache
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\CoreLibCore30.AssemblyInfo.cs
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\LibCore30.Core.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\LibCore30.Core.pdb
