@@ -1,0 +1,69 @@
+﻿<controls:LibUserControl
+    x:Class="Mohammad.Wpf.Windows.Controls.OperationWatcher"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls"
+    xmlns:converters="clr-namespace:Mohammad.Wpf.Converters"
+    x:Name="LibOprrationWatcher">
+    <UserControl.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ToolBar
+            Visibility="{Binding ElementName=LibOprrationWatcher, Path=IsToolBarVisible, Converter={StaticResource BoolToVisibility}}">
+            <Button Click="CleanButton_OnClick" Content="Clean" />
+            <ToggleButton Content="Auto-scroll" IsChecked="{Binding ElementName=LibOprrationWatcher, Path=AutoScroll}" />
+            <ToggleButton Content="Log all events" IsChecked="{Binding ElementName=LibOprrationWatcher, Path=LogAll}" />
+            <ToggleButton Content="Pause" IsChecked="{Binding ElementName=LibOprrationWatcher, Path=IsPaused}" />
+        </ToolBar>
+        <ListView
+            Name="LogListView"
+            Grid.Row="1"
+            x:FieldModifier="public">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        Width="150"
+                        DisplayMemberBinding="{Binding Time}"
+                        Header="Time" />
+                    <GridViewColumn
+                        Width="400"
+                        DisplayMemberBinding="{Binding Description}"
+                        Header="Description" />
+                    <GridViewColumn
+                        Width="600"
+                        DisplayMemberBinding="{Binding Details}"
+                        Header="Details" />
+                    <GridViewColumn
+                        Width="200"
+                        DisplayMemberBinding="{Binding Sender}"
+                        Header="Sender" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ProgressBar
+            Name="CurrentOperationProgressBar"
+            Grid.Row="2"
+            Height="10"
+            Visibility="Collapsed" />
+        <ProgressBar
+            Name="MainOperationProgressBar"
+            Grid.Row="3"
+            Height="10"
+            Visibility="Collapsed" />
+        <StatusBar
+            Name="StatusBar"
+            Grid.Row="4"
+            Visibility="Collapsed">
+            <StatusBarItem Name="StatusBarItem" Content="" />
+        </StatusBar>
+    </Grid>
+</controls:LibUserControl>

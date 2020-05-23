@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4921A4FF-DD9C-492C-ADD1-70A8AD537173}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mohammad.Web</RootNamespace>
+    <AssemblyName>Library45.Web</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\dotnet45_Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Core30_debug|AnyCPU'">
+    <OutputPath>bin\Core30_debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Core30_release|AnyCPU'">
+    <OutputPath>bin\Core30_release\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Api\Exceptions\BadRequestException.cs" />
+    <Compile Include="Api\Exceptions\InternalServerErrorException.cs" />
+    <Compile Include="Api\Helpers\WebPostedFileExtensions.cs" />
+    <Compile Include="Api\WebApiApplication.cs" />
+    <Compile Include="Api\WebApiApplicationBase.cs" />
+    <Compile Include="Api\Exceptions\ApiExceptionBase.cs" />
+    <Compile Include="Api\ApiControllerBase.cs" />
+    <Compile Include="Api\Helpers\ApiHelpers.cs" />
+    <Compile Include="Api\MessageExchange\IMessageExchange.cs" />
+    <Compile Include="Api\MessageExchange\OkActionResult.cs" />
+    <Compile Include="Api\Tools\MutlipartTools.cs" />
+    <Compile Include="Api\Tools\WebPostedFile.cs" />
+    <Compile Include="Api\WebApiConfigBase.cs" />
+    <Compile Include="Asp\Helpers\Session.cs" />
+    <Compile Include="Asp\Security\UserData.cs" />
+    <Compile Include="Asp\UI\Helpers\ControlHelper.cs" />
+    <Compile Include="Api\Tools\DownloadHelper.cs" />
+    <Compile Include="Asp\Helpers\Vars.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Api\Internals\ApiExceptionLogger.cs" />
+    <Compile Include="Api\Internals\ApiHandleExceptionsAttribute.cs" />
+    <Compile Include="Api\Internals\ApiProxyAttribute.cs" />
+    <Compile Include="Api\Tools\ServerTools.cs" />
+    <Compile Include="Api\Helpers\WebApiConfigHelper.cs" />
+    <Content Include="Asp\UI\WebControls\Tiles\AjaxTile.ascx">
+      <SubType>ASPXCodeBehind</SubType>
+    </Content>
+    <Content Include="Asp\UI\WebParts\DisplayModeMenu.ascx" />
+    <Compile Include="Asp\Security\AuthorizeAttribute.cs" />
+    <Compile Include="Asp\Security\FormsAuthenticationHelper.cs" />
+    <Compile Include="Asp\Security\UserManager.cs" />
+    <Compile Include="Asp\UI\BasePage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Asp\UI\LibraryBasePage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Asp\UI\LibraryBasePage.Generic.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Asp\UI\WebControls\Tiles\AjaxTile.ascx.cs">
+      <DependentUpon>AjaxTile.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Asp\UI\WebControls\Tiles\AjaxTile.ascx.designer.cs">
+      <DependentUpon>AjaxTile.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Asp\UI\WebParts\FileBasedPersonalizationProvider.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\ClientBehavior1.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\ClientBehavior1.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoreLib45\CoreLib45.csproj">
+      <Project>{E9A26E5C-B17E-4A9F-899D-844DA2C0FBFC}</Project>
+      <Name>CoreLib45</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client">
+      <Version>5.2.7</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core">
+      <Version>5.2.7</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.ValueTuple">
+      <Version>4.5.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>if /I "$(ConfigurationName)" == "Release" xcopy "$(TargetPath)" "%25MohammadAssemblyBank%25\Library\*.dll" /y</PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions />
+</Project>

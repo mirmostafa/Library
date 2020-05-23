@@ -1,0 +1,18 @@
+﻿<Button x:Class="Mohammad.Wpf.Windows.Controls.PathButton"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls"
+        Name="Me"
+        Style="{StaticResource NormalButton}"
+        mc:Ignorable="d">
+    <controls:IconicTextBlock HorizontalAlignment="Center"
+                              VerticalAlignment="Center"
+                              PathStyle="{Binding ElementName=Me,
+                                                  Path=PathStyle}"
+                              Text="{Binding ElementName=Me,
+                                             Path=Text}"
+                              TextBlockStyle="{Binding ElementName=Me,
+                                                       Path=TextBlockStyle}" />
+</Button>

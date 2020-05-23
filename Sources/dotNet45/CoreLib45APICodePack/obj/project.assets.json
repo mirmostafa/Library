@@ -1,0 +1,165 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.5": {
+      "CoreLib45/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        },
+        "compile": {
+          "bin/placeholder/CoreLib45.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CoreLib45.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5/win": {
+      "CoreLib45/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        },
+        "compile": {
+          "bin/placeholder/CoreLib45.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CoreLib45.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5/win-x64": {
+      "CoreLib45/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        },
+        "compile": {
+          "bin/placeholder/CoreLib45.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CoreLib45.dll": {}
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5/win-x86": {
+      "CoreLib45/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "System.ValueTuple": "4.5.0"
+        },
+        "compile": {
+          "bin/placeholder/CoreLib45.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/CoreLib45.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "CoreLib45/1.0.0": {
+      "type": "project",
+      "path": "../CoreLib45/CoreLib45.csproj",
+      "msbuildProject": "../CoreLib45/CoreLib45.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.5": [
+      "CoreLib45 >= 1.0.0",
+      "Microsoft.WindowsAPICodePack-Core >= 1.1.0.2"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\": {},
+    "C:\\Microsoft\\Xamarin\\NuGet\\": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\CoreLib45APICodePack.csproj",
+      "projectName": "CoreLib45APICodePack",
+      "projectPath": "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\CoreLib45APICodePack.csproj",
+      "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\obj\\",
+      "projectStyle": "PackageReference",
+      "skipContentFileWrite": true,
+      "fallbackFolders": [
+        "C:\\Microsoft\\Xamarin\\NuGet\\"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net45"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "D:\\Mirmostafa\\Sources\\Satrap\\Shared": {}
+      },
+      "frameworks": {
+        "net45": {
+          "projectReferences": {
+            "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj": {
+              "projectPath": "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj"
+            }
+          }
+        }
+      }
+    },
+    "frameworks": {
+      "net45": {
+        "dependencies": {
+          "Microsoft.WindowsAPICodePack-Core": {
+            "target": "Package",
+            "version": "[1.1.0.2, )"
+          }
+        }
+      }
+    },
+    "runtimes": {
+      "win": {
+        "#import": []
+      },
+      "win-x64": {
+        "#import": []
+      },
+      "win-x86": {
+        "#import": []
+      }
+    }
+  },
+  "logs": [
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package Microsoft.WindowsAPICodePack-Core. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages, Stimul",
+      "libraryId": "Microsoft.WindowsAPICodePack-Core",
+      "targetGraphs": [
+        ".NETFramework,Version=v4.5",
+        ".NETFramework,Version=v4.5/win",
+        ".NETFramework,Version=v4.5/win-x64",
+        ".NETFramework,Version=v4.5/win-x86"
+      ]
+    },
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package System.ValueTuple. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages, Stimul",
+      "libraryId": "System.ValueTuple",
+      "targetGraphs": [
+        ".NETFramework,Version=v4.5",
+        ".NETFramework,Version=v4.5/win",
+        ".NETFramework,Version=v4.5/win-x64",
+        ".NETFramework,Version=v4.5/win-x86"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:tiles="clr-namespace:Mohammad.Wpf.Windows.Controls.Tiles">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="../../../Themes/DefaultsValues.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style x:Key="BaseTile" TargetType="tiles:BaseTile">
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Opacity" Value=".9" />
+    </Style>
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:SquareBlockTile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:SquareText01Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:SquareText02Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:SquareText03Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:SquareText04Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:WideText01Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:WideText02Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:WideText03Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:WideText04Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:WideText09Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:WideText11Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:WideText13Tile" />
+    <Style BasedOn="{StaticResource BaseTile}" TargetType="tiles:WideText14Tile" />
+    <Style x:Key="TileHeadingBlock" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource DefaultHeadingFontName}" />
+        <Setter Property="FontSize" Value="{StaticResource DefaultHeadingFontSize}" />
+        <Setter Property="Margin" Value="0,0,10,0" />
+    </Style>
+
+    <Style x:Key="TileBodyBlock" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource DefaultBodyFontSize}" />
+        <Setter Property="FontFamily" Value="{StaticResource DefaultBodyFontName}" />
+        <Setter Property="Margin" Value="0,0,10,0" />
+    </Style>
+    <Style x:Key="TileBadgeBlock" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{Binding BadgeFontSize, ElementName=baseTile}" />
+        <Setter Property="FontFamily" Value="{StaticResource DefaultBodyFontName}" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Margin" Value="0,0,10,0" />
+    </Style>
+</ResourceDictionary>

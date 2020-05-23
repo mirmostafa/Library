@@ -1,0 +1,32 @@
+#region Code Identifications
+
+// Created on     2018/07/22
+// Last update on 2018/07/23 by Mohammad Mir mostafa 
+
+#endregion
+
+using System;
+
+namespace Mohammad.Globalization.Attributes
+{
+    [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+    internal sealed class LocalizedDescriptionAttribute : Attribute
+    {
+        public LocalizedDescriptionAttribute(string cultureName)
+            : this(cultureName, string.Empty)
+        {
+        }
+
+        public LocalizedDescriptionAttribute(string cultureName, string description)
+        {
+            if (cultureName == null)
+                throw new ArgumentNullException("cultureName");
+            this.CultureName = cultureName;
+            this.Description = description;
+        }
+
+        public string CultureName { get; set; }
+
+        public string Description { get; set; }
+    }
+}

@@ -1,0 +1,88 @@
+﻿<tiles:BaseTile x:Class="Mohammad.Wpf.Windows.Controls.Tiles.WideText02Tile"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:tiles="clr-namespace:Mohammad.Wpf.Windows.Controls.Tiles"
+                x:Name="baseTile"
+                Scale="Tile100Wide">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Tiles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50*" />
+            <RowDefinition Height="25*" />
+            <RowDefinition Height="25*" />
+            <RowDefinition Height="25*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="33*" />
+            <ColumnDefinition Width="33*" />
+            <ColumnDefinition Width="33*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Name="textBlock1"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="3"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileHeadingBlock}" />
+        <TextBlock Name="textBlock2"
+                   Grid.Row="1"
+                   Grid.Column="1"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileBodyBlock}" />
+        <TextBlock Name="textBlock3"
+                   Grid.Row="2"
+                   Grid.Column="1"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileBodyBlock}" />
+        <TextBlock Name="textBlock4"
+                   Grid.Row="3"
+                   Grid.Column="1"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileBodyBlock}" />
+        <TextBlock Name="textBlock5"
+                   Grid.Row="1"
+                   Grid.Column="2"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileBodyBlock}" />
+        <TextBlock Name="textBlock6"
+                   Grid.Row="2"
+                   Grid.Column="2"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileBodyBlock}" />
+        <TextBlock Name="textBlock7"
+                   Grid.Row="3"
+                   Grid.Column="2"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileBodyBlock}" />
+        <TextBlock Name="textBlock8"
+                   Grid.Row="1"
+                   Grid.Column="3"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileBodyBlock}" />
+        <TextBlock Name="textBlock9"
+                   Grid.Row="2"
+                   Grid.Column="3"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileBodyBlock}" />
+        <TextBlock Name="textBlock10"
+                   Grid.Row="3"
+                   Grid.Column="3"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource TileBodyBlock}" />
+    </Grid>
+</tiles:BaseTile>

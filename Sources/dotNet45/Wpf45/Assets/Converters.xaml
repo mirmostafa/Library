@@ -1,0 +1,16 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:Mohammad.Wpf.Converters">
+
+    <converters:ToUpperConverter x:Key="ToUpperConverter" />
+    <converters:ToLowerConverter x:Key="ToLowerConverter" />
+    <converters:SeparateCamelCase x:Key="SeparateCamelCase" />
+    <converters:FormatterConverter x:Key="FormatterConverter" />
+    <converters:NumericConverter x:Key="NumericConverter" />
+    <converters:StringToEnumConverter x:Key="StringToEnumConverter" />
+    <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    <converters:StringEmptyToVisiblityConverter x:Key="StringEmptyToVisiblityConverter" />
+    <converters:TextToBrushRequiredFieldValidator x:Key="TextToBrushRequiredFieldValidator" />
+    <converters:KeyEqualsValueValidator x:Key="KeyEqualsValueValidator" />
+</ResourceDictionary>

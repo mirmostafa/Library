@@ -1,0 +1,32 @@
+﻿<?xml
+  version="1.0"
+  encoding="utf-8"?>
+
+<Program>
+  <Settings>
+    <ConnectionString Name="Cs1" Step="..." />
+    <ConnectionString Name="Cs2" Step="..." />
+  </Settings>
+  <Commands>
+    <FileSystemCommands Order="0">
+      <Copy Source="..." Destination="..." />
+      <Copy Source="..." Destination="..." />
+      <Copy Source="..." Destination="..." />
+      <Copy Source="..." Destination="..." />
+    </FileSystemCommands>
+    <DatabaseCommands ConnectionString="Cs1">
+      <ExecuteScripts Oreder="0" Suborder="0">
+        <Script File="..." />
+        <Script File="..." />
+        <Script File="..." />
+      </ExecuteScripts>
+    </DatabaseCommands>
+    <DatabaseOprations ConnectionString="Cs2">
+      <ExecuteScripts Oreder="0" Suborder="1">
+        <Script File="..." />
+        <Script File="..." />
+        <Script File="..." />
+      </ExecuteScripts>
+    </DatabaseOprations>
+  </Commands>
+</Program>

@@ -1,0 +1,649 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E0AA6D37-5477-4DB6-8ECA-6F24B54F304D}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mohammad.Wpf</RootNamespace>
+    <AssemblyName>Library45.Wpf</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <ExpressionBlendVersion>5.0.40218.0</ExpressionBlendVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\dotnet45_Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Core30_debug|AnyCPU'">
+    <OutputPath>bin\Core30_debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Core30_release|AnyCPU'">
+    <OutputPath>bin\Core30_release\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Controls.Ribbon" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Converters\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converters\ChangeCase.cs" />
+    <Compile Include="Converters\FormatterConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Converters\NumericConverter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Converters\StringEmptyToVisiblityConverter.cs" />
+    <Compile Include="Converters\StringToEnumConverter.cs" />
+    <Compile Include="Converters\TextToBrushRequiredFieldValidator.cs" />
+    <Compile Include="Drawing\ImageConverter.cs" />
+    <Compile Include="Drawing\ImageEncoding.cs" />
+    <Compile Include="EventsArgs\BindingDataEventArgs.cs" />
+    <Compile Include="EventsArgs\LibCommandInitializingEventArgs.cs" />
+    <Compile Include="Helpers\ApplicationHelper.cs" />
+    <Compile Include="Helpers\CommandHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\ControlHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\TreeViewHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Helpers\VisualTreeHelper.cs" />
+    <Compile Include="Interfaces\IWindowHosted.cs" />
+    <Compile Include="Internals\LibCommandDynamicCollection.cs" />
+    <Compile Include="Interfaces\ISettingsEnabledElement.cs" />
+    <Compile Include="Internals\BalloonIcon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Dialogs\ConnectionStringDialogBox.xaml.cs">
+      <DependentUpon>ConnectionStringDialogBox.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\BalloonFlags.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\IconDataMembers.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\IconState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\MouseEvent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\NotifyCommand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\NotifyIconData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\NotifyIconVersion.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\Point.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\TrayInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\WinApi.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\WindowClass.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Interop\WindowMessageSink.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\PopupActivationMode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\RoutedEventHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Internals\Util.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Page Include="Assets\Converters.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\IconicPaths.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\IconsNonShared.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Skin_Default.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Skin_Black.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ModernUI\ProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ModernUI.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="ValidationRules\MandatoryValidationRule.cs" />
+    <Compile Include="Windows\Controls\CalloutTextBlock.xaml.cs">
+      <DependentUpon>CalloutTextBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\CalloutTextBox.xaml.cs">
+      <DependentUpon>CalloutTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\DetailsView.xaml.cs">
+      <DependentUpon>DetailsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\DescriptiveBox.xaml.cs">
+      <DependentUpon>DescriptiveBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\HamburgerMenu.cs" />
+    <Compile Include="Windows\Controls\HamburgerMenuItem.cs" />
+    <Compile Include="Windows\Controls\HeaderedPanel.xaml.cs">
+      <DependentUpon>HeaderedPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\IconicTextBlock.xaml.cs">
+      <DependentUpon>IconicTextBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\LibButtonBase.cs" />
+    <Compile Include="Windows\Controls\LibCheckBox.xaml.cs">
+      <DependentUpon>LibCheckBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\LibFrame.xaml.cs">
+      <DependentUpon>LibFrame.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\LibPanel.cs" />
+    <Compile Include="Windows\Controls\LibTreeViewItem.cs" />
+    <Compile Include="Windows\Controls\NavigationBar.xaml.cs">
+      <DependentUpon>NavigationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\NavigationTabControl.xaml.cs">
+      <DependentUpon>NavigationTabControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\OperationWatcherPage.xaml.cs">
+      <DependentUpon>OperationWatcherPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\PageBase.cs" />
+    <Compile Include="Windows\Controls\ProgressView.xaml.cs">
+      <DependentUpon>ProgressView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\SeparatorBlock.xaml.cs">
+      <DependentUpon>SeparatorBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\SeparatorControl.xaml.cs">
+      <DependentUpon>SeparatorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\TextBoxButton.xaml.cs">
+      <DependentUpon>TextBoxButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\WideText14Tile.xaml.cs">
+      <DependentUpon>WideText14Tile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\WideText13Tile.xaml.cs">
+      <DependentUpon>WideText13Tile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\TitleBar.xaml.cs">
+      <DependentUpon>TitleBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Dialogs\MsgBox.cs" />
+    <Compile Include="Windows\IFlickable.cs" />
+    <Compile Include="Windows\Controls\LibTextBlock.xaml.cs">
+      <DependentUpon>LibTextBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\ILibControl.cs" />
+    <Compile Include="Windows\Input\ILibCommandSource.cs" />
+    <Compile Include="Windows\Input\ILibInputElement.cs" />
+    <Compile Include="Windows\Input\LibCommands\ILibCommand.cs" />
+    <Compile Include="Windows\Input\LibCommands\NavigationCommand.cs" />
+    <Compile Include="Windows\LibraryApplication.cs" />
+    <Compile Include="Windows\Media\Animations.cs" />
+    <Compile Include="Windows\Behaviors\TextBoxMaskBehavior.cs" />
+    <Compile Include="Specialized\BingImage.cs" />
+    <Compile Include="Windows\Controls\CommandBar.xaml.cs">
+      <DependentUpon>CommandBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\ConnectionStringBox.xaml.cs">
+      <DependentUpon>ConnectionStringBox.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\ButtonBar.xaml.cs">
+      <DependentUpon>ButtonBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\SeparatorCheckBox.xaml.cs">
+      <DependentUpon>SeparatorCheckBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\IDescriptiveObject.cs" />
+    <Compile Include="Windows\Controls\LibUserControl.cs" />
+    <Compile Include="Windows\Controls\VersionTextBox.xaml.cs">
+      <DependentUpon>VersionTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\GifImage.cs" />
+    <Compile Include="Windows\Controls\LabeledTextBox.xaml.cs">
+      <DependentUpon>LabeledTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\LineBlock.xaml.cs">
+      <DependentUpon>LineBlock.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\LineControl.xaml.cs">
+      <DependentUpon>LineControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\LookupBox.xaml.cs">
+      <DependentUpon>LookupBox.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\LookupBoxItemPage.xaml.cs">
+      <DependentUpon>LookupBoxItemPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\OperationWatcher.xaml.cs">
+      <DependentUpon>OperationWatcher.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\PageHeader.xaml.cs">
+      <DependentUpon>PageHeader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\PathButton.xaml.cs">
+      <DependentUpon>PathButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\RelativeAnimatingContentControl.cs" />
+    <Compile Include="Windows\Controls\SeparatorLabel.xaml.cs">
+      <DependentUpon>SeparatorLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\NotifyIcon.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\SystemNotificationAreaIcon.Declarations.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\BaseTile.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\WideText11Tile.xaml.cs">
+      <DependentUpon>WideText11Tile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\WideText09Tile.xaml.cs">
+      <DependentUpon>WideText09Tile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\WideText04Tile.xaml.cs">
+      <DependentUpon>WideText04Tile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\WideText03Tile.xaml.cs">
+      <DependentUpon>WideText03Tile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\WideText02Tile.xaml.cs">
+      <DependentUpon>WideText02Tile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquareBlockTile.xaml.cs">
+      <DependentUpon>SquareBlockTile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquareImageTile.xaml.cs">
+      <DependentUpon>SquareImageTile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquarePeekImageAndText01Tile.xaml.cs">
+      <DependentUpon>SquarePeekImageAndText01Tile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquarePeekImageAndText02Tile.xaml.cs">
+      <DependentUpon>SquarePeekImageAndText02Tile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquarePeekImageAndText03Tile.xaml.cs">
+      <DependentUpon>SquarePeekImageAndText03Tile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquarePeekImageAndText04Tile.xaml.cs">
+      <DependentUpon>SquarePeekImageAndText04Tile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquareText01Tile.xaml.cs">
+      <DependentUpon>SquareText01Tile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquareText02Tile.xaml.cs">
+      <DependentUpon>SquareText02Tile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquareText03Tile.xaml.cs">
+      <DependentUpon>SquareText03Tile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\SquareText04Tile.xaml.cs">
+      <DependentUpon>SquareText04Tile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\Tiles\WideText01Tile.xaml.cs">
+      <DependentUpon>WideText01Tile.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Controls\WatermarkTextBox.xaml.cs">
+      <DependentUpon>WatermarkTextBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows\Dialogs\ConnectionStringDialog.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Input\LibCommands\CloseCommand.cs" />
+    <Compile Include="Windows\Input\LibCommands\ILibCommandManager.cs" />
+    <Compile Include="Windows\Input\LibCommands\LibCommandBinding.cs" />
+    <Compile Include="Windows\Input\LibCommands\LibCommandManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Input\LibCommands\LibCommand.cs" />
+    <Compile Include="Windows\Input\LibCommands\ShowWindowCommand.cs" />
+    <Compile Include="Windows\Input\LibCommands\UIElementController.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\Input\WindowsHotKey.cs" />
+    <Compile Include="Windows\Intenals\AppSettings.cs" />
+    <Compile Include="Windows\Controls\LibraryPage.cs" />
+    <Compile Include="Windows\Controls\LibraryWindow.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Windows\DependencyObjects\NumericTextBox.cs" />
+    <Compile Include="Windows\Output\Toast.cs" />
+    <Compile Include="EventsArgs\ApplySettingsEventArgs.cs" />
+    <Compile Include="Windows\Settings\AppSettings.cs" />
+    <Compile Include="Windows\Settings\WindowSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoreLib45\CoreLib45.csproj">
+      <Project>{e9a26e5c-b17e-4a9f-899d-844da2c0fbfc}</Project>
+      <Name>CoreLib45</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Internals\Dialogs\ConnectionStringDialogBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\DefaultTheme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\DefaultsValues.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\CalloutTextBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\CalloutTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\CommandBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\ConnectionStringBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\ButtonBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\DetailsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\DescriptiveBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\HeaderedPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\IconicTextBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\LibCheckBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\LibFrame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\LibTextBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\NavigationBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\NavigationTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\OperationWatcherPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\ProgressView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\SeparatorCheckBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\SeparatorBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\SeparatorControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\TextBoxButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\WideText14Tile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\WideText13Tile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\TitleBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\VersionTextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\LabeledTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\LineBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\LineControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\LookupBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\LookupBoxItemPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\OperationWatcher.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\PageHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\PathButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\SeparatorLabel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\WideText11Tile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\WideText09Tile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\WideText04Tile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\WideText03Tile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\WideText02Tile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquareBlockTile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquareImageTile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquarePeekImageAndText01Tile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquarePeekImageAndText02Tile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquarePeekImageAndText03Tile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquarePeekImageAndText04Tile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquareText01Tile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquareText02Tile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquareText03Tile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\SquareText04Tile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\Tiles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\Tiles\WideText01Tile.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows\Controls\WatermarkTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Internals\DefaultTrayIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Definitions\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Intenals\" />
+    <Folder Include="Internals\Control\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>if /I "$(ConfigurationName)" == "Release" xcopy "$(TargetPath)" "%25MohammadAssemblyBank%25\Library\*.dll" /y</PostBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "XfAAZM7SOBqobQOJgDilkjM6tkVMPlEg0V97awOAV7WK5Z0QlE60Ti6w7X+zDjNfUVGCVBREI1ePbu8Oc6s6tg==",
+  "success": false,
+  "projectFilePath": "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package System.ValueTuple. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages, Stimul",
+      "libraryId": "System.ValueTuple",
+      "targetGraphs": [
+        ".NETFramework,Version=v4.5",
+        ".NETFramework,Version=v4.5/win",
+        ".NETFramework,Version=v4.5/win-x64",
+        ".NETFramework,Version=v4.5/win-x86"
+      ]
+    }
+  ]
+}

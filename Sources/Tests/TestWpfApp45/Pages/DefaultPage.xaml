@@ -1,0 +1,107 @@
+﻿<PageBase
+    x:Class="TestWpfApp45.Pages.DefaultPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="ThisPage"
+    Title="DefaultPage"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    Loaded="DefaultPage_OnLoaded"
+    mc:Ignorable="d">
+
+    <Grid Name="ControlClientGrid" Style="{StaticResource ControlClientGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <HeaderedPanel IsChildEnabled="{Binding Header.IsChecked, RelativeSource={RelativeSource Self}}" SepratorColor="Teal">
+                <HeaderedPanel.Header>
+                    <LibCheckBox IsChecked="True" Text="Enable Group" />
+                </HeaderedPanel.Header>
+                <StackPanel>
+                    <LineControl>
+                        <DescriptiveBox Description="Cortana is the codename for the newly announced intelligent personal assistant and knowledge navigator for Windows Phone 8.1. The technology is expected to be added to Windows 8.x and the Xbox One in the future. It builds off of Microsoft's current voice technology called TellMe, which was purchased by Microsoft in 2009." Header="Cortana">
+                            <LibCheckBox Text="Enabled" />
+                        </DescriptiveBox>
+                    </LineControl>
+                    <LineControl>
+                        <LibCheckBox
+                            AutoFlick="True"
+                            IsChecked="True"
+                            Text="_GOD" />
+                    </LineControl>
+                </StackPanel>
+            </HeaderedPanel>
+            <DescriptiveBox
+                Grid.Row="1"
+                Description="The URL which can be seen by the sever and gateway machines. The patches will be uploaded there."
+                Header="Header" />
+            <TextBlock
+                Grid.Row="2"
+                Text="The URL which can be seen by the sever and gateway machines. The patches will be uploaded there."
+                TextWrapping="Wrap" />
+            <ProgressView
+                x:Name="ProgressView"
+                Grid.Row="3"
+                Header="MultiTask Operation Simulation">
+                <ProgressView.Thumbnail>
+                    <Path Fill="Brown" Style="{StaticResource Battery2}" />
+                </ProgressView.Thumbnail>
+            </ProgressView>
+            <VersionTextBox Grid.Row="4" IsEnabled="False" />
+            <SeparatorBlock Grid.Row="6" Header="A SeparatorLabel" />
+            <SeparatorLabel Grid.Row="7" Background="Aqua">
+                <SeparatorLabel.Header>
+                    <IconicTextBlock PathStyle="{StaticResource BackupRestore}" Text="Backup" />
+                </SeparatorLabel.Header>
+            </SeparatorLabel>
+            <CalloutTextBox
+                Name="CalloutBox"
+                Grid.Row="8"
+                Header="CalloutTextBox"
+                Text="This is a CalloutTextBox"
+                TextChanged="CalloutTextBox_OnTextChanged" />
+            <OperationWatcher Name="Watcher" Grid.Row="20" />
+        </Grid>
+        <ButtonBar Grid.Row="1">
+            <ButtonBar.PageButtons>
+                <Button
+                    Click="OperationWatcherTest_OnExecuted"
+                    Content="Multiopration"
+                    Style="{StaticResource LongButton}" />
+                <Button Click="CommonTestsButton_OnClick" />
+                <PathButton PathStyle="{StaticResource Save}" Text="Save" />
+                <Button Click="MsgBoxCheckButton_OnClick" Content="MsgBox Test" />
+                <Button Click="ShowProgressTestButton_OnClick" Content="ShowProgress" />
+                <Button Click="MsgBoxTestButton_OnClick" Content="ShowProgress" />
+            </ButtonBar.PageButtons>
+        </ButtonBar>
+    </Grid>
+
+</PageBase>

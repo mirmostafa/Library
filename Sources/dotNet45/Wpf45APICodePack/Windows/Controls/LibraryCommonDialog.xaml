@@ -1,0 +1,61 @@
+﻿<controls:LibraryGlassWindow x:Class="Mohammad.Wpf.Windows.Controls.LibraryCommonDialog"
+                             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                             xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls"
+                             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                             xmlns:controls1="clr-namespace:Mohammad.Wpf.Windows.Controls;assembly=Library45.Wpf"
+                             xmlns:libCommands="clr-namespace:Mohammad.Wpf.Windows.Input.LibCommands;assembly=Library45.Wpf"
+                             x:Name="Me" Closing="LibraryCommonDialog_OnClosing"
+                             Loaded="LibCommonDialog_OnLoaded"
+                             WindowStartupLocation="CenterScreen">
+    <Grid Name="LayoutRoot" Style="{StaticResource LayoutRoot}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ProgressBar Name="ProgressBar"
+                     Margin="{StaticResource DefaultMargin}"
+                     Foreground="RoyalBlue"
+                     Style="{StaticResource ModernProgressBar}" />
+        <controls1:PageHeader Name="PageHeader"
+                              Grid.Row="1"
+                              Height="60"
+                              AutoVisible="True"
+                              Owner="{Binding ElementName=Me}"
+                              Visibility="Hidden" />
+        <Grid x:Name="ControlClientGrid"
+              Grid.Row="2"
+              Style="{StaticResource ControlClientGrid}">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <controls1:LibFrame Name="Frame"
+                                    VerticalAlignment="Stretch"
+                                    UseAnimation="{Binding ElementName=Me,
+                                                 Path=UseAnimation}" />
+            </ScrollViewer>
+        </Grid>
+        <controls1:CommandBar Name="CommandBar"
+                              Grid.Row="3"
+                              Height="35"
+                              Visibility="Hidden">
+            <controls1:CommandBar.PageCommands>
+                <libCommands:CloseCommand Closing="OkCommand_OnClosing"
+                                          CommandName="OkCommand"
+                                          Content="OK"
+                                          DialogResult="True"
+                                          IsDefault="True" />
+                <libCommands:CloseCommand Closing="CancelCommand_OnClosing"
+                                          CommandName="CancelCommand"
+                                          Content="Cancel"
+                                          DialogResult="False"
+                                          IsCancel="True" />
+            </controls1:CommandBar.PageCommands>
+        </controls1:CommandBar>
+        <StatusBar Name="StatusBar"
+                   Grid.Row="4"
+                   Visibility="Hidden">
+            <StatusBarItem Name="StatusBarItem" />
+        </StatusBar>
+    </Grid>
+</controls:LibraryGlassWindow>

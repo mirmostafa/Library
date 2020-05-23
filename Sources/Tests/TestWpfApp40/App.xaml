@@ -1,0 +1,5 @@
+﻿<Windows:LibraryApplicationCodePack x:Class="TestWpfApp40.App"
+                                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                                    xmlns:Windows="clr-namespace:Library40.Wpf.Windows;assembly=Library40.WpfAPICodePack"
+                                    StartupUri="MainWindow.xaml" />

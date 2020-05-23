@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "dgSpecHash": "XSiK6y7Qiw+at/h2r9GPo3p+hC3B0WJz64YKTCZ+AGEN23DbDs23R7Z6cK7a2zKeWzSDOUhWfRHzG3uI20ZIRA==",
+  "success": false,
+  "projectFilePath": "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\CoreLib45APICodePack.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package Microsoft.WindowsAPICodePack-Core. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages, Stimul",
+      "libraryId": "Microsoft.WindowsAPICodePack-Core",
+      "targetGraphs": [
+        ".NETFramework,Version=v4.5",
+        ".NETFramework,Version=v4.5/win",
+        ".NETFramework,Version=v4.5/win-x64",
+        ".NETFramework,Version=v4.5/win-x86"
+      ]
+    },
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package System.ValueTuple. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages, Stimul",
+      "libraryId": "System.ValueTuple",
+      "targetGraphs": [
+        ".NETFramework,Version=v4.5",
+        ".NETFramework,Version=v4.5/win",
+        ".NETFramework,Version=v4.5/win-x64",
+        ".NETFramework,Version=v4.5/win-x86"
+      ]
+    }
+  ]
+}

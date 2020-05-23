@@ -1,0 +1,25 @@
+#region File Notice
+// Created at: 2013/12/24 3:43 PM
+// Last Update time: 2013/12/24 4:04 PM
+// Last Updated by: Mohammad Mir mostafa
+#endregion
+
+using System;
+
+namespace Library40.PlugIn
+{
+	[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
+	public sealed class ExportAttribute : Attribute
+	{
+		public ExportAttribute()
+		{
+		}
+
+		public ExportAttribute(string name)
+		{
+			this.Name = name;
+		}
+
+		public string Name { get; set; }
+	}
+}

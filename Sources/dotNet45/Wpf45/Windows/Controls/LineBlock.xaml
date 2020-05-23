@@ -1,0 +1,27 @@
+﻿<controls:LibUserControl x:Class="Mohammad.Wpf.Windows.Controls.LineBlock"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls"
+                         x:Name="libUserControl"
+                         Margin="0"
+                         d:DesignWidth="100"
+                         mc:Ignorable="d">
+    <Grid Background="{Binding ElementName=libUserControl, Path=Background}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <controls:LineControl Background="{Binding ElementName=libUserControl, Path=Background}"
+                              LineBrush="{Binding LineBrush, ElementName=libUserControl}" />
+        <controls:LibTextBlock x:Name="LibTextBlock"
+                               Grid.Column="1"
+                               Margin="1,0,0,0"
+                               VerticalAlignment="Center"
+                               Background="{Binding ElementName=libUserControl,
+                                                    Path=Background}"
+                               Text="{Binding Text,
+                                              ElementName=libUserControl}" />
+    </Grid>
+</controls:LibUserControl>

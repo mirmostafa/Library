@@ -1,0 +1,42 @@
+﻿<controls:LibUserControl
+    x:Class="Mohammad.Wpf.Windows.Controls.VersionTextBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:Mohammad.Wpf.Windows.Behaviors"
+    xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls"
+    x:Name="Me"
+    Height="26">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Text" Value="." />
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Width" Value="35" />
+            <Setter Property="Height" Value="22" />
+        </Style>
+    </UserControl.Resources>
+    <DockPanel DataContext="{Binding ElementName=Me, Path=Version}" LastChildFill="False">
+        <TextBox
+            behaviors:TextBoxMaskBehavior.Mask="Integer"
+            IsReadOnly="{Binding IsReadOnly, ElementName=Me}"
+            Text="{Binding Major}" />
+        <TextBlock />
+        <TextBox
+            behaviors:TextBoxMaskBehavior.Mask="Integer"
+            IsReadOnly="{Binding IsReadOnly, ElementName=Me}"
+            Text="{Binding Minor}" />
+        <TextBlock />
+        <TextBox
+            behaviors:TextBoxMaskBehavior.Mask="Integer"
+            IsReadOnly="{Binding IsReadOnly, ElementName=Me}"
+            Text="{Binding Build}" />
+        <TextBlock />
+        <TextBox
+            behaviors:TextBoxMaskBehavior.Mask="Integer"
+            IsReadOnly="{Binding IsReadOnly, ElementName=Me}"
+            Text="{Binding Revision}" />
+    </DockPanel>
+</controls:LibUserControl>

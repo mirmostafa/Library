@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Library40.Bcl.Hierarchy.Node&lt;T&gt;" Collapsed="true">
+    <Position X="0.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAACAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Bcl\Hierarchy\Node.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.Bcl.Hierarchy.TreeByIdComplex&lt;TItem, TParent&gt;" Collapsed="true">
+    <Position X="3.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAJAAIAAAAAAABAAAAAAAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Bcl\Hierarchy\TreeByIdComplex.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.Bcl.Hierarchy.NodeById&lt;T&gt;" Collapsed="true">
+    <Position X="6.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAEAACAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Bcl\Hierarchy\NodeById.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.Bcl.Hierarchy.NodeByIdComplex&lt;TItem, TParent&gt;" Collapsed="true">
+    <Position X="3.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAAAAAAAEAACAQAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Bcl\Hierarchy\NodeByIdComplex.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.Bcl.Hierarchy.ReadOnlyTree&lt;T&gt;" Collapsed="true">
+    <Position X="3.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEgCAAAAAAAAhCAAAAAAAAAAAABAAAEAAQAAIAAAAA=</HashCode>
+      <FileName>Bcl\Hierarchy\ReadOnlyTree.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Nodes" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Library40.Bcl.Hierarchy.ReadOnlyTreeById&lt;T&gt;" Collapsed="true">
+    <Position X="6.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEgCAAAAAAAABAAAAAAAAAAAAABAAAEAAQAAAAAAIA=</HashCode>
+      <FileName>Bcl\Hierarchy\ReadOnlyTreeById.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Nodes" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Library40.Bcl.Hierarchy.ReadOnlyTreeByIdComplex&lt;TItem, TParent&gt;" Collapsed="true">
+    <Position X="3.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEgCAAAAAAAABAAAAgAAAAAAAQAAAAEAAQAAAAAAAA=</HashCode>
+      <FileName>Bcl\Hierarchy\ReadOnlyTreeByIdComplex.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Nodes" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Library40.Bcl.Hierarchy.Tree&lt;T&gt;" Collapsed="true">
+    <Position X="3.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAABAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Bcl\Hierarchy\Tree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.Bcl.Hierarchy.TreeById&lt;T&gt;" Collapsed="true">
+    <Position X="6.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAhAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Bcl\Hierarchy\TreeById.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,9 @@
+﻿<controls:LibUserControl x:Class="Mohammad.Wpf.Windows.Controls.ButtonBar"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls">
+    <DockPanel Style="{StaticResource CommandBar}">
+        <StackPanel Name="AppButtonPanel" Style="{StaticResource AppCommandPanel}" />
+        <StackPanel Name="PageButtonPanel" Style="{StaticResource PageCommandPanel}" />
+    </DockPanel>
+</controls:LibUserControl>

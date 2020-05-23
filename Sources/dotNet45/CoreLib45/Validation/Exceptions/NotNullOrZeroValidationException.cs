@@ -1,0 +1,45 @@
+#region Code Identifications
+
+// Created on     2018/07/22
+// Last update on 2018/07/23 by Mohammad Mir mostafa 
+
+#endregion
+
+using System;
+using System.Runtime.Serialization;
+
+namespace Mohammad.Validation.Exceptions
+{
+    [Serializable]
+    public class NotNullOrZeroValidationException : ValidationExceptionBase
+    {
+        public NotNullOrZeroValidationException()
+        {
+        }
+
+        protected NotNullOrZeroValidationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+
+        public NotNullOrZeroValidationException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
+
+        public NotNullOrZeroValidationException(string parameterName)
+            : this() => this.ParameterName = parameterName;
+
+        public NotNullOrZeroValidationException(string message, string instruction)
+            : base(message, instruction)
+        {
+        }
+
+        public NotNullOrZeroValidationException(string message, Exception inner, string instruction)
+            : base(message, inner, instruction)
+        {
+        }
+
+        public string ParameterName { get; set; }
+    }
+}

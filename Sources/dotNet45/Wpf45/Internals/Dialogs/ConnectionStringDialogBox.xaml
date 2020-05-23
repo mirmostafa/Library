@@ -1,0 +1,169 @@
+﻿<Window x:Class="Mohammad.Wpf.Internals.Dialogs.ConnectionStringDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:behaviors="clr-namespace:Mohammad.Wpf.Windows.Behaviors"
+        Title="Connection Settings"
+        Width="451"
+        Height="544"
+        Background="White"
+        Loaded="Window_OnLoaded"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        x:ClassModifier="internal">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Name="PromptTextBlock"
+                       Grid.Row="0"
+                       Height="60" />
+            <Label Grid.Row="1" Content="S_erver name:" />
+            <DockPanel Grid.Row="2">
+                <Button Name="RefreshButton"
+                        Width="75"
+                        Margin="2"
+                        Click="RefreshButton_OnClick"
+                        Content="_Refresh"
+                        DockPanel.Dock="Right" />
+                <ComboBox Name="ServersComboBox"
+                          Margin="2"
+                          DockPanel.Dock="Left"
+                          DropDownOpened="ServersComboBox_OnDropDownOpened"
+                          IsEditable="True" />
+            </DockPanel>
+            <GroupBox Grid.Row="3" Header="Log on to the server">
+                <Grid Margin="0,10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="110" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <RadioButton Name="AuthWindowsRadioButton"
+                                 Grid.Row="0"
+                                 Grid.ColumnSpan="3"
+                                 Margin="2"
+                                 Checked="AuthWindowsRadioButton_OnChecked"
+                                 Content="Use _Windows Authentication" />
+                    <RadioButton Name="AuthUserPassRadioButton"
+                                 Grid.Row="1"
+                                 Grid.ColumnSpan="3"
+                                 Margin="2"
+                                 Checked="AuthUserPassRadioButton_OnChecked"
+                                 Content="Use S_QL Server Authentication"
+                                 IsChecked="True" />
+                    <StackPanel Name="UserInfoPanel"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="2"
+                                Margin="2">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0"
+                                   Grid.Column="0"
+                                   Margin="2"
+                                   Content="_User name:" />
+                            <TextBox Name="UserNameTextBox"
+                                     Grid.Row="0"
+                                     Grid.Column="1"
+                                     TextChanged="UserNameTextBoxText_OnChanged" />
+                            <Label Grid.Row="1"
+                                   Grid.Column="0"
+                                   Margin="2"
+                                   Content="_Password:" />
+                            <PasswordBox Name="PasswordTextBox"
+                                         Grid.Row="1"
+                                         Grid.Column="1"
+                                         Margin="2" />
+                            <CheckBox Name="SavePassCheckBox"
+                                      Grid.Row="2"
+                                      Grid.Column="1"
+                                      Margin="2"
+                                      Content="_Save my password"
+                                      IsChecked="True" />
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+            <GroupBox Name="SelectDbGroupBox"
+                      Grid.Row="4"
+                      Header="Connect to a database">
+                <DockPanel>
+                    <Grid Margin="0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Label Grid.Row="0"
+                               Grid.ColumnSpan="2"
+                               Margin="2"
+                               Content="Select or enter a _database name:" />
+                        <ComboBox Name="DbsComboBox"
+                                  Grid.Row="1"
+                                  Grid.ColumnSpan="2"
+                                  Margin="2"
+                                  DropDownOpened="DbsComboBoxDropDown_OnOpened"
+                                  IsEditable="True" />
+                        <Label Grid.Row="2" Content="Connection Timeout:" />
+                        <TextBox Name="TimeoutTextBox"
+                                 Grid.Row="2"
+                                 Grid.Column="2"
+                                 behaviors:TextBoxMaskBehavior.Mask="Integer" />
+                    </Grid>
+                </DockPanel>
+            </GroupBox>
+            <Separator Grid.Row="6" Margin="0,10" />
+        </Grid>
+        <DockPanel Grid.Row="1" LastChildFill="False">
+            <Button Name="TestConnectionButton"
+                    Width="120"
+                    Margin="2"
+                    Click="TestConnectionButton_OnClick"
+                    Content="_Test Connection"
+                    DockPanel.Dock="Left" />
+            <Button Width="75"
+                    Margin="2"
+                    Content="Cancel"
+                    DockPanel.Dock="Right"
+                    IsCancel="True" />
+            <Button Name="OkButton"
+                    Width="75"
+                    Margin="2"
+                    Click="OkButton_OnClick"
+                    Content="OK"
+                    DockPanel.Dock="Right"
+                    IsDefault="True" />
+        </DockPanel>
+    </Grid>
+</Window>

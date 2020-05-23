@@ -1,0 +1,15 @@
+﻿<controls:LibUserControl x:Class="Mohammad.Wpf.Windows.Controls.SeparatorBlock"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls"
+                         x:Name="Me"
+                         mc:Ignorable="d" Padding="0" Margin="0">
+    <controls:SeparatorLabel x:Name="SeparatorLabel">
+        <controls:SeparatorLabel.Header>
+            <TextBlock Foreground="{Binding ElementName=SeparatorLabel, Path=SepratorColor}" Padding="0"
+                       Margin="0,0,0,2" />
+        </controls:SeparatorLabel.Header>
+    </controls:SeparatorLabel>
+</controls:LibUserControl>

@@ -1,0 +1,52 @@
+#region Code Identifications
+
+// Created on     2018/07/25
+// Last update on 2018/08/11 by Mohammad Mir mostafa 
+
+#endregion
+
+using System;
+using System.ServiceModel.Channels;
+using System.Threading.Tasks;
+using Mohammad.Helpers;
+
+namespace Mohammad.ServiceModel
+{
+    public partial class ServiceClient<TContract>
+    {
+        public static TContract GetChannelByServiceConfig()
+        {
+            string uri            = null;
+            var    serviceConfigs = typeof(TContract).GetCustomAttributes(typeof(ServiceConfigAttribute), true);
+            if (serviceConfigs.Length > 0)
+                uri = serviceConfigs[0].As<ServiceConfigAttribute>().ServiceUrl;
+
+            return GetChannel(uri);
+        }
+
+        public static async Task<TContract> GetChannelByServiceConfigAsync()                     => await Task.Run(() => GetChannelByServiceConfig());
+        public static       TContract       GetChannel(string uri, TimeSpan? sendTimeout = null) => GetChannel(uri, WcfHelper.DefaultBinding, sendTimeout);
+
+        public static async Task<TContract> GetChannelAsync(string uri, TimeSpan? sendTimeout = null)
+        {
+            return await Task.Run(() => GetChannel(uri, WcfHelper.DefaultBinding, sendTimeout));
+        }
+
+        public static TContract GetChannel(string uri, Binding binding, TimeSpan? sendTimeout = null) => new ServiceClient<TContract>(uri,
+                                                                                                                                      binding,
+                                                                                                                                      sendTimeout:
+                                                                                                                                      sendTimeout)
+           .GetChannel();
+
+        public static TContract GetChannel(string uri, object callbackObject, TimeSpan? sendTimeout = null) => GetChannel(uri,
+                                                                                                                          WcfHelper.DefaultBinding,
+                                                                                                                          callbackObject,
+                                                                                                                          sendTimeout);
+
+        public static TContract GetChannel(string uri, Binding binding, object callbackObject, TimeSpan? sendTimeout = null) => new ServiceClient<TContract>(
+            uri,
+            binding,
+            callbackObject,
+            sendTimeout).GetChannel();
+    }
+}

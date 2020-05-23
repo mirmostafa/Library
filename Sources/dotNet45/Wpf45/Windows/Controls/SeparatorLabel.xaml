@@ -1,0 +1,23 @@
+﻿<controls:LibUserControl x:Class="Mohammad.Wpf.Windows.Controls.SeparatorLabel"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls"
+                         x:Name="LibSeparatorBlock"
+                         Margin="0,5,0,0"
+                         Background="Transparent"
+                         Padding="0"
+                         d:DesignWidth="300"
+                         mc:Ignorable="d">
+    <DockPanel Margin="0" DataContext="{Binding ElementName=LibSeparatorBlock}">
+        <Label Margin="0"
+               Content="{Binding Header}"
+               Foreground="{Binding SepratorColor}"
+               Padding="0"
+               Style="{Binding LabelStyle}" />
+        <Separator Name="Separator"
+                   Margin="0" Padding="0"
+                   Background="{Binding SepratorColor}" />
+    </DockPanel>
+</controls:LibUserControl>

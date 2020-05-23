@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Library40.LogSystem.Attributes.LogDescriptionAttribute" Collapsed="true">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Attributes\LogDescriptionAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.LogSystem.Configuration.Logging" Collapsed="true">
+    <Position X="8" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAE=</HashCode>
+      <FileName>Configuration\Logging.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.LogSystem.Configuration.LoggingConfigurationHandler" Collapsed="true">
+    <Position X="9.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>Configuration\LoggingConfigurationHandler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.LogSystem.Entities.LogEntity" Collapsed="true">
+    <Position X="9.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAGggAwAEAAAAAAAAAAAABAABAABACAAAQQA=</HashCode>
+      <FileName>Entities\LogEntity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.LogSystem.FileBased.Safe.Writer" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="8" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAEAAIAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>FileBased\Safe\Writer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Library40.LogSystem.FileBased.Text.TextLogger" Collapsed="true">
+    <Position X="3.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Text\TextLogger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.LogSystem.FileBased.Text.TextLogger&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="3.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Text\TextLogger.Generic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Library40.LogSystem.FileBased.Text.TextWriter&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABBAAAAAAAAEAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Text\TextWriter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.LogSystem.FileBased.Xml.XmlLogger" Collapsed="true">
+    <Position X="5.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Xml\XmlLogger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.LogSystem.FileBased.Xml.XmlLogger&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="5.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Xml\XmlLogger.Generic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Library40.LogSystem.FileBased.Xml.XmlWriter&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Xml\XmlWriter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.LogSystem.Internals.Logger&lt;TWriter, TLogEntity&gt;" Collapsed="true">
+    <Position X="4.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEBg8mAYAEAABgEAAAQAgAAQEAAEAAAEFEQAQ=</HashCode>
+      <FileName>Internals\Logger.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Library40.LogSystem.Internals.Utilities" Collapsed="true">
+    <Position X="11.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAABAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Internals\Utilities.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Library40.LogSystem.Internals.Writer&lt;TLog, TLogEntity&gt;" Collapsed="true">
+    <Position X="4.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAwkAAAEAAAgAAAAAAgAAAAAAGAAAAEAAAA=</HashCode>
+      <FileName>Internals\Writer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Library40.LogSystem.Logger&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Logger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Library40.LogSystem.FileBased.IStorageReadable" Collapsed="true">
+    <Position X="11.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\IStorageReadable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Library40.LogSystem.Interfaces.ILogger&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="8" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAgoAAYAAAAAAEAAAAAAAAQEAAAAAAEAEAAA=</HashCode>
+      <FileName>Interfaces\ILogger.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Library40.LogSystem.Interfaces.ILogger" Collapsed="true">
+    <Position X="9.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAggAAYAAAAAAEAAAAAAAAAEAAAAAAEAEAAA=</HashCode>
+      <FileName>Interfaces\ILogger.Generic.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Library40.LogSystem.Internals.IWriter&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="8" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAEAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Internals\IWriter.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Library40.LogSystem.Attributes.AutoFillTag" Collapsed="true">
+    <Position X="8" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAgA=</HashCode>
+      <FileName>Attributes\LogDescriptionAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Library40.LogSystem.Entities.LogLevel" Collapsed="true">
+    <Position X="11.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAYAAAIAAAAAAAAAAAAEAAAAAAEAEAAA=</HashCode>
+      <FileName>Definitions.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Library40.LogSystem.Configurations.LoggingSeverity" Collapsed="true">
+    <Position X="9.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAgEAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Definitions.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

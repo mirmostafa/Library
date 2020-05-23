@@ -1,0 +1,12 @@
+﻿<controls:LibraryPage x:Class="Mohammad.Wpf.Windows.Controls.OperationWatcherPage"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls"
+                      mc:Ignorable="d" x:Name="Me"
+                      d:DesignHeight="300" d:DesignWidth="300"
+                      Title="OperationWatcherPage">
+
+    <controls:OperationWatcher x:Name="Watcher" x:FieldModifier="public" />
+</controls:LibraryPage>

@@ -1,0 +1,74 @@
+﻿<LibraryGlassWindow
+    x:Class="TestWpfApp45.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Pages="clr-namespace:TestWpfApp45.Pages"
+    xmlns:TestWpfApp45="clr-namespace:TestWpfApp45"
+    xmlns:libCommands="clr-namespace:Mohammad.Wpf.Windows.Input.LibCommands;assembly=Library45.WpfAPICodePack"
+    Name="AppMainWindow"
+    Title="Main Window"
+    IsGlassEnabled="True"
+    Loaded="MainWindow_OnLoaded">
+    <Grid Style="{StaticResource LayoutRoot}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ContentControl Opacity=".3">
+            <Canvas>
+                <Image
+                    Name="BackgroundImage"
+                    Stretch="Fill"
+                    StretchDirection="Both" />
+            </Canvas>
+        </ContentControl>
+        <ModernProgressBar
+            Name="ProgressBar"
+            Margin="0"
+            Visibility="Collapsed" />
+        <PageHeader
+            Grid.Row="1"
+            Animation="Navigation"
+            Owner="{Binding ElementName=AppMainWindow}" />
+        <NavigationTabControl
+            Name="NavTab"
+            Grid.Row="3"
+            Background="Transparent"
+            Window="{Binding ElementName=AppMainWindow, Mode=OneWay}">
+            <NavigationTabControl.NavigationCommands>
+                <NavigationCommand
+                    Content="Home"
+                    IsDefault="True"
+                    Source="Pages/DefaultPage.xaml" />
+                <NavigationCommand Content="Events" Navigating="EventNavigation_OnNavigating" />
+                <NavigationCommand Content="Page2" Source="/Pages/Page2.xaml" />
+            </NavigationTabControl.NavigationCommands>
+        </NavigationTabControl>
+        <CommandBar Name="CommandBar" Grid.Row="4">
+            <CommandBar.AppCommands>
+                <libCommands:ExitAppCommand
+                    ConfirmationInstruction="Application Exit"
+                    ConfirmationPrompt="Are you sure you want to close the application?"
+                    Content="E_xit App…" />
+                <LibCommand
+                    CommandName="LoadBing"
+                    Content="Load _Bing"
+                    Executed="LoadBingImage_OnExecuted"
+                    KeyGesture="Ctrl+L" />
+            </CommandBar.AppCommands>
+            <CommandBar.PageCommands>
+                <libCommands:ShowCommonDialogCommand Content="Test Page…" PageType="{x:Type Pages:Page1}" />
+                <LibCommand Content="Test Page2…" Executed="ShowTestPage2_OnExecuted" />
+                <libCommands:ShowCommonDialogCommand
+                    Content="_Settings…"
+                    PageType="{x:Type Pages:SettingsPage}"
+                    ShowStatusBar="True" />
+                <LibCommand Content="Common Tests" Executed="CommonTests_OnExecuted" />
+            </CommandBar.PageCommands>
+        </CommandBar>
+    </Grid>
+
+</LibraryGlassWindow>

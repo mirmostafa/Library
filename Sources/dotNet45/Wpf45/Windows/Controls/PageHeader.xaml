@@ -1,0 +1,72 @@
+﻿<controls:LibUserControl
+    x:Class="Mohammad.Wpf.Windows.Controls.PageHeader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:Mohammad.Wpf.Windows.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="PageHeaderUserControl"
+    HorizontalAlignment="Stretch"
+    d:DesignWidth="300"
+    Loaded="PageHeade_OnLoaded"
+    MouseDown="PageHeader_OnMouseDown"
+    Opacity=".8"
+    mc:Ignorable="d">
+    <Grid Style="{StaticResource PageHeaderLayoutRoot}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+            Name="AppTitleBlock"
+            Grid.ColumnSpan="2"
+            Style="{StaticResource AppTitleBlock}"
+            Visibility="Hidden">
+            <TextBlock.Effect>
+                <BlurEffect Radius="60" />
+            </TextBlock.Effect>
+        </TextBlock>
+        <Image
+            Name="PageLogoImage"
+            Grid.RowSpan="2"
+            Grid.Column="1"
+            MaxWidth="60"
+            MaxHeight="60"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Visibility="Collapsed">
+            <!--
+                <Image.Effect>
+                <DropShadowEffect BlurRadius="15" Color="Navy" />
+                </Image.Effect>
+            -->
+        </Image>
+        <TextBlock
+            Name="PageTitleBlurBlock"
+            Grid.Row="1"
+            Foreground="WhiteSmoke"
+            Style="{StaticResource PageTitleBlock}"
+            Visibility="Hidden">
+            <TextBlock.Effect>
+                <BlurEffect Radius="4" />
+            </TextBlock.Effect>
+        </TextBlock>
+        <TextBlock
+            Name="PageTitleBlock"
+            Grid.Row="1"
+            Style="{StaticResource PageTitleBlock}"
+            Visibility="Hidden" />
+        <TextBlock
+            Name="PageDescriptionBlock"
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            Style="{StaticResource PageDescriptionBlock}"
+            Visibility="Hidden" />
+    </Grid>
+</controls:LibUserControl>

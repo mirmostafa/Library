@@ -1,0 +1,15 @@
+﻿<Tiles:BaseTile x:Class="Library40.Wpf.Windows.Controls.Tiles.SquarePeekImageAndText02Tile"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                xmlns:Tiles="clr-namespace:Library40.Wpf.Windows.Controls.Tiles" Height="310"
+                Width="150">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="150" />
+        </Grid.RowDefinitions>
+        <Tiles:SquareImageTile x:Name="squareImageTile1" />
+        <Tiles:SquareText02Tile Grid.Row="2" x:Name="squareText02Tile1" />
+    </Grid>
+</Tiles:BaseTile>

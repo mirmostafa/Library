@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Mohammad.Logging.AppLogger" Collapsed="true">
+    <Position X="7.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAEAAAAAAAMBIRAAAAAAAAAAAAAAAAAAACABAAAAAAA=</HashCode>
+      <FileName>AppLogger.Static.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.Logging.Logger&lt;TWriter, TLogEntity&gt;" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQEAAAAEAg8mAYAEAABgEAAAQigAAQMAAEAAQEFEUgQ=</HashCode>
+      <FileName>Logger.Generic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Mohammad.Logging.Logger&lt;TWriter&gt;" Collapsed="true">
+    <Position X="3" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Logger.Simple.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.Logging.Configuration.Logging" Collapsed="true">
+    <Position X="7.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAE=</HashCode>
+      <FileName>Configuration\Logging.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.Logging.FileBased.Text.TextLogger" Collapsed="true">
+    <Position X="5.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Text\TextLogger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.Logging.FileBased.Text.TextLogger&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="5.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAEQAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>FileBased\Text\TextLogger.Generic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Mohammad.Logging.FileBased.Text.TextWriter&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="2.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABBAAAAAAAAEAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Text\TextWriter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.Logging.FileBased.Xml.XmlLogger" Collapsed="true">
+    <Position X="0.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Xml\XmlLogger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.Logging.FileBased.Xml.XmlLogger&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="0.75" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAQAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Xml\XmlLogger.Generic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Mohammad.Logging.FileBased.Xml.XmlWriter&lt;TLogEntity&gt;" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FileBased\Xml\XmlWriter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.Logging.Internals.Writer&lt;TLog, TLogEntity&gt;" Collapsed="true">
+    <Position X="1.75" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAwkAAAEAAAgAAAAAAgAAAAAAGAAAAEAAAA=</HashCode>
+      <FileName>Internals\Writer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Mohammad.Logging.FileSplitLogger">
+    <Position X="9.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>SplitLogger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.Logging.FileLogSplitInfo">
+    <Position X="7" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>FileLogSplitInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
