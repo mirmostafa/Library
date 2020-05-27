@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "4yVEviCrb5PO84T+QBJUmikgdysVnhWDr/QrpGJ7ze8bS+R0p6FXOD7vvYtdTOePpq02rAEuH29u7ycoLJP/Yg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\dotNet45\\Web45\\Web45.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.aspnet.webapi.client\\5.2.7\\microsoft.aspnet.webapi.client.5.2.7.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.aspnet.webapi.core\\5.2.7\\microsoft.aspnet.webapi.core.5.2.7.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

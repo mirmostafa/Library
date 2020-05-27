@@ -1,0 +1,16 @@
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\bin\Debug\Library45.Web.dll.config
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\bin\Debug\Library45.Web.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\bin\Debug\Library45.Web.pdb
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\bin\Debug\System.Net.Http.Formatting.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\bin\Debug\System.Web.Http.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\bin\Debug\Newtonsoft.Json.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\bin\Debug\System.ValueTuple.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\bin\Debug\Library45.Core.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\bin\Debug\Library45.Core.pdb
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\obj\Debug\Mohammad.Web.Properties.ClientBehavior1.resources
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\obj\Debug\Web45.csproj.GenerateResource.cache
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\obj\Debug\Web45.csproj.CoreCompileInputs.cache
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\obj\Debug\Web45.csproj.CopyComplete
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\obj\Debug\Library45.Web.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\obj\Debug\Library45.Web.pdb
+C:\Users\m.mirmostafa\Source\My\Library\Sources\dotNet45\Web45\obj\Debug\Web45.csprojAssemblyReference.cache

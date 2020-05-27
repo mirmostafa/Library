@@ -1,0 +1,12 @@
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\bin\Debug\ClassLibrary.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\bin\Debug\ClassLibrary.pdb
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\bin\Debug\System.ValueTuple.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\bin\Debug\Library45.Core.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\bin\Debug\Library45.Core.pdb
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\obj\Debug\CoreLib45.Test.csprojAssemblyReference.cache
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\obj\Debug\CoreLib45.Test.csproj.CoreCompileInputs.cache
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\obj\Debug\CoreLib45.Test.csproj.CopyComplete
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\obj\Debug\ClassLibrary.dll
+C:\Users\m.mirmostafa\Source\My\Library\Sources\Tests\CoreLib45.Test\obj\Debug\ClassLibrary.pdb

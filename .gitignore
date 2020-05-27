@@ -3,3 +3,18 @@
 ################################################################################
 
 /Sources/Core/Core30/CoreLibCore30/bin/Debug/netcoreapp3.0
+/Sources/dotNet45/Wpf45APICodePack/bin/Debug
+/Sources/dotNet45/Wpf45/bin/Debug
+/Sources/dotNet45/Wndows45/bin/Debug
+/Sources/dotNet45/Win45APICodePack/bin/Debug
+/Sources/dotNet45/Web45/bin/Debug
+/Sources/dotNet45/LogSystem45/bin/Debug
+/Sources/dotNet45/CoreLib45APICodePack/bin/Debug
+/Sources/dotNet45/CoreLib45/bin/Debug
+/Sources/dotNet45/CodeGenerator/bin/Debug
+/Sources/Tests/CoreLib45.Test/bin/Debug
+/Sources/Tests/CoreLibCore30ConApp/bin/Debug/netcoreapp3.0
+/Sources/Tests/CoreLibCore30Test/bin/Debug/netcoreapp3.0
+/Sources/Tests/TestConsole45/bin/Debug
+/Sources/Tests/TestWpfApp45/bin/Debug
+*.pdb

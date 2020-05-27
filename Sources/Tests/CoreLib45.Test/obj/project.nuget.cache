@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "NkqkEqwq8riJCwSiBqIyZiQ8HT7hU28F9Sw6n95YO4+598fghOkgSH0DVStqDGgU4mD1k6F0f5V5BfAFTYozyg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\m.mirmostafa\\Source\\My\\Library\\Sources\\Tests\\CoreLib45.Test\\CoreLib45.Test.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\mstest.testframework\\2.1.1\\mstest.testframework.2.1.1.nupkg.sha512",
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

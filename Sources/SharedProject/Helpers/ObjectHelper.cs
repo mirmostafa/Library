@@ -151,7 +151,7 @@ namespace Mohammad.Helpers
         {
             //! If (T) has implemented CreateInstance as a static method, use it to create an instance
             var ci = createInstance ?? GetMethod<Func<TSingleton>>(typeof(TSingleton), "CreateInstance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
-            var result = ci.Invoke();
+            var result = ci?.Invoke();
 
             //! if not, try to find a non-public constructor instead. A non-public constructor is mandatory.
             if (result == null)
