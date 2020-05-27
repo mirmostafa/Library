@@ -28,14 +28,14 @@ namespace Mohammad.Diagnostics
 
         public void Start()
         {
-            LibrarySupervisor.Logger.Debug($"Starting. Current memory: {GC.GetTotalMemory(false).ToMesuranceSystem()}", sender: this._DefaultSender);
+            LibrarySupervisor.Logger.Debug($"Starting. Current memory: {GC.GetTotalMemory(false).ToMeasuranceSystem()}", sender: this._DefaultSender);
             this._StartMemory = GC.GetTotalMemory(false);
         }
 
         public void Stop()
         {
             this._StopMemory = GC.GetTotalMemory(false);
-            LibrarySupervisor.Logger.Debug($"Stopped. Memory used: {this.UsedMemory.ToMesuranceSystem()}", sender: this._DefaultSender);
+            LibrarySupervisor.Logger.Debug($"Stopped. Memory used: {this.UsedMemory.ToMeasuranceSystem()}", sender: this._DefaultSender);
         }
 
         public void Cleanup(object o = null)
@@ -49,7 +49,7 @@ namespace Mohammad.Diagnostics
                 GC.Collect(GC.GetGeneration(o), GCCollectionMode.Forced, true);
             }
 
-            LibrarySupervisor.Logger.Debug($"Cleaned up. Memory used: {this.UsedMemory.ToMesuranceSystem()}", sender: this._DefaultSender);
+            LibrarySupervisor.Logger.Debug($"Cleaned up. Memory used: {this.UsedMemory.ToMeasuranceSystem()}", sender: this._DefaultSender);
         }
 
         public static MemoryProfiler StartNew()

@@ -406,8 +406,8 @@ namespace Mohammad.Specialized
 
                 this._Progress = value;
                 this.Logger.Debug(string.Format("[{2}%] {0} of {1}",
-                        this.BytesReceived.ToMesuranceSystem(),
-                        this.TotalBytesReceived.ToMesuranceSystem(),
+                        this.BytesReceived.ToMeasuranceSystem(),
+                        this.TotalBytesReceived.ToMeasuranceSystem(),
                         this.Progress),
                     sender: this.VideoInfo.Id);
                 this.OnPropertyChanged();
@@ -427,8 +427,8 @@ namespace Mohammad.Specialized
 
                 this._BytesReceived = value;
                 this.Logger.Debug(string.Format("[{2}%] {0} of {1}",
-                        this.BytesReceived.ToMesuranceSystem(),
-                        this.TotalBytesReceived.ToMesuranceSystem(),
+                        this.BytesReceived.ToMeasuranceSystem(),
+                        this.TotalBytesReceived.ToMeasuranceSystem(),
                         this.Progress),
                     sender: this.VideoInfo.Id);
                 this.OnPropertyChanged();
@@ -448,8 +448,8 @@ namespace Mohammad.Specialized
 
                 this._TotalBytesReceived = value;
                 this.Logger.Debug(string.Format("[{2}%] {0} of {1}",
-                        this.BytesReceived.ToMesuranceSystem(),
-                        this.TotalBytesReceived.ToMesuranceSystem(),
+                        this.BytesReceived.ToMeasuranceSystem(),
+                        this.TotalBytesReceived.ToMeasuranceSystem(),
                         this.Progress),
                     sender: this.VideoInfo.Id);
                 this.OnPropertyChanged();

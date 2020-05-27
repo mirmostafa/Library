@@ -365,7 +365,7 @@ namespace Mohammad.Helpers
         public static string Merge(string quatStart, string quatEnd, string separator, params object[] array)
         {
             var result = array.Aggregate(string.Empty, (current, str) => current + (quatStart + str) + quatEnd + separator + " ").Trim();
-            return result[..^1];
+            return result.Substring(0, result.Length - 1);
         }
 
         public static string Merge(this IEnumerable<string> array) => array.Merge(", ");
@@ -378,7 +378,7 @@ namespace Mohammad.Helpers
         public static string Merge(this IEnumerable<string> array, string quat, string separator)
         {
             var result = array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator} ").Trim();
-            return result[..^1];
+            return result.Substring(0, result.Length - 1);
         }
 
         public static string SplitMerge(this string str, char splitter, string startSeparator, string endSeparator)
@@ -514,13 +514,13 @@ namespace Mohammad.Helpers
                     continue;
                 }
 
-                yield return value[lastWord..x];
+                yield return value.Substring(lastWord, x - lastWord);
                 lastWord = x;
             }
 
             if (lastWord <= value.Length)
             {
-                yield return value[lastWord..];
+                yield return value.Substring(lastWord, value.Length - lastWord);
             }
         }
 
