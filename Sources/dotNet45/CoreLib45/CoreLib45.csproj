@@ -343,6 +343,9 @@
     <Compile Include="Wmi\WmiTools.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="Data\Ado\Ado.cd" />
     <None Include="Data\SqlServer\Dynamics\SqlServer.cd" />
     <None Include="Properties\CoreLibCodeAnalysis.ruleset" />

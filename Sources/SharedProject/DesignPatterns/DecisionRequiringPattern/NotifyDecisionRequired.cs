@@ -10,7 +10,7 @@ using System;
 namespace Mohammad.DesignPatterns.DecisionRequiringPattern
 {
     [Flags]
-    public enum ResponceType
+    public enum ResponseType
     {
         Cancel = 2,
         Retry = 4,
@@ -32,16 +32,16 @@ namespace Mohammad.DesignPatterns.DecisionRequiringPattern
     public class DecisionRequiredEventArgs : EventArgs
     {
         public Exception Exception { get; }
-        public ResponceType Responce { get; set; }
+        public ResponseType Response { get; set; }
         public DecisionLevel Level { get; }
-        public ResponceType AllowedResponceTypes { get; set; }
+        public ResponseType AllowedResponseTypes { get; set; }
 
         public DecisionRequiredEventArgs(Exception exception,
             DecisionLevel level,
-            ResponceType allowedResponceTypes = ResponceType.Cancel | ResponceType.Continue | ResponceType.Retry)
+            ResponseType allowedResponseTypes = ResponseType.Cancel | ResponseType.Continue | ResponseType.Retry)
         {
             this.Level = level;
-            this.AllowedResponceTypes = allowedResponceTypes;
+            this.AllowedResponseTypes = allowedResponseTypes;
             this.Exception = exception;
         }
     }
@@ -50,14 +50,14 @@ namespace Mohammad.DesignPatterns.DecisionRequiringPattern
     {
         public event EventHandler<DecisionRequiredEventArgs> DecisionRequired;
 
-        public ResponceType Ask(Exception exception,
+        public ResponseType Ask(Exception exception,
             DecisionLevel level = DecisionLevel.Warning,
             bool throwIfNotHandled = true,
-            ResponceType allowedResponceTypes = ResponceType.Cancel | ResponceType.Continue | ResponceType.Retry)
+            ResponseType allowedResponseTypes = ResponseType.Cancel | ResponseType.Continue | ResponseType.Retry)
         {
-            var e = new DecisionRequiredEventArgs(exception, level, allowedResponceTypes);
+            var e = new DecisionRequiredEventArgs(exception, level, allowedResponseTypes);
             this.OnDecisionRequired(e, throwIfNotHandled);
-            return e.Responce;
+            return e.Response;
         }
 
         protected virtual void OnDecisionRequired(DecisionRequiredEventArgs e, bool throwIfNotHandled)

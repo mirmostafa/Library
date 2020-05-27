@@ -24,8 +24,7 @@ namespace Mohammad.Helpers
     /// </summary>
     public static class ObjectHelper
     {
-        public static TType As<TType>(this object obj)
-            where TType : class => obj as TType;
+        public static TType As<TType>(this object obj) where TType : class => obj as TType;
 
         public static IEnumerable<dynamic> AsEnumerable(dynamic dynObj)
         {
@@ -127,48 +126,47 @@ namespace Mohammad.Helpers
             }
         }
 
-        public static Lazy<TSingleton> GenerateLazySingletonInstance<TSingleton>(Func<TSingleton> createInstance = null,
-            Action<TSingleton> initializeInstance = null)
+        public static Lazy<TSingleton> GenerateLazySingletonInstance<TSingleton>(Func<TSingleton> createInstance = null, Action<TSingleton> initializeInstance = null)
             where TSingleton : class, ISingleton<TSingleton> => new Lazy<TSingleton>(() => GenerateSingletonInstance<TSingleton>());
 
         /// <summary>
         ///     Generates a singleton instance of a class (Must be cached by the owner class).
         /// </summary>
-        /// <typeparam name="TSingletone">The type of class which is being instantiated.</typeparam>
+        /// <typeparam name="TSingleton">The type of class which is being instantiated.</typeparam>
         /// <param name="createInstance">A delegate to be used for getting an instance of </param>
         /// <param name="initializeInstance">The instance initializer.</param>
         /// <returns></returns>
         /// <exception cref="SingletonException">
-        ///     The class must have a static method: "TSingletone CreateInstance()" or a private/protected constructor.
+        ///     The class must have a static method: "TSingleton CreateInstance()" or a private/protected constructor.
         /// </exception>
         /// <remarks>
-        ///     Before generating instance, GenerateSingletonInstance searches for a static method: "TSingletone CreateInstance()".
+        ///     Before generating instance, GenerateSingletonInstance searches for a static method: "TSingleton CreateInstance()".
         ///     If found, GenerateSingletonInstance calls it and retrieves an instance. Otherwise, a private/protected
-        ///     parameterless constructor is required to construct an instance of TSingleton./>
+        ///     parameter-less constructor is required to construct an instance of TSingleton./>
         ///     After generating instance, searches for a method named: "InitializeComponents". If found will be called.
         /// </remarks>
-        public static TSingletone GenerateSingletonInstance<TSingletone>(Func<TSingletone> createInstance = null,
-            Action<TSingletone> initializeInstance = null)
-            where TSingletone : class, ISingleton<TSingletone>
+        public static TSingleton GenerateSingletonInstance<TSingleton>(Func<TSingleton> createInstance = null,
+            Action<TSingleton> initializeInstance = null)
+            where TSingleton : class, ISingleton<TSingleton>
         {
             //! If (T) has implemented CreateInstance as a static method, use it to create an instance
-            var ci = createInstance ?? GetMethod<Func<TSingletone>>(typeof(TSingletone), "CreateInstance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+            var ci = createInstance ?? GetMethod<Func<TSingleton>>(typeof(TSingleton), "CreateInstance", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
             var result = ci.Invoke();
 
             //! if not, try to find a non-public constructor instead. A non-public constructor is mandatory.
             if (result == null)
             {
-                var constructor = typeof(TSingletone).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic,
+                var constructor = typeof(TSingleton).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic,
                     null,
                     new Type[0],
                     new ParameterModifier[0]);
                 if (constructor == null)
                 {
                     throw new SingletonException(
-                        $"The class must have a static method: \"{typeof(TSingletone)} CreateInstance()\" or a private/protected parameterless constructor.");
+                        $"The class must have a static method: \"{typeof(TSingleton)} CreateInstance()\" or a private/protected parameterless constructor.");
                 }
 
-                result = constructor.Invoke(new object[0]) as TSingletone;
+                result = constructor.Invoke(new object[0]) as TSingleton;
 
                 //! Just to make sure that the code will work.
                 if (result == null)
@@ -217,8 +215,7 @@ namespace Mohammad.Helpers
             return attributes.Length > 0 ? (TAttribute)attributes[0] : default;
         }
 
-        public static TAttribute GetAttribute<TAttribute>(object value, bool inherited)
-            where TAttribute : Attribute => GetAttribute<TAttribute>(value, null, inherited);
+        public static TAttribute GetAttribute<TAttribute>(object value, bool inherited) where TAttribute : Attribute => GetAttribute<TAttribute>(value, null, inherited);
 
         public static string GetDescription(object classInstance) => GetAttribute<DescriptionAttribute>(classInstance).Description;
 
@@ -273,7 +270,6 @@ namespace Mohammad.Helpers
             }
 
             var property = properties.FirstOrDefault(prop => string.Compare(prop.Name, propName, StringComparison.Ordinal) == 0);
-
             return property != null ? (TPropertyType)property.GetValue(obj, null) : default;
         }
 
@@ -288,23 +284,13 @@ namespace Mohammad.Helpers
         public static TStruct IfDefault<TStruct>(this TStruct t, TStruct value, TStruct defaultValue = default)
             where TStruct : struct => Equals(t, defaultValue) ? value : t;
 
-        public static TResult IfNotNull<T, TResult>(this T obj, Func<T, TResult> ifTrue)
-        {
-            return obj.If(o => o == null, _ => default, ifTrue);
-        }
+        public static TResult IfNotNull<T, TResult>(this T obj, Func<T, TResult> ifTrue) => obj.If(o => o == null, _ => default, ifTrue);
 
         public static TResult Iif<TResult>(this bool booleanExpr, TResult trueResult, TResult falseResult) => booleanExpr ? trueResult : falseResult;
 
         public static bool Implements(object obj, Type type) => obj.GetType()
             .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Any(
-                property => property.PropertyType
-                    .FindInterfaces(
-                        (m, filterCriteria) =>
-                            m.FullName ==
-                            "System.IDisposable",
-                        null)
-                    .Any());
+            .Any(property => property.PropertyType.FindInterfaces((m, filterCriteria) => m.FullName == "System.IDisposable", null).Any());
 
         public static int? IndexOf<TSource>(TSource item, params TSource[] range)
         {
@@ -321,26 +307,18 @@ namespace Mohammad.Helpers
         public static bool IsNull(object value) => value == null;
 
         public static bool IsNullOrEmptyString(object value) => string.IsNullOrEmpty(ToString(value));
+
         public static T NotNull<T>(this T a, T defaultValue) => a.NotNull(o => o, () => defaultValue);
 
-        public static TResult NotNull<T, TResult>(this T a, TResult defaultValue) => a.NotNull(
-            o => typeof(TResult) == typeof(string) ? o.ToString().To<TResult>() : o.To<TResult>(),
-            () => defaultValue);
+        public static TResult NotNull<T, TResult>(this T a, TResult defaultValue)
+            => a.NotNull(o => typeof(TResult) == typeof(string) ? o.ToString().To<TResult>() : o.To<TResult>(), () => defaultValue);
 
         public static TResult NotNull<T, TResult>(this T a, Func<T, TResult> whenNotNull, Func<TResult> whenNull = null)
-        {
-            if (Equals(a, default(T)))
-            {
-                return whenNull == null ? default : whenNull();
-            }
+            => Equals(a, default(T)) ? whenNull == null ? default :
+                whenNull() :
+                a is string s && string.IsNullOrEmpty(s) ? whenNull == null ? default : whenNull() : whenNotNull(a);
 
-            return a is string s && string.IsNullOrEmpty(s) ? whenNull == null ? default : whenNull() : whenNotNull(a);
-        }
-
-        public static TResult NotNull<T, TResult>(this T a, Func<TResult> whenNull = null)
-        {
-            return a.NotNull(o => o.To<TResult>(), whenNull);
-        }
+        public static TResult NotNull<T, TResult>(this T a, Func<TResult> whenNull = null) => a.NotNull(o => o.To<TResult>(), whenNull);
 
         public static Dictionary<string, object> ReflectFields(object obj, bool privateFields = false)
         {
@@ -350,7 +328,7 @@ namespace Mohammad.Helpers
                     ? BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
                     : BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
             {
-                Catch(() => result.Add(field.Name, field.GetValue(obj)));
+                _ = Catch(() => result.Add(field.Name, field.GetValue(obj)));
             }
 
             return result;
@@ -367,30 +345,21 @@ namespace Mohammad.Helpers
         public static void ReflectionCopy<TSource, TDestination>(TSource source, TDestination destination, bool ignoreExceptions)
         {
             var props = from sourceProperty in typeof(TSource).GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                        join destProperty in typeof(TDestination).GetProperties(BindingFlags.Instance | BindingFlags.Public) on sourceProperty.Name equals
-                            destProperty.Name
+                        join destProperty in typeof(TDestination).GetProperties(BindingFlags.Instance | BindingFlags.Public) on sourceProperty.Name equals destProperty.Name
                         where sourceProperty.CanRead && destProperty.CanWrite
                         select new
                         {
                             Value = sourceProperty.GetValue(source, null), Destination = destProperty
                         };
 
-            Action<dynamic> action;
-            if (ignoreExceptions)
-            {
-                action = p => Catch(() => p.Destination.SetValue(destination, p.Value, null));
-            }
-            else
-            {
-                action = p => p.Destination.SetValue(destination, p.Value, null);
-            }
+            var action = ignoreExceptions
+                ? (Action<dynamic>)(p => Catch(() => p.Destination.SetValue(destination, p.Value, null)))
+                : p => p.Destination.SetValue(destination, p.Value, null);
 
             foreach (var p in props)
             {
                 action(p);
             }
-
-            //props.ForEach(p => p.Destination.SetValue(destination, p.Value, null));
         }
 
         /// <summary>
@@ -424,7 +393,7 @@ namespace Mohammad.Helpers
                       BindingFlags.NonPublic
                     : BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
             {
-                Catch(() => result.Add(property.Name, property.GetValue(obj, null)));
+                _=Catch(() => result.Add(property.Name, property.GetValue(obj, null)));
             }
 
             return result;
@@ -437,7 +406,7 @@ namespace Mohammad.Helpers
                 ? BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
                 : BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public))
             {
-                Catch(() => result.Add(property.Name));
+                _=Catch(() => result.Add(property.Name));
             }
 
             return result;
@@ -450,16 +419,12 @@ namespace Mohammad.Helpers
                 throw new ArgumentNullException(nameof(obj));
             }
 
-            obj.GetType()
-                .GetField(fieldName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance)
-                ?.SetValue(obj, value);
+            obj.GetType().GetField(fieldName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(obj, value);
         }
 
         public static void SetProperty(object obj, string propertyName, object value)
         {
-            var property = obj
-                ?.GetType()
-                .GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
+            var property = obj?.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Instance);
             if (property != null)
             {
                 property.SetValue(obj, value, null);
@@ -476,84 +441,9 @@ namespace Mohammad.Helpers
 
         public static TType To<TType>(this object obj) => (TType)obj;
 
-        public static T ToNotNull<T>(this T? t, T defaultValue = default)
-            where T : struct => t ?? defaultValue;
+        public static T ToNotNull<T>(this T? t, T defaultValue = default) where T : struct => t ?? defaultValue;
 
         public static string ToString(object value, string defaultValue = "") => (value ?? defaultValue).ToString();
-
-        //public static TDestination? Map<TSource, TDestination>(this TSource source, TDestination destination)
-        //    where TDestination : class
-        //{
-        //    if (destination == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(destination));
-        //    }
-
-        //    if (source is null)
-        //    {
-        //        return null;
-        //    }
-
-        //    var props = typeof(TDestination).GetProperties();
-        //    var result = destination;
-        //    foreach (var prop in props)
-        //    {
-        //        Copy(source, result, prop);
-        //    }
-
-        //    return result;
-        //}
-
-        //public static TDestination? MapExcept<TSource, TDestination>(this TSource source, TDestination destination, Func<TDestination, object> except)
-        //    where TDestination : class
-        //{
-        //    if (destination == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(destination));
-        //    }
-
-        //    if (source is null)
-        //    {
-        //        return null;
-        //    }
-
-        //    var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
-        //    var props = typeof(TDestination).GetProperties();
-        //    var result = destination;
-        //    foreach (var prop in props)
-        //    {
-        //        if (!exceptProps.Contains(prop.Name))
-        //        {
-        //            Copy(source, result, prop);
-        //        }
-        //    }
-
-        //    return result;
-        //}
-
-        //public static TDestination? MapExcept<TSource, TDestination>(this TSource source, Func<TDestination, object> except)
-        //    where TDestination : class, new()
-        //{
-        //    var destination = new TDestination();
-
-        //    if (source is null)
-        //    {
-        //        return null;
-        //    }
-
-        //    var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
-        //    var props = typeof(TDestination).GetProperties();
-        //    var result = destination;
-        //    foreach (var prop in props)
-        //    {
-        //        if (!exceptProps.Contains(prop.Name))
-        //        {
-        //            Copy(source, result, prop);
-        //        }
-        //    }
-
-        //    return result;
-        //}
 
         public static TDestination MapOnly<TSource, TDestination>(this TSource source, TDestination destination, Func<TDestination, object> onlyProps)
             where TDestination : class

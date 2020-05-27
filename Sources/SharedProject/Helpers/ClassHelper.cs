@@ -19,11 +19,11 @@ namespace Mohammad.Helpers
     {
         public static string GetClassDescription(this MethodBase method, bool getClassNameIfNotFound)
         {
-            var attributes = method.DeclaringType.GetCustomAttributes(typeof(DescriptionAttribute), false);
+            var attributes = method?.DeclaringType?.GetCustomAttributes(typeof(DescriptionAttribute), false);
             var result = string.Empty;
-            foreach (var attribute in attributes.Where(attribute => attribute is DescriptionAttribute))
+            foreach (var attribute in attributes?.Where(attribute => attribute is DescriptionAttribute))
             {
-                result = (attribute as DescriptionAttribute).Description;
+                result = (attribute as DescriptionAttribute)?.Description;
                 break;
             }
 

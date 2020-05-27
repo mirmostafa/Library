@@ -26,10 +26,10 @@ namespace Mohammad.Text
                 {
                     case '{':
                     case '[':
-                        sb.Append(ch);
+                        _ = sb.Append(ch);
                         if (!quoted)
                         {
-                            sb.AppendLine();
+                            _ = sb.AppendLine();
                             Enumerable.Range(0, ++indent).ForEach(item => sb.Append(indentString));
                         }
 
@@ -38,14 +38,14 @@ namespace Mohammad.Text
                     case ']':
                         if (!quoted)
                         {
-                            sb.AppendLine();
+                            _ = sb.AppendLine();
                             Enumerable.Range(0, --indent).ForEach(item => sb.Append(indentString));
                         }
 
-                        sb.Append(ch);
+                        _ = sb.Append(ch);
                         break;
                     case '"':
-                        sb.Append(ch);
+                        _ = sb.Append(ch);
                         var escaped = false;
                         var index = i;
                         while (index > 0 && jsonText[--index] == '\\')
@@ -60,24 +60,24 @@ namespace Mohammad.Text
 
                         break;
                     case ',':
-                        sb.Append(ch);
+                        _ = sb.Append(ch);
                         if (!quoted)
                         {
-                            sb.AppendLine();
+                            _ = sb.AppendLine();
                             Enumerable.Range(0, indent).ForEach(item => sb.Append(indentString));
                         }
 
                         break;
                     case ':':
-                        sb.Append(ch);
+                        _ = sb.Append(ch);
                         if (!quoted)
                         {
-                            sb.Append(" ");
+                            _ = sb.Append(" ");
                         }
 
                         break;
                     default:
-                        sb.Append(ch);
+                        _ = sb.Append(ch);
                         break;
                 }
             }

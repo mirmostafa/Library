@@ -19,14 +19,10 @@ namespace Mohammad.Helpers
     /// </summary>
     public static class NumericHelper
     {
-        #region Fields
-
         private static readonly Type[] _NumericTypes =
         {
             typeof(short), typeof(int), typeof(long), typeof(double), typeof(float), typeof(decimal), typeof(ushort), typeof(uint), typeof(ulong), typeof(byte)
         };
-
-        #endregion
 
         public static bool AllHaveValues(params int?[] numbers) => numbers.All(n => n.HasValue);
         public static long Between(this long value, long min, long max, long defaultValue) => value.IsBetween(min, max) ? value : defaultValue;
@@ -46,13 +42,12 @@ namespace Mohammad.Helpers
             return str;
         }
 
-        public static string ConvertBase(string num, int sourceBase, int desctinationBase) =>
-            Convert.ToString(Convert.ToInt32(num, sourceBase), desctinationBase);
+        public static string ConvertBase(string num, int sourceBase, int descriptionBase) => Convert.ToString(Convert.ToInt32(num, sourceBase), descriptionBase);
 
         public static double FromSciToDouble(string obj) => double.Parse(obj, NumberStyles.Float);
 
-        public static IEnumerable<int> GetPrimes(int min, int max) =>
-            Enumerable.Range(min, max - min).Where(n => Enumerable.Range(2, (int)Math.Sqrt(n) - 1).All(i => n % i > 0));
+        public static IEnumerable<int> GetPrimes(int min, int max)
+            => Enumerable.Range(min, max - min).Where(n => Enumerable.Range(2, (int)Math.Sqrt(n) - 1).All(i => n % i > 0));
 
         public static string HexToBin(string hex) => ConvertBase(hex, 16, 2);
 
@@ -114,7 +109,7 @@ namespace Mohammad.Helpers
                 return false;
             }
 
-            for (var i = 3; i < Math.Sqrt(value); i = i + 2)
+            for (var i = 3; i < Math.Sqrt(value); i += 2)
             {
                 if (value % i == 0)
                 {
@@ -150,52 +145,37 @@ namespace Mohammad.Helpers
 
         public static string ToBin(this int num) => Convert.ToString(num, 2);
 
-        public static string ToCommaSeparate(this double num) => double.Parse(num.ToString(CultureInfo.InvariantCulture))
-            .ToString("N",
-                new NumberFormatInfo
-                {
-                    NumberDecimalDigits =
-                        0
-                });
+        public static string ToCommaSeparate(this double num)
+            => double.Parse(num.ToString(CultureInfo.InvariantCulture)).ToString("N", new NumberFormatInfo {NumberDecimalDigits = 0});
 
-        public static string ToCommaSeparate(this long num) => long.Parse(num.ToString(CultureInfo.InvariantCulture))
-            .ToString("N",
-                new NumberFormatInfo
-                {
-                    NumberDecimalDigits = 0
-                });
+        public static string ToCommaSeparate(this long num)
+            => long.Parse(num.ToString(CultureInfo.InvariantCulture)).ToString("N", new NumberFormatInfo {NumberDecimalDigits = 0});
 
-        public static string ToCommaSeparate(this int num) => int.Parse(num.ToString(CultureInfo.InvariantCulture))
-            .ToString("N",
-                new NumberFormatInfo
-                {
-                    NumberDecimalDigits = 0
-                });
+        public static string ToCommaSeparate(this int num)
+            => int.Parse(num.ToString(CultureInfo.InvariantCulture)).ToString("N", new NumberFormatInfo {NumberDecimalDigits = 0});
 
         public static double? ToDouble(string str) => double.TryParse(str, out var num) ? num : default(double?);
         public static double ToDouble(string str, double defaultValue) => ToDouble(str) ?? defaultValue;
         public static string ToHex(this int num) => num.ToString("X");
         public static int ToInt(this object obj) => Convert.ToInt32(obj);
 
-        public static int ToInt(this object obj, int defaultValue) =>
-            obj == null ? defaultValue : obj.ToString().ToIntNullable() ?? defaultValue;
+        public static int ToInt(this object obj, int defaultValue) => obj == null ? defaultValue : obj.ToString().ToIntNullable() ?? defaultValue;
 
         public static int? ToIntNullable(this string str) => int.TryParse(str, out var result) ? result : default(int?);
         public static long ToLong(this object obj) => Convert.ToInt64(obj);
 
-        public static long ToLong(this object obj, long defaultValue) =>
-            obj == null ? defaultValue : obj.ToString().ToLongNullable() ?? defaultValue;
+        public static long ToLong(this object obj, long defaultValue) => obj == null ? defaultValue : obj.ToString().ToLongNullable() ?? defaultValue;
 
         public static long? ToLongNullable(this string str) => long.TryParse(str, out var result) ? result : default(long?);
 
-        public static string ToMesuranceSystem(this int num)
+        public static string ToMeasuranceSystem(this int num)
         {
             var a = num.ToString().Length / 3 - 1;
             var measures = new[] {"", "K", "M", "G", "T"};
             return $"{Math.Round(num / Math.Pow(1024, a), 3)} {measures[a]}";
         }
 
-        public static string ToMesuranceSystem(this ulong num)
+        public static string ToMeasuranceSystem(this ulong num)
         {
             if (num == 0)
             {
@@ -207,7 +187,7 @@ namespace Mohammad.Helpers
             return $"{Math.Round(num / Math.Pow(1024, a), 3)} {measures[a]}";
         }
 
-        public static string ToMesuranceSystem(this long num)
+        public static string ToMeasuranceSystem(this long num)
         {
             if (num == 0)
             {
@@ -215,8 +195,8 @@ namespace Mohammad.Helpers
             }
 
             var a = num.ToString().Length / 3 - 1;
-            var mesures = new[] {"", "K", "M", "G", "T"};
-            return $"{Math.Round(num / Math.Pow(1024, a), 3)} {mesures[a]}";
+            var measures = new[] {"", "K", "M", "G", "T"};
+            return $"{Math.Round(num / Math.Pow(1024, a), 3)} {measures[a]}";
         }
 
         public static string ToOct(this int num) => ConvertBase(num.ToString(), 10, 8);

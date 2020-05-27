@@ -21,6 +21,28 @@ namespace Mohammad.Helpers
     /// </summary>
     public static class StringHelper
     {
+        public static readonly char DecimalSeparator = '⁄';
+
+        public static readonly IEnumerable<char> PersianChars = new[]
+        {
+            'آ', 'ا', 'ب', 'پ', 'ت', 'ث', 'ج', 'چ', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'ژ', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ک',
+            'گ', 'ل', 'م', 'ن', 'و', 'ه', 'ی'
+        };
+
+        private static readonly IEnumerable<(char Persian, char English)> _Numbers = new[]
+        {
+            ('۰', '0'), ('۱', '1'), ('۲', '2'), ('۳', '3'), ('۴', '4'), ('۵', '5'), ('۶', '6'), ('۷', '7'), ('۸', '8'), ('۹', '9')
+        };
+
+        public static readonly IReadOnlyList<char> PersianDigits = _Numbers.Select(n => n.Persian).ToList();
+
+        public static readonly IEnumerable<char> PersianSpecialChars = new[]
+        {
+            'ة', 'ي', 'ئ', 'ژ', 'ؤ', 'إ', 'أ', 'ء', '؛', '،', 'ٍ', 'ٌ', 'ً', 'َ', 'ُ', 'ِ', 'ّ', 'ّ', 'ۀ', 'آ', 'ـ', 'ك'
+        };
+
+        public static readonly IEnumerable<char> SeparatorsChars = new[] {',', DecimalSeparator};
+
         [Obsolete("MOHAMMAD: Please use the other overload please.")]
         public static string GetPhrase(this string str, char start, char end, int index) => GetPhrase(str, index, start, end);
 
@@ -56,42 +78,25 @@ namespace Mohammad.Helpers
 
         public static bool AnyCharInString(this string str, string range) => range.Any(c => str.Contains(c.ToString()));
 
-        public static IEnumerable<string> Compact(this IEnumerable<string> strings) =>
-            strings.Where(item => !IsNullOrEmpty(item));
+        public static IEnumerable<string> Compact(this IEnumerable<string> strings) => strings.Where(item => !IsNullOrEmpty(item));
 
-        public static string[] Compact(params string[] strings) =>
-            strings.Where(item => !item.IsNullOrEmpty()).ToArray();
+        public static string[] Compact(params string[] strings) => strings.Where(item => !item.IsNullOrEmpty()).ToArray();
 
-        public static int CompareTo(this string str1, string str, bool ignoreCase = false) =>
-            string.Compare(str1, str, ignoreCase);
+        public static int CompareTo(this string str1, string str, bool ignoreCase = false) => string.Compare(str1, str, ignoreCase);
 
-        public static string ConcatStrings(this IEnumerable<string> values)
-        {
-            if (values == null)
-            {
-                throw new ArgumentNullException(nameof(values));
-            }
+        public static string ConcatStrings(this IEnumerable<string> values) => string.Concat(values.ToArray());
 
-            return string.Concat(values.ToArray());
-        }
-
-        public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase) =>
-            array.Any(s => s.CompareTo(str, ignoreCase) == 0);
+        public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase) => array.Any(s => s.CompareTo(str, ignoreCase) == 0);
 
         public static bool Contains(string str, string value, bool ignoreCase = true) => ignoreCase
             ? str.ToLowerInvariant().Contains(value.ToLowerInvariant())
             : str.Contains(value);
 
-        public static bool
-            ContainsAny(this string str, IEnumerable<object> array) =>
-            array.Any(item => str.Contains(item.ToString()));
+        public static bool ContainsAny(this string str, IEnumerable<object> array) => array.Any(item => str.Contains(item.ToString()));
 
-        public static bool
-            ContainsAny(this string str, params object[] array) =>
-            str.ContainsAny(array.AsEnumerable());
+        public static bool ContainsAny(this string str, params object[] array) => str.ContainsAny(array.AsEnumerable());
 
-        public static bool ContainsOf(this string str, string target) =>
-            str.ToLower().Contains(target.ToLower());
+        public static bool ContainsOf(this string str, string target) => str.ToLower().Contains(target.ToLower());
 
         public static char ConvertPersianDigitToEnglishDigit(this char c)
         {
@@ -111,7 +116,7 @@ namespace Mohammad.Helpers
             var buffer = new StringBuilder(text.Length);
             foreach (var c in text)
             {
-                buffer.Append(ConvertPersianDigitToEnglishDigit(c));
+                _ = buffer.Append(ConvertPersianDigitToEnglishDigit(c));
             }
 
             return buffer.ToString();
@@ -147,32 +152,20 @@ namespace Mohammad.Helpers
             return Encoding.UTF8.GetString(Encoding.Unicode.GetBytes(text));
         }
 
-        public static bool
-            EndsWithAny(this string str, IEnumerable<object> array) =>
-            array.Any(item => str.EndsWith(item.ToString()));
+        public static bool EndsWithAny(this string str, IEnumerable<object> array) => array.Any(item => str.EndsWith(item.ToString()));
 
-        public static bool
-            EndsWithAny(this string str, params object[] array) =>
-            str.EndsWithAny(array.AsEnumerable());
+        public static bool EndsWithAny(this string str, params object[] array) => str.EndsWithAny(array.AsEnumerable());
 
         public static bool EndsWithAny(this string str, IEnumerable<string> values) => values.Any(str.EndsWith);
 
-        public static bool
-            EqualsTo(this string str1, string str, bool ignoreCase = true) =>
-            str1.CompareTo(str, ignoreCase) == 0;
+        public static bool EqualsTo(this string str1, string str, bool ignoreCase = true) => str1.CompareTo(str, ignoreCase) == 0;
 
-        public static bool
-            EqualsToAny(this string str1, bool ignoreCase, params string[] array) =>
-            array.Any(s => str1.EqualsTo(s, ignoreCase));
+        public static bool EqualsToAny(this string str1, bool ignoreCase, params string[] array) => array.Any(s => str1.EqualsTo(s, ignoreCase));
 
         public static bool EqualsToAny(this string str1, params string[] array) => array.Any(s => str1.EqualsTo(s));
 
-        public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr,
-            char keyValueSeparator = '=',
-            char separator = ';')
-        {
-            return keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
-        }
+        public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';')
+            => keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
 
         public static string GetLongest(this string[] strings) => strings.Max();
 
@@ -235,11 +228,11 @@ namespace Mohammad.Helpers
                 if (c == separator)
                 {
                     yield return buffer.ToString();
-                    buffer.Clear();
+                    _ = buffer.Clear();
                 }
                 else
                 {
-                    buffer.Append(c);
+                    _ = buffer.Append(c);
                 }
             }
         }
@@ -263,46 +256,47 @@ namespace Mohammad.Helpers
         }
 
         public static bool IsCommon(this char c) => c == ' ';
+
         public static bool IsDigit(this char c, bool canAcceptMinusKey = false) => canAcceptMinusKey && c == '-' || char.IsDigit(c);
 
         public static bool IsDigitOrControl(this char key) => char.IsDigit(key) || char.IsControl(key);
 
         public static bool IsEnglish(this string text) => CheckAllValidations(text, IsEnglish);
+
         public static bool IsEnglish(this char c) => IsCommon(c) || char.ToUpper(c) >= 'A' && char.ToUpper(c) <= 'Z';
 
-        public static bool IsEnglishOrNumber(this string text, bool canAcceptMinusKey = false) =>
-            CheckAllValidations(text, c => IsDigit(c, canAcceptMinusKey) || IsEnglish(c));
+        public static bool IsEnglishOrNumber(this string text, bool canAcceptMinusKey = false)
+            => CheckAllValidations(text, c => IsDigit(c, canAcceptMinusKey) || IsEnglish(c));
 
         public static bool IsInRange(this string text, params string[] range) => IsInRange(text, true, range);
 
-        public static bool IsInRange(this string text, bool ignoreCase, params string[] range) =>
-            IsInRange(text, false, ignoreCase, range);
+        public static bool IsInRange(this string text, bool ignoreCase, params string[] range) => IsInRange(text, false, ignoreCase, range);
 
-        public static bool IsInRange(this string text, bool trimmed, bool ignoreCase, params string[] range) =>
-            range.IndexOf(text, trimmed, ignoreCase) >= 0;
+        public static bool IsInRange(this string text, bool trimmed, bool ignoreCase, params string[] range) => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
-        public static bool IsInRange(this string text, bool trimmed, bool ignoreCase, IEnumerable<string> range) =>
-            range.IndexOf(text, trimmed, ignoreCase) >= 0;
+        public static bool IsInRange(this string text, bool trimmed, bool ignoreCase, IEnumerable<string> range) => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
         public static bool IsInString(this char c, string text) => text.Contains(c.ToString());
+
         public static bool IsInteger(this string text) => int.TryParse(text, out var _);
+
         public static bool IsLetter(this char c) => IsEnglish(c) || IsPersian(c);
 
-        public static bool IsLetterText(this string text) =>
-            CheckAllValidations(text, c => IsEnglish(c) || IsPersian(c));
+        public static bool IsLetterText(this string text) => CheckAllValidations(text, c => IsEnglish(c) || IsPersian(c));
 
         public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
+
         public static bool IsNullOrEmpty(object o) => o?.ToString().IsNullOrEmpty() != false;
+
         public static bool IsNumber(this string text) => float.TryParse(text, out var _);
+
         public static bool IsPersian(this string text) => CheckAllValidations(text, IsPersian);
 
-        public static bool IsPersian(this char c) =>
-            IsCommon(c) || PersianChars.Any(pc => pc == c) || PersianSpecialChars.Any(pc => pc == c);
+        public static bool IsPersian(this char c) => IsCommon(c) || PersianChars.Any(pc => pc == c) || PersianSpecialChars.Any(pc => pc == c);
 
         public static bool IsPersianDigit(this char c) => PersianDigits.Any(pd => c == pd);
 
-        public static bool IsPersianOrNumber(this string text, bool canAcceptMinusKey) =>
-            CheckAllValidations(text, c => IsDigit(c, canAcceptMinusKey) || IsPersian(c));
+        public static bool IsPersianOrNumber(this string text, bool canAcceptMinusKey) => CheckAllValidations(text, c => IsDigit(c, canAcceptMinusKey) || IsPersian(c));
 
         public static bool IsUnicode(this string str)
         {
@@ -336,11 +330,11 @@ namespace Mohammad.Helpers
                 if (c == separator)
                 {
                     yield return buffer.ToString();
-                    buffer.Clear();
+                    _ = buffer.Clear();
                 }
                 else
                 {
-                    buffer.Append(c);
+                    _ = buffer.Append(c);
                 }
             }
         }
@@ -371,7 +365,7 @@ namespace Mohammad.Helpers
         public static string Merge(string quatStart, string quatEnd, string separator, params object[] array)
         {
             var result = array.Aggregate(string.Empty, (current, str) => current + (quatStart + str) + quatEnd + separator + " ").Trim();
-            return result.Substring(0, result.Length - 1);
+            return result[..^1];
         }
 
         public static string Merge(this IEnumerable<string> array) => array.Merge(", ");
@@ -384,7 +378,7 @@ namespace Mohammad.Helpers
         public static string Merge(this IEnumerable<string> array, string quat, string separator)
         {
             var result = array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator} ").Trim();
-            return result.Substring(0, result.Length - 1);
+            return result[..^1];
         }
 
         public static string SplitMerge(this string str, char splitter, string startSeparator, string endSeparator)
@@ -392,7 +386,7 @@ namespace Mohammad.Helpers
             var result = new StringBuilder();
             foreach (var part in str.Split(splitter))
             {
-                result.Append($"{startSeparator}{part}{endSeparator}");
+                _ = result.Append($"{startSeparator}{part}{endSeparator}");
             }
 
             return result.ToString();
@@ -400,26 +394,24 @@ namespace Mohammad.Helpers
 
         public static string RemoveFromEnd(this string str, int count) => str.Substring(0, str.Length - count);
 
-        public static string MergePair(this IEnumerable<PairValue<string, string>> splitPair,
-            string keyValueSeparator = "=",
-            string statementSeparator = ";")
+        public static string MergePair(this IEnumerable<PairValue<string, string>> splitPair, string keyValueSeparator = "=", string statementSeparator = ";")
         {
             var result = new StringBuilder();
             foreach (var pair in splitPair)
             {
-                result.Append(string.Concat(pair.Value1, keyValueSeparator, pair.Value2, statementSeparator));
+                _ = result.Append(string.Concat(pair.Value1, keyValueSeparator, pair.Value2, statementSeparator));
             }
 
             return result.ToString();
         }
 
         public static bool NotEndsWithAny(this string str, IEnumerable<object> array) => array.Any(item => !str.EndsWith(item.ToString()));
+
         public static bool NotEndsWithAny(this string str, params object[] array) => str.NotEndsWithAny(array.AsEnumerable());
 
         public static string PatternPolicy(string text)
         {
             var result = string.Empty;
-
             var t = CorrectUnicodeProblem(text);
 
             char[] outChar =
@@ -456,17 +448,15 @@ namespace Mohammad.Helpers
             var result = new StringBuilder(string.Empty);
             for (var counter = 0; counter < count; counter++)
             {
-                result.Append(text);
+                _ = result.Append(text);
             }
 
             return result.ToString();
         }
 
-        public static string ReplaceEx(this string s, string old, string replacement, int count = 1) =>
-            new Regex(Regex.Escape(old)).Replace(s, replacement, count);
+        public static string ReplaceEx(this string s, string old, string replacement, int count = 1) => new Regex(Regex.Escape(old)).Replace(s, replacement, count);
 
-        public static string ReplaceEx(this string s, char old, char replacement, int count = 1) =>
-            ReplaceEx(s, old.ToString(), replacement.ToString(), count);
+        public static string ReplaceEx(this string s, char old, char replacement, int count = 1) => ReplaceEx(s, old.ToString(), replacement.ToString(), count);
 
         public static string SeparateCamelCase(this string str)
         {
@@ -524,29 +514,26 @@ namespace Mohammad.Helpers
                     continue;
                 }
 
-                yield return value.Substring(lastWord, x - lastWord);
+                yield return value[lastWord..x];
                 lastWord = x;
             }
 
             if (lastWord <= value.Length)
             {
-                yield return value.Substring(lastWord, value.Length - lastWord);
+                yield return value[lastWord..];
             }
         }
 
-        public static IEnumerable<PairValue<string, string>> SplitPair(string str,
-            string keyValueSeparator = "=",
-            string statementSeparator = ";")
+        public static IEnumerable<PairValue<string, string>> SplitPair(string str, string keyValueSeparator = "=", string statementSeparator = ";")
         {
             var split = str.Split(new[] {keyValueSeparator, statementSeparator}, StringSplitOptions.None);
-            for (var i = 0; i < split.Length; i = i + 2)
+            for (var i = 0; i < split.Length; i += 2)
             {
                 yield return new PairValue<string, string>(split[i], split[i + 1]);
             }
         }
 
-        public static string SqlEncodingToUtf(this string obj) =>
-            Encoding.UTF8.GetString(Encoding.GetEncoding(1256).GetBytes(obj));
+        public static string SqlEncodingToUtf(this string obj) => Encoding.UTF8.GetString(Encoding.GetEncoding(1256).GetBytes(obj));
 
         public static bool StartsWithAny(this string str, IEnumerable<string> values) => values.Any(str.StartsWith);
 
@@ -571,14 +558,13 @@ namespace Mohammad.Helpers
             var bytes = IsUnicode(str) ? Encoding.Unicode.GetBytes(str) : Encoding.ASCII.GetBytes(str);
             foreach (var b in bytes)
             {
-                sb.Append(b.ToString("X"));
+                _ = sb.Append(b.ToString("X"));
             }
 
             return sb.ToString();
         }
 
-        public static IEnumerable<int> ToInt(IEnumerable<string> array) =>
-            array.Where(str => str.IsNumber()).Select(str => str.ToInt());
+        public static IEnumerable<int> ToInt(IEnumerable<string> array) => array.Where(str => str.IsNumber()).Select(str => str.ToInt());
 
         public static IEnumerable<string> ToLower(this IEnumerable<string> strings) => strings.ForEachFunc(str => str.ToLower());
 
@@ -604,16 +590,14 @@ namespace Mohammad.Helpers
             return string.Join(separator, strings.ToArray());
         }
 
-        public static string ToUnicode(this string str) =>
-            Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
+        public static string ToUnicode(this string str) => Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
 
-        public static IEnumerable<string> Trim(this IEnumerable<string> strings) =>
-            strings.Where(item => !IsNullOrEmpty(item));
+        public static IEnumerable<string> Trim(this IEnumerable<string> strings) => strings.Where(item => !IsNullOrEmpty(item));
 
-        public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars) =>
-            values.Select(t => t.Trim(trimChars));
+        public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars) => values.Select(t => t.Trim(trimChars));
 
         public static IEnumerable<string> TrimAll(this IEnumerable<string> values) => values.Select(t => t.Trim());
+
         public static string Truncate(this string value, int length) => value?.Substring(0, value.Length - 1);
 
         public static (bool Succeed, int Result) TryLengthOf(this string str, char c, int index)
@@ -655,31 +639,5 @@ namespace Mohammad.Helpers
         public static string? NullIfEmpty(this string? s) => string.IsNullOrEmpty(s) ? null : s;
         internal static bool CheckAllValidations(string text, Func<char, bool> regularValidate) => text.All(regularValidate);
         internal static bool CheckAnyValidations(string text, Func<char, bool> regularValidate) => text.Any(regularValidate);
-
-        #region Fields
-
-        public static readonly char DecimalSeparator = '⁄';
-
-        public static readonly IEnumerable<char> PersianChars = new[]
-        {
-            'آ', 'ا', 'ب', 'پ', 'ت', 'ث', 'ج', 'چ', 'ح', 'خ', 'د', 'ذ', 'ر', 'ز', 'ژ', 'س', 'ش', 'ص', 'ض', 'ط', 'ظ', 'ع', 'غ', 'ف', 'ق', 'ک',
-            'گ', 'ل', 'م', 'ن', 'و', 'ه', 'ی'
-        };
-
-        private static readonly IEnumerable<(char Persian, char English)> _Numbers = new[]
-        {
-            ('۰', '0'), ('۱', '1'), ('۲', '2'), ('۳', '3'), ('۴', '4'), ('۵', '5'), ('۶', '6'), ('۷', '7'), ('۸', '8'), ('۹', '9')
-        };
-
-        public static readonly IReadOnlyList<char> PersianDigits = _Numbers.Select(n => n.Persian).ToList();
-
-        public static readonly IEnumerable<char> PersianSpecialChars = new[]
-        {
-            'ة', 'ي', 'ئ', 'ژ', 'ؤ', 'إ', 'أ', 'ء', '؛', '،', 'ٍ', 'ٌ', 'ً', 'َ', 'ُ', 'ِ', 'ّ', 'ّ', 'ۀ', 'آ', 'ـ', 'ك'
-        };
-
-        public static readonly IEnumerable<char> SeparatorsChars = new[] {',', DecimalSeparator};
-
-        #endregion
     }
 }
