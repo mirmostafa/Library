@@ -1,0 +1,130 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Web45\\Web45.csproj": {}
+  },
+  "projects": {
+    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
+        "projectName": "CoreLib45",
+        "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
+        "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
+        "outputPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net45"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net45": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net45": {
+          "dependencies": {
+            "System.ValueTuple": {
+              "target": "Package",
+              "version": "[4.5.0, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    },
+    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Web45\\Web45.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Web45\\Web45.csproj",
+        "projectName": "Web45",
+        "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Web45\\Web45.csproj",
+        "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
+        "outputPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Web45\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net45"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net45": {
+            "projectReferences": {
+              "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj": {
+                "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net45": {
+          "dependencies": {
+            "Microsoft.AspNet.WebApi.Client": {
+              "target": "Package",
+              "version": "[5.2.7, )"
+            },
+            "Microsoft.AspNet.WebApi.Core": {
+              "target": "Package",
+              "version": "[5.2.7, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
+            },
+            "System.ValueTuple": {
+              "target": "Package",
+              "version": "[4.5.0, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ using System.Globalization;
 
 namespace Mohammad.Helpers
 {
-    public static class DateTimeHelper
+    public static partial class DateTimeHelper
     {
         public static bool IsBetween(this TimeSpan source, TimeSpan start, TimeSpan end) => source >= start && source <= end;
 
@@ -18,7 +18,7 @@ namespace Mohammad.Helpers
                                                                                             source.ToTimeSpan() <= end.ToTimeSpan();
 
         public static bool IsBetween(this TimeSpan source, string start, string end) => source.IsBetween(ToTimeSpan(start), ToTimeSpan(end));
-        public static bool IsValid(string dateTime) => DateTime.TryParse(dateTime, out var buffer);
+        public static bool IsValid(string dateTime) => DateTime.TryParse(dateTime, out _);
         public static DateTime ToDateTime(this TimeSpan source) => new DateTime(source.Ticks);
         public static TimeSpan ToTimeSpan(string source) => TimeSpan.Parse(source);
         public static TimeSpan ToTimeSpan(this DateTime source) => new TimeSpan(source.Ticks);
