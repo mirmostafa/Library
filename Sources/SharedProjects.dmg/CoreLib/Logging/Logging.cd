@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Mohammad.Logging.Gateways.FileLoggerGateway" Collapsed="true">
+    <Position X="2.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAIAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Logging\Gateways\FileLoggerGateway.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.Logging.Logger" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="2.75" Y="1" Width="1.5" />
+    <Members>
+      <Field Name="_EnableRaisingEvents" Hidden="true" />
+      <Field Name="_EndDelimiter" Hidden="true" />
+      <Field Name="_LogLevel" Hidden="true" />
+      <Field Name="_StartDelimiter" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>QAiAAAAAACcAgQAMAAhAAAAAAAgAAQMAAIAAAEAEAAA=</HashCode>
+      <FileName>Logging\Logger.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Out" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Mohammad.Logging.LoggerContainer" Collapsed="true">
+    <Position X="4.25" Y="6.75" Width="1.5" />
+    <Members>
+      <Field Name="_Logger" Hidden="true" />
+      <Field Name="_Out" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAcAAQAAAABAAAAAQAgBAQMAAIAAAEAEIAA=</HashCode>
+      <FileName>Logging\LoggerContainer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Logger" />
+      <Property Name="Out" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="System.IO.TextWriter" Collapsed="true">
+    <Position X="2.75" Y="3" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Mohammad.Logging.ILogger" Collapsed="true">
+    <Position X="5.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAIAAQAAAAAAAAAAAAAAAQMAAIAAAEAEAAA=</HashCode>
+      <FileName>Logging\ILogger.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Out" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Mohammad.Logging.ISimpleLogger" Collapsed="true">
+    <Position X="5.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Logging\ISimpleLogger.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

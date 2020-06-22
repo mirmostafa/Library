@@ -1,0 +1,3 @@
+﻿namespace Mohammad.Net
+{
+}

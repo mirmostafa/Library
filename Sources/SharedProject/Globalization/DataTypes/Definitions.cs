@@ -18,7 +18,6 @@ namespace Mohammad.Globalization.DataTypes
     internal struct PersianDateTimeData
     {
         internal int Day;
-
         internal bool HasDate;
         internal bool HasTime;
         internal int Hour;

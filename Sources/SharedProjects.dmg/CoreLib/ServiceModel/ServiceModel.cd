@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Mohammad.ServiceModel.ServiceClient&lt;TContract&gt;">
+    <Position X="4.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACEAAAAAAAAAAAAAAAgAAAAAAACA=</HashCode>
+      <FileName>ServiceModel\ServiceClient.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.ServiceModel.ServiceConfigAttribute" Collapsed="true">
+    <Position X="11.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceModel\ServiceConfigAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mohammad.ServiceModel.ServiceHost">
+    <Position X="7.75" Y="1.5" Width="1.5" />
+    <Members>
+      <Field Name="_Endpoints" Hidden="true" />
+      <Field Name="_EventDisposed" Hidden="true" />
+      <Field Name="_Events" Hidden="true" />
+      <Field Name="_Host" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AABIAAAAACAAIAQEAAAAAEAAAgAAEgAAAABAAACCAAA=</HashCode>
+      <FileName>ServiceModel\ServiceHost.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Mohammad.ServiceModel.ServiceHost&lt;TContract, TService&gt;" Collapsed="true">
+    <Position X="1.5" Y="3.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ServiceModel\ServiceHost.Generic.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
