@@ -1,7 +1,4 @@
-
-
-
-using System;
+ï»¿using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -32,82 +29,82 @@ namespace Mohammad.Globalization.DataTypes
 
     public enum PersianMonth
     {
-        [LocalizedDescription("fa-IR", "ÝÑÑæÏíä")]
+        [LocalizedDescription("fa-IR", "ÙØ±ÙˆØ±Ø¯ÛŒÙ†")]
         [LocalizedDescription("en-US", "Farvardin")]
         Farvardin,
 
-        [LocalizedDescription("fa-IR", "ÇÑÏíÈåÔÊ")]
+        [LocalizedDescription("fa-IR", "Ø§Ø±Ø¯ÛŒØ¨Ù‡Ø´Øª")]
         [LocalizedDescription("en-US", "Ordibehesht")]
         Ordibehesht,
 
-        [LocalizedDescription("fa-IR", "ÎÑÏÇÏ")]
+        [LocalizedDescription("fa-IR", "Ø®Ø±Ø¯Ø§Ø¯")]
         [LocalizedDescription("en-US", "Khordad")]
         Khordad,
 
-        [LocalizedDescription("fa-IR", "ÊíÑ")]
+        [LocalizedDescription("fa-IR", "ØªÛŒØ±")]
         [LocalizedDescription("en-US", "Tir")]
         Tir,
 
-        [LocalizedDescription("fa-IR", "ãÑÏÇÏ")]
+        [LocalizedDescription("fa-IR", "Ù…Ø±Ø¯Ø§Ø¯")]
         [LocalizedDescription("en-US", "Mordad")]
         Mordad,
 
-        [LocalizedDescription("fa-IR", "ÔåÑíæÑ")]
+        [LocalizedDescription("fa-IR", "Ø´Ù‡Ø±ÛŒÙˆØ±")]
         [LocalizedDescription("en-US", "Shahrivar")]
         Sharivar,
 
-        [LocalizedDescription("fa-IR", "ãåÑ")]
+        [LocalizedDescription("fa-IR", "Ù…Ù‡Ø±")]
         [LocalizedDescription("en-US", "Mehr")]
         Mehr,
 
-        [LocalizedDescription("fa-IR", "ÂÈÇä")]
+        [LocalizedDescription("fa-IR", "Ø¢ÛŒØ§Ù†")]
         [LocalizedDescription("en-US", "Aban")]
         Aban,
 
-        [LocalizedDescription("fa-IR", "ÂÐÑ")]
+        [LocalizedDescription("fa-IR", "Ø¢Ø°Ø±")]
         [LocalizedDescription("en-US", "Azar")]
         Azar,
 
-        [LocalizedDescription("fa-IR", "Ïí")]
+        [LocalizedDescription("fa-IR", "Ø¯ÛŒ")]
         [LocalizedDescription("en-US", "Dey")]
         Dey,
 
-        [LocalizedDescription("fa-IR", "Èåãä")]
+        [LocalizedDescription("fa-IR", "Ø¨Ù‡Ù…Ù†")]
         [LocalizedDescription("en-US", "Bahman")]
         Bahman,
 
-        [LocalizedDescription("fa-IR", "ÇÓÝäÏ")]
+        [LocalizedDescription("fa-IR", "Ø§Ø³ÙÙ†Ø¯")]
         [LocalizedDescription("en-US", "Esfand")]
         Esfand
     }
 
     public enum PersianDayOfWeek
     {
-        [LocalizedDescription("fa-IR", "í˜ÔäÈå")]
+        [LocalizedDescription("fa-IR", "ÛŒÚ©Ø´Ù†Ø¨Ù‡")]
         [LocalizedDescription("en-US", "YekShanbeh")]
         YekShanbeh,
 
-        [LocalizedDescription("fa-IR", "ÏæÔäÈå")]
+        [LocalizedDescription("fa-IR", "Ø¯ÙˆØ´Ù†Ø¨Ù‡")]
         [LocalizedDescription("en-US", "DoShanbeh")]
         DoShanbeh,
 
-        [LocalizedDescription("fa-IR", "ÓåþÔäÈå")]
+        [LocalizedDescription("fa-IR", "Ø³Ù‡â€ŒØ´Ù†Ø¨Ù‡")]
         [LocalizedDescription("en-US", "SehShanbeh")]
         SeShanbeh,
 
-        [LocalizedDescription("fa-IR", "åÇÑÔäÈå")]
+        [LocalizedDescription("fa-IR", "ÂÚ†Ù‡Ø§Ø±Ø´Ù†Ø¨Ù‡")]
         [LocalizedDescription("en-US", "ChaharShanbeh")]
         ChaharShanbeh,
 
-        [LocalizedDescription("fa-IR", "äÌÔäÈå")]
+        [LocalizedDescription("fa-IR", "ÂÙ¾Ù†Ø¬Ø´Ù†ÛŒÙ‡")]
         [LocalizedDescription("en-US", "PanjShanbeh")]
         PanjShanbeh,
 
-        [LocalizedDescription("fa-IR", "ÌãÚå")]
+        [LocalizedDescription("fa-IR", "Ø¬Ù…Ø¹Ù‡")]
         [LocalizedDescription("en-US", "Jomeh")]
         Jomeh,
 
-        [LocalizedDescription("fa-IR", "ÔäÈå")]
+        [LocalizedDescription("fa-IR", "Ø´Ù†Ø¨Ù‡")]
         [LocalizedDescription("en-US", "Shanbeh")]
         Shanbeh
     }
@@ -150,10 +147,7 @@ namespace Mohammad.Globalization.DataTypes
             return result;
         }
 
-        public void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo)
-        {
-            MapToNumberFormatInfo(numberFormatInfo, this);
-        }
+        public void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo) => MapToNumberFormatInfo(numberFormatInfo, this);
 
         public static void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo, NumericFormatInfo numericFormatInfo)
         {

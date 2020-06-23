@@ -1,11 +1,63 @@
 {
   "version": 3,
   "targets": {
-    ".NETCoreApp,Version=v3.0": {}
+    ".NETCoreApp,Version=v3.0": {
+      "Autofac/5.2.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.1/Autofac.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.1/Autofac.dll": {}
+        }
+      },
+      "LibCore30.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.0",
+        "dependencies": {
+          "Autofac": "5.2.0"
+        },
+        "compile": {
+          "bin/placeholder/LibCore30.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/LibCore30.Core.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Autofac/5.2.0": {
+      "sha512": "V8dBH0dsv75uDzl7Sw+HkhKDPUw2eXnlMjcSVMH+tLo2s67MpTKGyDj1pDcpR+IF2u4YRs0s3/x7R88YJzIWvg==",
+      "type": "package",
+      "path": "autofac/5.2.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "autofac.5.2.0.nupkg.sha512",
+        "autofac.nuspec",
+        "icon.png",
+        "lib/net461/Autofac.dll",
+        "lib/net461/Autofac.pdb",
+        "lib/net461/Autofac.xml",
+        "lib/netstandard2.0/Autofac.dll",
+        "lib/netstandard2.0/Autofac.pdb",
+        "lib/netstandard2.0/Autofac.xml",
+        "lib/netstandard2.1/Autofac.dll",
+        "lib/netstandard2.1/Autofac.pdb",
+        "lib/netstandard2.1/Autofac.xml"
+      ]
+    },
+    "LibCore30.Core/1.0.0": {
+      "type": "project",
+      "path": "../../Core/Core30/CoreLibCore30/CoreLibCore30.csproj",
+      "msbuildProject": "../../Core/Core30/CoreLibCore30/CoreLibCore30.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    ".NETCoreApp,Version=v3.0": []
+    ".NETCoreApp,Version=v3.0": [
+      "LibCore30.Core >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\m.mirmostafa\\.nuget\\packages\\": {},
@@ -37,7 +89,11 @@
       },
       "frameworks": {
         "netcoreapp3.0": {
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj": {
+              "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

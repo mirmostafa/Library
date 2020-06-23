@@ -1,13 +1,15 @@
-
-
+using System.Diagnostics;
 
 namespace Mohammad.Helpers.Internals
 {
     public class MemberInfo<TEnum>
         where TEnum : struct
     {
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public object DisplayMember { get; }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public object Value { get; }
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public TEnum ValueMember { get; }
 
         public MemberInfo(object displayMember, TEnum valueMember, object value)

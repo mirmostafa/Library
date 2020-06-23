@@ -1,9 +1,0 @@
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Core30\CoreLibCore30\bin\Debug\netcoreapp3.0\LibCore30.Core.deps.json
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Core30\CoreLibCore30\bin\Debug\netcoreapp3.0\LibCore30.Core.dll
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Core30\CoreLibCore30\bin\Debug\netcoreapp3.0\LibCore30.Core.pdb
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\CoreLibCore30.csprojAssemblyReference.cache
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\CoreLibCore30.AssemblyInfoInputs.cache
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\CoreLibCore30.AssemblyInfo.cs
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\CoreLibCore30.csproj.CoreCompileInputs.cache
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\LibCore30.Core.dll
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Core30\CoreLibCore30\obj\Debug\netcoreapp3.0\LibCore30.Core.pdb

@@ -26,4 +26,8 @@
 
   <Import Project="..\..\..\SharedProject\SharedProject.projitems" Label="Shared" />
 
+  <ItemGroup>
+    <Compile Update="D:\Mirmostafa\Sources\My\Library\Sources\SharedProject\Globalization\DataTypes\Definitions.cs" Link="Definitions.cs" />
+  </ItemGroup>
+
 </Project>

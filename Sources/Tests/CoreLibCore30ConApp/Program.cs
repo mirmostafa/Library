@@ -1,4 +1,5 @@
 ﻿using System;
+using Mohammad.Globalization;
 
 namespace CoreLibCore30ConApp
 {
@@ -9,16 +10,13 @@ namespace CoreLibCore30ConApp
             Console.Write("Enter you name: ");
             var name = Console.ReadLine();
 
-            // Pattern matching
-            if (name is {Length: var length})
+            if (name is { Length: var length })
             {
                 Console.WriteLine(length);
             }
 
-            var b = Get();
-            if (b.HasValue && b.Value)
-            {
-            }
+            var a = PersianDateTime.Now;
+            Console.WriteLine(a);
         }
 
         private static bool? Get() => null;

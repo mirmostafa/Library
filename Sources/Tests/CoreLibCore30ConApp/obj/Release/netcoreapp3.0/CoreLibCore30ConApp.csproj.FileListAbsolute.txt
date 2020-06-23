@@ -1,0 +1,13 @@
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\bin\Release\netcoreapp3.0\CoreLibCore30ConApp.exe
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\bin\Release\netcoreapp3.0\CoreLibCore30ConApp.deps.json
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\bin\Release\netcoreapp3.0\CoreLibCore30ConApp.runtimeconfig.json
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\bin\Release\netcoreapp3.0\CoreLibCore30ConApp.runtimeconfig.dev.json
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\bin\Release\netcoreapp3.0\CoreLibCore30ConApp.dll
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\bin\Release\netcoreapp3.0\CoreLibCore30ConApp.pdb
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\obj\Release\netcoreapp3.0\CoreLibCore30ConApp.csprojAssemblyReference.cache
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\obj\Release\netcoreapp3.0\CoreLibCore30ConApp.AssemblyInfoInputs.cache
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\obj\Release\netcoreapp3.0\CoreLibCore30ConApp.AssemblyInfo.cs
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\obj\Release\netcoreapp3.0\CoreLibCore30ConApp.csproj.CoreCompileInputs.cache
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\obj\Release\netcoreapp3.0\CoreLibCore30ConApp.dll
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\obj\Release\netcoreapp3.0\CoreLibCore30ConApp.pdb
+D:\Mirmostafa\Sources\my\Library\Sources\Tests\CoreLibCore30ConApp\obj\Release\netcoreapp3.0\CoreLibCore30ConApp.genruntimeconfig.cache

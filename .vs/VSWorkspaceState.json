@@ -1,7 +1,18 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Sources"
+    "\\Sources",
+    "\\Sources\\dotNet45",
+    "\\Sources\\dotNet45\\Wpf45APICodePack",
+    "\\Sources\\dotNet45\\Wpf45APICodePack\\Windows",
+    "\\Sources\\dotNet45\\Wpf45APICodePack\\Windows\\Controls",
+    "\\Sources\\SharedProject",
+    "\\Sources\\SharedProject\\Helpers",
+    "\\Sources\\SharedProject\\Helpers\\Internals",
+    "\\Sources\\Tests",
+    "\\Sources\\Tests\\CoreLibCore30ConApp",
+    "\\Sources\\Tests\\TestWpfApp45"
   ],
+  "SelectedNode": "\\Sources\\SharedProject\\Globalization\\PersianDateTime.cs",
   "PreviewInSolutionExplorer": false
 }

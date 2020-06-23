@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -14,6 +16,7 @@ namespace Mohammad.Globalization
     // Date: 1385/10/6 10:33:14 AM
     // Last update: 1399/04/02: Immutalization
     [Serializable]
+    //[DebuggerDisplay("Value: {" + nameof(Value) + "}, Text: {" + nameof(Text) + "}", Name = "{" + nameof(Text) + "}")]
     public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime>, IEquatable<PersianDateTime>, IConvertible, ISerializable
     {
         internal static PersianCalendar PersianCalendar = new PersianCalendar();
@@ -21,7 +24,8 @@ namespace Mohammad.Globalization
 
         public static string DateSeparator { get; set; } = "/";
         public static string TimeSeparator { get; set; } = ":";
-        public static string ToStringFormat { get; set; } = "HH:mm:ss yyyy/MM/dd";
+        public static string ToStringFormat { get; set; } = "yyyy/MM/dd HH:mm:ss";
+        public bool IsInitiated { get; }
 
         /// <summary>
         ///     Gets the year.
@@ -67,7 +71,8 @@ namespace Mohammad.Globalization
         public static PersianDateTime Now => DateTime.Now.ToPersianDateTime();
 
         /// <summary>
-        /// Returns the tick count for this DateTime. The returned value is the number of 100-nanosecond intervals that have elapsed since 1/1/0001 12:00am.
+        ///     Returns the tick count for this DateTime. The returned value is the number of 100-nanosecond intervals that have
+        ///     elapsed since 1/1/0001 12:00am.
         /// </summary>
         public long Ticks => ((DateTime)this).Ticks;
 
@@ -76,6 +81,12 @@ namespace Mohammad.Globalization
         /// </summary>
         /// <value>The month names.</value>
         public static IEnumerable<string> MonthNames => EnumHelper.GetDescriptions(EnumHelper.GetItems<PersianMonth>());
+
+        /// <summary>
+        ///     Gets the days of week names.
+        /// </summary>
+        /// <value>The month names.</value>
+        public static IEnumerable<string> DaysOfWeek => EnumHelper.GetDescriptions(EnumHelper.GetItems<PersianDayOfWeek>());
 
         /// <summary>
         ///     Gets the day of week.
@@ -88,6 +99,18 @@ namespace Mohammad.Globalization
         /// </summary>
         /// <value>The day of week title.</value>
         public string DayOfWeekTitle => EnumHelper.GetItemDescription(this.DayOfWeek);
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        [SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>")]
+        // ReSharper disable once UnusedMember.Local
+        private string DebuggerDisplay
+        {
+            get
+            {
+                var self = this;
+                return self.ToString();
+            }
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="PersianDateTime" /> struct.
@@ -103,6 +126,7 @@ namespace Mohammad.Globalization
             this.Data.Hour = PersianCalendar.GetHour(dateTime);
             this.Data.Minute = PersianCalendar.GetMinute(dateTime);
             this.Data.Second = PersianCalendar.GetSecond(dateTime);
+            this.IsInitiated = true;
         }
 
         /// <summary>
@@ -124,11 +148,13 @@ namespace Mohammad.Globalization
             this.Data.Hour = hour;
             this.Data.Minute = minute;
             this.Data.Second = second;
+            this.IsInitiated = true;
         }
 
-        private PersianDateTime(in PersianDateTimeData data) => this.Data = data;
+        private PersianDateTime(in PersianDateTimeData data) => (this.Data, this.IsInitiated) = (data, true);
 
-        private PersianDateTime(SerializationInfo info, in StreamingContext context) => this.Data = (PersianDateTimeData)info.GetValue("Data", typeof(PersianDateTimeData));
+        private PersianDateTime(SerializationInfo info, in StreamingContext context)
+            => (this.Data, this.IsInitiated) = ((PersianDateTimeData)info.GetValue("Data", typeof(PersianDateTimeData)), true);
 
         public static implicit operator string(in PersianDateTime persianDateTime) => persianDateTime.ToString();
         public static implicit operator PersianDateTime(string persianDateTimeString) => ParsePersian(persianDateTimeString);
@@ -226,10 +252,7 @@ namespace Mohammad.Globalization
         public bool Equals(PersianDateTime other) => this.CompareTo(other) == 0;
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Data", this.Data);
-        }
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) => info.AddValue("Data", this.Data);
 
         public void Deconstruct(out int year, out int month, out int day, out int hour, out int minute, out int second)
         {
@@ -260,7 +283,7 @@ namespace Mohammad.Globalization
         public static PersianDateTime Subtract(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2) => persianDateTime1 - persianDateTime2;
         public static PersianDateTime ParseDateTime(in DateTime dateTime) => new PersianDateTime(dateTime);
 
-        public static PersianDateTime ParsePersian(string dateTimeString)
+        public static PersianDateTime ParsePersian(in string dateTimeString)
         {
             ArgHelper.AssertNotNull(dateTimeString, nameof(dateTimeString));
             var data = new PersianDateTimeData
@@ -325,14 +348,19 @@ namespace Mohammad.Globalization
         }
 
         /// <summary>
-        ///     Returns a <see cref="System.String" /> that represents this instance.
+        ///     Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <param name="format">The format.</param>
         /// <returns>
-        ///     A <see cref="System.String" /> that represents this instance.
+        ///     A <see cref="string" /> that represents this instance.
         /// </returns>
         public string ToString(string format)
         {
+            if (!this.IsInitiated)
+            {
+                return base.ToString();
+            }
+
             ArgHelper.AssertNotNull(format, "format");
             format = format.Trim().Replace("yyyy", this.Year.ToString("0000", CultureInfo.CurrentCulture));
             format = format.Trim().Replace("MMMM", MonthNames.ToArray()[this.Month - 1]);
@@ -345,21 +373,21 @@ namespace Mohammad.Globalization
         }
 
         /// <summary>
-        ///     Returns a <see cref="System.String" /> that represents this instance.
+        ///     Returns a <see cref="string" /> that represents this instance.
         /// </summary>
         /// <returns>
-        ///     A <see cref="System.String" /> that represents this instance.
+        ///     A <see cref="string" /> that represents this instance.
         /// </returns>
         public override string ToString() => this.ToString(ToStringFormat);
 
         /// <summary>
-        ///     Determines whether the specified <see cref="System.Object" /> is equal to this instance.
+        ///     Determines whether the specified <see cref="object" /> is equal to this instance.
         /// </summary>
         /// <param name="obj">
-        ///     The <see cref="System.Object" /> to compare with this instance.
+        ///     The <see cref="object" /> to compare with this instance.
         /// </param>
         /// <returns>
-        ///     <c>true</c> if the specified <see cref="System.Object" /> is equal to this instance; otherwise, <c>false</c>.
+        ///     <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
         public override bool Equals(object obj)
         {
@@ -449,6 +477,8 @@ namespace Mohammad.Globalization
             return (result, succeed);
         }
 
+        public static bool IsPersianDateTime(string s) => TryParsePersian(s, out _);
+
         /// <summary>
         ///     Raises the invalid type cast exception.
         /// </summary>
@@ -458,7 +488,5 @@ namespace Mohammad.Globalization
             var targetType = CodeHelper.GetCallerMethodName().Substring(2);
             return new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
         }
-        public static bool IsPersianDateTime(string s) => TryParsePersian(s, out _);
-
     }
 }
