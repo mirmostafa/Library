@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -15,11 +11,7 @@ namespace Mohammad.Data.Ado.BusinessTools
 {
     public abstract class BusinessEntityOnAdo<TEntity> : IExceptionHandlerContainer
     {
-        #region Fields
-
         private ExceptionHandling _ExceptionHandling;
-
-        #endregion
 
         public ExceptionHandling ExceptionHandling
         {
@@ -35,15 +27,9 @@ namespace Mohammad.Data.Ado.BusinessTools
         protected BusinessEntityOnAdo(string connectionString) => this.Sql = new Sql(connectionString);
         protected BusinessEntityOnAdo(Sql sql) => this.Sql = sql;
 
-        public void Delete(TEntity entity)
-        {
-            this.ExecuteAndHandleExceptions(() => this.DeleteCore(entity));
-        }
+        public void Delete(TEntity entity) => this.ExecuteAndHandleExceptions(() => this.DeleteCore(entity));
 
-        public void Insert(TEntity entity)
-        {
-            this.ExecuteAndHandleExceptions(() => this.InsertCore(entity));
-        }
+        public void Insert(TEntity entity) => this.ExecuteAndHandleExceptions(() => this.InsertCore(entity));
 
         public IEnumerable<TEntity> SelectAll()
         {
@@ -55,10 +41,7 @@ namespace Mohammad.Data.Ado.BusinessTools
             return entities;
         }
 
-        public void Update(TEntity entity)
-        {
-            this.ExecuteAndHandleExceptions(() => this.UpdateCore(entity));
-        }
+        public void Update(TEntity entity) => this.ExecuteAndHandleExceptions(() => this.UpdateCore(entity));
 
         protected virtual string CreateDeleteCoreStatement(TEntity entity) => SqlStatementBuilder.CreateDelete(entity);
 
@@ -68,10 +51,7 @@ namespace Mohammad.Data.Ado.BusinessTools
         protected virtual string CreateUpdateStatement(TEntity entity) =>
             SqlStatementBuilder.CreateUpdate(entity, false, new[] {this.IdentityColumnName});
 
-        protected virtual void DeleteCore(TEntity entity)
-        {
-            this.Sql.ExecuteNonQuery(this.CreateDeleteCoreStatement(entity));
-        }
+        protected virtual void DeleteCore(TEntity entity) => this.Sql.ExecuteNonQuery(this.CreateDeleteCoreStatement(entity));
 
         protected virtual bool ExecuteAndHandleExceptions(Action action)
         {
@@ -87,10 +67,7 @@ namespace Mohammad.Data.Ado.BusinessTools
             }
         }
 
-        protected virtual void InsertCore(TEntity entity)
-        {
-            this.Sql.ExecuteNonQuery(this.CreateInsertValueStatement(entity));
-        }
+        protected virtual void InsertCore(TEntity entity) => this.Sql.ExecuteNonQuery(this.CreateInsertValueStatement(entity));
 
         protected virtual IEnumerable<TEntity> SelectCore()
         {
@@ -101,9 +78,6 @@ namespace Mohammad.Data.Ado.BusinessTools
             }
         }
 
-        protected virtual void UpdateCore(TEntity entity)
-        {
-            this.Sql.ExecuteNonQuery(this.CreateUpdateStatement(entity));
-        }
+        protected virtual void UpdateCore(TEntity entity) => this.Sql.ExecuteNonQuery(this.CreateUpdateStatement(entity));
     }
 }

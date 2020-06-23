@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -28,17 +24,13 @@ namespace Mohammad.ProgressiveOperations
         }
 
         public void Add(MultiStepOperation operation, Action action, string description = null, int priorityId = -1)
-        {
-            this.Add(new MultiStepOperationStep(operation, action, description, priorityId));
-        }
+            => this.Add(new MultiStepOperationStep(operation, action, description, priorityId));
 
         public void Add<TArgument>(MultiStepOperation operation,
             Action<TArgument> action,
             TArgument argument,
             string description = null,
             int priorityId = -1)
-        {
-            this.Add(new MultiStepOperationStep<TArgument>(operation, action, argument, description, priorityId));
-        }
+            => this.Add(new MultiStepOperationStep<TArgument>(operation, action, argument, description, priorityId));
     }
 }

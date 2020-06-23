@@ -5,11 +5,7 @@ namespace Mohammad.CqrsInfra.QueryInfra
 {
     public sealed class QueryProcessor : IQueryProcessor
     {
-        #region Fields
-
         private readonly ILifetimeScope _Container;
-
-        #endregion
 
         public QueryProcessor(ILifetimeScope container) => this._Container = container;
 

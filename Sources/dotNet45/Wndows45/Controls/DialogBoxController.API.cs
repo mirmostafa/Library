@@ -52,16 +52,8 @@ namespace Mohammad.Win.Controls
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SendMessage(int hwnd, int message, IntPtr wParam, int lParam);
 
-        #region Nested type: CallBack_EnumWinProc
-
         private delegate int CallBack_EnumWinProc(int hWnd, int lParam);
 
-        #endregion
-
-        #region Nested type: CallBack_WinProc
-
         private delegate int CallBack_WinProc(int uMsg, int wParam, int lParam);
-
-        #endregion
     }
 }

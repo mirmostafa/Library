@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -44,8 +40,7 @@ namespace Mohammad.AddIns.Contacts
 
         public static IEnumerable<AddIn<TBaseClass>> GetServices<TAttribute>(string file)
             where TAttribute : Attribute
-        {
-            return Assembly.LoadFrom(file)
+            => Assembly.LoadFrom(file)
                 .GetTypes()
                 .Select(type => new
                 {
@@ -63,7 +58,6 @@ namespace Mohammad.AddIns.Contacts
                         FilePath = file,
                         Instance = bc
                     });
-        }
 
         public static IEnumerable<AddIn<TBaseClass>> LoadAddIns<TAttribute>(string path = ".", params string[] searchPatterns)
             where TAttribute : Attribute

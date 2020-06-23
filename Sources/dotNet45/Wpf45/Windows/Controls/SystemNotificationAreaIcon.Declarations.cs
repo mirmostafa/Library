@@ -52,8 +52,6 @@ namespace Mohammad.Wpf.Windows.Controls
             ContextMenuProperty.OverrideMetadata(typeof(NotifyIcon), md);
         }
 
-        #region TrayPopupResolved
-
         /// <summary>
         ///     TrayPopupResolved Read-Only Dependency Property
         /// </summary>
@@ -87,10 +85,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             this.SetValue(_TrayPopupResolvedPropertyKey, value);
         }
-
-        #endregion
-
-        #region TrayToolTipResolved
 
         /// <summary>
         ///     TrayToolTipResolved Read-Only Dependency Property
@@ -127,10 +121,6 @@ namespace Mohammad.Wpf.Windows.Controls
             this.SetValue(_TrayToolTipResolvedPropertyKey, value);
         }
 
-        #endregion
-
-        #region CustomBalloon
-
         /// <summary>
         ///     CustomBalloon Read-Only Dependency Property
         /// </summary>
@@ -155,10 +145,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             this.SetValue(_CustomBalloonPropertyKey, value);
         }
-
-        #endregion
-
-        #region Icon property / IconSource dependency property
 
         /// <summary>
         ///     Resolves an image source and updates the <see cref="Icon" /> property accordingly.
@@ -234,10 +220,6 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        #endregion
-
-        #region ToolTipText dependency property
-
         /// <summary>
         ///     A tooltip text that is being displayed if no custom <see cref="ToolTip" />
         ///     was set or if custom tooltips are not supported.
@@ -292,10 +274,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
             this.WriteToolTipSettings();
         }
-
-        #endregion
-
-        #region TrayToolTip dependency property
 
         /// <summary>
         ///     A custom UI element that is displayed as a tooltip if the user hovers over the taskbar icon.
@@ -366,10 +344,6 @@ namespace Mohammad.Wpf.Windows.Controls
             this.WriteToolTipSettings();
         }
 
-        #endregion
-
-        #region TrayPopup dependency property
-
         /// <summary>
         ///     A control that is displayed as a popup when the taskbar icon is clicked.
         /// </summary>
@@ -430,10 +404,6 @@ namespace Mohammad.Wpf.Windows.Controls
             this.CreatePopup();
         }
 
-        #endregion
-
-        #region MenuActivation dependency property
-
         /// <summary>
         ///     Defines what mouse events display the context menu.
         ///     Defaults to <see cref="PopupActivationMode.RightClick" />.
@@ -457,10 +427,6 @@ namespace Mohammad.Wpf.Windows.Controls
             set => this.SetValue(MenuActivationProperty, value);
         }
 
-        #endregion
-
-        #region PopupActivation dependency property
-
         /// <summary>
         ///     Defines what mouse events trigger the <see cref="TrayPopup" />.
         ///     Default is <see cref="PopupActivationMode.LeftClick" />.
@@ -483,10 +449,6 @@ namespace Mohammad.Wpf.Windows.Controls
             get => (PopupActivationMode)this.GetValue(PopupActivationProperty);
             set => this.SetValue(PopupActivationProperty, value);
         }
-
-        #endregion
-
-        #region Visibility dependency property override
 
         /// <summary>
         ///     A static callback listener which is being invoked if the
@@ -523,10 +485,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 this.RemoveTaskbarIcon();
             }
         }
-
-        #endregion
-
-        #region DataContext dependency property override / target update
 
         /// <summary>
         ///     Updates the <see cref="FrameworkElement.DataContextProperty" /> of a given
@@ -587,10 +545,6 @@ namespace Mohammad.Wpf.Windows.Controls
             this.UpdateDataContext(this.ContextMenu, oldValue, newValue);
         }
 
-        #endregion
-
-        #region ContextMenu dependency property override
-
         /// <summary>
         ///     A static callback listener which is being invoked if the
         ///     <see cref="FrameworkElement.ContextMenuProperty" /> dependency property has
@@ -628,10 +582,6 @@ namespace Mohammad.Wpf.Windows.Controls
             this.UpdateDataContext((ContextMenu)e.NewValue, null, this.DataContext);
         }
 
-        #endregion
-
-        #region DoubleClickCommand dependency property
-
         /// <summary>
         ///     Associates a command that is being executed if the tray icon is being
         ///     double clicked.
@@ -653,10 +603,6 @@ namespace Mohammad.Wpf.Windows.Controls
             set => this.SetValue(DoubleClickCommandProperty, value);
         }
 
-        #endregion
-
-        #region DoubleClickCommandParameter dependency property
-
         /// <summary>
         ///     Command parameter for the <see cref="DoubleClickCommand" />.
         /// </summary>
@@ -676,10 +622,6 @@ namespace Mohammad.Wpf.Windows.Controls
             set => this.SetValue(DoubleClickCommandParameterProperty, value);
         }
 
-        #endregion
-
-        #region DoubleClickCommandTarget dependency property
-
         /// <summary>
         ///     The target of the command that is fired if the notify icon is double clicked.
         /// </summary>
@@ -698,10 +640,6 @@ namespace Mohammad.Wpf.Windows.Controls
             get => (IInputElement)this.GetValue(DoubleClickCommandTargetProperty);
             set => this.SetValue(DoubleClickCommandTargetProperty, value);
         }
-
-        #endregion
-
-        #region LeftClickCommand dependency property
 
         /// <summary>
         ///     Associates a command that is being executed if the tray icon is being
@@ -724,10 +662,6 @@ namespace Mohammad.Wpf.Windows.Controls
             set => this.SetValue(LeftClickCommandProperty, value);
         }
 
-        #endregion
-
-        #region LeftClickCommandParameter dependency property
-
         /// <summary>
         ///     Command parameter for the <see cref="LeftClickCommand" />.
         /// </summary>
@@ -747,10 +681,6 @@ namespace Mohammad.Wpf.Windows.Controls
             set => this.SetValue(LeftClickCommandParameterProperty, value);
         }
 
-        #endregion
-
-        #region LeftClickCommandTarget dependency property
-
         /// <summary>
         ///     The target of the command that is fired if the notify icon is clicked.
         /// </summary>
@@ -769,10 +699,6 @@ namespace Mohammad.Wpf.Windows.Controls
             get => (IInputElement)this.GetValue(LeftClickCommandTargetProperty);
             set => this.SetValue(LeftClickCommandTargetProperty, value);
         }
-
-        #endregion
-
-        #region TrayLeftMouseDown
 
         /// <summary>
         ///     TrayLeftMouseDown Routed Event
@@ -817,10 +743,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region TrayRightMouseDown
-
         /// <summary>
         ///     TrayRightMouseDown Routed Event
         /// </summary>
@@ -858,10 +780,6 @@ namespace Mohammad.Wpf.Windows.Controls
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }
-
-        #endregion
-
-        #region TrayMiddleMouseDown
 
         /// <summary>
         ///     TrayMiddleMouseDown Routed Event
@@ -901,10 +819,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region TrayLeftMouseUp
-
         /// <summary>
         ///     TrayLeftMouseUp Routed Event
         /// </summary>
@@ -942,10 +856,6 @@ namespace Mohammad.Wpf.Windows.Controls
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }
-
-        #endregion
-
-        #region TrayRightMouseUp
 
         /// <summary>
         ///     TrayRightMouseUp Routed Event
@@ -985,10 +895,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region TrayMiddleMouseUp
-
         /// <summary>
         ///     TrayMiddleMouseUp Routed Event
         /// </summary>
@@ -1026,10 +932,6 @@ namespace Mohammad.Wpf.Windows.Controls
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }
-
-        #endregion
-
-        #region TrayMouseDoubleClick
 
         /// <summary>
         ///     TrayMouseDoubleClick Routed Event
@@ -1074,10 +976,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region TrayMouseMove
-
         /// <summary>
         ///     TrayMouseMove Routed Event
         /// </summary>
@@ -1115,10 +1013,6 @@ namespace Mohammad.Wpf.Windows.Controls
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }
-
-        #endregion
-
-        #region TrayBalloonTipShown
 
         /// <summary>
         ///     TrayBalloonTipShown Routed Event
@@ -1158,10 +1052,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region TrayBalloonTipClosed
-
         /// <summary>
         ///     TrayBalloonTipClosed Routed Event
         /// </summary>
@@ -1200,10 +1090,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region TrayBalloonTipClicked
-
         /// <summary>
         ///     TrayBalloonTipClicked Routed Event
         /// </summary>
@@ -1241,10 +1127,6 @@ namespace Mohammad.Wpf.Windows.Controls
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }
-
-        #endregion
-
-        #region TrayContextMenuOpen (and PreviewTrayContextMenuOpen)
 
         /// <summary>
         ///     TrayContextMenuOpen Routed Event
@@ -1322,10 +1204,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region TrayPopupOpen (and PreviewTrayPopupOpen)
-
         /// <summary>
         ///     TrayPopupOpen Routed Event
         /// </summary>
@@ -1401,10 +1279,6 @@ namespace Mohammad.Wpf.Windows.Controls
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }
-
-        #endregion
-
-        #region TrayToolTipOpen (and PreviewTrayToolTipOpen)
 
         /// <summary>
         ///     TrayToolTipOpen Routed Event
@@ -1482,10 +1356,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region TrayToolTipClose (and PreviewTrayToolTipClose)
-
         /// <summary>
         ///     TrayToolTipClose Routed Event
         /// </summary>
@@ -1562,10 +1432,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region PopupOpened
-
         /// <summary>
         ///     PopupOpened Attached Routed Event
         /// </summary>
@@ -1609,10 +1475,6 @@ namespace Mohammad.Wpf.Windows.Controls
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }
-
-        #endregion
-
-        #region ToolTipOpened
 
         /// <summary>
         ///     ToolTipOpened Attached Routed Event
@@ -1658,10 +1520,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region ToolTipClose
-
         /// <summary>
         ///     ToolTipClose Attached Routed Event
         /// </summary>
@@ -1705,10 +1563,6 @@ namespace Mohammad.Wpf.Windows.Controls
             RoutedEventHelper.RaiseEvent(target, args);
             return args;
         }
-
-        #endregion
-
-        #region BalloonShowing
 
         /// <summary>
         ///     BalloonShowing Attached Routed Event
@@ -1757,10 +1611,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region BalloonClosing
-
         /// <summary>
         ///     BalloonClosing Attached Routed Event
         /// </summary>
@@ -1808,10 +1658,6 @@ namespace Mohammad.Wpf.Windows.Controls
             return args;
         }
 
-        #endregion
-
-        #region ParentTaskbarIcon
-
         /// <summary>
         ///     An attached property that is assigned to
         /// </summary>
@@ -1833,7 +1679,5 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             d.SetValue(ParentTaskbarIconProperty, value);
         }
-
-        #endregion
     }
 }

@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -31,10 +27,7 @@ namespace Mohammad.ServiceProcess
 
         public string[] Args { get; private set; }
 
-        public void Shutdown()
-        {
-            this._HoldeResetEvent.Set();
-        }
+        public void Shutdown() => this._HoldeResetEvent.Set();
 
         protected virtual void OnStartingup(WindowsServiceProgramBaseStartupEventArgs e)
         {
@@ -159,10 +152,7 @@ namespace Mohammad.ServiceProcess
         {
         }
 
-        protected virtual void OnUnhandlesExceptionOccurred(ItemActingEventArgs<Exception> e)
-        {
-            this.UnhandlesExceptionOccurred?.Invoke(this, e);
-        }
+        protected virtual void OnUnhandlesExceptionOccurred(ItemActingEventArgs<Exception> e) => this.UnhandlesExceptionOccurred?.Invoke(this, e);
 
         protected virtual void OnInitializing()
         {
@@ -174,20 +164,11 @@ namespace Mohammad.ServiceProcess
 
         protected abstract IEnumerable<LibraryWindowsServiceBase> OnGettingServices();
 
-        private void Startup(WindowsServiceProgramBaseStartupEventArgs e)
-        {
-            this.OnStartingup(e);
-        }
+        private void Startup(WindowsServiceProgramBaseStartupEventArgs e) => this.OnStartingup(e);
 
-        private void InitializeComponents()
-        {
-            this.OnInitializing();
-        }
+        private void InitializeComponents() => this.OnInitializing();
 
-        private void StopServices()
-        {
-            this._Services.ForEach(svc => Catch(svc.Stop));
-        }
+        private void StopServices() => this._Services.ForEach(svc => Catch(svc.Stop));
 
         private static void GetDefaultCommandArguments()
         {
@@ -216,20 +197,11 @@ namespace Mohammad.ServiceProcess
             taskList.WaitAny();
         }
 
-        private static void WaitForInternalShutdown()
-        {
-            Instance._HoldeResetEvent.WaitOne();
-        }
+        private static void WaitForInternalShutdown() => Instance._HoldeResetEvent.WaitOne();
 
-        private static void WaitForUserToExit()
-        {
-            While(() => AskKey("", true).Key != ConsoleKey.X);
-        }
+        private static void WaitForUserToExit() => While(() => AskKey("", true).Key != ConsoleKey.X);
 
-        private void FinalizeComponents()
-        {
-            this.OnFinalizing();
-        }
+        private void FinalizeComponents() => this.OnFinalizing();
 
         private IEnumerable<LibraryWindowsServiceBase> GetServices() => this.OnGettingServices();
 

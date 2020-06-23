@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System.ComponentModel;
 using Mohammad.DesignPatterns.ExceptionHandlingPattern;
@@ -29,15 +25,9 @@ namespace Mohammad.Data.BusinessTools
 
         protected Validator Validator { get; private set; }
 
-        protected BusinessEntityBase()
-        {
-            this.Initialize();
-        }
+        protected BusinessEntityBase() => this.Initialize();
 
-        protected virtual ExceptionHandling OnExceptionHandlingRequired() => new ExceptionHandling
-        {
-            RaiseExceptions = true
-        };
+        protected virtual ExceptionHandling OnExceptionHandlingRequired() => new ExceptionHandling {RaiseExceptions = true};
 
         protected virtual void OnInitializing()
         {
@@ -49,11 +39,7 @@ namespace Mohammad.Data.BusinessTools
             this.Validator = new Validator(this.ExceptionHandling);
         }
 
-        #region Fields
-
         private static TBusinessEntity _Instance;
         private ExceptionHandling _ExceptionHandling;
-
-        #endregion
     }
 }

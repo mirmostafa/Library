@@ -7,34 +7,20 @@ namespace Mohammad.Win.Renderers.Internal
     /// </summary>
     internal class Office2007ColorTable : ProfessionalColorTable
     {
-        #region Check
-
         /// <summary>
         ///     Gets the solid color to use when the check box is selected and gradients are being used.
         /// </summary>
         public override Color CheckBackground => _checkBack;
-
-        #endregion
-
-        #region ImageMargin
 
         /// <summary>
         ///     Gets the starting color of the gradient used in the image margin of a ToolStripDropDownMenu.
         /// </summary>
         public override Color ImageMarginGradientBegin => _imageMargin;
 
-        #endregion
-
-        #region MenuBorder
-
         /// <summary>
         ///     Gets the border color or a MenuStrip.
         /// </summary>
         public override Color MenuBorder => _menuBorder;
-
-        #endregion
-
-        #region Static Fixed Colors - Blue Color Scheme
 
         private static readonly Color _buttonBorder = Color.FromArgb(121, 153, 194);
         private static readonly Color _buttonPressedBegin = Color.FromArgb(248, 181, 106);
@@ -65,14 +51,6 @@ namespace Mohammad.Win.Renderers.Internal
         private static readonly Color _toolStripEnd = Color.FromArgb(152, 186, 230);
         private static readonly Color _toolStripMiddle = Color.FromArgb(222, 236, 255);
 
-        #endregion
-
-        #region Identity
-
-        #endregion
-
-        #region ButtonPressed
-
         /// <summary>
         ///     Gets the starting color of the gradient used when the button is pressed down.
         /// </summary>
@@ -87,10 +65,6 @@ namespace Mohammad.Win.Renderers.Internal
         ///     Gets the middle color of the gradient used when the button is pressed down.
         /// </summary>
         public override Color ButtonPressedGradientMiddle => _buttonPressedMiddle;
-
-        #endregion
-
-        #region ButtonSelected
 
         /// <summary>
         ///     Gets the starting color of the gradient used when the button is selected.
@@ -112,10 +86,6 @@ namespace Mohammad.Win.Renderers.Internal
         /// </summary>
         public override Color ButtonSelectedHighlightBorder => _buttonBorder;
 
-        #endregion
-
-        #region Grip
-
         /// <summary>
         ///     Gets the color to use for shadow effects on the grip or move handle.
         /// </summary>
@@ -125,10 +95,6 @@ namespace Mohammad.Win.Renderers.Internal
         ///     Gets the color to use for highlight effects on the grip or move handle.
         /// </summary>
         public override Color GripLight => _gripLight;
-
-        #endregion
-
-        #region MenuItem
 
         /// <summary>
         ///     Gets the starting color of the gradient used when a top-level ToolStripMenuItem is pressed down.
@@ -155,10 +121,6 @@ namespace Mohammad.Win.Renderers.Internal
         /// </summary>
         public override Color MenuItemSelectedGradientEnd => _menuItemSelectedEnd;
 
-        #endregion
-
-        #region MenuStrip
-
         /// <summary>
         ///     Gets the starting color of the gradient used in the MenuStrip.
         /// </summary>
@@ -168,10 +130,6 @@ namespace Mohammad.Win.Renderers.Internal
         ///     Gets the end color of the gradient used in the MenuStrip.
         /// </summary>
         public override Color MenuStripGradientEnd => _menuToolBack;
-
-        #endregion
-
-        #region OverflowButton
 
         /// <summary>
         ///     Gets the starting color of the gradient used in the ToolStripOverflowButton.
@@ -188,10 +146,6 @@ namespace Mohammad.Win.Renderers.Internal
         /// </summary>
         public override Color OverflowButtonGradientMiddle => _overflowMiddle;
 
-        #endregion
-
-        #region RaftingContainer
-
         /// <summary>
         ///     Gets the starting color of the gradient used in the ToolStripContainer.
         /// </summary>
@@ -201,10 +155,6 @@ namespace Mohammad.Win.Renderers.Internal
         ///     Gets the end color of the gradient used in the ToolStripContainer.
         /// </summary>
         public override Color RaftingContainerGradientEnd => _menuToolBack;
-
-        #endregion
-
-        #region Separator
 
         /// <summary>
         ///     Gets the color to use to for shadow effects on the ToolStripSeparator.
@@ -216,10 +166,6 @@ namespace Mohammad.Win.Renderers.Internal
         /// </summary>
         public override Color SeparatorLight => _separatorLight;
 
-        #endregion
-
-        #region StatusStrip
-
         /// <summary>
         ///     Gets the starting color of the gradient used on the StatusStrip.
         /// </summary>
@@ -229,10 +175,6 @@ namespace Mohammad.Win.Renderers.Internal
         ///     Gets the end color of the gradient used on the StatusStrip.
         /// </summary>
         public override Color StatusStripGradientEnd => _statusStripDark;
-
-        #endregion
-
-        #region ToolStrip
 
         /// <summary>
         ///     Gets the border color to use on the bottom edge of the ToolStrip.
@@ -278,7 +220,5 @@ namespace Mohammad.Win.Renderers.Internal
         ///     Gets the end color of the gradient used in the ToolStripPanel.
         /// </summary>
         public override Color ToolStripPanelGradientEnd => _menuToolBack;
-
-        #endregion
     }
 }

@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Specialized;
@@ -154,9 +150,7 @@ namespace Mohammad.Helpers
         }
 
         public static bool IsAssemblyDebugBuild(Assembly assembly)
-        {
-            return assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Select(obj2 => obj2.IsJITTrackingEnabled).FirstOrDefault();
-        }
+            => assembly.GetCustomAttributes(false).OfType<DebuggableAttribute>().Select(obj2 => obj2.IsJITTrackingEnabled).FirstOrDefault();
 
         public static bool IsConfigFileEncrypted<TProgram>() => GetConnectionStringSection(GetConfiguration<TProgram>()).SectionInformation.IsProtected;
 

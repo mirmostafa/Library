@@ -261,8 +261,6 @@ namespace Mohammad.Win.Controls
             this.Invalidate();
         }
 
-        #region Interval
-
         private int _Interval = 100;
 
         /// <summary>
@@ -281,10 +279,6 @@ namespace Mohammad.Win.Controls
                 }
             }
         }
-
-        #endregion
-
-        #region AutoProgress
 
         private bool _AutoProgress;
 
@@ -320,7 +314,5 @@ namespace Mohammad.Win.Controls
                 }
             }
         }
-
-        #endregion
     }
 }

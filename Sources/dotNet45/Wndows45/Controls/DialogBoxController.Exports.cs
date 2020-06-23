@@ -7,18 +7,12 @@ namespace Mohammad.Win.Controls
 {
     partial class DialogBoxController
     {
-        #region Fade
-
         /// <summary>
         ///     Gets or sets that the dialog box must be faded in start of showing
         /// </summary>
         [Description("Gets or sets that the dialog box must be faded in start of showing")]
         [DefaultValue(false)]
         public bool Fade { get; set; }
-
-        #endregion
-
-        #region RightToLeft
 
         /// <summary>
         ///     Gets or sets a value indicating whether the text in controlled dialogs appears from right to left
@@ -28,10 +22,6 @@ namespace Mohammad.Win.Controls
         [DefaultValue(RightToLeft.Yes)]
         public RightToLeft RightToLeft { get; set; } = RightToLeft.Yes;
 
-        #endregion
-
-        #region Translate
-
         /// <summary>
         ///     Gets or sets that the buttons must be translated to persian language.
         /// </summary>
@@ -39,10 +29,6 @@ namespace Mohammad.Win.Controls
         [Localizable(true)]
         [DefaultValue(true)]
         public bool Translate { get; set; } = true;
-
-        #endregion
-
-        #region Font
 
         /// <summary>
         ///     Gets or sets the font of the text displayed by the controlled dialog box.
@@ -59,10 +45,6 @@ namespace Mohammad.Win.Controls
         [Localizable(true)]
         [DefaultValue(typeof(Font), "Tahoma")]
         public virtual Font Font { get; set; } = new Font("Tahoma", 8);
-
-        #endregion
-
-        #region Enable
 
         private bool enable;
         private CallBack_WinProc myWndProc;
@@ -109,10 +91,6 @@ namespace Mohammad.Win.Controls
             }
         }
 
-        #endregion
-
-        #region Dictionary
-
         private DialogBoxControllerDict _Dictionary;
 
         /// <summary>
@@ -131,7 +109,5 @@ namespace Mohammad.Win.Controls
             }
             set => this._Dictionary = value;
         }
-
-        #endregion
     }
 }

@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -21,11 +17,7 @@ namespace Mohammad.Helpers.Console.Menu
 
     public class ConsoleMenuItem : IEquatable<ConsoleMenuItem>
     {
-        #region Fields
-
         private readonly object _ExtraArgs;
-
-        #endregion
 
         public ConsoleMenuItemList Children { get; } = new ConsoleMenuItemList();
         public char HotKey { get; internal set; }
@@ -213,15 +205,9 @@ namespace Mohammad.Helpers.Console.Menu
             }
         }
 
-        protected virtual void OnHotKeyPressed(ConsoleMenuItemHotKeyPressedEventArgs e)
-        {
-            this.HotKeyPressed?.Invoke(this, e);
-        }
+        protected virtual void OnHotKeyPressed(ConsoleMenuItemHotKeyPressedEventArgs e) => this.HotKeyPressed?.Invoke(this, e);
 
-        private static void AddSeparator()
-        {
-            ConsoleHelper.Inform(" ---------------------------------");
-        }
+        private static void AddSeparator() => ConsoleHelper.Inform(" ---------------------------------");
 
         private static void DrawItem(KeyValuePair<char, string> item)
         {
@@ -277,14 +263,8 @@ namespace Mohammad.Helpers.Console.Menu
             return result;
         }
 
-        public void Add(char separator = '-')
-        {
-            this.Add(new ConsoleMenuItem('_', "_", (IEnumerable<ConsoleMenuItem>)null));
-        }
+        public void Add(char separator = '-') => this.Add(new ConsoleMenuItem('_', "_", (IEnumerable<ConsoleMenuItem>)null));
 
-        public void AddSeparator(char separator = '-')
-        {
-            this.Add(new ConsoleMenuItem('_', "_", (IEnumerable<ConsoleMenuItem>)null));
-        }
+        public void AddSeparator(char separator = '-') => this.Add(new ConsoleMenuItem('_', "_", (IEnumerable<ConsoleMenuItem>)null));
     }
 }

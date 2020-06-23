@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2017/12/17
+﻿// Created on     2017/12/17
 // Last update on 2018/01/03 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -30,13 +26,9 @@ namespace Mohammad.Web.Api
     public abstract class WebApiConfigBase<TWebApiConfig> : Singleton<TWebApiConfig>
         where TWebApiConfig : WebApiConfigBase<TWebApiConfig>
     {
-        #region Fields
-
         //! Singleton App
         // ReSharper disable once StaticMemberInGenericType
         private static readonly object _WebApiConfigHelperLockObject = new object();
-
-        #endregion
 
         public DateTime AppStartTime { get; private set; }
 

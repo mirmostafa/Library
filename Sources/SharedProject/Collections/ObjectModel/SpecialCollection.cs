@@ -1,16 +1,8 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
-
-#region
 
 using System.Collections.Generic;
 using System.Linq;
-
-#endregion
 
 namespace Mohammad.Collections.ObjectModel
 {

@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -24,14 +20,10 @@ namespace Mohammad.ServiceProcess
 
         public static void Run<TWinService>(Action intractiveAction, ExceptionHandling exceptionHandling = null, bool autoStop = false)
             where TWinService : ServiceBase, new()
-        {
-            Run(new TWinService(), intractiveAction, exceptionHandling, autoStop);
-        }
+            => Run(new TWinService(), intractiveAction, exceptionHandling, autoStop);
 
         public static void Run(ServiceBase winService, Action intractiveAction, ExceptionHandling exceptionHandling = null, bool autoStop = false)
-        {
-            Run(EnumerableHelper.ToEnumerable(winService), intractiveAction, exceptionHandling, autoStop);
-        }
+            => Run(EnumerableHelper.ToEnumerable(winService), intractiveAction, exceptionHandling, autoStop);
 
         public static void Run(IEnumerable<ServiceBase> winServices,
             Action intractiveAction,
@@ -60,9 +52,6 @@ namespace Mohammad.ServiceProcess
             }
         }
 
-        public static void Exit()
-        {
-            Catch(() => _Mrs.Set());
-        }
+        public static void Exit() => Catch(() => _Mrs.Set());
     }
 }

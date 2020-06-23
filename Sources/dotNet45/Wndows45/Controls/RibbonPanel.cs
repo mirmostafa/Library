@@ -272,8 +272,6 @@ namespace Mohammad.Win.Controls
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            #region Entering
-
             if (this.i_mode == 0)
             {
                 if (Math.Abs(this._BaseColorOn.R - this.R0) > this.Speed)
@@ -340,10 +338,6 @@ namespace Mohammad.Win.Controls
                 }
             }
 
-            #endregion
-
-            #region Leaving
-
             if (this.i_mode == 1)
             {
                 if (Math.Abs(this._BaseColor.R - this.R0) < this.Speed)
@@ -409,8 +403,6 @@ namespace Mohammad.Win.Controls
                     this.Refresh();
                 }
             }
-
-            #endregion
         }
 
         private void InitializeComponent()

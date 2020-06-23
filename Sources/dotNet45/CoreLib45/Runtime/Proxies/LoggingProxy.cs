@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -78,20 +74,11 @@ namespace Mohammad.Runtime.Proxies
             }
         }
 
-        protected virtual void OnInvoked(ItemActedEventArgs<InvokeEventArgs> e)
-        {
-            this.Invoked?.Invoke(this._Instance, e);
-        }
+        protected virtual void OnInvoked(ItemActedEventArgs<InvokeEventArgs> e) => this.Invoked?.Invoke(this._Instance, e);
 
-        protected virtual void OnExceptionOccurred(ItemActedEventArgs<Exception> e)
-        {
-            this.ExceptionOccurred?.Invoke(this._Instance, e);
-        }
+        protected virtual void OnExceptionOccurred(ItemActedEventArgs<Exception> e) => this.ExceptionOccurred?.Invoke(this._Instance, e);
 
-        protected virtual void OnInvoking(ItemActingEventArgs<InvokeEventArgs> e)
-        {
-            this.Invoking?.Invoke(this._Instance, e);
-        }
+        protected virtual void OnInvoking(ItemActingEventArgs<InvokeEventArgs> e) => this.Invoking?.Invoke(this._Instance, e);
 
         public event EventHandler<ItemActedEventArgs<InvokeEventArgs>> Invoked;
         public event EventHandler<ItemActedEventArgs<Exception>> ExceptionOccurred;

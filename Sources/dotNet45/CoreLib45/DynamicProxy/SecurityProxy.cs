@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Reflection;
@@ -63,10 +59,7 @@ namespace Mohammad.DynamicProxy
         /// <param name="obj"> Instance of object to be proxied </param>
         public static T NewInstance<T>(T obj) => (T)ProxyFactory.Instance.Create(new SecurityProxy(obj), obj.GetType());
 
-        protected virtual void OnMethodCalling(ItemActingEventArgs<MethodCallingEventItem> e)
-        {
-            this.MethodCalling.Raise(this, e);
-        }
+        protected virtual void OnMethodCalling(ItemActingEventArgs<MethodCallingEventItem> e) => this.MethodCalling.Raise(this, e);
 
         public event EventHandler<ItemActingEventArgs<MethodCallingEventItem>> MethodCalling;
     }

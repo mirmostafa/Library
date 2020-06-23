@@ -1,9 +1,5 @@
-#region Code Identifications
-
 // Created on     2018/07/23
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System.Collections.Generic;
 using System.Linq;
@@ -71,10 +67,7 @@ namespace Mohammad.Net
             }
         }
 
-        public static void ResetCache()
-        {
-            _Cache = new Expando();
-        }
+        public static void ResetCache() => _Cache = new Expando();
 
         private static IEnumerable<IPAddress> ExcludeV6(this IEnumerable<IPAddress> addresses) => addresses.Where(
             ip => !ip.IsIPv4MappedToIPv6 && !ip.IsIPv6LinkLocal && !ip.IsIPv6Multicast && !ip.IsIPv6SiteLocal && !ip.IsIPv6Teredo);

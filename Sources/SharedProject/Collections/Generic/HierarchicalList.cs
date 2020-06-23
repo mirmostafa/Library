@@ -1,10 +1,3 @@
-#region Code Identifications
-
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,35 +36,20 @@ namespace Mohammad.Collections.Generic
         public IEnumerator<HierarchicalItem<TData>> GetEnumerator() => this._InnerList.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        public void Add(HierarchicalItem<TData> item)
-        {
-            this._InnerList.Add(item);
-        }
+        public void Add(HierarchicalItem<TData> item) => this._InnerList.Add(item);
 
-        public void Clear()
-        {
-            this._InnerList.Clear();
-        }
+        public void Clear() => this._InnerList.Clear();
 
         public bool Contains(HierarchicalItem<TData> item) => this._InnerList.Contains(item);
 
-        public void CopyTo(HierarchicalItem<TData>[] array, int arrayIndex)
-        {
-            this._InnerList.CopyTo(array, arrayIndex);
-        }
+        public void CopyTo(HierarchicalItem<TData>[] array, int arrayIndex) => this._InnerList.CopyTo(array, arrayIndex);
 
         public bool Remove(HierarchicalItem<TData> item) => this._InnerList.Remove(item);
         public int IndexOf(HierarchicalItem<TData> item) => this._InnerList.IndexOf(item);
 
-        public void Insert(int index, HierarchicalItem<TData> item)
-        {
-            this._InnerList.Insert(index, item);
-        }
+        public void Insert(int index, HierarchicalItem<TData> item) => this._InnerList.Insert(index, item);
 
-        public void RemoveAt(int index)
-        {
-            this._InnerList.RemoveAt(index);
-        }
+        public void RemoveAt(int index) => this._InnerList.RemoveAt(index);
 
         public HierarchicalItem<TData> Add(TData data, TData parent = default)
         {
@@ -94,9 +72,7 @@ namespace Mohammad.Collections.Generic
             this.Where(item => item.Parent != null && item.Parent.Data.Equals(data)).Select(item => item.Data);
 
         public void BuildTree<TItem>(Func<TData, TItem> getNewItem, Action<TItem> addToRoots, Action<TItem, TItem> addChild)
-        {
-            this.GetRootElements().BuildTree(getNewItem, this.GetChildren, addToRoots, addChild);
-        }
+            => this.GetRootElements().BuildTree(getNewItem, this.GetChildren, addToRoots, addChild);
 
         public IEnumerable<TData> GetRootElements() => this.GetRootItems().Select(item => item.Data);
         public IEnumerable<HierarchicalItem<TData>> GetRootItems() => this.Where(item => item.Parent == null);

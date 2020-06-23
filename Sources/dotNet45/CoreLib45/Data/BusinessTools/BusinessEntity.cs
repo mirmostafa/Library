@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -24,22 +20,13 @@ namespace Mohammad.Data.BusinessTools
         protected virtual bool IsLazy { get; set; } = true;
 
         [DataObjectMethod(DataObjectMethodType.Delete)]
-        public virtual void Delete(TEntity entity)
-        {
-            this.Delete(entity, true);
-        }
+        public virtual void Delete(TEntity entity) => this.Delete(entity, true);
 
         [DataObjectMethod(DataObjectMethodType.Delete)]
-        public virtual void DeleteByIds(IEnumerable<long> ids)
-        {
-            this.DeleteByIds(ids, true);
-        }
+        public virtual void DeleteByIds(IEnumerable<long> ids) => this.DeleteByIds(ids, true);
 
         [DataObjectMethod(DataObjectMethodType.Insert)]
-        public void Insert(TEntity entity)
-        {
-            this.Insert(entity, true);
-        }
+        public void Insert(TEntity entity) => this.Insert(entity, true);
 
         [DataObjectMethod(DataObjectMethodType.Select)]
         public virtual IEnumerable<TEntity> Select()
@@ -50,10 +37,7 @@ namespace Mohammad.Data.BusinessTools
         }
 
         [DataObjectMethod(DataObjectMethodType.Update)]
-        public virtual void Update(TEntity entity)
-        {
-            this.Update(entity, true);
-        }
+        public virtual void Update(TEntity entity) => this.Update(entity, true);
 
         [DataObjectMethod(DataObjectMethodType.Update)]
         public virtual void Update(TEntity entity, bool submitChanges)
@@ -193,10 +177,7 @@ namespace Mohammad.Data.BusinessTools
             }
         }
 
-        public virtual void SaveChanges()
-        {
-            this.SaveChangesCore();
-        }
+        public virtual void SaveChanges() => this.SaveChangesCore();
 
         protected virtual void CheckPermission(string premissionKey)
         {
@@ -211,15 +192,9 @@ namespace Mohammad.Data.BusinessTools
 
         protected abstract void InsertCore(TEntity entity, bool submitChanges);
 
-        protected virtual void OnDeleted(EntityActed<TEntity> e)
-        {
-            this.Deleted.Raise(this, e);
-        }
+        protected virtual void OnDeleted(EntityActed<TEntity> e) => this.Deleted.Raise(this, e);
 
-        protected virtual void OnDeletedByIds(EntityActed<IEnumerable<long>> e)
-        {
-            this.DeletedByIds.Raise(this, e);
-        }
+        protected virtual void OnDeletedByIds(EntityActed<IEnumerable<long>> e) => this.DeletedByIds.Raise(this, e);
 
         protected virtual bool OnDeleting(EntityActing<TEntity> e)
         {
@@ -233,30 +208,15 @@ namespace Mohammad.Data.BusinessTools
             return e.Handled;
         }
 
-        protected virtual void OnError(EntityActed<IEnumerable<long>> e)
-        {
-            this.Error.Raise(this, e);
-        }
+        protected virtual void OnError(EntityActed<IEnumerable<long>> e) => this.Error.Raise(this, e);
 
-        protected virtual void OnError(EntityActed<TEntity> e)
-        {
-            this.Error.Raise(this, e);
-        }
+        protected virtual void OnError(EntityActed<TEntity> e) => this.Error.Raise(this, e);
 
-        protected virtual void OnFilled(EntityActed<TEntity> e)
-        {
-            this.Filled.Raise(this, e);
-        }
+        protected virtual void OnFilled(EntityActed<TEntity> e) => this.Filled.Raise(this, e);
 
-        protected virtual void OnGotNew(EntityActed<TEntity> e)
-        {
-            this.GotNew.Raise(this, e);
-        }
+        protected virtual void OnGotNew(EntityActed<TEntity> e) => this.GotNew.Raise(this, e);
 
-        protected virtual void OnInserted(EntityActed<TEntity> e)
-        {
-            this.Inserted.Raise(this, e);
-        }
+        protected virtual void OnInserted(EntityActed<TEntity> e) => this.Inserted.Raise(this, e);
 
         protected virtual bool OnInserting(EntityActing<TEntity> e)
         {
@@ -264,10 +224,7 @@ namespace Mohammad.Data.BusinessTools
             return e.Handled;
         }
 
-        protected virtual void OnUpdated(EntityActed<TEntity> e)
-        {
-            this.Updated.Raise(this, e);
-        }
+        protected virtual void OnUpdated(EntityActed<TEntity> e) => this.Updated.Raise(this, e);
 
         protected virtual bool OnUpdating(EntityActing<TEntity> e)
         {
@@ -275,15 +232,9 @@ namespace Mohammad.Data.BusinessTools
             return e.Handled;
         }
 
-        protected virtual void OnValidated(EntityActed<TEntity> e)
-        {
-            this.Validated.Raise(this, e);
-        }
+        protected virtual void OnValidated(EntityActed<TEntity> e) => this.Validated.Raise(this, e);
 
-        protected virtual void OnValidatedByIds(EntityActed<IEnumerable<long>> e)
-        {
-            this.ValidatedByIds.Raise(this, e);
-        }
+        protected virtual void OnValidatedByIds(EntityActed<IEnumerable<long>> e) => this.ValidatedByIds.Raise(this, e);
 
         protected virtual bool OnValidating(EntityValidating<TEntity> e)
         {

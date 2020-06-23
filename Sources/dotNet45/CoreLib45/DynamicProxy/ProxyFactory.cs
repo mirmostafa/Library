@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections;
@@ -108,8 +104,6 @@ namespace Mohammad.DynamicProxy
                 var superConstructor = objType.GetConstructor(new Type[0]);
                 var delegateConstructor = typeBuilder.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, new[] {handlerType});
 
-                #region( "Constructor IL Code" )
-
                 var constructorIl = delegateConstructor.GetILGenerator();
 
                 // Load "this"
@@ -124,8 +118,6 @@ namespace Mohammad.DynamicProxy
                 constructorIl.Emit(OpCodes.Call, superConstructor);
                 // Constructor return
                 constructorIl.Emit(OpCodes.Ret);
-
-                #endregion
 
                 // for every method that the interfaces define, build a corresponding 
                 // method in the dynamic type that calls the handlers invoke method.  
@@ -167,8 +159,6 @@ namespace Mohammad.DynamicProxy
                         CallingConventions.Standard,
                         methodInfo.ReturnType,
                         methodParameters);
-
-                    #region( "Handler Method IL Code" )
 
                     var methodIl = methodBuilder.GetILGenerator();
 
@@ -309,8 +299,6 @@ namespace Mohammad.DynamicProxy
 
                     // Return
                     methodIl.Emit(OpCodes.Ret);
-
-                    #endregion
                 }
             }
 

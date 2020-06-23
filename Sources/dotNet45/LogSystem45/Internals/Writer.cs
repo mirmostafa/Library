@@ -27,8 +27,6 @@ namespace Mohammad.Logging.Internals
 
         protected abstract void InnerWrite(TLogEntity logEntity);
 
-        #region IWriter<TLogEntity> Members
-
         public bool ShowInDebuggerTracer { get; set; } = true;
 
         public void Write(TLogEntity logEntity)
@@ -50,7 +48,5 @@ namespace Mohammad.Logging.Internals
         }
 
         public abstract void LoadLastLog();
-
-        #endregion
     }
 }

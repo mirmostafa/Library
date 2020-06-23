@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2018/03/10
+﻿// Created on     2018/03/10
 // Last update on 2018/03/10 by Mohammad Mir mostafa 
-
-#endregion
 
 using System.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,8 +29,6 @@ namespace CoreLib45.Test
             person.Address = "Here!";
         }
 
-        #region Additional test attributes
-
         //
         // You can use the following additional attributes as you write your tests:
         //
@@ -54,7 +48,5 @@ namespace CoreLib45.Test
         // [TestCleanup()]
         // public void MyTestCleanup() { }
         //
-
-        #endregion
     }
 }

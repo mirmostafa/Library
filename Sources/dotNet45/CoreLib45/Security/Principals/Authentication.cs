@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Security.Principal;
@@ -22,10 +18,7 @@ namespace Mohammad.Security.Principals
         public LogonType LogonType { get; set; }
         public LogonProvider LogonProvider { get; set; }
 
-        ~Authentication()
-        {
-            this.Dispose(false);
-        }
+        ~Authentication() => this.Dispose(false);
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

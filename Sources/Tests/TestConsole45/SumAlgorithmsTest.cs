@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2018/07/29
+﻿// Created on     2018/07/29
 // Last update on 2018/07/29 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -63,25 +59,20 @@ namespace TestConsole45
             }
         }
 
-        private void InitializeActors()
+        private void InitializeActors() => this._Data = new Data
         {
-            this._Data = new Data
+            Actors = new List<(Func<IEnumerable<long>, long> Sun, string Name)>
             {
-                Actors = new List<(Func<IEnumerable<long>, long> Sun, string Name)>
-                {
-                    (SumAlgorithms.Sum1, "Sum1"),
-                    (SumAlgorithms.Sum2, "Sum2"),
-                    (SumAlgorithms.Sum3, "Sum3"),
-                    (SumAlgorithms.Sum4, "Sum4")
-                },
-                Info = new List<(TimeSpan Calc, string Name)>()
-            };
-        }
+                (SumAlgorithms.Sum1, "Sum1"),
+                (SumAlgorithms.Sum2, "Sum2"),
+                (SumAlgorithms.Sum3, "Sum3"),
+                (SumAlgorithms.Sum4, "Sum4")
+            },
+            Info = new List<(TimeSpan Calc, string Name)>()
+        };
 
         private static TimeSpan Run((Func<IEnumerable<long>, long> Sun, string Name) actor)
-        {
-            return Diag.Stopwatch(() => actor.Sun(Enumerable.Range(1, 100000000).Select(n => n.ToLong()))).Elapsed;
-        }
+            => Diag.Stopwatch(() => actor.Sun(Enumerable.Range(1, 100000000).Select(n => n.ToLong()))).Elapsed;
 
         private static class SumAlgorithms
         {

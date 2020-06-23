@@ -18,11 +18,7 @@ namespace Mohammad.CqrsInfra.CommandInfra
             return await this._DecoratedHandler.HandleAsync(command);
         }
 
-        #region Fields
-
         private readonly ICommandHandler<TCommand, TResult> _DecoratedHandler;
         private readonly ICommandValidator<TCommand> _Validator;
-
-        #endregion
     }
 }

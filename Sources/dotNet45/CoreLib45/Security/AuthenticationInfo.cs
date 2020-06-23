@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -72,15 +68,10 @@ namespace Mohammad.Security
 
         public override string ToString() => $"{nameof(this.UserName)}: {this.UserName}, {nameof(this.Domain)}: {this.Domain}";
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            throw new NotImplementedException();
-        }
+        public void GetObjectData(SerializationInfo info, StreamingContext context) => throw new NotImplementedException();
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+            => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         private sealed class UserNameDomainEqualityComparer : IEqualityComparer<AuthenticationInfo>
         {

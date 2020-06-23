@@ -11,8 +11,6 @@ namespace Mohammad.Win.Renderers.Internal
     /// </remarks>
     public class WindowsVistaColorTable
     {
-        #region Ctor
-
         public WindowsVistaColorTable()
         {
             this.BackgroundNorth = Color.Black;
@@ -61,14 +59,6 @@ namespace Mohammad.Win.Renderers.Internal
             this.CheckedButtonFill = Color.FromArgb(0x18, 0x38, 0x9E);
             this.CheckedButtonFillHot = Color.FromArgb(0x0F, 0x3A, 0xBF);
         }
-
-        #endregion
-
-        #region Fields
-
-        #endregion
-
-        #region Properties
 
         public Color CheckedGlowHot { get; set; }
 
@@ -182,7 +172,5 @@ namespace Mohammad.Win.Renderers.Internal
         ///     Gets or sets the glossy effect south color
         /// </summary>
         public Color GlossyEffectSouth { get; set; }
-
-        #endregion
     }
 }

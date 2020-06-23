@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2018/07/29
+﻿// Created on     2018/07/29
 // Last update on 2018/08/01 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -21,20 +17,11 @@ namespace TestConsole45.ProgressiveApproach
         protected bool IsCancellationRequested => this.CancellationToken.IsCancellationRequested;
 
         /// <inheritdoc />
-        public void Dispose()
-        {
-            this._CancellationTokenSource?.Dispose();
-        }
+        public void Dispose() => this._CancellationTokenSource?.Dispose();
 
-        public void Cancel()
-        {
-            this._CancellationTokenSource.Cancel();
-        }
+        public void Cancel() => this._CancellationTokenSource.Cancel();
 
-        public void Start(params IStep[] steps)
-        {
-            this.Start(steps.AsEnumerable());
-        }
+        public void Start(params IStep[] steps) => this.Start(steps.AsEnumerable());
 
         public void Start(IEnumerable<IStep> steps)
         {
@@ -132,15 +119,9 @@ namespace TestConsole45.ProgressiveApproach
         {
         }
 
-        protected virtual void OnExecutingStep((IStep Step, int Index, int Max) e)
-        {
-            this.ExecutingStep?.Invoke(this, e);
-        }
+        protected virtual void OnExecutingStep((IStep Step, int Index, int Max) e) => this.ExecutingStep?.Invoke(this, e);
 
-        protected virtual void OnExecutedStep((IStep Step, int Index, int Max) e)
-        {
-            this.ExecutedStep?.Invoke(this, e);
-        }
+        protected virtual void OnExecutedStep((IStep Step, int Index, int Max) e) => this.ExecutedStep?.Invoke(this, e);
 
         public event EventHandler<(IStep Step, int Index, int Max)> ExecutingStep;
         public event EventHandler<(IStep Step, int Index, int Max)> ExecutedStep;

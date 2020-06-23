@@ -1,9 +1,5 @@
-#region Code Identifications
-
 // Created on     2017/10/30
 // Last update on 2017/10/30 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Web.Http.Controllers;

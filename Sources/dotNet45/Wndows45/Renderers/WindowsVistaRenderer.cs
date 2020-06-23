@@ -17,8 +17,6 @@ namespace Mohammad.Win.Renderers
     /// </remarks>
     public class WindowsVistaRenderer : ToolStripRenderer
     {
-        #region Ctor
-
         public WindowsVistaRenderer()
         {
             this.ColorTable = new WindowsVistaColorTable();
@@ -28,8 +26,6 @@ namespace Mohammad.Win.Renderers
             this.ToolStripRadius = 2;
             this.ButtonRadius = 2;
         }
-
-        #endregion
 
         public static void Render(ToolStripContainer toolStripContainer)
         {
@@ -121,18 +117,12 @@ namespace Mohammad.Win.Renderers
         {
             if (e.ToolStrip is ToolStripDropDownMenu)
 
-                #region Draw Rectangled Border
-
             {
                 this.DrawVistaMenuBorder(e.Graphics, new Rectangle(Point.Empty, e.ToolStrip.Size));
             }
 
-            #endregion
-
             else
             {
-                #region Draw Rounded Border
-
                 e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
                 using (var path = this.GetToolStripRectangle(e.ToolStrip))
@@ -140,8 +130,6 @@ namespace Mohammad.Win.Renderers
                 {
                     e.Graphics.DrawPath(p, path);
                 }
-
-                #endregion
             }
         }
 
@@ -152,32 +140,22 @@ namespace Mohammad.Win.Renderers
                 return;
             }
 
-            #region Background
-
             using (var b = new LinearGradientBrush(Point.Empty, new PointF(0, e.ToolStrip.Height), this.ColorTable.BackgroundNorth, this.ColorTable.BackgroundSouth))
             using (var border = this.GetToolStripRectangle(e.ToolStrip))
             {
                 e.Graphics.FillPath(b, border);
             }
 
-            #endregion
-
             if (this.GlossyEffect)
-
-                #region Glossy Effect
 
             {
                 this.DrawGlossyEffect(e.Graphics, e.ToolStrip, 1);
             }
 
-            #endregion
-
             if (!this.BackgroundGlow)
             {
                 return;
             }
-
-            #region BackroundGlow
 
             var glowSize = Convert.ToInt32(Convert.ToSingle(e.ToolStrip.Height) * 0.15f);
             var glow = new Rectangle(0, e.ToolStrip.Height - glowSize - 1, e.ToolStrip.Width - 1, glowSize);
@@ -191,8 +169,6 @@ namespace Mohammad.Win.Renderers
             {
                 e.Graphics.FillPath(b, border);
             }
-
-            #endregion
         }
 
         protected override void OnRenderItemText(ToolStripItemTextRenderEventArgs e)
@@ -331,8 +307,6 @@ namespace Mohammad.Win.Renderers
             }
         }
 
-        #region Static
-
         /// <summary>
         ///     Creates the glow of the buttons
         /// </summary>
@@ -388,14 +362,6 @@ namespace Mohammad.Win.Renderers
             return path;
         }
 
-        #endregion
-
-        #region Fields
-
-        #endregion
-
-        #region Properties
-
         /// <summary>
         ///     Gets or sets the buttons rectangle radius
         /// </summary>
@@ -420,10 +386,6 @@ namespace Mohammad.Win.Renderers
         ///     Gets or sets the color table of the renderer
         /// </summary>
         public WindowsVistaColorTable ColorTable { get; set; }
-
-        #endregion
-
-        #region Methods
 
         /// <summary>
         ///     Gets a rounded rectangle representing the hole area of the toolstrip
@@ -508,8 +470,6 @@ namespace Mohammad.Win.Renderers
                 return;
             }
 
-            #region Layers
-
             //Outer border
             using (var path = GraphicsTools.CreateRoundRectangle(outerBorder, this.ButtonRadius))
             using (var p = new Pen(this.ColorTable.ButtonOuterBorder))
@@ -593,8 +553,6 @@ namespace Mohammad.Win.Renderers
 
                 g.ResetClip();
             }
-
-            #endregion
         }
 
         /// <summary>
@@ -618,8 +576,6 @@ namespace Mohammad.Win.Renderers
 
             const int margin = 2;
 
-            #region IconSeparator
-
             const int left = 22;
 
             using (var p = new Pen(this.ColorTable.MenuDark))
@@ -632,11 +588,7 @@ namespace Mohammad.Win.Renderers
                 g.DrawLine(p, new Point(r.Left + left + 1, r.Top), new Point(r.Left + left + 1, r.Height - margin));
             }
 
-            #endregion
-
             if (highlighted)
-
-                #region Draw Rectangle
 
             {
                 using (var path = GraphicsTools.CreateRoundRectangle(new Rectangle(r.X + margin, r.Y + margin, r.Width - margin * 2, r.Height - margin * 2), 3))
@@ -656,8 +608,6 @@ namespace Mohammad.Win.Renderers
                     }
                 }
             }
-
-            #endregion
         }
 
         /// <summary>
@@ -672,7 +622,5 @@ namespace Mohammad.Win.Renderers
                 g.DrawRectangle(p, new Rectangle(r.Left, r.Top, r.Width - 1, r.Height - 1));
             }
         }
-
-        #endregion
     }
 }

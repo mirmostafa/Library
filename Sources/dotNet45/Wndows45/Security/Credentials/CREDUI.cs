@@ -41,8 +41,6 @@ namespace Mohammad.Win.Security.Credentials
         [DllImport("credui.dll", EntryPoint = "CredUIConfirmCredentialsW", CharSet = CharSet.Unicode)]
         public static extern ReturnCodes ConfirmCredentials(string targetName, bool confirm);
 
-        #region FLAGS enum
-
         /// <summary>
         ///     http://www.pinvoke.net/default.aspx/Enums.CREDUI_FLAGS
         ///     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnnetsec/html/dpapiusercredentials.asp
@@ -70,10 +68,6 @@ namespace Mohammad.Win.Security.Credentials
             KEEP_USERNAME = 0x100000
         }
 
-        #endregion
-
-        #region ReturnCodes enum
-
         /// <summary>
         ///     http://www.pinvoke.net/default.aspx/Enums.CredUIReturnCodes
         /// </summary>
@@ -88,10 +82,6 @@ namespace Mohammad.Win.Security.Credentials
             ERROR_NO_SUCH_LOGON_SESSION = 1312,
             ERROR_INVALID_ACCOUNT_NAME = 1315
         }
-
-        #endregion
-
-        #region Nested type: INFO
 
         /// <summary>
         ///     http://www.pinvoke.net/default.aspx/Structures.CREDUI_INFO
@@ -109,7 +99,5 @@ namespace Mohammad.Win.Security.Credentials
             [MarshalAs(UnmanagedType.LPWStr)]
             public string pszMessageText;
         }
-
-        #endregion
     }
 }

@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2018/04/29
+﻿// Created on     2018/04/29
 // Last update on 2018/04/30 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections;
@@ -22,47 +18,26 @@ namespace CoreLib45.Test.HelpersTests
         {
             var data = new List<Person>
             {
-                new Person("Ali")
-                {
-                    Age = 5
-                },
-                new Person("Ali")
-                {
-                    Age = 5
-                },
-                new Person("Mohammad")
-                {
-                    Age = 5
-                }
+                new Person("Ali") {Age = 5},
+                new Person("Ali") {Age = 5},
+                new Person("Mohammad") {Age = 5}
             };
             var distinct = data.Distinct((x, y) => x.Name == y.Name).ToList();
             Assert.AreEqual(distinct.Count, 2);
         }
 
         [TestMethod]
-        public void CastTest()
-        {
-            Assert.IsNotNull(EnumerableHelper.AsEnuemrable(1, 2, 3, 4, 5).Cast(i => i.ToString()));
-        }
+        public void CastTest() => Assert.IsNotNull(EnumerableHelper.AsEnuemrable(1, 2, 3, 4, 5).Cast(i => i.ToString()));
 
         [TestMethod]
-        public void CountTest()
-        {
-            Assert.AreEqual(EnumerableHelper.Count(1, 2, 3, 4, 5), 5);
-        }
+        public void CountTest() => Assert.AreEqual(EnumerableHelper.Count(1, 2, 3, 4, 5), 5);
 
         [TestMethod]
-        public void ElementAtTest()
-        {
-            Assert.AreEqual(EnumerableHelper.ElementAt(EnumerableHelper.ToArray(1, 2, 3, 4, 5), 2), 3);
-        }
+        public void ElementAtTest() => Assert.AreEqual(EnumerableHelper.ElementAt(EnumerableHelper.ToArray(1, 2, 3, 4, 5), 2), 3);
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void ElementAtExceptionTest()
-        {
-            EnumerableHelper.ElementAt(EnumerableHelper.ToArray(1), 2);
-        }
+        public void ElementAtExceptionTest() => EnumerableHelper.ElementAt(EnumerableHelper.ToArray(1), 2);
 
         [TestMethod]
         public void TakeGroupsTest()

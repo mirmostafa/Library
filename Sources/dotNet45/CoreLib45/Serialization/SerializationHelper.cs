@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.IO;
@@ -51,9 +47,7 @@ namespace Mohammad.Serialization
             password);
 
         public static void Save<TClass>(string xmlFilePath, TClass value, bool encryptAfterSave = false, string password = null)
-        {
-            Serialize(xmlFilePath, value, encryptAfterSave, password);
-        }
+            => Serialize(xmlFilePath, value, encryptAfterSave, password);
 
         public static byte[] SerializeToBinary(object value)
         {
@@ -104,10 +98,7 @@ namespace Mohammad.Serialization
             {
                 using (Stream stream = new FileStream(xmlFilePath, FileMode.Create))
                 using (var xmlWriter = XmlWriter.Create(stream,
-                    new XmlWriterSettings
-                    {
-                        Indent = true
-                    }))
+                    new XmlWriterSettings {Indent = true}))
                 {
                     ser.Serialize(xmlWriter, value);
                 }

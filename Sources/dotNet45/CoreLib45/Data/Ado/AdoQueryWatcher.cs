@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Data;
@@ -33,10 +29,7 @@ namespace Mohammad.Data.Ado
 
             var connection = new SqlConnection(this.ConnectionString);
             connection.Open();
-            var command = new SqlCommand(this._Query, connection)
-            {
-                Notification = null
-            };
+            var command = new SqlCommand(this._Query, connection) {Notification = null};
 
             _Dependency = new SqlDependency(command);
             _Dependency.OnChange += this.OnDependencyChange;
@@ -46,15 +39,9 @@ namespace Mohammad.Data.Ado
             connection.Close();
         }
 
-        public void Stop()
-        {
-            SqlDependency.Stop(this.ConnectionString);
-        }
+        public void Stop() => SqlDependency.Stop(this.ConnectionString);
 
-        protected virtual async void OnChanged(SqlNotificationEventArgs e)
-        {
-            await this.Changed.RaiseAsync(this, e);
-        }
+        protected virtual async void OnChanged(SqlNotificationEventArgs e) => await this.Changed.RaiseAsync(this, e);
 
         private void OnDependencyChange(object sender, SqlNotificationEventArgs e)
         {
@@ -64,12 +51,8 @@ namespace Mohammad.Data.Ado
 
         public event EventHandler<SqlNotificationEventArgs> Changed;
 
-        #region Fields
-
         private static SqlDependency _Dependency;
         private static DataTable _TempTable;
         private readonly string _Query;
-
-        #endregion
     }
 }

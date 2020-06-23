@@ -1,25 +1,13 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
-
-#region
 
 using System.IO;
-
-#endregion
 
 namespace Mohammad.Helpers.Console
 {
     internal abstract class Dumper<TType>
     {
-        #region Fields
-
         internal readonly TextWriter Log;
-
-        #endregion
 
         internal Dumper(int depth)
             : this(depth, System.Console.Out)
@@ -70,12 +58,8 @@ namespace Mohammad.Helpers.Console
 
         internal abstract void WriteLine(TType element, string prefix);
 
-        #region Fields
-
         protected int Depth;
         protected int Level;
         protected int Pos;
-
-        #endregion
     }
 }

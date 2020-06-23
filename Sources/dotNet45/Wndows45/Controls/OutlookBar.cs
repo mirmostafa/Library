@@ -14,8 +14,6 @@ namespace Mohammad.Win.Controls
     /// </summary>
     public partial class OutlookBar : UserControl
     {
-        #region OutlookBarButtons list
-
         public class OutlookBarButtons : CollectionBase
         {
             //protected ArrayList List;
@@ -56,8 +54,6 @@ namespace Mohammad.Win.Controls
 
             public int IndexOf(object value) => this.List.IndexOf(value);
 
-            #region handle CollectionBase events
-
             protected override void OnInsertComplete(int index, object value)
             {
                 var b = (OutlookBarButton)value;
@@ -79,13 +75,7 @@ namespace Mohammad.Win.Controls
                 this.Parent.ButtonlistChanged();
                 base.OnClearComplete();
             }
-
-            #endregion handle CollectionBase events
         }
-
-        #endregion OutlookBarButtons list
-
-        #region OutlookBar property definitions
 
         /// <summary>
         ///     property to set the buttonHeigt
@@ -206,15 +196,7 @@ namespace Mohammad.Win.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public OutlookBarButtons Buttons => this.buttons;
 
-        #endregion OutlookBar property definitions
-
-        #region OutlookBar events
-
-        #region Delegates
-
         public delegate void ButtonClickEventHandler(object sender, ButtonClickEventArgs e);
-
-        #endregion
 
         public new event ButtonClickEventHandler Click;
 
@@ -227,10 +209,6 @@ namespace Mohammad.Win.Controls
                 : base(evt.Button, evt.Clicks, evt.X, evt.Y, evt.Delta)
                 => this.SelectedButton = button;
         }
-
-        #endregion OutlookBar events
-
-        #region OutlookBar functions
 
         public OutlookBar()
         {
@@ -301,10 +279,6 @@ namespace Mohammad.Win.Controls
 
             this.Invalidate();
         }
-
-        #endregion OutlookBar functions
-
-        #region OutlookBar control event handlers
 
         /// <summary>
         ///     isResizing is used as a signal, so this method is not called recusively
@@ -461,8 +435,6 @@ namespace Mohammad.Win.Controls
                 }
             }
         }
-
-        #endregion OutlookBar control event handlers
     }
 
     public class OutlookBarButton // : IComponent

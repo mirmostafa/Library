@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections;
@@ -20,11 +16,7 @@ namespace Mohammad.Data.SqlServer.Dynamics
 {
     public class Table : SqlObject<Table, Database>, IEnumerable
     {
-        #region Fields
-
         private Columns _Columns;
-
-        #endregion
 
         public Row this[int index] => this.Rows.ElementAt(index);
 
@@ -214,10 +206,12 @@ namespace Mohammad.Data.SqlServer.Dynamics
                 {
                     columns.Add(new Column(null, reader.Field("name", Convert.ToString), null)
                     {
-                        CollationName = reader.Field("collation_name", Convert.ToString), IsNullable = reader.Field("is_nullable", str => str.ToString().EqualsTo("1")),
+                        CollationName = reader.Field("collation_name", Convert.ToString),
+                        IsNullable = reader.Field("is_nullable", str => str.ToString().EqualsTo("1")),
                         MaxLength = reader.Field("max_length", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
                         Precision = reader.Field("precision", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
-                        Position = reader.Field("column_id", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)), DataType = reader.Field("system_type", Convert.ToString)
+                        Position = reader.Field("column_id", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
+                        DataType = reader.Field("system_type", Convert.ToString)
                     });
                 }
 
@@ -234,20 +228,13 @@ namespace Mohammad.Data.SqlServer.Dynamics
                     column.IsForeignKey = true;
                     column.ForeignKeyInfo = new ForeignKeyInfo
                     {
-                        ReferencedColumn = reader.Field("ReferencedColumn", Convert.ToString), ReferencedTable = reader.Field("ReferencedTable", Convert.ToString)
+                        ReferencedColumn = reader.Field("ReferencedColumn", Convert.ToString),
+                        ReferencedTable = reader.Field("ReferencedTable", Convert.ToString)
                     };
                 }
             }
 
             return new Columns(columns);
         }
-
-        #region Overrides of SqlObject<Table,Database>
-
-        #endregion
-
-        #region Overrides of SqlObject<Table,Database>
-
-        #endregion
     }
 }

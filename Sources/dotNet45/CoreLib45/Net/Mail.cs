@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿// Created on     2018/07/23
 
-// Created on     2018/07/23
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System.Net;
 using System.Net.Mail;
@@ -63,21 +59,18 @@ namespace Mohammad.Net
             this.IsBodyHtml = isBodyHtml;
         }
 
-        public void Send()
-        {
-            Send(this.Subject,
-                this.Content,
-                this.Reciever,
-                this.Sender,
-                this.SenderName,
-                this.Host,
-                this.Port,
-                this.UserName,
-                this.Password,
-                this.Domain,
-                this.EnableSsl,
-                this.IsBodyHtml);
-        }
+        public void Send() => Send(this.Subject,
+            this.Content,
+            this.Reciever,
+            this.Sender,
+            this.SenderName,
+            this.Host,
+            this.Port,
+            this.UserName,
+            this.Password,
+            this.Domain,
+            this.EnableSsl,
+            this.IsBodyHtml);
 
         public static void Send(string subject,
             string content,

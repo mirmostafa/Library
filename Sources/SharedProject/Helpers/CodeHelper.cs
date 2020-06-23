@@ -1,10 +1,3 @@
-#region Code Identifications
-
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,24 +15,11 @@ namespace Mohammad.Helpers
 {
     public static class CodeHelper
     {
-        #region Fields
+        public static readonly Action EmptyDelegate = () => { };
 
-        public static readonly Action EmptyDelegate = () =>
-        {
-        };
+        public static void Break() => throw new BreakException();
 
-        #endregion
-
-        public static void Break()
-        {
-            throw new BreakException();
-        }
-
-        public static Exception Catch(Action tryMethod,
-            Action<Exception> catchMethod = null,
-            Action finallyMethod = null,
-            ExceptionHandling handling = null,
-            bool throwException = false)
+        public static Exception? Catch(Action tryMethod, Action<Exception> catchMethod = null, Action finallyMethod = null, ExceptionHandling handling = null, bool throwException = false)
         {
             if (tryMethod == null)
             {
@@ -194,10 +174,8 @@ namespace Mohammad.Helpers
                 throw new ArgumentNullException(nameof(action));
             }
 
-            using (var disposable = new TDisposable())
-            {
-                action(disposable);
-            }
+            using var disposable = new TDisposable();
+            action(disposable);
         }
 
         public static TResult Dispose<TDisposable, TResult>(Func<TDisposable, TResult> action)
@@ -208,21 +186,16 @@ namespace Mohammad.Helpers
                 throw new ArgumentNullException(nameof(action));
             }
 
-            using (var disposable = new TDisposable())
-            {
-                return action(disposable);
-            }
+            using var disposable = new TDisposable();
+            return action(disposable);
         }
 
-        public static void Do(IEnumerable<Action> actions, Action<int> next = null)
-        {
-            Do(actions,
-                index =>
-                {
-                    next?.Invoke(index);
-                    return true;
-                });
-        }
+        public static void Do(IEnumerable<Action> actions, Action<int> next = null) => Do(actions,
+            index =>
+            {
+                next?.Invoke(index);
+                return true;
+            });
 
         public static void Do(IEnumerable<Action> actions, Func<int, bool> next)
         {
@@ -334,13 +307,10 @@ namespace Mohammad.Helpers
             } while (predicate());
         }
 
-        public static void DoWhile(Func<bool> predicate)
-        {
-            DoWhile(() =>
-                {
-                },
-                predicate);
-        }
+        public static void DoWhile(Func<bool> predicate) => DoWhile(() =>
+            {
+            },
+            predicate);
 
         public static IEnumerable<TResult> DoWhile<TResult>(Func<TResult> action, Func<bool> predicate)
         {
@@ -390,15 +360,12 @@ namespace Mohammad.Helpers
             return stackTrace.GetFrame(index)?.GetMethod();
         }
 
-        public static string GetCallerMethodName(int index = 2) => GetCallerMethod(index)?.Name;
+        public static string GetCallerMethodName(int index = 2) => GetCallerMethod(index).Name;
 
         public static MethodBase GetCurrentMethod() => GetCallerMethod();
 
         public static TDelegate GetDelegate<TType, TDelegate>(string methodName) =>
-            (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate),
-                typeof(TType)
-                    .GetMethod(
-                        methodName));
+            (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate), typeof(TType).GetMethod(methodName) ?? throw new InvalidOperationException());
 
         public static IEnumerable<Action> GetRepeat(Action del, int count)
         {
@@ -434,13 +401,10 @@ namespace Mohammad.Helpers
             }
         }
 
-        public static TResult If<T, TResult>(this T obj, Func<T, bool> condition, Func<T, TResult> ifTrue, Func<T, TResult> ifFalse) =>
-            condition(obj)
-                ? ifTrue(obj)
-                : ifFalse(obj);
+        public static TResult If<T, TResult>(this T obj, Func<T, bool> condition, Func<T, TResult> ifTrue, Func<T, TResult> ifFalse)
+            => condition(obj) ? ifTrue(obj) : ifFalse(obj);
 
-        public static TResult If<T, TResult>(this T obj, Func<T, bool> condition, TResult ifTrue, TResult ifFalse) =>
-            condition(obj) ? ifTrue : ifFalse;
+        public static TResult If<T, TResult>(this T obj, Func<T, bool> condition, TResult ifTrue, TResult ifFalse) => condition(obj) ? ifTrue : ifFalse;
 
         public static void IfFalse(this bool condition, Action ifFalse)
         {
@@ -479,18 +443,16 @@ namespace Mohammad.Helpers
                     }
                 }
 
-                var contstructors = typeof(TType).GetConstructors();
-                return (from contstructor in contstructors
-                        where parameters != null
-                        where parameters != null && contstructor.GetParameters().GetLength(0) == parameters.Length
-                        select contstructor.Invoke(parameters)).FirstOrDefault();
+                var constructors = typeof(TType).GetConstructors();
+                return constructors.Where(constructor => parameters != null)
+                    .Where(constructor => parameters != null && constructor.GetParameters().GetLength(0) == parameters.Length)
+                    .Select(constructor => constructor.Invoke(parameters)).FirstOrDefault();
             }
 
             var methods = typeof(TType).GetMethods();
-            return (from method in methods
-                    where string.Compare(method.Name, methodName, StringComparison.Ordinal) == 0
-                    where method.GetParameters().GetLength(0) == parameters.Length
-                    select method.Invoke(target, parameters)).FirstOrDefault();
+            return methods.Where(method => string.Compare(method.Name, methodName, StringComparison.Ordinal) == 0)
+                .Where(method => method.GetParameters().GetLength(0) == parameters.Length)
+                .Select(method => method.Invoke(target, parameters)).FirstOrDefault();
         }
 
         /// <summary>
@@ -546,9 +508,7 @@ namespace Mohammad.Helpers
             Action finallyMethod = null,
             ExceptionHandling handling = null,
             bool throwException = false)
-        {
-            Lock(() => Catch(tryMethod, catchMethod, finallyMethod, handling, throwException), lockObject ?? GetCallerMethod().DeclaringType);
-        }
+            => Lock(() => Catch(tryMethod, catchMethod, finallyMethod, handling, throwException), lockObject ?? GetCallerMethod().DeclaringType);
 
         public static (bool IsSucceed, int RetryCount) Retry(Func<bool> func, int retryCount, TimeSpan waitForRetry = default)
         {

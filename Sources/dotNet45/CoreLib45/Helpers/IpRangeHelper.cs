@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -19,26 +15,19 @@ namespace Mohammad.Helpers
         public static ResolveAndPingResult[] FastResolveAndPing(this IEnumerable<IpAddress> range) => range.FastForEachFunc(ip => ip.ResolveAndPing());
 
         public static void FastResolveAndPing(this IEnumerable<IpAddress> range, Action<ResolveAndPingResult> onResolved)
-        {
-            range.FastForEachFunc(ip => ip.ResolveAndPing(), onResolved);
-        }
+            => range.FastForEachFunc(ip => ip.ResolveAndPing(), onResolved);
 
-        public static void FastResolveAndPing(this IEnumerable<IpAddress> range, Action<IpAddress, string> onSucceed)
-        {
-            range.FastForEachFunc(ip => ip.ResolveAndPing(),
-                r =>
+        public static void FastResolveAndPing(this IEnumerable<IpAddress> range, Action<IpAddress, string> onSucceed) => range.FastForEachFunc(ip => ip.ResolveAndPing(),
+            r =>
+            {
+                if (r.PingStatus == IPStatus.Success)
                 {
-                    if (r.PingStatus == IPStatus.Success)
-                    {
-                        onSucceed(r.Ip, r.MachineName);
-                    }
-                });
-        }
+                    onSucceed(r.Ip, r.MachineName);
+                }
+            });
 
         public static void FastResolveAndPing(this IEnumerable<IpAddress> range, Func<ResolveAndPingResult, bool> onResolved)
-        {
-            range.FastForEachBreak(ip => onResolved(ip.ResolveAndPing()));
-        }
+            => range.FastForEachBreak(ip => onResolved(ip.ResolveAndPing()));
 
         public static IEnumerable<ResolveAndPingResult> ResolveAndPing(this IEnumerable<IpAddress> range) => range.Select(ip => ip.ResolveAndPing());
     }

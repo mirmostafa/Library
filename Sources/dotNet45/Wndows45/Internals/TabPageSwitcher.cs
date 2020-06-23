@@ -132,15 +132,11 @@ namespace Mohammad.Win.Internals
         /// </summary>
         public event EventHandler SelectedTabStripPageChanged;
 
-        #region DesignerSerialization Friendliness
-
         private bool ShouldSerializeBackColor() => this.BackColor != Color.FromArgb(191, 219, 255);
 
         public override void ResetBackColor()
         {
             this.BackColor = Color.FromArgb(191, 219, 255);
         }
-
-        #endregion
     }
 }

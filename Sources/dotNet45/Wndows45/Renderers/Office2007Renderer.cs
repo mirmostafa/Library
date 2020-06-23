@@ -29,14 +29,8 @@ namespace Mohammad.Win.Renderers
             //    toolStripContentPanel.Renderer = windowsVistaRenderer;
         }
 
-        #region FieldsPrivate
-
         private const int _MarginInset = 2;
         private static readonly Blend _StatusStripBlend;
-
-        #endregion
-
-        #region MethodsPublic
 
         static Office2007Renderer()
         {
@@ -64,10 +58,6 @@ namespace Mohammad.Win.Renderers
             : base(professionalColorTable)
         {
         }
-
-        #endregion
-
-        #region MethodsProtected
 
         /// <summary>
         ///     Raises the RenderArrow event.
@@ -231,10 +221,6 @@ namespace Mohammad.Win.Renderers
             }
         }
 
-        #endregion
-
-        #region MethodsPrivate
-
         private static GraphicsPath CreateBorderPath(Rectangle rectangle, float cut)
         {
             // Drawing lines requires we draw inside the area we want
@@ -263,7 +249,5 @@ namespace Mohammad.Win.Renderers
             // Now create a path based on this inner rectangle
             return CreateBorderPath(rectangle, cut);
         }
-
-        #endregion
     }
 }

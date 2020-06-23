@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 
@@ -18,9 +14,7 @@ namespace Mohammad.ProgressiveOperations
         public long Id { get; internal set; }
 
         protected MultiStepOperationStepBase(MultiStepOperation operation, string description = null, int priorityId = -1)
-        {
-            this.InitializeComponents(operation, description, priorityId);
-        }
+            => this.InitializeComponents(operation, description, priorityId);
 
         protected abstract void OnStep(MultiStepOperation op);
 

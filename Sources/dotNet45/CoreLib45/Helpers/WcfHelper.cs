@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Linq;
@@ -24,40 +20,34 @@ namespace Mohammad.Helpers
         ///     Gets the basic HTTP binding.
         /// </summary>
         /// <value>The basic HTTP binding.</value>
-        public static BasicHttpBinding BasicHttpBinding => new BasicHttpBinding
-        {
-            Security =
-            {
-                Mode = BasicHttpSecurityMode.None
-            }
-        };
+        public static BasicHttpBinding BasicHttpBinding => new BasicHttpBinding {Security = {Mode = BasicHttpSecurityMode.None}};
 
         /// <summary>
         ///     A simple default binding = NetTcpBinding
         /// </summary>
         public static NetTcpBinding DefaultBinding => new NetTcpBinding
         {
-            Security =
-            {
-                Mode = SecurityMode.None
-            },
-            OpenTimeout = TimeSpan.FromMinutes(2), CloseTimeout = TimeSpan.FromMinutes(2), ReceiveTimeout = TimeSpan.FromMinutes(15), SendTimeout = TimeSpan.FromMinutes(15),
-            TransactionFlow = false, TransferMode = TransferMode.Buffered, TransactionProtocol = TransactionProtocol.OleTransactions,
-            HostNameComparisonMode = HostNameComparisonMode.StrongWildcard, ListenBacklog = 100, MaxBufferPoolSize = 2147483647, MaxBufferSize = 2147483647,
-            MaxConnections = 1000, MaxReceivedMessageSize = 2147483647
+            Security = {Mode = SecurityMode.None},
+            OpenTimeout = TimeSpan.FromMinutes(2),
+            CloseTimeout = TimeSpan.FromMinutes(2),
+            ReceiveTimeout = TimeSpan.FromMinutes(15),
+            SendTimeout = TimeSpan.FromMinutes(15),
+            TransactionFlow = false,
+            TransferMode = TransferMode.Buffered,
+            TransactionProtocol = TransactionProtocol.OleTransactions,
+            HostNameComparisonMode = HostNameComparisonMode.StrongWildcard,
+            ListenBacklog = 100,
+            MaxBufferPoolSize = 2147483647,
+            MaxBufferSize = 2147483647,
+            MaxConnections = 1000,
+            MaxReceivedMessageSize = 2147483647
         };
 
         /// <summary>
         ///     Gets the ws HTTP binding.
         /// </summary>
         /// <value>The ws HTTP binding.</value>
-        public static WSHttpBinding WsHttpBinding => new WSHttpBinding
-        {
-            Security =
-            {
-                Mode = SecurityMode.None
-            }
-        };
+        public static WSHttpBinding WsHttpBinding => new WSHttpBinding {Security = {Mode = SecurityMode.None}};
 
         public static string CreateUri<TContract>(string host = null, string urlSufix = null)
         {
@@ -70,7 +60,9 @@ namespace Mohammad.Helpers
             {
                 return new UriBuilder
                 {
-                    Scheme = Uri.UriSchemeNetTcp, Host = host, Fragment = urlSufix
+                    Scheme = Uri.UriSchemeNetTcp,
+                    Host = host,
+                    Fragment = urlSufix
                 }.ToString();
             }
 
@@ -82,10 +74,7 @@ namespace Mohammad.Helpers
 
             var serviceUrl = customAttributes[0].As<ServiceConfigAttribute>().ServiceUrl;
             return !host.IsNullOrEmpty()
-                ? new UriBuilder(serviceUrl)
-                {
-                    Host = host
-                }.ToString()
+                ? new UriBuilder(serviceUrl) {Host = host}.ToString()
                 : new UriBuilder(serviceUrl).ToString();
         }
 

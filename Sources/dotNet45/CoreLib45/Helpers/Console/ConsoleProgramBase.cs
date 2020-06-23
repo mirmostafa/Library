@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -34,9 +30,7 @@ namespace Mohammad.Helpers.Console
         }
 
         protected virtual void ExceptionHandlingExceptionOccurred(object sender, ExceptionOccurredEventArgs<Exception> e)
-        {
-            $"[{PersianDateTime.Now}] Exception: {e.Exception.GetBaseException().Message}".WriteLine(ConsoleColor.Red);
-        }
+            => $"[{PersianDateTime.Now}] Exception: {e.Exception.GetBaseException().Message}".WriteLine(ConsoleColor.Red);
 
         protected abstract void Execute();
 
@@ -181,10 +175,7 @@ namespace Mohammad.Helpers.Console
             this.Shutdown();
         }
 
-        protected void WaitIfRequired()
-        {
-            this._ResetEvent.WaitOne();
-        }
+        protected void WaitIfRequired() => this._ResetEvent.WaitOne();
 
         private void Run(Action run)
         {
@@ -205,12 +196,8 @@ namespace Mohammad.Helpers.Console
             }
         }
 
-        #region Fields
-
         private bool _IsPaused;
         private readonly ManualResetEvent _ResetEvent = new ManualResetEvent(true);
         private Task _Task;
-
-        #endregion
     }
 }

@@ -18,14 +18,8 @@ namespace Mohammad.Win.Renderers
             return result;
         }
 
-        #region FieldsPrivate
-
         private static readonly Blend m_statusStripBlend;
         private static readonly int m_iMarginInset = 2;
-
-        #endregion
-
-        #region MethodsPublic
 
         static AquaRenderer()
         {
@@ -53,10 +47,6 @@ namespace Mohammad.Win.Renderers
             : base(professionalColorTable)
         {
         }
-
-        #endregion
-
-        #region MethodsProtected
 
         /// <summary>
         ///     Raises the RenderArrow event.
@@ -233,10 +223,6 @@ namespace Mohammad.Win.Renderers
             }
         }
 
-        #endregion
-
-        #region MethodsPrivate
-
         private static GraphicsPath CreateBorderPath(Rectangle rectangle, float cut)
         {
             // Drawing lines requires we draw inside the area we want
@@ -265,7 +251,5 @@ namespace Mohammad.Win.Renderers
             // Now create a path based on this inner rectangle
             return CreateBorderPath(rectangle, cut);
         }
-
-        #endregion
     }
 }

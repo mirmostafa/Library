@@ -632,8 +632,6 @@ namespace Mohammad.Win.Helpers
                             column => ((DataGridViewColumn)column).HeaderText = ((DataGridViewColumn)column).HeaderText.SeparateCamelCase()));
         }
 
-        #region Nested type: TabPageInfo
-
         private sealed class TabPageInfo
         {
             internal TabControl Parent { get; }
@@ -647,7 +645,5 @@ namespace Mohammad.Win.Helpers
                 this.Index = index;
             }
         }
-
-        #endregion
     }
 }

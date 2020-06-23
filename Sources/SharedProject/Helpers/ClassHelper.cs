@@ -1,10 +1,3 @@
-#region Code Identifications
-
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
-
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -21,10 +14,13 @@ namespace Mohammad.Helpers
         {
             var attributes = method?.DeclaringType?.GetCustomAttributes(typeof(DescriptionAttribute), false);
             var result = string.Empty;
-            foreach (var attribute in attributes?.Where(attribute => attribute is DescriptionAttribute))
+            if (attributes != null)
             {
-                result = (attribute as DescriptionAttribute)?.Description;
-                break;
+                foreach (var attribute in attributes.Where(attribute => attribute is DescriptionAttribute))
+                {
+                    result = (attribute as DescriptionAttribute)?.Description;
+                    break;
+                }
             }
 
             if (string.IsNullOrEmpty(result) && getClassNameIfNotFound)
@@ -53,9 +49,20 @@ namespace Mohammad.Helpers
 
         {
             var attributes = method?.DeclaringType?.GetCustomAttributes(typeof(TAttribute), false);
-            var result = (from Attribute attribute in attributes
-                          where attribute is TAttribute
-                          select attribute as TAttribute).FirstOrDefault() ?? defaultValue;
+            TAttribute first = null;
+            if (attributes != null)
+            {
+                foreach (var attribute in attributes)
+                {
+                    if (attribute is TAttribute attr)
+                    {
+                        first = attr;
+                        break;
+                    }
+                }
+            }
+
+            var result = first ?? defaultValue;
             return result;
         }
 

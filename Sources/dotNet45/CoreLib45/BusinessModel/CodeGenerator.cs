@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.CodeDom;
@@ -111,43 +107,39 @@ namespace Mohammad.BusinessModel
             return this.Generate(codeNamespace);
         }
 
-        protected virtual IEnumerable<CodeTypeDeclaration> GetTableClass(IEnumerable<Table> tables, string baseClassName = null)
+        protected virtual IEnumerable<CodeTypeDeclaration> GetTableClass(IEnumerable<Table> tables, string baseClassName = null) => tables.Select(table =>
         {
-            return tables.Select(table =>
+            var tableClass = CodeDomHelper.InitClass(table.Name, "", baseTypeNames: (baseClassName ?? string.Empty).Replace("%EntityName%", table.Name));
+            var tableAttr = new CodeAttributeDeclaration("Table");
+            tableClass.CustomAttributes.Add(tableAttr);
+            tableClass.AddField(typeof(string), "DbTableName", $"\"{table.Name}\"", false, true, true);
+            foreach (var column in table.Columns)
             {
-                var tableClass = CodeDomHelper.InitClass(table.Name, "", baseTypeNames: (baseClassName ?? string.Empty).Replace("%EntityName%", table.Name));
-                var tableAttr = new CodeAttributeDeclaration("Table");
-                tableClass.CustomAttributes.Add(tableAttr);
-                tableClass.AddField(typeof(string), "DbTableName", $"\"{table.Name}\"", false, true, true);
-                foreach (var column in table.Columns)
-                {
-                    tableClass.AddField(typeof(string), string.Concat(column.Name, "ColumnName"), string.Concat("\"", column.Name, "\""), false, true, true);
-                }
+                tableClass.AddField(typeof(string), string.Concat(column.Name, "ColumnName"), string.Concat("\"", column.Name, "\""), false, true, true);
+            }
 
-                foreach (var column in table.Columns)
-                {
-                    var type = ConvertType.SqlTypeToType(column.DataType, false).Name;
-                    var colType = $"Column<{type}>";
-                    tableClass.AddField(typeof(ColumnStructure),
-                        $"{column.Name}ColumnStructure",
-                        $"new ColumnStructure(\"{column.Name}\",{column.IsNullable},{column.IsIdentity},{false},{column.IsForeignKey},\"{(column.IsForeignKey ? column.ForeignKeyInfo.ReferencedTable : string.Empty)}\",\"{(column.IsForeignKey ? column.ForeignKeyInfo.ReferencedColumn : string.Empty)}\")",
-                        true,
-                        false,
-                        true);
-                    tableClass.AddPropertyWithBackingField(colType,
-                        column.Name,
-                        $"new Column<{type}>(\"{column.Name}\", {column.IsNullable.ToString().ToLower()}) ",
-                        true);
-                }
+            foreach (var column in table.Columns)
+            {
+                var type = ConvertType.SqlTypeToType(column.DataType, false).Name;
+                var colType = $"Column<{type}>";
+                tableClass.AddField(typeof(ColumnStructure),
+                    $"{column.Name}ColumnStructure",
+                    $"new ColumnStructure(\"{column.Name}\",{column.IsNullable},{column.IsIdentity},{false},{column.IsForeignKey},\"{(column.IsForeignKey ? column.ForeignKeyInfo.ReferencedTable : string.Empty)}\",\"{(column.IsForeignKey ? column.ForeignKeyInfo.ReferencedColumn : string.Empty)}\")",
+                    true,
+                    false,
+                    true);
+                tableClass.AddPropertyWithBackingField(colType,
+                    column.Name,
+                    $"new Column<{type}>(\"{column.Name}\", {column.IsNullable.ToString().ToLower()}) ",
+                    true);
+            }
 
-                return tableClass;
-            });
-        }
+            return tableClass;
+        });
 
-        protected virtual IEnumerable<Table> GetTables(IEnumerable<string> tablenames)
-        {
-            return tablenames != null && tablenames.Any() ? this.Database.Tables.Where(t => tablenames.Contains(t.Name, true)) : this.Database.Tables;
-        }
+        protected virtual IEnumerable<Table> GetTables(IEnumerable<string> tablenames) => tablenames != null && tablenames.Any()
+            ? this.Database.Tables.Where(t => tablenames.Contains(t.Name, true))
+            : this.Database.Tables;
 
         protected virtual string Generate(CodeNamespace ns)
         {

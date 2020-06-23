@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.ComponentModel;
@@ -43,20 +39,11 @@ namespace Mohammad.Primitives
         {
         }
 
-        public static void InitializeCacheContainer(ObjectCache defaultCacheContainer)
-        {
-            _DefaultCacheContainer = defaultCacheContainer;
-        }
+        public static void InitializeCacheContainer(ObjectCache defaultCacheContainer) => _DefaultCacheContainer = defaultCacheContainer;
 
-        public static void InitializeCacheContainer(string name)
-        {
-            _DefaultCacheContainer = new MemoryCache(name);
-        }
+        public static void InitializeCacheContainer(string name) => _DefaultCacheContainer = new MemoryCache(name);
 
-        public static void Set(string key, object value, DateTime? expirationDate = null)
-        {
-            InnerSetToCache(DefaultCacheContainer, key, value, expirationDate);
-        }
+        public static void Set(string key, object value, DateTime? expirationDate = null) => InnerSetToCache(DefaultCacheContainer, key, value, expirationDate);
 
         public static TValue Get<TValue>(string key)
         {
@@ -69,30 +56,21 @@ namespace Mohammad.Primitives
             return result.To<TValue>();
         }
 
-        public static TValue Get<TValue>(string key, Func<TValue> creator, TValue nullValue = default)
+        public static TValue Get<TValue>(string key, Func<TValue> creator, TValue nullValue = default) => CodeHelper.Lock(() =>
         {
-            return CodeHelper.Lock(() =>
+            var result = Get<TValue>(key);
+            if (!Equals(nullValue, result))
             {
-                var result = Get<TValue>(key);
-                if (!Equals(nullValue, result))
-                {
-                    return result;
-                }
+                return result;
+            }
 
-                Set(key, creator());
-                return Get(key).To<TValue>();
-            });
-        }
+            Set(key, creator());
+            return Get(key).To<TValue>();
+        });
 
         public static object Get(string key) => DefaultCacheContainer[key];
 
-        private static void InnerSetToCache(ObjectCache cacheContainer, string key, object value, DateTime? expirationDate)
-        {
-            cacheContainer.Set(new CacheItem(key, value),
-                new CacheItemPolicy
-                {
-                    AbsoluteExpiration = expirationDate ?? DateTime.MaxValue
-                });
-        }
+        private static void InnerSetToCache(ObjectCache cacheContainer, string key, object value, DateTime? expirationDate) => cacheContainer.Set(new CacheItem(key, value),
+            new CacheItemPolicy {AbsoluteExpiration = expirationDate ?? DateTime.MaxValue});
     }
 }

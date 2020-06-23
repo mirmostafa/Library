@@ -184,8 +184,6 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        #region Private animation updating system
-
         /// <summary>
         ///     A simple class designed to store information about a specific
         ///     animation instance and its properties. Able to update the values at
@@ -438,7 +436,5 @@ namespace Mohammad.Wpf.Windows.Controls
                 this.SetValue(sizeToUse * this._Ratio);
             }
         }
-
-        #endregion
     }
 }

@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -42,10 +38,7 @@ namespace Mohammad.ServiceModel
         /// <summary>
         ///     Get the uri, which the service is being up.
         /// </summary>
-        public IEnumerable<string> Addresses
-        {
-            get { return this._Endpoints.Select(ep => ep.Address.ToString()); }
-        }
+        public IEnumerable<string> Addresses => this._Endpoints.Select(ep => ep.Address.ToString());
 
         /// <summary>
         ///     Gets the list of event handlers that are attached to this component.
@@ -123,18 +116,12 @@ namespace Mohammad.ServiceModel
         /// <summary>
         ///     Causes a communication object to transition from the created state to the opened state
         /// </summary>
-        public void Open()
-        {
-            this._Host.Open();
-        }
+        public void Open() => this._Host.Open();
 
         /// <summary>
         ///     Causes a communication object to transition from the current state to the closed state
         /// </summary>
-        public void Close()
-        {
-            this._Host.Close();
-        }
+        public void Close() => this._Host.Close();
 
         /// <summary>
         ///     Releases unmanaged and - optionally - managed resources

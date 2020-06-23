@@ -1,0 +1,11 @@
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\bin\Debug\Library45.CodeGeneration.dll.config
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\bin\Debug\Library45.CodeGeneration.dll
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\bin\Debug\Library45.CodeGeneration.pdb
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\bin\Debug\Library45.Core.dll
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\bin\Debug\System.ValueTuple.dll
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\bin\Debug\Library45.Core.pdb
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\obj\Debug\CodeGeneration.csprojAssemblyReference.cache
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\obj\Debug\CodeGeneration.csproj.CoreCompileInputs.cache
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\obj\Debug\CodeGeneration.csproj.CopyComplete
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\obj\Debug\Library45.CodeGeneration.dll
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CodeGenerator\obj\Debug\Library45.CodeGeneration.pdb

@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Data;
@@ -28,15 +24,9 @@ namespace Mohammad.Helpers
         public static T ValueOf<T>(this DataRow row, string columnName, DataRowVersion version) => UnboxT<T>.Unbox(row[columnName, version]);
         public static T ValueOf<T>(this DataRow row, DataColumn column, DataRowVersion version) => UnboxT<T>.Unbox(row[column, version]);
 
-        #region Nested
-
         private static class UnboxT<T>
         {
-            #region Fields
-
             internal static readonly Converter<object, T> Unbox = Create(typeof(T));
-
-            #endregion
 
             private static Converter<object, T> Create(Type type)
             {
@@ -80,7 +70,5 @@ namespace Mohammad.Helpers
                 return (T)Convert.ChangeType(value, typeof(T));
             }
         }
-
-        #endregion
     }
 }

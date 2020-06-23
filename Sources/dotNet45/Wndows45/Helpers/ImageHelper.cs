@@ -1,9 +1,5 @@
-#region Code Identifications
-
 // Created by Mohammad on 2017/10/17
 // Last updated by Mohammad Mir mostafa on 2017/10/17
-
-#endregion
 
 using System;
 using System.Collections.Generic;

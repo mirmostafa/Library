@@ -152,8 +152,6 @@ namespace Mohammad.Win.Controls
             Application.Idle += this.Application_Idle;
         }
 
-        #region IExtenderProvider Members
-
         bool IExtenderProvider.CanExtend(object extendee)
         {
             var targetType = extendee.GetType();
@@ -168,8 +166,6 @@ namespace Mohammad.Win.Controls
 
             return false;
         }
-
-        #endregion
 
         /// <summary>
         ///     Return the action assigned to a component
@@ -311,8 +307,6 @@ namespace Mohammad.Win.Controls
         [Description("Occurs when the application is idle so that the action list can update a specific action in the list.")]
         public event EventHandler Update;
 
-        #region ISupportInitialize Members
-
         /// <summary>
         ///     Initializing started.
         /// </summary>
@@ -330,7 +324,5 @@ namespace Mohammad.Win.Controls
             this.checkInternalCollections();
             this.refreshActions();
         }
-
-        #endregion
     }
 }

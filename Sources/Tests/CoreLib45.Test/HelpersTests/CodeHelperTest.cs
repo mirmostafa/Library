@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2018/07/25
+﻿// Created on     2018/07/25
 // Last update on 2018/07/28 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Data;
@@ -50,14 +46,11 @@ namespace CoreLib45.Test.HelpersTests
 
         [TestMethod]
         [ExpectedException(typeof(Exception))]
-        public void TestCatch3_1()
-        {
-            Catch(() => throw new Exception(),
-                ex =>
-                {
-                },
-                throwException: true);
-        }
+        public void TestCatch3_1() => Catch(() => throw new Exception(),
+            ex =>
+            {
+            },
+            throwException: true);
 
         [TestMethod]
         public void TestCatch4()
@@ -191,22 +184,13 @@ namespace CoreLib45.Test.HelpersTests
         public void ComputeTest() => Compute(new[] {1, 2}.ToList);
 
         [TestMethod]
-        public void GetCurrenntMethodTest()
-        {
-            Assert.AreEqual(GetCurrentMethod().Name, "GetCurrenntMethodTest");
-        }
+        public void GetCurrenntMethodTest() => Assert.AreEqual(GetCurrentMethod().Name, "GetCurrenntMethodTest");
 
         [TestMethod]
-        public void GetCallerMethodNameTest()
-        {
-            Assert.AreEqual(GetCallerMethodName(), "GetCallerMethodNameTest");
-        }
+        public void GetCallerMethodNameTest() => Assert.AreEqual(GetCallerMethodName(), "GetCallerMethodNameTest");
 
         [TestMethod]
-        public void GetCallerMethodNameTest3()
-        {
-            Assert.AreEqual(GetCallerMethodName(3), "InvokeMethod");
-        }
+        public void GetCallerMethodNameTest3() => Assert.AreEqual(GetCallerMethodName(3), "InvokeMethod");
 
         [TestMethod]
         public void HasExceptionTest()
@@ -220,10 +204,7 @@ namespace CoreLib45.Test.HelpersTests
 
         [TestMethod]
         [ExpectedException(typeof(BreakException))]
-        public void BreakTest()
-        {
-            Break();
-        }
+        public void BreakTest() => Break();
 
         [TestMethod]
         public void DoAndLockTest()
@@ -289,12 +270,9 @@ namespace CoreLib45.Test.HelpersTests
         }
 
         [TestMethod]
-        public void ExecOnDebuggerTest()
+        public void ExecOnDebuggerTest() => ExecOnDebugger(() =>
         {
-            ExecOnDebugger(() =>
-            {
-            });
-        }
+        });
 
         [TestMethod]
         public void GetRepeatTest()
@@ -307,25 +285,16 @@ namespace CoreLib45.Test.HelpersTests
         }
 
         [TestMethod]
-        public void RunAndCleanupMemory1Test()
+        public void RunAndCleanupMemory1Test() => RunAndCleanupMemory(() =>
         {
-            RunAndCleanupMemory(() =>
-            {
-            });
-        }
+        });
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void RunAndCleanupMemory2Test()
-        {
-            RunAndCleanupMemory(null);
-        }
+        public void RunAndCleanupMemory2Test() => RunAndCleanupMemory(null);
 
         [TestMethod]
-        public void RunAndCleanupMemoryFuncTest()
-        {
-            Assert.AreEqual(RunAndCleanupMemory(() => 5), 5);
-        }
+        public void RunAndCleanupMemoryFuncTest() => Assert.AreEqual(RunAndCleanupMemory(() => 5), 5);
 
         [TestMethod]
         public void GetCallerMethodTest()

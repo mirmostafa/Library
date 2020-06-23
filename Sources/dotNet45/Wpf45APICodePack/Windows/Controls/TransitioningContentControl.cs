@@ -186,16 +186,10 @@ namespace Mohammad.Wpf.Windows.Controls
             return newStoryboard;
         }
 
-        #region Events
-
         /// <summary>
         ///     Occurs when the current transition has completed.
         /// </summary>
         public event RoutedEventHandler TransitionCompleted;
-
-        #endregion Events
-
-        #region Visual state names
 
         /// <summary>
         ///     The name of the group that holds the presentation states.
@@ -213,10 +207,6 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public const string DefaultTransitionState = "DefaultTransition";
 
-        #endregion Visual state names
-
-        #region Template part names
-
         /// <summary>
         ///     The name of the control that will display the previous content.
         /// </summary>
@@ -226,10 +216,6 @@ namespace Mohammad.Wpf.Windows.Controls
         ///     The name of the control that will display the current content.
         /// </summary>
         internal const string CurrentContentPresentationSitePartName = "CurrentContentPresentationSite";
-
-        #endregion Template part names
-
-        #region TemplateParts
 
         /// <summary>
         ///     Gets or sets the current content presentation site.
@@ -242,10 +228,6 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         /// <value>The previous content presentation site.</value>
         private ContentPresenter PreviousContentPresentationSite { get; set; }
-
-        #endregion TemplateParts
-
-        #region public bool IsTransitioning
 
         /// <summary>
         ///     Occurs when the IsTransitioning value has changed.
@@ -300,10 +282,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 throw new InvalidOperationException("IsTransitioning property is read-only.");
             }
         }
-
-        #endregion public bool IsTransitioning
-
-        #region public string Transition
 
         /// <summary>
         ///     Gets or sets the name of the transition to use. These correspond
@@ -365,10 +343,6 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-        #endregion public string Transition
-
-        #region public bool RestartTransitionOnContentChange
-
         /// <summary>
         ///     Gets or sets a value indicating whether the current transition
         ///     will be aborted when setting new content during a transition.
@@ -405,7 +379,5 @@ namespace Mohammad.Wpf.Windows.Controls
         protected virtual void OnRestartTransitionOnContentChangeChanged(bool oldValue, bool newValue)
         {
         }
-
-        #endregion public bool RestartTransitionOnContentChange
     }
 }

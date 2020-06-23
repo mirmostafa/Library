@@ -74,12 +74,8 @@ namespace Mohammad.CqrsInfra
             return builder;
         }
 
-        #region Fields
-
         private static Assembly _Assembly;
 
         private static IContainer _container;
-
-        #endregion
     }
 }

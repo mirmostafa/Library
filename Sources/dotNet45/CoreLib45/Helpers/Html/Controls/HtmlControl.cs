@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +13,9 @@ namespace Mohammad.Helpers.Html.Controls
         public static IEnumerable<HtmlElement> HtmlH2GetAll(this HtmlDocument document) => document.GetElementsByTagName("h2").Cast<HtmlElement>();
         public static IEnumerable<HtmlElement> HtmlSpanGetAll(this HtmlDocument document) => document.GetElementsByTagName("span").Cast<HtmlElement>();
 
-        public static HtmlElement HtmlSpanGetByAttribute(this HtmlDocument document, string attName, string attValue)
-        {
-            return document.GetElementsByTagName("span")
-                .Cast<HtmlElement>()
-                .FirstOrDefault(el => el.GetAttribute(attName).ToLower().Equals(attValue.ToLower()));
-        }
+        public static HtmlElement HtmlSpanGetByAttribute(this HtmlDocument document, string attName, string attValue) => document.GetElementsByTagName("span")
+            .Cast<HtmlElement>()
+            .FirstOrDefault(el => el.GetAttribute(attName).ToLower().Equals(attValue.ToLower()));
 
         public static void TextBoxSetText(this HtmlDocument document, string attName, string attValue, string value)
         {
@@ -58,13 +51,11 @@ namespace Mohammad.Helpers.Html.Controls
             string attValue,
             string tagName = "input",
             string attributeName = "value")
-        {
-            return document.GetElementsByTagName(tagName)
+            => document.GetElementsByTagName(tagName)
                 .Cast<HtmlElement>()
                 .Where(tag => tag.GetAttribute(attName).Equals(attValue))
                 .Select(tag => tag.GetAttribute(attributeName))
                 .FirstOrDefault();
-        }
 
         internal static void InvokeMember(this HtmlDocument document, string attName, string attValue, string tagName = "input", string methodName = "click")
         {

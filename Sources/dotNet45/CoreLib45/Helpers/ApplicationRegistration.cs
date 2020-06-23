@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using Microsoft.Win32;
 
@@ -45,8 +41,6 @@ namespace Mohammad.Helpers
             }
         }
 
-        #region Nested
-
         public class ApplicationRegistrationInfo
         {
             public string ApplicationTitle { get; set; }
@@ -74,7 +68,5 @@ namespace Mohammad.Helpers
                 this.Version = version ?? ApplicationHelper.Version;
             }
         }
-
-        #endregion
     }
 }

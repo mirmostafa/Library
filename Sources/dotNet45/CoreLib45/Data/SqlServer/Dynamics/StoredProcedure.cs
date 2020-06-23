@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -18,11 +14,7 @@ namespace Mohammad.Data.SqlServer.Dynamics
 {
     public class StoredProcedure : SqlObject<StoredProcedure, Database>
     {
-        #region Fields
-
         private StoredProcedureParams _Params;
-
-        #endregion
 
         public string AssemblyName { get; set; }
         public string Body { get; set; }
@@ -39,7 +31,8 @@ namespace Mohammad.Data.SqlServer.Dynamics
                                       select new StoredProcedureParam(this, row.Field<string>("name"), this.ConnectionString)
                                       {
                                           DefaultValue = row.Field("DefaultValue", Convert.ToString),
-                                          Id = row.Field("ID", Convert.ToInt64), Length = row.Field("Length", Convert.ToInt32),
+                                          Id = row.Field("ID", Convert.ToInt64),
+                                          Length = row.Field("Length", Convert.ToInt32),
                                           NumericPrecision = row.Field("NumericPrecision", Convert.ToInt32),
                                           SqlDataType = row.Field("DataType", Convert.ToString)
                                       }));

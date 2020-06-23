@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.IO;
@@ -57,25 +53,13 @@ namespace Mohammad.IO
             this._CancellationTokenSource.Dispose();
         }
 
-        protected virtual void OnAdded(ItemActedEventArgs<string> e)
-        {
-            this.Added.RaiseAsync(this, e, this._TaskScheduler);
-        }
+        protected virtual void OnAdded(ItemActedEventArgs<string> e) => this.Added.RaiseAsync(this, e, this._TaskScheduler);
 
-        protected virtual void OnDeleted(ItemActedEventArgs<string> e)
-        {
-            this.Deleted.RaiseAsync(this, e, this._TaskScheduler);
-        }
+        protected virtual void OnDeleted(ItemActedEventArgs<string> e) => this.Deleted.RaiseAsync(this, e, this._TaskScheduler);
 
-        protected virtual void OnModified(ItemActedEventArgs<string> e)
-        {
-            this.Modified.RaiseAsync(this, e, this._TaskScheduler);
-        }
+        protected virtual void OnModified(ItemActedEventArgs<string> e) => this.Modified.RaiseAsync(this, e, this._TaskScheduler);
 
-        protected virtual void OnRenamed(ChangedEventArgs<string> e)
-        {
-            this.Renamed.RaiseAsync(this, e, this._TaskScheduler);
-        }
+        protected virtual void OnRenamed(ChangedEventArgs<string> e) => this.Renamed.RaiseAsync(this, e, this._TaskScheduler);
 
         private void Watch()
         {

@@ -11,8 +11,6 @@ using Mohammad.Wpf.Windows.Controls;
 
 namespace Mohammad.Wpf.AddIns.Utilities.RibbonAddIn
 {
-    #region Data Structures
-
     public interface IAddInRibbonAppContext : IAddInAppContext
     {
         IEnumerable<TRibbonAction> GetRibbonActions<TRibbonAction>() where TRibbonAction : IRibbonAction;
@@ -48,8 +46,6 @@ namespace Mohammad.Wpf.AddIns.Utilities.RibbonAddIn
             this.Actions = actions;
         }
     }
-
-    #endregion
 
     public static class RibbonAddInLoader
     {

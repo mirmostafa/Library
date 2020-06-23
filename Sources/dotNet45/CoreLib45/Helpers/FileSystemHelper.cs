@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -55,9 +51,7 @@ namespace Mohammad.Helpers
         /// <param name="rights">The rights.</param>
         /// <param name="controlType">Type of the control.</param>
         public static void AddSecurity(this DirectoryInfo dir, string account, FileSystemRights rights, AccessControlType controlType)
-        {
-            AddDirectorySecurity(dir.FullName, account, rights, controlType);
-        }
+            => AddDirectorySecurity(dir.FullName, account, rights, controlType);
 
         public static FileInfo ChangeExtension(this FileInfo file, string ext)
         {
@@ -608,9 +602,7 @@ namespace Mohammad.Helpers
         /// <param name="rights">The rights.</param>
         /// <param name="controlType">Type of the control.</param>
         public static void RemoveSecurity(this DirectoryInfo dir, string account, FileSystemRights rights, AccessControlType controlType)
-        {
-            RemoveDirectorySecurity(dir.FullName, account, rights, controlType);
-        }
+            => RemoveDirectorySecurity(dir.FullName, account, rights, controlType);
 
         /// <summary>
         ///     Safely deletes the specific files.
@@ -623,9 +615,7 @@ namespace Mohammad.Helpers
         public static void SafeDelete(this IEnumerable<FileInfo> files,
             EventHandler<ItemActingEventArgs<FileInfo>> onFileDeleting = null,
             bool sendToRecycleBin = false)
-        {
-            files.ForEach(file => file.SafeDelete(onFileDeleting, sendToRecycleBin));
-        }
+            => files.ForEach(file => file.SafeDelete(onFileDeleting, sendToRecycleBin));
 
         /// <summary>
         ///     Safely deletes the specific file.
@@ -666,9 +656,7 @@ namespace Mohammad.Helpers
             EventHandler<ItemActingEventArgs<DirectoryInfo>> onDirectoryDeleting = null,
             EventHandler<ItemActingEventArgs<FileInfo>> onFileDeleting = null,
             bool sendToRecycleBin = false)
-        {
-            directories.ForEach(dir => dir.SafeDelete(onDirectoryDeleting, onFileDeleting, sendToRecycleBin));
-        }
+            => directories.ForEach(dir => dir.SafeDelete(onDirectoryDeleting, onFileDeleting, sendToRecycleBin));
 
         /// <summary>
         ///     Safely deletes the specific file system.
@@ -780,9 +768,7 @@ namespace Mohammad.Helpers
         /// </summary>
         /// <param name="fileSystem">The file system.</param>
         public static void ShellExecute(this FileSystemInfo fileSystem)
-        {
-            Api.ShellExecute(IntPtr.Zero, ShellExecuteVerbs.OpenFile, fileSystem.FullName, null, null, ShowCommands.SW_SHOWNORMAL);
-        }
+            => Api.ShellExecute(IntPtr.Zero, ShellExecuteVerbs.OpenFile, fileSystem.FullName, null, null, ShowCommands.SW_SHOWNORMAL);
 
         /// <summary>
         ///     Executes the specified command.
@@ -813,7 +799,11 @@ namespace Mohammad.Helpers
 
             var startInfo = new ProcessStartInfo
             {
-                WorkingDirectory = workingDirectory, UseShellExecute = useShellExecute, FileName = command, Arguments = args, CreateNoWindow = createNoWindow
+                WorkingDirectory = workingDirectory,
+                UseShellExecute = useShellExecute,
+                FileName = command,
+                Arguments = args,
+                CreateNoWindow = createNoWindow
             };
             var result = Process.Start(startInfo);
             if (waitForExit)

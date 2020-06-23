@@ -1,11 +1,4 @@
-﻿#region Code Identifications
-
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
-
-using System;
+﻿using System;
 using System.Globalization;
 using System.Reflection;
 
@@ -45,12 +38,9 @@ namespace Mohammad.Globalization.Helpers
             _CalendarId = typeof(Calendar).GetProperty("ID", BindingFlags.NonPublic | BindingFlags.Instance);
             _CultureInfoReadOnly = typeof(CultureInfo).GetField("m_isReadOnly", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             _CultureInfoCalendar = typeof(CultureInfo).GetField("calendar", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            _NumberFormatInfoReadOnly =
-                typeof(NumberFormatInfo).GetField("isReadOnly", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            _DateTimeFormatInfoCalendar =
-                typeof(DateTimeFormatInfo).GetField("calendar", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            _DateTimeFormatInfoReadOnly =
-                typeof(DateTimeFormatInfo).GetField("m_isReadOnly", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            _NumberFormatInfoReadOnly = typeof(NumberFormatInfo).GetField("isReadOnly", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            _DateTimeFormatInfoCalendar = typeof(DateTimeFormatInfo).GetField("calendar", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            _DateTimeFormatInfoReadOnly = typeof(DateTimeFormatInfo).GetField("m_isReadOnly", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             _DateTimeFormatInfoCultureTableRecord =
                 typeof(DateTimeFormatInfo).GetField("m_cultureTableRecord", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
             var cultureTableRecord = typeof(DateTimeFormatInfo).Assembly.GetType("System.Globalization.CultureTableRecord");
@@ -61,10 +51,7 @@ namespace Mohammad.Globalization.Helpers
         ///     Represents a method that set PersianCalendar to specified instances of CultureInfo
         /// </summary>
         /// <param name="culture">Represents an instance of CultureInfo that persian number format should be set to it.</param>
-        public static void SetPersianOptions(CultureInfo culture)
-        {
-            SetPersianCalendar(culture, new DateTimeFormatInfo());
-        }
+        public static void SetPersianOptions(CultureInfo culture) => SetPersianCalendar(culture, new DateTimeFormatInfo());
 
         /// <summary>
         ///     Represents a method that set PersianCalendar to specified instances of CultureInfo and DateTimeFormatInfo
@@ -99,10 +86,7 @@ namespace Mohammad.Globalization.Helpers
         ///     Represents a method that set persian number format to specified instance CultureInfo.
         /// </summary>
         /// <param name="info">Represents an instance of CultureInfo that persian number format should be set to it.</param>
-        public static void InitPersianNumberFormat(CultureInfo info)
-        {
-            InitPersianNumberFormat(info.NumberFormat);
-        }
+        public static void InitPersianNumberFormat(CultureInfo info) => InitPersianNumberFormat(info.NumberFormat);
 
         /// <summary>
         ///     Represents a method that set persian number format to specified instance NumberFormatInfo.

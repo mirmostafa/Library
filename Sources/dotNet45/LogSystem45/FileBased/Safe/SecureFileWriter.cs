@@ -17,8 +17,6 @@ namespace Mohammad.Logging.FileBased.Safe
         public SecureFileWriter(string fileName, string key) => this.Storage = new SecureFile(fileName, key);
         public override string ToString() => this.Storage.ToString();
 
-        #region IWriter<LogEntity> Members
-
         public bool ShowInDebuggerTracer { get; set; }
 
         public void Write(LogEntity logEntity)
@@ -30,7 +28,5 @@ namespace Mohammad.Logging.FileBased.Safe
         {
             throw new NotImplementedException();
         }
-
-        #endregion
     }
 }

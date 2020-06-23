@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -48,23 +44,14 @@ namespace Mohammad.ProgressiveOperations
             });
         }
 
-        public async Task StartAsync()
-        {
-            await Async.Run(this.Start);
-        }
+        public async Task StartAsync() => await Async.Run(this.Start);
 
         public static Progressive<T> Get(params Action[] steps) => new SimpleProgressive<T>(steps);
         public static Progressive<TData> Get<TData>(params Action[] steps) => new SimpleProgressive<TData>(steps);
 
-        public static void Start(params Action[] steps)
-        {
-            Get(steps).Start();
-        }
+        public static void Start(params Action[] steps) => Get(steps).Start();
 
-        public static async Task StartAsync(params Action[] steps)
-        {
-            await Get(steps).StartAsync();
-        }
+        public static async Task StartAsync(params Action[] steps) => await Get(steps).StartAsync();
 
         public static Progressive<T> Get(IEnumerable<Action> steps,
             EventHandler<ProgressiveOperationEventArgs<T>> onProgressChanged,
@@ -87,10 +74,7 @@ namespace Mohammad.ProgressiveOperations
             result.Start();
         }
 
-        protected virtual void OnProgressChanged(ProgressiveOperationEventArgs<T> e)
-        {
-            this.ProgressChanged?.Invoke(this, e);
-        }
+        protected virtual void OnProgressChanged(ProgressiveOperationEventArgs<T> e) => this.ProgressChanged?.Invoke(this, e);
 
         protected virtual void OnExceptionOccurred(Exception ex)
         {

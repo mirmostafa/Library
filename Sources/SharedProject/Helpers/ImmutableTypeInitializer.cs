@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2018/07/25
+﻿// Created on     2018/07/25
 // Last update on 2018/07/25 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -48,11 +44,7 @@ namespace Mohammad.Helpers
     /// </example>
     public sealed class ImmutableTypeInitializer<T> : DynamicObject
     {
-        #region Fields
-
         private readonly Dictionary<string, object> _CtorParameters = new Dictionary<string, object>();
-
-        #endregion
 
         public object this[string ctorParamName]
         {

@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Drawing;
@@ -108,10 +104,7 @@ namespace Mohammad.Helpers
         /// <param name="width">The width.</param>
         /// <param name="height">The height.</param>
         /// <param name="path">The path.</param>
-        public static void ResizeAndSaveImage(Stream stream, int width, int height, string path)
-        {
-            ResizeAndSaveImage(Image.FromStream(stream), width, height, path);
-        }
+        public static void ResizeAndSaveImage(Stream stream, int width, int height, string path) => ResizeAndSaveImage(Image.FromStream(stream), width, height, path);
 
         /// <summary>
         ///     Resizes the and saves image.
@@ -131,10 +124,7 @@ namespace Mohammad.Helpers
         /// <param name="stream">The stream.</param>
         /// <param name="size">The size.</param>
         /// <param name="path">The path.</param>
-        public static void ResizeAndSaveImage(Stream stream, int size, string path)
-        {
-            ResizeAndSaveImage(Image.FromStream(stream), size, path);
-        }
+        public static void ResizeAndSaveImage(Stream stream, int size, string path) => ResizeAndSaveImage(Image.FromStream(stream), size, path);
 
         /// <summary>
         ///     Resize the image to the specified width and height.

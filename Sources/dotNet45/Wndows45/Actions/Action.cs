@@ -39,11 +39,7 @@ namespace Mohammad.Win.Actions
 
         public object Tag { get; set; }
 
-        #region IPermissionalControl Members
-
         public string PermissionKey { get; set; }
-
-        #endregion
 
         /// <summary>
         ///     Creates a new instance
@@ -62,8 +58,6 @@ namespace Mohammad.Win.Actions
             this.checkStateChangedEventHandler = this.target_CheckStateChanged;
         }
 
-        #region Nested type: ActionWorkingState
-
         /// <summary>
         /// </summary>
         protected enum ActionWorkingState
@@ -76,10 +70,6 @@ namespace Mohammad.Win.Actions
             /// </summary>
             Driving
         }
-
-        #endregion
-
-        #region common properties
 
         private bool _AutoCheck;
         private bool _enabled;
@@ -263,10 +253,6 @@ namespace Mohammad.Win.Actions
             }
         }
 
-        #endregion
-
-        #region updating targets
-
         internal void RefreshEnabledCheckState()
         {
             this.UpdateAllTargets("Enabled", this.Enabled);
@@ -339,10 +325,6 @@ namespace Mohammad.Win.Actions
             }
         }
 
-        #endregion
-
-        #region Hook su eventi target
-
         private readonly EventHandler checkStateChangedEventHandler;
         private readonly EventHandler clickEventHandler;
 
@@ -396,12 +378,6 @@ namespace Mohammad.Win.Actions
             }
         }
 
-        #endregion
-
-        #region Handling eventi target
-
-        #region Click
-
         private void toolbar_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
         {
             if (this.targets.Contains(e.Button))
@@ -427,10 +403,6 @@ namespace Mohammad.Win.Actions
             }
         }
 
-        #endregion
-
-        #region CheckStateChanged
-
         internal bool InterceptingCheckStateChanged { get; set; }
 
         private void target_CheckStateChanged(object sender, EventArgs e)
@@ -446,12 +418,6 @@ namespace Mohammad.Win.Actions
                 this.CheckState = (CheckState)this.ActionList.TypesDescription[sender.GetType()].GetValue("CheckState", target);
             }
         }
-
-        #endregion
-
-        #endregion
-
-        #region Action execution
 
         /// <summary>
         ///     Prforms the Execute event if enebled.
@@ -488,10 +454,6 @@ namespace Mohammad.Win.Actions
 
             this.PerformExecute();
         }
-
-        #endregion
-
-        #region Events and event handlers
 
         /// <summary>
         ///     Occurs when the action is going to be executed.
@@ -569,10 +531,6 @@ namespace Mohammad.Win.Actions
             this.OnUpdate(EventArgs.Empty);
         }
 
-        #endregion
-
-        #region Gestione di collection di oggetti associati
-
         private readonly List<Component> targets;
 
         internal void InternalRemoveTarget(Component extendee)
@@ -605,7 +563,5 @@ namespace Mohammad.Win.Actions
         protected virtual void OnAddingTarget(Component extendee)
         {
         }
-
-        #endregion
     }
 }

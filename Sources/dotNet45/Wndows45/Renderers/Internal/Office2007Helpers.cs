@@ -10,14 +10,8 @@ namespace Mohammad.Win.Renderers.Internal
     /// </summary>
     internal class UseAntiAlias : IDisposable
     {
-        #region Instance Fields
-
         private readonly Graphics _g;
         private readonly SmoothingMode _old;
-
-        #endregion
-
-        #region Identity
 
         /// <summary>
         ///     Initialize a new instance of the UseAntiAlias class.
@@ -37,8 +31,6 @@ namespace Mohammad.Win.Renderers.Internal
         {
             this._g.SmoothingMode = this._old;
         }
-
-        #endregion
     }
 
     /// <summary>
@@ -46,14 +38,8 @@ namespace Mohammad.Win.Renderers.Internal
     /// </summary>
     public class UseClearTypeGridFit : IDisposable
     {
-        #region Instance Fields
-
         private readonly Graphics _g;
         private readonly TextRenderingHint _old;
-
-        #endregion
-
-        #region Identity
 
         /// <summary>
         ///     Initialize a new instance of the UseClearTypeGridFit class.
@@ -76,8 +62,6 @@ namespace Mohammad.Win.Renderers.Internal
         {
             this._g.TextRenderingHint = this._old;
         }
-
-        #endregion
     }
 
     /// <summary>
@@ -85,14 +69,8 @@ namespace Mohammad.Win.Renderers.Internal
     /// </summary>
     public class UseClipping : IDisposable
     {
-        #region Instance Fields
-
         private readonly Graphics _g;
         private readonly Region _old;
-
-        #endregion
-
-        #region Identity
 
         /// <summary>
         ///     Initialize a new instance of the UseClipping class.
@@ -140,7 +118,5 @@ namespace Mohammad.Win.Renderers.Internal
         {
             this._g.Clip = this._old;
         }
-
-        #endregion
     }
 }

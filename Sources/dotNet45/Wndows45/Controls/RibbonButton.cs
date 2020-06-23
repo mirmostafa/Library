@@ -564,8 +564,6 @@ namespace Mohammad.Win.Controls
             this.ResumeLayout(false);
         }
 
-        #region Side enum
-
         public enum Side
         {
             UpLeft,
@@ -573,7 +571,5 @@ namespace Mohammad.Win.Controls
             DownLeft,
             DownRight
         }
-
-        #endregion
     }
 }

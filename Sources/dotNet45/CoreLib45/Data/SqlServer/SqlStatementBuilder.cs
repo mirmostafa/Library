@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -17,17 +13,17 @@ namespace Mohammad.Data.SqlServer
 {
     public static class SqlStatementBuilder
     {
+        public static string BracketClose = "]";
+        public static string BracketOpen = "[";
+
         public static string CreateDelete(string tableName, bool useLike = false, IEnumerable<PairValue<string, object>> whereColumns = null) =>
-            $"DELECT FROM {tableName}{CreateWhereClause(whereColumns, useLike)}";
+            $"DELETE FROM {tableName}{CreateWhereClause(whereColumns, useLike)}";
 
         public static string CreateDelete<TEntity>(TEntity entity) => CreateDelete(typeof(TEntity).Name, entity);
 
-        public static string CreateDelete<TEntity>(string tableName, TEntity entity) => CreateDelete(
-            tableName,
+        public static string CreateDelete<TEntity>(string tableName, TEntity entity) => CreateDelete(tableName,
             false,
-            typeof(TEntity)
-                .GetProperties()
-                .Select(p => new PairValue<string, object>(p.Name, p.GetValue(entity, null))));
+            typeof(TEntity).GetProperties().Select(p => new PairValue<string, object>(p.Name, p.GetValue(entity, null))));
 
         public static string CreateExecuteStoredProcedure(string spName, Action<List<SqlParameter>> fillParams = null)
         {
@@ -165,12 +161,5 @@ namespace Mohammad.Data.SqlServer
 
             return result.ToString();
         }
-
-        #region Fields
-
-        public static string BracketClose = "]";
-        public static string BracketOpen = "[";
-
-        #endregion
     }
 }

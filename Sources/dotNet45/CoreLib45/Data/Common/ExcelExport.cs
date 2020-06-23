@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -253,8 +249,6 @@ namespace Mohammad.Data.Common
         /// <returns> </returns>
         protected virtual string GetWorksheets(DataSet source)
         {
-            #region replaceXmlChar
-
             Func<string, string> replaceXmlChar = delegate(string input)
             {
                 input = input.Replace("&", "&amp");
@@ -264,10 +258,6 @@ namespace Mohammad.Data.Common
                 input = input.Replace("'", "&apos;");
                 return input;
             };
-
-            #endregion
-
-            #region getCell
 
             Func<Type, object, string> getCell = delegate(Type type, object cellData)
             {
@@ -285,15 +275,9 @@ namespace Mohammad.Data.Common
                 return $"<Cell><Data ss:Type=\"String\">{replaceXmlChar(data.ToString())}</Data></Cell>{Environment.NewLine}";
             };
 
-            #endregion
-
-            #region validateSheetName
-
             Func<DataTable, string> validateSheetName = dt => this.TruncateLongSheetName && dt.TableName.Length > 30
                 ? dt.TableName.Substring(0, 30)
                 : dt.TableName;
-
-            #endregion
 
             var sw = new StringWriter();
             if (source == null || source.Tables.Count == 0)

@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -19,17 +15,9 @@ namespace Mohammad.Data.SqlServer.Dynamics
 {
     public class Server : DynamicObject, ISqlObject
     {
-        #region Fields
-
         private Databases _Databases;
 
-        #endregion
-
-        #region Fields
-
         protected SqlConnectionStringBuilder ConnectionStringBuilder = new SqlConnectionStringBuilder();
-
-        #endregion
 
         /// <summary>
         ///     Gets or sets the connection string.
@@ -75,10 +63,7 @@ namespace Mohammad.Data.SqlServer.Dynamics
         {
         }
 
-        public static Server GetServer(string connectionString) => new Server
-        {
-            ConnectionString = connectionString
-        };
+        public static Server GetServer(string connectionString) => new Server {ConnectionString = connectionString};
 
         public override string ToString() => !this.Version.IsNullOrEmpty() ? $"{this.Name} - {this.Version}" : $"{this.Name}";
 
@@ -118,14 +103,12 @@ namespace Mohammad.Data.SqlServer.Dynamics
 
         internal static Server GetInstance() => new Server();
 
-        internal static Server GetInstance(string name) => new Server
-        {
-            Name = name
-        };
+        internal static Server GetInstance(string name) => new Server {Name = name};
 
         internal static Server GetInstance(string name, string connectionString) => new Server
         {
-            Name = name, ConnectionString = connectionString
+            Name = name,
+            ConnectionString = connectionString
         };
 
         internal void SetName(string name) => this.Name = name;

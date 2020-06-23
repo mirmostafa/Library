@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.IO;
@@ -50,15 +46,12 @@ namespace Mohammad.Logging.Gateways
             }
         }
 
-        private void ManageLogFile()
-        {
-            this._CompleteFilePath = this.IsLogRotationEnabled
-                ? Path.Combine(Path.GetDirectoryName(this._FilePath),
-                    string.Concat(Path.GetFileNameWithoutExtension(this._FilePath),
-                        "_",
-                        DateTime.Now.ToShortDateString().Replace("/", "-"),
-                        Path.GetExtension(this._FilePath)))
-                : this._FilePath;
-        }
+        private void ManageLogFile() => this._CompleteFilePath = this.IsLogRotationEnabled
+            ? Path.Combine(Path.GetDirectoryName(this._FilePath),
+                string.Concat(Path.GetFileNameWithoutExtension(this._FilePath),
+                    "_",
+                    DateTime.Now.ToShortDateString().Replace("/", "-"),
+                    Path.GetExtension(this._FilePath)))
+            : this._FilePath;
     }
 }

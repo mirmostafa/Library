@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2018/07/25
+﻿// Created on     2018/07/25
 // Last update on 2018/07/28 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -75,31 +71,19 @@ namespace TestConsole45
             dataContext?.Dispose();
         }
 
-        protected override void DeleteCore(TEntity entity, bool submitChanges)
-        {
-            this.DataContext.DeleteEntity(entity, submitChanges, this.ExceptionHandling);
-        }
+        protected override void DeleteCore(TEntity entity, bool submitChanges) => this.DataContext.DeleteEntity(entity, submitChanges, this.ExceptionHandling);
 
         protected override TEntity FillCore(TEntity entity) => throw new NotImplementedException();
         protected abstract TDateContext GetDb();
         protected override TEntity GetNewCore() => Activator.CreateInstance<TEntity>();
 
-        protected override void InsertCore(TEntity entity, bool submitChanges)
-        {
-            this.DataContext.InsertEntity(entity, submitChanges, this.ExceptionHandling);
-        }
+        protected override void InsertCore(TEntity entity, bool submitChanges) => this.DataContext.InsertEntity(entity, submitChanges, this.ExceptionHandling);
 
         protected override IEnumerable<TEntity> SelectCore() => this.DataContext.GetAll<TEntity>();
 
-        protected override void SaveChangesCore()
-        {
-            CodeHelper.Catch(() => this.DataContext.SaveChanges(), throwException: true, handling: this.ExceptionHandling);
-        }
+        protected override void SaveChangesCore() => CodeHelper.Catch(() => this.DataContext.SaveChanges(), throwException: true, handling: this.ExceptionHandling);
 
-        protected override void UpdateCore(TEntity entity, bool submitChanges)
-        {
-            this.DataContext.UpdateEntity(entity, submitChanges);
-        }
+        protected override void UpdateCore(TEntity entity, bool submitChanges) => this.DataContext.UpdateEntity(entity, submitChanges);
     }
 
     public static class EntityFrameworkHelper
@@ -119,8 +103,7 @@ namespace TestConsole45
 
         public static void DeleteEntity<TEntity>(this ObjectContext db, TEntity entity, bool submitChanges = true, ExceptionHandling exceptionHandling = null)
             where TEntity : class
-        {
-            CodeHelper.Catch(() =>
+            => CodeHelper.Catch(() =>
                 {
                     CodeHelper.Catch(() => db.CreateObjectSet<TEntity>().Attach(entity));
                     db.Refresh(RefreshMode.ClientWins, entity);
@@ -131,15 +114,13 @@ namespace TestConsole45
                     }
                 },
                 handling: exceptionHandling);
-        }
 
         public static ObjectSet<TEntity> GetAll<TEntity>(this ObjectContext db, ExceptionHandling exceptionHandling = null)
             where TEntity : class => CodeHelper.CatchFunc(db.CreateObjectSet<TEntity>, handling: exceptionHandling);
 
         public static void InsertEntity<TEntity>(this ObjectContext db, TEntity entity, bool submitChanges = true, ExceptionHandling exceptionHandling = null)
             where TEntity : class
-        {
-            CodeHelper.Catch(() =>
+            => CodeHelper.Catch(() =>
                 {
                     db.CreateObjectSet<TEntity>().AddObject(entity);
                     if (submitChanges)
@@ -148,12 +129,10 @@ namespace TestConsole45
                     }
                 },
                 handling: exceptionHandling);
-        }
 
         public static void UpdateEntity<TEntity>(this ObjectContext db, TEntity entity, bool submitChanges = true, ExceptionHandling exceptionHandling = null)
             where TEntity : class
-        {
-            CodeHelper.Catch(() =>
+            => CodeHelper.Catch(() =>
                 {
                     CodeHelper.Catch(() => db.CreateObjectSet<TEntity>().Attach(entity));
                     db.Refresh(RefreshMode.ClientWins, entity);
@@ -163,7 +142,6 @@ namespace TestConsole45
                     }
                 },
                 handling: exceptionHandling);
-        }
 
         public static string GetTableName<TEntityObject>()
             where TEntityObject : EntityObject => typeof(TEntityObject).GetCustomAttributes(typeof(EdmEntityTypeAttribute), false).FirstOrDefault() is

@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Drawing;
@@ -65,10 +61,10 @@ namespace Mohammad.Security.Principals
             PointF[] points =
             {
                 new PointF(random.Next(rect.Width) / v, random.Next(rect.Height) / v),
-                new PointF(rect.Width - random.Next(rect.Width) / v, random.Next(rect.Height) / v),
-                new PointF(random.Next(rect.Width) / v, rect.Height - random.Next(rect.Height) / v),
-                new PointF(rect.Width - random.Next(rect.Width) / v,
-                    rect.Height - random.Next(rect.Height) / v)
+                new PointF(rect.Width - (random.Next(rect.Width) / v), random.Next(rect.Height) / v),
+                new PointF(random.Next(rect.Width) / v, rect.Height - (random.Next(rect.Height) / v)),
+                new PointF(rect.Width - (random.Next(rect.Width) / v),
+                    rect.Height - (random.Next(rect.Height) / v))
             };
             var matrix = new Matrix();
             matrix.Translate(0F, 0F);
@@ -78,7 +74,7 @@ namespace Mohammad.Security.Principals
             graphics.FillPath(hatchBrush, path);
 
             var max = Math.Max(rect.Width, rect.Height);
-            for (var i = 0; i < (int)(rect.Width * rect.Height / 30F); i++)
+            for (var i = 0; i < (int)((rect.Width * rect.Height) / 30F); i++)
             {
                 var x = random.Next(rect.Width);
                 var y = random.Next(rect.Height);

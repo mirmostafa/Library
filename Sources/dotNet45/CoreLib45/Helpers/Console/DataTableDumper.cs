@@ -1,17 +1,9 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
-
-#region
 
 using System;
 using System.Data;
 using System.Linq;
-
-#endregion
 
 namespace Mohammad.Helpers.Console
 {
@@ -22,8 +14,6 @@ namespace Mohammad.Helpers.Console
             var dumper = new Dumper(0);
             dumper.Write(dataTable, null);
         }
-
-        #region Nested
 
         private class Dumper : Dumper<DataTable>
         {
@@ -84,7 +74,5 @@ namespace Mohammad.Helpers.Console
                 ConsoleHelper.LineFeed();
             }
         }
-
-        #endregion
     }
 }

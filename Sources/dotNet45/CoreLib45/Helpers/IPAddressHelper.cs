@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -53,7 +49,7 @@ namespace Mohammad.Helpers
             onIntranet = onIntranet || ipAddress.Equals(ipAddress.And(_IntranetMask1));
             onIntranet = onIntranet || ipAddress.Equals(ipAddress.And(_IntranetMask4));
 
-            onIntranet = onIntranet || _IntranetMask2.Equals(ipAddress.And(_IntranetMask2)) && ipAddress.Equals(ipAddress.And(_IntranetMask3));
+            onIntranet = onIntranet || (_IntranetMask2.Equals(ipAddress.And(_IntranetMask2)) && ipAddress.Equals(ipAddress.And(_IntranetMask3)));
 
             return onIntranet;
         }
@@ -76,14 +72,10 @@ namespace Mohammad.Helpers
             return (addressBytes, maskBytes);
         }
 
-        #region Fields
-
         private static readonly IPAddress _Empty = IPAddress.Parse("0.0.0.0");
         private static readonly IPAddress _IntranetMask1 = IPAddress.Parse("10.255.255.255");
         private static readonly IPAddress _IntranetMask2 = IPAddress.Parse("172.16.0.0");
         private static readonly IPAddress _IntranetMask3 = IPAddress.Parse("172.31.255.255");
         private static readonly IPAddress _IntranetMask4 = IPAddress.Parse("192.168.255.255");
-
-        #endregion
     }
 }

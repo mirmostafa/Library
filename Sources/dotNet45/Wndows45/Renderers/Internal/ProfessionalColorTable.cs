@@ -14,13 +14,7 @@ namespace Mohammad.Win.Renderers.Internal
     /// </summary>
     public class ProfessionalColorTable : System.Windows.Forms.ProfessionalColorTable
     {
-        #region FieldsPrivate
-
         private Dictionary<KnownColors, Color> m_dictionaryRGBTable;
-
-        #endregion
-
-        #region MethodsProtected
 
         /// <summary>
         ///     Initialize a color Dictionary with defined colors
@@ -29,10 +23,6 @@ namespace Mohammad.Win.Renderers.Internal
         protected virtual void InitColors(ref Dictionary<KnownColors, Color> rgbTable)
         {
         }
-
-        #endregion
-
-        #region Enums
 
         /// <summary>
         ///     Gets or sets the KnownColors appearance of the ProfessionalColorTable.
@@ -266,14 +256,8 @@ namespace Mohammad.Win.Renderers.Internal
             LastKnownColor = SeparatorLight
         }
 
-        #endregion
-
-        #region MethodsPrivate
-
         private static class DisplayInformation
         {
-            #region Nested type: NativeMethods
-
             private static class NativeMethods
             {
                 [DllImport("uxtheme.dll", CharSet = CharSet.Auto)]
@@ -285,16 +269,8 @@ namespace Mohammad.Win.Renderers.Internal
                     int cchMaxSizeChars);
             }
 
-            #endregion
-
-            #region FieldsPrivate
-
             private const string m_strAeroFileName = "aero.msstyles";
             private const string m_strLunaFileName = "luna.msstyles";
-
-            #endregion
-
-            #region Properties
 
             [field: ThreadStatic]
             public static string ColorScheme { get; private set; }
@@ -303,10 +279,6 @@ namespace Mohammad.Win.Renderers.Internal
             internal static bool IsLunaTheme { get; private set; }
 
             internal static bool IsAeroTheme { get; private set; }
-
-            #endregion
-
-            #region MethodsPrivate
 
             static DisplayInformation()
             {
@@ -341,13 +313,7 @@ namespace Mohammad.Win.Renderers.Internal
                     ColorScheme = null;
                 }
             }
-
-            #endregion
         }
-
-        #endregion
-
-        #region Properties
 
         /// <summary>
         ///     Gets the starting color of the gradient used when the button is pressed down.
@@ -1071,11 +1037,5 @@ namespace Mohammad.Win.Renderers.Internal
         }
 
         internal Color FromKnownColor(KnownColors color) => this.ColorTable[color];
-
-        #endregion
-
-        #region MethodsPublic
-
-        #endregion
     }
 }

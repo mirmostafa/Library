@@ -80,7 +80,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Globalization\Attributes\LocalizedDescription.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Globalization\CustomFormatters\CustomNumberFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Globalization\DataTypes\Definitions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Globalization\DateTimeFormatter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Globalization\DateTools.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Globalization\Helpers\Localization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Globalization\Helpers\PersianCultureHelper.cs" />

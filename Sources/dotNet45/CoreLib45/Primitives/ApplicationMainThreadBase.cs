@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.IO;
@@ -92,10 +88,7 @@ namespace Mohammad.Primitives
             }
         }
 
-        public async Task RunInUi(Action action)
-        {
-            await Async.Run(action, this.CancellationTokenSource.Token, this.MainTaskScheduler);
-        }
+        public async Task RunInUi(Action action) => await Async.Run(action, this.CancellationTokenSource.Token, this.MainTaskScheduler);
 
         public async Task<TResult> RunInUi<TResult>(Func<TResult> action) =>
             await Async.Run(action, this.CancellationTokenSource.Token, this.MainTaskScheduler);
@@ -115,9 +108,7 @@ namespace Mohammad.Primitives
         protected virtual ExceptionHandling OnExceptionHandlingRequired() => new ExceptionHandling(this.OnExceptionOccurred);
 
         protected virtual void OnExceptionOccurred(object sender, ExceptionOccurredEventArgs<Exception> e)
-        {
-            this.Logger.Exception($"An unhanded exception occurred on {this.ApplicationLogSender}", e.Exception, sender);
-        }
+            => this.Logger.Exception($"An unhanded exception occurred on {this.ApplicationLogSender}", e.Exception, sender);
 
         protected virtual void OnInitializing()
         {
@@ -127,10 +118,7 @@ namespace Mohammad.Primitives
         {
         }
 
-        protected virtual void OnShuttingdown()
-        {
-            this.Shuttingdown.Raise(this);
-        }
+        protected virtual void OnShuttingdown() => this.Shuttingdown.Raise(this);
 
         //protected void Log(object text, object details = null, object sender = null, LogLevel level = LogLevel.Internal,
         //    [CallerMemberName] string memberName = "", [CallerFilePath] string sourceFilePath = "", [CallerLineNumber] int sourceLineNumber = 0)

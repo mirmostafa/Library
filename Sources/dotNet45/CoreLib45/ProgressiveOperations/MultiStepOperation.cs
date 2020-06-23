@@ -1,9 +1,5 @@
-#region Code Identifications
-
 // Created on     2018/07/25
 // Last update on 2018/07/29 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -137,10 +133,7 @@ namespace Mohammad.ProgressiveOperations
 
         protected MultiStepOperation(MultiStepOperationStepCollection steps = null) => this._Steps = steps ?? new MultiStepOperationStepCollection();
 
-        ~MultiStepOperation()
-        {
-            this.Dispose(false);
-        }
+        ~MultiStepOperation() => this.Dispose(false);
 
         public void Dispose()
         {
@@ -307,12 +300,10 @@ namespace Mohammad.ProgressiveOperations
             this.OnCurrentOperationIncreased(new MultiStepLogEventArgs(this.CurrentStepIndex, description, moreInfo, max: this.CurrentStepsCount));
         }
 
-        public void RunCurrentSteps(IEnumerable<Action> actions, string currentOperationDescriptiondescription = null, TimeSpan timeout = default)
-        {
-            this.RunCurrentSteps(actions.ToDictionary<Action, Action, string>(action => action, action => null),
-                currentOperationDescriptiondescription,
-                timeout);
-        }
+        public void RunCurrentSteps(IEnumerable<Action> actions, string currentOperationDescriptiondescription = null, TimeSpan timeout = default) => this.RunCurrentSteps(
+            actions.ToDictionary<Action, Action, string>(action => action, action => null),
+            currentOperationDescriptiondescription,
+            timeout);
 
         public void RunCurrentSteps(IEnumerable<KeyValuePair<Action, string>> actions,
             string currentOperationDescriptiondescription = null,
@@ -422,10 +413,7 @@ namespace Mohammad.ProgressiveOperations
         {
         }
 
-        protected void CancelCurrentOperation()
-        {
-            this.CurrentOperationCanceled.Raise(this, this._Scheduler);
-        }
+        protected void CancelCurrentOperation() => this.CurrentOperationCanceled.Raise(this, this._Scheduler);
 
         protected virtual void CurrentOperationIncreasing(string description = null, object moreInfo = null)
         {
@@ -503,9 +491,7 @@ namespace Mohammad.ProgressiveOperations
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+            => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         protected virtual void DoSteps(Action op, string desc, TimeSpan timeout = default)
         {

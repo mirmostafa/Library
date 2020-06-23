@@ -1,16 +1,10 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 namespace Mohammad.Data.SqlServer.Dynamics
 {
     internal class QueryBank
     {
-        #region Fields
-
         //internal const string COLUMNS_WHERE_TABLE_NAME = @"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{0}';";
         internal const string COLUMNS_WHERE_TABLE_NAME =
             @"SELECT *, system_type= (SELECT TOP 1 name FROM sys.types WHERE system_type_id = cols.system_type_id) FROM sys.columns AS cols WHERE OBJECT_ID = (SELECT object_id FROM sys.tables WHERE name = '{0}') AND is_hidden = 0";
@@ -39,7 +33,5 @@ WHERE        ((SELECT        name
 						FROM sys.tables AS t
 						JOIN sys.identity_columns c ON t.object_id = c.object_id
 						WHERE t.name = '{0}';";
-
-        #endregion
     }
 }

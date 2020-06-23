@@ -178,12 +178,8 @@ namespace Mohammad.Win.Internals
 
             if (tabStrip != null)
             {
-                #region Tab Selected and NOT active
-
                 if (tab.b_selected & !tab.b_active)
                 {
-                    #region Show Lateral Gradients
-
                     var ri = bounds;
                     ri.Width = (tab.Width - textwidth) / 2;
                     ri.X += 2;
@@ -201,10 +197,6 @@ namespace Mohammad.Win.Internals
                     b = new LinearGradientBrush(ri, C0i, CFi, LinearGradientMode.ForwardDiagonal);
                     g.FillRectangle(b, offset, ri.Y, ri.Width, ri.Height);
 
-                    #endregion
-
-                    #region Show Central Gradient
-
                     var r = bounds;
                     r.X += 2;
                     r.Width -= 2;
@@ -217,10 +209,6 @@ namespace Mohammad.Win.Internals
                     CF = this.SetTransparency(CF, c_origin - i_opacity);
                     b = new LinearGradientBrush(r, C0, CF, LinearGradientMode.Vertical);
                     g.FillRectangle(b, r.X, r.Y + r.Height + 1, r.Width - r.X, r.Height);
-
-                    #endregion
-
-                    #region Show Vertical Side Lines
 
                     var Offs = 0;
                     this.X0 = 0;
@@ -245,10 +233,6 @@ namespace Mohammad.Win.Internals
                     rsr = new Rectangle(this.XF - 2, this.YF / 2 - 1, this.XF - 1, this.YF - Offs);
                     b = new LinearGradientBrush(rsr, CFsl, C0sl, LinearGradientMode.Vertical);
                     g.FillRectangle(b, this.XF - 1, this.YF / 2 - 1, rsr.Width, rsr.Height);
-
-                    #endregion
-
-                    #region Show Border
 
                     this.X0 = 0;
                     this.XF = tab.Width + this.X0;
@@ -278,32 +262,18 @@ namespace Mohammad.Win.Internals
                     IBC = this.SetTransparency(IBC, c_origin - i_opacity);
                     PBorder = new Pen(IBC);
                     g.DrawPath(PBorder, this.path);
-
-                    #endregion
                 }
-
-                #endregion
 
                 else if (tab.b_active & !tab.b_selected)
                 {
-                    #region Show Upper Rectangle
-
                     var upblock = new Rectangle(8, 3, bounds.Width - 16, 4);
                     g.FillRectangle(new SolidBrush(Color.FromArgb(245, 250, 255)), upblock);
-
-                    #endregion
-
-                    #region Show Bottom Rectangle
 
                     var CFsl = this.BaseColor;
                     var C0sl = Color.FromArgb(CFsl.R + 19, CFsl.G + 15, CFsl.B + 10);
                     var doblock = new Rectangle(6, 3, bounds.Width - 12, bounds.Height);
                     Brush b = new LinearGradientBrush(doblock, C0sl, CFsl, LinearGradientMode.Vertical);
                     g.FillRectangle(b, doblock);
-
-                    #endregion
-
-                    #region Show Line Borders
 
                     var b2 = Pens.White;
                     var b3 = Pens.White;
@@ -338,10 +308,6 @@ namespace Mohammad.Win.Internals
                         g.DrawPath(b4, this.path);
                     }
 
-                    #endregion
-
-                    #region Show Shadow
-
                     var P0 = new Point(bounds.Right - 5, 3);
                     var PF = new Point(bounds.Right - 5, bounds.Height - 2);
                     var ps = new Pen(this.SetTransparency(Color.Black, 20));
@@ -350,29 +316,17 @@ namespace Mohammad.Win.Internals
                     PF = new Point(bounds.Right - 4, bounds.Height - 1);
                     ps = new Pen(this.SetTransparency(Color.Black, 10));
                     g.DrawLine(ps, P0, PF);
-
-                    #endregion
                 }
                 else if (tab.b_active & tab.b_selected)
                 {
-                    #region Show Upper Rectangle
-
                     var upblock = new Rectangle(8, 3, bounds.Width - 16, 4);
                     g.FillRectangle(new SolidBrush(Color.FromArgb(245, 250, 255)), upblock);
-
-                    #endregion
-
-                    #region Show Bottom Rectangle
 
                     var CFsl = this.BaseColor;
                     var C0sl = Color.FromArgb(CFsl.R + 19, CFsl.G + 15, CFsl.B + 10);
                     var doblock = new Rectangle(6, 3, bounds.Width - 12, bounds.Height);
                     Brush b = new LinearGradientBrush(doblock, C0sl, CFsl, LinearGradientMode.Vertical);
                     g.FillRectangle(b, doblock);
-
-                    #endregion
-
-                    #region Show Line Borders
 
                     var b2 = Pens.White;
                     var b3 = Pens.White;
@@ -407,10 +361,6 @@ namespace Mohammad.Win.Internals
                         g.DrawPath(b4, this.path);
                     }
 
-                    #endregion
-
-                    #region Show Shadow
-
                     var P0 = new Point(bounds.Right - 5, 3);
                     var PF = new Point(bounds.Right - 5, bounds.Height - 2);
                     var ps = new Pen(this.SetTransparency(Color.Black, 20));
@@ -420,10 +370,6 @@ namespace Mohammad.Win.Internals
                     ps = new Pen(this.SetTransparency(Color.Black, 10));
                     g.DrawLine(ps, P0, PF);
 
-                    #endregion
-
-                    #region Show Halo
-
                     var CH = this.HaloColor;
                     var c_origin = 255;
                     CH = this.SetTransparency(CH, c_origin - i_opacity);
@@ -431,8 +377,6 @@ namespace Mohammad.Win.Internals
                     g.DrawPath(new Pen(CH), this.path);
                     this.DrawHalo(TX0 + 1, TY0 + 1, TXF + 1, TYF);
                     g.DrawPath(new Pen(CH), this.path);
-
-                    #endregion
                 }
             }
             else

@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2017/08/07
+﻿// Created on     2017/08/07
 // Last update on 2017/11/04 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,54 +15,30 @@ namespace CoreLib45.Test
     public class SingletonTests
     {
         [TestMethod]
-        public void InstanceNotNullTest()
-        {
-            Assert.AreNotEqual(SingletonTest1.Instance, null);
-        }
+        public void InstanceNotNullTest() => Assert.AreNotEqual(SingletonTest1.Instance, null);
 
         [TestMethod]
         [ExpectedException(typeof(NotNullOrZeroValidationException))]
-        public void TestValiatorSingletonWithException()
-        {
-            Validator.Instance.AssertNotDefault(0, "Number");
-        }
+        public void TestValiatorSingletonWithException() => Validator.Instance.AssertNotDefault(0, "Number");
 
         [TestMethod]
-        public void TestValiatorSingletonWithNoException()
-        {
-            Validator.Instance.AssertNotDefault(1, "Number");
-        }
+        public void TestValiatorSingletonWithNoException() => Validator.Instance.AssertNotDefault(1, "Number");
 
         [TestMethod]
-        public void TestInterfaceSingleton2()
-        {
-            Assert.AreNotEqual(SingletonTest2.Instance, null);
-        }
+        public void TestInterfaceSingleton2() => Assert.AreNotEqual(SingletonTest2.Instance, null);
 
         [TestMethod]
-        public void TestInterfaceSingleton3()
-        {
-            Assert.AreNotEqual(SingletonTest3.Instance, null);
-        }
+        public void TestInterfaceSingleton3() => Assert.AreNotEqual(SingletonTest3.Instance, null);
 
         [TestMethod]
         [ExpectedException(typeof(SingletonException))]
-        public void TestInterfaceSingleton4()
-        {
-            Assert.AreNotEqual(SingletonTest4.Instance, null);
-        }
+        public void TestInterfaceSingleton4() => Assert.AreNotEqual(SingletonTest4.Instance, null);
 
         [TestMethod]
-        public void TestInterfaceSingleton5()
-        {
-            Assert.AreNotEqual(SingletonTest5.Instance, null);
-        }
+        public void TestInterfaceSingleton5() => Assert.AreNotEqual(SingletonTest5.Instance, null);
 
         [TestMethod]
-        public void TestInterfaceSingleton6()
-        {
-            Assert.AreNotEqual(SingletonTest6.Instance.Fake(), null);
-        }
+        public void TestInterfaceSingleton6() => Assert.AreNotEqual(SingletonTest6.Instance.Fake(), null);
     }
 
     internal class SingletonTest1 : Singleton<SingletonTest1>

@@ -9,67 +9,23 @@ namespace Mohammad.Win.Forms.Internals
 {
     internal class ChevronButton : Button
     {
-        #region Fields
-
-        #region _IsMouseDown
-
         private bool _IsMouseDown;
-
-        #endregion
-
-        #region _IsKeyDown
 
         private bool _IsKeyDown;
 
-        #endregion
-
-        #region _IsHovered
-
         private bool _IsHovered;
-
-        #endregion
-
-        #region _IsFocusedByKey
-
-        #endregion
-
-        #region _IsFocused
 
         private bool _IsFocused;
 
-        #endregion
-
-        #region components
-
         private readonly IContainer components;
 
-        #endregion
-
-        #region _Expanded
-
         private bool _Expanded;
-
-        #endregion
-
-        #endregion
-
-        #region Properties
-
-        #region _IsPressed
 
         public bool IsFocusedByKey { get; private set; }
 
         private bool _IsPressed => this._IsKeyDown || this._IsMouseDown && this._IsHovered;
 
-        #endregion
-
-        #region Focused
-
         public override bool Focused => false;
-
-        #endregion
-
-        #region Expanded
 
         public bool Expanded
         {
@@ -80,14 +36,6 @@ namespace Mohammad.Win.Forms.Internals
                 this.SetImage();
             }
         }
-
-        #endregion
-
-        #endregion
-
-        #region Methods
-
-        #region SetImage
 
         private void SetImage()
         {
@@ -105,10 +53,6 @@ namespace Mohammad.Win.Forms.Internals
             }
         }
 
-        #endregion
-
-        #region OnMouseUp
-
         protected override void OnMouseUp(MouseEventArgs mevent)
         {
             if (this._IsMouseDown)
@@ -119,10 +63,6 @@ namespace Mohammad.Win.Forms.Internals
 
             base.OnMouseUp(mevent);
         }
-
-        #endregion
-
-        #region OnMouseMove
 
         protected override void OnMouseMove(MouseEventArgs mevent)
         {
@@ -145,10 +85,6 @@ namespace Mohammad.Win.Forms.Internals
             }
         }
 
-        #endregion
-
-        #region OnMouseLeave
-
         protected override void OnMouseLeave(EventArgs e)
         {
             this._IsHovered = false;
@@ -156,20 +92,12 @@ namespace Mohammad.Win.Forms.Internals
             base.OnMouseLeave(e);
         }
 
-        #endregion
-
-        #region OnMouseEnter
-
         protected override void OnMouseEnter(EventArgs e)
         {
             this._IsHovered = true;
             this.SetImage();
             base.OnMouseEnter(e);
         }
-
-        #endregion
-
-        #region OnMouseDown
 
         protected override void OnMouseDown(MouseEventArgs mevent)
         {
@@ -183,10 +111,6 @@ namespace Mohammad.Win.Forms.Internals
             base.OnMouseDown(mevent);
         }
 
-        #endregion
-
-        #region OnLeave
-
         protected override void OnLeave(EventArgs e)
         {
             base.OnLeave(e);
@@ -196,10 +120,6 @@ namespace Mohammad.Win.Forms.Internals
             this._IsMouseDown = false;
             this.SetImage();
         }
-
-        #endregion
-
-        #region OnKeyUp
 
         protected override void OnKeyUp(KeyEventArgs kevent)
         {
@@ -212,10 +132,6 @@ namespace Mohammad.Win.Forms.Internals
             base.OnKeyUp(kevent);
         }
 
-        #endregion
-
-        #region OnKeyDown
-
         protected override void OnKeyDown(KeyEventArgs kevent)
         {
             if (kevent.KeyCode == Keys.Space)
@@ -227,10 +143,6 @@ namespace Mohammad.Win.Forms.Internals
             base.OnKeyDown(kevent);
         }
 
-        #endregion
-
-        #region OnEnter
-
         protected override void OnEnter(EventArgs e)
         {
             this._IsFocused = true;
@@ -238,10 +150,6 @@ namespace Mohammad.Win.Forms.Internals
             this.SetImage();
             base.OnEnter(e);
         }
-
-        #endregion
-
-        #region OnClick
 
         protected override void OnClick(EventArgs e)
         {
@@ -251,10 +159,6 @@ namespace Mohammad.Win.Forms.Internals
             this.SetImage();
             base.OnClick(e);
         }
-
-        #endregion
-
-        #region InitializeComponent
 
         [DebuggerStepThrough]
         private void InitializeComponent()
@@ -273,10 +177,6 @@ namespace Mohammad.Win.Forms.Internals
             this.ResumeLayout(false);
         }
 
-        #endregion
-
-        #region Dispose
-
         [DebuggerNonUserCode]
         protected override void Dispose(bool disposing)
         {
@@ -293,18 +193,10 @@ namespace Mohammad.Win.Forms.Internals
             }
         }
 
-        #endregion
-
-        #region ChevronButton
-
         public ChevronButton()
         {
             this.InitializeComponent();
             this.Image = Resources.chevronmore;
         }
-
-        #endregion
-
-        #endregion
     }
 }

@@ -1,12 +1,3 @@
-#region Code Identifications
-
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
-
-#region
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,8 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Mohammad.Helpers.CodeHelper;
-
-#endregion
 
 namespace Mohammad.Helpers
 {
@@ -48,9 +37,7 @@ namespace Mohammad.Helpers
         /// <returns> </returns>
         [Obsolete("Please use Sql, instead.", true)]
         public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Predicate<object> predicate)
-        {
-            return table.Select().Where(row => predicate?.Invoke(row) != false).Select(row => row[columnTitle]).Cast<T>();
-        }
+            => table.Select().Where(row => predicate?.Invoke(row) != false).Select(row => row[columnTitle]).Cast<T>();
 
         /// <summary>
         ///     Selects the specified table.
@@ -63,9 +50,7 @@ namespace Mohammad.Helpers
         /// <returns> </returns>
         [Obsolete("Please use Sql, instead.", true)]
         public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Func<object, T> convertor, Predicate<object> predicate)
-        {
-            return table.Select().Where(row => predicate?.Invoke(row) != false).Select(row => convertor(row[columnTitle]));
-        }
+            => table.Select().Where(row => predicate?.Invoke(row) != false).Select(row => convertor(row[columnTitle]));
 
         [Obsolete("Please use Sql, instead.", true)]
         public static IEnumerable<T> Select<T>(this DataTable table)
@@ -91,9 +76,7 @@ namespace Mohammad.Helpers
         [Obsolete("Please use Sql, instead.", true)]
         public static IEnumerable<T> SelectTable<T>(this SqlConnection connection, string tableName)
             where T : new()
-        {
-            return connection.Execute(cmd => cmd.ExecuteReader(CommandBehavior.CloseConnection).Select<T>(), $"SELECT * FROM [{tableName}]");
-        }
+            => connection.Execute(cmd => cmd.ExecuteReader(CommandBehavior.CloseConnection).Select<T>(), $"SELECT * FROM [{tableName}]");
 
         [Obsolete("Please use Sql, instead.", true)]
         public static IEnumerable<T> ExecuteReader<T>(this SqlConnection connection, string query, Action<SqlParameterCollection> fillParams = null)
@@ -135,30 +118,22 @@ namespace Mohammad.Helpers
             return result;
         }
 
-        public static void EnsureClosed(this SqlConnection connection, Action<SqlConnection> action, bool openConnection = false)
-        {
-            connection.EnsureClosed(c =>
-                {
-                    action(c);
-                    return true;
-                },
-                openConnection);
-        }
+        public static void EnsureClosed(this SqlConnection connection, Action<SqlConnection> action, bool openConnection = false) => connection.EnsureClosed(c =>
+            {
+                action(c);
+                return true;
+            },
+            openConnection);
 
-        public static void EnsureClosed(this SqlConnection connection, Action action, bool openConnection = false)
-        {
-            connection.EnsureClosed(c =>
-                {
-                    action();
-                    return true;
-                },
-                openConnection);
-        }
+        public static void EnsureClosed(this SqlConnection connection, Action action, bool openConnection = false) => connection.EnsureClosed(c =>
+            {
+                action();
+                return true;
+            },
+            openConnection);
 
         public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<TResult> action, bool openConnection = false)
-        {
-            return connection.EnsureClosed(c => action(), openConnection);
-        }
+            => connection.EnsureClosed(c => action(), openConnection);
 
         public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<SqlConnection, TResult> action, bool openConnection = false)
         {
@@ -269,9 +244,7 @@ namespace Mohammad.Helpers
         }
 
         public static int ExecuteNonQuery(this SqlConnection connection, string sql, Action<SqlParameterCollection> fillParams = null)
-        {
-            return connection.Execute(cmd => cmd.ExecuteNonQuery(), sql, fillParams);
-        }
+            => connection.Execute(cmd => cmd.ExecuteNonQuery(), sql, fillParams);
 
         public static SqlDataReader ExecuteReader(this SqlConnection connection,
             string sql,
@@ -328,14 +301,10 @@ namespace Mohammad.Helpers
         }
 
         public static object ExecuteScalar(this SqlConnection connection, string sql, Action<SqlParameterCollection> fillParams = null)
-        {
-            return connection.Execute(cmd => cmd.ExecuteScalar(), sql, fillParams);
-        }
+            => connection.Execute(cmd => cmd.ExecuteScalar(), sql, fillParams);
 
         public static async Task<object> ExecuteScalarAsync(this SqlConnection connection, string sql, Action<SqlParameterCollection> fillParams = null)
-        {
-            return await connection.ExecuteAsync(cmd => cmd.ExecuteScalarAsync(), sql, fillParams);
-        }
+            => await connection.ExecuteAsync(cmd => cmd.ExecuteScalarAsync(), sql, fillParams);
 
         public static object ExecuteStoredProcedure(this SqlConnection connection,
             string spName,
@@ -543,9 +512,7 @@ namespace Mohammad.Helpers
         /// <returns> </returns>
         public static IEnumerable<T> GetColumnData<T>(this DataRowCollection rows, string columnName)
             where T : class
-        {
-            return rows.Cast<DataRow>().Where(row => row != null).Select(row => row[columnName] as T);
-        }
+            => rows.Cast<DataRow>().Where(row => row != null).Select(row => row[columnName] as T);
 
         /// <summary>
         ///     Gets the column data.
@@ -556,9 +523,7 @@ namespace Mohammad.Helpers
         /// <returns> </returns>
         public static IEnumerable<T> GetColumnData<T>(this DataRowCollection rows, int columnIndex = 0)
             where T : class
-        {
-            return rows.Cast<DataRow>().Where(row => row != null).Select(row => row[columnIndex] as T);
-        }
+            => rows.Cast<DataRow>().Where(row => row != null).Select(row => row[columnIndex] as T);
 
         /// <summary>
         ///     Gets the columns data.
@@ -617,9 +582,7 @@ namespace Mohammad.Helpers
         /// <param name="convertor"> The converter. </param>
         /// <returns> </returns>
         public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Converter<object, T> convertor)
-        {
-            return table.Select().Select(row => row[columnTitle]).Cast(convertor);
-        }
+            => table.Select().Select(row => row[columnTitle]).Cast(convertor);
 
         /// <summary>
         ///     Selects the specified table according to de given value .
@@ -696,8 +659,7 @@ namespace Mohammad.Helpers
             string selectCommandText,
             Action<SqlParameterCollection> fillParam = null,
             string tableName = null)
-        {
-            return Execute(connection,
+            => Execute(connection,
                 cmd =>
                 {
                     var result = new DataTable(tableName);
@@ -710,7 +672,6 @@ namespace Mohammad.Helpers
                 },
                 selectCommandText,
                 fillParam);
-        }
 
         public static Exception TryConnect(this SqlConnection conn) => Catch(() => conn.EnsureClosed(c => c.Open()));
 

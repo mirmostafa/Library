@@ -1,11 +1,4 @@
-﻿#region Code Identifications
-
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -16,22 +9,19 @@ namespace Mohammad.Globalization
     {
         private static readonly PersianCalendar _PersianCalendar = new PersianCalendar();
 
-        public static DateTime DefaulDate { get; set; } = _PersianCalendar.MinSupportedDateTime;
+        public static DateTime DefaultDate { get; set; } = _PersianCalendar.MinSupportedDateTime;
 
-        public static string TranslateToPersian(DayOfWeek day)
+        public static string TranslateToPersian(DayOfWeek day) => day switch
         {
-            switch (day)
-            {
-                case DayOfWeek.Saturday: return "شنبه";
-                case DayOfWeek.Sunday: return "یکشنبه";
-                case DayOfWeek.Monday: return "دوشنبه";
-                case DayOfWeek.Tuesday: return "سه شنبه";
-                case DayOfWeek.Wednesday: return "چهارشنبه";
-                case DayOfWeek.Thursday: return "پنجشنبه";
-                case DayOfWeek.Friday: return "جمعه";
-                default: throw new ArgumentOutOfRangeException(nameof(day));
-            }
-        }
+            DayOfWeek.Saturday => "شنبه",
+            DayOfWeek.Sunday => "یکشنبه",
+            DayOfWeek.Monday => "دوشنبه",
+            DayOfWeek.Tuesday => "سه شنبه",
+            DayOfWeek.Wednesday => "چهارشنبه",
+            DayOfWeek.Thursday => "پنجشنبه",
+            DayOfWeek.Friday => "جمعه",
+            _ => throw new ArgumentOutOfRangeException(nameof(day))
+        };
 
         public static string ToPersianDate(this DateTime? date) => date == null ? string.Empty : ToPersianDate(date.Value);
 
@@ -74,16 +64,9 @@ namespace Mohammad.Globalization
             return result;
         }
 
-        public static DateTime ToDateTime(int? year, int? month, int? day) => AllHaveValue(year, month, day)
-            ? _PersianCalendar.ToDateTime(
-                year.Value,
-                month.Value,
-                day.Value,
-                0,
-                0,
-                0,
-                0)
-            : DefaulDate;
+        public static DateTime ToDateTime(int? year, int? month, int? day) => year != null && month != null && day != null
+            ? _PersianCalendar.ToDateTime(year.Value, month.Value, day.Value, 0, 0, 0, 0)
+            : DefaultDate;
 
         public static Tuple<int, int, int> GetPersianDateParts(DateTime date) => Tuple.Create(GetPersianYear(date),
             GetPersianMonth(date),
@@ -95,11 +78,9 @@ namespace Mohammad.Globalization
             return ToDateTime(data[0], data[1], data[2]);
         }
 
-        public static bool AllHaveValue(int? year, int? month, int? day) => year != null && month != null && day != null;
-
-        public static int GetPersianDayOfMonth(this DateTime? dateTime) => _PersianCalendar.GetDayOfMonth(dateTime ?? DefaulDate);
-        public static int GetPersianMonth(this DateTime? dateTime) => _PersianCalendar.GetMonth(dateTime ?? DefaulDate);
-        public static int GetPersianYear(this DateTime? dateTime) => _PersianCalendar.GetYear(dateTime ?? DefaulDate);
+        public static int GetPersianDayOfMonth(this DateTime? dateTime) => _PersianCalendar.GetDayOfMonth(dateTime ?? DefaultDate);
+        public static int GetPersianMonth(this DateTime? dateTime) => _PersianCalendar.GetMonth(dateTime ?? DefaultDate);
+        public static int GetPersianYear(this DateTime? dateTime) => _PersianCalendar.GetYear(dateTime ?? DefaultDate);
         public static int GetPersianDaysCountInMonth(int year, int month) => _PersianCalendar.GetDaysInMonth(year, month);
 
         public static DateTime GetPersianFirstDayOfMonth(this DateTime current)

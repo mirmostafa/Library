@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -21,11 +17,7 @@ namespace Mohammad.Data.Linq.DataTools
     public abstract class DataAccessEntityOnLinq<TEntity, TDateContext, TBusinessEntity> : BusinessEntity<TEntity, TBusinessEntity>
         where TEntity : class, new() where TDateContext : DataContext where TBusinessEntity : BusinessEntity<TEntity, TBusinessEntity>, new()
     {
-        #region Fields
-
         private TDateContext _Db;
-
-        #endregion
 
         protected TDateContext Db
         {
@@ -85,20 +77,11 @@ namespace Mohammad.Data.Linq.DataTools
             }
         }
 
-        public void Attach(TEntity entity, bool asModified = true)
-        {
-            this.OnAttaching(entity, asModified);
-        }
+        public void Attach(TEntity entity, bool asModified = true) => this.OnAttaching(entity, asModified);
 
-        public void Attach(TEntity entity, TEntity original)
-        {
-            this.OnAttaching(entity, original);
-        }
+        public void Attach(TEntity entity, TEntity original) => this.OnAttaching(entity, original);
 
-        public void Refresh(TEntity entity, RefreshMode refreshMode = RefreshMode.OverwriteCurrentValues)
-        {
-            this.Db.Refresh(refreshMode, entity);
-        }
+        public void Refresh(TEntity entity, RefreshMode refreshMode = RefreshMode.OverwriteCurrentValues) => this.Db.Refresh(refreshMode, entity);
 
         public void Reset()
         {
@@ -108,29 +91,17 @@ namespace Mohammad.Data.Linq.DataTools
             GC.Collect();
         }
 
-        protected override void DeleteCore(TEntity entity, bool submitChanges)
-        {
-            this.Db.DeleteEntity(entity, submitChanges, this.ExceptionHandling);
-        }
+        protected override void DeleteCore(TEntity entity, bool submitChanges) => this.Db.DeleteEntity(entity, submitChanges, this.ExceptionHandling);
 
         protected override TEntity FillCore(TEntity entity) => throw new NotImplementedException();
         protected abstract TDateContext GetDb();
         protected override TEntity GetNewCore() => Activator.CreateInstance<TEntity>();
 
-        protected override void InsertCore(TEntity entity, bool submitChanges)
-        {
-            this.Db.InsertEntity(entity, submitChanges, this.ExceptionHandling);
-        }
+        protected override void InsertCore(TEntity entity, bool submitChanges) => this.Db.InsertEntity(entity, submitChanges, this.ExceptionHandling);
 
-        protected virtual void OnAttaching(TEntity entity, bool asModified)
-        {
-            this.Db.Attach(entity, asModified);
-        }
+        protected virtual void OnAttaching(TEntity entity, bool asModified) => this.Db.Attach(entity, asModified);
 
-        protected virtual void OnAttaching(TEntity entity, TEntity original)
-        {
-            this.Db.Attach(entity, original);
-        }
+        protected virtual void OnAttaching(TEntity entity, TEntity original) => this.Db.Attach(entity, original);
 
         protected override void SaveChangesCore()
         {
@@ -207,9 +178,6 @@ namespace Mohammad.Data.Linq.DataTools
             }
         }
 
-        protected override void UpdateCore(TEntity entity, bool submitChanges)
-        {
-            this.Db.UpdateEntity(entity, submitChanges, this.ExceptionHandling);
-        }
+        protected override void UpdateCore(TEntity entity, bool submitChanges) => this.Db.UpdateEntity(entity, submitChanges, this.ExceptionHandling);
     }
 }

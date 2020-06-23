@@ -1,57 +1,45 @@
-﻿#region Code Identifications
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
+//namespace Mohammad.DesignPatterns.Creational
+//{
+//    public static class Factory
+//    {
+//        private static readonly List<Tuple<Type, Delegate, object>> _Manufacturares = new List<Tuple<Type, Delegate, object>>();
 
-#endregion
+//        public static void SetProducer<T>(Func<T> producer)
+//        {
+//            if (FindByType<T>() != null)
+//            {
+//                throw new Exception();
+//            }
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Mohammad.Collections.Generic;
-using Mohammad.Helpers;
+//            _Manufacturares.Add(new Tuple<Type, Delegate, object>(typeof(T), producer, null));
+//        }
 
-namespace Mohammad.DesignPatterns.Creational
-{
-    public static class Factory
-    {
-        private static readonly List<TripleValue<Type, Delegate, object>> _Manufacturares = new List<TripleValue<Type, Delegate, object>>();
+//        public static T Get<T>(bool produceNew = false, bool overwrite = true)
+//        {
+//            var manufacturer = FindByType<T>();
+//            if (produceNew)
+//            {
+//                var item3 = manufacturer.Item2 as Func<T>;
+//                if (overwrite)
+//                {
+//                    manufacturer.Item3 = item3;
+//                }
 
-        public static void SetProducer<T>(Func<T> producer)
-        {
-            if (FindByType<T>() != null)
-            {
-                throw new Exception();
-            }
+//                return item3;
+//            }
 
-            _Manufacturares.Add(new TripleValue<Type, Delegate, object>(typeof(T), producer, null));
-        }
+//            if (manufacturer.Item3 == null)
+//            {
+//                manufacturer.Item3 = manufacturer.Item2.As<Func<T>>()();
+//            }
 
-        public static T Get<T>(bool produceNew = false, bool overwrite = true)
-        {
-            var manufacturer = FindByType<T>();
-            if (produceNew)
-            {
-                var value3 = manufacturer.Value2.As<Func<T>>()();
-                if (overwrite)
-                {
-                    manufacturer.Value3 = value3;
-                }
+//            return (T)manufacturer.Item3;
+//        }
 
-                return value3;
-            }
-
-            if (manufacturer.Value3 == null)
-            {
-                manufacturer.Value3 = manufacturer.Value2.As<Func<T>>()();
-            }
-
-            return (T)manufacturer.Value3;
-        }
-
-        private static TripleValue<Type, Delegate, object> FindByType<T>()
-        {
-            return _Manufacturares.FirstOrDefault(manufacturare => manufacturare.Value1 == typeof(T));
-        }
-    }
-}
+//        private static Tuple<Type, Delegate, object> FindByType<T>() => _Manufacturares.FirstOrDefault(manufacturare => manufacturare.Item1 == typeof(T));
+//    }
+//}

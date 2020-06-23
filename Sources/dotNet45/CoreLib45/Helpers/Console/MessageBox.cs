@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using Mohammad.Globalization;
@@ -22,10 +18,7 @@ namespace Mohammad.Helpers.Console
             InsertSeparatorLine();
         }
 
-        public static void InsertSeparatorLine(object text = null)
-        {
-            InsertSeparatorLine(_Width, text);
-        }
+        public static void InsertSeparatorLine(object text = null) => InsertSeparatorLine(_Width, text);
 
         public static void InsertSeparatorLine(int width, object text = null)
         {
@@ -39,20 +32,11 @@ namespace Mohammad.Helpers.Console
             }
         }
 
-        public static void Open()
-        {
-            Open(DefaultWidth ?? 1);
-        }
+        public static void Open() => Open(DefaultWidth ?? 1);
 
-        public static void Open(int width)
-        {
-            Open(string.Empty, width);
-        }
+        public static void Open(int width) => Open(string.Empty, width);
 
-        public static void Open(string title)
-        {
-            Open(title, 0);
-        }
+        public static void Open(string title) => Open(title, 0);
 
         public static void Open(string title, int width)
         {
@@ -63,9 +47,7 @@ namespace Mohammad.Helpers.Console
         }
 
         public static void Show(object obj, object title)
-        {
-            Show(obj, title, obj.ToString().Split(new[] {Environment.NewLine}, StringSplitOptions.None).GetLongest().Length + 4);
-        }
+            => Show(obj, title, obj.ToString().Split(new[] {Environment.NewLine}, StringSplitOptions.None).GetLongest().Length + 4);
 
         public static void Show(object obj, object title, int width)
         {
@@ -107,22 +89,13 @@ namespace Mohammad.Helpers.Console
             }
         }
 
-        public static void WriteInBoxTimeStamp(this string text)
-        {
-            Show(string.Format("[{0}] {1}", PersianDateTime.Now, text));
-        }
+        public static void WriteInBoxTimeStamp(this string text) => Show(string.Format("[{0}] {1}", PersianDateTime.Now, text));
 
+        //string.Format("  [{0}] {1}", PersianDateTime.Now, text).WriteLine(foregroundColor);
         public static void WriteLineTimeStamp(this string text, ConsoleColor foregroundColor = DefaultConstConsoleColor)
-        {
-            //string.Format("  [{0}] {1}", PersianDateTime.Now, text).WriteLine(foregroundColor);
-            string.Format("[{0}] {1}", PersianDateTime.Now, text).WriteLine(foregroundColor);
-        }
-
-        #region Fields
+            => string.Format("[{0}] {1}", PersianDateTime.Now, text).WriteLine(foregroundColor);
 
         private const ConsoleColor DefaultConstConsoleColor = ConsoleHelper.DEFAULT_CONSTANT_CONSOLE_COLOR;
         private static int _Width;
-
-        #endregion
     }
 }

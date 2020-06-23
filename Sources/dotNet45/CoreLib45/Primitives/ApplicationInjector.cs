@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using Mohammad.DesignPatterns.Creational;
 using Mohammad.Logging;
@@ -44,9 +40,6 @@ namespace Mohammad.Primitives
         ApplicationInjector<TApplication, TAppSettings>>
         where TApplication : IApplication where TAppSettings : IAppSettings
     {
-        private ApplicationInjector()
-        {
-            this.SetLogger(new Logger());
-        }
+        private ApplicationInjector() => this.SetLogger(new Logger());
     }
 }

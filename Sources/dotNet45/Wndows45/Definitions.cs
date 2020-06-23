@@ -54,10 +54,6 @@ namespace Mohammad.Win
 
     public class NavigatingEventArgs : EventArgs
     {
-        #region Methods
-
-        #region Constructor
-
         /// <summary>
         ///     Constructor
         /// </summary>
@@ -67,45 +63,23 @@ namespace Mohammad.Win
             this.CurrentPageIndex = currentPageIndex;
         }
 
-        #endregion
-
-        #endregion
-
-        #region Properties
-
-        #region PageRowCount
-
         /// <summary>
         ///     Count of rows in each page. -1: all rows (no paging)
         /// </summary>
         public int PageRowCount { get; }
 
-        #endregion
-
-        #region CurrentPageIndex
-
         /// <summary>
         ///     Property description
         /// </summary>
         public int CurrentPageIndex { get; }
-
-        #endregion
-
-        #endregion
     }
 
     public class ReportGeneratingEventArgs : EventArgs
     {
-        #region Handled
-
         /// <summary>
         ///     Property description
         /// </summary>
         public bool Cancel { get; set; }
-
-        #endregion
-
-        #region Constructor
 
         /// <summary>
         ///     Constructor
@@ -113,8 +87,6 @@ namespace Mohammad.Win
         internal ReportGeneratingEventArgs()
         {
         }
-
-        #endregion
     }
 
     internal enum Direction

@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using Mohammad.Globalization;
@@ -13,32 +9,23 @@ namespace Mohammad.Helpers
 {
     public static class PersianDateTimeHelper
     {
-        public static int GetDayCount(this PersianMonth persianMonth, int? year = null)
+        public static int GetDayCount(this PersianMonth persianMonth, int? year = null) => persianMonth switch
         {
-            switch (persianMonth)
-            {
-                case PersianMonth.Farvardin:
-                case PersianMonth.Ordibehesht:
-                case PersianMonth.Khordad:
-                case PersianMonth.Tir:
-                case PersianMonth.Mordad:
-                case PersianMonth.Sharivar: return 31;
-                case PersianMonth.Mehr:
-                case PersianMonth.Aban:
-                case PersianMonth.Azar:
-                case PersianMonth.Dey:
-                case PersianMonth.Bahman: return 30;
-                case PersianMonth.Esfand: return year.HasValue ? PersianDateTime.PersianCalendar.IsLeapYear(year.Value) ? 30 : 29 : 29;
-                default: return 0;
-            }
-        }
-
-        public static bool IsPersianDateTime(string s)
-        {
-            PersianDateTime persianDateTime;
-            return PersianDateTime.TryParsePersian(s, out persianDateTime);
-        }
-
+            PersianMonth.Farvardin => 31,
+            PersianMonth.Ordibehesht => 31,
+            PersianMonth.Khordad => 31,
+            PersianMonth.Tir => 31,
+            PersianMonth.Mordad => 31,
+            PersianMonth.Sharivar => 31,
+            PersianMonth.Mehr => 30,
+            PersianMonth.Aban => 30,
+            PersianMonth.Azar => 30,
+            PersianMonth.Dey => 30,
+            PersianMonth.Bahman => 30,
+            PersianMonth.Esfand => (year.HasValue ? PersianDateTime.PersianCalendar.IsLeapYear(year.Value) ? 30 : 29 : 29),
+            _ => 0
+        };
+        
         public static PersianDateTime ToPersianDateTime(this DateTime dateTime) => new PersianDateTime(dateTime);
     }
 }

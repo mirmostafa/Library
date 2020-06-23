@@ -1,26 +1,15 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
-
-#region
 
 using System;
 using System.Collections;
 using System.Reflection;
 
-#endregion
-
 namespace Mohammad.Helpers.Console
 {
     public static class ObjectDumper
     {
-        public static void WriteDump(object element)
-        {
-            WriteDump(element, 0);
-        }
+        public static void WriteDump(object element) => WriteDump(element, 0);
 
         public static void WriteDump(object element, int depth)
         {
@@ -28,18 +17,13 @@ namespace Mohammad.Helpers.Console
             dumper.Write(element, null);
         }
 
-        public static void WriteLineDump(object element)
-        {
-            WriteLineDump(element, 0);
-        }
+        public static void WriteLineDump(object element) => WriteLineDump(element, 0);
 
         public static void WriteLineDump(object element, int depth)
         {
             var dumper = new Dumper(depth);
             dumper.WriteLine(element, null);
         }
-
-        #region Nested
 
         private class Dumper : Dumper<object>
         {
@@ -285,7 +269,5 @@ namespace Mohammad.Helpers.Console
                 }
             }
         }
-
-        #endregion
     }
 }

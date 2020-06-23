@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -69,12 +65,8 @@ namespace Mohammad.Data.SqlServer.Dynamics
 
         private static IEnumerable<DataRow> GetRows(DataSet ds) => ds.Dispose(ds.GetTables().FirstOrDefault()?.Dispose(t => t?.Select()));
 
-        #region Fields
-
         private static ExceptionHandling<Exception> _CommonExceptionHandling;
         private readonly string _ConnectionString;
         private ExceptionHandling<Exception> _ExceptionHandling;
-
-        #endregion
     }
 }

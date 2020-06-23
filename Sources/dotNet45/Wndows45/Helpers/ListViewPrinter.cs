@@ -106,8 +106,6 @@ namespace Mohammad.Win.Helpers
             this.m_fListWidth += 1; // separator
         }
 
-        #region Properties
-
         /// <summary>
         ///     Gets or sets whether to fit the list width on a single page
         /// </summary>
@@ -127,10 +125,6 @@ namespace Mohammad.Win.Helpers
         ///     A <see cref="string" /> the represents the title printed as page header.
         /// </value>
         public string Title { get; set; } = "";
-
-        #endregion
-
-        #region Events Handlers
 
         private void OnBeginPrint(object sender, PrintEventArgs e)
         {
@@ -353,7 +347,5 @@ namespace Mohammad.Win.Helpers
 
             brushHeader.Dispose();
         }
-
-        #endregion
     }
 }

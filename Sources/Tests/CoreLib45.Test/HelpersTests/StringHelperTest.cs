@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2018/03/10
+﻿// Created on     2018/03/10
 // Last update on 2018/03/10 by Mohammad Mir mostafa 
-
-#endregion
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Mohammad.Helpers;

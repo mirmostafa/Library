@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -14,10 +10,7 @@ namespace Mohammad.Helpers.Html
     {
         public bool Eof => this._Pos >= this._Html.Length;
 
-        public HtmlParser(string html)
-        {
-            this.Reset(html);
-        }
+        public HtmlParser(string html) => this.Reset(html);
 
         public IEnumerable<dynamic> GetTagsByName(string tagName)
         {
@@ -43,10 +36,7 @@ namespace Mohammad.Helpers.Html
             return (char)0;
         }
 
-        public void Reset()
-        {
-            this._Pos = 0;
-        }
+        public void Reset() => this._Pos = 0;
 
         public void Reset(string html)
         {
@@ -54,10 +44,7 @@ namespace Mohammad.Helpers.Html
             this._Pos = 0;
         }
 
-        private void Move(int ahead = 1)
-        {
-            this._Pos = Math.Min(this._Pos + ahead, this._Html.Length);
-        }
+        private void Move(int ahead = 1) => this._Pos = Math.Min(this._Pos + ahead, this._Html.Length);
 
         private bool MoveToNextTag()
         {
@@ -253,12 +240,8 @@ namespace Mohammad.Helpers.Html
             }
         }
 
-        #region Fields
-
         private string _Html;
         private int _Pos;
         private bool _ScriptBegin;
-
-        #endregion
     }
 }

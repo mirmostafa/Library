@@ -1,9 +1,5 @@
-﻿#region Code Identifications
-
-// Created on     2018/07/25
+﻿// Created on     2018/07/25
 // Last update on 2018/08/12 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -53,21 +49,12 @@ namespace TestWpfApp45
             this.Status.Set("Ready", level: LogLevel.Status);
         }
 
-        private void EventNavigation_OnNavigating(object sender, ItemActingEventArgs<object> e)
-        {
-            e.Item = App.WatcherPage;
-        }
+        private void EventNavigation_OnNavigating(object sender, ItemActingEventArgs<object> e) => e.Item = App.WatcherPage;
 
-        private void ShowTestPage2_OnExecuted(object sender, EventArgs e)
-        {
-            LibraryDialog.ShowDialog<Page2>(this);
-        }
+        private void ShowTestPage2_OnExecuted(object sender, EventArgs e) => LibraryDialog.ShowDialog<Page2>(this);
 
-        private void CommonTests_OnExecuted(object sender, EventArgs e)
-        {
-            //Break();
-            ValidationException.WrapThrow("", "No machine selected.");
-        }
+        //Break();
+        private void CommonTests_OnExecuted(object sender, EventArgs e) => ValidationException.WrapThrow("", "No machine selected.");
 
         private async void LoadBingImage_OnExecuted(object sender, EventArgs routedEventArgs)
         {
@@ -108,10 +95,7 @@ namespace TestWpfApp45
             }
         }
 
-        private void Watcher_OnRenamed(object sender, ChangedEventArgs<string> e)
-        {
-            this.Status.Set($"{e.OldValue} to {e.NewValue}", detail: "renamed");
-        }
+        private void Watcher_OnRenamed(object sender, ChangedEventArgs<string> e) => this.Status.Set($"{e.OldValue} to {e.NewValue}", detail: "renamed");
 
         private void Watcher_OnModified(object sender, ItemActedEventArgs<string> e)
         {
@@ -123,15 +107,9 @@ namespace TestWpfApp45
             this.Status.Set(e.Item, detail: "modified");
         }
 
-        private void Watcher_OnDeleted(object sender, ItemActedEventArgs<string> e)
-        {
-            this.Status.Set(e.Item, detail: "deleted");
-        }
+        private void Watcher_OnDeleted(object sender, ItemActedEventArgs<string> e) => this.Status.Set(e.Item, detail: "deleted");
 
-        private void Watcher_OnAdded(object sender, ItemActedEventArgs<string> e)
-        {
-            this.Status.Set(e.Item, detail: "added");
-        }
+        private void Watcher_OnAdded(object sender, ItemActedEventArgs<string> e) => this.Status.Set(e.Item, detail: "added");
         //}
         //        this._Watchers.ForEach(w => CodeHelper.Catch(w.Stop));
         //    else

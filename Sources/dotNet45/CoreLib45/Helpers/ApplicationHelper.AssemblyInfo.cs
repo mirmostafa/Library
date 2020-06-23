@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Reflection;
@@ -15,11 +11,7 @@ namespace Mohammad.Helpers
 {
     public static partial class ApplicationHelper
     {
-        #region Fields
-
         private static string _Company;
-
-        #endregion
 
         public static string ApplicationTitle => CalculatePropertyValue<AssemblyTitleAttribute>("Title");
 

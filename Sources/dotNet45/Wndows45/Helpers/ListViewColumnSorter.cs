@@ -39,8 +39,6 @@ namespace Mohammad.Win.Helpers
             this.Enabled = true;
         }
 
-        #region IComparer Members
-
         public int Compare(object x, object y)
         {
             var item1 = x as ListViewItem;
@@ -49,8 +47,6 @@ namespace Mohammad.Win.Helpers
                 item2.SubItems.Count > this._ColIndex ? item2.SubItems[this._ColIndex].Text : string.Empty);
             return this.ListView.Sorting == SortOrder.Ascending ? result : result *= -1;
         }
-
-        #endregion
 
         private void ListViewColumnClick(object sender, ColumnClickEventArgs e)
         {

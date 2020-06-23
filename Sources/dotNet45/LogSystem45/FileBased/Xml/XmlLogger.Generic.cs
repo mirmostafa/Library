@@ -10,11 +10,7 @@ namespace Mohammad.Logging.FileBased.Xml
     public class XmlLogger<TLogEntity> : Logger<XmlWriter<TLogEntity>, TLogEntity>, IStorageReadable
         where TLogEntity : LogEntity, new()
     {
-        #region IStorageReadable Members
-
         public string StorageFilePath => this.Writer.Log.FullName;
-
-        #endregion
 
         public XmlLogger(DirectoryInfo logPath = null, bool useLogRotation = false)
         {

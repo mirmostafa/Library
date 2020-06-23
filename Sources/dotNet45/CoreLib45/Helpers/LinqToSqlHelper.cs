@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System.Data;
 using System.Data.Linq;
@@ -17,11 +13,7 @@ namespace Mohammad.Helpers
 {
     public static class LinqToSqlHelper
     {
-        #region Fields
-
         public static ConflictMode? DefaultConflictMode = null;
-
-        #endregion
 
         public static SqlDataReader AsDataReader(this DataContext db, IQueryable query) => query.AsDataReader(db);
 
@@ -38,22 +30,17 @@ namespace Mohammad.Helpers
 
         public static void Attach<TEntity>(this DataContext db, TEntity entity, bool asModified = true)
             where TEntity : class
-        {
-            db.GetTable<TEntity>().Attach(entity, asModified);
-        }
+            => db.GetTable<TEntity>().Attach(entity, asModified);
 
         public static void Attach<TEntity>(this DataContext db, TEntity entity, TEntity original)
             where TEntity : class
-        {
-            db.GetTable<TEntity>().Attach(entity, original);
-        }
+            => db.GetTable<TEntity>().Attach(entity, original);
 
         public static bool CanRequestNotifications() => HasException(() => new SqlClientPermission(PermissionState.Unrestricted).Demand());
 
         public static void DeleteEntity<TEntity>(this DataContext db, TEntity entity, bool submitChanges = true, ExceptionHandling exceptionHandling = null)
             where TEntity : class
-        {
-            Catch(() =>
+            => Catch(() =>
                 {
                     Catch(() => db.GetTable<TEntity>().Attach(entity, false));
                     db.Refresh(RefreshMode.KeepCurrentValues, entity);
@@ -65,7 +52,6 @@ namespace Mohammad.Helpers
                 },
                 handling: exceptionHandling,
                 throwException: true);
-        }
 
         public static Table<TEntity> GetAll<TEntity>(this DataContext db, ExceptionHandling exceptionHandling)
             where TEntity : class => CatchFunc(db.GetTable<TEntity>, handling: exceptionHandling, throwException: true);
@@ -74,8 +60,7 @@ namespace Mohammad.Helpers
 
         public static void InsertEntity<TEntity>(this DataContext db, TEntity entity, bool submitChanges = true, ExceptionHandling exceptionHandling = null)
             where TEntity : class
-        {
-            Catch(() =>
+            => Catch(() =>
                 {
                     db.GetTable<TEntity>().InsertOnSubmit(entity);
                     if (submitChanges)
@@ -85,7 +70,6 @@ namespace Mohammad.Helpers
                 },
                 handling: exceptionHandling,
                 throwException: true);
-        }
 
         public static DataTable ToDataTable(this IQueryable query, DataContext db)
         {

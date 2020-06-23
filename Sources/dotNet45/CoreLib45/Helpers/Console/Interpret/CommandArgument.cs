@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -14,11 +10,7 @@ namespace Mohammad.Helpers.Console.Interpret
 {
     public class CommandArgument
     {
-        #region Fields
-
         private string _Syntax;
-
-        #endregion
 
         public Delegate Action { get; set; }
         public string Description { get; set; }
@@ -130,11 +122,7 @@ namespace Mohammad.Helpers.Console.Interpret
             log("Interpreting ended.");
         }
 
-        #region Fields
-
         private readonly string _AppName;
         private string _Syntax;
-
-        #endregion
     }
 }

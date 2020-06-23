@@ -1,11 +1,4 @@
-﻿#region Code Identifications
-
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -20,8 +13,8 @@ namespace Mohammad.Globalization
         static PersianAlphabetConverter()
         {
             InitIgnores();
-            InitiAlphabets();
-            InitiNumbers();
+            InitAlphabets();
+            InitNumbers();
         }
 
         public static byte[] Convert(string input)
@@ -100,7 +93,7 @@ namespace Mohammad.Globalization
             _IgnoreList.Add(248); //Çø
         }
 
-        private static void InitiAlphabets()
+        private static void InitAlphabets()
         {
             AddAlphabet(new PersianCharacter(32, 32, 32, 32, 32, false, false)); //space
             AddAlphabet(new PersianCharacter(194, 141, 141, 141, 141, false, false)); //Â
@@ -144,10 +137,10 @@ namespace Mohammad.Globalization
             AddAlphabet(new PersianCharacter(198, 252, 254, 254, 252, true, true)); //í ÈÇ åãÒå
         }
 
-        private static void InitiNumbers()
+        private static void InitNumbers()
         {
             const byte zero1256 = 48;
-            byte diff = 80;
+            const byte diff = 80;
             for (var i = zero1256; i < zero1256 + 10; i++)
             {
                 var newCode = System.Convert.ToByte(i + diff);
@@ -155,27 +148,12 @@ namespace Mohammad.Globalization
             }
         }
 
-        private static void AddAlphabet(PersianCharacter c)
-        {
-            _AlphabetList.Add(c.Pc1256Code, c);
-        }
+        private static void AddAlphabet(PersianCharacter c) => _AlphabetList.Add(c.Pc1256Code, c);
 
         private static IEnumerable<byte> GetIgnoreCharacters() => _IgnoreList;
 
-        private static PersianCharacter FindChar(byte pc1256Code)
-        {
-            if (_AlphabetList.ContainsKey(pc1256Code))
-            {
-                return _AlphabetList[pc1256Code];
-            }
-
-            if (_NumberList.ContainsKey(pc1256Code))
-            {
-                return _NumberList[pc1256Code];
-            }
-
-            return null;
-        }
+        private static PersianCharacter? FindChar(byte pc1256Code) => _AlphabetList.ContainsKey(pc1256Code) ? _AlphabetList[pc1256Code] :
+            _NumberList.ContainsKey(pc1256Code) ? _NumberList[pc1256Code] : null;
 
         private class PersianCharacter
         {
@@ -209,26 +187,11 @@ namespace Mohammad.Globalization
 
             public ConvertedCharacter GetProperPrinterCode(PersianCharacter beforeChar, PersianCharacter afterChar)
             {
-                byte properByteCode;
                 var isStickyToPreviousChar = beforeChar != null && beforeChar._IsStickyToBeginOfNextChar;
                 var isStickyToNextChar = afterChar != null && afterChar._IsStickyToEndOfPreviousChar;
-                if (isStickyToPreviousChar && isStickyToNextChar) //Middle
-                {
-                    properByteCode = this._PrinterMiddleCode;
-                }
-                else if (!isStickyToPreviousChar && !isStickyToNextChar) //Isolated
-                {
-                    properByteCode = this._PrinterIsolatedCode;
-                }
-                else if (isStickyToNextChar) //Begin
-                {
-                    properByteCode = this._PrinterBeginCode;
-                }
-                else //End
-                {
-                    properByteCode = this._PrinterEndCode;
-                }
-
+                var properByteCode = isStickyToPreviousChar && isStickyToNextChar ? this._PrinterMiddleCode :
+                    !isStickyToPreviousChar && !isStickyToNextChar ? this._PrinterIsolatedCode :
+                    isStickyToNextChar ? this._PrinterBeginCode : this._PrinterEndCode;
                 return new ConvertedCharacter(properByteCode, this._IsNeedToReverse);
             }
         }

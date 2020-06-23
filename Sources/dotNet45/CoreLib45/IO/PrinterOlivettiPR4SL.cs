@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -93,10 +89,7 @@ namespace Mohammad.IO
             this.Initialize();
         }
 
-        ~PrinterOlivettiPr4Sl()
-        {
-            this.Dispose(false);
-        }
+        ~PrinterOlivettiPr4Sl() => this.Dispose(false);
 
         public void Dispose()
         {
@@ -104,20 +97,11 @@ namespace Mohammad.IO
             GC.SuppressFinalize(this);
         }
 
-        public void InitializePrinter()
-        {
-            this.SendCommand(ComPortPrinterCommands.InitializePrinter);
-        }
+        public void InitializePrinter() => this.SendCommand(ComPortPrinterCommands.InitializePrinter);
 
-        public void SetCharacterSize(ComPortPrinterCharacterSize value)
-        {
-            this.SendCommand(ComPortPrinterCommands.SelectCharacterSize, Convert.ToByte(value));
-        }
+        public void SetCharacterSize(ComPortPrinterCharacterSize value) => this.SendCommand(ComPortPrinterCommands.SelectCharacterSize, Convert.ToByte(value));
 
-        public void SetCharacterCodeTable(ComPortPrinterCharacterCodeTable value)
-        {
-            this.SendCommand(ComPortPrinterCommands.SelectCharacterCodeTable, Convert.ToByte(value));
-        }
+        public void SetCharacterCodeTable(ComPortPrinterCharacterCodeTable value) => this.SendCommand(ComPortPrinterCommands.SelectCharacterCodeTable, Convert.ToByte(value));
 
         public void SetJustification(ComPortPrinterJustification value)
         {
@@ -137,9 +121,7 @@ namespace Mohammad.IO
         }
 
         public void SetInternationalCharacterSet(ComPortPrinterInternationalCharacterSet value)
-        {
-            this.SendCommand(ComPortPrinterCommands.SelectInternationalCharacterSet, Convert.ToByte(value));
-        }
+            => this.SendCommand(ComPortPrinterCommands.SelectInternationalCharacterSet, Convert.ToByte(value));
 
         public void PrintLine(params string[] lines)
         {
@@ -207,10 +189,7 @@ namespace Mohammad.IO
                 "Printing");
         }
 
-        public void PrintLine(IEnumerable<string> lines)
-        {
-            this.InnerDoOnPaperReady(() => this.PrintLine(lines));
-        }
+        public void PrintLine(IEnumerable<string> lines) => this.InnerDoOnPaperReady(() => this.PrintLine(lines));
 
         public void PrintLineOnPaperReady(params string[] lines)
         {
@@ -220,10 +199,7 @@ namespace Mohammad.IO
             }
         }
 
-        public void DoEachOnPaperReady(Action<int> action, int count)
-        {
-            this.DoEachOnPaperReady(Enumerable.Repeat(action, count).ToArray());
-        }
+        public void DoEachOnPaperReady(Action<int> action, int count) => this.DoEachOnPaperReady(Enumerable.Repeat(action, count).ToArray());
 
         //TODO: Work on this. This is so error-prone.
         public void DoEachOnPaperReady(params Action<int>[] actions)
@@ -240,30 +216,15 @@ namespace Mohammad.IO
             this.StopCheckStatusTimer();
         }
 
-        public void EjectPaper()
-        {
-            this.SendCommand(ComPortPrinterCommands.PaperEject);
-        }
+        public void EjectPaper() => this.SendCommand(ComPortPrinterCommands.PaperEject);
 
-        public void FeedLine(byte lineCount = 1)
-        {
-            this.SendCommand(ComPortPrinterCommands.PrintAndFeedLines, lineCount);
-        }
+        public void FeedLine(byte lineCount = 1) => this.SendCommand(ComPortPrinterCommands.PrintAndFeedLines, lineCount);
 
-        public void FeedLinesReverse(byte lineCount = 1)
-        {
-            this.SendCommand(ComPortPrinterCommands.PrintAndReverseFeedLines, lineCount);
-        }
+        public void FeedLinesReverse(byte lineCount = 1) => this.SendCommand(ComPortPrinterCommands.PrintAndReverseFeedLines, lineCount);
 
-        public void SetLeftMargin(byte l = 0, byte h = 0)
-        {
-            this.SendCommand(ComPortPrinterCommands.SetLeftMargin, l, h);
-        }
+        public void SetLeftMargin(byte l = 0, byte h = 0) => this.SendCommand(ComPortPrinterCommands.SetLeftMargin, l, h);
 
-        public void SetSlipPaperWaitingTime(byte t1 = 0, byte t2 = 5)
-        {
-            this.SendCommand(ComPortPrinterCommands.SetSlipPaperWaitingTime, t1, t2);
-        }
+        public void SetSlipPaperWaitingTime(byte t1 = 0, byte t2 = 5) => this.SendCommand(ComPortPrinterCommands.SetSlipPaperWaitingTime, t1, t2);
 
         public static bool TryDetectPrinter(out string portName, TextWriter log = null)
         {
@@ -286,26 +247,17 @@ namespace Mohammad.IO
             return false;
         }
 
-        public string ReadExisting()
-        {
-            return this.Do(() => this._SerialPort.ReadExisting(), "ReadExisting");
-        }
+        public string ReadExisting() => this.Do(() => this._SerialPort.ReadExisting(), "ReadExisting");
 
-        public byte[] Read()
-        {
-            return this.Do(() =>
-                {
-                    var result = new byte[this._SerialPort.ReadBufferSize];
-                    this._SerialPort.Read(result, 0, result.Length);
-                    return result.Where(element => element != '\0').ToArray();
-                },
-                "Read");
-        }
+        public byte[] Read() => this.Do(() =>
+            {
+                var result = new byte[this._SerialPort.ReadBufferSize];
+                this._SerialPort.Read(result, 0, result.Length);
+                return result.Where(element => element != '\0').ToArray();
+            },
+            "Read");
 
-        public string ReadLine()
-        {
-            return this.Do(() => this._SerialPort.ReadLine(), "ReadLine");
-        }
+        public string ReadLine() => this.Do(() => this._SerialPort.ReadLine(), "ReadLine");
 
         public void StartCheckStatusTimer(int interval = 1000)
         {
@@ -334,10 +286,7 @@ namespace Mohammad.IO
             this._Timer = null;
         }
 
-        public void ProcessQueue()
-        {
-            this.StartCheckStatusTimer();
-        }
+        public void ProcessQueue() => this.StartCheckStatusTimer();
 
         private void Initialize()
         {
@@ -354,10 +303,7 @@ namespace Mohammad.IO
             this.RealtimeStatusTransmission();
         }
 
-        private void SerialPort_OnDataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            this.CheckDataReceived();
-        }
+        private void SerialPort_OnDataReceived(object sender, SerialDataReceivedEventArgs e) => this.CheckDataReceived();
 
         private void InnerDoOnPaperReady(Action action, bool autoResetCheckStatusTimer = true, TimeSpan? timeout = null)
         {
@@ -404,14 +350,11 @@ namespace Mohammad.IO
             this.HandleException(action);
         }
 
-        private void HandleException(Action action)
+        private void HandleException(Action action) => this.HandleException(() =>
         {
-            this.HandleException(() =>
-            {
-                action();
-                return true;
-            });
-        }
+            action();
+            return true;
+        });
 
         private TResult HandleException<TResult>(Func<TResult> action, TResult defaultResult = default)
         {
@@ -432,10 +375,7 @@ namespace Mohammad.IO
             }
         }
 
-        private void SendCommand(IEnumerable<byte> command, params byte[] args)
-        {
-            this.Do(() => this.UnsafeSendCommand(command, args), null);
-        }
+        private void SendCommand(IEnumerable<byte> command, params byte[] args) => this.Do(() => this.UnsafeSendCommand(command, args), null);
 
         private void UnsafeSendCommand(IEnumerable<byte> command, params byte[] args)
         {
@@ -445,15 +385,12 @@ namespace Mohammad.IO
             this._SerialPort.Write(buffer, 0, buffer.Length);
         }
 
-        private void Do(Action action, string eventName)
-        {
-            this.Do(() =>
-                {
-                    action();
-                    return true;
-                },
-                eventName);
-        }
+        private void Do(Action action, string eventName) => this.Do(() =>
+            {
+                action();
+                return true;
+            },
+            eventName);
 
         private TResult Do<TResult>(Func<TResult> action, string eventName, TResult defaultResult = default)
         {
@@ -547,10 +484,7 @@ namespace Mohammad.IO
             this._Log.WriteLine(log);
         }
 
-        private void LogEvent(string format, params object[] args)
-        {
-            this.LogEvent(string.Format(format, args));
-        }
+        private void LogEvent(string format, params object[] args) => this.LogEvent(string.Format(format, args));
 
         private void CheckDataReceived()
         {
@@ -693,13 +627,10 @@ namespace Mohammad.IO
             }
         }
 
-        private void OnStatusChanged()
-        {
-            this.StatusChanged?.Invoke(this, EventArgs.Empty);
-            //if (this.PrintQueue.Any())
-            //    this.InnerDoOnPaperReady(this.PrintQueue.Dequeue());
-        }
+        private void OnStatusChanged() => this.StatusChanged?.Invoke(this, EventArgs.Empty);
 
+        //if (this.PrintQueue.Any())
+        //    this.InnerDoOnPaperReady(this.PrintQueue.Dequeue());
         public event EventHandler StatusChanged;
         public event EventHandler<ItemActedEventArgs<string>> DataReceived;
         public event EventHandler<ItemActingEventArgs<Exception>> ExceptionOccurred;
@@ -733,8 +664,6 @@ namespace Mohammad.IO
             public static readonly byte[] InitializePrinter = {0x1B, 0x40, 0x1B, 0x74, 0x13, 0x1B, 0x4D, 0x00};
             public static readonly byte[] SetSlipPaperWaitingTime = {0x1B, 0x66};
         }
-
-        #region R&D
 
         //[Obsolete("Not done yet.")]
         //public void SetPrinterPrintDirection(ComPortPrinterPrintDirection value)
@@ -776,8 +705,6 @@ namespace Mohammad.IO
         //            throw new ArgumentOutOfRangeException("value", value, null);
         //    }
         //}
-
-        #endregion
     }
 
     public enum PrinterStatus

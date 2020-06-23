@@ -1,10 +1,3 @@
-#region Code Identifications
-
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -465,5 +458,7 @@ namespace Mohammad.Globalization
             var targetType = CodeHelper.GetCallerMethodName().Substring(2);
             return new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
         }
+        public static bool IsPersianDateTime(string s) => TryParsePersian(s, out _);
+
     }
 }

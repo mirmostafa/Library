@@ -11,8 +11,6 @@ namespace Mohammad.Wpf.Internals.Interop
     /// </summary>
     public class WindowMessageSink : IDisposable
     {
-        #region CreateMessageWindow
-
         /// <summary>
         ///     Creates the helper message window that is used
         ///     to receive messages from the taskbar icon.
@@ -73,10 +71,6 @@ namespace Mohammad.Wpf.Internals.Interop
             }
         }
 
-        #endregion
-
-        #region members
-
         /// <summary>
         ///     The ID of messages that are received from the the
         ///     taskbar icon.
@@ -120,10 +114,6 @@ namespace Mohammad.Wpf.Internals.Interop
         /// </summary>
         public NotifyIconVersion Version { get; set; }
 
-        #endregion
-
-        #region events
-
         /// <summary>
         ///     The custom tooltip should be closed or hidden.
         /// </summary>
@@ -147,10 +137,6 @@ namespace Mohammad.Wpf.Internals.Interop
         /// </summary>
         public event Action TaskbarCreated;
 
-        #endregion
-
-        #region construction
-
         /// <summary>
         ///     Creates a new message sink that receives message from
         ///     a given taskbar icon.
@@ -173,10 +159,6 @@ namespace Mohammad.Wpf.Internals.Interop
         /// </summary>
         /// <returns></returns>
         internal static WindowMessageSink CreateEmpty() => new WindowMessageSink {MessageWindowHandle = IntPtr.Zero, Version = NotifyIconVersion.Vista};
-
-        #endregion
-
-        #region Handle Window Messages
 
         /// <summary>
         ///     Callback method that receives messages from the taskbar area.
@@ -288,10 +270,6 @@ namespace Mohammad.Wpf.Internals.Interop
             }
         }
 
-        #endregion
-
-        #region Dispose
-
         /// <summary>
         ///     Set to true as soon as <see cref="Dispose" />
         ///     has been invoked.
@@ -348,7 +326,5 @@ namespace Mohammad.Wpf.Internals.Interop
             WinApi.DestroyWindow(this.MessageWindowHandle);
             this.messageHandler = null;
         }
-
-        #endregion
     }
 }

@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -19,62 +15,57 @@ namespace Mohammad.Data.SqlServer
     {
         internal static TableSchema Refactor(Type tableEntity, bool includeAutoIcreamentals) => RefactorCore(tableEntity, includeAutoIcreamentals);
 
-        internal static TableSchema Refactor(object obj, bool includeAutoIcreamentals)
-        {
-            return RefactorCore(obj.GetType(),
-                includeAutoIcreamentals,
-                p =>
+        internal static TableSchema Refactor(object obj, bool includeAutoIcreamentals) => RefactorCore(obj.GetType(),
+            includeAutoIcreamentals,
+            p =>
+            {
+                var value = p.GetValue(obj);
+                if (p.PropertyType == typeof(string) || p.PropertyType == typeof(Guid))
                 {
-                    var value = p.GetValue(obj);
-                    if (p.PropertyType == typeof(string) || p.PropertyType == typeof(Guid))
-                    {
-                        value = string.Format("N'{0}'", value);
-                    }
-                    else if (p.PropertyType == typeof(bool))
-                    {
-                        value = string.Format("{0}", (bool)value ? 1 : 0);
-                    }
+                    value = $"N'{value}'";
+                }
+                else if (p.PropertyType == typeof(bool))
+                {
+                    value = $"{((bool)value ? 1 : 0)}";
+                }
 
-                    return value;
-                });
-        }
+                return value;
+            });
 
-        internal static TableSchema Refactor(string tableName, IEnumerable<TripleValue<string, object, Type>> props)
+        internal static TableSchema Refactor(string tableName, IEnumerable<Tuple<string, object, Type>> props)
         {
             var pairs = new List<PairValue<string, object>>(props.Count());
             foreach (var prop in props)
             {
                 var item = new PairValue<string, object>();
-                if (prop.Value3 == typeof(string) || prop.Value3 == typeof(Guid) || prop.Value3 == typeof(Guid?))
+                if (prop.Item3 == typeof(string) || prop.Item3 == typeof(Guid) || prop.Item3 == typeof(Guid?))
                 {
-                    item.Value2 = string.Format("N'{0}'", prop.Value2);
+                    item.Value2 = $"N'{prop.Item2}'";
                 }
-                else if (prop.Value3 == typeof(bool) || prop.Value3 == typeof(bool?))
+                else if (prop.Item3 == typeof(bool) || prop.Item3 == typeof(bool?))
                 {
-                    item.Value2 = string.Format("{0}", (bool)prop.Value2 ? 1 : 0);
+                    item.Value2 = $"{((bool)prop.Item2 ? 1 : 0)}";
                 }
                 else
                 {
-                    item.Value2 = string.Format("{0}", prop.Value2);
+                    item.Value2 = $"{prop.Item2}";
                 }
 
-                item.Value1 = string.Format("[{0}]", prop.Value1);
+                item.Value1 = $"[{prop.Item1}]";
                 pairs.Add(item);
             }
 
             return new TableSchema
             {
-                Columns = pairs, TableName = tableName
+                Columns = pairs,
+                TableName = tableName
             };
         }
 
-        internal static TableSchema Refactor(object obj)
-        {
-            return Refactor(obj.GetType().Name,
-                obj.GetType()
-                    .GetProperties()
-                    .Select(prop => new TripleValue<string, object, Type>(prop.Name, prop.GetValue(obj), prop.PropertyType)));
-        }
+        internal static TableSchema Refactor(object obj) => Refactor(obj.GetType().Name,
+            obj.GetType()
+                .GetProperties()
+                .Select(prop => new Tuple<string, object, Type>(prop.Name, prop.GetValue(obj), prop.PropertyType)));
 
         internal static TableSchema RefactorCore(Type tableEntity, bool includeAutoIcreamentals, Func<PropertyInfo, object> getValue = null)
         {
@@ -84,7 +75,7 @@ namespace Mohammad.Data.SqlServer
             }
 
             var tableAttr = tableEntity.GetCustomAttributes(typeof(SqlTableAttribute), true).Cast<SqlTableAttribute>().FirstOrDefault();
-            var tablename = tableAttr != null ? tableAttr.Name ?? tableEntity.Name : tableEntity.Name;
+            var tablename = tableAttr != null ? tableAttr.Name : tableEntity.Name;
             var columns = new List<PairValue<string, object>>();
             foreach (var property in tableEntity.GetProperties()
                 .Where(property =>
@@ -114,23 +105,17 @@ namespace Mohammad.Data.SqlServer
 
             return new TableSchema
             {
-                TableName = tablename, Columns = columns.ToEnumerable()
+                TableName = tablename,
+                Columns = columns.ToEnumerable()
             };
         }
 
-        #region Nested
-
         internal class TableSchema
         {
-            public IEnumerable<string> ColumnNames
-            {
-                get { return this.Columns.Select(c => c.Value1); }
-            }
+            public IEnumerable<string> ColumnNames => this.Columns.Select(c => c.Value1);
 
             public IEnumerable<PairValue<string, object>> Columns { get; set; }
             public string TableName { get; set; }
         }
-
-        #endregion
     }
 }

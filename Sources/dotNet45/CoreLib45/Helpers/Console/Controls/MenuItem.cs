@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Linq;
@@ -13,11 +9,7 @@ namespace Mohammad.Helpers.Console.Controls
 {
     public class MenuItem
     {
-        #region Fields
-
         private Menu _DropDownMenu;
-
-        #endregion
 
         public Menu DropDownMenu
         {
@@ -40,11 +32,7 @@ namespace Mohammad.Helpers.Console.Controls
 
     public class Menu
     {
-        #region Fields
-
         private EventualCollection<MenuItem> _Items;
-
-        #endregion
 
         public EventualCollection<MenuItem> Items => this._Items ?? (this._Items = new EventualCollection<MenuItem>());
 
@@ -88,15 +76,9 @@ namespace Mohammad.Helpers.Console.Controls
             }
         }
 
-        private void OnDisplayed()
-        {
-            this.Displayed.RaiseAsync(this);
-        }
+        private void OnDisplayed() => this.Displayed.RaiseAsync(this);
 
-        private void OnDisplaying()
-        {
-            this.Displaying.RaiseAsync(this);
-        }
+        private void OnDisplaying() => this.Displaying.RaiseAsync(this);
 
         public event EventHandler Displayed;
         public event EventHandler Displaying;

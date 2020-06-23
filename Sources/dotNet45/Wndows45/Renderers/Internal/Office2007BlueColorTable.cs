@@ -8,8 +8,6 @@ namespace Mohammad.Win.Renderers.Internal
     /// </summary>
     public class Office2007BlueColorTable : ProfessionalColorTable
     {
-        #region MethodsProtected
-
         /// <summary>
         ///     initialize a color Dictionary with defined colors
         /// </summary>
@@ -60,23 +58,5 @@ namespace Mohammad.Win.Renderers.Internal
             rgbTable[KnownColors.ToolStripPanelGradientBegin] = Color.FromArgb(191, 219, 255);
             rgbTable[KnownColors.ToolStripPanelGradientEnd] = Color.FromArgb(191, 219, 255);
         }
-
-        #endregion
-
-        #region FieldsPrivate
-
-        #endregion
-
-        #region Properties
-
-        #endregion
-
-        #region MethodsPublic
-
-        #endregion
-
-        #region MethodsPrivate
-
-        #endregion
     }
 }

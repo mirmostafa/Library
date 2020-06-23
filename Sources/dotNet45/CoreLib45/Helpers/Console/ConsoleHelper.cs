@@ -1,9 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Collections;
@@ -18,17 +14,9 @@ namespace Mohammad.Helpers.Console
 {
     public static class ConsoleHelper
     {
-        #region Fields
-
         internal const ConsoleColor DEFAULT_CONSTANT_CONSOLE_COLOR = ConsoleColor.Cyan;
 
-        #endregion
-
-        #region Fields
-
         private static ILogger _Out;
-
-        #endregion
 
         public static ILogger Out
         {
@@ -71,10 +59,7 @@ namespace Mohammad.Helpers.Console
             System.Console.SetCursorPosition(0, currentLineCursor);
         }
 
-        public static void Error(string s)
-        {
-            s.WriteLine(ConsoleColor.Red);
-        }
+        public static void Error(string s) => s.WriteLine(ConsoleColor.Red);
 
         public static TResult Exec<TResult>(Func<TResult> func, string startPrompt = null, string endPrompt = "Done")
         {
@@ -93,25 +78,13 @@ namespace Mohammad.Helpers.Console
             return func.EndInvoke(result);
         }
 
-        public static void Highlight(string s)
-        {
-            s.WriteLine(DefaultHighlightColor);
-        }
+        public static void Highlight(string s) => s.WriteLine(DefaultHighlightColor);
 
-        public static void Inform(string s)
-        {
-            s.WriteLine(ConsoleColor.White);
-        }
+        public static void Inform(string s) => s.WriteLine(ConsoleColor.White);
 
-        public static void LineFeed()
-        {
-            WriteLine();
-        }
+        public static void LineFeed() => WriteLine();
 
-        public static void Pause()
-        {
-            System.Console.ReadKey(true);
-        }
+        public static void Pause() => System.Console.ReadKey(true);
 
         public static ConsoleKey PressKeyInRange(Action prompter, ConsoleKey[] consoleKeys)
         {
@@ -125,10 +98,7 @@ namespace Mohammad.Helpers.Console
             return key;
         }
 
-        public static ConsoleKey PressKeyInRange(string prompt, params ConsoleKey[] consoleKeys)
-        {
-            return PressKeyInRange(() => prompt.WriteLine(), consoleKeys);
-        }
+        public static ConsoleKey PressKeyInRange(string prompt, params ConsoleKey[] consoleKeys) => PressKeyInRange(() => prompt.WriteLine(), consoleKeys);
 
         public static bool ProcessCommandArguments(string[] args, IDictionary<string, Action> actions, bool continueOnException = true)
         {
@@ -153,10 +123,7 @@ namespace Mohammad.Helpers.Console
             return result;
         }
 
-        public static void ShowElapsedTime(Action action)
-        {
-            $"Took: {Diag.Stopwatch(action).Elapsed}".WriteLine();
-        }
+        public static void ShowElapsedTime(Action action) => $"Took: {Diag.Stopwatch(action).Elapsed}".WriteLine();
 
         public static ConsoleKeyInfo ShowMenu(IDictionary<char, string> items, string caption = null, string prompt = null, bool? showSelectedKey = null)
         {
@@ -184,15 +151,9 @@ namespace Mohammad.Helpers.Console
             }
         }
 
-        public static void Write(params object[] objs)
-        {
-            objs.ForEach(obj => obj.Write());
-        }
+        public static void Write(params object[] objs) => objs.ForEach(obj => obj.Write());
 
-        public static void Write(IEnumerable obj, ConsoleColor consoleColor = DEFAULT_CONSTANT_CONSOLE_COLOR)
-        {
-            obj.ForEach(item => item.Write(consoleColor));
-        }
+        public static void Write(IEnumerable obj, ConsoleColor consoleColor = DEFAULT_CONSTANT_CONSOLE_COLOR) => obj.ForEach(item => item.Write(consoleColor));
 
         public static void Write(this object obj, ConsoleColor consoleColor = DEFAULT_CONSTANT_CONSOLE_COLOR)
         {
@@ -224,10 +185,7 @@ namespace Mohammad.Helpers.Console
             System.Console.Write($"{value}", consoleColor);
         }
 
-        public static void WriteLine()
-        {
-            "".WriteLine();
-        }
+        public static void WriteLine() => "".WriteLine();
 
         public static void WriteLine(this object value, ConsoleColor consoleColor = DEFAULT_CONSTANT_CONSOLE_COLOR)
         {
@@ -315,16 +273,9 @@ namespace Mohammad.Helpers.Console
             }
         }
 
-        public static void WriteSeparatorLine(char separatorchar = '=', int count = 20)
-        {
-            Inform(separatorchar.ToString().Repeat(count));
-        }
-
-        #region Fields
+        public static void WriteSeparatorLine(char separatorchar = '=', int count = 20) => Inform(separatorchar.ToString().Repeat(count));
 
         public static ConsoleColor DefaultConsoleColor = ConsoleColor.Gray;
         public static ConsoleColor DefaultHighlightColor = ConsoleColor.Magenta;
-
-        #endregion
     }
 }

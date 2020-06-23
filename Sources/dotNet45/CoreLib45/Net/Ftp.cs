@@ -1,9 +1,5 @@
-#region Code Identifications
-
 // Created on     2018/07/23
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
 
 using System;
 using System.Diagnostics;
@@ -31,10 +27,7 @@ namespace Mohammad.Net
 
         public ExceptionHandling ExceptionHandling
         {
-            get => this._ExceptionHandling ?? (this._ExceptionHandling = new ExceptionHandling
-            {
-                RaiseExceptions = true
-            });
+            get => this._ExceptionHandling ?? (this._ExceptionHandling = new ExceptionHandling {RaiseExceptions = true});
             private set => this._ExceptionHandling = value;
         }
 
@@ -83,10 +76,7 @@ namespace Mohammad.Net
                 exceptionHandling)
             .Validate();
 
-        public void Validate()
-        {
-            this.Run(".", WebRequestMethods.Ftp.ListDirectory);
-        }
+        public void Validate() => this.Run(".", WebRequestMethods.Ftp.ListDirectory);
 
         public static bool IsValid(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
                 userName,
@@ -194,9 +184,7 @@ namespace Mohammad.Net
             string userName,
             string password,
             ExceptionHandling exceptionHandling = null)
-        {
-            new Ftp(hostIp, userName, password, exceptionHandling).Upload(remoteFile, localFile);
-        }
+            => new Ftp(hostIp, userName, password, exceptionHandling).Upload(remoteFile, localFile);
 
         public static void Download(string remoteFile,
             string localFile,
@@ -204,24 +192,14 @@ namespace Mohammad.Net
             string userName,
             string password,
             ExceptionHandling exceptionHandling = null)
-        {
-            new Ftp(hostIp, userName, password, exceptionHandling).Download(remoteFile, localFile);
-        }
+            => new Ftp(hostIp, userName, password, exceptionHandling).Download(remoteFile, localFile);
 
-        public void Delete(string deleteFile)
-        {
-            this.Run(deleteFile, WebRequestMethods.Ftp.DeleteFile);
-        }
+        public void Delete(string deleteFile) => this.Run(deleteFile, WebRequestMethods.Ftp.DeleteFile);
 
         public void Rename(string currentFileNameAndPath, string newFileName)
-        {
-            this.Run(currentFileNameAndPath, WebRequestMethods.Ftp.Rename, null, initFtpWebRequest: req => req.RenameTo = newFileName);
-        }
+            => this.Run(currentFileNameAndPath, WebRequestMethods.Ftp.Rename, null, initFtpWebRequest: req => req.RenameTo = newFileName);
 
-        public void CreateDirectory(string newDirectory)
-        {
-            this.Run(newDirectory, WebRequestMethods.Ftp.MakeDirectory);
-        }
+        public void CreateDirectory(string newDirectory) => this.Run(newDirectory, WebRequestMethods.Ftp.MakeDirectory);
 
         public string GetFileCreatedDateTime(string fileName) => this.Run(fileName, WebRequestMethods.Ftp.GetDateTimestamp, reader => reader.ReadToEnd());
 
@@ -238,22 +216,19 @@ namespace Mohammad.Net
                 return fileInfo;
             });
 
-        public string[] DirectoryListSimple(string directory)
-        {
-            return this.Run(directory,
-                WebRequestMethods.Ftp.ListDirectory,
-                reader =>
+        public string[] DirectoryListSimple(string directory) => this.Run(directory,
+            WebRequestMethods.Ftp.ListDirectory,
+            reader =>
+            {
+                string directoryRaw = null;
+                while (reader.Peek() != -1)
                 {
-                    string directoryRaw = null;
-                    while (reader.Peek() != -1)
-                    {
-                        directoryRaw += reader.ReadLine() + "|";
-                    }
+                    directoryRaw += reader.ReadLine() + "|";
+                }
 
-                    var directoryList = directoryRaw?.Split("|".ToCharArray());
-                    return directoryList;
-                });
-        }
+                var directoryList = directoryRaw?.Split("|".ToCharArray());
+                return directoryList;
+            });
 
         public string[] DirectoryListDetailed(string directory) => this.Run(directory,
             WebRequestMethods.Ftp.ListDirectoryDetails,
@@ -272,15 +247,9 @@ namespace Mohammad.Net
 
         public override string ToString() => $"{nameof(this._Host)}: {this._Host}, {nameof(this._User)}: {this._User}";
 
-        protected virtual void OnBytesRead(ItemActedEventArgs<int> e)
-        {
-            this.Downloading?.Invoke(this, e);
-        }
+        protected virtual void OnBytesRead(ItemActedEventArgs<int> e) => this.Downloading?.Invoke(this, e);
 
-        private void Log(string log)
-        {
-            this.Logger?.Info(log);
-        }
+        private void Log(string log) => this.Logger?.Info(log);
 
         private void Run(string path,
             string method,

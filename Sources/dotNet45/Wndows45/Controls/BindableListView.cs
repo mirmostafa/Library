@@ -302,8 +302,6 @@ namespace Mohammad.Win.Controls
         public event EventHandler<AddingNewEventArgs> AddingNew;
         public event EventHandler DataBound;
 
-        #region IBindingListView Members
-
         public event ListChangedEventHandler ListChanged;
 
         /// <summary>
@@ -792,8 +790,6 @@ namespace Mohammad.Win.Controls
         /// </summary>
         /// <returns> true if the data source supports filtering; otherwise, false. </returns>
         public bool SupportsFiltering => false;
-
-        #endregion
     }
 
     public class BindableListViewItemDataBound : ItemActedEventArgs<object>

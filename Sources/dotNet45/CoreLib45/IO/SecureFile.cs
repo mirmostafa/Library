@@ -1,9 +1,5 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
@@ -147,10 +143,7 @@ namespace Mohammad.IO
             File.AppendAllText(this.OriginalFile.FullName, string.Concat(_Separator, encrypt));
         }
 
-        public void WriteLine(string text)
-        {
-            this.Write(string.Concat(text, Environment.NewLine));
-        }
+        public void WriteLine(string text) => this.Write(string.Concat(text, Environment.NewLine));
 
         public IEnumerable<string> ReadLines()
         {

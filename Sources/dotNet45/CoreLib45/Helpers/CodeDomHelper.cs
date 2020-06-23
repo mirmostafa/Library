@@ -1,11 +1,5 @@
-#region Code Identifications
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
 
-#endregion
-
-#region
 
 using System;
 using System.CodeDom;
@@ -13,8 +7,6 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-
-#endregion
 
 namespace Mohammad.Helpers
 {
@@ -25,7 +17,11 @@ namespace Mohammad.Helpers
         {
             var result = new CodeMemberProperty
             {
-                Attributes = MemberAttributes.Public, Type = new CodeTypeReference(type), Name = name, HasGet = false, HasSet = false
+                Attributes = MemberAttributes.Public,
+                Type = new CodeTypeReference(type),
+                Name = name,
+                HasGet = false,
+                HasSet = false
             };
             return result;
         }
@@ -53,9 +49,7 @@ namespace Mohammad.Helpers
         }
 
         public static void AddDocComment(this CodeTypeMember result, string docComments)
-        {
-            result.Comments.Add(new CodeCommentStatement(string.Format("<summary>{0}</summary>", docComments), true));
-        }
+            => result.Comments.Add(new CodeCommentStatement(string.Format("<summary>{0}</summary>", docComments), true));
 
         public static CodeMemberField AddField(this CodeTypeDeclaration typeDeclaration,
             Type type,
@@ -94,10 +88,7 @@ namespace Mohammad.Helpers
             string returnName = null,
             MemberAttributes attributes = MemberAttributes.Public | MemberAttributes.Final)
         {
-            var result = new CodeMemberMethod
-            {
-                Name = name
-            };
+            var result = new CodeMemberMethod {Name = name};
             if (returnName != null)
             {
                 result.ReturnType = new CodeTypeReference(returnName);
@@ -117,10 +108,7 @@ namespace Mohammad.Helpers
             return result;
         }
 
-        public static void AddNamespace(this CodeCompileUnit unit, params CodeNamespace[] namespaces)
-        {
-            namespaces.ForEach(ns => unit.Namespaces.Add(ns));
-        }
+        public static void AddNamespace(this CodeCompileUnit unit, params CodeNamespace[] namespaces) => namespaces.ForEach(ns => unit.Namespaces.Add(ns));
 
         public static CodeMemberProperty AddProperty(this CodeTypeDeclaration typeDeclaration, string typeName, string name)
         {
@@ -168,15 +156,15 @@ namespace Mohammad.Helpers
             AddPropertyWithBackingField(typeDeclaration, typeof(TType), name);
 
         public static void AddUsing(this CodeNamespace codeNamespace, params string[] references)
-        {
-            references.ForEach(reference => codeNamespace.Imports.Add(new CodeNamespaceImport(reference)));
-        }
+            => references.ForEach(reference => codeNamespace.Imports.Add(new CodeNamespaceImport(reference)));
 
         public static CodeMemberField CreateAutoField(Type type, string name, bool isNullable = false)
         {
             var cfield = new CodeMemberField
             {
-                Attributes = MemberAttributes.Public, Name = name, Type = new CodeTypeReference(type)
+                Attributes = MemberAttributes.Public,
+                Name = name,
+                Type = new CodeTypeReference(type)
             };
             cfield.Name += " { get; set; }";
             return cfield;
@@ -186,7 +174,9 @@ namespace Mohammad.Helpers
         {
             var cfield = new CodeMemberField
             {
-                Attributes = MemberAttributes.Public, Name = name, Type = new CodeTypeReference(type)
+                Attributes = MemberAttributes.Public,
+                Name = name,
+                Type = new CodeTypeReference(type)
             };
             cfield.Name += " { get; set; }";
             return cfield;
@@ -196,7 +186,8 @@ namespace Mohammad.Helpers
         {
             var propertyChanged = new CodeMemberEvent
             {
-                Attributes = MemberAttributes.Public, Type = eventArgs.Name == null
+                Attributes = MemberAttributes.Public,
+                Type = eventArgs.Name == null
                     ? new CodeTypeReference("System.EventHandler")
                     : new CodeTypeReference(string.Format("System.EventHandler<{0}>", eventArgs.Name)),
                 Name = name
@@ -208,7 +199,11 @@ namespace Mohammad.Helpers
         {
             var result = new CodeMemberProperty
             {
-                Attributes = MemberAttributes.Public, Type = new CodeTypeReference(type), Name = name, HasGet = true, HasSet = true
+                Attributes = MemberAttributes.Public,
+                Type = new CodeTypeReference(type),
+                Name = name,
+                HasGet = true,
+                HasSet = true
             };
             return result;
         }
@@ -217,7 +212,11 @@ namespace Mohammad.Helpers
         {
             var result = new CodeMemberProperty
             {
-                Attributes = MemberAttributes.Public, Type = new CodeTypeReference(typeName), Name = name, HasGet = true, HasSet = true
+                Attributes = MemberAttributes.Public,
+                Type = new CodeTypeReference(typeName),
+                Name = name,
+                HasGet = true,
+                HasSet = true
             };
             return result;
         }
@@ -232,10 +231,7 @@ namespace Mohammad.Helpers
         public static void GenerateCSharpCode(this CodeCompileUnit unit, FileInfo outputFile)
         {
             var provider = CodeDomProvider.CreateProvider("CSharp");
-            var options = new CodeGeneratorOptions
-            {
-                BracingStyle = "C"
-            };
+            var options = new CodeGeneratorOptions {BracingStyle = "C"};
             if (!outputFile.Exists)
             {
                 outputFile.CreateText().Close();
@@ -253,10 +249,7 @@ namespace Mohammad.Helpers
         public static void GenerateCSharpCode(this CodeCompileUnit unit, TextWriter writer)
         {
             var provider = CodeDomProvider.CreateProvider("CSharp");
-            var options = new CodeGeneratorOptions
-            {
-                BracingStyle = "C"
-            };
+            var options = new CodeGeneratorOptions {BracingStyle = "C"};
             provider.GenerateCodeFromCompileUnit(unit, writer, options);
         }
 
@@ -264,7 +257,9 @@ namespace Mohammad.Helpers
         {
             var result = new CodeTypeDeclaration(name)
             {
-                IsClass = true, TypeAttributes = TypeAttributes.Public, IsPartial = true
+                IsClass = true,
+                TypeAttributes = TypeAttributes.Public,
+                IsPartial = true
             };
             if (!docComments.IsNullOrEmpty())
             {
@@ -287,10 +282,7 @@ namespace Mohammad.Helpers
             CodeTypeDeclaration parent,
             string name)
         {
-            var result = new CodeMemberField
-            {
-                Attributes = modifiers
-            };
+            var result = new CodeMemberField {Attributes = modifiers};
             if (!initValue.IsNullOrEmpty())
             {
                 result.InitExpression = new CodeSnippetExpression(initValue);
@@ -314,10 +306,7 @@ namespace Mohammad.Helpers
             CodeTypeDeclaration parent,
             string name)
         {
-            var result = new CodeMemberField
-            {
-                Attributes = modifiers
-            };
+            var result = new CodeMemberField {Attributes = modifiers};
             if (!initValue.IsNullOrEmpty())
             {
                 result.InitExpression = new CodeSnippetExpression(initValue);
@@ -338,7 +327,8 @@ namespace Mohammad.Helpers
         {
             var result = new CodeTypeDeclaration(name)
             {
-                TypeAttributes = TypeAttributes.Public, IsInterface = true
+                TypeAttributes = TypeAttributes.Public,
+                IsInterface = true
             };
             if (!docComments.IsNullOrEmpty())
             {
@@ -367,7 +357,11 @@ namespace Mohammad.Helpers
 
             var result = new CodeMemberProperty
             {
-                Attributes = modifiers, Name = name, HasGet = hasGet, HasSet = hasSet, Type = new CodeTypeReference(type)
+                Attributes = modifiers,
+                Name = name,
+                HasGet = hasGet,
+                HasSet = hasSet,
+                Type = new CodeTypeReference(type)
             };
             if (!docComment.IsNullOrEmpty())
             {
@@ -378,10 +372,7 @@ namespace Mohammad.Helpers
             {
                 //CodeMethodReturnStatement t = new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), backingFieldName));
                 //result.GetStatements.Add(t);
-                var getMethod = new CodeMethodReturnStatement(new CodeFieldReferenceExpression
-                {
-                    FieldName = backingFieldName
-                });
+                var getMethod = new CodeMethodReturnStatement(new CodeFieldReferenceExpression {FieldName = backingFieldName});
                 result.GetStatements.Add(getMethod);
             }
 
@@ -411,7 +402,11 @@ namespace Mohammad.Helpers
 
             var result = new CodeMemberProperty
             {
-                Attributes = modifiers, Name = name, HasGet = hasGet, HasSet = hasSet, Type = new CodeTypeReference(typeName)
+                Attributes = modifiers,
+                Name = name,
+                HasGet = hasGet,
+                HasSet = hasSet,
+                Type = new CodeTypeReference(typeName)
             };
             if (!docComment.IsNullOrEmpty())
             {
@@ -421,10 +416,7 @@ namespace Mohammad.Helpers
             if (hasGet)
             {
                 //CodeMethodReturnStatement getMethod = new CodeMethodReturnStatement(new CodeFieldReferenceExpression(new CodeThisReferenceExpression(), backingFieldName));
-                var getMethod = new CodeMethodReturnStatement(new CodeFieldReferenceExpression
-                {
-                    FieldName = backingFieldName
-                });
+                var getMethod = new CodeMethodReturnStatement(new CodeFieldReferenceExpression {FieldName = backingFieldName});
                 result.GetStatements.Add(getMethod);
             }
 

@@ -10,8 +10,6 @@ namespace Mohammad.Wpf.Internals
     /// </summary>
     internal static class RoutedEventHelper
     {
-        #region RoutedEvent Helper Methods
-
         /// <summary>
         ///     A static helper method to raise a routed event on a target UIElement or ContentElement.
         /// </summary>
@@ -76,7 +74,5 @@ namespace Mohammad.Wpf.Internals
                 }
             }
         }
-
-        #endregion
     }
 }

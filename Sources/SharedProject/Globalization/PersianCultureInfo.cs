@@ -1,14 +1,11 @@
-﻿#region Code Identifications
+﻿
 
-// Created on     2018/07/22
-// Last update on 2018/07/23 by Mohammad Mir mostafa 
-
-#endregion
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+// ReSharper disable PossibleNullReferenceException
 
 namespace Mohammad.Globalization
 {
@@ -32,7 +29,7 @@ namespace Mohammad.Globalization
             var calendarType = typeof(Calendar);
 
             var idProperty = calendarType.GetProperty("ID", BindingFlags.Instance | BindingFlags.NonPublic);
-            var optionalCalendarfield = formatType.GetField("optionalCalendars", BindingFlags.Instance | BindingFlags.NonPublic);
+            var optionalCalendarField = formatType.GetField("optionalCalendars", BindingFlags.Instance | BindingFlags.NonPublic);
 
             //populating new list of optional calendar ids
             var newOptionalCalendarIDs = new int[optionalCalendars.Count];
@@ -41,7 +38,7 @@ namespace Mohammad.Globalization
                 newOptionalCalendarIDs[i] = (int)idProperty.GetValue(optionalCalendars[i], null);
             }
 
-            optionalCalendarfield.SetValue(this.DateTimeFormat, newOptionalCalendarIDs);
+            optionalCalendarField.SetValue(this.DateTimeFormat, newOptionalCalendarIDs);
 
             this.OptionalCalendars = optionalCalendars.ToArray();
             this.Calendar = this.OptionalCalendars[0];
