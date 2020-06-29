@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -358,9 +355,11 @@ namespace Mohammad.Helpers
             }
 
             foreach (var other in others)
-            foreach (var item in other)
             {
-                yield return item;
+                foreach (var item in other)
+                {
+                    yield return item;
+                }
             }
         }
 

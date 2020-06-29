@@ -10,6 +10,7 @@
 //------------------------------------------------------------------------------
 
 using Mohammad.Wpf.Windows.Controls;
+using Mohammad.Wpf.Windows.Input;
 using Mohammad.Wpf.Windows.Input.LibCommands;
 using System;
 using System.Diagnostics;

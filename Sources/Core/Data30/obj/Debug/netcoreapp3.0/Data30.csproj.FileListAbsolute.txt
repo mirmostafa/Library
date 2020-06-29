@@ -1,5 +1,0 @@
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Data30\bin\Debug\netcoreapp3.0\LibCore30.Data30.deps.json
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Data30\bin\Debug\netcoreapp3.0\LibCore30.Data30.dll
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Data30\obj\Debug\netcoreapp3.0\Data30.csprojAssemblyReference.cache
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Data30\obj\Debug\netcoreapp3.0\Data30.AssemblyInfoInputs.cache
-D:\Mirmostafa\Sources\My\Library\Sources\Core\Data30\obj\Debug\netcoreapp3.0\Data30.AssemblyInfo.cs
