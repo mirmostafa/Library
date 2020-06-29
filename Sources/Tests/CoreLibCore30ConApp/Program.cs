@@ -1,5 +1,6 @@
 ﻿using System;
 using Mohammad.Globalization;
+using Mohammad.Helpers;
 
 namespace CoreLibCore30ConApp
 {
@@ -16,9 +17,7 @@ namespace CoreLibCore30ConApp
             }
 
             var a = PersianDateTime.Now;
-            Console.WriteLine(a);
+            var p4 = ImmutableTypeInitializer<Person>.New().CtorParam("Name", "Ali").CtorParam("Age", 5).Build();
         }
-
-        private static bool? Get() => null;
     }
 }

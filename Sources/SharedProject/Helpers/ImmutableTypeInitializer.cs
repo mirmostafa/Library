@@ -62,15 +62,13 @@ namespace Mohammad.Helpers
             }
         }
 
-        public static implicit operator T(ImmutableTypeInitializer<T> initializer) => initializer.Build();
+        public static implicit operator T(in ImmutableTypeInitializer<T> initializer) => initializer.Build();
 
         public T Build()
         {
             var target = typeof(T).GetConstructors()
-                .FirstOrDefault(ctor => ctor.GetParameters()
-                    .Any(parameter =>
-                        this._CtorParameters.Keys.Contains(parameter.Name.ToLower())));
-            if (target == null)
+                .FirstOrDefault(ctor => ctor.GetParameters().Any(parameter => this._CtorParameters.Keys.Contains(parameter.Name.ToLower())));
+            if (target is null)
             {
                 throw new Exception();
             }
@@ -85,7 +83,7 @@ namespace Mohammad.Helpers
             return (T)target.Invoke(seqParams);
         }
 
-        public ImmutableTypeInitializer<T> CtorParam(string name, object value)
+        public ImmutableTypeInitializer<T> CtorParam(in string name, in object value)
         {
             this[name] = value;
             return this;

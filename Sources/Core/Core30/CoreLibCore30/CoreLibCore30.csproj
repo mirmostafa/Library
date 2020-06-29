@@ -12,6 +12,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>LibCore30.Core</AssemblyName>
     <RootNamespace>Mohammad</RootNamespace>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

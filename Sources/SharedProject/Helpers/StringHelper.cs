@@ -1,5 +1,4 @@
-﻿
-// Last update on 2018/07/23 by Mohammad Mirmostafa 
+﻿// Last update on 2018/07/23 by Mohammad Mirmostafa 
 
 using System;
 using System.Collections.Generic;
@@ -37,7 +36,7 @@ namespace Mohammad.Helpers
             'ة', 'ي', 'ئ', 'ژ', 'ؤ', 'إ', 'أ', 'ء', '؛', '،', 'ٍ', 'ٌ', 'ً', 'َ', 'ُ', 'ِ', 'ّ', 'ّ', 'ۀ', 'آ', 'ـ', 'ك'
         };
 
-        public static readonly IEnumerable<char> SeparatorsChars = new[] { ',', DecimalSeparator };
+        public static readonly IEnumerable<char> SeparatorsChars = new[] {',', DecimalSeparator};
 
         [Obsolete("MOHAMMAD: Please use the other overload please.")]
         public static string GetPhrase(this string str, char start, char end, int index) => GetPhrase(str, index, start, end);
@@ -254,13 +253,13 @@ namespace Mohammad.Helpers
 
         public static bool IsCommon(this char c) => c == ' ';
 
-        public static bool IsDigit(this char c, bool canAcceptMinusKey = false) => (canAcceptMinusKey && c == '-') || char.IsDigit(c);
+        public static bool IsDigit(this char c, bool canAcceptMinusKey = false) => canAcceptMinusKey && c == '-' || char.IsDigit(c);
 
         public static bool IsDigitOrControl(this char key) => char.IsDigit(key) || char.IsControl(key);
 
         public static bool IsEnglish(this string text) => CheckAllValidations(text, IsEnglish);
 
-        public static bool IsEnglish(this char c) => IsCommon(c) || (char.ToUpper(c) >= 'A' && char.ToUpper(c) <= 'Z');
+        public static bool IsEnglish(this char c) => IsCommon(c) || char.ToUpper(c) >= 'A' && char.ToUpper(c) <= 'Z';
 
         public static bool IsEnglishOrNumber(this string text, bool canAcceptMinusKey = false)
             => CheckAllValidations(text, c => IsDigit(c, canAcceptMinusKey) || IsEnglish(c));
@@ -459,7 +458,7 @@ namespace Mohammad.Helpers
             var i = 1;
             while (i < str.Length)
             {
-                if (char.IsUpper(str[i]) && (!char.IsUpper(str[i - 1]) || (i < str.Length - 1 && !char.IsUpper(str[i + 1]))))
+                if (char.IsUpper(str[i]) && (!char.IsUpper(str[i - 1]) || i < str.Length - 1 && !char.IsUpper(str[i + 1])))
                 {
                     str = str.Insert(i, " ");
                     i += 1;
@@ -522,7 +521,7 @@ namespace Mohammad.Helpers
 
         public static IEnumerable<PairValue<string, string>> SplitPair(string str, string keyValueSeparator = "=", string statementSeparator = ";")
         {
-            var split = str.Split(new[] { keyValueSeparator, statementSeparator }, StringSplitOptions.None);
+            var split = str.Split(new[] {keyValueSeparator, statementSeparator}, StringSplitOptions.None);
             for (var i = 0; i < split.Length; i += 2)
             {
                 yield return new PairValue<string, string>(split[i], split[i + 1]);
@@ -572,7 +571,7 @@ namespace Mohammad.Helpers
 
         public static IEnumerable<string> TrimAll(this IEnumerable<string> values) => values.Select(t => t.Trim());
 
-        public static string Truncate(this string value, int length) => value?.Substring(0, value.Length - 1);
+        public static string? Truncate(this string value, in int length) => value?.Substring(0, value.Length - 1);
 
         public static (int Result, bool Succeed) TryLengthOf(this string str, char c, int index)
         {
@@ -609,9 +608,9 @@ namespace Mohammad.Helpers
             return value;
         }
 
-        public static string? IfNull(this string? s, string? value) => string.IsNullOrWhiteSpace(s) ? value : s;
+        public static string? IfNull(this string? s, in string? value) => string.IsNullOrWhiteSpace(s) ? value : s;
         public static string? NullIfEmpty(this string? s) => string.IsNullOrEmpty(s) ? null : s;
-        internal static bool CheckAllValidations(string text, Func<char, bool> regularValidate) => text.All(regularValidate);
-        internal static bool CheckAnyValidations(string text, Func<char, bool> regularValidate) => text.Any(regularValidate);
+        internal static bool CheckAllValidations(in string text, in Func<char, bool> regularValidate) => text.All(regularValidate);
+        internal static bool CheckAnyValidations(in string text, in Func<char, bool> regularValidate) => text.Any(regularValidate);
     }
 }
