@@ -4,7 +4,7 @@ namespace Mohammad.Helpers
 {
     public static class AsyncHelper
     {
-        public static async void Catch(this Task task)
+        public static async void CatchAsync(this Task task)
         {
             try
             {
