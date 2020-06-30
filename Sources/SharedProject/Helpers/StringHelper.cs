@@ -164,7 +164,7 @@ namespace Mohammad.Helpers
 
         public static string GetLongest(this string[] strings) => strings.Max();
 
-        public static string GetPhrase(this string str, int index, char start, char end = default)
+        public static string? GetPhrase(this string str, in int index, in char start, char end = default)
         {
             if (end == default(char))
             {
@@ -571,7 +571,7 @@ namespace Mohammad.Helpers
 
         public static IEnumerable<string> TrimAll(this IEnumerable<string> values) => values.Select(t => t.Trim());
 
-        public static string? Truncate(this string value, in int length) => value?.Substring(0, value.Length - 1);
+        public static string Truncate(this string value, int length) => value?.Substring(0, value.Length - 1);
 
         public static (int Result, bool Succeed) TryLengthOf(this string str, char c, int index)
         {
@@ -579,10 +579,10 @@ namespace Mohammad.Helpers
             return (result, ex == null);
         }
 
-        public static string ReplaceAll(this string value, IEnumerable<(string OldValue, string NewValue)> items) =>
+        public static string ReplaceAll(this string value, in IEnumerable<(string OldValue, string NewValue)> items) =>
             items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
-        public static string ReplaceAll(this string value, IEnumerable<(char OldValue, char NewValue)> items) =>
+        public static string ReplaceAll(this string value, in IEnumerable<(char OldValue, char NewValue)> items) =>
             items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
         public static string ReplaceAll(this string value, params (char OldValue, char NewValue)[] items) =>
@@ -591,7 +591,7 @@ namespace Mohammad.Helpers
         public static string ToEnglishDigits(this string value) => value.ReplaceAll(_Numbers.Select(n => (n.Persian, n.English)));
         public static string ToPersianDigits(this string value) => value.ReplaceAll(_Numbers.Select(n => (n.English, n.Persian)));
 
-        public static string Normalize(this string value, bool correctPersianChars, NumberCulture toNumberCulture = NumberCulture.None)
+        public static string ToCulturalNumber(this string value, in bool correctPersianChars, in NumberCulture toNumberCulture = NumberCulture.None)
         {
             value = toNumberCulture switch
             {

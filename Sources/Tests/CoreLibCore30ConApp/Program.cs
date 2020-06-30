@@ -16,8 +16,7 @@ namespace CoreLibCore30ConApp
                 Console.WriteLine(length);
             }
 
-            var a = PersianDateTime.Now;
-            var p4 = ImmutableTypeInitializer<Person>.New().CtorParam("Name", "Ali").CtorParam("Age", 5).Build();
+            var (year, month, day, hour, minute, second, millisecond) = PersianDateTime.Now;
         }
     }
 }

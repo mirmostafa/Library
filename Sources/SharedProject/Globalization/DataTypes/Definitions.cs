@@ -10,6 +10,21 @@ namespace Mohammad.Globalization.DataTypes
     [StructLayout(LayoutKind.Sequential)]
     internal struct PersianDateTimeData
     {
+        public override int GetHashCode()
+        {
+            var hashCode = new HashCode();
+            hashCode.Add(this.Day);
+            hashCode.Add(this.HasDate);
+            hashCode.Add(this.HasTime);
+            hashCode.Add(this.Hour);
+            hashCode.Add(this.Minute);
+            hashCode.Add(this.Month);
+            hashCode.Add(this.Second);
+            hashCode.Add(this.Millisecond);
+            hashCode.Add(this.Year);
+            return hashCode.ToHashCode();
+        }
+
         internal int Day;
         internal bool HasDate;
         internal bool HasTime;
@@ -17,11 +32,13 @@ namespace Mohammad.Globalization.DataTypes
         internal int Minute;
         internal int Month;
         internal int Second;
+        internal double Millisecond;
         internal int Year;
 
         internal void Init()
         {
-            this.Year = this.Month = this.Day = this.Hour = this.Minute = this.Second = -1;
+            this.Year = this.Month = this.Day = this.Hour = this.Minute = this.Second =  -1;
+            this.Millisecond = -1d;
             this.HasDate = true;
             this.HasTime = true;
         }

@@ -63,12 +63,14 @@ namespace Mohammad.Globalization
         /// <value>The second.</value>
         public int Second => this.Data.Second;
 
+        public double Millisecond => this.Data.Millisecond;
+
         /// <summary>
         ///     Gets a <see cref="T:Mohammad.Globalization.PersianDateTime" /> object that is set to the current date and time
         ///     on this computer, expressed as the local time.
         /// </summary>
         /// <returns>An object whose value is the current local date and time.</returns>
-        public static PersianDateTime Now => DateTime.Now.ToPersianDateTime();
+        public static PersianDateTime Now => new PersianDateTime(DateTime.Now);
 
         /// <summary>
         ///     Returns the tick count for this DateTime. The returned value is the number of 100-nanosecond intervals that have
@@ -126,6 +128,7 @@ namespace Mohammad.Globalization
             this.Data.Hour = PersianCalendar.GetHour(dateTime);
             this.Data.Minute = PersianCalendar.GetMinute(dateTime);
             this.Data.Second = PersianCalendar.GetSecond(dateTime);
+            this.Data.Millisecond = PersianCalendar.GetMilliseconds(dateTime);
             this.IsInitiated = true;
         }
 
@@ -138,7 +141,8 @@ namespace Mohammad.Globalization
         /// <param name="hour">The hour.</param>
         /// <param name="minute">The minute.</param>
         /// <param name="second">The second.</param>
-        public PersianDateTime(in int year, in int month, in int day, in int hour, in int minute, in int second)
+        /// <param name="millisecond"></param>
+        public PersianDateTime(in int year, in int month, in int day, in int hour, in int minute, in int second, in double millisecond)
         {
             this.Data = new PersianDateTimeData();
             this.Data.Init();
@@ -148,16 +152,17 @@ namespace Mohammad.Globalization
             this.Data.Hour = hour;
             this.Data.Minute = minute;
             this.Data.Second = second;
+            this.Data.Millisecond = millisecond;
             this.IsInitiated = true;
         }
 
         private PersianDateTime(in PersianDateTimeData data) => (this.Data, this.IsInitiated) = (data, true);
 
-        private PersianDateTime(SerializationInfo info, in StreamingContext context)
+        private PersianDateTime(in SerializationInfo info, in StreamingContext context)
             => (this.Data, this.IsInitiated) = ((PersianDateTimeData)info.GetValue("Data", typeof(PersianDateTimeData)), true);
 
         public static implicit operator string(in PersianDateTime persianDateTime) => persianDateTime.ToString();
-        public static implicit operator PersianDateTime(string persianDateTimeString) => ParsePersian(persianDateTimeString);
+        public static implicit operator PersianDateTime(in string persianDateTimeString) => ParsePersian(persianDateTimeString);
         public static implicit operator PersianDateTime(in DateTime dateTime) => dateTime.ToPersianDateTime();
 
         public static implicit operator DateTime(in PersianDateTime persianDateTime) => PersianCalendar.ToDateTime(persianDateTime.Year,
@@ -200,7 +205,7 @@ namespace Mohammad.Globalization
         /// <returns>
         ///     A new object that is a copy of this instance.
         /// </returns>
-        public object Clone() => new PersianDateTime(this.Year, this.Month, this.Day, this.Hour, this.Minute, this.Second);
+        public object Clone() => new PersianDateTime(this.Year, this.Month, this.Day, this.Hour, this.Minute, this.Second, this.Millisecond);
 
         public int CompareTo(PersianDateTime other) => DateTime.Compare(this, other);
 
@@ -215,46 +220,46 @@ namespace Mohammad.Globalization
         /// <returns>
         ///     A <see cref="T:System.DateTime" /> instance equivalent to the value of this instance.
         /// </returns>
-        public DateTime ToDateTime(IFormatProvider provider) => this;
+        public DateTime ToDateTime(IFormatProvider? provider) => this;
 
         TypeCode IConvertible.GetTypeCode() => throw new NotSupportedException();
 
-        bool IConvertible.ToBoolean(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        bool IConvertible.ToBoolean(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        byte IConvertible.ToByte(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        byte IConvertible.ToByte(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        char IConvertible.ToChar(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        char IConvertible.ToChar(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        decimal IConvertible.ToDecimal(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        decimal IConvertible.ToDecimal(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        double IConvertible.ToDouble(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        double IConvertible.ToDouble(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        short IConvertible.ToInt16(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        short IConvertible.ToInt16(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        int IConvertible.ToInt32(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        int IConvertible.ToInt32(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        long IConvertible.ToInt64(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        long IConvertible.ToInt64(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        sbyte IConvertible.ToSByte(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        sbyte IConvertible.ToSByte(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        float IConvertible.ToSingle(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        float IConvertible.ToSingle(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        string IConvertible.ToString(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        string IConvertible.ToString(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        object IConvertible.ToType(Type conversionType, IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        object IConvertible.ToType(Type conversionType, IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        ushort IConvertible.ToUInt16(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        ushort IConvertible.ToUInt16(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        uint IConvertible.ToUInt32(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        uint IConvertible.ToUInt32(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
-        ulong IConvertible.ToUInt64(IFormatProvider provider) => throw RaiseInvalidTypeCastException();
+        ulong IConvertible.ToUInt64(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
 
         public bool Equals(PersianDateTime other) => this.CompareTo(other) == 0;
 
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) => info.AddValue("Data", this.Data);
 
-        public void Deconstruct(out int year, out int month, out int day, out int hour, out int minute, out int second)
+        public void Deconstruct(out int year, out int month, out int day, out int hour, out int minute, out int second, out double millisecond)
         {
             year = this.Year;
             month = this.Month;
@@ -262,9 +267,25 @@ namespace Mohammad.Globalization
             hour = this.Hour;
             minute = this.Minute;
             second = this.Second;
+            millisecond = this.Millisecond;
         }
 
-        public static int Compare(string persianDateTime1, string persianDateTime2)
+        public void Deconstruct(out int year, out int month, out int day)
+        {
+            year = this.Year;
+            month = this.Month;
+            day = this.Day;
+        }
+
+        public void Deconstruct(out int hour, out int minute, out int second, out double millisecond)
+        {
+            hour = this.Hour;
+            minute = this.Minute;
+            second = this.Second;
+            millisecond = this.Millisecond;
+        }
+
+        public static int Compare(in string persianDateTime1, in string persianDateTime2)
         {
             if (!TryParsePersian(persianDateTime1, out var p1))
             {
@@ -311,11 +332,6 @@ namespace Mohammad.Globalization
                 {
                     throw new ArgumentException("not valid date", nameof(dateTimeString));
                 }
-
-                if (data.Year < 1300)
-                {
-                    data.Year += 1300;
-                }
             }
 
             if (data.HasTime)
@@ -333,7 +349,7 @@ namespace Mohammad.Globalization
                 }
             }
 
-            if (data.ToString().Equals("00:00:00 0000/00/00"))
+            if (data.ToString()?.Equals("00:00:00 0000/00/00") != false)
             {
                 throw new ArgumentException("not valid date", nameof(dateTimeString));
             }
@@ -341,7 +357,7 @@ namespace Mohammad.Globalization
             return new PersianDateTime(data);
         }
 
-        public static PersianDateTime ParseEnglish(string dateTimeString)
+        public static PersianDateTime ParseEnglish(in string dateTimeString)
         {
             ArgHelper.AssertNotNull(dateTimeString, nameof(dateTimeString));
             return DateTime.Parse(dateTimeString, CultureInfo.CurrentCulture).ToPersianDateTime();
@@ -354,7 +370,7 @@ namespace Mohammad.Globalization
         /// <returns>
         ///     A <see cref="string" /> that represents this instance.
         /// </returns>
-        public string ToString(string format)
+        public string? ToString(string format)
         {
             if (!this.IsInitiated)
             {
@@ -378,7 +394,7 @@ namespace Mohammad.Globalization
         /// <returns>
         ///     A <see cref="string" /> that represents this instance.
         /// </returns>
-        public override string ToString() => this.ToString(ToStringFormat);
+        public override string? ToString() => this.ToString(ToStringFormat);
 
         /// <summary>
         ///     Determines whether the specified <see cref="object" /> is equal to this instance.
@@ -389,7 +405,7 @@ namespace Mohammad.Globalization
         /// <returns>
         ///     <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
         /// </returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (!(obj is PersianDateTime))
             {
@@ -406,11 +422,11 @@ namespace Mohammad.Globalization
         /// <returns>
         ///     A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
-        public override int GetHashCode() => base.GetHashCode();
+        public override int GetHashCode() => this.Data.GetHashCode();
 
-        public static string ToPersian(in DateTime dateTime) => new PersianDateTime(dateTime).ToString();
+        public static string ToPersian(in DateTime dateTime) => new PersianDateTime(dateTime).ToString()!;
 
-        public string ToDateString(string separator = null)
+        public string ToDateString(string? separator = null)
         {
             if (separator == null)
             {
@@ -424,13 +440,12 @@ namespace Mohammad.Globalization
                 this.Day.ToString("00", CultureInfo.CurrentCulture));
         }
 
-        public string ToTimeString(string separator = null)
+        public string ToTimeString(string? separator = null)
         {
             if (separator == null)
             {
                 separator = TimeSeparator;
             }
-
             return string.Concat(this.Hour.ToString("00", CultureInfo.CurrentCulture),
                 separator,
                 this.Minute.ToString("00", CultureInfo.CurrentCulture),
@@ -449,7 +464,7 @@ namespace Mohammad.Globalization
         /// </summary>
         /// <param name="persianDateTime">The PersianDate time.</param>
         /// <returns></returns>
-        public PersianDateTime Add(PersianDateTime persianDateTime) => Add(this, persianDateTime);
+        public PersianDateTime Add(in PersianDateTime persianDateTime) => Add(this, persianDateTime);
 
         /// <summary>
         ///     Tries to parse a string to PersianDateTime.
@@ -457,7 +472,7 @@ namespace Mohammad.Globalization
         /// <param name="str">The STR.</param>
         /// <param name="result">The result.</param>
         /// <returns></returns>
-        public static bool TryParsePersian(string str, out PersianDateTime result)
+        public static bool TryParsePersian(in string str, out PersianDateTime result)
         {
             result = Now;
             try
@@ -471,13 +486,13 @@ namespace Mohammad.Globalization
             }
         }
 
-        public static (PersianDateTime Result, bool Succeed) TryParsePersian(string str)
+        public static (PersianDateTime Result, bool Succeed) TryParsePersian(in string str)
         {
             var succeed = TryParsePersian(str, out var result);
             return (result, succeed);
         }
 
-        public static bool IsPersianDateTime(string s) => TryParsePersian(s, out _);
+        public static bool IsPersianDateTime(in string s) => TryParsePersian(s, out _);
 
         /// <summary>
         ///     Raises the invalid type cast exception.
