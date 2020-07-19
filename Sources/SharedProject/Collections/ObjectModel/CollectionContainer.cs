@@ -13,13 +13,13 @@ namespace Mohammad.Collections.ObjectModel
     public abstract class CollectionContainer<T, TCollection>
         where TCollection : Collection<T>, new()
     {
-        private TCollection _Items;
+        private TCollection? _Items;
 
         /// <summary>
         ///     Gets the items.
         /// </summary>
         /// <value>The items.</value>
-        protected TCollection Items => PropertyHelper.Get(ref this._Items);
+        protected TCollection Items => this._Items ??= new TCollection();
 
         /// <summary>
         ///     Gets the <see cref="T" /> at the specified index.

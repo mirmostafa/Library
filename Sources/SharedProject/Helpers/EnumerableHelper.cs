@@ -413,7 +413,7 @@ namespace Mohammad.Helpers
         public static int Count<T>(params T[] items) => items.Length;
 
         public static int CountOf<TSource>(this IEnumerable<TSource> source, TSource item)
-            where TSource : class => source.Where(s => s == item).Count();
+            where TSource : class => source.Count(s => s == item);
 
         public static IEnumerable<T> Distinct<T>(this IEnumerable<T> source, Func<T, T, bool> comparer, Func<T, int> getHashCode = null) => source.Distinct(
             new LibEqualityComparer<T>(comparer, getHashCode));
@@ -768,7 +768,7 @@ namespace Mohammad.Helpers
             return index == count;
         }
 
-        public static IEnumerable IfZero(IEnumerable source, IEnumerable defaultSource) => !source.Cast<object>().Any() ? defaultSource : source;
+        public static IEnumerable IfZero(in IEnumerable source, IEnumerable defaultSource) => !source.Cast<object>().Any() ? defaultSource : source;
 
         /// <summary>
         ///     Gets index of a specific element.
@@ -859,12 +859,10 @@ namespace Mohammad.Helpers
         /// <returns></returns>
         public static IEnumerable<TSource> Iterate<TSource>(this IEnumerable<TSource> source)
         {
-            using (var enumerator = source.GetEnumerator())
+            using var enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                while (enumerator.MoveNext())
-                {
-                    yield return enumerator.Current;
-                }
+                yield return enumerator.Current;
             }
         }
 
@@ -1070,7 +1068,8 @@ namespace Mohammad.Helpers
                 throw new ArgumentNullException(nameof(selector));
             }
 
-            var children = items.SelectMany(selector);
+            items = items.ToList();
+            var children = items.SelectMany(selector).ToList();
             return children.Any() ? items.Concat(SelectManyRecursive(children, selector)) : items.Concat(children);
         }
 
@@ -1271,14 +1270,12 @@ namespace Mohammad.Helpers
             }
 
             var index = 0;
-            using (var enumerator = source.GetEnumerator())
+            using var enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                while (enumerator.MoveNext())
+                if (!moveNext(enumerator.Current, index++))
                 {
-                    if (!moveNext(enumerator.Current, index++))
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
         }
@@ -1310,7 +1307,7 @@ namespace Mohammad.Helpers
 
         public static (string Name, TValue Value) ByName<TValue>(this IEnumerable<(string Name, TValue Value)> dic, string name, TValue value)
         {
-            var result= dic.First(o => o.Name == name);
+            var result = dic.First(o => o.Name == name);
             result.Value = value;
             return result;
         }

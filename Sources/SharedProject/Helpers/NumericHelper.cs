@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,13 +18,12 @@ namespace Mohammad.Helpers
         };
 
         public static bool AllHaveValues(params int?[] numbers) => numbers.All(n => n.HasValue);
-        public static long Between(this long value, long min, long max, long defaultValue) => value.IsBetween(min, max) ? value : defaultValue;
-        public static int BinToDec(string binaryNumber) => ConvertBase(binaryNumber, 2, 10).ToIntNullable() ?? 0;
-        public static string BinToHex(string binaryNumber) => ConvertBase(binaryNumber, 2, 16);
+        public static long Between(this long value, in long min, in long max, in long defaultValue) => value.IsBetween(min, max) ? value : defaultValue;
+        public static int BinToDec(in string binaryNumber) => ConvertBase(binaryNumber, 2, 10).ToIntNullable() ?? 0;
+        public static string BinToHex(in string binaryNumber) => ConvertBase(binaryNumber, 2, 16);
+        public static string BytesToHex(in byte[] bytes) => BytesToHex(bytes, false);
 
-        public static string BytesToHex(byte[] bytes) => BytesToHex(bytes, false);
-
-        public static string BytesToHex(byte[] bytes, bool removeDashes)
+        public static string BytesToHex(in byte[] bytes, bool removeDashes = true)
         {
             var str = BitConverter.ToString(bytes);
             if (removeDashes)
@@ -38,16 +34,16 @@ namespace Mohammad.Helpers
             return str;
         }
 
-        public static string ConvertBase(string num, int sourceBase, int descriptionBase) => Convert.ToString(Convert.ToInt32(num, sourceBase), descriptionBase);
+        public static string ConvertBase(in string num, in int sourceBase, in int descriptionBase) => Convert.ToString(Convert.ToInt32(num, sourceBase), descriptionBase);
 
-        public static double FromSciToDouble(string obj) => double.Parse(obj, NumberStyles.Float);
+        public static double FromSciToDouble(in string obj) => double.Parse(obj, NumberStyles.Float);
 
-        public static IEnumerable<int> GetPrimes(int min, int max)
+        public static IEnumerable<int> GetPrimes(in int min, in int max)
             => Enumerable.Range(min, max - min).Where(n => Enumerable.Range(2, (int)Math.Sqrt(n) - 1).All(i => n % i > 0));
 
-        public static string HexToBin(string hex) => ConvertBase(hex, 16, 2);
+        public static string HexToBin(in string hex) => ConvertBase(hex, 16, 2);
 
-        public static byte[] HexToBytes(string hex)
+        public static byte[] HexToBytes(in string hex)
         {
             var str = hex.Replace("-", string.Empty);
             var numArray = new byte[str.Length / 2];
@@ -72,13 +68,13 @@ namespace Mohammad.Helpers
             return numArray;
         }
 
-        public static int HexToDec(string hexNumber) => Convert.ToInt32(hexNumber, 16);
-        public static bool IsBetween(this int value, int min, int max) => value >= min && value <= max;
-        public static bool IsBetween(this long value, long min, long max) => value >= min && value <= max;
-        public static bool IsBiggerThan(this int value, int min) => value > min;
-        public static bool IsBiggerThan(this long value, long max) => value > max;
-        public static bool IsLessThan(this long value, long min) => value < min;
-        public static bool IsLessThan(this int value, int max) => value < max;
+        public static int HexToDec(in string hexNumber) => Convert.ToInt32(hexNumber, 16);
+        public static bool IsBetween(this int value, in int min, in int max) => value >= min && value <= max;
+        public static bool IsBetween(this long value, in long min, in long max) => value >= min && value <= max;
+        public static bool IsBiggerThan(this int value, in int min) => value > min;
+        public static bool IsBiggerThan(this long value, in long max) => value > max;
+        public static bool IsLessThan(this long value, in long min) => value < min;
+        public static bool IsLessThan(this int value, in int max) => value < max;
 
         public static bool IsNumeric(this Type type)
         {
@@ -124,7 +120,7 @@ namespace Mohammad.Helpers
             return result[0].Substring(0, result[0].Length - 1);
         }
 
-        public static int SetFlag(int num, int index, bool set)
+        public static int SetFlag(in int num, in int index, in bool set)
         {
             var byt = Convert.ToString(num, 2);
             var boolArray = byt.ToCharArray().Select(c => c.ToString().Equals("1")).ToArray();
@@ -150,17 +146,17 @@ namespace Mohammad.Helpers
         public static string ToCommaSeparate(this int num)
             => int.Parse(num.ToString(CultureInfo.InvariantCulture)).ToString("N", new NumberFormatInfo {NumberDecimalDigits = 0});
 
-        public static double? ToDouble(string str) => double.TryParse(str, out var num) ? num : default(double?);
-        public static double ToDouble(string str, double defaultValue) => ToDouble(str) ?? defaultValue;
+        public static double? ToDouble(in string str) => double.TryParse(str, out var num) ? num : default(double?);
+        public static double ToDouble(in string str, in double defaultValue) => ToDouble(str) ?? defaultValue;
         public static string ToHex(this int num) => num.ToString("X");
         public static int ToInt(this object obj) => Convert.ToInt32(obj);
 
-        public static int ToInt(this object obj, int defaultValue) => obj == null ? defaultValue : obj.ToString().ToIntNullable() ?? defaultValue;
+        public static int ToInt(this object obj, in int defaultValue) => obj == null ? defaultValue : obj.ToString().ToIntNullable() ?? defaultValue;
 
         public static int? ToIntNullable(this string str) => int.TryParse(str, out var result) ? result : default(int?);
         public static long ToLong(this object obj) => Convert.ToInt64(obj);
 
-        public static long ToLong(this object obj, long defaultValue) => obj == null ? defaultValue : obj.ToString().ToLongNullable() ?? defaultValue;
+        public static long ToLong(this object obj, in long defaultValue) => obj == null ? defaultValue : obj.ToString().ToLongNullable() ?? defaultValue;
 
         public static long? ToLongNullable(this string str) => long.TryParse(str, out var result) ? result : default(long?);
 

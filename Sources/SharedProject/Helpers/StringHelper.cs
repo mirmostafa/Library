@@ -1,5 +1,4 @@
-﻿// Last update on 2018/07/23 by Mohammad Mirmostafa 
-
+﻿#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -280,7 +279,7 @@ namespace Mohammad.Helpers
 
         public static bool IsLetterText(this string text) => CheckAllValidations(text, c => IsEnglish(c) || IsPersian(c));
 
-        public static bool IsNullOrEmpty(this string str) => string.IsNullOrEmpty(str);
+        public static bool IsNullOrEmpty(this string? str) => string.IsNullOrEmpty(str);
 
         public static bool IsNullOrEmpty(object o) => o?.ToString().IsNullOrEmpty() != false;
 

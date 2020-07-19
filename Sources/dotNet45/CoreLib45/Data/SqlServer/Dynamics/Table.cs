@@ -1,6 +1,4 @@
-﻿
-
-
+﻿#nullable enable
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,11 +14,11 @@ namespace Mohammad.Data.SqlServer.Dynamics
 {
     public class Table : SqlObject<Table, Database>, IEnumerable
     {
-        private Columns _Columns;
+        private Columns? _Columns;
 
         public Row this[int index] => this.Rows.ElementAt(index);
 
-        public Columns Columns => PropertyHelper.Get(ref this._Columns, this.GetColumns);
+        public Columns Columns => this._Columns ??= this.GetColumns();
 
         public DateTime CreateDate { get; set; }
         public long Id { get; set; }
@@ -30,12 +28,10 @@ namespace Mohammad.Data.SqlServer.Dynamics
         {
             get
             {
-                using (var reader = this.ToSqlDataReader())
+                using var reader = this.ToSqlDataReader();
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        yield return new Row(this, this.Columns.Select(c => new KeyValuePair<string, object>(c.Name, reader[c.Name])).ToDictionary());
-                    }
+                    yield return new Row(this, this.Columns.Select(c => new KeyValuePair<string, object>(c.Name, reader[c.Name])).ToDictionary());
                 }
             }
         }
@@ -162,14 +158,12 @@ namespace Mohammad.Data.SqlServer.Dynamics
                 columns = this.Columns.Select(c => c.Name).ToArray();
             }
 
-            using (var reader = this.ToReader(columns))
+            using var reader = this.ToReader(columns);
+            while (reader.Read())
             {
-                while (reader.Read())
-                {
-                    yield return new Row(this,
-                        columns.Select(column => new KeyValuePair<string, object>(column, reader[column])).ToList(),
-                        this.ConnectionString);
-                }
+                yield return new Row(this,
+                    columns.Select(column => new KeyValuePair<string, object>(column, reader[column])).ToList(),
+                    this.ConnectionString);
             }
         }
 

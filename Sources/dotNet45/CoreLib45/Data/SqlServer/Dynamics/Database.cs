@@ -1,6 +1,4 @@
-﻿
-
-
+﻿#nullable enable
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,32 +12,38 @@ namespace Mohammad.Data.SqlServer.Dynamics
 {
     public class Database : SqlObject<Database, Server>
     {
-        public string CollationName { get; internal set; }
+        private IEnumerable<DataRow>? _AllParams;
+        private StoredProcedures? _StoredProcedures;
+        private Tables? _Tables;
+
+        public string? CollationName { get; internal set; }
         public DateTime CreateDate { get; internal set; }
         public long Id { get; internal set; }
         public bool IsBrokerEnabled { get; internal set; }
-        public StoredProcedures StoredProcedures => PropertyHelper.Get(ref this._StoredProcedures, this.GetStoredProcedures);
-        public Tables Tables => PropertyHelper.Get(ref this._Tables, this.GetTables);
+        public StoredProcedures StoredProcedures => this._StoredProcedures ??= this.GetStoredProcedures();
+        public Tables Tables => this._Tables ??= this.GetTables();
 
-        internal IEnumerable<DataRow> AllParams => this._AllParams ??
-                                                   (this._AllParams = GetQueryItems(this.ConnectionString, QueryBank.DATABASE_EXTENDED_PROPERTIES));
+        internal IEnumerable<DataRow> AllParams => this._AllParams ??= GetQueryItems(this.ConnectionString, QueryBank.DATABASE_EXTENDED_PROPERTIES);
 
-        internal Database(Server server, string name, string connectionString)
-            : base(server, name, connectionString: connectionString)
+        internal Database(in Server server, in string name, in string connectionString, in string? collationName = null)
+            : base(server, name, connectionString: connectionString) => this.CollationName = collationName;
+
+        public static Database GetDatabase(in string connectionString, string? name = null)
         {
-        }
-
-        public static Database GetDatabase(string connectionstring, string name = null)
-        {
-            if (name.IsNullOrEmpty())
+            if (connectionString == null)
             {
-                name = new SqlConnectionStringBuilder(connectionstring).InitialCatalog;
+                throw new ArgumentNullException(nameof(connectionString));
             }
 
-            return GetDatabasesCore(connectionstring).FirstOrDefault(db => db.Name == name);
+            if (name.IsNullOrEmpty())
+            {
+                name = new SqlConnectionStringBuilder(connectionString).InitialCatalog;
+            }
+
+            return GetDatabasesCore(connectionString).FirstOrDefault(db => db.Name == name);
         }
 
-        public static Databases GetDatabases(string connectionstring) => GetDatabasesCore(connectionstring);
+        public static Databases GetDatabases(string connectionString) => GetDatabasesCore(connectionString);
 
         public static Databases GetDatabases(string datasource, string username, string password)
             => GetDatabasesCore(ConnectionStringBuilder.Build(datasource, username, password));
@@ -58,20 +62,25 @@ namespace Mohammad.Data.SqlServer.Dynamics
             return true;
         }
 
-        protected static Databases GetDatabasesCore(string connectionstring, string databases = "sys.databases")
-            => new Databases(() => GatherDatabases(connectionstring, databases));
+        protected static Databases GetDatabasesCore(string connectionString, string databases = "sys.databases")
+            => new Databases(() => GatherDatabases(connectionString, databases));
 
-        private static IEnumerable<Database> GatherDatabases(string connectionstring, string databases)
+        private static IEnumerable<Database> GatherDatabases(string connectionString, string databases)
         {
-            var builder = new SqlConnectionStringBuilder(connectionstring);
-            foreach (var row in GetDataRows(connectionstring, databases))
+            if (connectionString == null)
+            {
+                throw new ArgumentNullException(nameof(connectionString));
+            }
+
+            var builder = new SqlConnectionStringBuilder(connectionString);
+            foreach (var row in GetDataRows(connectionString, databases))
             {
                 if (builder.InitialCatalog.IsNullOrEmpty())
                 {
                     builder.InitialCatalog = row.Field<string>("name");
                 }
 
-                yield return new Database(Server.GetInstance(builder.DataSource, connectionstring), row.Field<string>("name"), connectionstring)
+                yield return new Database(Server.GetInstance(builder.DataSource, connectionString), row.Field<string>("name"), connectionString)
                 {
                     CollationName = row.Field<string>("collation_name"),
                     CreateDate = row.Field("create_date", Convert.ToDateTime),
@@ -124,9 +133,5 @@ namespace Mohammad.Data.SqlServer.Dynamics
             //                                              Convert.ToDateTime)
             //                   }).ToList());
         }
-
-        private IEnumerable<DataRow> _AllParams;
-        private StoredProcedures _StoredProcedures;
-        private Tables _Tables;
     }
 }

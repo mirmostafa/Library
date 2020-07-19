@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,21 +10,18 @@ namespace Mohammad.Collections.ObjectModel
     [Serializable]
     public class EventualCollection<T> : ObservableCollection<T>, IEventualCollection<T>
     {
-        private LibReadOnlyCollection<T> _LibReadOnlyCollection;
+        private LibReadOnlyCollection<T>? _LibReadOnlyCollection;
 
-        public virtual LibReadOnlyCollection<T> LibReadOnlyCollection
-        {
-            get { return PropertyHelper.Get(ref this._LibReadOnlyCollection, () => new LibReadOnlyCollection<T>(this)); }
-        }
+        public virtual LibReadOnlyCollection<T> LibReadOnlyCollection => this._LibReadOnlyCollection ??= new LibReadOnlyCollection<T>(this);
 
-        public event EventHandler<ItemActedEventArgs<T>> ItemAdded;
-        public event EventHandler<ItemActingEventArgs<T>> ItemAdding;
-        public event EventHandler<ItemActedEventArgs<T>> ItemChanged;
-        public event EventHandler<ItemActingEventArgs<T>> ItemChanging;
-        public event EventHandler<ItemActedEventArgs<T>> ItemRemoved;
-        public event EventHandler<ItemActingEventArgs<T>> ItemRemoving;
-        public event EventHandler ItemsCleared;
-        public event EventHandler<ActingEventArgs> ItemsClearing;
+        public event EventHandler<ItemActedEventArgs<T>>? ItemAdded;
+        public event EventHandler<ItemActingEventArgs<T>>? ItemAdding;
+        public event EventHandler<ItemActedEventArgs<T>>? ItemChanged;
+        public event EventHandler<ItemActingEventArgs<T>>? ItemChanging;
+        public event EventHandler<ItemActedEventArgs<T>>? ItemRemoved;
+        public event EventHandler<ItemActingEventArgs<T>>? ItemRemoving;
+        public event EventHandler? ItemsCleared;
+        public event EventHandler<ActingEventArgs>? ItemsClearing;
 
         public void Add(IEnumerable<T> items)
         {

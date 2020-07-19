@@ -17,8 +17,7 @@ namespace Mohammad.Helpers
     /// </summary>
     public static class ObjectHelper
     {
-        public static T? As<T>(this object obj)
-            where T : class => obj as T;
+        public static T? As<T>(this object obj) where T : class => obj as T;
 
         public static T CheckDbNull<T>(in object o, in T defaultValue, Func<object, T> converter) => IsDbNull(o) ? defaultValue : converter(o);
 
@@ -39,9 +38,6 @@ namespace Mohammad.Helpers
 #else
         public static T[] EmptyArray<T>() => new T[0];
 #endif
-
-
-
 
         /// <summary>
         ///     Creates a new instance in object o.
@@ -118,9 +114,9 @@ namespace Mohammad.Helpers
             }
         }
 
-        public static Lazy<TSingleton> GenerateLazySingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null, Action<TSingleton>? initializeInstance = null)
+        public static Lazy<TSingleton?> GenerateLazySingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null, Action<TSingleton>? initializeInstance = null)
             where TSingleton : class, ISingleton<TSingleton>
-            => new Lazy<TSingleton>(() => GenerateSingletonInstance<TSingleton>());
+            => new Lazy<TSingleton?>(() => GenerateSingletonInstance<TSingleton>());
 
         /// <summary>
         ///     Generates a singleton instance of a class (Must be cached by the owner class).
@@ -169,7 +165,7 @@ namespace Mohammad.Helpers
 
             //! If (T) has implemented CreateInstance as an instantiate method, use it to initialize the instance.
             var initialize = GetMethod<Action>(result, "InitializeComponents");
-            initialize.Invoke();
+            initialize?.Invoke();
 
             //! if(T) has initialized b"InitializeInstance" delegate, call it to initialize the instance.
             initializeInstance?.Invoke(result);
@@ -221,7 +217,7 @@ namespace Mohammad.Helpers
         public static TFieldType GetField<TFieldType>(in object obj, string fieldName)
         {
             var field = obj.GetType().GetFields().FirstOrDefault(fld => string.Compare(fld.Name, fieldName, StringComparison.Ordinal) == 0);
-            return field != null ? (TFieldType)field.GetValue(obj) : default;
+            return (TFieldType)(field?.GetValue(obj) ?? default);
         }
 
         public static TDelegate? GetMethod<TDelegate>(in object obj, in string name, BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance)
@@ -248,6 +244,11 @@ namespace Mohammad.Helpers
 
         public static TPropertyType GetProp<TPropertyType>(in object obj, string propName, in int eventNoDefault)
         {
+            if (obj == null)
+            {
+                throw new ArgumentNullException(nameof(obj));
+            }
+
             if (eventNoDefault != 0)
             {
                 return GetProp<TPropertyType>(obj, propName);
@@ -313,7 +314,7 @@ namespace Mohammad.Helpers
             where TResult : class
             => a.NotNull(o => typeof(TResult) == typeof(string) ? o?.ToString().To<TResult>() : o?.To<TResult>(), () => defaultValue);
 
-        public static TResult NotNull<T, TResult>(this T a, Func<T, TResult> whenNotNull, Func<TResult> whenNull = null)
+        public static TResult NotNull<T, TResult>(this T a, Func<T, TResult> whenNotNull, Func<TResult>? whenNull = null)
         {
             if (Equals(a, default(T)))
             {
@@ -372,7 +373,7 @@ namespace Mohammad.Helpers
 
         public static string ToString(in object value, in string defaultValue = "") => (value ?? defaultValue).ToString();
 
-        public static TDestination MapOnly<TSource, TDestination>(this TSource source, TDestination destination, Func<TDestination, object> onlyProps)
+        public static TDestination? MapOnly<TSource, TDestination>(this TSource source, in TDestination destination, Func<TDestination, object> onlyProps)
             where TDestination : class
         {
             if (destination == null)
@@ -399,7 +400,7 @@ namespace Mohammad.Helpers
             return result;
         }
 
-        public static TDestination Map<TDestination>(this object source)
+        public static TDestination? Map<TDestination>(this object source)
             where TDestination : class, new()
         {
             if (source is null)

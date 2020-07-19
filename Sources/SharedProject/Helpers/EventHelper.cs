@@ -25,7 +25,7 @@ namespace Mohammad.Helpers
             return e;
         }
 
-        public static TEvenetArgs Raise<TEvenetArgs>(this EventHandler<TEvenetArgs> handler, object sender, TEvenetArgs e)
+        public static TEventArgs Raise<TEventArgs>(this EventHandler<TEventArgs>? handler, object sender, TEventArgs e)
         {
             if (handler == null)
             {
@@ -36,7 +36,7 @@ namespace Mohammad.Helpers
             return e;
         }
 
-        public static Task RaiseAsync(this Delegate handler, object sender, TaskScheduler scheduler = null, Task task = null)
+        public static Task RaiseAsync(this Delegate? handler, object sender, TaskScheduler scheduler = null, Task task = null)
         {
             if (handler == null)
             {

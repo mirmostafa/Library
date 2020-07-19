@@ -1,6 +1,4 @@
-
-
-
+#nullable enable
 using System;
 using Mohammad.Globalization;
 using Mohammad.Globalization.DataTypes;
@@ -9,7 +7,7 @@ namespace Mohammad.Helpers
 {
     public static class PersianDateTimeHelper
     {
-        public static int GetDayCount(this PersianMonth persianMonth, int? year = null) => persianMonth switch
+        public static int GetDayCount(this PersianMonth persianMonth, in int? year = null) => persianMonth switch
         {
             PersianMonth.Farvardin => 31,
             PersianMonth.Ordibehesht => 31,
@@ -25,7 +23,7 @@ namespace Mohammad.Helpers
             PersianMonth.Esfand => (year.HasValue ? PersianDateTime.PersianCalendar.IsLeapYear(year.Value) ? 30 : 29 : 29),
             _ => 0
         };
-        
+
         public static PersianDateTime ToPersianDateTime(this DateTime dateTime) => new PersianDateTime(dateTime);
     }
 }
