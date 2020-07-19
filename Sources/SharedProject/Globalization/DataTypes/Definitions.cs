@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Text;
 using Mohammad.Globalization.Attributes;
 using Mohammad.Helpers;
 
@@ -10,20 +11,18 @@ namespace Mohammad.Globalization.DataTypes
     [StructLayout(LayoutKind.Sequential)]
     internal struct PersianDateTimeData
     {
-        public override int GetHashCode()
-        {
-            var hashCode = new HashCode();
-            hashCode.Add(this.Day);
-            hashCode.Add(this.HasDate);
-            hashCode.Add(this.HasTime);
-            hashCode.Add(this.Hour);
-            hashCode.Add(this.Minute);
-            hashCode.Add(this.Month);
-            hashCode.Add(this.Second);
-            hashCode.Add(this.Millisecond);
-            hashCode.Add(this.Year);
-            return hashCode.ToHashCode();
-        }
+        public override int GetHashCode() 
+            => new StringBuilder()
+            .Append(this.Day)
+            .Append(this.HasDate)
+            .Append(this.HasTime)
+            .Append(this.Hour)
+            .Append(this.Minute)
+            .Append(this.Month)
+            .Append(this.Second)
+            .Append(this.Millisecond)
+            .Append(this.Year)
+            .GetHashCode();
 
         internal int Day;
         internal bool HasDate;
@@ -37,7 +36,7 @@ namespace Mohammad.Globalization.DataTypes
 
         internal void Init()
         {
-            this.Year = this.Month = this.Day = this.Hour = this.Minute = this.Second =  -1;
+            this.Year = this.Month = this.Day = this.Hour = this.Minute = this.Second = -1;
             this.Millisecond = -1d;
             this.HasDate = true;
             this.HasTime = true;

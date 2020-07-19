@@ -1,7 +1,0 @@
-D:\Mirmostafa\Sources\my\Library\Sources\Core\Core30\CoreLibCore30\bin\Release\netcoreapp3.0\LibCore30.Core.deps.json
-D:\Mirmostafa\Sources\my\Library\Sources\Core\Core30\CoreLibCore30\bin\Release\netcoreapp3.0\LibCore30.Core.dll
-D:\Mirmostafa\Sources\my\Library\Sources\Core\Core30\CoreLibCore30\obj\Release\netcoreapp3.0\CoreLibCore30.csprojAssemblyReference.cache
-D:\Mirmostafa\Sources\my\Library\Sources\Core\Core30\CoreLibCore30\obj\Release\netcoreapp3.0\CoreLibCore30.AssemblyInfoInputs.cache
-D:\Mirmostafa\Sources\my\Library\Sources\Core\Core30\CoreLibCore30\obj\Release\netcoreapp3.0\CoreLibCore30.AssemblyInfo.cs
-D:\Mirmostafa\Sources\my\Library\Sources\Core\Core30\CoreLibCore30\obj\Release\netcoreapp3.0\CoreLibCore30.csproj.CoreCompileInputs.cache
-D:\Mirmostafa\Sources\my\Library\Sources\Core\Core30\CoreLibCore30\obj\Release\netcoreapp3.0\LibCore30.Core.dll
