@@ -468,9 +468,9 @@ namespace Mohammad.Specialized
                 {
                     var sb = new StringBuilder("Information gathered:");
                     sb.AppendLine();
-                    foreach (var property in ObjectHelper.ReflectProperties(value))
+                    foreach (var property in ObjectHelper.GetProperties(value))
                     {
-                        sb.AppendFormat("{0}:\t{1}", property.Key, property.Value);
+                        sb.AppendFormat("{0}:\t{1}", property.Name, property.Value);
                         sb.AppendLine();
                     }
 

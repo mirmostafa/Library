@@ -53,7 +53,7 @@ namespace Mohammad.Logging.FileBased.Text
 
             var result = this.LogFormat;
 
-            ObjectHelper.ReflectProperties(logEntity).ForEach(prop => result = result.Replace(prop.Key, prop.Value != null ? prop.Value.ToString() : ""));
+            ObjectHelper.GetProperties(logEntity).ForEach(prop => result = result.Replace(prop.Name, prop.Value != null ? prop.Value.ToString() : ""));
             return result;
         }
     }

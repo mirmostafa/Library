@@ -1296,13 +1296,23 @@ namespace Mohammad.Helpers
             }
 
             var index = 0;
-            using (var enumerator = source.GetEnumerator())
+            using var enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                while (enumerator.MoveNext())
-                {
-                    moveNext(enumerator.Current, index++);
-                }
+                moveNext(enumerator.Current, index++);
             }
+        }
+
+        public static (string Name, TValue Value) ByName<TValue>(this IEnumerable<(string Name, TValue Value)> dic, string name)
+        {
+            return dic.First(o => o.Name == name);
+        }
+
+        public static (string Name, TValue Value) ByName<TValue>(this IEnumerable<(string Name, TValue Value)> dic, string name, TValue value)
+        {
+            var result= dic.First(o => o.Name == name);
+            result.Value = value;
+            return result;
         }
     }
 }

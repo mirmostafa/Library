@@ -25,10 +25,10 @@ namespace Mohammad.Logging.FileBased.Xml
         {
             lock (this)
             {
-                var row = ObjectHelper.ReflectProperties(logEntity);
+                var row = ObjectHelper.GetProperties(logEntity);
                 if (logEntity.Level == LogLevel.Fatal || logEntity.Level == LogLevel.Error)
                 {
-                    row["StackTrace"] = logEntity.StackTrace;
+                    row.ByName("StackTrace",logEntity.StackTrace);
                 }
 
                 var doc = new XmlDocument();
@@ -57,9 +57,9 @@ namespace Mohammad.Logging.FileBased.Xml
                     node = node.AppendChild(doc.CreateNode(XmlNodeType.Element, "Log", "Descriptor", logEntity.Descriptor));
 
                     foreach (var field in
-                        row.Where(fld => fld.Value != null && !string.IsNullOrEmpty(fld.Key) && !fld.Key.IsInRange("Descriptor")))
+                        row.Where(fld => fld.Value != null && !string.IsNullOrEmpty(fld.Name) && !fld.Name.IsInRange("Descriptor")))
                     {
-                        var elem = doc.CreateElement(field.Key);
+                        var elem = doc.CreateElement(field.Name);
                         if (field.Value != null)
                         {
                             elem.InnerText = field.Value.ToString();

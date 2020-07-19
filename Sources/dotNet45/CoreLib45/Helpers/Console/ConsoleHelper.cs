@@ -267,9 +267,9 @@ namespace Mohammad.Helpers.Console
 
         public static void WriteLineReflect(object obj)
         {
-            foreach (var property in ObjectHelper.ReflectProperties(obj))
+            foreach (var property in ObjectHelper.GetProperties(obj))
             {
-                $"{property.Key.SeparateCamelCase()} = {property.Value}".WriteLine();
+                $"{property.Name.SeparateCamelCase()} = {property.Value}".WriteLine();
             }
         }
 

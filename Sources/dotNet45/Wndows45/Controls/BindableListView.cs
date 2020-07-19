@@ -197,10 +197,10 @@ namespace Mohammad.Win.Controls
             else
             {
                 //Get item's schema
-                var properties = ObjectHelper.ReflectProperties(value);
+                var properties = ObjectHelper.GetProperties(value);
 
                 //iterate on columns' tag which represent table's fields
-                foreach (var property in this.Columns.Cast<ColumnHeader>().Where(column => column.Tag != null).Select(column => properties[column.Tag.ToString()]))
+                foreach (var property in this.Columns.Cast<ColumnHeader>().Where(column => column.Tag != null).Select(column => properties.ByName(column.Tag.ToString()).Value))
                     //is the first field on current row?
                 {
                     if (item == null)
@@ -237,12 +237,12 @@ namespace Mohammad.Win.Controls
             }
             else
             {
-                foreach (var property in ObjectHelper.ReflectProperties(entity))
+                foreach (var property in ObjectHelper.GetProperties(entity))
                 {
                     //Add property name as key and parsed property name the title of column
-                    var col = this.Columns.Add(property.Key, property.Key.SeparateCamelCase());
+                    var col = this.Columns.Add(property.Name, property.Name.SeparateCamelCase());
                     col.TextAlign = HorizontalAlignment.Right;
-                    col.Tag = property.Key;
+                    col.Tag = property.Name;
                 }
             }
         }

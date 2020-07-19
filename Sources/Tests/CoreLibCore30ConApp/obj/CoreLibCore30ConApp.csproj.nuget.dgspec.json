@@ -1,0 +1,130 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj": {}
+  },
+  "projects": {
+    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj",
+        "projectName": "LibCore30.Core",
+        "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj",
+        "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
+        "outputPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.0": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.0": {
+          "dependencies": {
+            "Autofac": {
+              "target": "Package",
+              "version": "[5.2.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj",
+        "projectName": "CoreLibCore30ConApp",
+        "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj",
+        "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
+        "outputPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet\\"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.0": {
+            "projectReferences": {
+              "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj": {
+                "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.0": {
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
