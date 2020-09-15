@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Runtime.Serialization;
 
 namespace Mohammad.Exceptions
@@ -9,10 +6,6 @@ namespace Mohammad.Exceptions
     [Serializable]
     public abstract class PairMessageStatusCodeExceptionBase<TStatusCode> : CommonExceptionBase
     {
-        public virtual TStatusCode StatusCode { get; }
-
-        public (TStatusCode StatusCode, string Message) Info => (this.StatusCode, this.GetBaseException().Message);
-
         protected PairMessageStatusCodeExceptionBase(string message, TStatusCode statusCode)
             : base(message) => this.StatusCode = statusCode;
 
@@ -34,5 +27,9 @@ namespace Mohammad.Exceptions
             : base(info, context)
         {
         }
+
+        public virtual TStatusCode StatusCode { get; }
+
+        public (TStatusCode StatusCode, string Message) Info => (this.StatusCode, this.GetBaseException().Message);
     }
 }

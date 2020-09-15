@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Data.Linq;
@@ -18,6 +15,19 @@ namespace Mohammad.Data.Linq.DataTools
         where TEntity : class, new() where TDateContext : DataContext where TBusinessEntity : BusinessEntity<TEntity, TBusinessEntity>, new()
     {
         private TDateContext _Db;
+
+        protected DataAccessEntityOnLinq()
+        {
+            this.ExceptionHandling.Reset();
+            try
+            {
+                this.Db.Log = new LinqLogger();
+            }
+            catch (Exception ex)
+            {
+                this.ExceptionHandling.HandleException(ex);
+            }
+        }
 
         protected TDateContext Db
         {
@@ -63,19 +73,6 @@ namespace Mohammad.Data.Linq.DataTools
         }
 
         protected bool UseStaticDataContext { get; set; }
-
-        protected DataAccessEntityOnLinq()
-        {
-            this.ExceptionHandling.Reset();
-            try
-            {
-                this.Db.Log = new LinqLogger();
-            }
-            catch (Exception ex)
-            {
-                this.ExceptionHandling.HandleException(ex);
-            }
-        }
 
         public void Attach(TEntity entity, bool asModified = true) => this.OnAttaching(entity, asModified);
 

@@ -1,6 +1,3 @@
-
-
-
 namespace Mohammad.Logging
 {
     namespace EventsArgs

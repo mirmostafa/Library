@@ -14,6 +14,11 @@ namespace Mohammad.Wpf.Internals.Dialogs
     /// </summary>
     internal partial class ConnectionStringDialog
     {
+        public ConnectionStringDialog()
+        {
+            this.InitializeComponent();
+        }
+
         public string ConnectionString
         {
             get
@@ -44,11 +49,6 @@ namespace Mohammad.Wpf.Internals.Dialogs
         }
 
         public bool ValidateResult { get; set; }
-
-        public ConnectionStringDialog()
-        {
-            this.InitializeComponent();
-        }
 
         private SqlConnectionStringBuilder ParseConnectionString(bool full)
         {

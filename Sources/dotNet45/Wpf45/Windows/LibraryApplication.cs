@@ -25,6 +25,12 @@ namespace Mohammad.Wpf.Windows
         private static CancellationTokenSource _CancellationTokenSource;
         private Mutex _Mutext;
 
+        public LibraryApplication()
+        {
+            IsDesignMode = true;
+            this.Initialize();
+        }
+
         public static ExceptionHandling ExceptionHandling
         {
             get => _ExceptionHandling ?? (_ExceptionHandling = Current.As<LibraryApplication>().OnExceptionHandlingRequrired() ?? new ExceptionHandling());
@@ -83,12 +89,6 @@ namespace Mohammad.Wpf.Windows
             }
         }
 
-        public LibraryApplication()
-        {
-            IsDesignMode = true;
-            this.Initialize();
-        }
-
         public static void RunInUi(Action action)
         {
             Current.Dispatcher.Invoke(DispatcherPriority.Render, action);
@@ -110,6 +110,41 @@ namespace Mohammad.Wpf.Windows
                 },
                 frame);
             Dispatcher.PushFrame(frame);
+        }
+
+        internal virtual void ExceptionOccurred(object sender, ExceptionOccurredEventArgs<Exception> e)
+        {
+            if (e.Exception is BreakException)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            this.OnExceptionOccurred(sender, e);
+        }
+
+        internal void MainWindowIsInitializing()
+        {
+            if (_MainTaskScheduler == null)
+            {
+                _MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            }
+
+            if (_UiSyncContext == null)
+            {
+                _UiSyncContext = SynchronizationContext.Current;
+            }
+
+            this.OnMainWindowInitialized();
+        }
+
+        internal void MainWindowIsClosed()
+        {
+            var exception = CodeHelper.Catch(this.OnShuttingDown);
+            if (exception != null)
+            {
+                this.ExceptionOccurred(this, new ExceptionOccurredEventArgs<Exception>(exception));
+            }
         }
 
         protected virtual ExceptionHandling OnExceptionHandlingRequrired() => new ExceptionHandling {RaiseExceptions = true};
@@ -243,41 +278,6 @@ namespace Mohammad.Wpf.Windows
         {
             var args = new ExceptionOccurredEventArgs<Exception>(e.ExceptionObject as Exception);
             this.ExceptionOccurred(sender, args);
-        }
-
-        internal virtual void ExceptionOccurred(object sender, ExceptionOccurredEventArgs<Exception> e)
-        {
-            if (e.Exception is BreakException)
-            {
-                e.Handled = true;
-                return;
-            }
-
-            this.OnExceptionOccurred(sender, e);
-        }
-
-        internal void MainWindowIsInitializing()
-        {
-            if (_MainTaskScheduler == null)
-            {
-                _MainTaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            }
-
-            if (_UiSyncContext == null)
-            {
-                _UiSyncContext = SynchronizationContext.Current;
-            }
-
-            this.OnMainWindowInitialized();
-        }
-
-        internal void MainWindowIsClosed()
-        {
-            var exception = CodeHelper.Catch(this.OnShuttingDown);
-            if (exception != null)
-            {
-                this.ExceptionOccurred(this, new ExceptionOccurredEventArgs<Exception>(exception));
-            }
         }
     }
 }

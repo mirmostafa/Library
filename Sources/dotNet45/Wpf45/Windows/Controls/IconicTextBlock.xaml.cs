@@ -32,6 +32,13 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(IconicTextBlock),
             new PropertyMetadata(default(Style)));
 
+        public IconicTextBlock()
+        {
+            this.InitializeComponent();
+            this.PathWidth = 12;
+            this.PathHeight = 12;
+        }
+
         public double PathHeight
         {
             get => (double)this.GetValue(PathHeightProperty);
@@ -60,13 +67,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => (Style)this.GetValue(TextBlockStyleProperty);
             set => this.SetValue(TextBlockStyleProperty, value);
-        }
-
-        public IconicTextBlock()
-        {
-            this.InitializeComponent();
-            this.PathWidth = 12;
-            this.PathHeight = 12;
         }
     }
 }

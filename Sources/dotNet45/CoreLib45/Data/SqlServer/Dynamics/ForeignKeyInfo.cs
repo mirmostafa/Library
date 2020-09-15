@@ -1,6 +1,3 @@
-
-
-
 namespace Mohammad.Data.SqlServer.Dynamics
 {
     public class ForeignKeyInfo

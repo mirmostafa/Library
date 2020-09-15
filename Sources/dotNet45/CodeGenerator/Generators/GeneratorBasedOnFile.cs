@@ -32,12 +32,12 @@ namespace Mohammad.CodeGeneration.Generators
 
     public class Class : CodeSnippet
     {
+        public Class(string name) => this.Name = name;
         public string Name { get; }
         public List<Property> Properties { get; } = new List<Property>();
         public List<Field> Fields { get; } = new List<Field>();
         public List<Method> Methods { get; } = new List<Method>();
         public List<Event> Events { get; } = new List<Event>();
-        public Class(string name) => this.Name = name;
     }
 
     public abstract class ClassMember : CodeSnippet
@@ -74,12 +74,6 @@ namespace Mohammad.CodeGeneration.Generators
 
     public abstract class LanguageDeclarationTemplateBase
     {
-        public string Namespace { get; }
-        public string Class { get; }
-        public string Property { get; }
-        public string Field { get; }
-        public string Event { get; }
-
         protected LanguageDeclarationTemplateBase(string @namespace, string @class, string property, string field, string @event)
         {
             this.Namespace = @namespace;
@@ -88,6 +82,12 @@ namespace Mohammad.CodeGeneration.Generators
             this.Field = field;
             this.Event = @event;
         }
+
+        public string Namespace { get; }
+        public string Class { get; }
+        public string Property { get; }
+        public string Field { get; }
+        public string Event { get; }
     }
 
     public sealed class CSharpLanguageDeclarationTemplate : LanguageDeclarationTemplateBase

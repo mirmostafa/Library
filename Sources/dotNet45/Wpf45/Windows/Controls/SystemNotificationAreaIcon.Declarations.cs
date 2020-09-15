@@ -22,6 +22,348 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         public const string CATEGORY_NAME = "NotifyIcon";
 
+        /// <summary>
+        ///     TrayPopupResolved Read-Only Dependency Property
+        /// </summary>
+        private static readonly DependencyPropertyKey _TrayPopupResolvedPropertyKey = DependencyProperty.RegisterReadOnly("TrayPopupResolved",
+            typeof(Popup),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        ///     A read-only dependency property that returns the <see cref="Popup" />
+        ///     that is being displayed in the taskbar area based on a user action.
+        /// </summary>
+        public static readonly DependencyProperty TrayPopupResolvedProperty = _TrayPopupResolvedPropertyKey.DependencyProperty;
+
+        /// <summary>
+        ///     TrayToolTipResolved Read-Only Dependency Property
+        /// </summary>
+        private static readonly DependencyPropertyKey _TrayToolTipResolvedPropertyKey = DependencyProperty.RegisterReadOnly("TrayToolTipResolved",
+            typeof(ToolTip),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        ///     A read-only dependency property that returns the <see cref="ToolTip" />
+        ///     that is being displayed.
+        /// </summary>
+        public static readonly DependencyProperty TrayToolTipResolvedProperty = _TrayToolTipResolvedPropertyKey.DependencyProperty;
+
+        /// <summary>
+        ///     CustomBalloon Read-Only Dependency Property
+        /// </summary>
+        private static readonly DependencyPropertyKey _CustomBalloonPropertyKey = DependencyProperty.RegisterReadOnly("CustomBalloon",
+            typeof(Popup),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null));
+
+        public static readonly DependencyProperty CustomBalloonProperty = _CustomBalloonPropertyKey.DependencyProperty;
+
+        /// <summary>
+        ///     Resolves an image source and updates the <see cref="Icon" /> property accordingly.
+        /// </summary>
+        public static readonly DependencyProperty IconSourceProperty = DependencyProperty.Register("IconSource",
+            typeof(ImageSource),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null, IconSourcePropertyChanged));
+
+        /// <summary>
+        ///     A tooltip text that is being displayed if no custom <see cref="ToolTip" />
+        ///     was set or if custom tooltips are not supported.
+        /// </summary>
+        public static readonly DependencyProperty ToolTipTextProperty = DependencyProperty.Register("ToolTipText",
+            typeof(string),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(string.Empty, ToolTipTextPropertyChanged));
+
+        /// <summary>
+        ///     A custom UI element that is displayed as a tooltip if the user hovers over the taskbar icon.
+        ///     Works only with Vista and above. Accordingly, you should make sure that
+        ///     the <see cref="ToolTipText" /> property is set as well.
+        /// </summary>
+        public static readonly DependencyProperty TrayToolTipProperty = DependencyProperty.Register("TrayToolTip",
+            typeof(UIElement),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null, TrayToolTipPropertyChanged));
+
+        /// <summary>
+        ///     A control that is displayed as a popup when the taskbar icon is clicked.
+        /// </summary>
+        public static readonly DependencyProperty TrayPopupProperty = DependencyProperty.Register("TrayPopup",
+            typeof(UIElement),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null, TrayPopupPropertyChanged));
+
+        /// <summary>
+        ///     Defines what mouse events display the context menu.
+        ///     Defaults to <see cref="PopupActivationMode.RightClick" />.
+        /// </summary>
+        public static readonly DependencyProperty MenuActivationProperty = DependencyProperty.Register("MenuActivation",
+            typeof(PopupActivationMode),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(PopupActivationMode.RightClick));
+
+        /// <summary>
+        ///     Defines what mouse events trigger the <see cref="TrayPopup" />.
+        ///     Default is <see cref="PopupActivationMode.LeftClick" />.
+        /// </summary>
+        public static readonly DependencyProperty PopupActivationProperty = DependencyProperty.Register("PopupActivation",
+            typeof(PopupActivationMode),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(PopupActivationMode.LeftClick));
+
+        /// <summary>
+        ///     Associates a command that is being executed if the tray icon is being
+        ///     double clicked.
+        /// </summary>
+        public static readonly DependencyProperty DoubleClickCommandProperty = DependencyProperty.Register("DoubleClickCommand",
+            typeof(ICommand),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        ///     Command parameter for the <see cref="DoubleClickCommand" />.
+        /// </summary>
+        public static readonly DependencyProperty DoubleClickCommandParameterProperty = DependencyProperty.Register("DoubleClickCommandParameter",
+            typeof(object),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        ///     The target of the command that is fired if the notify icon is double clicked.
+        /// </summary>
+        public static readonly DependencyProperty DoubleClickCommandTargetProperty = DependencyProperty.Register("DoubleClickCommandTarget",
+            typeof(IInputElement),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        ///     Associates a command that is being executed if the tray icon is being
+        ///     double clicked.
+        /// </summary>
+        public static readonly DependencyProperty LeftClickCommandProperty = DependencyProperty.Register("LeftClickCommand",
+            typeof(ICommand),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        ///     Command parameter for the <see cref="LeftClickCommand" />.
+        /// </summary>
+        public static readonly DependencyProperty LeftClickCommandParameterProperty = DependencyProperty.Register("LeftClickCommandParameter",
+            typeof(object),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        ///     The target of the command that is fired if the notify icon is clicked.
+        /// </summary>
+        public static readonly DependencyProperty LeftClickCommandTargetProperty = DependencyProperty.Register("LeftClickCommandTarget",
+            typeof(IInputElement),
+            typeof(NotifyIcon),
+            new FrameworkPropertyMetadata(null));
+
+        /// <summary>
+        ///     TrayLeftMouseDown Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayLeftMouseDownEvent = EventManager.RegisterRoutedEvent("TrayLeftMouseDown",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayRightMouseDown Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayRightMouseDownEvent = EventManager.RegisterRoutedEvent("TrayRightMouseDown",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayMiddleMouseDown Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayMiddleMouseDownEvent = EventManager.RegisterRoutedEvent("TrayMiddleMouseDown",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayLeftMouseUp Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayLeftMouseUpEvent = EventManager.RegisterRoutedEvent("TrayLeftMouseUp",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayRightMouseUp Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayRightMouseUpEvent = EventManager.RegisterRoutedEvent("TrayRightMouseUp",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayMiddleMouseUp Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayMiddleMouseUpEvent = EventManager.RegisterRoutedEvent("TrayMiddleMouseUp",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayMouseDoubleClick Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayMouseDoubleClickEvent = EventManager.RegisterRoutedEvent("TrayMouseDoubleClick",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayMouseMove Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayMouseMoveEvent = EventManager.RegisterRoutedEvent("TrayMouseMove",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayBalloonTipShown Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayBalloonTipShownEvent = EventManager.RegisterRoutedEvent("TrayBalloonTipShown",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayBalloonTipClosed Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayBalloonTipClosedEvent = EventManager.RegisterRoutedEvent("TrayBalloonTipClosed",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayBalloonTipClicked Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayBalloonTipClickedEvent = EventManager.RegisterRoutedEvent("TrayBalloonTipClicked",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayContextMenuOpen Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayContextMenuOpenEvent = EventManager.RegisterRoutedEvent("TrayContextMenuOpen",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     PreviewTrayContextMenuOpen Routed Event
+        /// </summary>
+        public static readonly RoutedEvent PreviewTrayContextMenuOpenEvent = EventManager.RegisterRoutedEvent("PreviewTrayContextMenuOpen",
+            RoutingStrategy.Tunnel,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayPopupOpen Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayPopupOpenEvent = EventManager.RegisterRoutedEvent("TrayPopupOpen",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     PreviewTrayPopupOpen Routed Event
+        /// </summary>
+        public static readonly RoutedEvent PreviewTrayPopupOpenEvent = EventManager.RegisterRoutedEvent("PreviewTrayPopupOpen",
+            RoutingStrategy.Tunnel,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayToolTipOpen Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayToolTipOpenEvent = EventManager.RegisterRoutedEvent("TrayToolTipOpen",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     PreviewTrayToolTipOpen Routed Event
+        /// </summary>
+        public static readonly RoutedEvent PreviewTrayToolTipOpenEvent = EventManager.RegisterRoutedEvent("PreviewTrayToolTipOpen",
+            RoutingStrategy.Tunnel,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     TrayToolTipClose Routed Event
+        /// </summary>
+        public static readonly RoutedEvent TrayToolTipCloseEvent = EventManager.RegisterRoutedEvent("TrayToolTipClose",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     PreviewTrayToolTipClose Routed Event
+        /// </summary>
+        public static readonly RoutedEvent PreviewTrayToolTipCloseEvent = EventManager.RegisterRoutedEvent("PreviewTrayToolTipClose",
+            RoutingStrategy.Tunnel,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     PopupOpened Attached Routed Event
+        /// </summary>
+        public static readonly RoutedEvent PopupOpenedEvent = EventManager.RegisterRoutedEvent("PopupOpened",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     ToolTipOpened Attached Routed Event
+        /// </summary>
+        public static readonly RoutedEvent ToolTipOpenedEvent = EventManager.RegisterRoutedEvent("ToolTipOpened",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     ToolTipClose Attached Routed Event
+        /// </summary>
+        public static readonly RoutedEvent ToolTipCloseEvent = EventManager.RegisterRoutedEvent("ToolTipClose",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     BalloonShowing Attached Routed Event
+        /// </summary>
+        public static readonly RoutedEvent BalloonShowingEvent = EventManager.RegisterRoutedEvent("BalloonShowing",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     BalloonClosing Attached Routed Event
+        /// </summary>
+        public static readonly RoutedEvent BalloonClosingEvent = EventManager.RegisterRoutedEvent("BalloonClosing",
+            RoutingStrategy.Bubble,
+            typeof(RoutedEventHandler),
+            typeof(NotifyIcon));
+
+        /// <summary>
+        ///     An attached property that is assigned to
+        /// </summary>
+        public static readonly DependencyProperty ParentTaskbarIconProperty = DependencyProperty.RegisterAttached("ParentTaskbarIcon",
+            typeof(NotifyIcon),
+            typeof(NotifyIcon));
+
+        private Icon _Icon;
+
         //POPUP CONTROLS
 
         //DEPENDENCY PROPERTIES
@@ -53,20 +395,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     TrayPopupResolved Read-Only Dependency Property
-        /// </summary>
-        private static readonly DependencyPropertyKey _TrayPopupResolvedPropertyKey = DependencyProperty.RegisterReadOnly("TrayPopupResolved",
-            typeof(Popup),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null));
-
-        /// <summary>
-        ///     A read-only dependency property that returns the <see cref="Popup" />
-        ///     that is being displayed in the taskbar area based on a user action.
-        /// </summary>
-        public static readonly DependencyProperty TrayPopupResolvedProperty = _TrayPopupResolvedPropertyKey.DependencyProperty;
-
-        /// <summary>
         ///     Gets the TrayPopupResolved property. Returns
         ///     a <see cref="Popup" /> which is either the
         ///     <see cref="TrayPopup" /> control itself or a
@@ -75,30 +403,6 @@ namespace Mohammad.Wpf.Windows.Controls
         /// </summary>
         [Category(CATEGORY_NAME)]
         public Popup TrayPopupResolved => (Popup)this.GetValue(TrayPopupResolvedProperty);
-
-        /// <summary>
-        ///     Provides a secure method for setting the TrayPopupResolved property.
-        ///     This dependency property indicates ....
-        /// </summary>
-        /// <param name="value">The new value for the property.</param>
-        protected void SetTrayPopupResolved(Popup value)
-        {
-            this.SetValue(_TrayPopupResolvedPropertyKey, value);
-        }
-
-        /// <summary>
-        ///     TrayToolTipResolved Read-Only Dependency Property
-        /// </summary>
-        private static readonly DependencyPropertyKey _TrayToolTipResolvedPropertyKey = DependencyProperty.RegisterReadOnly("TrayToolTipResolved",
-            typeof(ToolTip),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null));
-
-        /// <summary>
-        ///     A read-only dependency property that returns the <see cref="ToolTip" />
-        ///     that is being displayed.
-        /// </summary>
-        public static readonly DependencyProperty TrayToolTipResolvedProperty = _TrayToolTipResolvedPropertyKey.DependencyProperty;
 
         /// <summary>
         ///     Gets the TrayToolTipResolved property. Returns
@@ -112,49 +416,10 @@ namespace Mohammad.Wpf.Windows.Controls
         public ToolTip TrayToolTipResolved => (ToolTip)this.GetValue(TrayToolTipResolvedProperty);
 
         /// <summary>
-        ///     Provides a secure method for setting the <see cref="TrayToolTipResolved" />
-        ///     property.
-        /// </summary>
-        /// <param name="value">The new value for the property.</param>
-        protected void SetTrayToolTipResolved(ToolTip value)
-        {
-            this.SetValue(_TrayToolTipResolvedPropertyKey, value);
-        }
-
-        /// <summary>
-        ///     CustomBalloon Read-Only Dependency Property
-        /// </summary>
-        private static readonly DependencyPropertyKey _CustomBalloonPropertyKey = DependencyProperty.RegisterReadOnly("CustomBalloon",
-            typeof(Popup),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null));
-
-        public static readonly DependencyProperty CustomBalloonProperty = _CustomBalloonPropertyKey.DependencyProperty;
-
-        /// <summary>
         ///     A custom popup that is being displayed in the tray area in order
         ///     to display messages to the user.
         /// </summary>
         public Popup CustomBalloon => (Popup)this.GetValue(CustomBalloonProperty);
-
-        /// <summary>
-        ///     Provides a secure method for setting the <see cref="CustomBalloon" /> property.
-        /// </summary>
-        /// <param name="value">The new value for the property.</param>
-        protected void SetCustomBalloon(Popup value)
-        {
-            this.SetValue(_CustomBalloonPropertyKey, value);
-        }
-
-        /// <summary>
-        ///     Resolves an image source and updates the <see cref="Icon" /> property accordingly.
-        /// </summary>
-        public static readonly DependencyProperty IconSourceProperty = DependencyProperty.Register("IconSource",
-            typeof(ImageSource),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null, IconSourcePropertyChanged));
-
-        private Icon _Icon;
 
         /// <summary>
         ///     Gets or sets the icon to be displayed. This is not a
@@ -189,6 +454,144 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
+        ///     A property wrapper for the <see cref="ToolTipTextProperty" />
+        ///     dependency property:<br />
+        ///     A tooltip text that is being displayed if no custom <see cref="ToolTip" />
+        ///     was set or if custom tooltips are not supported.
+        /// </summary>
+        [Category(CATEGORY_NAME)]
+        [Description("Alternative to a fully blown ToolTip, which is only displayed on Vista and above.")]
+        public string ToolTipText
+        {
+            get => (string)this.GetValue(ToolTipTextProperty);
+            set => this.SetValue(ToolTipTextProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="TrayToolTipProperty" />
+        ///     dependency property:<br />
+        ///     A custom UI element that is displayed as a tooltip if the user hovers over the taskbar icon.
+        ///     Works only with Vista and above. Accordingly, you should make sure that
+        ///     the <see cref="ToolTipText" /> property is set as well.
+        /// </summary>
+        [Category(CATEGORY_NAME)]
+        [Description("Custom UI element that is displayed as a tooltip. Only on Vista and above")]
+        public UIElement TrayToolTip
+        {
+            get => (UIElement)this.GetValue(TrayToolTipProperty);
+            set => this.SetValue(TrayToolTipProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="TrayPopupProperty" />
+        ///     dependency property:<br />
+        ///     A control that is displayed as a popup when the taskbar icon is clicked.
+        /// </summary>
+        [Category(CATEGORY_NAME)]
+        [Description("Displayed as a Popup if the user clicks on the taskbar icon.")]
+        public UIElement TrayPopup
+        {
+            get => (UIElement)this.GetValue(TrayPopupProperty);
+            set => this.SetValue(TrayPopupProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="MenuActivationProperty" />
+        ///     dependency property:<br />
+        ///     Defines what mouse events display the context menu.
+        ///     Defaults to <see cref="PopupActivationMode.RightClick" />.
+        /// </summary>
+        [Category(CATEGORY_NAME)]
+        [Description("Defines what mouse events display the context menu.")]
+        public PopupActivationMode MenuActivation
+        {
+            get => (PopupActivationMode)this.GetValue(MenuActivationProperty);
+            set => this.SetValue(MenuActivationProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="PopupActivationProperty" />
+        ///     dependency property:<br />
+        ///     Defines what mouse events trigger the <see cref="TrayPopup" />.
+        ///     Default is <see cref="PopupActivationMode.LeftClick" />.
+        /// </summary>
+        [Category(CATEGORY_NAME)]
+        [Description("Defines what mouse events display the TaskbarIconPopup.")]
+        public PopupActivationMode PopupActivation
+        {
+            get => (PopupActivationMode)this.GetValue(PopupActivationProperty);
+            set => this.SetValue(PopupActivationProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="DoubleClickCommandProperty" />
+        ///     dependency property:<br />
+        ///     Associates a command that is being executed if the tray icon is being
+        ///     double clicked.
+        /// </summary>
+        public ICommand DoubleClickCommand
+        {
+            get => (ICommand)this.GetValue(DoubleClickCommandProperty);
+            set => this.SetValue(DoubleClickCommandProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="DoubleClickCommandParameterProperty" />
+        ///     dependency property:<br />
+        ///     Command parameter for the <see cref="DoubleClickCommand" />.
+        /// </summary>
+        public object DoubleClickCommandParameter
+        {
+            get => this.GetValue(DoubleClickCommandParameterProperty);
+            set => this.SetValue(DoubleClickCommandParameterProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="DoubleClickCommandTargetProperty" />
+        ///     dependency property:<br />
+        ///     The target of the command that is fired if the notify icon is double clicked.
+        /// </summary>
+        public IInputElement DoubleClickCommandTarget
+        {
+            get => (IInputElement)this.GetValue(DoubleClickCommandTargetProperty);
+            set => this.SetValue(DoubleClickCommandTargetProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="LeftClickCommandProperty" />
+        ///     dependency property:<br />
+        ///     Associates a command that is being executed if the tray icon is being
+        ///     double clicked.
+        /// </summary>
+        public ICommand LeftClickCommand
+        {
+            get => (ICommand)this.GetValue(LeftClickCommandProperty);
+            set => this.SetValue(LeftClickCommandProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="LeftClickCommandParameterProperty" />
+        ///     dependency property:<br />
+        ///     Command parameter for the <see cref="LeftClickCommand" />.
+        /// </summary>
+        public object LeftClickCommandParameter
+        {
+            get => this.GetValue(LeftClickCommandParameterProperty);
+            set => this.SetValue(LeftClickCommandParameterProperty, value);
+        }
+
+        /// <summary>
+        ///     A property wrapper for the <see cref="LeftClickCommandTargetProperty" />
+        ///     dependency property:<br />
+        ///     The target of the command that is fired if the notify icon is clicked.
+        /// </summary>
+        public IInputElement LeftClickCommandTarget
+        {
+            get => (IInputElement)this.GetValue(LeftClickCommandTargetProperty);
+            set => this.SetValue(LeftClickCommandTargetProperty, value);
+        }
+
+        /// <summary>
         ///     A static callback listener which is being invoked if the
         ///     <see cref="IconSourceProperty" /> dependency property has
         ///     been changed. Invokes the <see cref="OnIconSourcePropertyChanged" />
@@ -201,6 +604,728 @@ namespace Mohammad.Wpf.Windows.Controls
             var owner = (NotifyIcon)d;
             owner.OnIconSourcePropertyChanged(e);
         }
+
+        /// <summary>
+        ///     A static callback listener which is being invoked if the
+        ///     <see cref="ToolTipTextProperty" /> dependency property has
+        ///     been changed. Invokes the <see cref="OnToolTipTextPropertyChanged" />
+        ///     instance method of the changed instance.
+        /// </summary>
+        /// <param name="d">The currently processed owner of the property.</param>
+        /// <param name="e">Provides information about the updated property.</param>
+        private static void ToolTipTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var owner = (NotifyIcon)d;
+            owner.OnToolTipTextPropertyChanged(e);
+        }
+
+        /// <summary>
+        ///     A static callback listener which is being invoked if the
+        ///     <see cref="TrayToolTipProperty" /> dependency property has
+        ///     been changed. Invokes the <see cref="OnTrayToolTipPropertyChanged" />
+        ///     instance method of the changed instance.
+        /// </summary>
+        /// <param name="d">The currently processed owner of the property.</param>
+        /// <param name="e">Provides information about the updated property.</param>
+        private static void TrayToolTipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var owner = (NotifyIcon)d;
+            owner.OnTrayToolTipPropertyChanged(e);
+        }
+
+        /// <summary>
+        ///     A static callback listener which is being invoked if the
+        ///     <see cref="TrayPopupProperty" /> dependency property has
+        ///     been changed. Invokes the <see cref="OnTrayPopupPropertyChanged" />
+        ///     instance method of the changed instance.
+        /// </summary>
+        /// <param name="d">The currently processed owner of the property.</param>
+        /// <param name="e">Provides information about the updated property.</param>
+        private static void TrayPopupPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var owner = (NotifyIcon)d;
+            owner.OnTrayPopupPropertyChanged(e);
+        }
+
+        /// <summary>
+        ///     A static callback listener which is being invoked if the
+        ///     <see cref="UIElement.VisibilityProperty" /> dependency property has
+        ///     been changed. Invokes the <see cref="OnVisibilityPropertyChanged" />
+        ///     instance method of the changed instance.
+        /// </summary>
+        /// <param name="d">The currently processed owner of the property.</param>
+        /// <param name="e">Provides information about the updated property.</param>
+        private static void VisibilityPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var owner = (NotifyIcon)d;
+            owner.OnVisibilityPropertyChanged(e);
+        }
+
+        /// <summary>
+        ///     A static callback listener which is being invoked if the
+        ///     <see cref="FrameworkElement.DataContextProperty" /> dependency property has
+        ///     been changed. Invokes the <see cref="OnDataContextPropertyChanged" />
+        ///     instance method of the changed instance.
+        /// </summary>
+        /// <param name="d">The currently processed owner of the property.</param>
+        /// <param name="e">Provides information about the updated property.</param>
+        private static void DataContextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var owner = (NotifyIcon)d;
+            owner.OnDataContextPropertyChanged(e);
+        }
+
+        /// <summary>
+        ///     A static callback listener which is being invoked if the
+        ///     <see cref="FrameworkElement.ContextMenuProperty" /> dependency property has
+        ///     been changed. Invokes the <see cref="OnContextMenuPropertyChanged" />
+        ///     instance method of the changed instance.
+        /// </summary>
+        /// <param name="d">The currently processed owner of the property.</param>
+        /// <param name="e">Provides information about the updated property.</param>
+        private static void ContextMenuPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var owner = (NotifyIcon)d;
+            owner.OnContextMenuPropertyChanged(e);
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayLeftMouseDown event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayLeftMouseDownEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayLeftMouseDownEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayRightMouseDown event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayRightMouseDownEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayRightMouseDownEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayMiddleMouseDown event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayMiddleMouseDownEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayMiddleMouseDownEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayLeftMouseUp event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayLeftMouseUpEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayLeftMouseUpEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayRightMouseUp event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayRightMouseUpEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayRightMouseUpEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayMiddleMouseUp event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayMiddleMouseUpEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayMiddleMouseUpEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayMouseDoubleClick event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayMouseDoubleClickEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayMouseDoubleClickEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayMouseMove event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayMouseMoveEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayMouseMoveEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayBalloonTipShown event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayBalloonTipShownEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayBalloonTipShownEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayBalloonTipClosed event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayBalloonTipClosedEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayBalloonTipClosedEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayBalloonTipClicked event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayBalloonTipClickedEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayBalloonTipClickedEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayContextMenuOpen event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayContextMenuOpenEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayContextMenuOpenEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the PreviewTrayContextMenuOpen event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaisePreviewTrayContextMenuOpenEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = PreviewTrayContextMenuOpenEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayPopupOpen event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayPopupOpenEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayPopupOpenEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the PreviewTrayPopupOpen event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaisePreviewTrayPopupOpenEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = PreviewTrayPopupOpenEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayToolTipOpen event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayToolTipOpenEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayToolTipOpenEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the PreviewTrayToolTipOpen event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaisePreviewTrayToolTipOpenEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = PreviewTrayToolTipOpenEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the TrayToolTipClose event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseTrayToolTipCloseEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = TrayToolTipCloseEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the PreviewTrayToolTipClose event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaisePreviewTrayToolTipCloseEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = PreviewTrayToolTipCloseEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     Adds a handler for the PopupOpened attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be added</param>
+        public static void AddPopupOpenedHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.AddHandler(element, PopupOpenedEvent, handler);
+        }
+
+        /// <summary>
+        ///     Removes a handler for the PopupOpened attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be removed</param>
+        public static void RemovePopupOpenedHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.RemoveHandler(element, PopupOpenedEvent, handler);
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the PopupOpened event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaisePopupOpenedEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = PopupOpenedEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     Adds a handler for the ToolTipOpened attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be added</param>
+        public static void AddToolTipOpenedHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.AddHandler(element, ToolTipOpenedEvent, handler);
+        }
+
+        /// <summary>
+        ///     Removes a handler for the ToolTipOpened attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be removed</param>
+        public static void RemoveToolTipOpenedHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.RemoveHandler(element, ToolTipOpenedEvent, handler);
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the ToolTipOpened event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseToolTipOpenedEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = ToolTipOpenedEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     Adds a handler for the ToolTipClose attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be added</param>
+        public static void AddToolTipCloseHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.AddHandler(element, ToolTipCloseEvent, handler);
+        }
+
+        /// <summary>
+        ///     Removes a handler for the ToolTipClose attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be removed</param>
+        public static void RemoveToolTipCloseHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.RemoveHandler(element, ToolTipCloseEvent, handler);
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the ToolTipClose event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        internal static RoutedEventArgs RaiseToolTipCloseEvent(DependencyObject target)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs {RoutedEvent = ToolTipCloseEvent};
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     Adds a handler for the BalloonShowing attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be added</param>
+        public static void AddBalloonShowingHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.AddHandler(element, BalloonShowingEvent, handler);
+        }
+
+        /// <summary>
+        ///     Removes a handler for the BalloonShowing attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be removed</param>
+        public static void RemoveBalloonShowingHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.RemoveHandler(element, BalloonShowingEvent, handler);
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the BalloonShowing event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        /// <param name="source">
+        ///     The <see cref="NotifyIcon" /> instance that manages the balloon.
+        /// </param>
+        internal static RoutedEventArgs RaiseBalloonShowingEvent(DependencyObject target, NotifyIcon source)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs(BalloonShowingEvent, source);
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     Adds a handler for the BalloonClosing attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be added</param>
+        public static void AddBalloonClosingHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.AddHandler(element, BalloonClosingEvent, handler);
+        }
+
+        /// <summary>
+        ///     Removes a handler for the BalloonClosing attached event
+        /// </summary>
+        /// <param name="element">UIElement or ContentElement that listens to the event</param>
+        /// <param name="handler">Event handler to be removed</param>
+        public static void RemoveBalloonClosingHandler(DependencyObject element, RoutedEventHandler handler)
+        {
+            RoutedEventHelper.RemoveHandler(element, BalloonClosingEvent, handler);
+        }
+
+        /// <summary>
+        ///     A static helper method to raise the BalloonClosing event on a target element.
+        /// </summary>
+        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
+        /// <param name="source">
+        ///     The <see cref="NotifyIcon" /> instance that manages the balloon.
+        /// </param>
+        internal static RoutedEventArgs RaiseBalloonClosingEvent(DependencyObject target, NotifyIcon source)
+        {
+            if (target == null)
+            {
+                return null;
+            }
+
+            var args = new RoutedEventArgs(BalloonClosingEvent, source);
+            RoutedEventHelper.RaiseEvent(target, args);
+            return args;
+        }
+
+        /// <summary>
+        ///     Gets the ParentTaskbarIcon property.  This dependency property
+        ///     indicates ....
+        /// </summary>
+        public static NotifyIcon GetParentTaskbarIcon(DependencyObject d) => (NotifyIcon)d.GetValue(ParentTaskbarIconProperty);
+
+        /// <summary>
+        ///     Sets the ParentTaskbarIcon property.  This dependency property
+        ///     indicates ....
+        /// </summary>
+        public static void SetParentTaskbarIcon(DependencyObject d, NotifyIcon value)
+        {
+            d.SetValue(ParentTaskbarIconProperty, value);
+        }
+
+        /// <summary>
+        ///     Provides a secure method for setting the TrayPopupResolved property.
+        ///     This dependency property indicates ....
+        /// </summary>
+        /// <param name="value">The new value for the property.</param>
+        protected void SetTrayPopupResolved(Popup value)
+        {
+            this.SetValue(_TrayPopupResolvedPropertyKey, value);
+        }
+
+        /// <summary>
+        ///     Provides a secure method for setting the <see cref="TrayToolTipResolved" />
+        ///     property.
+        /// </summary>
+        /// <param name="value">The new value for the property.</param>
+        protected void SetTrayToolTipResolved(ToolTip value)
+        {
+            this.SetValue(_TrayToolTipResolvedPropertyKey, value);
+        }
+
+        /// <summary>
+        ///     Provides a secure method for setting the <see cref="CustomBalloon" /> property.
+        /// </summary>
+        /// <param name="value">The new value for the property.</param>
+        protected void SetCustomBalloon(Popup value)
+        {
+            this.SetValue(_CustomBalloonPropertyKey, value);
+        }
+
+        /// <summary>
+        ///     A helper method to raise the TrayLeftMouseDown event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayLeftMouseDownEvent()
+        {
+            var args = RaiseTrayLeftMouseDownEvent(this);
+            return args;
+        }
+
+        /// <summary>
+        ///     A helper method to raise the TrayRightMouseDown event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayRightMouseDownEvent() => RaiseTrayRightMouseDownEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayMiddleMouseDown event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayMiddleMouseDownEvent() => RaiseTrayMiddleMouseDownEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayLeftMouseUp event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayLeftMouseUpEvent() => RaiseTrayLeftMouseUpEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayRightMouseUp event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayRightMouseUpEvent() => RaiseTrayRightMouseUpEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayMiddleMouseUp event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayMiddleMouseUpEvent() => RaiseTrayMiddleMouseUpEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayMouseDoubleClick event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayMouseDoubleClickEvent()
+        {
+            var args = RaiseTrayMouseDoubleClickEvent(this);
+            this.DoubleClickCommand.ExecuteIfEnabled(this.DoubleClickCommandParameter, this.DoubleClickCommandTarget ?? this);
+            return args;
+        }
+
+        /// <summary>
+        ///     A helper method to raise the TrayMouseMove event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayMouseMoveEvent() => RaiseTrayMouseMoveEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayBalloonTipShown event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayBalloonTipShownEvent() => RaiseTrayBalloonTipShownEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayBalloonTipClosed event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayBalloonTipClosedEvent() => RaiseTrayBalloonTipClosedEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayBalloonTipClicked event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayBalloonTipClickedEvent() => RaiseTrayBalloonTipClickedEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayContextMenuOpen event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayContextMenuOpenEvent() => RaiseTrayContextMenuOpenEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the PreviewTrayContextMenuOpen event.
+        /// </summary>
+        protected RoutedEventArgs RaisePreviewTrayContextMenuOpenEvent() => RaisePreviewTrayContextMenuOpenEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayPopupOpen event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayPopupOpenEvent() => RaiseTrayPopupOpenEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the PreviewTrayPopupOpen event.
+        /// </summary>
+        protected RoutedEventArgs RaisePreviewTrayPopupOpenEvent() => RaisePreviewTrayPopupOpenEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayToolTipOpen event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayToolTipOpenEvent() => RaiseTrayToolTipOpenEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the PreviewTrayToolTipOpen event.
+        /// </summary>
+        protected RoutedEventArgs RaisePreviewTrayToolTipOpenEvent() => RaisePreviewTrayToolTipOpenEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the TrayToolTipClose event.
+        /// </summary>
+        protected RoutedEventArgs RaiseTrayToolTipCloseEvent() => RaiseTrayToolTipCloseEvent(this);
+
+        /// <summary>
+        ///     A helper method to raise the PreviewTrayToolTipClose event.
+        /// </summary>
+        protected RoutedEventArgs RaisePreviewTrayToolTipCloseEvent() => RaisePreviewTrayToolTipCloseEvent(this);
 
         /// <summary>
         ///     Handles changes of the <see cref="IconSourceProperty" /> dependency property. As
@@ -221,43 +1346,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A tooltip text that is being displayed if no custom <see cref="ToolTip" />
-        ///     was set or if custom tooltips are not supported.
-        /// </summary>
-        public static readonly DependencyProperty ToolTipTextProperty = DependencyProperty.Register("ToolTipText",
-            typeof(string),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(string.Empty, ToolTipTextPropertyChanged));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="ToolTipTextProperty" />
-        ///     dependency property:<br />
-        ///     A tooltip text that is being displayed if no custom <see cref="ToolTip" />
-        ///     was set or if custom tooltips are not supported.
-        /// </summary>
-        [Category(CATEGORY_NAME)]
-        [Description("Alternative to a fully blown ToolTip, which is only displayed on Vista and above.")]
-        public string ToolTipText
-        {
-            get => (string)this.GetValue(ToolTipTextProperty);
-            set => this.SetValue(ToolTipTextProperty, value);
-        }
-
-        /// <summary>
-        ///     A static callback listener which is being invoked if the
-        ///     <see cref="ToolTipTextProperty" /> dependency property has
-        ///     been changed. Invokes the <see cref="OnToolTipTextPropertyChanged" />
-        ///     instance method of the changed instance.
-        /// </summary>
-        /// <param name="d">The currently processed owner of the property.</param>
-        /// <param name="e">Provides information about the updated property.</param>
-        private static void ToolTipTextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var owner = (NotifyIcon)d;
-            owner.OnToolTipTextPropertyChanged(e);
-        }
-
-        /// <summary>
         ///     Handles changes of the <see cref="ToolTipTextProperty" /> dependency property. As
         ///     WPF internally uses the dependency property system and bypasses the
         ///     <see cref="ToolTipText" /> property wrapper, updates of the property's value
@@ -273,45 +1361,6 @@ namespace Mohammad.Wpf.Windows.Controls
             }
 
             this.WriteToolTipSettings();
-        }
-
-        /// <summary>
-        ///     A custom UI element that is displayed as a tooltip if the user hovers over the taskbar icon.
-        ///     Works only with Vista and above. Accordingly, you should make sure that
-        ///     the <see cref="ToolTipText" /> property is set as well.
-        /// </summary>
-        public static readonly DependencyProperty TrayToolTipProperty = DependencyProperty.Register("TrayToolTip",
-            typeof(UIElement),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null, TrayToolTipPropertyChanged));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="TrayToolTipProperty" />
-        ///     dependency property:<br />
-        ///     A custom UI element that is displayed as a tooltip if the user hovers over the taskbar icon.
-        ///     Works only with Vista and above. Accordingly, you should make sure that
-        ///     the <see cref="ToolTipText" /> property is set as well.
-        /// </summary>
-        [Category(CATEGORY_NAME)]
-        [Description("Custom UI element that is displayed as a tooltip. Only on Vista and above")]
-        public UIElement TrayToolTip
-        {
-            get => (UIElement)this.GetValue(TrayToolTipProperty);
-            set => this.SetValue(TrayToolTipProperty, value);
-        }
-
-        /// <summary>
-        ///     A static callback listener which is being invoked if the
-        ///     <see cref="TrayToolTipProperty" /> dependency property has
-        ///     been changed. Invokes the <see cref="OnTrayToolTipPropertyChanged" />
-        ///     instance method of the changed instance.
-        /// </summary>
-        /// <param name="d">The currently processed owner of the property.</param>
-        /// <param name="e">Provides information about the updated property.</param>
-        private static void TrayToolTipPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var owner = (NotifyIcon)d;
-            owner.OnTrayToolTipPropertyChanged(e);
         }
 
         /// <summary>
@@ -345,41 +1394,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A control that is displayed as a popup when the taskbar icon is clicked.
-        /// </summary>
-        public static readonly DependencyProperty TrayPopupProperty = DependencyProperty.Register("TrayPopup",
-            typeof(UIElement),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null, TrayPopupPropertyChanged));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="TrayPopupProperty" />
-        ///     dependency property:<br />
-        ///     A control that is displayed as a popup when the taskbar icon is clicked.
-        /// </summary>
-        [Category(CATEGORY_NAME)]
-        [Description("Displayed as a Popup if the user clicks on the taskbar icon.")]
-        public UIElement TrayPopup
-        {
-            get => (UIElement)this.GetValue(TrayPopupProperty);
-            set => this.SetValue(TrayPopupProperty, value);
-        }
-
-        /// <summary>
-        ///     A static callback listener which is being invoked if the
-        ///     <see cref="TrayPopupProperty" /> dependency property has
-        ///     been changed. Invokes the <see cref="OnTrayPopupPropertyChanged" />
-        ///     instance method of the changed instance.
-        /// </summary>
-        /// <param name="d">The currently processed owner of the property.</param>
-        /// <param name="e">Provides information about the updated property.</param>
-        private static void TrayPopupPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var owner = (NotifyIcon)d;
-            owner.OnTrayPopupPropertyChanged(e);
-        }
-
-        /// <summary>
         ///     Handles changes of the <see cref="TrayPopupProperty" /> dependency property. As
         ///     WPF internally uses the dependency property system and bypasses the
         ///     <see cref="TrayPopup" /> property wrapper, updates of the property's value
@@ -402,66 +1416,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
             //create a pop
             this.CreatePopup();
-        }
-
-        /// <summary>
-        ///     Defines what mouse events display the context menu.
-        ///     Defaults to <see cref="PopupActivationMode.RightClick" />.
-        /// </summary>
-        public static readonly DependencyProperty MenuActivationProperty = DependencyProperty.Register("MenuActivation",
-            typeof(PopupActivationMode),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(PopupActivationMode.RightClick));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="MenuActivationProperty" />
-        ///     dependency property:<br />
-        ///     Defines what mouse events display the context menu.
-        ///     Defaults to <see cref="PopupActivationMode.RightClick" />.
-        /// </summary>
-        [Category(CATEGORY_NAME)]
-        [Description("Defines what mouse events display the context menu.")]
-        public PopupActivationMode MenuActivation
-        {
-            get => (PopupActivationMode)this.GetValue(MenuActivationProperty);
-            set => this.SetValue(MenuActivationProperty, value);
-        }
-
-        /// <summary>
-        ///     Defines what mouse events trigger the <see cref="TrayPopup" />.
-        ///     Default is <see cref="PopupActivationMode.LeftClick" />.
-        /// </summary>
-        public static readonly DependencyProperty PopupActivationProperty = DependencyProperty.Register("PopupActivation",
-            typeof(PopupActivationMode),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(PopupActivationMode.LeftClick));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="PopupActivationProperty" />
-        ///     dependency property:<br />
-        ///     Defines what mouse events trigger the <see cref="TrayPopup" />.
-        ///     Default is <see cref="PopupActivationMode.LeftClick" />.
-        /// </summary>
-        [Category(CATEGORY_NAME)]
-        [Description("Defines what mouse events display the TaskbarIconPopup.")]
-        public PopupActivationMode PopupActivation
-        {
-            get => (PopupActivationMode)this.GetValue(PopupActivationProperty);
-            set => this.SetValue(PopupActivationProperty, value);
-        }
-
-        /// <summary>
-        ///     A static callback listener which is being invoked if the
-        ///     <see cref="UIElement.VisibilityProperty" /> dependency property has
-        ///     been changed. Invokes the <see cref="OnVisibilityPropertyChanged" />
-        ///     instance method of the changed instance.
-        /// </summary>
-        /// <param name="d">The currently processed owner of the property.</param>
-        /// <param name="e">Provides information about the updated property.</param>
-        private static void VisibilityPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var owner = (NotifyIcon)d;
-            owner.OnVisibilityPropertyChanged(e);
         }
 
         /// <summary>
@@ -513,20 +1467,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A static callback listener which is being invoked if the
-        ///     <see cref="FrameworkElement.DataContextProperty" /> dependency property has
-        ///     been changed. Invokes the <see cref="OnDataContextPropertyChanged" />
-        ///     instance method of the changed instance.
-        /// </summary>
-        /// <param name="d">The currently processed owner of the property.</param>
-        /// <param name="e">Provides information about the updated property.</param>
-        private static void DataContextPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var owner = (NotifyIcon)d;
-            owner.OnDataContextPropertyChanged(e);
-        }
-
-        /// <summary>
         ///     Handles changes of the <see cref="FrameworkElement.DataContextProperty" /> dependency property. As
         ///     WPF internally uses the dependency property system and bypasses the
         ///     <see cref="FrameworkElement.DataContext" /> property wrapper, updates of the property's value
@@ -543,20 +1483,6 @@ namespace Mohammad.Wpf.Windows.Controls
             this.UpdateDataContext(this.TrayPopupResolved, oldValue, newValue);
             this.UpdateDataContext(this.TrayToolTipResolved, oldValue, newValue);
             this.UpdateDataContext(this.ContextMenu, oldValue, newValue);
-        }
-
-        /// <summary>
-        ///     A static callback listener which is being invoked if the
-        ///     <see cref="FrameworkElement.ContextMenuProperty" /> dependency property has
-        ///     been changed. Invokes the <see cref="OnContextMenuPropertyChanged" />
-        ///     instance method of the changed instance.
-        /// </summary>
-        /// <param name="d">The currently processed owner of the property.</param>
-        /// <param name="e">Provides information about the updated property.</param>
-        private static void ContextMenuPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var owner = (NotifyIcon)d;
-            owner.OnContextMenuPropertyChanged(e);
         }
 
         /// <summary>
@@ -583,132 +1509,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     Associates a command that is being executed if the tray icon is being
-        ///     double clicked.
-        /// </summary>
-        public static readonly DependencyProperty DoubleClickCommandProperty = DependencyProperty.Register("DoubleClickCommand",
-            typeof(ICommand),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="DoubleClickCommandProperty" />
-        ///     dependency property:<br />
-        ///     Associates a command that is being executed if the tray icon is being
-        ///     double clicked.
-        /// </summary>
-        public ICommand DoubleClickCommand
-        {
-            get => (ICommand)this.GetValue(DoubleClickCommandProperty);
-            set => this.SetValue(DoubleClickCommandProperty, value);
-        }
-
-        /// <summary>
-        ///     Command parameter for the <see cref="DoubleClickCommand" />.
-        /// </summary>
-        public static readonly DependencyProperty DoubleClickCommandParameterProperty = DependencyProperty.Register("DoubleClickCommandParameter",
-            typeof(object),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="DoubleClickCommandParameterProperty" />
-        ///     dependency property:<br />
-        ///     Command parameter for the <see cref="DoubleClickCommand" />.
-        /// </summary>
-        public object DoubleClickCommandParameter
-        {
-            get => this.GetValue(DoubleClickCommandParameterProperty);
-            set => this.SetValue(DoubleClickCommandParameterProperty, value);
-        }
-
-        /// <summary>
-        ///     The target of the command that is fired if the notify icon is double clicked.
-        /// </summary>
-        public static readonly DependencyProperty DoubleClickCommandTargetProperty = DependencyProperty.Register("DoubleClickCommandTarget",
-            typeof(IInputElement),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="DoubleClickCommandTargetProperty" />
-        ///     dependency property:<br />
-        ///     The target of the command that is fired if the notify icon is double clicked.
-        /// </summary>
-        public IInputElement DoubleClickCommandTarget
-        {
-            get => (IInputElement)this.GetValue(DoubleClickCommandTargetProperty);
-            set => this.SetValue(DoubleClickCommandTargetProperty, value);
-        }
-
-        /// <summary>
-        ///     Associates a command that is being executed if the tray icon is being
-        ///     double clicked.
-        /// </summary>
-        public static readonly DependencyProperty LeftClickCommandProperty = DependencyProperty.Register("LeftClickCommand",
-            typeof(ICommand),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="LeftClickCommandProperty" />
-        ///     dependency property:<br />
-        ///     Associates a command that is being executed if the tray icon is being
-        ///     double clicked.
-        /// </summary>
-        public ICommand LeftClickCommand
-        {
-            get => (ICommand)this.GetValue(LeftClickCommandProperty);
-            set => this.SetValue(LeftClickCommandProperty, value);
-        }
-
-        /// <summary>
-        ///     Command parameter for the <see cref="LeftClickCommand" />.
-        /// </summary>
-        public static readonly DependencyProperty LeftClickCommandParameterProperty = DependencyProperty.Register("LeftClickCommandParameter",
-            typeof(object),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="LeftClickCommandParameterProperty" />
-        ///     dependency property:<br />
-        ///     Command parameter for the <see cref="LeftClickCommand" />.
-        /// </summary>
-        public object LeftClickCommandParameter
-        {
-            get => this.GetValue(LeftClickCommandParameterProperty);
-            set => this.SetValue(LeftClickCommandParameterProperty, value);
-        }
-
-        /// <summary>
-        ///     The target of the command that is fired if the notify icon is clicked.
-        /// </summary>
-        public static readonly DependencyProperty LeftClickCommandTargetProperty = DependencyProperty.Register("LeftClickCommandTarget",
-            typeof(IInputElement),
-            typeof(NotifyIcon),
-            new FrameworkPropertyMetadata(null));
-
-        /// <summary>
-        ///     A property wrapper for the <see cref="LeftClickCommandTargetProperty" />
-        ///     dependency property:<br />
-        ///     The target of the command that is fired if the notify icon is clicked.
-        /// </summary>
-        public IInputElement LeftClickCommandTarget
-        {
-            get => (IInputElement)this.GetValue(LeftClickCommandTargetProperty);
-            set => this.SetValue(LeftClickCommandTargetProperty, value);
-        }
-
-        /// <summary>
-        ///     TrayLeftMouseDown Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayLeftMouseDownEvent = EventManager.RegisterRoutedEvent("TrayLeftMouseDown",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Occurs when the user presses the left mouse button.
         /// </summary>
         [Category(CATEGORY_NAME)]
@@ -717,39 +1517,6 @@ namespace Mohammad.Wpf.Windows.Controls
             add => this.AddHandler(TrayLeftMouseDownEvent, value);
             remove => this.RemoveHandler(TrayLeftMouseDownEvent, value);
         }
-
-        /// <summary>
-        ///     A helper method to raise the TrayLeftMouseDown event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayLeftMouseDownEvent()
-        {
-            var args = RaiseTrayLeftMouseDownEvent(this);
-            return args;
-        }
-
-        /// <summary>
-        ///     A static helper method to raise the TrayLeftMouseDown event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayLeftMouseDownEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayLeftMouseDownEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayRightMouseDown Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayRightMouseDownEvent = EventManager.RegisterRoutedEvent("TrayRightMouseDown",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
 
         /// <summary>
         ///     Occurs when the presses the right mouse button.
@@ -761,35 +1528,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the TrayRightMouseDown event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayRightMouseDownEvent() => RaiseTrayRightMouseDownEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayRightMouseDown event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayRightMouseDownEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayRightMouseDownEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayMiddleMouseDown Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayMiddleMouseDownEvent = EventManager.RegisterRoutedEvent("TrayMiddleMouseDown",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Occurs when the user presses the middle mouse button.
         /// </summary>
         public event RoutedEventHandler TrayMiddleMouseDown
@@ -797,35 +1535,6 @@ namespace Mohammad.Wpf.Windows.Controls
             add => this.AddHandler(TrayMiddleMouseDownEvent, value);
             remove => this.RemoveHandler(TrayMiddleMouseDownEvent, value);
         }
-
-        /// <summary>
-        ///     A helper method to raise the TrayMiddleMouseDown event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayMiddleMouseDownEvent() => RaiseTrayMiddleMouseDownEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayMiddleMouseDown event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayMiddleMouseDownEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayMiddleMouseDownEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayLeftMouseUp Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayLeftMouseUpEvent = EventManager.RegisterRoutedEvent("TrayLeftMouseUp",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
 
         /// <summary>
         ///     Occurs when the user releases the left mouse button.
@@ -837,35 +1546,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the TrayLeftMouseUp event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayLeftMouseUpEvent() => RaiseTrayLeftMouseUpEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayLeftMouseUp event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayLeftMouseUpEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayLeftMouseUpEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayRightMouseUp Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayRightMouseUpEvent = EventManager.RegisterRoutedEvent("TrayRightMouseUp",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Occurs when the user releases the right mouse button.
         /// </summary>
         public event RoutedEventHandler TrayRightMouseUp
@@ -873,35 +1553,6 @@ namespace Mohammad.Wpf.Windows.Controls
             add => this.AddHandler(TrayRightMouseUpEvent, value);
             remove => this.RemoveHandler(TrayRightMouseUpEvent, value);
         }
-
-        /// <summary>
-        ///     A helper method to raise the TrayRightMouseUp event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayRightMouseUpEvent() => RaiseTrayRightMouseUpEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayRightMouseUp event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayRightMouseUpEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayRightMouseUpEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayMiddleMouseUp Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayMiddleMouseUpEvent = EventManager.RegisterRoutedEvent("TrayMiddleMouseUp",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
 
         /// <summary>
         ///     Occurs when the user releases the middle mouse button.
@@ -913,35 +1564,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the TrayMiddleMouseUp event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayMiddleMouseUpEvent() => RaiseTrayMiddleMouseUpEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayMiddleMouseUp event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayMiddleMouseUpEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayMiddleMouseUpEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayMouseDoubleClick Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayMouseDoubleClickEvent = EventManager.RegisterRoutedEvent("TrayMouseDoubleClick",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Occurs when the user double-clicks the taskbar icon.
         /// </summary>
         public event RoutedEventHandler TrayMouseDoubleClick
@@ -949,40 +1571,6 @@ namespace Mohammad.Wpf.Windows.Controls
             add => this.AddHandler(TrayMouseDoubleClickEvent, value);
             remove => this.RemoveHandler(TrayMouseDoubleClickEvent, value);
         }
-
-        /// <summary>
-        ///     A helper method to raise the TrayMouseDoubleClick event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayMouseDoubleClickEvent()
-        {
-            var args = RaiseTrayMouseDoubleClickEvent(this);
-            this.DoubleClickCommand.ExecuteIfEnabled(this.DoubleClickCommandParameter, this.DoubleClickCommandTarget ?? this);
-            return args;
-        }
-
-        /// <summary>
-        ///     A static helper method to raise the TrayMouseDoubleClick event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayMouseDoubleClickEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayMouseDoubleClickEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayMouseMove Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayMouseMoveEvent = EventManager.RegisterRoutedEvent("TrayMouseMove",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
 
         /// <summary>
         ///     Occurs when the user moves the mouse over the taskbar icon.
@@ -994,35 +1582,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the TrayMouseMove event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayMouseMoveEvent() => RaiseTrayMouseMoveEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayMouseMove event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayMouseMoveEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayMouseMoveEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayBalloonTipShown Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayBalloonTipShownEvent = EventManager.RegisterRoutedEvent("TrayBalloonTipShown",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Occurs when a balloon ToolTip is displayed.
         /// </summary>
         public event RoutedEventHandler TrayBalloonTipShown
@@ -1030,35 +1589,6 @@ namespace Mohammad.Wpf.Windows.Controls
             add => this.AddHandler(TrayBalloonTipShownEvent, value);
             remove => this.RemoveHandler(TrayBalloonTipShownEvent, value);
         }
-
-        /// <summary>
-        ///     A helper method to raise the TrayBalloonTipShown event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayBalloonTipShownEvent() => RaiseTrayBalloonTipShownEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayBalloonTipShown event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayBalloonTipShownEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayBalloonTipShownEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayBalloonTipClosed Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayBalloonTipClosedEvent = EventManager.RegisterRoutedEvent("TrayBalloonTipClosed",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
 
         /// <summary>
         ///     Occurs when a balloon ToolTip was closed.
@@ -1070,35 +1600,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the TrayBalloonTipClosed event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayBalloonTipClosedEvent() => RaiseTrayBalloonTipClosedEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayBalloonTipClosed event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayBalloonTipClosedEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayBalloonTipClosedEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayBalloonTipClicked Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayBalloonTipClickedEvent = EventManager.RegisterRoutedEvent("TrayBalloonTipClicked",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Occurs when the user clicks on a balloon ToolTip.
         /// </summary>
         public event RoutedEventHandler TrayBalloonTipClicked
@@ -1108,70 +1609,12 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the TrayBalloonTipClicked event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayBalloonTipClickedEvent() => RaiseTrayBalloonTipClickedEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayBalloonTipClicked event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayBalloonTipClickedEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayBalloonTipClickedEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayContextMenuOpen Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayContextMenuOpenEvent = EventManager.RegisterRoutedEvent("TrayContextMenuOpen",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     PreviewTrayContextMenuOpen Routed Event
-        /// </summary>
-        public static readonly RoutedEvent PreviewTrayContextMenuOpenEvent = EventManager.RegisterRoutedEvent("PreviewTrayContextMenuOpen",
-            RoutingStrategy.Tunnel,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Bubbled event that occurs when the context menu of the taskbar icon is being displayed.
         /// </summary>
         public event RoutedEventHandler TrayContextMenuOpen
         {
             add => this.AddHandler(TrayContextMenuOpenEvent, value);
             remove => this.RemoveHandler(TrayContextMenuOpenEvent, value);
-        }
-
-        /// <summary>
-        ///     A helper method to raise the TrayContextMenuOpen event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayContextMenuOpenEvent() => RaiseTrayContextMenuOpenEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayContextMenuOpen event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayContextMenuOpenEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayContextMenuOpenEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
         }
 
         /// <summary>
@@ -1184,70 +1627,12 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the PreviewTrayContextMenuOpen event.
-        /// </summary>
-        protected RoutedEventArgs RaisePreviewTrayContextMenuOpenEvent() => RaisePreviewTrayContextMenuOpenEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the PreviewTrayContextMenuOpen event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaisePreviewTrayContextMenuOpenEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = PreviewTrayContextMenuOpenEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayPopupOpen Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayPopupOpenEvent = EventManager.RegisterRoutedEvent("TrayPopupOpen",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     PreviewTrayPopupOpen Routed Event
-        /// </summary>
-        public static readonly RoutedEvent PreviewTrayPopupOpenEvent = EventManager.RegisterRoutedEvent("PreviewTrayPopupOpen",
-            RoutingStrategy.Tunnel,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Bubbled event that occurs when the custom popup is being opened.
         /// </summary>
         public event RoutedEventHandler TrayPopupOpen
         {
             add => this.AddHandler(TrayPopupOpenEvent, value);
             remove => this.RemoveHandler(TrayPopupOpenEvent, value);
-        }
-
-        /// <summary>
-        ///     A helper method to raise the TrayPopupOpen event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayPopupOpenEvent() => RaiseTrayPopupOpenEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayPopupOpen event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayPopupOpenEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayPopupOpenEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
         }
 
         /// <summary>
@@ -1260,70 +1645,12 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the PreviewTrayPopupOpen event.
-        /// </summary>
-        protected RoutedEventArgs RaisePreviewTrayPopupOpenEvent() => RaisePreviewTrayPopupOpenEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the PreviewTrayPopupOpen event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaisePreviewTrayPopupOpenEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = PreviewTrayPopupOpenEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayToolTipOpen Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayToolTipOpenEvent = EventManager.RegisterRoutedEvent("TrayToolTipOpen",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     PreviewTrayToolTipOpen Routed Event
-        /// </summary>
-        public static readonly RoutedEvent PreviewTrayToolTipOpenEvent = EventManager.RegisterRoutedEvent("PreviewTrayToolTipOpen",
-            RoutingStrategy.Tunnel,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Bubbled event that occurs when the custom ToolTip is being displayed.
         /// </summary>
         public event RoutedEventHandler TrayToolTipOpen
         {
             add => this.AddHandler(TrayToolTipOpenEvent, value);
             remove => this.RemoveHandler(TrayToolTipOpenEvent, value);
-        }
-
-        /// <summary>
-        ///     A helper method to raise the TrayToolTipOpen event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayToolTipOpenEvent() => RaiseTrayToolTipOpenEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayToolTipOpen event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayToolTipOpenEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayToolTipOpenEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
         }
 
         /// <summary>
@@ -1336,43 +1663,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the PreviewTrayToolTipOpen event.
-        /// </summary>
-        protected RoutedEventArgs RaisePreviewTrayToolTipOpenEvent() => RaisePreviewTrayToolTipOpenEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the PreviewTrayToolTipOpen event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaisePreviewTrayToolTipOpenEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = PreviewTrayToolTipOpenEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     TrayToolTipClose Routed Event
-        /// </summary>
-        public static readonly RoutedEvent TrayToolTipCloseEvent = EventManager.RegisterRoutedEvent("TrayToolTipClose",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     PreviewTrayToolTipClose Routed Event
-        /// </summary>
-        public static readonly RoutedEvent PreviewTrayToolTipCloseEvent = EventManager.RegisterRoutedEvent("PreviewTrayToolTipClose",
-            RoutingStrategy.Tunnel,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
         ///     Bubbled event that occurs when a custom tooltip is being closed.
         /// </summary>
         public event RoutedEventHandler TrayToolTipClose
@@ -1382,302 +1672,12 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     A helper method to raise the TrayToolTipClose event.
-        /// </summary>
-        protected RoutedEventArgs RaiseTrayToolTipCloseEvent() => RaiseTrayToolTipCloseEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the TrayToolTipClose event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseTrayToolTipCloseEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = TrayToolTipCloseEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
         ///     Tunneled event that occurs when a custom tooltip is being closed.
         /// </summary>
         public event RoutedEventHandler PreviewTrayToolTipClose
         {
             add => this.AddHandler(PreviewTrayToolTipCloseEvent, value);
             remove => this.RemoveHandler(PreviewTrayToolTipCloseEvent, value);
-        }
-
-        /// <summary>
-        ///     A helper method to raise the PreviewTrayToolTipClose event.
-        /// </summary>
-        protected RoutedEventArgs RaisePreviewTrayToolTipCloseEvent() => RaisePreviewTrayToolTipCloseEvent(this);
-
-        /// <summary>
-        ///     A static helper method to raise the PreviewTrayToolTipClose event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaisePreviewTrayToolTipCloseEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = PreviewTrayToolTipCloseEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     PopupOpened Attached Routed Event
-        /// </summary>
-        public static readonly RoutedEvent PopupOpenedEvent = EventManager.RegisterRoutedEvent("PopupOpened",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     Adds a handler for the PopupOpened attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be added</param>
-        public static void AddPopupOpenedHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.AddHandler(element, PopupOpenedEvent, handler);
-        }
-
-        /// <summary>
-        ///     Removes a handler for the PopupOpened attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be removed</param>
-        public static void RemovePopupOpenedHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.RemoveHandler(element, PopupOpenedEvent, handler);
-        }
-
-        /// <summary>
-        ///     A static helper method to raise the PopupOpened event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaisePopupOpenedEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = PopupOpenedEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     ToolTipOpened Attached Routed Event
-        /// </summary>
-        public static readonly RoutedEvent ToolTipOpenedEvent = EventManager.RegisterRoutedEvent("ToolTipOpened",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     Adds a handler for the ToolTipOpened attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be added</param>
-        public static void AddToolTipOpenedHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.AddHandler(element, ToolTipOpenedEvent, handler);
-        }
-
-        /// <summary>
-        ///     Removes a handler for the ToolTipOpened attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be removed</param>
-        public static void RemoveToolTipOpenedHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.RemoveHandler(element, ToolTipOpenedEvent, handler);
-        }
-
-        /// <summary>
-        ///     A static helper method to raise the ToolTipOpened event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseToolTipOpenedEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = ToolTipOpenedEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     ToolTipClose Attached Routed Event
-        /// </summary>
-        public static readonly RoutedEvent ToolTipCloseEvent = EventManager.RegisterRoutedEvent("ToolTipClose",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     Adds a handler for the ToolTipClose attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be added</param>
-        public static void AddToolTipCloseHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.AddHandler(element, ToolTipCloseEvent, handler);
-        }
-
-        /// <summary>
-        ///     Removes a handler for the ToolTipClose attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be removed</param>
-        public static void RemoveToolTipCloseHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.RemoveHandler(element, ToolTipCloseEvent, handler);
-        }
-
-        /// <summary>
-        ///     A static helper method to raise the ToolTipClose event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        internal static RoutedEventArgs RaiseToolTipCloseEvent(DependencyObject target)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs {RoutedEvent = ToolTipCloseEvent};
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     BalloonShowing Attached Routed Event
-        /// </summary>
-        public static readonly RoutedEvent BalloonShowingEvent = EventManager.RegisterRoutedEvent("BalloonShowing",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     Adds a handler for the BalloonShowing attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be added</param>
-        public static void AddBalloonShowingHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.AddHandler(element, BalloonShowingEvent, handler);
-        }
-
-        /// <summary>
-        ///     Removes a handler for the BalloonShowing attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be removed</param>
-        public static void RemoveBalloonShowingHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.RemoveHandler(element, BalloonShowingEvent, handler);
-        }
-
-        /// <summary>
-        ///     A static helper method to raise the BalloonShowing event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        /// <param name="source">
-        ///     The <see cref="NotifyIcon" /> instance that manages the balloon.
-        /// </param>
-        internal static RoutedEventArgs RaiseBalloonShowingEvent(DependencyObject target, NotifyIcon source)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs(BalloonShowingEvent, source);
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     BalloonClosing Attached Routed Event
-        /// </summary>
-        public static readonly RoutedEvent BalloonClosingEvent = EventManager.RegisterRoutedEvent("BalloonClosing",
-            RoutingStrategy.Bubble,
-            typeof(RoutedEventHandler),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     Adds a handler for the BalloonClosing attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be added</param>
-        public static void AddBalloonClosingHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.AddHandler(element, BalloonClosingEvent, handler);
-        }
-
-        /// <summary>
-        ///     Removes a handler for the BalloonClosing attached event
-        /// </summary>
-        /// <param name="element">UIElement or ContentElement that listens to the event</param>
-        /// <param name="handler">Event handler to be removed</param>
-        public static void RemoveBalloonClosingHandler(DependencyObject element, RoutedEventHandler handler)
-        {
-            RoutedEventHelper.RemoveHandler(element, BalloonClosingEvent, handler);
-        }
-
-        /// <summary>
-        ///     A static helper method to raise the BalloonClosing event on a target element.
-        /// </summary>
-        /// <param name="target">UIElement or ContentElement on which to raise the event</param>
-        /// <param name="source">
-        ///     The <see cref="NotifyIcon" /> instance that manages the balloon.
-        /// </param>
-        internal static RoutedEventArgs RaiseBalloonClosingEvent(DependencyObject target, NotifyIcon source)
-        {
-            if (target == null)
-            {
-                return null;
-            }
-
-            var args = new RoutedEventArgs(BalloonClosingEvent, source);
-            RoutedEventHelper.RaiseEvent(target, args);
-            return args;
-        }
-
-        /// <summary>
-        ///     An attached property that is assigned to
-        /// </summary>
-        public static readonly DependencyProperty ParentTaskbarIconProperty = DependencyProperty.RegisterAttached("ParentTaskbarIcon",
-            typeof(NotifyIcon),
-            typeof(NotifyIcon));
-
-        /// <summary>
-        ///     Gets the ParentTaskbarIcon property.  This dependency property
-        ///     indicates ....
-        /// </summary>
-        public static NotifyIcon GetParentTaskbarIcon(DependencyObject d) => (NotifyIcon)d.GetValue(ParentTaskbarIconProperty);
-
-        /// <summary>
-        ///     Sets the ParentTaskbarIcon property.  This dependency property
-        ///     indicates ....
-        /// </summary>
-        public static void SetParentTaskbarIcon(DependencyObject d, NotifyIcon value)
-        {
-            d.SetValue(ParentTaskbarIconProperty, value);
         }
     }
 }

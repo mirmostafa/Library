@@ -1,7 +1,4 @@
-﻿
-
-
-using System.Reflection;
+﻿using System.Reflection;
 
 [assembly: Obfuscation(Feature = "Apply to type * when public and enum: renaming", Exclude = false)]
 [assembly: Obfuscation(Feature = "Apply to type * when internal: renaming", Exclude = true)]

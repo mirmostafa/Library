@@ -25,6 +25,16 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(LibCheckBox),
             new PropertyMetadata(default(string)));
 
+        public LibCheckBox()
+        {
+            this.InitializeComponent();
+            this.MouseLeftButtonUp += (_, e) =>
+            {
+                this.IsChecked = !(this.IsChecked ?? true);
+                e.Handled = true;
+            };
+        }
+
         public bool AutoFlick
         {
             get => (bool)this.GetValue(AutoFlickProperty);
@@ -62,16 +72,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         public FrameworkElement FlickerTextBlock => this.TextBlock;
-
-        public LibCheckBox()
-        {
-            this.InitializeComponent();
-            this.MouseLeftButtonUp += (_, e) =>
-            {
-                this.IsChecked = !(this.IsChecked ?? true);
-                e.Handled = true;
-            };
-        }
 
         protected virtual void OnIsCheckedChanged()
         {

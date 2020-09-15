@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,8 +8,8 @@ namespace Mohammad.Collections.Hierarchy
 {
     public class ReadOnlyTreeByIdComplex<TItem, TParent> : IEnumerable<TItem>, IReadOnlyTreeByIdComplex<TItem, TParent>
     {
-        protected List<NodeByIdComplex<TItem, TParent>> Nodes { get; }
         public ReadOnlyTreeByIdComplex(List<NodeByIdComplex<TItem, TParent>> nodes) => this.Nodes = nodes;
+        protected List<NodeByIdComplex<TItem, TParent>> Nodes { get; }
 
         public IEnumerator<TItem> GetEnumerator()
         {

@@ -22,6 +22,13 @@ namespace Mohammad.Wpf.Windows.Controls
         private bool _IsDialog;
         private LibraryCommonPage _Page;
 
+        public LibraryCommonDialog()
+        {
+            this.UseAnimation = true;
+            this.InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        }
+
         public bool UseAnimation
         {
             get => (bool)this.GetValue(UseAnimationProperty);
@@ -131,13 +138,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => this.CommandBar.GetCommandByCommandName("OkCommand").Content;
             set => this.CommandBar.GetCommandByCommandName("OkCommand").Content = value;
-        }
-
-        public LibraryCommonDialog()
-        {
-            this.UseAnimation = true;
-            this.InitializeComponent();
-            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         protected override void OnInitializingStatus(out ProgressBar progressBar, out StatusBarItem statusBarItem, out ISimpleLogger logger)

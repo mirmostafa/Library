@@ -12,6 +12,11 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
             typeof(WideText14Tile),
             new PropertyMetadata(default(string)));
 
+        public WideText14Tile()
+        {
+            this.InitializeComponent();
+        }
+
         public string Body
         {
             get => (string)this.GetValue(BodyProperty);
@@ -32,11 +37,6 @@ namespace Mohammad.Wpf.Windows.Controls.Tiles
         {
             get => this.textBlockBadge.Text;
             set => this.textBlockBadge.Text = value;
-        }
-
-        public WideText14Tile()
-        {
-            this.InitializeComponent();
         }
 
         protected override void HookCommand()

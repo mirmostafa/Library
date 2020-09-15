@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using Mohammad.Primitives;
 
 namespace Mohammad.AddIns.Contacts

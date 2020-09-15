@@ -5,6 +5,11 @@
     /// </summary>
     public partial class SquareText02Tile
     {
+        public SquareText02Tile()
+        {
+            this.InitializeComponent();
+        }
+
         public string Header
         {
             get => this.textBlock1.Text;
@@ -15,11 +20,6 @@
         {
             get => this.textBlock2.Text;
             set => this.textBlock2.Text = value;
-        }
-
-        public SquareText02Tile()
-        {
-            this.InitializeComponent();
         }
     }
 }

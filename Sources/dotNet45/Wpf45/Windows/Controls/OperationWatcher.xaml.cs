@@ -42,6 +42,14 @@ namespace Mohammad.Wpf.Windows.Controls
         private MultiStepOperation _Operation;
         private Visibility _StatusBarVisibility = Visibility.Visible;
 
+        public OperationWatcher()
+        {
+            this._UiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+            this.IsToolBarVisible = true;
+            this.InitializeComponent();
+            this.DataContext = this;
+        }
+
         public bool AutoScroll
         {
             get => (bool)this.GetValue(AutoScrollProperty);
@@ -148,14 +156,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 this._StatusBarVisibility = value;
                 this.OnPropertyChanged();
             }
-        }
-
-        public OperationWatcher()
-        {
-            this._UiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            this.IsToolBarVisible = true;
-            this.InitializeComponent();
-            this.DataContext = this;
         }
 
         public void Log(object text,
@@ -279,6 +279,11 @@ namespace Mohammad.Wpf.Windows.Controls
             thumbnailClipSetter(this.MainOperationProgressBar);
         }
 
+        internal void WatchLogger(ILogger logger)
+        {
+            logger.Logging += this.logger_OnLogging;
+        }
+
         private void Operation_OnMultiStepErrorOccurred(object sender, MultiStepErrorOccurredEventArgs e)
         {
             this.Log(e.Exception.GetBaseException().Message, e.Log, e.Sender, LogLevel.Error);
@@ -378,11 +383,6 @@ namespace Mohammad.Wpf.Windows.Controls
         private void logger_OnLogging(object sender, LogEventArgs e)
         {
             this.Log(e.Log, e.MoreInfo, e.Sender, e.Level, e.MemberName, e.SourceFilePath, e.SourceLineNumber);
-        }
-
-        internal void WatchLogger(ILogger logger)
-        {
-            logger.Logging += this.logger_OnLogging;
         }
     }
 }

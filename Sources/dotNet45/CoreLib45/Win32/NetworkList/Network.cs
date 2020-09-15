@@ -1,6 +1,3 @@
-
-
-
 using System;
 using Mohammad.Win32.Interop.NetworkList;
 
@@ -18,6 +15,8 @@ namespace Mohammad.Win32.NetworkList
     public class Network
     {
         private readonly INetwork network;
+
+        internal Network(INetwork network) => this.network = network;
 
         /// <summary>
         ///     Gets or sets the category of a network. The
@@ -159,7 +158,5 @@ namespace Mohammad.Win32.NetworkList
         ///     A <see cref="System.Guid" /> value.
         /// </value>
         public Guid NetworkId => this.network.GetNetworkId();
-
-        internal Network(INetwork network) => this.network = network;
     }
 }

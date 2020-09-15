@@ -1,7 +1,4 @@
-﻿
-
-
-namespace Mohammad.Constants
+﻿namespace Mohammad.Constants
 {
     public class RegexPatterns
     {

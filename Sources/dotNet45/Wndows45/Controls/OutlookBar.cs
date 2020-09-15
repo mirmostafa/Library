@@ -14,69 +14,6 @@ namespace Mohammad.Win.Controls
     /// </summary>
     public partial class OutlookBar : UserControl
     {
-        public class OutlookBarButtons : CollectionBase
-        {
-            //protected ArrayList List;
-            protected OutlookBar parent;
-            public OutlookBar Parent => this.parent;
-            public OutlookBarButton this[int index] => (OutlookBarButton)this.List[index];
-            internal OutlookBarButtons(OutlookBar parent) => this.parent = parent;
-
-            public void Add(OutlookBarButton item)
-            {
-                if (this.List.Count == 0)
-                {
-                    this.Parent.SelectedButton = item;
-                }
-
-                this.List.Add(item);
-                item.Parent = this.Parent;
-                this.Parent.ButtonlistChanged();
-            }
-
-            public OutlookBarButton Add(string text, Image image)
-            {
-                var b = new OutlookBarButton(this.parent);
-                b.Text = text;
-                b.Image = image;
-                this.Add(b);
-                return b;
-            }
-
-            public OutlookBarButton Add(string text) => this.Add(text, null);
-            public OutlookBarButton Add() => this.Add();
-
-            public void Remove(OutlookBarButton button)
-            {
-                this.List.Remove(button);
-                this.Parent.ButtonlistChanged();
-            }
-
-            public int IndexOf(object value) => this.List.IndexOf(value);
-
-            protected override void OnInsertComplete(int index, object value)
-            {
-                var b = (OutlookBarButton)value;
-                b.Parent = this.parent;
-                this.Parent.ButtonlistChanged();
-                base.OnInsertComplete(index, value);
-            }
-
-            protected override void OnSetComplete(int index, object oldValue, object newValue)
-            {
-                var b = (OutlookBarButton)newValue;
-                b.Parent = this.parent;
-                this.Parent.ButtonlistChanged();
-                base.OnSetComplete(index, oldValue, newValue);
-            }
-
-            protected override void OnClearComplete()
-            {
-                this.Parent.ButtonlistChanged();
-                base.OnClearComplete();
-            }
-        }
-
         /// <summary>
         ///     property to set the buttonHeigt
         ///     default is 30
@@ -101,9 +38,22 @@ namespace Mohammad.Win.Controls
         protected int hoveringButtonIndex = -1;
 
         /// <summary>
+        ///     isResizing is used as a signal, so this method is not called recusively
+        ///     this prevents a stack overflow
+        /// </summary>
+        private bool isResizing;
+
+        /// <summary>
         ///     this variable remembers which button is currently selected
         /// </summary>
         protected OutlookBarButton selectedButton;
+
+        public OutlookBar()
+        {
+            this.InitializeComponent();
+            this.buttons = new OutlookBarButtons(this);
+            this.buttonHeight = 30; // set default to 30
+        }
 
         [Description("Specifies the height of each button on the OutlookBar")]
         [Category("Layout")]
@@ -196,25 +146,21 @@ namespace Mohammad.Win.Controls
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public OutlookBarButtons Buttons => this.buttons;
 
-        public delegate void ButtonClickEventHandler(object sender, ButtonClickEventArgs e);
-
-        public new event ButtonClickEventHandler Click;
-
-        [Serializable]
-        public class ButtonClickEventArgs : MouseEventArgs
+        /// <summary>
+        ///     returns the button given the coordinates relative to the Outlookbar control
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public OutlookBarButton HitTest(int x, int y)
         {
-            public readonly OutlookBarButton SelectedButton;
+            var index = (y - 1) / (this.buttonHeight + 1);
+            if (index >= 0 && index < this.buttons.Count)
+            {
+                return this.buttons[index];
+            }
 
-            public ButtonClickEventArgs(OutlookBarButton button, MouseEventArgs evt)
-                : base(evt.Button, evt.Clicks, evt.X, evt.Y, evt.Delta)
-                => this.SelectedButton = button;
-        }
-
-        public OutlookBar()
-        {
-            this.InitializeComponent();
-            this.buttons = new OutlookBarButtons(this);
-            this.buttonHeight = 30; // set default to 30
+            return null;
         }
 
         private void PaintSelectedButton(OutlookBarButton prevButton, OutlookBarButton newButton)
@@ -250,23 +196,6 @@ namespace Mohammad.Win.Controls
         }
 
         /// <summary>
-        ///     returns the button given the coordinates relative to the Outlookbar control
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public OutlookBarButton HitTest(int x, int y)
-        {
-            var index = (y - 1) / (this.buttonHeight + 1);
-            if (index >= 0 && index < this.buttons.Count)
-            {
-                return this.buttons[index];
-            }
-
-            return null;
-        }
-
-        /// <summary>
         ///     this function will setup the control to cope with changes in the buttonlist
         ///     that is, addition and removal of buttons
         /// </summary>
@@ -279,12 +208,6 @@ namespace Mohammad.Win.Controls
 
             this.Invalidate();
         }
-
-        /// <summary>
-        ///     isResizing is used as a signal, so this method is not called recusively
-        ///     this prevents a stack overflow
-        /// </summary>
-        private bool isResizing;
 
         private void OutlookBar_Load(object sender, EventArgs e)
         {
@@ -435,6 +358,83 @@ namespace Mohammad.Win.Controls
                 }
             }
         }
+
+        public new event ButtonClickEventHandler Click;
+
+        public delegate void ButtonClickEventHandler(object sender, ButtonClickEventArgs e);
+
+        public class OutlookBarButtons : CollectionBase
+        {
+            //protected ArrayList List;
+            protected OutlookBar parent;
+            internal OutlookBarButtons(OutlookBar parent) => this.parent = parent;
+            public OutlookBar Parent => this.parent;
+            public OutlookBarButton this[int index] => (OutlookBarButton)this.List[index];
+
+            public void Add(OutlookBarButton item)
+            {
+                if (this.List.Count == 0)
+                {
+                    this.Parent.SelectedButton = item;
+                }
+
+                this.List.Add(item);
+                item.Parent = this.Parent;
+                this.Parent.ButtonlistChanged();
+            }
+
+            public OutlookBarButton Add(string text, Image image)
+            {
+                var b = new OutlookBarButton(this.parent);
+                b.Text = text;
+                b.Image = image;
+                this.Add(b);
+                return b;
+            }
+
+            public OutlookBarButton Add(string text) => this.Add(text, null);
+            public OutlookBarButton Add() => this.Add();
+
+            public void Remove(OutlookBarButton button)
+            {
+                this.List.Remove(button);
+                this.Parent.ButtonlistChanged();
+            }
+
+            public int IndexOf(object value) => this.List.IndexOf(value);
+
+            protected override void OnInsertComplete(int index, object value)
+            {
+                var b = (OutlookBarButton)value;
+                b.Parent = this.parent;
+                this.Parent.ButtonlistChanged();
+                base.OnInsertComplete(index, value);
+            }
+
+            protected override void OnSetComplete(int index, object oldValue, object newValue)
+            {
+                var b = (OutlookBarButton)newValue;
+                b.Parent = this.parent;
+                this.Parent.ButtonlistChanged();
+                base.OnSetComplete(index, oldValue, newValue);
+            }
+
+            protected override void OnClearComplete()
+            {
+                this.Parent.ButtonlistChanged();
+                base.OnClearComplete();
+            }
+        }
+
+        [Serializable]
+        public class ButtonClickEventArgs : MouseEventArgs
+        {
+            public readonly OutlookBarButton SelectedButton;
+
+            public ButtonClickEventArgs(OutlookBarButton button, MouseEventArgs evt)
+                : base(evt.Button, evt.Clicks, evt.X, evt.Y, evt.Delta)
+                => this.SelectedButton = button;
+        }
     }
 
     public class OutlookBarButton // : IComponent
@@ -444,6 +444,18 @@ namespace Mohammad.Win.Controls
         protected OutlookBar parent;
         protected object tag;
         protected string text;
+
+        public OutlookBarButton()
+        {
+            this.parent = new OutlookBar(); // set it to a dummy outlookbar control
+            this.text = "";
+        }
+
+        public OutlookBarButton(OutlookBar parent)
+        {
+            this.parent = parent;
+            this.text = "";
+        }
 
         [Description("Indicates wether the button is enabled")]
         [Category("Behavior")]
@@ -493,18 +505,6 @@ namespace Mohammad.Win.Controls
 
         public int Height => this.parent == null ? 30 : this.parent.ButtonHeight;
         public int Width => this.parent == null ? 60 : this.parent.Width - 2;
-
-        public OutlookBarButton()
-        {
-            this.parent = new OutlookBar(); // set it to a dummy outlookbar control
-            this.text = "";
-        }
-
-        public OutlookBarButton(OutlookBar parent)
-        {
-            this.parent = parent;
-            this.text = "";
-        }
 
         /// <summary>
         ///     the outlook button will paint itself on its container (the OutlookBar)

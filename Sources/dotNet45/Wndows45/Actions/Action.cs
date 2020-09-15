@@ -16,7 +16,37 @@ namespace Mohammad.Win.Actions
     [StandardAction]
     public class Action : Component, IPermissionalControl
     {
+        private readonly EventHandler checkStateChangedEventHandler;
+        private readonly EventHandler clickEventHandler;
+
+        private readonly List<Component> targets;
+
+        private bool _AutoCheck;
+        private bool _enabled;
+        private string _text;
         private ActionList actionList;
+        private CheckState checkState;
+        private Image image;
+        private Keys shortcutKeys;
+        private string toolTipText;
+        private bool visible;
+
+        /// <summary>
+        ///     Creates a new instance
+        /// </summary>
+        public Action()
+        {
+            this.targets = new List<Component>();
+            this._enabled = true;
+            this._text = string.Empty;
+            this.WorkingState = ActionWorkingState.Listening;
+            this.shortcutKeys = Keys.None;
+            this.toolTipText = string.Empty;
+            this.visible = true;
+
+            this.clickEventHandler = this.target_Click;
+            this.checkStateChangedEventHandler = this.target_CheckStateChanged;
+        }
 
         /// <summary>
         /// </summary>
@@ -40,45 +70,6 @@ namespace Mohammad.Win.Actions
         public object Tag { get; set; }
 
         public string PermissionKey { get; set; }
-
-        /// <summary>
-        ///     Creates a new instance
-        /// </summary>
-        public Action()
-        {
-            this.targets = new List<Component>();
-            this._enabled = true;
-            this._text = string.Empty;
-            this.WorkingState = ActionWorkingState.Listening;
-            this.shortcutKeys = Keys.None;
-            this.toolTipText = string.Empty;
-            this.visible = true;
-
-            this.clickEventHandler = this.target_Click;
-            this.checkStateChangedEventHandler = this.target_CheckStateChanged;
-        }
-
-        /// <summary>
-        /// </summary>
-        protected enum ActionWorkingState
-        {
-            /// <summary>
-            /// </summary>
-            Listening,
-
-            /// <summary>
-            /// </summary>
-            Driving
-        }
-
-        private bool _AutoCheck;
-        private bool _enabled;
-        private string _text;
-        private CheckState checkState;
-        private Image image;
-        private Keys shortcutKeys;
-        private string toolTipText;
-        private bool visible;
 
         /// <summary>
         ///     Represents the text of client controls and menu items.
@@ -253,10 +244,71 @@ namespace Mohammad.Win.Actions
             }
         }
 
+        internal bool InterceptingCheckStateChanged { get; set; }
+
+        /// <summary>
+        ///     Prforms the Execute event if enebled.
+        /// </summary>
+        public void PerformExecute()
+        {
+            if (!this.Enabled)
+            {
+                return;
+            }
+
+            var e = new CancelEventArgs();
+            this.OnExecuting(e);
+            if (e.Cancel)
+            {
+                return;
+            }
+
+            this.OnExecute(EventArgs.Empty);
+            this.OnExecuted(EventArgs.Empty);
+        }
+
+        /// <summary>
+        ///     Performs Update event
+        /// </summary>
+        public void DoUpdate()
+        {
+            this.OnUpdate(EventArgs.Empty);
+        }
+
         internal void RefreshEnabledCheckState()
         {
             this.UpdateAllTargets("Enabled", this.Enabled);
             this.UpdateAllTargets("CheckState", this.CheckState);
+        }
+
+        internal void ExecuteShortcut()
+        {
+            if (!this.Enabled)
+            {
+                return;
+            }
+
+            if (this.AutoCheck)
+            {
+                this.Checked = !this.Checked;
+            }
+
+            this.PerformExecute();
+        }
+
+        internal void InternalRemoveTarget(Component extendee)
+        {
+            this.targets.Remove(extendee);
+            this.RemoveHandler(extendee);
+            this.OnRemovingTarget(extendee);
+        }
+
+        internal void InternalAddTarget(Component extendee)
+        {
+            this.targets.Add(extendee);
+            this.refreshState(extendee);
+            this.AddHandler(extendee);
+            this.OnAddingTarget(extendee);
         }
 
         /// <summary>
@@ -269,25 +321,6 @@ namespace Mohammad.Win.Actions
             foreach (var c in this.targets)
             {
                 this.updateProperty(c, propertyName, value);
-            }
-        }
-
-        private void updateProperty(Component target, string propertyName, object value)
-        {
-            this.WorkingState = ActionWorkingState.Driving;
-            try
-            {
-                if (this.ActionList != null)
-                {
-                    if (!this.SpecialUpdateProperty(target, propertyName, value))
-                    {
-                        this.ActionList.TypesDescription[target.GetType()].SetValue(propertyName, target, value);
-                    }
-                }
-            }
-            finally
-            {
-                this.WorkingState = ActionWorkingState.Listening;
             }
         }
 
@@ -314,19 +347,6 @@ namespace Mohammad.Win.Actions
 
             return false;
         }
-
-        private void refreshState(Component target)
-        {
-            var properties = TypeDescriptor.GetProperties(this, new Attribute[] {new UpdatablePropertyAttribute()});
-
-            foreach (PropertyDescriptor property in properties)
-            {
-                this.updateProperty(target, property.Name, property.GetValue(this));
-            }
-        }
-
-        private readonly EventHandler checkStateChangedEventHandler;
-        private readonly EventHandler clickEventHandler;
 
         /// <summary>
         ///     Adds new handlers to common events
@@ -378,6 +398,99 @@ namespace Mohammad.Win.Actions
             }
         }
 
+        /// <summary>
+        ///     Raised Executing event
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnExecuting(CancelEventArgs e)
+        {
+            if (this.Executing != null)
+            {
+                this.Executing(this, e);
+            }
+        }
+
+        /// <summary>
+        ///     Raises Execute event
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnExecute(EventArgs e)
+        {
+            if (this.Execute != null)
+            {
+                this.Execute(this, e);
+            }
+        }
+
+        /// <summary>
+        ///     Raises Executed event
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnExecuted(EventArgs e)
+        {
+            if (this.Executed != null)
+            {
+                this.Executed(this, e);
+            }
+        }
+
+        /// <summary>
+        ///     Raises Update event
+        /// </summary>
+        /// <param name="e"></param>
+        protected virtual void OnUpdate(EventArgs e)
+        {
+            if (this.Update != null)
+            {
+                this.Update(this, e);
+            }
+        }
+
+        /// <summary>
+        ///     Does nothing
+        /// </summary>
+        /// <param name="extendee"></param>
+        protected virtual void OnRemovingTarget(Component extendee)
+        {
+        }
+
+        /// <summary>
+        ///     Does nothing
+        /// </summary>
+        /// <param name="extendee"></param>
+        protected virtual void OnAddingTarget(Component extendee)
+        {
+        }
+
+        private void updateProperty(Component target, string propertyName, object value)
+        {
+            this.WorkingState = ActionWorkingState.Driving;
+            try
+            {
+                if (this.ActionList != null)
+                {
+                    if (!this.SpecialUpdateProperty(target, propertyName, value))
+                    {
+                        this.ActionList.TypesDescription[target.GetType()].SetValue(propertyName, target, value);
+                    }
+                }
+            }
+            finally
+            {
+                this.WorkingState = ActionWorkingState.Listening;
+            }
+        }
+
+        private void refreshState(Component target)
+        {
+            var properties = TypeDescriptor.GetProperties(this, new Attribute[] {new UpdatablePropertyAttribute()});
+
+            foreach (PropertyDescriptor property in properties)
+            {
+                this.updateProperty(target, property.Name, property.GetValue(this));
+            }
+        }
+
         private void toolbar_ButtonClick(object sender, ToolBarButtonClickEventArgs e)
         {
             if (this.targets.Contains(e.Button))
@@ -403,8 +516,6 @@ namespace Mohammad.Win.Actions
             }
         }
 
-        internal bool InterceptingCheckStateChanged { get; set; }
-
         private void target_CheckStateChanged(object sender, EventArgs e)
         {
             this.handleCheckStateChanged(sender, e);
@@ -420,57 +531,9 @@ namespace Mohammad.Win.Actions
         }
 
         /// <summary>
-        ///     Prforms the Execute event if enebled.
-        /// </summary>
-        public void PerformExecute()
-        {
-            if (!this.Enabled)
-            {
-                return;
-            }
-
-            var e = new CancelEventArgs();
-            this.OnExecuting(e);
-            if (e.Cancel)
-            {
-                return;
-            }
-
-            this.OnExecute(EventArgs.Empty);
-            this.OnExecuted(EventArgs.Empty);
-        }
-
-        internal void ExecuteShortcut()
-        {
-            if (!this.Enabled)
-            {
-                return;
-            }
-
-            if (this.AutoCheck)
-            {
-                this.Checked = !this.Checked;
-            }
-
-            this.PerformExecute();
-        }
-
-        /// <summary>
         ///     Occurs when the action is going to be executed.
         /// </summary>
         public event CancelEventHandler Executing;
-
-        /// <summary>
-        ///     Raised Executing event
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnExecuting(CancelEventArgs e)
-        {
-            if (this.Executing != null)
-            {
-                this.Executing(this, e);
-            }
-        }
 
         /// <summary>
         ///     Occurs when the client event that is linked to it fires.
@@ -478,33 +541,9 @@ namespace Mohammad.Win.Actions
         public event EventHandler Execute;
 
         /// <summary>
-        ///     Raises Execute event
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnExecute(EventArgs e)
-        {
-            if (this.Execute != null)
-            {
-                this.Execute(this, e);
-            }
-        }
-
-        /// <summary>
         ///     Occurs when the execution is accomplished.
         /// </summary>
         public event EventHandler Executed;
-
-        /// <summary>
-        ///     Raises Executed event
-        /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnExecuted(EventArgs e)
-        {
-            if (this.Executed != null)
-            {
-                this.Executed(this, e);
-            }
-        }
 
         /// <summary>
         ///     Occurs when the application is idle or when the action list updates.
@@ -512,56 +551,16 @@ namespace Mohammad.Win.Actions
         public event EventHandler Update;
 
         /// <summary>
-        ///     Raises Update event
         /// </summary>
-        /// <param name="e"></param>
-        protected virtual void OnUpdate(EventArgs e)
+        protected enum ActionWorkingState
         {
-            if (this.Update != null)
-            {
-                this.Update(this, e);
-            }
-        }
+            /// <summary>
+            /// </summary>
+            Listening,
 
-        /// <summary>
-        ///     Performs Update event
-        /// </summary>
-        public void DoUpdate()
-        {
-            this.OnUpdate(EventArgs.Empty);
-        }
-
-        private readonly List<Component> targets;
-
-        internal void InternalRemoveTarget(Component extendee)
-        {
-            this.targets.Remove(extendee);
-            this.RemoveHandler(extendee);
-            this.OnRemovingTarget(extendee);
-        }
-
-        internal void InternalAddTarget(Component extendee)
-        {
-            this.targets.Add(extendee);
-            this.refreshState(extendee);
-            this.AddHandler(extendee);
-            this.OnAddingTarget(extendee);
-        }
-
-        /// <summary>
-        ///     Does nothing
-        /// </summary>
-        /// <param name="extendee"></param>
-        protected virtual void OnRemovingTarget(Component extendee)
-        {
-        }
-
-        /// <summary>
-        ///     Does nothing
-        /// </summary>
-        /// <param name="extendee"></param>
-        protected virtual void OnAddingTarget(Component extendee)
-        {
+            /// <summary>
+            /// </summary>
+            Driving
         }
     }
 }

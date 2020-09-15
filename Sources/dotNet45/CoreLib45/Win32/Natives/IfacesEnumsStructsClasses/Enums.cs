@@ -1,6 +1,3 @@
-
-
-
 using System;
 
 namespace Mohammad.Win32.Natives.IfacesEnumsStructsClasses

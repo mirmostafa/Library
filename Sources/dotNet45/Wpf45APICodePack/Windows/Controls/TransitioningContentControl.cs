@@ -22,9 +22,74 @@ namespace Mohammad.Wpf.Windows.Controls
     public class TransitioningContentControl : ContentControl
     {
         /// <summary>
+        ///     The name of the group that holds the presentation states.
+        /// </summary>
+        private const string PresentationGroup = "PresentationStates";
+
+        /// <summary>
+        ///     The name of the state that represents a normal situation where no
+        ///     transition is currently being used.
+        /// </summary>
+        private const string NormalState = "Normal";
+
+        /// <summary>
+        ///     The name of the state that represents the default transition.
+        /// </summary>
+        public const string DefaultTransitionState = "DefaultTransition";
+
+        /// <summary>
+        ///     The name of the control that will display the previous content.
+        /// </summary>
+        internal const string PreviousContentPresentationSitePartName = "PreviousContentPresentationSite";
+
+        /// <summary>
+        ///     The name of the control that will display the current content.
+        /// </summary>
+        internal const string CurrentContentPresentationSitePartName = "CurrentContentPresentationSite";
+
+        /// <summary>
+        ///     Identifies the IsTransitioning dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IsTransitioningProperty = DependencyProperty.Register("IsTransitioning",
+            typeof(bool),
+            typeof(TransitioningContentControl),
+            new PropertyMetadata(OnIsTransitioningPropertyChanged));
+
+        /// <summary>
+        ///     Identifies the Transition dependency property.
+        /// </summary>
+        public static readonly DependencyProperty TransitionProperty = DependencyProperty.Register("Transition",
+            typeof(string),
+            typeof(TransitioningContentControl),
+            new PropertyMetadata(DefaultTransitionState, OnTransitionPropertyChanged));
+
+        /// <summary>
+        ///     Identifies the RestartTransitionOnContentChange dependency property.
+        /// </summary>
+        public static readonly DependencyProperty RestartTransitionOnContentChangeProperty = DependencyProperty.Register("RestartTransitionOnContentChange",
+            typeof(bool),
+            typeof(TransitioningContentControl),
+            new PropertyMetadata(false, OnRestartTransitionOnContentChangePropertyChanged));
+
+        /// <summary>
+        ///     Indicates whether the control allows writing IsTransitioning.
+        /// </summary>
+        private bool _allowIsTransitioningWrite;
+
+        /// <summary>
         ///     The storyboard that is used to transition old and new content.
         /// </summary>
         private Storyboard _currentTransition;
+
+#if !SILVERLIGHT
+        /// <summary>
+        ///     Static constructor
+        /// </summary>
+        static TransitioningContentControl()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(TransitioningContentControl), new FrameworkPropertyMetadata(typeof(TransitioningContentControl)));
+        }
+#endif
 
         /// <summary>
         ///     Gets or sets the storyboard that is used to transition old and new content.
@@ -49,15 +114,125 @@ namespace Mohammad.Wpf.Windows.Controls
             }
         }
 
-#if !SILVERLIGHT
         /// <summary>
-        ///     Static constructor
+        ///     Gets or sets the current content presentation site.
         /// </summary>
-        static TransitioningContentControl()
+        /// <value>The current content presentation site.</value>
+        private ContentPresenter CurrentContentPresentationSite { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the previous content presentation site.
+        /// </summary>
+        /// <value>The previous content presentation site.</value>
+        private ContentPresenter PreviousContentPresentationSite { get; set; }
+
+        /// <summary>
+        ///     Gets a value indicating whether this instance is currently performing
+        ///     a transition.
+        /// </summary>
+        public bool IsTransitioning
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TransitioningContentControl), new FrameworkPropertyMetadata(typeof(TransitioningContentControl)));
+            get => (bool)this.GetValue(IsTransitioningProperty);
+            private set
+            {
+                this._allowIsTransitioningWrite = true;
+                this.SetValue(IsTransitioningProperty, value);
+                this._allowIsTransitioningWrite = false;
+
+                if (this.IsTransitioningChanged != null)
+                {
+                    this.IsTransitioningChanged(this, EventArgs.Empty);
+                }
+            }
         }
-#endif
+
+        /// <summary>
+        ///     Gets or sets the name of the transition to use. These correspond
+        ///     directly to the VisualStates inside the PresentationStates group.
+        /// </summary>
+        public string Transition
+        {
+            get => this.GetValue(TransitionProperty) as string;
+            set => this.SetValue(TransitionProperty, value);
+        }
+
+        /// <summary>
+        ///     Gets or sets a value indicating whether the current transition
+        ///     will be aborted when setting new content during a transition.
+        /// </summary>
+        public bool RestartTransitionOnContentChange
+        {
+            get => (bool)this.GetValue(RestartTransitionOnContentChangeProperty);
+            set => this.SetValue(RestartTransitionOnContentChangeProperty, value);
+        }
+
+        /// <summary>
+        ///     IsTransitioningProperty property changed handler.
+        /// </summary>
+        /// <param name="d">TransitioningContentControl that changed its IsTransitioning.</param>
+        /// <param name="e">Event arguments.</param>
+        private static void OnIsTransitioningPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var source = (TransitioningContentControl)d;
+
+            if (!source._allowIsTransitioningWrite)
+            {
+                source.IsTransitioning = (bool)e.OldValue;
+                throw new InvalidOperationException("IsTransitioning property is read-only.");
+            }
+        }
+
+        /// <summary>
+        ///     TransitionProperty property changed handler.
+        /// </summary>
+        /// <param name="d">TransitioningContentControl that changed its Transition.</param>
+        /// <param name="e">Event arguments.</param>
+        private static void OnTransitionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var source = (TransitioningContentControl)d;
+            var oldTransition = e.NewValue as string;
+            var newTransition = e.NewValue as string;
+
+            if (source.IsTransitioning)
+            {
+                source.AbortTransition();
+            }
+
+            // find new transition
+            var newStoryboard = source.GetStoryboard(newTransition);
+
+            // unable to find the transition.
+            if (newStoryboard == null)
+                // could be during initialization of xaml that presentationgroups was not yet defined
+            {
+                if (source.TryGetVisualStateGroup(PresentationGroup) == null)
+                    // will delay check
+                {
+                    source.CurrentTransition = null;
+                }
+                else
+                {
+                    // revert to old value
+                    source.SetValue(TransitionProperty, oldTransition);
+
+                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Transition '{0}' was not defined.", newTransition));
+                }
+            }
+            else
+            {
+                source.CurrentTransition = newStoryboard;
+            }
+        }
+
+        /// <summary>
+        ///     RestartTransitionOnContentChangeProperty property changed handler.
+        /// </summary>
+        /// <param name="d">TransitioningContentControl that changed its RestartTransitionOnContentChange.</param>
+        /// <param name="e">Event arguments.</param>
+        private static void OnRestartTransitionOnContentChangePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((TransitioningContentControl)d).OnRestartTransitionOnContentChangeChanged((bool)e.OldValue, (bool)e.NewValue);
+        }
 
         /// <summary>
         ///     Builds the visual tree for the TransitioningContentControl control
@@ -123,6 +298,15 @@ namespace Mohammad.Wpf.Windows.Controls
             base.OnContentChanged(oldContent, newContent);
 
             this.StartTransition(oldContent, newContent);
+        }
+
+        /// <summary>
+        ///     Called when the RestartTransitionOnContentChangeProperty changes.
+        /// </summary>
+        /// <param name="oldValue">The old value of RestartTransitionOnContentChange.</param>
+        /// <param name="newValue">The new value of RestartTransitionOnContentChange.</param>
+        protected virtual void OnRestartTransitionOnContentChangeChanged(bool oldValue, bool newValue)
+        {
         }
 
         /// <summary>
@@ -192,192 +376,8 @@ namespace Mohammad.Wpf.Windows.Controls
         public event RoutedEventHandler TransitionCompleted;
 
         /// <summary>
-        ///     The name of the group that holds the presentation states.
-        /// </summary>
-        private const string PresentationGroup = "PresentationStates";
-
-        /// <summary>
-        ///     The name of the state that represents a normal situation where no
-        ///     transition is currently being used.
-        /// </summary>
-        private const string NormalState = "Normal";
-
-        /// <summary>
-        ///     The name of the state that represents the default transition.
-        /// </summary>
-        public const string DefaultTransitionState = "DefaultTransition";
-
-        /// <summary>
-        ///     The name of the control that will display the previous content.
-        /// </summary>
-        internal const string PreviousContentPresentationSitePartName = "PreviousContentPresentationSite";
-
-        /// <summary>
-        ///     The name of the control that will display the current content.
-        /// </summary>
-        internal const string CurrentContentPresentationSitePartName = "CurrentContentPresentationSite";
-
-        /// <summary>
-        ///     Gets or sets the current content presentation site.
-        /// </summary>
-        /// <value>The current content presentation site.</value>
-        private ContentPresenter CurrentContentPresentationSite { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the previous content presentation site.
-        /// </summary>
-        /// <value>The previous content presentation site.</value>
-        private ContentPresenter PreviousContentPresentationSite { get; set; }
-
-        /// <summary>
         ///     Occurs when the IsTransitioning value has changed.
         /// </summary>
         public event EventHandler IsTransitioningChanged;
-
-        /// <summary>
-        ///     Indicates whether the control allows writing IsTransitioning.
-        /// </summary>
-        private bool _allowIsTransitioningWrite;
-
-        /// <summary>
-        ///     Gets a value indicating whether this instance is currently performing
-        ///     a transition.
-        /// </summary>
-        public bool IsTransitioning
-        {
-            get => (bool)this.GetValue(IsTransitioningProperty);
-            private set
-            {
-                this._allowIsTransitioningWrite = true;
-                this.SetValue(IsTransitioningProperty, value);
-                this._allowIsTransitioningWrite = false;
-
-                if (this.IsTransitioningChanged != null)
-                {
-                    this.IsTransitioningChanged(this, EventArgs.Empty);
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Identifies the IsTransitioning dependency property.
-        /// </summary>
-        public static readonly DependencyProperty IsTransitioningProperty = DependencyProperty.Register("IsTransitioning",
-            typeof(bool),
-            typeof(TransitioningContentControl),
-            new PropertyMetadata(OnIsTransitioningPropertyChanged));
-
-        /// <summary>
-        ///     IsTransitioningProperty property changed handler.
-        /// </summary>
-        /// <param name="d">TransitioningContentControl that changed its IsTransitioning.</param>
-        /// <param name="e">Event arguments.</param>
-        private static void OnIsTransitioningPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var source = (TransitioningContentControl)d;
-
-            if (!source._allowIsTransitioningWrite)
-            {
-                source.IsTransitioning = (bool)e.OldValue;
-                throw new InvalidOperationException("IsTransitioning property is read-only.");
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets the name of the transition to use. These correspond
-        ///     directly to the VisualStates inside the PresentationStates group.
-        /// </summary>
-        public string Transition
-        {
-            get => this.GetValue(TransitionProperty) as string;
-            set => this.SetValue(TransitionProperty, value);
-        }
-
-        /// <summary>
-        ///     Identifies the Transition dependency property.
-        /// </summary>
-        public static readonly DependencyProperty TransitionProperty = DependencyProperty.Register("Transition",
-            typeof(string),
-            typeof(TransitioningContentControl),
-            new PropertyMetadata(DefaultTransitionState, OnTransitionPropertyChanged));
-
-        /// <summary>
-        ///     TransitionProperty property changed handler.
-        /// </summary>
-        /// <param name="d">TransitioningContentControl that changed its Transition.</param>
-        /// <param name="e">Event arguments.</param>
-        private static void OnTransitionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var source = (TransitioningContentControl)d;
-            var oldTransition = e.NewValue as string;
-            var newTransition = e.NewValue as string;
-
-            if (source.IsTransitioning)
-            {
-                source.AbortTransition();
-            }
-
-            // find new transition
-            var newStoryboard = source.GetStoryboard(newTransition);
-
-            // unable to find the transition.
-            if (newStoryboard == null)
-                // could be during initialization of xaml that presentationgroups was not yet defined
-            {
-                if (source.TryGetVisualStateGroup(PresentationGroup) == null)
-                    // will delay check
-                {
-                    source.CurrentTransition = null;
-                }
-                else
-                {
-                    // revert to old value
-                    source.SetValue(TransitionProperty, oldTransition);
-
-                    throw new ArgumentException(string.Format(CultureInfo.CurrentCulture, "Transition '{0}' was not defined.", newTransition));
-                }
-            }
-            else
-            {
-                source.CurrentTransition = newStoryboard;
-            }
-        }
-
-        /// <summary>
-        ///     Gets or sets a value indicating whether the current transition
-        ///     will be aborted when setting new content during a transition.
-        /// </summary>
-        public bool RestartTransitionOnContentChange
-        {
-            get => (bool)this.GetValue(RestartTransitionOnContentChangeProperty);
-            set => this.SetValue(RestartTransitionOnContentChangeProperty, value);
-        }
-
-        /// <summary>
-        ///     Identifies the RestartTransitionOnContentChange dependency property.
-        /// </summary>
-        public static readonly DependencyProperty RestartTransitionOnContentChangeProperty = DependencyProperty.Register("RestartTransitionOnContentChange",
-            typeof(bool),
-            typeof(TransitioningContentControl),
-            new PropertyMetadata(false, OnRestartTransitionOnContentChangePropertyChanged));
-
-        /// <summary>
-        ///     RestartTransitionOnContentChangeProperty property changed handler.
-        /// </summary>
-        /// <param name="d">TransitioningContentControl that changed its RestartTransitionOnContentChange.</param>
-        /// <param name="e">Event arguments.</param>
-        private static void OnRestartTransitionOnContentChangePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((TransitioningContentControl)d).OnRestartTransitionOnContentChangeChanged((bool)e.OldValue, (bool)e.NewValue);
-        }
-
-        /// <summary>
-        ///     Called when the RestartTransitionOnContentChangeProperty changes.
-        /// </summary>
-        /// <param name="oldValue">The old value of RestartTransitionOnContentChange.</param>
-        /// <param name="newValue">The new value of RestartTransitionOnContentChange.</param>
-        protected virtual void OnRestartTransitionOnContentChangeChanged(bool oldValue, bool newValue)
-        {
-        }
     }
 }

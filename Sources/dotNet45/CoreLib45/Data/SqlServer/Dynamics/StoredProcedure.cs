@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -15,6 +12,11 @@ namespace Mohammad.Data.SqlServer.Dynamics
     public class StoredProcedure : SqlObject<StoredProcedure, Database>
     {
         private StoredProcedureParams _Params;
+
+        public StoredProcedure(Database owner, string name, string schema, string connectionString)
+            : base(owner, name, schema, connectionString)
+        {
+        }
 
         public string AssemblyName { get; set; }
         public string Body { get; set; }
@@ -38,11 +40,6 @@ namespace Mohammad.Data.SqlServer.Dynamics
                                       }));
 
         public string Schema { get; set; }
-
-        public StoredProcedure(Database owner, string name, string schema, string connectionString)
-            : base(owner, name, schema, connectionString)
-        {
-        }
 
         public bool Run(params KeyValuePair<string, object>[] args) => true;
 

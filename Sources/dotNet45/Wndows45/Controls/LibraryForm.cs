@@ -16,6 +16,17 @@ namespace Mohammad.Win.Controls
         private bool _IsDataChanged;
         private bool _IsFormLoading;
 
+        /// <summary>
+        ///     Initializes a new instance of the Library.Windows.LibraryForm class.
+        /// </summary>
+        public LibraryForm()
+        {
+            this.IsFormLoading = true;
+            this.InitializeComponent();
+            this.AnimateTime = 200;
+            this.Font = _DefaultFont;
+        }
+
         public override Font Font
         {
             get => base.Font;
@@ -90,17 +101,6 @@ namespace Mohammad.Win.Controls
 
         [DefaultValue(false)]
         public bool AutoSetText { get; set; }
-
-        /// <summary>
-        ///     Initializes a new instance of the Library.Windows.LibraryForm class.
-        /// </summary>
-        public LibraryForm()
-        {
-            this.IsFormLoading = true;
-            this.InitializeComponent();
-            this.AnimateTime = 200;
-            this.Font = _DefaultFont;
-        }
 
         public override void ResetFont()
         {

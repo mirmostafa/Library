@@ -26,12 +26,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
         private bool _IsFirstDataRebind = true;
 
-        public Window Window
-        {
-            get => (Window)this.GetValue(WindowProperty);
-            set => this.SetValue(WindowProperty, value);
-        }
-
         public PageBase()
             : this(null)
         {
@@ -48,6 +42,12 @@ namespace Mohammad.Wpf.Windows.Controls
             this.Dispatcher.BeginInvoke(DispatcherPriority.Input, (ThreadStart)(() => this.OnInput(this)));
             this.Dispatcher.BeginInvoke(DispatcherPriority.Send, (ThreadStart)(() => this.OnSend(this)));
             this.Dispatcher.BeginInvoke(DispatcherPriority.SystemIdle, (ThreadStart)(() => this.OnSystemIdle(this)));
+        }
+
+        public Window Window
+        {
+            get => (Window)this.GetValue(WindowProperty);
+            set => this.SetValue(WindowProperty, value);
         }
 
         public virtual event PropertyChangedEventHandler PropertyChanged;

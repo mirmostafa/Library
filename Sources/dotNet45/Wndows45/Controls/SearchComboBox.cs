@@ -11,6 +11,16 @@ namespace Mohammad.Win.Controls
     {
         private string _EmptyText;
 
+        public SearchComboBox()
+        {
+            this.InitializeComponent();
+            //this.DropDownStyle = ComboBoxStyle.Simple;
+            this.SaveMru = true;
+            this.MaxMruCount = 8;
+            this.Text = this.EmptyText;
+            this.Font = new Font(this.Font, FontStyle.Italic);
+        }
+
         [DefaultValue(true)]
         public bool SaveMru { get; set; }
 
@@ -23,16 +33,6 @@ namespace Mohammad.Win.Controls
 
         [DefaultValue(8)]
         public int MaxMruCount { get; set; }
-
-        public SearchComboBox()
-        {
-            this.InitializeComponent();
-            //this.DropDownStyle = ComboBoxStyle.Simple;
-            this.SaveMru = true;
-            this.MaxMruCount = 8;
-            this.Text = this.EmptyText;
-            this.Font = new Font(this.Font, FontStyle.Italic);
-        }
 
         protected override void OnEnter(EventArgs e)
         {

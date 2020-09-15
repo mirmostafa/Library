@@ -17,305 +17,6 @@ namespace Mohammad.Win.Renderers.Internal
         private Dictionary<KnownColors, Color> m_dictionaryRGBTable;
 
         /// <summary>
-        ///     Initialize a color Dictionary with defined colors
-        /// </summary>
-        /// <param name="rgbTable">Dictionary with defined colors</param>
-        protected virtual void InitColors(ref Dictionary<KnownColors, Color> rgbTable)
-        {
-        }
-
-        /// <summary>
-        ///     Gets or sets the KnownColors appearance of the ProfessionalColorTable.
-        /// </summary>
-        public enum KnownColors
-        {
-            /// <summary>
-            ///     The starting color of the gradient used when the button is pressed down.
-            /// </summary>
-            ButtonPressedGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used when the button is pressed down.
-            /// </summary>
-            ButtonPressedGradientEnd,
-
-            /// <summary>
-            ///     The middle color of the gradient used when the button is pressed down.
-            /// </summary>
-            ButtonPressedGradientMiddle,
-
-            /// <summary>
-            ///     The starting color of the gradient used when the button is selected.
-            /// </summary>
-            ButtonSelectedGradientBegin,
-
-            /// <summary>
-            ///     The border color to use with the ButtonSelectedGradientBegin,
-            ///     ButtonSelectedGradientMiddle,
-            ///     and ButtonSelectedGradientEnd colors.
-            /// </summary>
-            ButtonSelectedBorder,
-
-            /// <summary>
-            ///     The end color of the gradient used when the button is selected.
-            /// </summary>
-            ButtonSelectedGradientEnd,
-
-            /// <summary>
-            ///     The middle color of the gradient used when the button is selected.
-            /// </summary>
-            ButtonSelectedGradientMiddle,
-
-            /// <summary>
-            ///     The border color to use with ButtonSelectedHighlight.
-            /// </summary>
-            ButtonSelectedHighlightBorder,
-
-            /// <summary>
-            ///     The solid color to use when the check box is selected and gradients are being used.
-            /// </summary>
-            CheckBackground,
-
-            /// <summary>
-            ///     The solid color to use when the check box is selected and gradients are being used.
-            /// </summary>
-            CheckSelectedBackground,
-
-            /// <summary>
-            ///     The color to use for shadow effects on the grip or move handle.
-            /// </summary>
-            GripDark,
-
-            /// <summary>
-            ///     The color to use for highlight effects on the grip or move handle.
-            /// </summary>
-            GripLight,
-
-            /// <summary>
-            ///     The starting color of the gradient used in the image margin
-            ///     of a ToolStripDropDownMenu.
-            /// </summary>
-            ImageMarginGradientBegin,
-
-            /// <summary>
-            ///     The border color or a MenuStrip.
-            /// </summary>
-            MenuBorder,
-
-            /// <summary>
-            ///     The border color to use with a ToolStripMenuItem.
-            /// </summary>
-            MenuItemBorder,
-
-            /// <summary>
-            ///     The starting color of the gradient used when a top-level
-            ///     ToolStripMenuItem is pressed down.
-            /// </summary>
-            MenuItemPressedGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used when a top-level
-            ///     ToolStripMenuItem is pressed down.
-            /// </summary>
-            MenuItemPressedGradientEnd,
-
-            /// <summary>
-            ///     The middle color of the gradient used when a top-level
-            ///     ToolStripMenuItem is pressed down.
-            /// </summary>
-            MenuItemPressedGradientMiddle,
-
-            /// <summary>
-            ///     The text color of a top-level ToolStripMenuItem.
-            /// </summary>
-            MenuItemText,
-
-            /// <summary>
-            ///     The solid color to use when a ToolStripMenuItem other
-            ///     than the top-level ToolStripMenuItem is selected.
-            /// </summary>
-            MenuItemSelected,
-
-            /// <summary>
-            ///     The starting color of the gradient used when the ToolStripMenuItem is selected.
-            /// </summary>
-            MenuItemSelectedGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used when the ToolStripMenuItem is selected.
-            /// </summary>
-            MenuItemSelectedGradientEnd,
-
-            /// <summary>
-            ///     The starting color of the gradient used in the MenuStrip.
-            /// </summary>
-            MenuStripGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used in the MenuStrip.
-            /// </summary>
-            MenuStripGradientEnd,
-
-            /// <summary>
-            ///     The starting color of the gradient used in the ToolStripOverflowButton.
-            /// </summary>
-            OverflowButtonGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used in the ToolStripOverflowButton.
-            /// </summary>
-            OverflowButtonGradientEnd,
-
-            /// <summary>
-            ///     The middle color of the gradient used in the ToolStripOverflowButton.
-            /// </summary>
-            OverflowButtonGradientMiddle,
-
-            /// <summary>
-            ///     The starting color of the gradient used in the ToolStripContainer.
-            /// </summary>
-            RaftingContainerGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used in the ToolStripContainer.
-            /// </summary>
-            RaftingContainerGradientEnd,
-
-            /// <summary>
-            ///     The color to use to for shadow effects on the ToolStripSeparator.
-            /// </summary>
-            SeparatorDark,
-
-            /// <summary>
-            ///     The color to use to for highlight effects on the ToolStripSeparator.
-            /// </summary>
-            SeparatorLight,
-
-            /// <summary>
-            ///     The starting color of the gradient used on the StatusStrip.
-            /// </summary>
-            StatusStripGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used on the StatusStrip.
-            /// </summary>
-            StatusStripGradientEnd,
-
-            /// <summary>
-            ///     The text color used on the StatusStrip.
-            /// </summary>
-            StatusStripText,
-
-            /// <summary>
-            ///     The border color to use on the bottom edge of the ToolStrip.
-            /// </summary>
-            ToolStripBorder,
-
-            /// <summary>
-            ///     The starting color of the gradient used in the ToolStripContentPanel.
-            /// </summary>
-            ToolStripContentPanelGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used in the ToolStripContentPanel.
-            /// </summary>
-            ToolStripContentPanelGradientEnd,
-
-            /// <summary>
-            ///     The solid background color of the ToolStripDropDown.
-            /// </summary>
-            ToolStripDropDownBackground,
-
-            /// <summary>
-            ///     The starting color of the gradient used in the ToolStrip background.
-            /// </summary>
-            ToolStripGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used in the ToolStrip background.
-            /// </summary>
-            ToolStripGradientEnd,
-
-            /// <summary>
-            ///     The middle color of the gradient used in the ToolStrip background.
-            /// </summary>
-            ToolStripGradientMiddle,
-
-            /// <summary>
-            ///     The starting color of the gradient used in the ToolStripPanel.
-            /// </summary>
-            ToolStripPanelGradientBegin,
-
-            /// <summary>
-            ///     The end color of the gradient used in the ToolStripPanel.
-            /// </summary>
-            ToolStripPanelGradientEnd,
-
-            /// <summary>
-            /// </summary>
-            LastKnownColor = SeparatorLight
-        }
-
-        private static class DisplayInformation
-        {
-            private static class NativeMethods
-            {
-                [DllImport("uxtheme.dll", CharSet = CharSet.Auto)]
-                public static extern int GetCurrentThemeName(StringBuilder pszThemeFileName,
-                    int dwMaxNameChars,
-                    StringBuilder pszColorBuff,
-                    int dwMaxColorChars,
-                    StringBuilder pszSizeBuff,
-                    int cchMaxSizeChars);
-            }
-
-            private const string m_strAeroFileName = "aero.msstyles";
-            private const string m_strLunaFileName = "luna.msstyles";
-
-            [field: ThreadStatic]
-            public static string ColorScheme { get; private set; }
-
-            [field: ThreadStatic]
-            internal static bool IsLunaTheme { get; private set; }
-
-            internal static bool IsAeroTheme { get; private set; }
-
-            static DisplayInformation()
-            {
-                SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
-                SetScheme();
-            }
-
-            private static void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-            {
-                SetScheme();
-            }
-
-            private static void SetScheme()
-            {
-                IsLunaTheme = false;
-                if (VisualStyleRenderer.IsSupported)
-                {
-                    ColorScheme = VisualStyleInformation.ColorScheme;
-
-                    if (!VisualStyleInformation.IsEnabledByUser)
-                    {
-                        return;
-                    }
-
-                    var stringBuilder = new StringBuilder(0x200);
-                    NativeMethods.GetCurrentThemeName(stringBuilder, stringBuilder.Capacity, null, 0, null, 0);
-                    IsLunaTheme = string.Equals(m_strLunaFileName, Path.GetFileName(stringBuilder.ToString()), StringComparison.InvariantCultureIgnoreCase);
-                    IsAeroTheme = string.Equals(m_strAeroFileName, Path.GetFileName(stringBuilder.ToString()), StringComparison.InvariantCultureIgnoreCase);
-                }
-                else
-                {
-                    ColorScheme = null;
-                }
-            }
-        }
-
-        /// <summary>
         ///     Gets the starting color of the gradient used when the button is pressed down.
         /// </summary>
         public override Color ButtonPressedGradientBegin
@@ -1037,5 +738,304 @@ namespace Mohammad.Win.Renderers.Internal
         }
 
         internal Color FromKnownColor(KnownColors color) => this.ColorTable[color];
+
+        /// <summary>
+        ///     Initialize a color Dictionary with defined colors
+        /// </summary>
+        /// <param name="rgbTable">Dictionary with defined colors</param>
+        protected virtual void InitColors(ref Dictionary<KnownColors, Color> rgbTable)
+        {
+        }
+
+        /// <summary>
+        ///     Gets or sets the KnownColors appearance of the ProfessionalColorTable.
+        /// </summary>
+        public enum KnownColors
+        {
+            /// <summary>
+            ///     The starting color of the gradient used when the button is pressed down.
+            /// </summary>
+            ButtonPressedGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used when the button is pressed down.
+            /// </summary>
+            ButtonPressedGradientEnd,
+
+            /// <summary>
+            ///     The middle color of the gradient used when the button is pressed down.
+            /// </summary>
+            ButtonPressedGradientMiddle,
+
+            /// <summary>
+            ///     The starting color of the gradient used when the button is selected.
+            /// </summary>
+            ButtonSelectedGradientBegin,
+
+            /// <summary>
+            ///     The border color to use with the ButtonSelectedGradientBegin,
+            ///     ButtonSelectedGradientMiddle,
+            ///     and ButtonSelectedGradientEnd colors.
+            /// </summary>
+            ButtonSelectedBorder,
+
+            /// <summary>
+            ///     The end color of the gradient used when the button is selected.
+            /// </summary>
+            ButtonSelectedGradientEnd,
+
+            /// <summary>
+            ///     The middle color of the gradient used when the button is selected.
+            /// </summary>
+            ButtonSelectedGradientMiddle,
+
+            /// <summary>
+            ///     The border color to use with ButtonSelectedHighlight.
+            /// </summary>
+            ButtonSelectedHighlightBorder,
+
+            /// <summary>
+            ///     The solid color to use when the check box is selected and gradients are being used.
+            /// </summary>
+            CheckBackground,
+
+            /// <summary>
+            ///     The solid color to use when the check box is selected and gradients are being used.
+            /// </summary>
+            CheckSelectedBackground,
+
+            /// <summary>
+            ///     The color to use for shadow effects on the grip or move handle.
+            /// </summary>
+            GripDark,
+
+            /// <summary>
+            ///     The color to use for highlight effects on the grip or move handle.
+            /// </summary>
+            GripLight,
+
+            /// <summary>
+            ///     The starting color of the gradient used in the image margin
+            ///     of a ToolStripDropDownMenu.
+            /// </summary>
+            ImageMarginGradientBegin,
+
+            /// <summary>
+            ///     The border color or a MenuStrip.
+            /// </summary>
+            MenuBorder,
+
+            /// <summary>
+            ///     The border color to use with a ToolStripMenuItem.
+            /// </summary>
+            MenuItemBorder,
+
+            /// <summary>
+            ///     The starting color of the gradient used when a top-level
+            ///     ToolStripMenuItem is pressed down.
+            /// </summary>
+            MenuItemPressedGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used when a top-level
+            ///     ToolStripMenuItem is pressed down.
+            /// </summary>
+            MenuItemPressedGradientEnd,
+
+            /// <summary>
+            ///     The middle color of the gradient used when a top-level
+            ///     ToolStripMenuItem is pressed down.
+            /// </summary>
+            MenuItemPressedGradientMiddle,
+
+            /// <summary>
+            ///     The text color of a top-level ToolStripMenuItem.
+            /// </summary>
+            MenuItemText,
+
+            /// <summary>
+            ///     The solid color to use when a ToolStripMenuItem other
+            ///     than the top-level ToolStripMenuItem is selected.
+            /// </summary>
+            MenuItemSelected,
+
+            /// <summary>
+            ///     The starting color of the gradient used when the ToolStripMenuItem is selected.
+            /// </summary>
+            MenuItemSelectedGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used when the ToolStripMenuItem is selected.
+            /// </summary>
+            MenuItemSelectedGradientEnd,
+
+            /// <summary>
+            ///     The starting color of the gradient used in the MenuStrip.
+            /// </summary>
+            MenuStripGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used in the MenuStrip.
+            /// </summary>
+            MenuStripGradientEnd,
+
+            /// <summary>
+            ///     The starting color of the gradient used in the ToolStripOverflowButton.
+            /// </summary>
+            OverflowButtonGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used in the ToolStripOverflowButton.
+            /// </summary>
+            OverflowButtonGradientEnd,
+
+            /// <summary>
+            ///     The middle color of the gradient used in the ToolStripOverflowButton.
+            /// </summary>
+            OverflowButtonGradientMiddle,
+
+            /// <summary>
+            ///     The starting color of the gradient used in the ToolStripContainer.
+            /// </summary>
+            RaftingContainerGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used in the ToolStripContainer.
+            /// </summary>
+            RaftingContainerGradientEnd,
+
+            /// <summary>
+            ///     The color to use to for shadow effects on the ToolStripSeparator.
+            /// </summary>
+            SeparatorDark,
+
+            /// <summary>
+            ///     The color to use to for highlight effects on the ToolStripSeparator.
+            /// </summary>
+            SeparatorLight,
+
+            /// <summary>
+            ///     The starting color of the gradient used on the StatusStrip.
+            /// </summary>
+            StatusStripGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used on the StatusStrip.
+            /// </summary>
+            StatusStripGradientEnd,
+
+            /// <summary>
+            ///     The text color used on the StatusStrip.
+            /// </summary>
+            StatusStripText,
+
+            /// <summary>
+            ///     The border color to use on the bottom edge of the ToolStrip.
+            /// </summary>
+            ToolStripBorder,
+
+            /// <summary>
+            ///     The starting color of the gradient used in the ToolStripContentPanel.
+            /// </summary>
+            ToolStripContentPanelGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used in the ToolStripContentPanel.
+            /// </summary>
+            ToolStripContentPanelGradientEnd,
+
+            /// <summary>
+            ///     The solid background color of the ToolStripDropDown.
+            /// </summary>
+            ToolStripDropDownBackground,
+
+            /// <summary>
+            ///     The starting color of the gradient used in the ToolStrip background.
+            /// </summary>
+            ToolStripGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used in the ToolStrip background.
+            /// </summary>
+            ToolStripGradientEnd,
+
+            /// <summary>
+            ///     The middle color of the gradient used in the ToolStrip background.
+            /// </summary>
+            ToolStripGradientMiddle,
+
+            /// <summary>
+            ///     The starting color of the gradient used in the ToolStripPanel.
+            /// </summary>
+            ToolStripPanelGradientBegin,
+
+            /// <summary>
+            ///     The end color of the gradient used in the ToolStripPanel.
+            /// </summary>
+            ToolStripPanelGradientEnd,
+
+            /// <summary>
+            /// </summary>
+            LastKnownColor = SeparatorLight
+        }
+
+        private static class DisplayInformation
+        {
+            private const string m_strAeroFileName = "aero.msstyles";
+            private const string m_strLunaFileName = "luna.msstyles";
+
+            static DisplayInformation()
+            {
+                SystemEvents.UserPreferenceChanged += OnUserPreferenceChanged;
+                SetScheme();
+            }
+
+            [field: ThreadStatic]
+            public static string ColorScheme { get; private set; }
+
+            [field: ThreadStatic]
+            internal static bool IsLunaTheme { get; private set; }
+
+            internal static bool IsAeroTheme { get; private set; }
+
+            private static void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+            {
+                SetScheme();
+            }
+
+            private static void SetScheme()
+            {
+                IsLunaTheme = false;
+                if (VisualStyleRenderer.IsSupported)
+                {
+                    ColorScheme = VisualStyleInformation.ColorScheme;
+
+                    if (!VisualStyleInformation.IsEnabledByUser)
+                    {
+                        return;
+                    }
+
+                    var stringBuilder = new StringBuilder(0x200);
+                    NativeMethods.GetCurrentThemeName(stringBuilder, stringBuilder.Capacity, null, 0, null, 0);
+                    IsLunaTheme = string.Equals(m_strLunaFileName, Path.GetFileName(stringBuilder.ToString()), StringComparison.InvariantCultureIgnoreCase);
+                    IsAeroTheme = string.Equals(m_strAeroFileName, Path.GetFileName(stringBuilder.ToString()), StringComparison.InvariantCultureIgnoreCase);
+                }
+                else
+                {
+                    ColorScheme = null;
+                }
+            }
+
+            private static class NativeMethods
+            {
+                [DllImport("uxtheme.dll", CharSet = CharSet.Auto)]
+                public static extern int GetCurrentThemeName(StringBuilder pszThemeFileName,
+                    int dwMaxNameChars,
+                    StringBuilder pszColorBuff,
+                    int dwMaxColorChars,
+                    StringBuilder pszSizeBuff,
+                    int cchMaxSizeChars);
+            }
+        }
     }
 }

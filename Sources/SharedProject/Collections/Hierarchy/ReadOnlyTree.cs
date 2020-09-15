@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +9,7 @@ namespace Mohammad.Collections.Hierarchy
     public class ReadOnlyTree<T> : IEnumerable<T>
     {
         private Func<T, T, bool> _ItemComparer;
+        public ReadOnlyTree(List<Node<T>> nodes) => this.Nodes = nodes;
         protected List<Node<T>> Nodes { get; }
 
         public Func<T, T, bool> ItemComparer
@@ -22,7 +20,6 @@ namespace Mohammad.Collections.Hierarchy
 
         public IEnumerable<T> Roots => this.Nodes.Where(n => this.ItemComparer(n.Parent, default)).Select(node => node.Current);
         public IEnumerable<T> Items => this.Nodes.Select(node => node.Current);
-        public ReadOnlyTree(List<Node<T>> nodes) => this.Nodes = nodes;
         public IEnumerator<T> GetEnumerator() => this.Nodes.Select(n => n.Current).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
         public IEnumerable<T> GetChildrenOf(T parent) => this.Nodes.Where(node => this.ItemComparer(node.Parent, parent)).Select(node => node.Current);

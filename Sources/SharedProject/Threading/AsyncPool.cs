@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,6 +15,30 @@ namespace Mohammad.Threading
         private readonly UniqueCollection<object> _Groups = new UniqueCollection<object>();
         private bool _Aborted;
         private ExceptionHandling _ExceptionHandling;
+
+        public AsyncPool(uint maximumCount)
+            : this(maximumCount, string.Empty)
+        {
+        }
+
+        public AsyncPool(uint maximumCount, ExceptionHandling exceptionHandling)
+            : this(maximumCount, string.Empty, exceptionHandling)
+        {
+        }
+
+        public AsyncPool(uint maximumCount, string name)
+            : this(maximumCount, name, null)
+        {
+        }
+
+        public AsyncPool(uint maximumCount, string name, ExceptionHandling exceptionHandling)
+        {
+            this.MaximumCount = maximumCount;
+            this.Stocks = new Collection<Async>();
+            this.AsyncsQ = new Queue<Async>();
+            this.Name = name;
+            this.ExceptionHandling = exceptionHandling;
+        }
 
         public ExceptionHandling ExceptionHandling
         {
@@ -51,30 +72,6 @@ namespace Mohammad.Threading
             }
         }
 
-        public AsyncPool(uint maximumCount)
-            : this(maximumCount, string.Empty)
-        {
-        }
-
-        public AsyncPool(uint maximumCount, ExceptionHandling exceptionHandling)
-            : this(maximumCount, string.Empty, exceptionHandling)
-        {
-        }
-
-        public AsyncPool(uint maximumCount, string name)
-            : this(maximumCount, name, null)
-        {
-        }
-
-        public AsyncPool(uint maximumCount, string name, ExceptionHandling exceptionHandling)
-        {
-            this.MaximumCount = maximumCount;
-            this.Stocks = new Collection<Async>();
-            this.AsyncsQ = new Queue<Async>();
-            this.Name = name;
-            this.ExceptionHandling = exceptionHandling;
-        }
-
         public AsyncPool AbortAllAsyncs()
         {
             this.Aborted = true;
@@ -91,6 +88,42 @@ namespace Mohammad.Threading
         }
 
         public override string ToString() => string.Format("{0} Asyncs: {1}, Jobs: {2}", this.Name, this.AsyncsQ.Count, this.Stocks.Count);
+
+        internal void Register(Async myAsync)
+        {
+            if (myAsync == null)
+            {
+                throw new ArgumentNullException("myAsync");
+            }
+
+            if (this.Aborted)
+            {
+                return;
+            }
+
+            this.AsyncsQ.Enqueue(myAsync);
+            this.QuequeChanged.RaiseAsync(this);
+        }
+
+        internal void Start()
+        {
+            if (this.Aborted)
+            {
+                return;
+            }
+
+            if (this.Stocks.Count >= this.MaximumCount)
+            {
+                return;
+            }
+
+            this.Aborted = false;
+            this.Refresh();
+        }
+
+        internal void Unregister(Async myAsync)
+        {
+        }
 
         private void Refresh()
         {
@@ -142,41 +175,5 @@ namespace Mohammad.Threading
         public event EventHandler QuequeChanged;
         public event EventHandler JobsChanged;
         public event EventHandler AbortedChanged;
-
-        internal void Register(Async myAsync)
-        {
-            if (myAsync == null)
-            {
-                throw new ArgumentNullException("myAsync");
-            }
-
-            if (this.Aborted)
-            {
-                return;
-            }
-
-            this.AsyncsQ.Enqueue(myAsync);
-            this.QuequeChanged.RaiseAsync(this);
-        }
-
-        internal void Start()
-        {
-            if (this.Aborted)
-            {
-                return;
-            }
-
-            if (this.Stocks.Count >= this.MaximumCount)
-            {
-                return;
-            }
-
-            this.Aborted = false;
-            this.Refresh();
-        }
-
-        internal void Unregister(Async myAsync)
-        {
-        }
     }
 }

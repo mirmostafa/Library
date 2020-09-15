@@ -1,7 +1,4 @@
-﻿
-
-
-using System.IO;
+﻿using System.IO;
 using System.IO.Compression;
 
 namespace Mohammad.Compression

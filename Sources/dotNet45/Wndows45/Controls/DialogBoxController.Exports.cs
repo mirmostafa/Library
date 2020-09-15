@@ -7,6 +7,11 @@ namespace Mohammad.Win.Controls
 {
     partial class DialogBoxController
     {
+        private DialogBoxControllerDict _Dictionary;
+
+        private bool enable;
+        private CallBack_WinProc myWndProc;
+
         /// <summary>
         ///     Gets or sets that the dialog box must be faded in start of showing
         /// </summary>
@@ -45,9 +50,6 @@ namespace Mohammad.Win.Controls
         [Localizable(true)]
         [DefaultValue(typeof(Font), "Tahoma")]
         public virtual Font Font { get; set; } = new Font("Tahoma", 8);
-
-        private bool enable;
-        private CallBack_WinProc myWndProc;
 
         /// <summary>
         ///     Enables or disabled tracking dialog boxes
@@ -90,8 +92,6 @@ namespace Mohammad.Win.Controls
                 }
             }
         }
-
-        private DialogBoxControllerDict _Dictionary;
 
         /// <summary>
         ///     Gets or set the dictionary which will be used to translate the controls found in dialog boxes.

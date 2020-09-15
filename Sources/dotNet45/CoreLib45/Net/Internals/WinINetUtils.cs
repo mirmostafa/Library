@@ -1,6 +1,5 @@
 ﻿// Created on     2018/07/23
 
-
 using System;
 using System.Runtime.InteropServices;
 using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;

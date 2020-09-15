@@ -1,7 +1,4 @@
-﻿
-
-
-namespace Mohammad.Logging
+﻿namespace Mohammad.Logging
 {
     public interface ILogRotator
     {

@@ -1,7 +1,4 @@
-﻿
-
-
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 
 namespace Mohammad.Helpers
 {
@@ -43,14 +40,6 @@ namespace Mohammad.Helpers
 
         public class ApplicationRegistrationInfo
         {
-            public string ApplicationTitle { get; set; }
-            public string Company { get; set; }
-            public string Copyright { get; set; }
-            public string Description { get; set; }
-            public string Guid { get; set; }
-            public string ProductTitle { get; set; }
-            public string Version { get; set; }
-
             public ApplicationRegistrationInfo(string applicationTitle = null,
                 string company = null,
                 string copyright = null,
@@ -67,6 +56,14 @@ namespace Mohammad.Helpers
                 this.ProductTitle = productTitle ?? ApplicationHelper.ProductTitle;
                 this.Version = version ?? ApplicationHelper.Version;
             }
+
+            public string ApplicationTitle { get; set; }
+            public string Company { get; set; }
+            public string Copyright { get; set; }
+            public string Description { get; set; }
+            public string Guid { get; set; }
+            public string ProductTitle { get; set; }
+            public string Version { get; set; }
         }
     }
 }

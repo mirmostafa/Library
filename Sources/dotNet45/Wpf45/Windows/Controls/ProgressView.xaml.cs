@@ -73,6 +73,13 @@ namespace Mohammad.Wpf.Windows.Controls
 
         private MultiStepOperation _Operation;
 
+        public ProgressView()
+        {
+            this.InitializeComponent();
+            this.StatusStyle = this.FindResource("LowlightBlock").As<Style>();
+            this.CurrentOperationProgressBarValue = 0;
+        }
+
         public long CurrentOperationProgressBarMaxValue
         {
             get => (long)this.GetValue(CurrentOperationProgressBarMaxValueProperty);
@@ -167,13 +174,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         public string DoneStatus { get; set; } = "Done.";
-
-        public ProgressView()
-        {
-            this.InitializeComponent();
-            this.StatusStyle = this.FindResource("LowlightBlock").As<Style>();
-            this.CurrentOperationProgressBarValue = 0;
-        }
 
         private void Operation_MainOperationStarted(object sender, MultiStepStartedLogEventArgs e)
         {

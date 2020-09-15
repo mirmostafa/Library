@@ -37,14 +37,14 @@ namespace Mohammad.Wpf.AddIns.Utilities.RibbonAddIn
 
     public class RetieveResult<TAddInAction, TAddInAppContext>
     {
-        public TAddInAppContext App { get; }
-        public IEnumerable<TAddInAction> Actions { get; }
-
         public RetieveResult(TAddInAppContext app, IEnumerable<TAddInAction> actions)
         {
             this.App = app;
             this.Actions = actions;
         }
+
+        public TAddInAppContext App { get; }
+        public IEnumerable<TAddInAction> Actions { get; }
     }
 
     public static class RibbonAddInLoader

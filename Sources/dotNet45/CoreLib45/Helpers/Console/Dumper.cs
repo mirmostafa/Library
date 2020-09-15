@@ -1,6 +1,3 @@
-
-
-
 using System.IO;
 
 namespace Mohammad.Helpers.Console
@@ -8,6 +5,10 @@ namespace Mohammad.Helpers.Console
     internal abstract class Dumper<TType>
     {
         internal readonly TextWriter Log;
+
+        protected int Depth;
+        protected int Level;
+        protected int Pos;
 
         internal Dumper(int depth)
             : this(depth, System.Console.Out)
@@ -19,6 +20,10 @@ namespace Mohammad.Helpers.Console
             this.Depth = depth;
             this.Log = log;
         }
+
+        internal abstract void Write(TType element, string prefix);
+
+        internal abstract void WriteLine(TType element, string prefix);
 
         protected void Write(string s)
         {
@@ -53,13 +58,5 @@ namespace Mohammad.Helpers.Console
                 this.Write(" ");
             }
         }
-
-        internal abstract void Write(TType element, string prefix);
-
-        internal abstract void WriteLine(TType element, string prefix);
-
-        protected int Depth;
-        protected int Level;
-        protected int Pos;
     }
 }

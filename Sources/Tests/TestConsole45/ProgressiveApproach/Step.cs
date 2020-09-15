@@ -10,18 +10,6 @@ namespace TestConsole45.ProgressiveApproach
     {
         private readonly List<IStep> _Children;
 
-        /// <inheritdoc />
-        public Delegate MainAction { get; }
-
-        /// <inheritdoc />
-        public IEnumerable<IStep> Children => this._Children;
-
-        /// <inheritdoc />
-        public string Description { get; }
-
-        /// <inheritdoc />
-        public int Priority { get; }
-
         public Step(Action mainAction, string description = null, IEnumerable<IStep> children = null, int priority = 0)
         {
             this.MainAction = mainAction ?? throw new ArgumentNullException(nameof(mainAction));
@@ -53,6 +41,18 @@ namespace TestConsole45.ProgressiveApproach
             this.Description = description;
             this.Priority = priority;
         }
+
+        /// <inheritdoc />
+        public Delegate MainAction { get; }
+
+        /// <inheritdoc />
+        public IEnumerable<IStep> Children => this._Children;
+
+        /// <inheritdoc />
+        public string Description { get; }
+
+        /// <inheritdoc />
+        public int Priority { get; }
 
         public Step AddChildren(params Step[] chilStep)
         {

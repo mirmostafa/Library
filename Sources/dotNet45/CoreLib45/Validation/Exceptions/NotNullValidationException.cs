@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Runtime.Serialization;
 
@@ -9,9 +6,6 @@ namespace Mohammad.Validation.Exceptions
     [Serializable]
     public class NotNullValidationException : ValidationExceptionBase
     {
-        public object Obj1Name { get; set; }
-        public object Obj2Name { get; set; }
-
         public NotNullValidationException()
         {
         }
@@ -42,5 +36,8 @@ namespace Mohammad.Validation.Exceptions
             : base(message, instruction)
         {
         }
+
+        public object Obj1Name { get; set; }
+        public object Obj2Name { get; set; }
     }
 }

@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;

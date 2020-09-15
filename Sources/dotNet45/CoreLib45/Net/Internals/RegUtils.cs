@@ -1,6 +1,5 @@
 ﻿// Created on     2018/07/23
 
-
 using Microsoft.Win32;
 
 namespace Mohammad.Net.Internals

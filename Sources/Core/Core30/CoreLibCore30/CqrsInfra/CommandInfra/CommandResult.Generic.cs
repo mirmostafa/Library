@@ -4,10 +4,10 @@ namespace Mohammad.CqrsInfra.CommandInfra
 {
     public class CommandResult<T> : CommandResult
     {
-        public T Result { get; }
-
         public CommandResult(bool status, T result)
             : base(status) => this.Result = result;
+
+        public T Result { get; }
 
         public static Task<CommandResult<T>> SuccessTask(T item) => Task.FromResult(Success(item));
         public static CommandResult<T> Success(T item) => new CommandResult<T>(true, item);

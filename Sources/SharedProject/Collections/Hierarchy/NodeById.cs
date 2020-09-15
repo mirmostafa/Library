@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +6,6 @@ namespace Mohammad.Collections.Hierarchy
 {
     public class NodeById<T> : IEquatable<NodeById<T>>
     {
-        public NodeById<T> ParentNode => this.Container.GetParentNodeOf(this);
-        public T Parent => this.Container.GetParentNodeOf(this).Current;
-        public IEnumerable<NodeById<T>> ChildNodes => this.Container.GetChildNodesOf(this);
-        public IEnumerable<T> Children => this.Container.GetChildNodesOf(this).Select(item => item.Current);
-        protected IReadOnlyTreeById<T> Container { get; }
-        public T Current { get; set; }
-        public long CurrentId { get; }
-        public long? ParentId { get; set; }
-
         public NodeById(IReadOnlyTreeById<T> container, T current, long currentId)
         {
             this.Container = container;
@@ -28,8 +16,14 @@ namespace Mohammad.Collections.Hierarchy
         public NodeById(IReadOnlyTreeById<T> container, T current, long currentId, long parentId)
             : this(container, current, currentId) => this.ParentId = parentId;
 
-        public static bool operator ==(NodeById<T> left, NodeById<T> right) => Equals(left, right);
-        public static bool operator !=(NodeById<T> left, NodeById<T> right) => !Equals(left, right);
+        public NodeById<T> ParentNode => this.Container.GetParentNodeOf(this);
+        public T Parent => this.Container.GetParentNodeOf(this).Current;
+        public IEnumerable<NodeById<T>> ChildNodes => this.Container.GetChildNodesOf(this);
+        public IEnumerable<T> Children => this.Container.GetChildNodesOf(this).Select(item => item.Current);
+        protected IReadOnlyTreeById<T> Container { get; }
+        public T Current { get; set; }
+        public long CurrentId { get; }
+        public long? ParentId { get; set; }
 
         public bool Equals(NodeById<T> other)
         {
@@ -45,6 +39,9 @@ namespace Mohammad.Collections.Hierarchy
 
             return this.CurrentId == other.CurrentId;
         }
+
+        public static bool operator ==(NodeById<T> left, NodeById<T> right) => Equals(left, right);
+        public static bool operator !=(NodeById<T> left, NodeById<T> right) => !Equals(left, right);
 
         public override string ToString() => this.Current.ToString();
 

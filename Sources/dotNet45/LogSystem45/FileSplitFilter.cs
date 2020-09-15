@@ -9,19 +9,6 @@ namespace Mohammad.Logging
     public class FileSplitFilter : TextWriter, IFilter
     {
         private FileInfo _CurrentLogFile;
-        public DirectoryInfo LeafLogDirectory { get; }
-        public FileLogSplitInfo Split { get; } = new FileLogSplitInfo();
-
-        public FileInfo CurrentLogFile
-        {
-            get => this._CurrentLogFile ?? (this._CurrentLogFile = this.Split.GetNextFile(this.GetFileName()));
-            private set => this._CurrentLogFile = value;
-        }
-
-        public override Encoding Encoding => Encoding.UTF8;
-        public string LogFileName { get; set; }
-
-        public TextWriter Out { get; set; }
 
         public FileSplitFilter(string leafLogDirectory)
             : this(new DirectoryInfo(leafLogDirectory))
@@ -43,6 +30,20 @@ namespace Mohammad.Logging
             this.LeafLogDirectory = leafLogDirectory;
             this.LogFileName = "Log.txt";
         }
+
+        public DirectoryInfo LeafLogDirectory { get; }
+        public FileLogSplitInfo Split { get; } = new FileLogSplitInfo();
+
+        public FileInfo CurrentLogFile
+        {
+            get => this._CurrentLogFile ?? (this._CurrentLogFile = this.Split.GetNextFile(this.GetFileName()));
+            private set => this._CurrentLogFile = value;
+        }
+
+        public override Encoding Encoding => Encoding.UTF8;
+        public string LogFileName { get; set; }
+
+        public TextWriter Out { get; set; }
 
         public override void WriteLine(string value)
         {

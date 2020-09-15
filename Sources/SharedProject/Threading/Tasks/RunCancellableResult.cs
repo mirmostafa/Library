@@ -1,7 +1,4 @@
-﻿
-
-
-using System.Threading;
+﻿using System.Threading;
 
 namespace Mohammad.Threading.Tasks
 {

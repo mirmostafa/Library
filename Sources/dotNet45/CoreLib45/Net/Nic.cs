@@ -1,6 +1,5 @@
 // Created on     2018/07/23
 
-
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using Mohammad.Helpers;
@@ -11,6 +10,7 @@ namespace Mohammad.Net
     {
         private long _BytesReceivedLast;
         private long _BytesSentLast;
+        public Nic(NetworkInterface networkInterface) => this.NetworkInterface = networkInterface;
 
         public int BytesSent
         {
@@ -35,7 +35,6 @@ namespace Mohammad.Net
         }
 
         public NetworkInterface NetworkInterface { get; }
-        public Nic(NetworkInterface networkInterface) => this.NetworkInterface = networkInterface;
         public static IEnumerable<NetworkInterface> GetAllNetworkInterfaceCards() => NetworkInterface.GetAllNetworkInterfaces();
     }
 }

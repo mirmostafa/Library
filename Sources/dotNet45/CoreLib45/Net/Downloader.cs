@@ -1,6 +1,5 @@
 ﻿// Created on     2018/07/23
 
-
 using System;
 using System.IO;
 using System.Net;

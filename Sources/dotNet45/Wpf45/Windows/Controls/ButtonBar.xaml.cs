@@ -10,6 +10,11 @@ namespace Mohammad.Wpf.Windows.Controls
     /// </summary>
     public partial class ButtonBar
     {
+        public ButtonBar()
+        {
+            this.InitializeComponent();
+        }
+
         public Style ButtonsStyle { get; set; }
         public List<Button> AppButtons { get; } = new List<Button>();
         public List<Button> PageButtons { get; } = new List<Button>();
@@ -28,11 +33,6 @@ namespace Mohammad.Wpf.Windows.Controls
                     yield return button;
                 }
             }
-        }
-
-        public ButtonBar()
-        {
-            this.InitializeComponent();
         }
 
         public override void OnApplyTemplate()

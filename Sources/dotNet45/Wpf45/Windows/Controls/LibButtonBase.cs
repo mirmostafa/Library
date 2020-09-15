@@ -10,6 +10,12 @@ namespace Mohammad.Wpf.Windows.Controls
     {
         public static DependencyProperty SecurityCodeProperty;
 
+        static LibButtonBase()
+        {
+            SecurityCodeProperty = DependencyProperty.Register("SecurityCode", typeof(string), typeof(LibButtonBase));
+            IsEnabledProperty.OverrideMetadata(typeof(LibButtonBase), new FrameworkPropertyMetadata {CoerceValueCallback = CoerceIsEnabledValueCallback});
+        }
+
         public DependencyProperty BindingFieldProperty => ContentProperty;
 
         public string SecurityCode
@@ -18,24 +24,10 @@ namespace Mohammad.Wpf.Windows.Controls
             set => this.SetValue(SecurityCodeProperty, value);
         }
 
-        static LibButtonBase()
-        {
-            SecurityCodeProperty = DependencyProperty.Register("SecurityCode", typeof(string), typeof(LibButtonBase));
-            IsEnabledProperty.OverrideMetadata(typeof(LibButtonBase), new FrameworkPropertyMetadata {CoerceValueCallback = CoerceIsEnabledValueCallback});
-        }
-
         public void SetControlUnSecured()
         {
             this.IsEnabled = false;
             this.OnSettingControlUnSecured();
-        }
-
-        protected virtual void OnIsEnabledValueChanging(ItemActingEventArgs<object> e)
-        {
-        }
-
-        protected virtual void OnSettingControlUnSecured()
-        {
         }
 
         private static object CoerceIsEnabledValueCallback(DependencyObject d, object value)
@@ -57,6 +49,14 @@ namespace Mohammad.Wpf.Windows.Controls
             var value1 = value;
             value = Catch(() => method?.Invoke(element, new[] {d, value1}));
             return value;
+        }
+
+        protected virtual void OnIsEnabledValueChanging(ItemActingEventArgs<object> e)
+        {
+        }
+
+        protected virtual void OnSettingControlUnSecured()
+        {
         }
     }
 }

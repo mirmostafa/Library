@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -54,6 +51,8 @@ namespace Mohammad.Dynamic.Xml
         {
             private readonly IEnumerator<XElement> _ElementEnumerator;
 
+            public NodeEnumerator(IEnumerator<XElement> elementEnumerator) => this._ElementEnumerator = elementEnumerator;
+
             public object Current
             {
                 get
@@ -62,8 +61,6 @@ namespace Mohammad.Dynamic.Xml
                     return new XNode(element);
                 }
             }
-
-            public NodeEnumerator(IEnumerator<XElement> elementEnumerator) => this._ElementEnumerator = elementEnumerator;
 
             public bool MoveNext() => this._ElementEnumerator.MoveNext();
 

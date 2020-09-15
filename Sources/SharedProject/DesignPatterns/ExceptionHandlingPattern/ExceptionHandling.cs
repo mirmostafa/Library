@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Diagnostics;
 using Mohammad.EventsArgs;
@@ -11,11 +8,6 @@ namespace Mohammad.DesignPatterns.ExceptionHandlingPattern
     public class ExceptionHandling<TException>
         where TException : Exception
     {
-        public TException LastException { get; private set; }
-        public bool HasException => this.LastException != null;
-        public bool RaiseExceptions { get; set; }
-        private object Sender { get; set; }
-
         public ExceptionHandling(EventHandler<ExceptionOccurredEventArgs<TException>> exceptionOccurredHandler)
             : this() => this.ExceptionOccurred += exceptionOccurredHandler;
 
@@ -23,9 +15,12 @@ namespace Mohammad.DesignPatterns.ExceptionHandlingPattern
         {
         }
 
-        public override string ToString() => this.LastException?.ToString() ?? "No error";
+        public TException LastException { get; private set; }
+        public bool HasException => this.LastException != null;
+        public bool RaiseExceptions { get; set; }
+        private object Sender { get; set; }
 
-        public event EventHandler<ExceptionOccurredEventArgs<TException>> ExceptionOccurred;
+        public override string ToString() => this.LastException?.ToString() ?? "No error";
 
         internal void HandleException(TException ex)
         {
@@ -66,6 +61,8 @@ namespace Mohammad.DesignPatterns.ExceptionHandlingPattern
         {
             this.Sender = sender;
         }
+
+        public event EventHandler<ExceptionOccurredEventArgs<TException>> ExceptionOccurred;
     }
 
     public class ExceptionHandling : ExceptionHandling<Exception>

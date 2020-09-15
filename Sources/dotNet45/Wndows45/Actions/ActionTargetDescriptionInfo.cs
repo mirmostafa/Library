@@ -11,10 +11,6 @@ namespace Mohammad.Win.Actions
         private readonly Dictionary<string, PropertyInfo> properties;
 
         /// <summary>
-        /// </summary>
-        public Type TargetType { get; }
-
-        /// <summary>
         ///     Creates a new instance
         /// </summary>
         /// <param name="targetType"></param>
@@ -28,6 +24,10 @@ namespace Mohammad.Win.Actions
                 this.properties.Add(property.Name, property);
             }
         }
+
+        /// <summary>
+        /// </summary>
+        public Type TargetType { get; }
 
         internal void SetValue(string propertyName, object target, object value)
         {

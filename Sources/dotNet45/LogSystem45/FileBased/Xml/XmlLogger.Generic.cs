@@ -10,12 +10,12 @@ namespace Mohammad.Logging.FileBased.Xml
     public class XmlLogger<TLogEntity> : Logger<XmlWriter<TLogEntity>, TLogEntity>, IStorageReadable
         where TLogEntity : LogEntity, new()
     {
-        public string StorageFilePath => this.Writer.Log.FullName;
-
         public XmlLogger(DirectoryInfo logPath = null, bool useLogRotation = false)
         {
             this.Initialize(logPath, useLogRotation);
         }
+
+        public string StorageFilePath => this.Writer.Log.FullName;
 
         public override string ToString() => this.StorageFilePath;
 

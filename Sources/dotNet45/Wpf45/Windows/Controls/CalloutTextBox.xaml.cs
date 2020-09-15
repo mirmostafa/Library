@@ -52,6 +52,11 @@ namespace Mohammad.Wpf.Windows.Controls
                 me.OnTextChanged(sender);
             });
 
+        public CalloutTextBox()
+        {
+            this.InitializeComponent();
+        }
+
         public string Description
         {
             get => (string)this.GetValue(DescriptionProperty);
@@ -84,11 +89,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public DependencyProperty BindingFieldProperty => this.LabeledTextBox.BindingFieldProperty;
         public FrameworkElement FlickerTextBlock => this.LabeledTextBox;
-
-        public CalloutTextBox()
-        {
-            this.InitializeComponent();
-        }
 
         protected virtual void OnTextChanged(object sender)
         {

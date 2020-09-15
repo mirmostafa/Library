@@ -22,6 +22,53 @@ namespace Mohammad.Globalization
         internal static PersianCalendar PersianCalendar = new PersianCalendar();
         internal readonly PersianDateTimeData Data;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="PersianDateTime" /> struct.
+        /// </summary>
+        /// <param name="dateTime">A DateTime instance.</param>
+        public PersianDateTime(in DateTime dateTime)
+        {
+            this.Data = new PersianDateTimeData();
+            this.Data.Init();
+            this.Data.Year = PersianCalendar.GetYear(dateTime);
+            this.Data.Month = PersianCalendar.GetMonth(dateTime);
+            this.Data.Day = PersianCalendar.GetDayOfMonth(dateTime);
+            this.Data.Hour = PersianCalendar.GetHour(dateTime);
+            this.Data.Minute = PersianCalendar.GetMinute(dateTime);
+            this.Data.Second = PersianCalendar.GetSecond(dateTime);
+            this.Data.Millisecond = PersianCalendar.GetMilliseconds(dateTime);
+            this.IsInitiated = true;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="PersianDateTime" /> struct.
+        /// </summary>
+        /// <param name="year">The year.</param>
+        /// <param name="month">The month.</param>
+        /// <param name="day">The day.</param>
+        /// <param name="hour">The hour.</param>
+        /// <param name="minute">The minute.</param>
+        /// <param name="second">The second.</param>
+        /// <param name="millisecond"></param>
+        public PersianDateTime(in int year, in int month, in int day, in int hour, in int minute, in int second, in double millisecond)
+        {
+            this.Data = new PersianDateTimeData();
+            this.Data.Init();
+            this.Data.Year = year;
+            this.Data.Month = month;
+            this.Data.Day = day;
+            this.Data.Hour = hour;
+            this.Data.Minute = minute;
+            this.Data.Second = second;
+            this.Data.Millisecond = millisecond;
+            this.IsInitiated = true;
+        }
+
+        private PersianDateTime(in PersianDateTimeData data) => (this.Data, this.IsInitiated) = (data, true);
+
+        private PersianDateTime(in SerializationInfo info, in StreamingContext context)
+            => (this.Data, this.IsInitiated) = ((PersianDateTimeData)info.GetValue("Data", typeof(PersianDateTimeData)), true);
+
         public static string DateSeparator { get; set; } = "/";
         public static string TimeSeparator { get; set; } = ":";
         public static string ToStringFormat { get; set; } = "yyyy/MM/dd HH:mm:ss";
@@ -115,91 +162,6 @@ namespace Mohammad.Globalization
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="PersianDateTime" /> struct.
-        /// </summary>
-        /// <param name="dateTime">A DateTime instance.</param>
-        public PersianDateTime(in DateTime dateTime)
-        {
-            this.Data = new PersianDateTimeData();
-            this.Data.Init();
-            this.Data.Year = PersianCalendar.GetYear(dateTime);
-            this.Data.Month = PersianCalendar.GetMonth(dateTime);
-            this.Data.Day = PersianCalendar.GetDayOfMonth(dateTime);
-            this.Data.Hour = PersianCalendar.GetHour(dateTime);
-            this.Data.Minute = PersianCalendar.GetMinute(dateTime);
-            this.Data.Second = PersianCalendar.GetSecond(dateTime);
-            this.Data.Millisecond = PersianCalendar.GetMilliseconds(dateTime);
-            this.IsInitiated = true;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="PersianDateTime" /> struct.
-        /// </summary>
-        /// <param name="year">The year.</param>
-        /// <param name="month">The month.</param>
-        /// <param name="day">The day.</param>
-        /// <param name="hour">The hour.</param>
-        /// <param name="minute">The minute.</param>
-        /// <param name="second">The second.</param>
-        /// <param name="millisecond"></param>
-        public PersianDateTime(in int year, in int month, in int day, in int hour, in int minute, in int second, in double millisecond)
-        {
-            this.Data = new PersianDateTimeData();
-            this.Data.Init();
-            this.Data.Year = year;
-            this.Data.Month = month;
-            this.Data.Day = day;
-            this.Data.Hour = hour;
-            this.Data.Minute = minute;
-            this.Data.Second = second;
-            this.Data.Millisecond = millisecond;
-            this.IsInitiated = true;
-        }
-
-        private PersianDateTime(in PersianDateTimeData data) => (this.Data, this.IsInitiated) = (data, true);
-
-        private PersianDateTime(in SerializationInfo info, in StreamingContext context)
-            => (this.Data, this.IsInitiated) = ((PersianDateTimeData)info.GetValue("Data", typeof(PersianDateTimeData)), true);
-
-        public static implicit operator string(in PersianDateTime persianDateTime) => persianDateTime.ToString();
-        public static implicit operator PersianDateTime(in string persianDateTimeString) => ParsePersian(persianDateTimeString);
-        public static implicit operator PersianDateTime(in DateTime dateTime) => dateTime.ToPersianDateTime();
-
-        public static implicit operator DateTime(in PersianDateTime persianDateTime) => PersianCalendar.ToDateTime(persianDateTime.Year,
-            persianDateTime.Month,
-            persianDateTime.Day,
-            persianDateTime.Hour,
-            persianDateTime.Minute,
-            persianDateTime.Second,
-            0);
-
-        public static PersianDateTime operator +(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
-        {
-            DateTime dateTime1 = persianDateTime1;
-            DateTime dateTime2 = persianDateTime2;
-            return dateTime1.Add(new TimeSpan(dateTime2.Ticks)).ToPersianDateTime();
-        }
-
-        public static PersianDateTime operator -(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
-        {
-            DateTime dateTime1 = persianDateTime1;
-            DateTime dateTime2 = persianDateTime2;
-            return dateTime1.Subtract(new TimeSpan(dateTime2.Ticks)).ToPersianDateTime();
-        }
-
-        public static bool operator ==(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2) => persianDateTime1.Equals(persianDateTime2);
-
-        public static bool operator !=(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2) => !persianDateTime1.Equals(persianDateTime2);
-
-        public static bool operator <(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) < 0;
-
-        public static bool operator <=(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) <= 0;
-
-        public static bool operator >(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) > 0;
-
-        public static bool operator >=(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) >= 0;
-
-        /// <summary>
         ///     Creates a new object that is a copy of the current instance.
         /// </summary>
         /// <returns>
@@ -259,31 +221,43 @@ namespace Mohammad.Globalization
         [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) => info.AddValue("Data", this.Data);
 
-        public void Deconstruct(out int year, out int month, out int day, out int hour, out int minute, out int second, out double millisecond)
+        public static implicit operator string(in PersianDateTime persianDateTime) => persianDateTime.ToString();
+        public static implicit operator PersianDateTime(in string persianDateTimeString) => ParsePersian(persianDateTimeString);
+        public static implicit operator PersianDateTime(in DateTime dateTime) => dateTime.ToPersianDateTime();
+
+        public static implicit operator DateTime(in PersianDateTime persianDateTime) => PersianCalendar.ToDateTime(persianDateTime.Year,
+            persianDateTime.Month,
+            persianDateTime.Day,
+            persianDateTime.Hour,
+            persianDateTime.Minute,
+            persianDateTime.Second,
+            0);
+
+        public static PersianDateTime operator +(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
         {
-            year = this.Year;
-            month = this.Month;
-            day = this.Day;
-            hour = this.Hour;
-            minute = this.Minute;
-            second = this.Second;
-            millisecond = this.Millisecond;
+            DateTime dateTime1 = persianDateTime1;
+            DateTime dateTime2 = persianDateTime2;
+            return dateTime1.Add(new TimeSpan(dateTime2.Ticks)).ToPersianDateTime();
         }
 
-        public void Deconstruct(out int year, out int month, out int day)
+        public static PersianDateTime operator -(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
         {
-            year = this.Year;
-            month = this.Month;
-            day = this.Day;
+            DateTime dateTime1 = persianDateTime1;
+            DateTime dateTime2 = persianDateTime2;
+            return dateTime1.Subtract(new TimeSpan(dateTime2.Ticks)).ToPersianDateTime();
         }
 
-        public void Deconstruct(out int hour, out int minute, out int second, out double millisecond)
-        {
-            hour = this.Hour;
-            minute = this.Minute;
-            second = this.Second;
-            millisecond = this.Millisecond;
-        }
+        public static bool operator ==(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2) => persianDateTime1.Equals(persianDateTime2);
+
+        public static bool operator !=(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2) => !persianDateTime1.Equals(persianDateTime2);
+
+        public static bool operator <(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) < 0;
+
+        public static bool operator <=(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) <= 0;
+
+        public static bool operator >(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) > 0;
+
+        public static bool operator >=(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) >= 0;
 
         public static int Compare(in string persianDateTime1, in string persianDateTime2)
         {
@@ -363,6 +337,72 @@ namespace Mohammad.Globalization
             return DateTime.Parse(dateTimeString, CultureInfo.CurrentCulture).ToPersianDateTime();
         }
 
+        public static string ToPersian(in DateTime dateTime) => new PersianDateTime(dateTime).ToString()!;
+
+        /// <summary>
+        ///     Tries to parse a string to PersianDateTime.
+        /// </summary>
+        /// <param name="str">The STR.</param>
+        /// <param name="result">The result.</param>
+        /// <returns></returns>
+        public static bool TryParsePersian(in string str, out PersianDateTime result)
+        {
+            result = Now;
+            try
+            {
+                result = ParsePersian(str);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static (PersianDateTime Result, bool Succeed) TryParsePersian(in string str)
+        {
+            var succeed = TryParsePersian(str, out var result);
+            return (result, succeed);
+        }
+
+        public static bool IsPersianDateTime(in string s) => TryParsePersian(s, out _);
+
+        /// <summary>
+        ///     Raises the invalid type cast exception.
+        /// </summary>
+        /// <returns></returns>
+        private static InvalidCastException RaiseInvalidTypeCastException()
+        {
+            var targetType = CodeHelper.GetCallerMethodName().Substring(2);
+            return new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
+        }
+
+        public void Deconstruct(out int year, out int month, out int day, out int hour, out int minute, out int second, out double millisecond)
+        {
+            year = this.Year;
+            month = this.Month;
+            day = this.Day;
+            hour = this.Hour;
+            minute = this.Minute;
+            second = this.Second;
+            millisecond = this.Millisecond;
+        }
+
+        public void Deconstruct(out int year, out int month, out int day)
+        {
+            year = this.Year;
+            month = this.Month;
+            day = this.Day;
+        }
+
+        public void Deconstruct(out int hour, out int minute, out int second, out double millisecond)
+        {
+            hour = this.Hour;
+            minute = this.Minute;
+            second = this.Second;
+            millisecond = this.Millisecond;
+        }
+
         /// <summary>
         ///     Returns a <see cref="string" /> that represents this instance.
         /// </summary>
@@ -424,8 +464,6 @@ namespace Mohammad.Globalization
         /// </returns>
         public override int GetHashCode() => this.Data.GetHashCode();
 
-        public static string ToPersian(in DateTime dateTime) => new PersianDateTime(dateTime).ToString()!;
-
         public string ToDateString(string? separator = null)
         {
             if (separator == null)
@@ -446,6 +484,7 @@ namespace Mohammad.Globalization
             {
                 separator = TimeSeparator;
             }
+
             return string.Concat(this.Hour.ToString("00", CultureInfo.CurrentCulture),
                 separator,
                 this.Minute.ToString("00", CultureInfo.CurrentCulture),
@@ -465,43 +504,5 @@ namespace Mohammad.Globalization
         /// <param name="persianDateTime">The PersianDate time.</param>
         /// <returns></returns>
         public PersianDateTime Add(in PersianDateTime persianDateTime) => Add(this, persianDateTime);
-
-        /// <summary>
-        ///     Tries to parse a string to PersianDateTime.
-        /// </summary>
-        /// <param name="str">The STR.</param>
-        /// <param name="result">The result.</param>
-        /// <returns></returns>
-        public static bool TryParsePersian(in string str, out PersianDateTime result)
-        {
-            result = Now;
-            try
-            {
-                result = ParsePersian(str);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public static (PersianDateTime Result, bool Succeed) TryParsePersian(in string str)
-        {
-            var succeed = TryParsePersian(str, out var result);
-            return (result, succeed);
-        }
-
-        public static bool IsPersianDateTime(in string s) => TryParsePersian(s, out _);
-
-        /// <summary>
-        ///     Raises the invalid type cast exception.
-        /// </summary>
-        /// <returns></returns>
-        private static InvalidCastException RaiseInvalidTypeCastException()
-        {
-            var targetType = CodeHelper.GetCallerMethodName().Substring(2);
-            return new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
-        }
     }
 }

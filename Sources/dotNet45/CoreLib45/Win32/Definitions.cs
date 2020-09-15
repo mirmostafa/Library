@@ -1,6 +1,3 @@
-
-
-
 using System;
 using Mohammad.Win32.Natives;
 

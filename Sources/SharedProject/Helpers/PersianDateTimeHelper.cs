@@ -20,7 +20,7 @@ namespace Mohammad.Helpers
             PersianMonth.Azar => 30,
             PersianMonth.Dey => 30,
             PersianMonth.Bahman => 30,
-            PersianMonth.Esfand => (year.HasValue ? PersianDateTime.PersianCalendar.IsLeapYear(year.Value) ? 30 : 29 : 29),
+            PersianMonth.Esfand => year.HasValue ? PersianDateTime.PersianCalendar.IsLeapYear(year.Value) ? 30 : 29 : 29,
             _ => 0
         };
 

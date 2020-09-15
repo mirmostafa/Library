@@ -19,6 +19,11 @@ namespace Mohammad.Win.Internals
     {
         private TabStripPage selectedTabStripPage;
 
+        public TabPageSwitcher()
+        {
+            this.ResetBackColor();
+        }
+
         /// <summary>
         ///     specify the default size for the control
         /// </summary>
@@ -61,9 +66,9 @@ namespace Mohammad.Win.Internals
             }
         }
 
-        public TabPageSwitcher()
+        public override void ResetBackColor()
         {
-            this.ResetBackColor();
+            this.BackColor = Color.FromArgb(191, 219, 255);
         }
 
         /// <summary>
@@ -122,6 +127,8 @@ namespace Mohammad.Win.Internals
             }
         }
 
+        private bool ShouldSerializeBackColor() => this.BackColor != Color.FromArgb(191, 219, 255);
+
         /// <summary>
         ///     Expose a Load event
         /// </summary>
@@ -131,12 +138,5 @@ namespace Mohammad.Win.Internals
         ///     Occurs when the selected tab has changed
         /// </summary>
         public event EventHandler SelectedTabStripPageChanged;
-
-        private bool ShouldSerializeBackColor() => this.BackColor != Color.FromArgb(191, 219, 255);
-
-        public override void ResetBackColor()
-        {
-            this.BackColor = Color.FromArgb(191, 219, 255);
-        }
     }
 }

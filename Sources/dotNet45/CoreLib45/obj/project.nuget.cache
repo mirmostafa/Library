@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "1JgIPKq0tCSu4vBQrs6Q1ifh2bYyqjk2BByvIsAmNWJRS5isKVl+wsEN3vNarhZaBiajW5lvf3RAFA6A8umdtQ==",
+  "success": true,
+  "projectFilePath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}

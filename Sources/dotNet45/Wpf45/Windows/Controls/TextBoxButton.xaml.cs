@@ -36,6 +36,13 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(TextBoxButton),
             new PropertyMetadata(default(string)));
 
+        public TextBoxButton()
+        {
+            this.InitializeComponent();
+            this.ButtonContent = "…";
+            //this.ButtonStyle = (Style)this.FindResource("IconButton");
+        }
+
         public object ButtonContent
         {
             get => this.GetValue(ButtonContentProperty);
@@ -88,13 +95,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => this.Button.CommandParameter;
             set => this.Button.CommandParameter = value;
-        }
-
-        public TextBoxButton()
-        {
-            this.InitializeComponent();
-            this.ButtonContent = "…";
-            //this.ButtonStyle = (Style)this.FindResource("IconButton");
         }
 
         private void Button_OnClick(object sender, RoutedEventArgs e)

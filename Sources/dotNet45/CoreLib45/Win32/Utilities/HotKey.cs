@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Mohammad.EventsArgs;
@@ -15,12 +12,6 @@ namespace Mohammad.Win32.Utilities
     {
         private Task _Task;
 
-        protected KeyModifier Modifiers { get; }
-        protected Keys Key { get; }
-        public int Id { get; }
-        protected TaskScheduler MainScheduler { get; private set; }
-        protected CancellationTokenSource CancellationTokenSource { get; private set; } = new CancellationTokenSource();
-
         public HotKey(KeyModifier modifiers, Keys key, int id = 1)
         {
             this.Modifiers = modifiers;
@@ -28,15 +19,54 @@ namespace Mohammad.Win32.Utilities
             this.Id = id;
         }
 
-        ~HotKey()
-        {
-            this.Dispose(false);
-        }
+        protected KeyModifier Modifiers { get; }
+        protected Keys Key { get; }
+        public int Id { get; }
+        protected TaskScheduler MainScheduler { get; private set; }
+        protected CancellationTokenSource CancellationTokenSource { get; private set; } = new CancellationTokenSource();
 
         public void Dispose()
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public static HotKey Create(KeyModifier keyModifiers, Keys key, Action<int> onHotKeyPressed, int id = 1)
+        {
+            if (onHotKeyPressed == null)
+            {
+                throw new ArgumentNullException(nameof(onHotKeyPressed));
+            }
+
+            return Create(keyModifiers, key, (_, e) => onHotKeyPressed(e.Item), id);
+        }
+
+        public static HotKey Create(KeyModifier keyModifiers, Keys key, Action onHotKeyPressed, int id = 1)
+        {
+            if (onHotKeyPressed == null)
+            {
+                throw new ArgumentNullException(nameof(onHotKeyPressed));
+            }
+
+            return Create(keyModifiers, key, (_, __) => onHotKeyPressed(), id);
+        }
+
+        public static HotKey Create(KeyModifier keyModifiers, Keys key, EventHandler<ItemActedEventArgs<int>> onHotKeyPressed, int id = 1)
+        {
+            if (onHotKeyPressed == null)
+            {
+                throw new ArgumentNullException(nameof(onHotKeyPressed));
+            }
+
+            var result = new HotKey(keyModifiers, key, id);
+            result.HotkeyPressed += onHotKeyPressed;
+            if (result.Register())
+            {
+                return result;
+            }
+
+            result.Dispose();
+            return null;
         }
 
         public bool Register()
@@ -82,44 +112,6 @@ namespace Mohammad.Win32.Utilities
             this.CancellationTokenSource.Cancel();
         }
 
-        public static HotKey Create(KeyModifier keyModifiers, Keys key, Action<int> onHotKeyPressed, int id = 1)
-        {
-            if (onHotKeyPressed == null)
-            {
-                throw new ArgumentNullException(nameof(onHotKeyPressed));
-            }
-
-            return Create(keyModifiers, key, (_, e) => onHotKeyPressed(e.Item), id);
-        }
-
-        public static HotKey Create(KeyModifier keyModifiers, Keys key, Action onHotKeyPressed, int id = 1)
-        {
-            if (onHotKeyPressed == null)
-            {
-                throw new ArgumentNullException(nameof(onHotKeyPressed));
-            }
-
-            return Create(keyModifiers, key, (_, __) => onHotKeyPressed(), id);
-        }
-
-        public static HotKey Create(KeyModifier keyModifiers, Keys key, EventHandler<ItemActedEventArgs<int>> onHotKeyPressed, int id = 1)
-        {
-            if (onHotKeyPressed == null)
-            {
-                throw new ArgumentNullException(nameof(onHotKeyPressed));
-            }
-
-            var result = new HotKey(keyModifiers, key, id);
-            result.HotkeyPressed += onHotKeyPressed;
-            if (result.Register())
-            {
-                return result;
-            }
-
-            result.Dispose();
-            return null;
-        }
-
         protected virtual void OnHotKeyPressed(ItemActedEventArgs<int> e)
         {
             this.HotkeyPressed.RaiseAsync(this, e, this.MainScheduler);
@@ -144,5 +136,10 @@ namespace Mohammad.Win32.Utilities
         }
 
         public event EventHandler<ItemActedEventArgs<int>> HotkeyPressed;
+
+        ~HotKey()
+        {
+            this.Dispose(false);
+        }
     }
 }

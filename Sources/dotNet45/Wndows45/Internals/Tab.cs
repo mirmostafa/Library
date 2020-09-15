@@ -24,6 +24,44 @@ namespace Mohammad.Win.Internals
         public int o_opacity = 180;
 
         /// <summary>
+        ///     Constructor for tab - support all overloads.
+        /// </summary>
+        public Tab()
+        {
+            this.Initialize();
+        }
+
+        public Tab(string text)
+            : base(text, null, null)
+        {
+            this.Initialize();
+        }
+
+        public Tab(Image image)
+            : base(null, image, null)
+        {
+            this.Initialize();
+        }
+
+        public Tab(string text, Image image)
+            : base(text, image, null)
+        {
+            this.Initialize();
+        }
+
+        public Tab(string text, Image image, EventHandler onClick)
+            : base(text, image, onClick)
+        {
+            this.Initialize();
+        }
+
+        public Tab(string text, Image image, EventHandler onClick, string name)
+            : base(text, image, onClick, name)
+        {
+            this.Initialize();
+        }
+
+        /// <summary>
         ///     Hide the CheckOnClick from the Property Grid so that we can use it for our own purposes.
         /// </summary>
         [DefaultValue(true)]
@@ -61,44 +99,6 @@ namespace Mohammad.Win.Internals
                 var textwidth = g.MeasureString(this.Text, this.Font).Width;
                 this.Width = Convert.ToInt16(textwidth) + 26;
             }
-        }
-
-        /// <summary>
-        ///     Constructor for tab - support all overloads.
-        /// </summary>
-        public Tab()
-        {
-            this.Initialize();
-        }
-
-        public Tab(string text)
-            : base(text, null, null)
-        {
-            this.Initialize();
-        }
-
-        public Tab(Image image)
-            : base(null, image, null)
-        {
-            this.Initialize();
-        }
-
-        public Tab(string text, Image image)
-            : base(text, image, null)
-        {
-            this.Initialize();
-        }
-
-        public Tab(string text, Image image, EventHandler onClick)
-            : base(text, image, onClick)
-        {
-            this.Initialize();
-        }
-
-        public Tab(string text, Image image, EventHandler onClick, string name)
-            : base(text, image, onClick, name)
-        {
-            this.Initialize();
         }
 
         protected override void OnMouseEnter(EventArgs e)

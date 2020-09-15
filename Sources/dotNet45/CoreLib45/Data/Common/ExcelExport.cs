@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,6 +13,11 @@ namespace Mohammad.Data.Common
 {
     public class ExcelExport : Singleton<ExcelExport>
     {
+        //Row limits older excel version per sheet, the row limit for excel 2003 is 65536
+        private ExcelExport()
+        {
+        }
+
         /// <summary>
         ///     Gets or sets the row limit per sheet.
         /// </summary>
@@ -30,9 +32,71 @@ namespace Mohammad.Data.Common
         /// </value>
         public bool TruncateLongSheetName { get; set; } = true;
 
-        //Row limits older excel version per sheet, the row limit for excel 2003 is 65536
-        private ExcelExport()
+        public static void Export<T>(IEnumerable<T> items, string csvFile, params KeyValuePair<string, string>[] columns)
         {
+            if (columns == null || !columns.Any())
+            {
+                columns = ObjectHelper.GetPropertiesName<T>().Select(prop => new KeyValuePair<string, string>(prop, prop)).ToArray();
+            }
+
+            var titlesProps = columns.ToDictionary(titleProp => titleProp.Key, titleProp => titleProp.Value);
+            var builder = new StringBuilder(titlesProps.Select(c => c.Key).Merge());
+            builder.AppendLine();
+            foreach (var item in items)
+            {
+                builder.AppendLine(titlesProps.Select(p =>
+                    {
+                        var prop = ObjectHelper.GetProp<string>(item, p.Value).Replace(",", "%%%");
+                        return prop;
+                    })
+                    .Merge());
+            }
+
+            if (File.Exists(csvFile))
+            {
+                File.Delete(csvFile);
+            }
+
+            File.CreateText(csvFile).Close();
+            File.WriteAllText(csvFile, builder.ToString());
+        }
+
+        /// <summary>
+        ///     Gets the workbook template.
+        /// </summary>
+        /// <returns> </returns>
+        protected static string GetWorkbookTemplate()
+        {
+            Contract.Ensures(1 <= Environment.NewLine.Length);
+
+            var sb = new StringBuilder(818);
+            sb.AppendFormat(@"<?xml version=""1.0"" encoding=""UTF-8"" ?>{0}", Environment.NewLine);
+            sb.AppendFormat(@"<?mso-application progid=""Excel.Sheet""?>{0}", Environment.NewLine);
+            sb.AppendFormat(@"<Workbook xmlns=""urn:schemas-microsoft-com:office:spreadsheet""{0}", Environment.NewLine);
+            sb.AppendFormat(@" xmlns:o=""urn:schemas-microsoft-com:office:office""{0}", Environment.NewLine);
+            sb.AppendFormat(@" xmlns:x=""urn:schemas-microsoft-com:office:excel""{0}", Environment.NewLine);
+            sb.AppendFormat(@" xmlns:ss=""urn:schemas-microsoft-com:office:spreadsheet""{0}", Environment.NewLine);
+            sb.AppendFormat(@" xmlns:html=""http://www.w3.org/TR/REC-html40"">{0}", Environment.NewLine);
+            sb.AppendFormat(@" <Styles>{0}", Environment.NewLine);
+            sb.AppendFormat(@"  <Style ss:ID=""Default"" ss:Name=""Normal"">{0}", Environment.NewLine);
+            sb.AppendFormat(@"   <Alignment ss:Vertical=""Bottom""/>{0}", Environment.NewLine);
+            sb.AppendFormat(@"   <Borders/>{0}", Environment.NewLine);
+            sb.AppendFormat(@"   <Font ss:FontName=""Tahoma"" x:Family=""Swiss"" ss:Size=""11"" ss:Color=""#000000""/>{0}", Environment.NewLine);
+            sb.AppendFormat(@"   <Interior/>{0}", Environment.NewLine);
+            sb.AppendFormat(@"   <NumberFormat/>{0}", Environment.NewLine);
+            sb.AppendFormat(@"   <Protection/>{0}", Environment.NewLine);
+            sb.AppendFormat(@"  </Style>{0}", Environment.NewLine);
+            sb.AppendFormat(@"  <Style ss:ID=""s62"">{0}", Environment.NewLine);
+            sb.AppendFormat(@"   <Font ss:FontName=""Tahoma"" x:Family=""Swiss"" ss:Size=""11"" ss:Color=""#000000""{0}", Environment.NewLine);
+            sb.AppendFormat(@"    ss:Bold=""1""/>{0}", Environment.NewLine);
+            sb.AppendFormat(@"  </Style>{0}", Environment.NewLine);
+            sb.AppendFormat(@"  <Style ss:ID=""s63"">{0}", Environment.NewLine);
+            sb.AppendFormat(@"   <NumberFormat ss:Format=""Short Date""/>{0}", Environment.NewLine);
+            sb.AppendFormat(@"  </Style>{0}", Environment.NewLine);
+            sb.AppendFormat(@" </Styles>{0}", Environment.NewLine);
+            sb.AppendLine(@"{0}");
+            sb.AppendLine(@"</Workbook>");
+            return sb.ToString();
         }
 
         /// <summary>
@@ -94,35 +158,6 @@ namespace Mohammad.Data.Common
         /// <param name="filename"> The filename. </param>
         /// <returns> </returns>
         public FileInfo Export(IEnumerable<DataTable> tables, string filename = null) => this.ExportCore(tables, filename);
-
-        public static void Export<T>(IEnumerable<T> items, string csvFile, params KeyValuePair<string, string>[] columns)
-        {
-            if (columns == null || !columns.Any())
-            {
-                columns = ObjectHelper.GetPropertiesName<T>().Select(prop => new KeyValuePair<string, string>(prop, prop)).ToArray();
-            }
-
-            var titlesProps = columns.ToDictionary(titleProp => titleProp.Key, titleProp => titleProp.Value);
-            var builder = new StringBuilder(titlesProps.Select(c => c.Key).Merge());
-            builder.AppendLine();
-            foreach (var item in items)
-            {
-                builder.AppendLine(titlesProps.Select(p =>
-                    {
-                        var prop = ObjectHelper.GetProp<string>(item, p.Value).Replace(",", "%%%");
-                        return prop;
-                    })
-                    .Merge());
-            }
-
-            if (File.Exists(csvFile))
-            {
-                File.Delete(csvFile);
-            }
-
-            File.CreateText(csvFile).Close();
-            File.WriteAllText(csvFile, builder.ToString());
-        }
 
         /// <summary>
         ///     Gets the excel XML.
@@ -202,44 +237,6 @@ namespace Mohammad.Data.Common
             var e = this.OnFormattingDateTime(new ItemActedEventArgs<string>(result));
             result = e.Item;
             return result;
-        }
-
-        /// <summary>
-        ///     Gets the workbook template.
-        /// </summary>
-        /// <returns> </returns>
-        protected static string GetWorkbookTemplate()
-        {
-            Contract.Ensures(1 <= Environment.NewLine.Length);
-
-            var sb = new StringBuilder(818);
-            sb.AppendFormat(@"<?xml version=""1.0"" encoding=""UTF-8"" ?>{0}", Environment.NewLine);
-            sb.AppendFormat(@"<?mso-application progid=""Excel.Sheet""?>{0}", Environment.NewLine);
-            sb.AppendFormat(@"<Workbook xmlns=""urn:schemas-microsoft-com:office:spreadsheet""{0}", Environment.NewLine);
-            sb.AppendFormat(@" xmlns:o=""urn:schemas-microsoft-com:office:office""{0}", Environment.NewLine);
-            sb.AppendFormat(@" xmlns:x=""urn:schemas-microsoft-com:office:excel""{0}", Environment.NewLine);
-            sb.AppendFormat(@" xmlns:ss=""urn:schemas-microsoft-com:office:spreadsheet""{0}", Environment.NewLine);
-            sb.AppendFormat(@" xmlns:html=""http://www.w3.org/TR/REC-html40"">{0}", Environment.NewLine);
-            sb.AppendFormat(@" <Styles>{0}", Environment.NewLine);
-            sb.AppendFormat(@"  <Style ss:ID=""Default"" ss:Name=""Normal"">{0}", Environment.NewLine);
-            sb.AppendFormat(@"   <Alignment ss:Vertical=""Bottom""/>{0}", Environment.NewLine);
-            sb.AppendFormat(@"   <Borders/>{0}", Environment.NewLine);
-            sb.AppendFormat(@"   <Font ss:FontName=""Tahoma"" x:Family=""Swiss"" ss:Size=""11"" ss:Color=""#000000""/>{0}", Environment.NewLine);
-            sb.AppendFormat(@"   <Interior/>{0}", Environment.NewLine);
-            sb.AppendFormat(@"   <NumberFormat/>{0}", Environment.NewLine);
-            sb.AppendFormat(@"   <Protection/>{0}", Environment.NewLine);
-            sb.AppendFormat(@"  </Style>{0}", Environment.NewLine);
-            sb.AppendFormat(@"  <Style ss:ID=""s62"">{0}", Environment.NewLine);
-            sb.AppendFormat(@"   <Font ss:FontName=""Tahoma"" x:Family=""Swiss"" ss:Size=""11"" ss:Color=""#000000""{0}", Environment.NewLine);
-            sb.AppendFormat(@"    ss:Bold=""1""/>{0}", Environment.NewLine);
-            sb.AppendFormat(@"  </Style>{0}", Environment.NewLine);
-            sb.AppendFormat(@"  <Style ss:ID=""s63"">{0}", Environment.NewLine);
-            sb.AppendFormat(@"   <NumberFormat ss:Format=""Short Date""/>{0}", Environment.NewLine);
-            sb.AppendFormat(@"  </Style>{0}", Environment.NewLine);
-            sb.AppendFormat(@" </Styles>{0}", Environment.NewLine);
-            sb.AppendLine(@"{0}");
-            sb.AppendLine(@"</Workbook>");
-            return sb.ToString();
         }
 
         /// <summary>

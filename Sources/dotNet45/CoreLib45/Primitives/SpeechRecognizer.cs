@@ -1,6 +1,3 @@
-
-
-
 using System.Globalization;
 using System.Speech.Recognition;
 using System.Speech.Synthesis;

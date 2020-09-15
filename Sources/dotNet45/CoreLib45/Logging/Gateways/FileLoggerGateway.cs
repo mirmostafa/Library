@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using Mohammad.Helpers;
@@ -13,10 +10,6 @@ namespace Mohammad.Logging.Gateways
         private readonly string _FilePath;
         private string _CompleteFilePath;
 
-        public override Encoding Encoding => Encoding.UTF8;
-
-        public bool IsLogRotationEnabled { get; set; }
-
         public FileLoggerGateway(string filePath = null)
         {
             var fullPath = Path.GetFullPath(filePath.IfNullOrEmpty(Path.Combine(Environment.CurrentDirectory, ApplicationHelper.ApplicationTitle + ".log")));
@@ -27,6 +20,10 @@ namespace Mohammad.Logging.Gateways
 
             this._FilePath = fullPath;
         }
+
+        public override Encoding Encoding => Encoding.UTF8;
+
+        public bool IsLogRotationEnabled { get; set; }
 
         public override void WriteLine()
         {

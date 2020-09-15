@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Runtime.Serialization;
 using Mohammad.Helpers;
@@ -18,9 +15,6 @@ namespace Mohammad.Exceptions
     [Serializable]
     public abstract class ExceptionBase : Exception, IException
     {
-        public string Instruction { get; set; }
-        public object Owner { get; set; }
-
         protected ExceptionBase()
         {
         }
@@ -45,6 +39,9 @@ namespace Mohammad.Exceptions
 
         protected ExceptionBase(string message, Exception inner, string instruction)
             : this(message, inner) => this.Instruction = instruction;
+
+        public string Instruction { get; set; }
+        public object Owner { get; set; }
 
         public static void WrapThrow<TException>()
             where TException : ExceptionBase

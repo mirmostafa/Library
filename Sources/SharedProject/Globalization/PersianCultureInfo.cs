@@ -1,19 +1,14 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+
 // ReSharper disable PossibleNullReferenceException
 
 namespace Mohammad.Globalization
 {
     public sealed class PersianCultureInfo : CultureInfo
     {
-        public override Calendar Calendar { get; }
-        public override Calendar[] OptionalCalendars { get; }
-
         public PersianCultureInfo(string cultureName = "fa-IR", bool useUserOverride = true, bool setPatterns = false)
             : base(cultureName, useUserOverride)
         {
@@ -73,5 +68,8 @@ namespace Mohammad.Globalization
                 this.DateTimeFormat.SetAllDateTimePatterns(new[] {"yyyy MMMM"}, 'Y');
             }
         }
+
+        public override Calendar Calendar { get; }
+        public override Calendar[] OptionalCalendars { get; }
     }
 }

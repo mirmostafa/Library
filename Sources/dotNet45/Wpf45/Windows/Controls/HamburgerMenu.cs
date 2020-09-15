@@ -32,6 +32,11 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(HamburgerMenu),
             new PropertyMetadata(Brushes.Red));
 
+        static HamburgerMenu()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(HamburgerMenu), new FrameworkPropertyMetadata(typeof(HamburgerMenu)));
+        }
+
         public new List<HamburgerMenuItem> Content
         {
             get => (List<HamburgerMenuItem>)this.GetValue(ContentProperty);
@@ -60,11 +65,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => (Brush)this.GetValue(SelectionIndicatorColorProperty);
             set => this.SetValue(SelectionIndicatorColorProperty, value);
-        }
-
-        static HamburgerMenu()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(HamburgerMenu), new FrameworkPropertyMetadata(typeof(HamburgerMenu)));
         }
 
         public override void BeginInit()

@@ -7,15 +7,13 @@ namespace Mohammad.Logging.FileBased.Safe
 {
     public class SecureFileWriter : IWriter<LogEntity>
     {
-        public SecureFile Storage { get; }
-
         public SecureFileWriter(string key)
             : this(Utilities.GenerateLogFileSpec(), key)
         {
         }
 
         public SecureFileWriter(string fileName, string key) => this.Storage = new SecureFile(fileName, key);
-        public override string ToString() => this.Storage.ToString();
+        public SecureFile Storage { get; }
 
         public bool ShowInDebuggerTracer { get; set; }
 
@@ -28,5 +26,7 @@ namespace Mohammad.Logging.FileBased.Safe
         {
             throw new NotImplementedException();
         }
+
+        public override string ToString() => this.Storage.ToString();
     }
 }

@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Mohammad.Data.SqlServer.Dynamics.Collections

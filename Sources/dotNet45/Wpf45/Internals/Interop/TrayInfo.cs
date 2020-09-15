@@ -80,6 +80,15 @@ namespace Mohammad.Wpf.Internals.Interop
             }
         }
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("shell32.dll")]
+        private static extern uint SHAppBarMessage(uint dwMessage, ref APPBARDATA data);
+
+        [DllImport("user32.dll")]
+        private static extern int SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
+
         public void GetPosition(string strClassName, string strWindowName)
         {
             this.m_data = new APPBARDATA();
@@ -106,15 +115,6 @@ namespace Mohammad.Wpf.Internals.Interop
         {
             this.GetPosition("Shell_TrayWnd", null);
         }
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-
-        [DllImport("shell32.dll")]
-        private static extern uint SHAppBarMessage(uint dwMessage, ref APPBARDATA data);
-
-        [DllImport("user32.dll")]
-        private static extern int SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
 
         public enum ScreenEdge
         {

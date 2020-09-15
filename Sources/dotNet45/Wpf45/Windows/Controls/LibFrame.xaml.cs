@@ -23,6 +23,12 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(LibFrame),
             new PropertyMetadata(default(Window)));
 
+        public LibFrame()
+        {
+            this.UseAnimation = UseAnimationByDefault;
+            this.InitializeComponent();
+        }
+
         public bool UseAnimation
         {
             get => (bool)this.GetValue(UseAnimationProperty);
@@ -33,12 +39,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => (Window)this.GetValue(WindowProperty);
             set => this.SetValue(WindowProperty, value);
-        }
-
-        public LibFrame()
-        {
-            this.UseAnimation = UseAnimationByDefault;
-            this.InitializeComponent();
         }
 
         private void LibFrame_OnNavigating(object sender, NavigatingCancelEventArgs e)

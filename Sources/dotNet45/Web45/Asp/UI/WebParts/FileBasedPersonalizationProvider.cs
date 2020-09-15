@@ -40,6 +40,77 @@ namespace Mohammad.Web.Asp.UI.WebParts
         public static string PersonalizationFolder { get; set; } = "~/App_Data/Personalization";
 
         /// <summary>
+        ///     Sets the authorization.
+        /// </summary>
+        /// <param name="page">The page.</param>
+        /// <param name="webPartManager">The web part manager1.</param>
+        /// <param name="cookieName">Name of the cookie.</param>
+        public static void SetAuthorization(Page page, WebPartManager webPartManager, string cookieName = "WebParts")
+        {
+            if (!page.IsPostBack)
+            {
+                var authCookie = HttpContext.Current.Request.Cookies.Get(FormsAuthentication.FormsCookieName);
+                if (authCookie == null)
+                {
+                    var cookie = HttpContext.Current.Request.Cookies.Get(cookieName);
+                    string userId;
+                    if (cookie == null)
+                    {
+                        userId = Guid.NewGuid().ToString().Replace("-", "");
+                        cookie = new HttpCookie(cookieName, userId) {Expires = DateTime.Now.AddYears(10)};
+                        HttpContext.Current.Response.Cookies.Add(cookie);
+                    }
+                    else
+                    {
+                        userId = cookie.Value;
+                    }
+
+                    var authTicket = new FormsAuthenticationTicket(1, userId, DateTime.Now, DateTime.Now.AddSeconds(30), false, "roles");
+                    HttpContext.Current.Session["Expired"] = authTicket.Expiration.ToString();
+                    var encryptedTicket = FormsAuthentication.Encrypt(authTicket);
+                    authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                    HttpContext.Current.Response.Cookies.Add(authCookie);
+                    HttpContext.Current.Response.Redirect(HttpContext.Current.Request.Url.ToString());
+                }
+
+                webPartManager.DisplayMode = WebPartManager.DesignDisplayMode;
+            }
+
+            webPartManager.DisplayMode = WebPartManager.DesignDisplayMode;
+        }
+
+        /// <summary>
+        ///     Gets the path.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <param name="path">The path.</param>
+        /// <returns></returns>
+        private static string GetPath(string userName, string path)
+        {
+            var sha = new SHA256Managed();
+            var encoding = new UnicodeEncoding();
+            var computeHash = sha.ComputeHash(encoding.GetBytes(path));
+            var hash = Convert.ToBase64String(computeHash).Replace('/', '_').Replace('\\', '_').Replace("=", "").ToUpper();
+
+            const string invalidCharacters = "[]{}<>/\\?,.;':`-=~!@#$%^&*()_+";
+            foreach (var c in invalidCharacters)
+            {
+                hash.Replace(c.ToString(), "");
+            }
+
+            var returnPath =
+                HttpContext.Current.Server.MapPath(string.IsNullOrEmpty(userName)
+                    ? string.Format("{0}/{1}.Personalization.bin", PersonalizationFolder, hash)
+                    : string.Format("{0}/{1}.{2}.Personalization.bin", PersonalizationFolder, userName.Replace('\\', '_'), hash));
+            if (!new FileInfo(returnPath).Directory.Exists)
+            {
+                new FileInfo(returnPath).Directory.Create();
+            }
+
+            return returnPath;
+        }
+
+        /// <summary>
         ///     When overridden in a derived class, returns a collection containing zero or more
         ///     <see
         ///         cref="T:System.Web.UI.WebControls.WebParts.PersonalizationStateInfo" />
@@ -112,46 +183,6 @@ namespace Mohammad.Web.Asp.UI.WebParts
         ///     The number of rows deleted from the underlying data store.
         /// </returns>
         public override int ResetUserState(string path, DateTime userInactiveSinceDate) => throw new NotSupportedException();
-
-        /// <summary>
-        ///     Sets the authorization.
-        /// </summary>
-        /// <param name="page">The page.</param>
-        /// <param name="webPartManager">The web part manager1.</param>
-        /// <param name="cookieName">Name of the cookie.</param>
-        public static void SetAuthorization(Page page, WebPartManager webPartManager, string cookieName = "WebParts")
-        {
-            if (!page.IsPostBack)
-            {
-                var authCookie = HttpContext.Current.Request.Cookies.Get(FormsAuthentication.FormsCookieName);
-                if (authCookie == null)
-                {
-                    var cookie = HttpContext.Current.Request.Cookies.Get(cookieName);
-                    string userId;
-                    if (cookie == null)
-                    {
-                        userId = Guid.NewGuid().ToString().Replace("-", "");
-                        cookie = new HttpCookie(cookieName, userId) {Expires = DateTime.Now.AddYears(10)};
-                        HttpContext.Current.Response.Cookies.Add(cookie);
-                    }
-                    else
-                    {
-                        userId = cookie.Value;
-                    }
-
-                    var authTicket = new FormsAuthenticationTicket(1, userId, DateTime.Now, DateTime.Now.AddSeconds(30), false, "roles");
-                    HttpContext.Current.Session["Expired"] = authTicket.Expiration.ToString();
-                    var encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-                    authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
-                    HttpContext.Current.Response.Cookies.Add(authCookie);
-                    HttpContext.Current.Response.Redirect(HttpContext.Current.Request.Url.ToString());
-                }
-
-                webPartManager.DisplayMode = WebPartManager.DesignDisplayMode;
-            }
-
-            webPartManager.DisplayMode = WebPartManager.DesignDisplayMode;
-        }
 
         /// <summary>
         ///     When overridden in a derived class, loads raw personalization data from the underlying data store.
@@ -273,37 +304,6 @@ namespace Mohammad.Web.Asp.UI.WebParts
                     writer.Close();
                 }
             }
-        }
-
-        /// <summary>
-        ///     Gets the path.
-        /// </summary>
-        /// <param name="userName">Name of the user.</param>
-        /// <param name="path">The path.</param>
-        /// <returns></returns>
-        private static string GetPath(string userName, string path)
-        {
-            var sha = new SHA256Managed();
-            var encoding = new UnicodeEncoding();
-            var computeHash = sha.ComputeHash(encoding.GetBytes(path));
-            var hash = Convert.ToBase64String(computeHash).Replace('/', '_').Replace('\\', '_').Replace("=", "").ToUpper();
-
-            const string invalidCharacters = "[]{}<>/\\?,.;':`-=~!@#$%^&*()_+";
-            foreach (var c in invalidCharacters)
-            {
-                hash.Replace(c.ToString(), "");
-            }
-
-            var returnPath =
-                HttpContext.Current.Server.MapPath(string.IsNullOrEmpty(userName)
-                    ? string.Format("{0}/{1}.Personalization.bin", PersonalizationFolder, hash)
-                    : string.Format("{0}/{1}.{2}.Personalization.bin", PersonalizationFolder, userName.Replace('\\', '_'), hash));
-            if (!new FileInfo(returnPath).Directory.Exists)
-            {
-                new FileInfo(returnPath).Directory.Create();
-            }
-
-            return returnPath;
         }
     }
 }

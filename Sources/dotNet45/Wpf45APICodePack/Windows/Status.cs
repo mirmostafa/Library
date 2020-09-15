@@ -23,6 +23,15 @@ namespace Mohammad.Wpf.Windows
         private readonly LibraryGlassWindow _Window;
         private ExceptionHandling _ExceptionHandling;
         private TaskbarProgressBarState _TaskbarProgressBarState;
+
+        public Status(ProgressBar progressBar, StatusBarItem statusBarItem, ISimpleLogger logger, LibraryGlassWindow window = null)
+        {
+            this._Window = window;
+            this.ProgressBar = progressBar;
+            this.StatusBarItem = statusBarItem;
+            this.Logger = logger;
+        }
+
         public ProgressBar ProgressBar { get; }
         public StatusBarItem StatusBarItem { get; }
         public ISimpleLogger Logger { get; }
@@ -34,14 +43,6 @@ namespace Mohammad.Wpf.Windows
         }
 
         public bool EnableRaisingEvents { get; set; } = true;
-
-        public Status(ProgressBar progressBar, StatusBarItem statusBarItem, ISimpleLogger logger, LibraryGlassWindow window = null)
-        {
-            this._Window = window;
-            this.ProgressBar = progressBar;
-            this.StatusBarItem = statusBarItem;
-            this.Logger = logger;
-        }
 
         public void DoWork(Action onWork, string startPrompt = null, string endPrompt = null, params LibCommand[] commands)
         {

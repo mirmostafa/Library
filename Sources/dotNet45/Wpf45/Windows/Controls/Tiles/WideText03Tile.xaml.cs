@@ -5,15 +5,15 @@
     /// </summary>
     public partial class WideText03Tile
     {
+        public WideText03Tile()
+        {
+            this.InitializeComponent();
+        }
+
         public string Header
         {
             get => this.textBlock1.Text;
             set => this.textBlock1.Text = value;
-        }
-
-        public WideText03Tile()
-        {
-            this.InitializeComponent();
         }
 
         protected override void HookCommand()

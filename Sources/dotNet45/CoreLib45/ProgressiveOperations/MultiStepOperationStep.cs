@@ -1,20 +1,17 @@
-﻿
-
-
-using System;
+﻿using System;
 
 namespace Mohammad.ProgressiveOperations
 {
     public class MultiStepOperationStep : MultiStepOperationStepBase
     {
-        private Action Action { get; }
-        private Action<MultiStepOperation> Action2 { get; }
-
         public MultiStepOperationStep(MultiStepOperation operation, Action<MultiStepOperation> action, string description = null, int priorityId = -1)
             : base(operation, description, priorityId) => this.Action2 = action;
 
         public MultiStepOperationStep(MultiStepOperation operation, Action action, string description = null, int priorityId = -1)
             : base(operation, description, priorityId) => this.Action = action;
+
+        private Action Action { get; }
+        private Action<MultiStepOperation> Action2 { get; }
 
         protected override void OnStep(MultiStepOperation op)
         {
@@ -31,11 +28,6 @@ namespace Mohammad.ProgressiveOperations
 
     public class MultiStepOperationStep<TArgument> : MultiStepOperationStepBase
     {
-        private Action<TArgument> Action { get; }
-        private Action<MultiStepOperation, TArgument> Action2 { get; }
-
-        public TArgument Argument { get; set; }
-
         public MultiStepOperationStep(MultiStepOperation operation,
             Action<MultiStepOperation, TArgument> action,
             string description = null,
@@ -52,6 +44,11 @@ namespace Mohammad.ProgressiveOperations
             this.Argument = argument;
             this.Action = action;
         }
+
+        private Action<TArgument> Action { get; }
+        private Action<MultiStepOperation, TArgument> Action2 { get; }
+
+        public TArgument Argument { get; set; }
 
         protected override void OnStep(MultiStepOperation op)
         {

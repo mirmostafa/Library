@@ -22,6 +22,23 @@ namespace Mohammad.Logging
         private static int _ReaderLockAcquireTimeout = DEFAULT_TIMEOUT;
         private readonly ReaderWriterLock _StructureHolderLock = new ReaderWriterLock();
         private ExceptionHandling _ExceptionHandling = new ExceptionHandling();
+
+        public Logger(TWriter writer, bool raiseEventOnly = false)
+            : this()
+        {
+            this.Writer = writer;
+            this.RaiseEventOnly = raiseEventOnly;
+            if (LoadLastLogOnInitialize)
+            {
+                this.Writer.LoadLastLog();
+            }
+        }
+
+        protected Logger()
+        {
+            this.ReadConfiguration();
+        }
+
         public static bool LoadLastLogOnInitialize { get; set; }
         public TWriter Writer { get; protected set; }
         public static int WriterLockAcquireTimeout { get; private set; } = DEFAULT_TIMEOUT;
@@ -42,20 +59,16 @@ namespace Mohammad.Logging
             set => this._ExceptionHandling = value;
         }
 
-        public Logger(TWriter writer, bool raiseEventOnly = false)
-            : this()
+        internal static void SetLockTimeouts(int? readerTimeout, int? writerTimeout)
         {
-            this.Writer = writer;
-            this.RaiseEventOnly = raiseEventOnly;
-            if (LoadLastLogOnInitialize)
-            {
-                this.Writer.LoadLastLog();
-            }
+            _ReaderLockAcquireTimeout = readerTimeout ?? DEFAULT_TIMEOUT;
+            WriterLockAcquireTimeout = writerTimeout ?? DEFAULT_TIMEOUT;
         }
 
-        protected Logger()
+        internal static void ResetLockTimeouts()
         {
-            this.ReadConfiguration();
+            _ReaderLockAcquireTimeout = DEFAULT_TIMEOUT;
+            WriterLockAcquireTimeout = DEFAULT_TIMEOUT;
         }
 
         //public void CurrentOperationStart(double maxSteps) { this.OnCurrentOperationStarted(new MultiStepStartedLogEventArgs(maxSteps)); }
@@ -240,17 +253,5 @@ namespace Mohammad.Logging
         public event EventHandler<ItemActingEventArgs<TLogEntity>> Logging;
 
         public event EventHandler<ItemActedEventArgs<TLogEntity>> Logged;
-
-        internal static void SetLockTimeouts(int? readerTimeout, int? writerTimeout)
-        {
-            _ReaderLockAcquireTimeout = readerTimeout ?? DEFAULT_TIMEOUT;
-            WriterLockAcquireTimeout = writerTimeout ?? DEFAULT_TIMEOUT;
-        }
-
-        internal static void ResetLockTimeouts()
-        {
-            _ReaderLockAcquireTimeout = DEFAULT_TIMEOUT;
-            WriterLockAcquireTimeout = DEFAULT_TIMEOUT;
-        }
     }
 }

@@ -1,6 +1,3 @@
-
-
-
 using System.ServiceProcess;
 
 namespace Mohammad.ServiceProcess

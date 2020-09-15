@@ -1,6 +1,3 @@
-
-
-
 using System.Collections.Generic;
 using System.Dynamic;
 using System.IO;
@@ -13,6 +10,13 @@ namespace Mohammad.Dynamic.Xml
     public sealed class XNode : DynamicObject
     {
         private readonly XElement _Element;
+
+        public XNode(string name)
+            : this(new XElement(name))
+        {
+        }
+
+        public XNode(XElement element) => this._Element = element;
 
         public string Xml
         {
@@ -37,13 +41,6 @@ namespace Mohammad.Dynamic.Xml
         }
 
         public string Name => this._Element.Name.LocalName;
-
-        public XNode(string name)
-            : this(new XElement(name))
-        {
-        }
-
-        public XNode(XElement element) => this._Element = element;
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {

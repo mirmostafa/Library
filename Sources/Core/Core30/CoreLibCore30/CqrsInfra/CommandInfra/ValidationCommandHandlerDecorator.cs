@@ -6,6 +6,9 @@ namespace Mohammad.CqrsInfra.CommandInfra
         where TCommand : ICommand
         where TResult : ICommandResult
     {
+        private readonly ICommandHandler<TCommand, TResult> _DecoratedHandler;
+        private readonly ICommandValidator<TCommand> _Validator;
+
         public ValidationCommandHandlerDecorator(ICommandHandler<TCommand, TResult> decoratedHandler, ICommandValidator<TCommand> validator)
         {
             this._DecoratedHandler = decoratedHandler;
@@ -17,8 +20,5 @@ namespace Mohammad.CqrsInfra.CommandInfra
             await this._Validator.ValidateAsync(command);
             return await this._DecoratedHandler.HandleAsync(command);
         }
-
-        private readonly ICommandHandler<TCommand, TResult> _DecoratedHandler;
-        private readonly ICommandValidator<TCommand> _Validator;
     }
 }

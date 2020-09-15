@@ -8,8 +8,8 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 {
     public class CloseCommand : LibCommand
     {
-        public bool? DialogResult { get; set; }
         public CloseCommand() => this.Content = "_Close";
+        public bool? DialogResult { get; set; }
 
         protected override void OnExecuted()
         {

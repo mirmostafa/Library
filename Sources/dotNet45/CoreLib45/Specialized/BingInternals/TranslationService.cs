@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Net;
 using System.Runtime.Serialization;
@@ -92,6 +89,30 @@ namespace Mohammad.Specialized.BingInternals
                 new Timer(this.OnTokenExpiredCallback, this, TimeSpan.FromMinutes(RefreshTokenDuration), TimeSpan.FromMilliseconds(-1));
         }
 
+        private static AdmAccessToken HttpPost(string datamarketAccessUri, string requestDetails)
+        {
+            //Prepare OAuth request 
+            var webRequest = WebRequest.Create(datamarketAccessUri);
+            webRequest.ContentType = "application/x-www-form-urlencoded";
+            webRequest.Method = "POST";
+            var bytes = Encoding.ASCII.GetBytes(requestDetails);
+            webRequest.ContentLength = bytes.Length;
+            using (var outputStream = webRequest.GetRequestStream())
+            {
+                outputStream.Write(bytes, 0, bytes.Length);
+            }
+
+            using (var webResponse = webRequest.GetResponse())
+            {
+                var serializer = new DataContractJsonSerializer(typeof(AdmAccessToken));
+                //Get deserialized object from JSON stream
+                var token = (AdmAccessToken)serializer.ReadObject(webResponse.GetResponseStream());
+                return token;
+            }
+        }
+
+        internal AdmAccessToken GetAccessToken() => this.token;
+
         private void RenewAccessToken()
         {
             var newAccessToken = HttpPost(DatamarketAccessUri, this.request);
@@ -123,29 +144,5 @@ namespace Mohammad.Specialized.BingInternals
                 }
             }
         }
-
-        private static AdmAccessToken HttpPost(string datamarketAccessUri, string requestDetails)
-        {
-            //Prepare OAuth request 
-            var webRequest = WebRequest.Create(datamarketAccessUri);
-            webRequest.ContentType = "application/x-www-form-urlencoded";
-            webRequest.Method = "POST";
-            var bytes = Encoding.ASCII.GetBytes(requestDetails);
-            webRequest.ContentLength = bytes.Length;
-            using (var outputStream = webRequest.GetRequestStream())
-            {
-                outputStream.Write(bytes, 0, bytes.Length);
-            }
-
-            using (var webResponse = webRequest.GetResponse())
-            {
-                var serializer = new DataContractJsonSerializer(typeof(AdmAccessToken));
-                //Get deserialized object from JSON stream
-                var token = (AdmAccessToken)serializer.ReadObject(webResponse.GetResponseStream());
-                return token;
-            }
-        }
-
-        internal AdmAccessToken GetAccessToken() => this.token;
     }
 }

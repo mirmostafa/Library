@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Threading;
 using Mohammad.EventsArgs;
@@ -13,6 +10,14 @@ namespace Mohammad.Threading
     {
         private AsyncPool _PriodPool;
 
+        protected PriodicAsync(TimeSpan interval) => this.Interval = interval;
+
+        protected PriodicAsync(TimeSpan interval, long maxCount)
+        {
+            this.Interval = interval;
+            this.MaxCount = maxCount;
+        }
+
         public long? MaxCount { get; set; }
         public long Count { get; protected set; }
         public virtual TimeSpan Interval { get; set; }
@@ -22,14 +27,6 @@ namespace Mohammad.Threading
         {
             get => this._PriodPool ?? (this._PriodPool = this.Pool);
             set => this._PriodPool = value;
-        }
-
-        protected PriodicAsync(TimeSpan interval) => this.Interval = interval;
-
-        protected PriodicAsync(TimeSpan interval, long maxCount)
-        {
-            this.Interval = interval;
-            this.MaxCount = maxCount;
         }
 
         public static PriodicAsync GetPriodicAsyncInstance(Delegate methodInfo, TimeSpan interval, long maxCount)

@@ -11,13 +11,6 @@ namespace Mohammad.Win.Renderers
     /// </summary>
     public class AquaRenderer : ToolStripProfessionalRenderer
     {
-        public static AquaRenderer Initialize(IContainerControl containerControl)
-        {
-            var result = new AquaRenderer();
-            ToolStripManager.Renderer = result;
-            return result;
-        }
-
         private static readonly Blend m_statusStripBlend;
         private static readonly int m_iMarginInset = 2;
 
@@ -46,6 +39,42 @@ namespace Mohammad.Win.Renderers
         public AquaRenderer(ProfessionalColorTable professionalColorTable)
             : base(professionalColorTable)
         {
+        }
+
+        public static AquaRenderer Initialize(IContainerControl containerControl)
+        {
+            var result = new AquaRenderer();
+            ToolStripManager.Renderer = result;
+            return result;
+        }
+
+        private static GraphicsPath CreateBorderPath(Rectangle rectangle, float cut)
+        {
+            // Drawing lines requires we draw inside the area we want
+            rectangle.Width--;
+            rectangle.Height--;
+
+            // Create path using a simple set of lines that cut the corner
+            var path = new GraphicsPath();
+            path.AddLine(rectangle.Left + cut, rectangle.Top, rectangle.Right - cut, rectangle.Top);
+            path.AddLine(rectangle.Right - cut, rectangle.Top, rectangle.Right, rectangle.Top + cut);
+            path.AddLine(rectangle.Right, rectangle.Top + cut, rectangle.Right, rectangle.Bottom - cut);
+            path.AddLine(rectangle.Right, rectangle.Bottom - cut, rectangle.Right - cut, rectangle.Bottom);
+            path.AddLine(rectangle.Right - cut, rectangle.Bottom, rectangle.Left + cut, rectangle.Bottom);
+            path.AddLine(rectangle.Left + cut, rectangle.Bottom, rectangle.Left, rectangle.Bottom - cut);
+            path.AddLine(rectangle.Left, rectangle.Bottom - cut, rectangle.Left, rectangle.Top + cut);
+            path.AddLine(rectangle.Left, rectangle.Top + cut, rectangle.Left + cut, rectangle.Top);
+            return path;
+        }
+
+        private static GraphicsPath CreateClipBorderPath(Rectangle rectangle, float cut)
+        {
+            // Clipping happens inside the rect, so make 1 wider and taller
+            rectangle.Width++;
+            rectangle.Height++;
+
+            // Now create a path based on this inner rectangle
+            return CreateBorderPath(rectangle, cut);
         }
 
         /// <summary>
@@ -221,35 +250,6 @@ namespace Mohammad.Win.Renderers
             {
                 base.OnRenderImageMargin(e);
             }
-        }
-
-        private static GraphicsPath CreateBorderPath(Rectangle rectangle, float cut)
-        {
-            // Drawing lines requires we draw inside the area we want
-            rectangle.Width--;
-            rectangle.Height--;
-
-            // Create path using a simple set of lines that cut the corner
-            var path = new GraphicsPath();
-            path.AddLine(rectangle.Left + cut, rectangle.Top, rectangle.Right - cut, rectangle.Top);
-            path.AddLine(rectangle.Right - cut, rectangle.Top, rectangle.Right, rectangle.Top + cut);
-            path.AddLine(rectangle.Right, rectangle.Top + cut, rectangle.Right, rectangle.Bottom - cut);
-            path.AddLine(rectangle.Right, rectangle.Bottom - cut, rectangle.Right - cut, rectangle.Bottom);
-            path.AddLine(rectangle.Right - cut, rectangle.Bottom, rectangle.Left + cut, rectangle.Bottom);
-            path.AddLine(rectangle.Left + cut, rectangle.Bottom, rectangle.Left, rectangle.Bottom - cut);
-            path.AddLine(rectangle.Left, rectangle.Bottom - cut, rectangle.Left, rectangle.Top + cut);
-            path.AddLine(rectangle.Left, rectangle.Top + cut, rectangle.Left + cut, rectangle.Top);
-            return path;
-        }
-
-        private static GraphicsPath CreateClipBorderPath(Rectangle rectangle, float cut)
-        {
-            // Clipping happens inside the rect, so make 1 wider and taller
-            rectangle.Width++;
-            rectangle.Height++;
-
-            // Now create a path based on this inner rectangle
-            return CreateBorderPath(rectangle, cut);
         }
     }
 }

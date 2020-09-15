@@ -10,13 +10,13 @@ namespace Mohammad.Logging.Configuration
             LoggingSeverity.Normal,
             ConfigurationPropertyOptions.None);
 
+        public LoggingConfigurationHandler() => this.Severity = LoggingSeverity.High;
+
         [ConfigurationProperty("severity", DefaultValue = LoggingSeverity.High)]
         public LoggingSeverity Severity
         {
             get => (LoggingSeverity)base[_Severity];
             set => base[_Severity] = value;
         }
-
-        public LoggingConfigurationHandler() => this.Severity = LoggingSeverity.High;
     }
 }

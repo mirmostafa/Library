@@ -65,6 +65,23 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
         public IEnumerator<LibCommand> GetEnumerator() => this.Commands.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
+        public static void Initialize(UIElement parent, params LibCommand[] commands)
+        {
+            foreach (var command in commands)
+            {
+                command.Initialize(parent);
+            }
+        }
+
+        public static void Initialize(UIElement parent, Type commandsStaticClassType)
+        {
+            var fields = commandsStaticClassType.GetFields();
+            foreach (var field in fields)
+            {
+                field.GetValue(null).As<LibCommand>().Initialize(parent);
+            }
+        }
+
         public void Add(LibCommand command)
         {
             this.Commands.Add(command);
@@ -87,23 +104,6 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
         public void Add(IEnumerable<LibCommand> commands)
         {
             this.Add(commands.ToArray());
-        }
-
-        public static void Initialize(UIElement parent, params LibCommand[] commands)
-        {
-            foreach (var command in commands)
-            {
-                command.Initialize(parent);
-            }
-        }
-
-        public static void Initialize(UIElement parent, Type commandsStaticClassType)
-        {
-            var fields = commandsStaticClassType.GetFields();
-            foreach (var field in fields)
-            {
-                field.GetValue(null).As<LibCommand>().Initialize(parent);
-            }
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

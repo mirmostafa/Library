@@ -14,6 +14,18 @@ namespace Mohammad.Win.Controls
         private Tab currentSelection;
         private int tabOverlap;
 
+        public TabStrip()
+        {
+            this.Renderer = new TabStripProfessionalRenderer();
+            this.Padding = new Padding(60, 3, 30, 0);
+            this.AutoSize = false;
+            this.Size = new Size(this.Width, 26);
+            this.BackColor = Color.FromArgb(191, 219, 255);
+            this.GripStyle = ToolStripGripStyle.Hidden;
+
+            this.ShowItemToolTips = false;
+        }
+
         protected override Padding DefaultPadding
         {
             get
@@ -70,18 +82,6 @@ namespace Mohammad.Win.Controls
                     this.PerformLayout();
                 }
             }
-        }
-
-        public TabStrip()
-        {
-            this.Renderer = new TabStripProfessionalRenderer();
-            this.Padding = new Padding(60, 3, 30, 0);
-            this.AutoSize = false;
-            this.Size = new Size(this.Width, 26);
-            this.BackColor = Color.FromArgb(191, 219, 255);
-            this.GripStyle = ToolStripGripStyle.Hidden;
-
-            this.ShowItemToolTips = false;
         }
 
         public override Size GetPreferredSize(Size proposedSize)

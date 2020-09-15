@@ -1,6 +1,3 @@
-
-
-
 using System.ServiceModel.Channels;
 
 namespace Mohammad.ServiceModel
@@ -18,7 +15,7 @@ namespace Mohammad.ServiceModel
         {
         }
 
-        public static ServiceHost<TContract, TService> CreateInstance(string uri = null, Binding binding = null, TService singletonServiceInstance = null) =>
-            new ServiceHost<TContract, TService>(uri, binding, singletonServiceInstance);
+        public static ServiceHost<TContract, TService> CreateInstance(string uri = null, Binding binding = null, TService singletonServiceInstance = null)
+            => new ServiceHost<TContract, TService>(uri, binding, singletonServiceInstance);
     }
 }

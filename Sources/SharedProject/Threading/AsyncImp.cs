@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using Mohammad.Helpers;

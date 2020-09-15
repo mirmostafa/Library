@@ -1,7 +1,4 @@
-﻿
-
-
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 namespace Mohammad.Primitives.Contracts
 {

@@ -1,6 +1,3 @@
-
-
-
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -11,6 +8,9 @@ namespace Mohammad.Data.SqlServer.Dynamics
 {
     public class Row : SqlObject<Row, Table>
     {
+        public Row(Table owner, IEnumerable<KeyValuePair<string, object>> data, string connectionString = null)
+            : base(owner, string.Empty, connectionString: connectionString ?? owner.ConnectionString) => this.Data = data;
+
         public object this[Column index] => this[index.Name];
 
         public object this[string colName]
@@ -32,9 +32,6 @@ namespace Mohammad.Data.SqlServer.Dynamics
         public object this[int index] => this.Data.ElementAt(index);
 
         private IEnumerable<KeyValuePair<string, object>> Data { get; }
-
-        public Row(Table owner, IEnumerable<KeyValuePair<string, object>> data, string connectionString = null)
-            : base(owner, string.Empty, connectionString: connectionString ?? owner.ConnectionString) => this.Data = data;
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {

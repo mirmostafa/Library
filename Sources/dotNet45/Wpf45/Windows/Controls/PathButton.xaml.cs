@@ -27,6 +27,11 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(PathButton),
             new PropertyMetadata(default(string)));
 
+        public PathButton()
+        {
+            this.InitializeComponent();
+        }
+
         public Style PathStyle
         {
             get => (Style)this.GetValue(PathStyleProperty);
@@ -49,11 +54,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => (string)this.GetValue(TextContentProperty);
             set => this.SetValue(TextContentProperty, value);
-        }
-
-        public PathButton()
-        {
-            this.InitializeComponent();
         }
     }
 }

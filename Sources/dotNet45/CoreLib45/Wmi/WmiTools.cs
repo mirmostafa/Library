@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
@@ -14,10 +11,6 @@ namespace Mohammad.Wmi
     {
         private const string QUERY_SELECT_FROM = "SELECT * FROM ";
         private readonly ManagementScope _Scope;
-
-        public bool IsLocal { get; }
-        public string Ip { get; }
-        public string Username { get; }
 
         private WmiTools()
         {
@@ -33,11 +26,12 @@ namespace Mohammad.Wmi
             this._Scope = ConnectScope(ip, username, password, domain);
         }
 
+        public bool IsLocal { get; }
+        public string Ip { get; }
+        public string Username { get; }
+
         public static WmiTools GetInstance() => new WmiTools();
         public static WmiTools GetInstance(string ip, string username, string password, string domain) => new WmiTools(ip, username, password, domain);
-
-        public IEnumerable<TWmiClass> GetQuery<TWmiClass>()
-            where TWmiClass : WmiBase, new() => Query<TWmiClass>(this._Scope);
 
         public static IEnumerable<TWmiQueryClass> GetQueryLocal<TWmiQueryClass>()
             where TWmiQueryClass : WmiBase, new() => Query<TWmiQueryClass>(ConnectScope());
@@ -46,8 +40,6 @@ namespace Mohammad.Wmi
             where TWmiQueryClass : WmiBase, new() => Query<TWmiQueryClass>(ConnectScope(ip, username, password, domain));
 
         public static DateTime ToDateTime(string dateString) => ManagementDateTimeConverter.ToDateTime(dateString);
-
-        public override string ToString() => this.IsLocal ? "Local Machine" : $"{nameof(this.Ip)}: {this.Ip}, {nameof(this.Username)}: {this.Username}";
 
         private static ManagementScope ConnectScope(string ip, string username, string password, string domain)
         {
@@ -106,5 +98,10 @@ namespace Mohammad.Wmi
         private static string GetWmiClassName<TWmiQueryClass>()
             where TWmiQueryClass : WmiBase, new() => ObjectHelper.GetAttribute<WmiClassAttribute>(typeof(TWmiQueryClass))?.ClassName ??
                                                      typeof(TWmiQueryClass).Name;
+
+        public IEnumerable<TWmiClass> GetQuery<TWmiClass>()
+            where TWmiClass : WmiBase, new() => Query<TWmiClass>(this._Scope);
+
+        public override string ToString() => this.IsLocal ? "Local Machine" : $"{nameof(this.Ip)}: {this.Ip}, {nameof(this.Username)}: {this.Username}";
     }
 }

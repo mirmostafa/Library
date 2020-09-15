@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Dynamic;
@@ -15,6 +12,15 @@ namespace Mohammad.Dynamic
     public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
     {
         protected readonly Dictionary<string, object> Properties = new Dictionary<string, object>();
+
+        public Expando()
+        {
+        }
+
+        protected Expando(SerializationInfo info, StreamingContext context) => this.Properties =
+            (Dictionary<string, object>)info.GetValue(
+                "Properties",
+                typeof(Dictionary<string, object>));
 
         public virtual object this[string index]
         {
@@ -38,15 +44,6 @@ namespace Mohammad.Dynamic
                 this.OnPropertyChanged(index);
             }
         }
-
-        public Expando()
-        {
-        }
-
-        protected Expando(SerializationInfo info, StreamingContext context) => this.Properties =
-            (Dictionary<string, object>)info.GetValue(
-                "Properties",
-                typeof(Dictionary<string, object>));
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using Mohammad.Helpers;
@@ -10,13 +7,17 @@ namespace Mohammad.Data.Ado
 {
     public class AdoQueryWatcher
     {
-        public string ConnectionString { get; }
+        private static SqlDependency _Dependency;
+        private static DataTable _TempTable;
+        private readonly string _Query;
 
         public AdoQueryWatcher(string connectionString, string query)
         {
             this.ConnectionString = connectionString;
             this._Query = query;
         }
+
+        public string ConnectionString { get; }
 
         public void Start()
         {
@@ -50,9 +51,5 @@ namespace Mohammad.Data.Ado
         }
 
         public event EventHandler<SqlNotificationEventArgs> Changed;
-
-        private static SqlDependency _Dependency;
-        private static DataTable _TempTable;
-        private readonly string _Query;
     }
 }

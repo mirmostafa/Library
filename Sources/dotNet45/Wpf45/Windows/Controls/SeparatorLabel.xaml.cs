@@ -23,6 +23,12 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(SeparatorLabel),
             new PropertyMetadata(default(Brush)));
 
+        public SeparatorLabel()
+        {
+            this.InitializeComponent();
+            this.SepratorColor = Brushes.RoyalBlue;
+        }
+
         public object Header
         {
             get => this.GetValue(HeaderProperty);
@@ -64,11 +70,5 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         public DependencyProperty BindingFieldProperty => HeaderProperty;
-
-        public SeparatorLabel()
-        {
-            this.InitializeComponent();
-            this.SepratorColor = Brushes.RoyalBlue;
-        }
     }
 }

@@ -47,6 +47,7 @@ namespace Mohammad.Wpf.Windows.Controls
 
         private Status _Status;
         private Windows7Tools _Windows7Tools;
+        public LibraryGlassWindow() => this.Loaded += this.LibraryGlassWindow_OnLoaded;
 
         public Brush GlassBackground
         {
@@ -90,7 +91,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         public Windows7Tools Windows7Tools => this._Windows7Tools ?? (this._Windows7Tools = new Windows7Tools(this));
-        public LibraryGlassWindow() => this.Loaded += this.LibraryGlassWindow_OnLoaded;
 
         protected virtual void OnInitializingStatus(out ProgressBar progressBar, out StatusBarItem statusBarItem, out ISimpleLogger logger)
         {

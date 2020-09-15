@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.DirectoryServices;
@@ -22,6 +19,9 @@ namespace Mohammad.DirectoryServices
             this._Password = password;
         }
 
+        private static IEnumerable<string> MakeUserFriendly(IEnumerable<string> strings) => strings.Select(computerName => computerName.Remove("CN=")
+            .Remove("OU="));
+
         public override string ToString() => $"{nameof(this._Domain)}: {this._Domain}, {nameof(this._Username)}: {this._Username}";
 
         public IEnumerable<string> GetComputerNames() => MakeUserFriendly(this.FindAll("(objectClass=computer)").Select(de => de.Name));
@@ -30,9 +30,6 @@ namespace Mohammad.DirectoryServices
             MakeUserFriendly(this.FindAll("(&(objectClass=user)(objectCategory=person))").Select(de => de.Name));
 
         public IEnumerable<string> GetOrganizationalUnits() => MakeUserFriendly(this.FindAll("(objectClass=organizationalUnit)").Select(de => de.Name));
-
-        private static IEnumerable<string> MakeUserFriendly(IEnumerable<string> strings) => strings.Select(computerName => computerName.Remove("CN=")
-            .Remove("OU="));
 
         private IEnumerable<DirectoryEntry> FindAll(string filter, Action<DirectorySearcher> initializeSearcher = null)
         {

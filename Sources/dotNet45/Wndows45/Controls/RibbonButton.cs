@@ -32,6 +32,30 @@ namespace Mohammad.Win.Controls
         private string s_folder;
         private int t;
 
+        //Constructor
+        public RibbonButton()
+        {
+            this.SetStyle(
+                ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint |
+                ControlStyles.DoubleBuffer,
+                true);
+
+            this.BackColor = Color.Transparent;
+            this.FlatStyle = FlatStyle.Flat;
+            this.BackgroundImageLayout = ImageLayout.Stretch;
+            this.FlatAppearance.BorderSize = 0;
+            this.TextAlign = ContentAlignment.BottomCenter;
+            this.ImageAlign = ContentAlignment.TopCenter;
+            this.FlatAppearance.BorderColor = Color.FromArgb(100, 255, 255, 255);
+            this.FlatAppearance.MouseDownBackColor = Color.FromArgb(100, 255, 255, 255);
+            this.FlatAppearance.MouseOverBackColor = Color.FromArgb(100, 255, 255, 255);
+            this._toshow = this.img_back;
+            this.timer1.Interval = 10;
+            this.timer1.Tick += this.timer1_Tick;
+            this.timer2.Interval = 10;
+            this.timer2.Tick += this.timer2_Tick;
+        }
+
         public bool ShowInfoForm { get; set; } = true;
 
         //Properties
@@ -112,30 +136,6 @@ namespace Mohammad.Win.Controls
         [Localizable(true)]
         [field: Localizable(true)]
         public string Word2 { get; set; } = "";
-
-        //Constructor
-        public RibbonButton()
-        {
-            this.SetStyle(
-                ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint |
-                ControlStyles.DoubleBuffer,
-                true);
-
-            this.BackColor = Color.Transparent;
-            this.FlatStyle = FlatStyle.Flat;
-            this.BackgroundImageLayout = ImageLayout.Stretch;
-            this.FlatAppearance.BorderSize = 0;
-            this.TextAlign = ContentAlignment.BottomCenter;
-            this.ImageAlign = ContentAlignment.TopCenter;
-            this.FlatAppearance.BorderColor = Color.FromArgb(100, 255, 255, 255);
-            this.FlatAppearance.MouseDownBackColor = Color.FromArgb(100, 255, 255, 255);
-            this.FlatAppearance.MouseOverBackColor = Color.FromArgb(100, 255, 255, 255);
-            this._toshow = this.img_back;
-            this.timer1.Interval = 10;
-            this.timer1.Tick += this.timer1_Tick;
-            this.timer2.Interval = 10;
-            this.timer2.Tick += this.timer2_Tick;
-        }
 
         //Methods
         public void PaintBackground()

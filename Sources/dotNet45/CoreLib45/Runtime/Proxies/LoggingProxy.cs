@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -86,11 +83,6 @@ namespace Mohammad.Runtime.Proxies
 
         public class InvokeEventArgs : EventArgs
         {
-            public MethodInfo Method { get; }
-            public string MethodName { get; }
-            public IEnumerable<(string Name, object Value)> Arguments { get; }
-            public T Instance { get; }
-
             public InvokeEventArgs(T instance, MethodInfo method, string methodName, IEnumerable<(string Name, object Value)> arguments)
             {
                 this.Instance = instance;
@@ -98,6 +90,11 @@ namespace Mohammad.Runtime.Proxies
                 this.Arguments = arguments;
                 this.MethodName = methodName;
             }
+
+            public MethodInfo Method { get; }
+            public string MethodName { get; }
+            public IEnumerable<(string Name, object Value)> Arguments { get; }
+            public T Instance { get; }
 
             public static InvokeEventArgs Create(T instance, IMethodCallMessage msg) => new InvokeEventArgs(instance,
                 (MethodInfo)msg.MethodBase,

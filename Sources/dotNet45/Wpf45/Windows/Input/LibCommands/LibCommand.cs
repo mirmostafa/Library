@@ -38,6 +38,33 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
         private string _ToolTip;
         private Visibility _Visibility = Visibility.Visible;
 
+        public LibCommand(string text)
+            : this(text, null)
+        {
+        }
+
+        public LibCommand(string text, string commandName)
+        {
+            this.Initailize(text, commandName);
+            this._CommandBinding = new CommandBinding(this);
+        }
+
+        public LibCommand() => this._CommandBinding = new CommandBinding(this);
+
+        public LibCommand(string text, string name, Type ownerType)
+            : base(text, name, ownerType)
+        {
+            this.Initailize(text, name);
+            this._CommandBinding = new CommandBinding(this);
+        }
+
+        public LibCommand(string text, string name, Type ownerType, InputGestureCollection inputGestures)
+            : base(text, name, ownerType, inputGestures)
+        {
+            this.Initailize(text, name);
+            this._CommandBinding = new CommandBinding(this);
+        }
+
         public string Category
         {
             get => this._Category;
@@ -227,33 +254,6 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
                 this._Visibility = value;
                 this.OnPropChanged(value);
             }
-        }
-
-        public LibCommand(string text)
-            : this(text, null)
-        {
-        }
-
-        public LibCommand(string text, string commandName)
-        {
-            this.Initailize(text, commandName);
-            this._CommandBinding = new CommandBinding(this);
-        }
-
-        public LibCommand() => this._CommandBinding = new CommandBinding(this);
-
-        public LibCommand(string text, string name, Type ownerType)
-            : base(text, name, ownerType)
-        {
-            this.Initailize(text, name);
-            this._CommandBinding = new CommandBinding(this);
-        }
-
-        public LibCommand(string text, string name, Type ownerType, InputGestureCollection inputGestures)
-            : base(text, name, ownerType, inputGestures)
-        {
-            this.Initailize(text, name);
-            this._CommandBinding = new CommandBinding(this);
         }
 
         public IEnumerator<UIElement> GetEnumerator()

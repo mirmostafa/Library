@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +6,14 @@ namespace Mohammad.Collections.Hierarchy
     public class Node<T> : IEquatable<Node<T>>
     {
         private Func<T, T, bool> _ItemComparer;
+
+        public Node(T parent, T current)
+        {
+            this.Current = current;
+            this.Parent = parent;
+        }
+
+        public Node(T current) => this.Current = current;
         public static IEqualityComparer<Node<T>> CurrentComparer { get; } = new CurrentEqualityComparer();
 
         public Func<T, T, bool> ItemComparer
@@ -20,16 +25,6 @@ namespace Mohammad.Collections.Hierarchy
         public T Current { get; }
         public T Parent { get; set; }
 
-        public Node(T parent, T current)
-        {
-            this.Current = current;
-            this.Parent = parent;
-        }
-
-        public Node(T current) => this.Current = current;
-        public static bool operator ==(Node<T> left, Node<T> right) => Equals(left, right);
-        public static bool operator !=(Node<T> left, Node<T> right) => !Equals(left, right);
-
         public bool Equals(Node<T> other)
         {
             if (ReferenceEquals(null, other))
@@ -39,6 +34,9 @@ namespace Mohammad.Collections.Hierarchy
 
             return ReferenceEquals(this, other) || EqualityComparer<T>.Default.Equals(this.Current, other.Current);
         }
+
+        public static bool operator ==(Node<T> left, Node<T> right) => Equals(left, right);
+        public static bool operator !=(Node<T> left, Node<T> right) => !Equals(left, right);
 
         public override bool Equals(object obj)
         {

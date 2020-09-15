@@ -26,6 +26,12 @@ namespace Mohammad.Wpf.Windows.Controls
         public static readonly DependencyProperty PropTypeProperty = ControlHelper.GetDependencyProperty<Brush, LineControl>("MouseMoveLineBrush",
             defaultValue: default(Brush));
 
+        public LineControl()
+        {
+            this.InitializeComponent();
+            this.LineBrush = Brushes.RoyalBlue;
+        }
+
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public object Child
         {
@@ -50,12 +56,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         public FrameworkElement FlickerTextBlock => this.FlickableRectangle;
-
-        public LineControl()
-        {
-            this.InitializeComponent();
-            this.LineBrush = Brushes.RoyalBlue;
-        }
 
         private void LineControl_OnMouseEnter(object sender, MouseEventArgs e)
         {

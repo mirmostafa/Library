@@ -9,13 +9,14 @@ namespace Mohammad.Wpf.Windows.Controls
     public partial class LookupBox
     {
         private LookupBoxItemPage _ItemsPage;
-        public IEnumerable SelectedItems => this._ItemsPage.SelectedItems;
-        public IEnumerable ItemsSource { get; set; }
 
         public LookupBox()
         {
             this.InitializeComponent();
         }
+
+        public IEnumerable SelectedItems => this._ItemsPage.SelectedItems;
+        public IEnumerable ItemsSource { get; set; }
 
         private void ItemsComboBoxDropDownOpened(object sender, EventArgs e)
         {

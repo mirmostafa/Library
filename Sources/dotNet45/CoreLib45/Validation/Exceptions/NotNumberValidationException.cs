@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Runtime.Serialization;
 
@@ -9,8 +6,6 @@ namespace Mohammad.Validation.Exceptions
     [Serializable]
     public class NotNumberValidationException : ValidationExceptionBase
     {
-        public string ParameterName { get; set; }
-
         public NotNumberValidationException()
         {
         }
@@ -37,5 +32,7 @@ namespace Mohammad.Validation.Exceptions
             : base(message, inner, instruction)
         {
         }
+
+        public string ParameterName { get; set; }
     }
 }

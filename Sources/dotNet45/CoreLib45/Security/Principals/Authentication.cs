@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Security.Principal;
 using Mohammad.Helpers;
@@ -18,8 +15,6 @@ namespace Mohammad.Security.Principals
         public LogonType LogonType { get; set; }
         public LogonProvider LogonProvider { get; set; }
 
-        ~Authentication() => this.Dispose(false);
-
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -29,17 +24,6 @@ namespace Mohammad.Security.Principals
             this.Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        public bool LogonUser() => Api.LogonUser(this.Username,
-            this.Domain,
-            this.Password,
-            this.LogonType.ToInt(),
-            this.LogonProvider.ToInt(),
-            ref this._Token);
-
-        public bool ImpersonateLoggedOnUser() => Api.ImpersonateLoggedOnUser(this._Token);
-
-        public WindowsImpersonationContext Impersonate() => new WindowsIdentity(this._Token).Impersonate();
 
         public static void Run(string username, string domain, string password, LogonType logonType, LogonProvider logonProvider, Action action)
         {
@@ -71,6 +55,17 @@ namespace Mohammad.Security.Principals
             return result;
         }
 
+        public bool LogonUser() => Api.LogonUser(this.Username,
+            this.Domain,
+            this.Password,
+            this.LogonType.ToInt(),
+            this.LogonProvider.ToInt(),
+            ref this._Token);
+
+        public bool ImpersonateLoggedOnUser() => Api.ImpersonateLoggedOnUser(this._Token);
+
+        public WindowsImpersonationContext Impersonate() => new WindowsIdentity(this._Token).Impersonate();
+
         public void Run(Action action)
         {
             if (action == null)
@@ -101,5 +96,7 @@ namespace Mohammad.Security.Principals
                 this._Token = IntPtr.Zero;
             }
         }
+
+        ~Authentication() => this.Dispose(false);
     }
 }

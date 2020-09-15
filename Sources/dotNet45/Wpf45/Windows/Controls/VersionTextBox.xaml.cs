@@ -18,6 +18,11 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(VersionTextBox),
             new PropertyMetadata(default(VersionInfo)));
 
+        public VersionTextBox()
+        {
+            this.InitializeComponent();
+        }
+
         public bool IsReadOnly
         {
             get => (bool)this.GetValue(IsReadOnlyProperty);
@@ -46,11 +51,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 this.DataContext = value;
                 this.OnPropertyChanged();
             }
-        }
-
-        public VersionTextBox()
-        {
-            this.InitializeComponent();
         }
     }
 }

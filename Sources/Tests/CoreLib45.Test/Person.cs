@@ -7,10 +7,10 @@ namespace CoreLib45.Test
 {
     public class Person : MarshalByRefObject
     {
+        public Person(string name) => this.Name = name ?? throw new NullReferenceException(nameof(name));
         public int Age { get; set; }
         public string Name { get; }
         public string Address { get; set; }
-        public Person(string name) => this.Name = name ?? throw new NullReferenceException(nameof(name));
 
         /// <inheritdoc />
         public override int GetHashCode() => this.Name?.GetHashCode() ?? 0;
@@ -18,12 +18,12 @@ namespace CoreLib45.Test
 
     public class Student : Person
     {
-        public string Major { get; set; }
-
         /// <inheritdoc />
         public Student(string name)
             : base(name)
         {
         }
+
+        public string Major { get; set; }
     }
 }

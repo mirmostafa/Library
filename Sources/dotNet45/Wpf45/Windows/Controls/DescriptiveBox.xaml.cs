@@ -36,6 +36,13 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(DescriptiveBox),
             new PropertyMetadata(default(Style)));
 
+        public DescriptiveBox()
+        {
+            this.InitializeComponent();
+            this.HeaderStyle = this.FindResource("HighlightLibBlock").As<Style>();
+            this.DescriptionStyle = this.FindResource("LowlightLibBlock").As<Style>();
+        }
+
         [Bindable(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public object Child
@@ -82,13 +89,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 this.SetValue(HeaderStyleProperty, value);
                 this.OnPropertyChanged();
             }
-        }
-
-        public DescriptiveBox()
-        {
-            this.InitializeComponent();
-            this.HeaderStyle = this.FindResource("HighlightLibBlock").As<Style>();
-            this.DescriptionStyle = this.FindResource("LowlightLibBlock").As<Style>();
         }
     }
 }

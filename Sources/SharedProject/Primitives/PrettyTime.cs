@@ -1,28 +1,9 @@
-﻿
-
-
-using System;
+﻿using System;
 
 namespace Mohammad.Primitives
 {
     public static class PrettyTime
     {
-        public static string Years { get; }
-        public static string Ago { get; }
-        public static string About { get; }
-        public static string Month { get; }
-        public static string Months { get; }
-        public static string Day { get; }
-        public static string Days { get; }
-        public static string Hours { get; }
-        public static string Hour { get; }
-        public static string Minute { get; }
-        public static string Minutes { get; }
-        public static string Seconds { get; }
-        public static string JustNow { get; set; }
-        public static string UnknownTime { get; }
-        public static string Year { get; }
-
         static PrettyTime()
         {
             Year = "year";
@@ -41,6 +22,22 @@ namespace Mohammad.Primitives
             UnknownTime = "Unknown time";
             JustNow = "just now";
         }
+
+        public static string Years { get; }
+        public static string Ago { get; }
+        public static string About { get; }
+        public static string Month { get; }
+        public static string Months { get; }
+        public static string Day { get; }
+        public static string Days { get; }
+        public static string Hours { get; }
+        public static string Hour { get; }
+        public static string Minute { get; }
+        public static string Minutes { get; }
+        public static string Seconds { get; }
+        public static string JustNow { get; set; }
+        public static string UnknownTime { get; }
+        public static string Year { get; }
 
         public static string FormatPretty(this DateTime dt)
         {

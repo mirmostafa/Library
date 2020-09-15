@@ -5,6 +5,11 @@
     /// </summary>
     public partial class WideText11Tile
     {
+        public WideText11Tile()
+        {
+            this.InitializeComponent();
+        }
+
         public string Body
         {
             get => this.textBlock1.Text;
@@ -15,11 +20,6 @@
         {
             get => this.textBlockBadge.Text;
             set => this.textBlockBadge.Text = value;
-        }
-
-        public WideText11Tile()
-        {
-            this.InitializeComponent();
         }
 
         protected override void HookCommand()

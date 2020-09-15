@@ -21,6 +21,13 @@ namespace Mohammad.Wpf.Windows.Controls
         public static readonly DependencyProperty WindowProperty = ControlHelper.GetDependencyProperty<Window, NavigationTabControl>("Window",
             (me, value) => me.NavigationCommands.ForEach(nc => nc.Window = value));
 
+        public NavigationTabControl()
+        {
+            this.InitializeComponent();
+            this.Frame.UseAnimation = UseAnimationByDefault;
+            this.NavigationCommands.ForEach(nc => nc.Window = this.Window);
+        }
+
         public Style ToggleButtonsStyle
         {
             get => (Style)this.GetValue(ToggleButtonsStyleProperty);
@@ -39,13 +46,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => (Window)this.GetValue(WindowProperty);
             set => this.SetValue(WindowProperty, value);
-        }
-
-        public NavigationTabControl()
-        {
-            this.InitializeComponent();
-            this.Frame.UseAnimation = UseAnimationByDefault;
-            this.NavigationCommands.ForEach(nc => nc.Window = this.Window);
         }
 
         private void NavigationTabControl_OnLoaded(object sender, RoutedEventArgs e)

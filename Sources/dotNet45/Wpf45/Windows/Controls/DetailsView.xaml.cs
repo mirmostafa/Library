@@ -48,6 +48,13 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(DetailsView),
             new PropertyMetadata(default(double)));
 
+        public DetailsView()
+        {
+            this.InitializeComponent();
+            this.HeaderStyle = (Style)this.FindResource("HighlightBlock");
+            this.ImageWidth = this.Width / 5;
+        }
+
         public object Budget
         {
             get => this.GetValue(BudgetProperty);
@@ -126,13 +133,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 this.SetValue(ImageWidthProperty, value);
                 this.OnPropertyChanged();
             }
-        }
-
-        public DetailsView()
-        {
-            this.InitializeComponent();
-            this.HeaderStyle = (Style)this.FindResource("HighlightBlock");
-            this.ImageWidth = this.Width / 5;
         }
     }
 }

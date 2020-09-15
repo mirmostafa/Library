@@ -24,10 +24,6 @@ namespace Mohammad.Win.Internals
         private int Y;
         private int Y0;
         private int YF;
-        public Color OnColor { get; set; }
-        public Color OnBackColor { get; set; }
-        public Color BaseColor { get; set; }
-        public Color HaloColor { get; set; }
 
         /// <summary>
         ///     This renderer supports rendering of tabs.
@@ -38,6 +34,11 @@ namespace Mohammad.Win.Internals
             this.OnColor = Color.FromArgb(226, 209, 156);
             this.OnBackColor = Color.FromArgb(191, 219, 255);
         }
+
+        public Color OnColor { get; set; }
+        public Color OnBackColor { get; set; }
+        public Color BaseColor { get; set; }
+        public Color HaloColor { get; set; }
 
         public Color SetTransparency(Color color, int transparency)
         {

@@ -1,6 +1,3 @@
-
-
-
 using System;
 
 namespace Mohammad.Threading

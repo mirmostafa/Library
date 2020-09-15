@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
@@ -15,24 +12,6 @@ namespace Mohammad.IO
         private const string _Separator = "tyupoi";
         private readonly FileInfo _File;
         private readonly string _Key;
-
-        public FileInfo OriginalFile
-        {
-            get
-            {
-                if (!this._File.Directory.Exists)
-                {
-                    this._File.Directory.Create();
-                }
-
-                if (!this._File.Exists)
-                {
-                    this._File.Create().Close();
-                }
-
-                return this._File;
-            }
-        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="SecureFile" /> class.
@@ -56,6 +35,24 @@ namespace Mohammad.IO
         {
             Contract.Requires(file != null);
             Contract.Requires(file.Length > 0);
+        }
+
+        public FileInfo OriginalFile
+        {
+            get
+            {
+                if (!this._File.Directory.Exists)
+                {
+                    this._File.Directory.Create();
+                }
+
+                if (!this._File.Exists)
+                {
+                    this._File.Create().Close();
+                }
+
+                return this._File;
+            }
         }
 
         //public void Write(string text)

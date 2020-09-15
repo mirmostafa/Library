@@ -18,6 +18,11 @@ namespace Mohammad.Wpf.Windows.Controls
 
         private string _PromptProperty;
 
+        public ConnectionStringBox()
+        {
+            this.InitializeComponent();
+        }
+
         public string ConnectionString
         {
             get => (string)this.GetValue(ConnectionStringProperty);
@@ -58,11 +63,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 this._PromptProperty = value;
                 this.OnPropertyChanged();
             }
-        }
-
-        public ConnectionStringBox()
-        {
-            this.InitializeComponent();
         }
 
         private void BrowseButton_OnClick(object sender, RoutedEventArgs e)

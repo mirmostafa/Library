@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Mohammad.EventsArgs;
@@ -12,6 +9,12 @@ namespace Mohammad.Logging
     {
         private object _DefaultSender;
         private ILogger _Logger;
+
+        protected LoggerContainer()
+        {
+            this.Logger.Logged += (_, e) => this.OnLogged(e);
+            this.Logger.Logging += (_, e) => this.OnLogging(e);
+        }
 
         public bool EnableRaisingEvents
         {
@@ -34,12 +37,6 @@ namespace Mohammad.Logging
         public object DefaultLogSender => this._DefaultSender ?? (this._DefaultSender = this.OnInitializingDefaultSender());
 
         public ILogger Logger => this._Logger ?? (this._Logger = this.OnInitializingLogger());
-
-        protected LoggerContainer()
-        {
-            this.Logger.Logged += (_, e) => this.OnLogged(e);
-            this.Logger.Logging += (_, e) => this.OnLogging(e);
-        }
 
         protected virtual object OnInitializingDefaultSender() => this.GetType().Name;
 

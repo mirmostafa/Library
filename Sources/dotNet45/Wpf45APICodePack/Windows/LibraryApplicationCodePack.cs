@@ -38,6 +38,43 @@ namespace Mohammad.Wpf.Windows
 
         public bool CanHandleValidationExceptions { get; set; } = true;
 
+        private static int RecoveryProcedure(object state)
+        {
+            var isCanceled = ApplicationRestartRecoveryManager.ApplicationRecoveryInProgress();
+
+            if (isCanceled)
+            {
+                Environment.Exit(2);
+            }
+
+            ApplicationRestartRecoveryManager.ApplicationRecoveryFinished(true);
+            return 0;
+        }
+
+        internal override void ExceptionOccurred(object sender, ExceptionOccurredEventArgs<Exception> e)
+        {
+            if (e.Exception is BreakException)
+            {
+                e.Handled = true;
+            }
+            else if (this.CanHandleValidationExceptions && e.Exception is IValidationException)
+            {
+                if (e.Exception is ValidationExceptionBase)
+                {
+                    var ex = e.Exception as ValidationExceptionBase;
+                    MsgBoxEx.Error(ex.Instruction, ex.GetBaseException().Message);
+                }
+                else
+                {
+                    MsgBoxEx.Exception(e.Exception);
+                }
+
+                e.Handled = true;
+            }
+
+            base.ExceptionOccurred(sender, e);
+        }
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -110,43 +147,6 @@ namespace Mohammad.Wpf.Windows
             {
                 jumpList.Refresh();
             }
-        }
-
-        private static int RecoveryProcedure(object state)
-        {
-            var isCanceled = ApplicationRestartRecoveryManager.ApplicationRecoveryInProgress();
-
-            if (isCanceled)
-            {
-                Environment.Exit(2);
-            }
-
-            ApplicationRestartRecoveryManager.ApplicationRecoveryFinished(true);
-            return 0;
-        }
-
-        internal override void ExceptionOccurred(object sender, ExceptionOccurredEventArgs<Exception> e)
-        {
-            if (e.Exception is BreakException)
-            {
-                e.Handled = true;
-            }
-            else if (this.CanHandleValidationExceptions && e.Exception is IValidationException)
-            {
-                if (e.Exception is ValidationExceptionBase)
-                {
-                    var ex = e.Exception as ValidationExceptionBase;
-                    MsgBoxEx.Error(ex.Instruction, ex.GetBaseException().Message);
-                }
-                else
-                {
-                    MsgBoxEx.Exception(e.Exception);
-                }
-
-                e.Handled = true;
-            }
-
-            base.ExceptionOccurred(sender, e);
         }
     }
 }

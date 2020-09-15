@@ -1,7 +1,4 @@
-﻿
-
-
-namespace Mohammad.Primitives
+﻿namespace Mohammad.Primitives
 {
     public interface IApplication
     {

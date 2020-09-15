@@ -1,16 +1,7 @@
-﻿
-
-
-namespace Mohammad.Collections.Hierarchy
+﻿namespace Mohammad.Collections.Hierarchy
 {
     public class NodeByIdComplex<TItem, TParent>
     {
-        protected IReadOnlyTreeByIdComplex<TItem, TParent> Container { get; }
-        public TItem Current { get; set; }
-        public long CurrentId { get; set; }
-        public TParent Parent { get; set; }
-        public long? ParentId { get; set; }
-
         public NodeByIdComplex(IReadOnlyTreeByIdComplex<TItem, TParent> container, TParent parent, long parentId)
         {
             this.Container = container;
@@ -24,6 +15,12 @@ namespace Mohammad.Collections.Hierarchy
             this.Current = current;
             this.CurrentId = currentId;
         }
+
+        protected IReadOnlyTreeByIdComplex<TItem, TParent> Container { get; }
+        public TItem Current { get; set; }
+        public long CurrentId { get; set; }
+        public TParent Parent { get; set; }
+        public long? ParentId { get; set; }
 
         public override string ToString() => this.Current.ToString();
     }

@@ -5,6 +5,11 @@
     /// </summary>
     public partial class WideText02Tile
     {
+        public WideText02Tile()
+        {
+            this.InitializeComponent();
+        }
+
         public string Header
         {
             get => this.textBlock1.Text;
@@ -63,11 +68,6 @@
         {
             get => this.textBlock10.Text;
             set => this.textBlock10.Text = value;
-        }
-
-        public WideText02Tile()
-        {
-            this.InitializeComponent();
         }
     }
 }

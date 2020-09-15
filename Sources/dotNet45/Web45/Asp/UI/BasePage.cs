@@ -8,8 +8,8 @@ namespace Mohammad.Web.Asp.UI
 {
     public abstract class BasePage : Page
     {
-        protected object DataContext { get; set; }
         protected BasePage() => this.MaintainScrollPositionOnPostBack = true;
+        protected object DataContext { get; set; }
 
         protected virtual void OnLoading(ActingEventArgs e)
         {

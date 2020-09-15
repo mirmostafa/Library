@@ -9,9 +9,9 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 {
     public class ExitAppCommand : LibCommand
     {
+        public ExitAppCommand() => this.Content = "E_xit";
         public string ConfirmationPrompt { get; set; }
         public string ConfirmationInstruction { get; set; }
-        public ExitAppCommand() => this.Content = "E_xit";
 
         protected override void OnExecuted()
         {

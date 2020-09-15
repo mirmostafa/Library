@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Configuration.Install;
@@ -26,12 +23,6 @@ namespace Mohammad.ServiceProcess
         private bool CanPauseOnEnded { get; set; } = true;
 
         public string[] Args { get; private set; }
-
-        public void Shutdown() => this._HoldeResetEvent.Set();
-
-        protected virtual void OnStartingup(WindowsServiceProgramBaseStartupEventArgs e)
-        {
-        }
 
         protected static void CallFromMain(params string[] args)
         {
@@ -130,6 +121,43 @@ namespace Mohammad.ServiceProcess
             }
         }
 
+        private static void GetDefaultCommandArguments()
+        {
+            " -help OR -/?\tShows this message".WriteLine();
+            " -console\tRuns in console mode".WriteLine();
+            " -nopause\tAfter ending the application does does not wait for [X] key.".WriteLine();
+            " -install\tInstalls this windows service".WriteLine();
+            " -uninstall\tUninstalls this windows service".WriteLine();
+            " -reinstall\tUninstalls and then installs this windows service".WriteLine();
+            LineFeed();
+            " Switch -console activates DEBUG Mode".WriteLine();
+        }
+
+        private static void WaitForExit(bool forcedPause = false)
+        {
+            Console.Title = $"{ApplicationHelper.ApplicationTitle} - {ApplicationHelper.Version}";
+            var taskList = new TaskList();
+            if (!Instance.CanPauseOnEnded && !forcedPause)
+            {
+                return;
+            }
+
+            Highlight("Ready. (Press [X] to exit)");
+            taskList.Run(WaitForUserToExit);
+            taskList.Run(WaitForInternalShutdown);
+            taskList.WaitAny();
+        }
+
+        private static void WaitForInternalShutdown() => Instance._HoldeResetEvent.WaitOne();
+
+        private static void WaitForUserToExit() => While(() => AskKey("", true).Key != ConsoleKey.X);
+
+        public void Shutdown() => this._HoldeResetEvent.Set();
+
+        protected virtual void OnStartingup(WindowsServiceProgramBaseStartupEventArgs e)
+        {
+        }
+
         protected virtual void OnHelpRequired()
         {
             $"Product:\t{ApplicationHelper.ProductTitle}".WriteLine();
@@ -169,37 +197,6 @@ namespace Mohammad.ServiceProcess
         private void InitializeComponents() => this.OnInitializing();
 
         private void StopServices() => this._Services.ForEach(svc => Catch(svc.Stop));
-
-        private static void GetDefaultCommandArguments()
-        {
-            " -help OR -/?\tShows this message".WriteLine();
-            " -console\tRuns in console mode".WriteLine();
-            " -nopause\tAfter ending the application does does not wait for [X] key.".WriteLine();
-            " -install\tInstalls this windows service".WriteLine();
-            " -uninstall\tUninstalls this windows service".WriteLine();
-            " -reinstall\tUninstalls and then installs this windows service".WriteLine();
-            LineFeed();
-            " Switch -console activates DEBUG Mode".WriteLine();
-        }
-
-        private static void WaitForExit(bool forcedPause = false)
-        {
-            Console.Title = $"{ApplicationHelper.ApplicationTitle} - {ApplicationHelper.Version}";
-            var taskList = new TaskList();
-            if (!Instance.CanPauseOnEnded && !forcedPause)
-            {
-                return;
-            }
-
-            Highlight("Ready. (Press [X] to exit)");
-            taskList.Run(WaitForUserToExit);
-            taskList.Run(WaitForInternalShutdown);
-            taskList.WaitAny();
-        }
-
-        private static void WaitForInternalShutdown() => Instance._HoldeResetEvent.WaitOne();
-
-        private static void WaitForUserToExit() => While(() => AskKey("", true).Key != ConsoleKey.X);
 
         private void FinalizeComponents() => this.OnFinalizing();
 

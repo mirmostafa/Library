@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -19,6 +16,26 @@ namespace Mohammad.Primitives
         private int _Major;
         private int _Minor;
         private int _Revision;
+
+        /// <summary>
+        ///     For serialization purposes.
+        /// </summary>
+        public VersionInfo()
+        {
+        }
+
+        public VersionInfo(VersionInfo version)
+            : this(version.Major, version.Minor, version.Build, version.Revision)
+        {
+        }
+
+        public VersionInfo(int major = 0, int minor = 0, int build = 0, int revision = 0)
+        {
+            this.Build = build;
+            this.Major = major;
+            this.Minor = minor;
+            this.Revision = revision;
+        }
 
         [XmlAttribute]
         public int Major
@@ -94,55 +111,6 @@ namespace Mohammad.Primitives
         [XmlAttribute]
         public short MinorRevision => (short)(this._Revision & ushort.MaxValue);
 
-        /// <summary>
-        ///     For serialization purposes.
-        /// </summary>
-        public VersionInfo()
-        {
-        }
-
-        public VersionInfo(VersionInfo version)
-            : this(version.Major, version.Minor, version.Build, version.Revision)
-        {
-        }
-
-        public VersionInfo(int major = 0, int minor = 0, int build = 0, int revision = 0)
-        {
-            this.Build = build;
-            this.Major = major;
-            this.Minor = minor;
-            this.Revision = revision;
-        }
-
-        public static bool operator ==(VersionInfo left, VersionInfo right) => Equals(left, right);
-        public static bool operator !=(VersionInfo left, VersionInfo right) => !Equals(left, right);
-
-        public static bool operator <(VersionInfo v1, VersionInfo v2)
-        {
-            if (v1 == null)
-            {
-                throw new ArgumentNullException(nameof(v1));
-            }
-
-            return v1.CompareTo(v2) < 0;
-        }
-
-        public static bool operator >(VersionInfo v1, VersionInfo v2) => v2 < v1;
-
-        public static bool operator <=(VersionInfo v1, VersionInfo v2)
-        {
-            if (v1 == null)
-            {
-                throw new ArgumentNullException(nameof(v1));
-            }
-
-            return v1.CompareTo(v2) <= 0;
-        }
-
-        public static bool operator >=(VersionInfo v1, VersionInfo v2) => v2 <= v1;
-        public static implicit operator string(VersionInfo version) => version?.ToString();
-        public static implicit operator VersionInfo(string version) => Parse(version);
-
         public object Clone() => new VersionInfo(this._Build, this._Major, this._Minor, this._Revision);
         public int CompareTo(object obj) => this.CompareTo(obj.As<VersionInfo>());
 
@@ -193,34 +161,34 @@ namespace Mohammad.Primitives
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public override string ToString() => $"{this._Major:000}.{this._Minor:000}.{this._Build:000}.{this._Revision:000}";
+        public static bool operator ==(VersionInfo left, VersionInfo right) => Equals(left, right);
+        public static bool operator !=(VersionInfo left, VersionInfo right) => !Equals(left, right);
 
-        public override bool Equals(object obj)
+        public static bool operator <(VersionInfo v1, VersionInfo v2)
         {
-            if (ReferenceEquals(null, obj))
+            if (v1 == null)
             {
-                return false;
+                throw new ArgumentNullException(nameof(v1));
             }
 
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            return obj.GetType() == this.GetType() && this.Equals((VersionInfo)obj);
+            return v1.CompareTo(v2) < 0;
         }
 
-        public override int GetHashCode()
+        public static bool operator >(VersionInfo v1, VersionInfo v2) => v2 < v1;
+
+        public static bool operator <=(VersionInfo v1, VersionInfo v2)
         {
-            unchecked
+            if (v1 == null)
             {
-                var hashCode = this._Build;
-                hashCode = (hashCode * 397) ^ this._Major;
-                hashCode = (hashCode * 397) ^ this._Minor;
-                hashCode = (hashCode * 397) ^ this._Revision;
-                return hashCode;
+                throw new ArgumentNullException(nameof(v1));
             }
+
+            return v1.CompareTo(v2) <= 0;
         }
+
+        public static bool operator >=(VersionInfo v1, VersionInfo v2) => v2 <= v1;
+        public static implicit operator string(VersionInfo version) => version?.ToString();
+        public static implicit operator VersionInfo(string version) => Parse(version);
 
         public static VersionInfo Parse(string input)
         {
@@ -288,6 +256,43 @@ namespace Mohammad.Primitives
             return true;
         }
 
+        private static void CheckIfNotNeg(int value, [CallerMemberName] string propertyName = null)
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(propertyName, string.Concat(value, " cannot be negative."));
+            }
+        }
+
+        public override string ToString() => $"{this._Major:000}.{this._Minor:000}.{this._Build:000}.{this._Revision:000}";
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            return obj.GetType() == this.GetType() && this.Equals((VersionInfo)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = this._Build;
+                hashCode = (hashCode * 397) ^ this._Major;
+                hashCode = (hashCode * 397) ^ this._Minor;
+                hashCode = (hashCode * 397) ^ this._Revision;
+                return hashCode;
+            }
+        }
+
         public VersionInfo AddMajor(int value)
         {
             var resut = new VersionInfo(this);
@@ -327,14 +332,6 @@ namespace Mohammad.Primitives
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             this.PropertyChanged.Raise(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private static void CheckIfNotNeg(int value, [CallerMemberName] string propertyName = null)
-        {
-            if (value < 0)
-            {
-                throw new ArgumentOutOfRangeException(propertyName, string.Concat(value, " cannot be negative."));
-            }
         }
     }
 }

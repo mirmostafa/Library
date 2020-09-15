@@ -5,12 +5,6 @@ namespace Mohammad.Web.Asp.Security
     [Serializable]
     public class UserData
     {
-        public string UserName { get; }
-        public string FirstName { get; }
-        public string LastName { get; }
-        public bool IsAdmin { get; }
-        public DateTime SignInTime { get; }
-
         public UserData(string firstName, string lastName, string userName, bool? isAdmin, DateTime signInTime)
         {
             this.FirstName = firstName;
@@ -24,5 +18,11 @@ namespace Mohammad.Web.Asp.Security
             : this(firstName, lastName, userName, isAdmin, DateTime.Now)
         {
         }
+
+        public string UserName { get; }
+        public string FirstName { get; }
+        public string LastName { get; }
+        public bool IsAdmin { get; }
+        public DateTime SignInTime { get; }
     }
 }

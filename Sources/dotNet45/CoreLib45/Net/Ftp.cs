@@ -1,6 +1,5 @@
 // Created on     2018/07/23
 
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -23,6 +22,14 @@ namespace Mohammad.Net
         private readonly string _User;
         private ExceptionHandling _ExceptionHandling;
 
+        public Ftp(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null)
+        {
+            this._Host = (hostIp ?? string.Empty).Normalize();
+            this._User = (userName ?? string.Empty).Normalize();
+            this._Pass = (password ?? string.Empty).Normalize();
+            this.ExceptionHandling = exceptionHandling;
+        }
+
         public bool UsePassive { get; set; }
 
         public ExceptionHandling ExceptionHandling
@@ -34,13 +41,38 @@ namespace Mohammad.Net
         public ILogger Logger { get; set; }
         public object DefaultLogSender => "Ftp";
 
-        public Ftp(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null)
-        {
-            this._Host = (hostIp ?? string.Empty).Normalize();
-            this._User = (userName ?? string.Empty).Normalize();
-            this._Pass = (password ?? string.Empty).Normalize();
-            this.ExceptionHandling = exceptionHandling;
-        }
+        public static Ftp CreateInstance(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
+            userName,
+            password,
+            exceptionHandling);
+
+        public static void Validate(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
+                userName,
+                password,
+                exceptionHandling)
+            .Validate();
+
+        public static bool IsValid(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
+                userName,
+                password,
+                exceptionHandling)
+            .IsValid();
+
+        public static void Upload(string remoteFile,
+            string localFile,
+            string hostIp,
+            string userName,
+            string password,
+            ExceptionHandling exceptionHandling = null)
+            => new Ftp(hostIp, userName, password, exceptionHandling).Upload(remoteFile, localFile);
+
+        public static void Download(string remoteFile,
+            string localFile,
+            string hostIp,
+            string userName,
+            string password,
+            ExceptionHandling exceptionHandling = null)
+            => new Ftp(hostIp, userName, password, exceptionHandling).Download(remoteFile, localFile);
 
         public bool TryUpload(string ftpPath, string patch, int retryCount = 3, Action<Ftp, int> onTrying = null, int delay = 50)
         {
@@ -65,24 +97,7 @@ namespace Mohammad.Net
         public async Task<bool> TryUploadAsync(string ftpPath, string patch, int retryCount = 3, Action<Ftp, int> onTrying = null, int delay = 50) =>
             await Async.Run(() => this.TryUpload(ftpPath, patch, retryCount, onTrying, delay));
 
-        public static Ftp CreateInstance(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
-            userName,
-            password,
-            exceptionHandling);
-
-        public static void Validate(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
-                userName,
-                password,
-                exceptionHandling)
-            .Validate();
-
         public void Validate() => this.Run(".", WebRequestMethods.Ftp.ListDirectory);
-
-        public static bool IsValid(string hostIp, string userName, string password, ExceptionHandling exceptionHandling = null) => new Ftp(hostIp,
-                userName,
-                password,
-                exceptionHandling)
-            .IsValid();
 
         public bool IsValid() => CodeHelper.Catch(this.Validate) == null;
 
@@ -177,22 +192,6 @@ namespace Mohammad.Net
                 return false;
             }
         }
-
-        public static void Upload(string remoteFile,
-            string localFile,
-            string hostIp,
-            string userName,
-            string password,
-            ExceptionHandling exceptionHandling = null)
-            => new Ftp(hostIp, userName, password, exceptionHandling).Upload(remoteFile, localFile);
-
-        public static void Download(string remoteFile,
-            string localFile,
-            string hostIp,
-            string userName,
-            string password,
-            ExceptionHandling exceptionHandling = null)
-            => new Ftp(hostIp, userName, password, exceptionHandling).Download(remoteFile, localFile);
 
         public void Delete(string deleteFile) => this.Run(deleteFile, WebRequestMethods.Ftp.DeleteFile);
 

@@ -1,6 +1,5 @@
 // Created on     2018/07/23
 
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +84,47 @@ namespace Mohammad.Net
 
         public static IEnumerable<IpAddress> GetRange(string start, string end) => GetRange(new IpAddress(start), new IpAddress(end));
 
+        public static string Resolve(string ip)
+        {
+            Validate(ip);
+            LibrarySupervisor.Logger.Debug($"Resolving {ip}");
+            return Dns.GetNameByIp(ip);
+        }
+
+        public static IpAddress GetFirstInSubmask(IpAddress ip)
+        {
+            var result = Parse(ip);
+            result._Parts[3] = 0;
+            return result;
+        }
+
+        public static IpAddress GetLastInSubmask(IpAddress ip)
+        {
+            var result = Parse(ip);
+            result._Parts[3] = 255;
+            return result;
+        }
+
+        private static int[] Split(string ip)
+        {
+            Validate(ip);
+            return ip.Split('.').Select(s => s.ToInt()).ToArray();
+        }
+
+        private static void Validate(string ip)
+        {
+            if (ip == null)
+            {
+                throw new ArgumentNullException(nameof(ip));
+            }
+
+            string[] parts;
+            if ((parts = ip.Split('.')).Length != 4 || parts.Any(part => !part.IsInteger()) || parts.Any(part => !part.ToInt().IsBetween(0, 255)))
+            {
+                throw new InvalidCastException("Parameter cannot be cast to IpAddress");
+            }
+        }
+
         public IpAddress GetNext()
         {
             var result = new IpAddress(this.ToString());
@@ -142,13 +182,6 @@ namespace Mohammad.Net
 
         public string GetFormatted() => $"{this._Parts[0]:000}.{this._Parts[1]:000}.{this._Parts[2]:000}.{this._Parts[3]:000}";
 
-        public static string Resolve(string ip)
-        {
-            Validate(ip);
-            LibrarySupervisor.Logger.Debug($"Resolving {ip}");
-            return Dns.GetNameByIp(ip);
-        }
-
         public string Resolve() => Resolve(this.ToString());
 
         public bool IsInRange(IEnumerable<IpAddress> ipAddresses) => ipAddresses.Any(ip => ip.Equals(this));
@@ -175,20 +208,6 @@ namespace Mohammad.Net
                 : new ResolveAndPingResult(this, this.Ping(TimeSpan.FromSeconds(5)).Status, system);
         }
 
-        public static IpAddress GetFirstInSubmask(IpAddress ip)
-        {
-            var result = Parse(ip);
-            result._Parts[3] = 0;
-            return result;
-        }
-
-        public static IpAddress GetLastInSubmask(IpAddress ip)
-        {
-            var result = Parse(ip);
-            result._Parts[3] = 255;
-            return result;
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj))
@@ -203,26 +222,6 @@ namespace Mohammad.Net
 
             var ip = obj as IpAddress;
             return ip != null && this.Equals(ip);
-        }
-
-        private static int[] Split(string ip)
-        {
-            Validate(ip);
-            return ip.Split('.').Select(s => s.ToInt()).ToArray();
-        }
-
-        private static void Validate(string ip)
-        {
-            if (ip == null)
-            {
-                throw new ArgumentNullException(nameof(ip));
-            }
-
-            string[] parts;
-            if ((parts = ip.Split('.')).Length != 4 || parts.Any(part => !part.IsInteger()) || parts.Any(part => !part.ToInt().IsBetween(0, 255)))
-            {
-                throw new InvalidCastException("Parameter cannot be cast to IpAddress");
-            }
         }
     }
 

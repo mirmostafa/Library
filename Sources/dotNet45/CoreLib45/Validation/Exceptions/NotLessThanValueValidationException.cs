@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Runtime.Serialization;
 
@@ -9,9 +6,6 @@ namespace Mohammad.Validation.Exceptions
     [Serializable]
     public class NotLessThanValueValidationException : ValidationExceptionBase
     {
-        public string ParameterName { get; set; }
-        public object Value { get; set; }
-
         public NotLessThanValueValidationException()
         {
         }
@@ -42,5 +36,8 @@ namespace Mohammad.Validation.Exceptions
             : base(message, instruction)
         {
         }
+
+        public string ParameterName { get; set; }
+        public object Value { get; set; }
     }
 }

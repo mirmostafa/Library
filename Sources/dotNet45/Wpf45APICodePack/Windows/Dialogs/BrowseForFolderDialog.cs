@@ -7,6 +7,7 @@ namespace Mohammad.Wpf.Windows.Dialogs
 {
     public class BrowseForFolderDialog
     {
+        public BrowseForFolderDialog() => this.Dialog = new CommonOpenFileDialog {IsFolderPicker = true};
         public CommonOpenFileDialog Dialog { get; set; }
 
         public string DefaultDirectory
@@ -23,7 +24,6 @@ namespace Mohammad.Wpf.Windows.Dialogs
 
         public IEnumerable<string> SelectedFolders => this.Dialog.FileNames;
         public string SelectedFolder => this.Dialog.FileName;
-        public BrowseForFolderDialog() => this.Dialog = new CommonOpenFileDialog {IsFolderPicker = true};
 
         public static bool? ShowDialog(out string selectedFolder, string title = null, string defaultDirectory = null)
         {

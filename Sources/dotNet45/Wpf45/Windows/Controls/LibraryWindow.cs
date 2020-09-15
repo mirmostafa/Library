@@ -43,6 +43,23 @@ namespace Mohammad.Wpf.Windows.Controls
         private bool _IsDialogBox;
         private bool _UseAnimations = true;
 
+        public LibraryWindow()
+        {
+            if (Equals(this, Application.Current.MainWindow) && Application.Current is LibraryApplication)
+            {
+                Application.Current.As<LibraryApplication>().MainWindowIsInitializing();
+            }
+
+            this.Commands = new LibCommandDynamicCollection(this);
+            this.Controls = new LibUserControlDynamicCollection(this);
+            if (LibraryApplication.InnerCommandsStaticClassType != null)
+            {
+                LibCommandManager.Initialize(this, LibraryApplication.InnerCommandsStaticClassType);
+            }
+
+            this.Loaded += this.LibraryWindow_OnLoaded;
+        }
+
         public object BackgroundContent
         {
             get => this.GetValue(BackgroundContentProperty);
@@ -124,23 +141,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => this._AppTitle.IsNullOrEmpty() ? this._AppTitle = ApplicationHelper.ApplicationTitle : this._AppTitle;
             set => this._AppTitle = value;
-        }
-
-        public LibraryWindow()
-        {
-            if (Equals(this, Application.Current.MainWindow) && Application.Current is LibraryApplication)
-            {
-                Application.Current.As<LibraryApplication>().MainWindowIsInitializing();
-            }
-
-            this.Commands = new LibCommandDynamicCollection(this);
-            this.Controls = new LibUserControlDynamicCollection(this);
-            if (LibraryApplication.InnerCommandsStaticClassType != null)
-            {
-                LibCommandManager.Initialize(this, LibraryApplication.InnerCommandsStaticClassType);
-            }
-
-            this.Loaded += this.LibraryWindow_OnLoaded;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

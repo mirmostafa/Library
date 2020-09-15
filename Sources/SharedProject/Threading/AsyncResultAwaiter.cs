@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -14,15 +11,15 @@ namespace Mohammad.Threading
         private Action _Continuation;
         private TResult _Result;
 
-        public IAsyncResult AsyncResult { get; }
-        public bool IsCompleted => this.AsyncResult.IsCompleted;
-
         public AsyncResultAwaiter(IAsyncResult asyncResult, Func<IAsyncResult, TResult> getResult)
         {
             this.AsyncResult = asyncResult ?? throw new ArgumentNullException(nameof(asyncResult));
             this._GetResult = getResult ?? throw new ArgumentNullException(nameof(getResult));
             ThreadPool.RegisterWaitForSingleObject(asyncResult.AsyncWaitHandle, this.AsyncResultAvailable, null, -1, true);
         }
+
+        public IAsyncResult AsyncResult { get; }
+        public bool IsCompleted => this.AsyncResult.IsCompleted;
 
         public void OnCompleted(Action continuation)
         {

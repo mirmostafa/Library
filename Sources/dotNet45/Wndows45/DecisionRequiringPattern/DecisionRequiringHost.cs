@@ -4,8 +4,8 @@ namespace Mohammad.Win.DecisionRequiringPattern
 {
     public class DecisionRequiringHost
     {
-        public DecisionRequiringClient Client { get; }
         public DecisionRequiringHost(DecisionRequiringClient client) => this.Client = client;
+        public DecisionRequiringClient Client { get; }
 
         public void Ask(DecidingEventArgs e)
         {

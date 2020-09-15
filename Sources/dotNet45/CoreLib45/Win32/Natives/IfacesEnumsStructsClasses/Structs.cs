@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Drawing;
 using System.IO;
@@ -3594,6 +3591,19 @@ namespace Mohammad.Win32.Natives.IfacesEnumsStructsClasses
     [StructLayout(LayoutKind.Sequential)]
     public struct RECT : IEquatable<RECT>
     {
+        public RECT(Rectangle rectangle)
+            : this(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom)
+        {
+        }
+
+        public RECT(int left, int top, int right, int bottom)
+        {
+            this.X = left;
+            this.Y = top;
+            this.Right = right;
+            this.Bottom = bottom;
+        }
+
         public int X { get; set; }
 
         public int Y { get; set; }
@@ -3646,18 +3656,8 @@ namespace Mohammad.Win32.Natives.IfacesEnumsStructsClasses
             }
         }
 
-        public RECT(Rectangle rectangle)
-            : this(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom)
-        {
-        }
-
-        public RECT(int left, int top, int right, int bottom)
-        {
-            this.X = left;
-            this.Y = top;
-            this.Right = right;
-            this.Bottom = bottom;
-        }
+        public bool Equals(RECT rectangle) => rectangle.X == this.X && rectangle.Y == this.Y && rectangle.Right == this.Right &&
+                                              rectangle.Bottom == this.Bottom;
 
         public static implicit operator Rectangle(RECT rectangle) => rectangle.ToRectangle();
 
@@ -3667,14 +3667,11 @@ namespace Mohammad.Win32.Natives.IfacesEnumsStructsClasses
 
         public static bool operator !=(RECT rectangle1, RECT rectangle2) => !rectangle1.Equals(rectangle2);
 
-        public bool Equals(RECT rectangle) => rectangle.X == this.X && rectangle.Y == this.Y && rectangle.Right == this.Right &&
-                                              rectangle.Bottom == this.Bottom;
-
-        public Rectangle ToRectangle() => new Rectangle(this.Left, this.Top, this.Width, this.Height);
-
         public static Rectangle ToRectangle(RECT rectangle) => rectangle.ToRectangle();
 
         public static RECT FromRectangle(Rectangle rectangle) => new RECT(rectangle.Left, rectangle.Top, rectangle.Right, rectangle.Bottom);
+
+        public Rectangle ToRectangle() => new Rectangle(this.Left, this.Top, this.Width, this.Height);
 
         public override string ToString() => "{Left: " + this.X + "; " + "Top: " + this.Y + "; Right: " + this.Right + "; Bottom: " + this.Bottom + "}";
 

@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -47,9 +44,9 @@ namespace Mohammad.BusinessModel.Classes
             }
         }
 
-        public static implicit operator TColumnType(Column<TColumnType> column) => column.Value;
-
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public static implicit operator TColumnType(Column<TColumnType> column) => column.Value;
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
@@ -63,6 +60,23 @@ namespace Mohammad.BusinessModel.Classes
         private bool _IsForiegnKey;
         private bool _IsIdentity;
         private bool _IsPrimaryKey;
+
+        public ColumnStructure(string columnName,
+            bool allowNull,
+            bool isIdentity,
+            bool isPrimaryKey,
+            bool isForiegnKey,
+            string foriegnKeyTable,
+            string foriegnKeyColumn)
+        {
+            this.AllowNull = allowNull;
+            this.IsPrimaryKey = isPrimaryKey;
+            this.IsForiegnKey = isForiegnKey;
+            this.IsIdentity = isIdentity;
+            this.ColumnName = columnName;
+            this.ForiegnKeyColumn = foriegnKeyColumn;
+            this.ForiegnKeyTable = foriegnKeyTable;
+        }
 
         public bool AllowNull
         {
@@ -167,23 +181,6 @@ namespace Mohammad.BusinessModel.Classes
                 this._ForiegnKeyTable = value;
                 this.OnPropertyChanged();
             }
-        }
-
-        public ColumnStructure(string columnName,
-            bool allowNull,
-            bool isIdentity,
-            bool isPrimaryKey,
-            bool isForiegnKey,
-            string foriegnKeyTable,
-            string foriegnKeyColumn)
-        {
-            this.AllowNull = allowNull;
-            this.IsPrimaryKey = isPrimaryKey;
-            this.IsForiegnKey = isForiegnKey;
-            this.IsIdentity = isIdentity;
-            this.ColumnName = columnName;
-            this.ForiegnKeyColumn = foriegnKeyColumn;
-            this.ForiegnKeyTable = foriegnKeyTable;
         }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null) => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

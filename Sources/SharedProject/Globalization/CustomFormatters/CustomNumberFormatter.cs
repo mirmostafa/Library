@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Globalization;
 using System.Threading;
@@ -11,10 +8,6 @@ namespace Mohammad.Globalization.CustomFormatters
     [Serializable]
     public class CustomNumberFormatter : IFormatProvider, ICustomFormatter
     {
-        public NumberFormatInfo Engine { get; }
-
-        public NumericFormatInfo Info { get; }
-
         // Fields
         // Methods
         public CustomNumberFormatter(NumericFormatInfo numericFormatInfo)
@@ -28,6 +21,10 @@ namespace Mohammad.Globalization.CustomFormatters
             this.Info = numericFormatInfo;
             this.Info.MapToNumberFormatInfo(this.Engine);
         }
+
+        public NumberFormatInfo Engine { get; }
+
+        public NumericFormatInfo Info { get; }
 
         public string Format(string format, object arg, IFormatProvider formatProvider)
         {

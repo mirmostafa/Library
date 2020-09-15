@@ -12,15 +12,15 @@ namespace Mohammad.Win.Actions
     public class ActionCollection : Collection<Action>
     {
         /// <summary>
-        ///     Gets the parent ActionList
-        /// </summary>
-        public ActionList Parent { get; }
-
-        /// <summary>
         ///     Creates an new instance
         /// </summary>
         /// <param name="parent">Parent ActionList</param>
         public ActionCollection(ActionList parent) => this.Parent = parent;
+
+        /// <summary>
+        ///     Gets the parent ActionList
+        /// </summary>
+        public ActionList Parent { get; }
 
         /// <summary>
         ///     Clears all of the action lists.

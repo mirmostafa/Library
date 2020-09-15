@@ -24,6 +24,25 @@ namespace Mohammad.Win.Controls
         private bool _Initializing;
 
         /// <summary>
+        ///     Creates an instance of ActionList.
+        /// </summary>
+        public ActionList()
+        {
+            this.Actions = new ActionCollection(this);
+            this._Targets = new Dictionary<Component, Action>();
+            this.TypesDescription = new Dictionary<Type, ActionTargetDescriptionInfo>();
+            this._Enabled = true;
+            this.ToolTip = new ToolTip();
+
+            if (this.DesignMode)
+            {
+                return;
+            }
+
+            Application.Idle += this.Application_Idle;
+        }
+
+        /// <summary>
         ///     The tip which will be shown on MouseOver.
         /// </summary>
         [Description("The tip which will be shown on MouseOver.")]
@@ -133,25 +152,6 @@ namespace Mohammad.Win.Controls
             }
         }
 
-        /// <summary>
-        ///     Creates an instance of ActionList.
-        /// </summary>
-        public ActionList()
-        {
-            this.Actions = new ActionCollection(this);
-            this._Targets = new Dictionary<Component, Action>();
-            this.TypesDescription = new Dictionary<Type, ActionTargetDescriptionInfo>();
-            this._Enabled = true;
-            this.ToolTip = new ToolTip();
-
-            if (this.DesignMode)
-            {
-                return;
-            }
-
-            Application.Idle += this.Application_Idle;
-        }
-
         bool IExtenderProvider.CanExtend(object extendee)
         {
             var targetType = extendee.GetType();
@@ -165,6 +165,24 @@ namespace Mohammad.Win.Controls
             }
 
             return false;
+        }
+
+        /// <summary>
+        ///     Initializing started.
+        /// </summary>
+        public void BeginInit()
+        {
+            this._Initializing = true;
+        }
+
+        /// <summary>
+        ///     Initializing ended.
+        /// </summary>
+        public void EndInit()
+        {
+            this._Initializing = false;
+            this.checkInternalCollections();
+            this.refreshActions();
         }
 
         /// <summary>
@@ -306,23 +324,5 @@ namespace Mohammad.Win.Controls
         /// </summary>
         [Description("Occurs when the application is idle so that the action list can update a specific action in the list.")]
         public event EventHandler Update;
-
-        /// <summary>
-        ///     Initializing started.
-        /// </summary>
-        public void BeginInit()
-        {
-            this._Initializing = true;
-        }
-
-        /// <summary>
-        ///     Initializing ended.
-        /// </summary>
-        public void EndInit()
-        {
-            this._Initializing = false;
-            this.checkInternalCollections();
-            this.refreshActions();
-        }
     }
 }

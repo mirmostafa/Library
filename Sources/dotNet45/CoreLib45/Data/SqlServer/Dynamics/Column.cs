@@ -1,12 +1,14 @@
-
-
-
 using System;
 
 namespace Mohammad.Data.SqlServer.Dynamics
 {
     public class Column : SqlObject<Column, Table>, IEquatable<Column>
     {
+        public Column(Table owner, string name, string connectionString)
+            : base(owner, name, connectionString: connectionString)
+        {
+        }
+
         public string CollationName { get; set; }
         public string DataType { get; set; }
         public ForeignKeyInfo ForeignKeyInfo { get; set; }
@@ -18,14 +20,6 @@ namespace Mohammad.Data.SqlServer.Dynamics
         public int Position { get; set; }
         public int Precision { get; set; }
 
-        public Column(Table owner, string name, string connectionString)
-            : base(owner, name, connectionString: connectionString)
-        {
-        }
-
-        public static bool operator ==(Column left, Column right) => Equals(left, right);
-        public static bool operator !=(Column left, Column right) => !Equals(left, right);
-
         public bool Equals(Column other)
         {
             if (ReferenceEquals(null, other))
@@ -35,6 +29,9 @@ namespace Mohammad.Data.SqlServer.Dynamics
 
             return ReferenceEquals(this, other) || string.Equals(this.Name, other.Name);
         }
+
+        public static bool operator ==(Column left, Column right) => Equals(left, right);
+        public static bool operator !=(Column left, Column right) => !Equals(left, right);
 
         public override bool Equals(object obj)
         {

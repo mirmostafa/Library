@@ -19,6 +19,14 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(SeparatorCheckBox),
             new PropertyMetadata(default(bool?)));
 
+        public SeparatorCheckBox()
+        {
+            this.InitializeComponent();
+
+            this.CheckBox.BindToElementPath(this, HeaderProperty, "Content");
+            this.CheckBox.BindToElementPath(this, IsCheckedProperty, "IsChecked");
+        }
+
         public string Header
         {
             get => (string)this.GetValue(HeaderProperty);
@@ -44,13 +52,5 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         public DependencyProperty BindingFieldProperty => IsCheckedProperty;
-
-        public SeparatorCheckBox()
-        {
-            this.InitializeComponent();
-
-            this.CheckBox.BindToElementPath(this, HeaderProperty, "Content");
-            this.CheckBox.BindToElementPath(this, IsCheckedProperty, "IsChecked");
-        }
     }
 }

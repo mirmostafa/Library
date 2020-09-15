@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +17,7 @@ namespace Mohammad.Win32.Utilities
 
     public class Window : IEquatable<Window>
     {
+        protected Window(IntPtr hwnd) => this.Hwnd = hwnd;
         public static IEqualityComparer<Window> HwndComparer { get; } = new HwndEqualityComparer();
 
         public WindowState WindowState
@@ -86,11 +84,6 @@ namespace Mohammad.Win32.Utilities
             }
         }
 
-        protected Window(IntPtr hwnd) => this.Hwnd = hwnd;
-
-        public static bool operator ==(Window left, Window right) => left.Hwnd == right.Hwnd;
-        public static bool operator !=(Window left, Window right) => !(left == right);
-
         /// <summary>
         ///     Indicates whether the current object is equal to another object of the same type.
         /// </summary>
@@ -108,6 +101,9 @@ namespace Mohammad.Win32.Utilities
             return ReferenceEquals(this, other) || this.Hwnd.Equals(other.Hwnd);
         }
 
+        public static bool operator ==(Window left, Window right) => left.Hwnd == right.Hwnd;
+        public static bool operator !=(Window left, Window right) => !(left == right);
+
         public static Window FindByText(string text) => Find(text, null);
         public static Window FindByClassName(string className) => Find(null, className);
 
@@ -116,6 +112,33 @@ namespace Mohammad.Win32.Utilities
             var hwnd = Api.FindWindow(className, null);
             return hwnd != IntPtr.Zero ? new Window(hwnd) : null;
         }
+
+        public static IEnumerable<Window> GetAll()
+        {
+            var result = new List<Window>();
+            Api.EnumDesktopWindows(IntPtr.Zero,
+                delegate(IntPtr wnd1, int param1)
+                {
+                    result.Add(new Window(wnd1));
+                    return true;
+                },
+                IntPtr.Zero);
+            return result;
+        }
+
+        /// <summary>
+        ///     Returns the caption of a windows by given HWND identifier.
+        /// </summary>
+        public static string GetWindowText(IntPtr hWnd)
+        {
+            var title = new StringBuilder(1024);
+            var titleLength = Api.GetWindowText(hWnd, title, title.Capacity + 1);
+            title.Length = titleLength;
+
+            return title.ToString();
+        }
+
+        public static Window GetActiveWindow() => new Window(Api.GetActiveWindow());
 
         public void BringToFront()
         {
@@ -168,32 +191,7 @@ namespace Mohammad.Win32.Utilities
         /// <filterpriority>2</filterpriority>
         public override int GetHashCode() => this.Hwnd.GetHashCode();
 
-        public static IEnumerable<Window> GetAll()
-        {
-            var result = new List<Window>();
-            Api.EnumDesktopWindows(IntPtr.Zero,
-                delegate(IntPtr wnd1, int param1)
-                {
-                    result.Add(new Window(wnd1));
-                    return true;
-                },
-                IntPtr.Zero);
-            return result;
-        }
-
         public override string ToString() => this.Text;
-
-        /// <summary>
-        ///     Returns the caption of a windows by given HWND identifier.
-        /// </summary>
-        public static string GetWindowText(IntPtr hWnd)
-        {
-            var title = new StringBuilder(1024);
-            var titleLength = Api.GetWindowText(hWnd, title, title.Capacity + 1);
-            title.Length = titleLength;
-
-            return title.ToString();
-        }
 
         public void BringWindowToTop()
         {
@@ -209,8 +207,6 @@ namespace Mohammad.Win32.Utilities
         {
             Api.CloseWindow(this.Hwnd);
         }
-
-        public static Window GetActiveWindow() => new Window(Api.GetActiveWindow());
 
         public void Flash(bool invert)
         {

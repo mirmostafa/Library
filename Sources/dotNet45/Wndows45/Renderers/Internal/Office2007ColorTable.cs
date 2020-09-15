@@ -7,21 +7,6 @@ namespace Mohammad.Win.Renderers.Internal
     /// </summary>
     internal class Office2007ColorTable : ProfessionalColorTable
     {
-        /// <summary>
-        ///     Gets the solid color to use when the check box is selected and gradients are being used.
-        /// </summary>
-        public override Color CheckBackground => _checkBack;
-
-        /// <summary>
-        ///     Gets the starting color of the gradient used in the image margin of a ToolStripDropDownMenu.
-        /// </summary>
-        public override Color ImageMarginGradientBegin => _imageMargin;
-
-        /// <summary>
-        ///     Gets the border color or a MenuStrip.
-        /// </summary>
-        public override Color MenuBorder => _menuBorder;
-
         private static readonly Color _buttonBorder = Color.FromArgb(121, 153, 194);
         private static readonly Color _buttonPressedBegin = Color.FromArgb(248, 181, 106);
         private static readonly Color _buttonPressedEnd = Color.FromArgb(255, 208, 134);
@@ -50,6 +35,21 @@ namespace Mohammad.Win.Renderers.Internal
         private static readonly Color _toolStripContentEnd = Color.FromArgb(164, 195, 235);
         private static readonly Color _toolStripEnd = Color.FromArgb(152, 186, 230);
         private static readonly Color _toolStripMiddle = Color.FromArgb(222, 236, 255);
+
+        /// <summary>
+        ///     Gets the solid color to use when the check box is selected and gradients are being used.
+        /// </summary>
+        public override Color CheckBackground => _checkBack;
+
+        /// <summary>
+        ///     Gets the starting color of the gradient used in the image margin of a ToolStripDropDownMenu.
+        /// </summary>
+        public override Color ImageMarginGradientBegin => _imageMargin;
+
+        /// <summary>
+        ///     Gets the border color or a MenuStrip.
+        /// </summary>
+        public override Color MenuBorder => _menuBorder;
 
         /// <summary>
         ///     Gets the starting color of the gradient used when the button is pressed down.

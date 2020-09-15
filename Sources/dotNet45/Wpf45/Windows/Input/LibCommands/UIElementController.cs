@@ -26,6 +26,13 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
         private string _Text;
         private string _ToolTip;
         private Visibility _Visibility;
+
+        public UIElementController(UIElement element)
+        {
+            this.Element = element;
+            this.ReAssignProps();
+        }
+
         public UIElement Element { get; }
 
         public bool IsCancel
@@ -171,12 +178,6 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
                 this._PathFill = value;
                 this.OnPropertyChanged();
             }
-        }
-
-        public UIElementController(UIElement element)
-        {
-            this.Element = element;
-            this.ReAssignProps();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

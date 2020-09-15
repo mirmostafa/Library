@@ -16,6 +16,9 @@ namespace Mohammad.Data.SqlServer.Dynamics
         private StoredProcedures? _StoredProcedures;
         private Tables? _Tables;
 
+        internal Database(in Server server, in string name, in string connectionString, in string? collationName = null)
+            : base(server, name, connectionString: connectionString) => this.CollationName = collationName;
+
         public string? CollationName { get; internal set; }
         public DateTime CreateDate { get; internal set; }
         public long Id { get; internal set; }
@@ -24,9 +27,6 @@ namespace Mohammad.Data.SqlServer.Dynamics
         public Tables Tables => this._Tables ??= this.GetTables();
 
         internal IEnumerable<DataRow> AllParams => this._AllParams ??= GetQueryItems(this.ConnectionString, QueryBank.DATABASE_EXTENDED_PROPERTIES);
-
-        internal Database(in Server server, in string name, in string connectionString, in string? collationName = null)
-            : base(server, name, connectionString: connectionString) => this.CollationName = collationName;
 
         public static Database GetDatabase(in string connectionString, string? name = null)
         {
@@ -47,20 +47,6 @@ namespace Mohammad.Data.SqlServer.Dynamics
 
         public static Databases GetDatabases(string datasource, string username, string password)
             => GetDatabasesCore(ConnectionStringBuilder.Build(datasource, username, password));
-
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            result = this.Tables[binder.Name];
-            return true;
-        }
-
-        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
-        {
-            result = this.StoredProcedures[binder.Name]
-                .Run(args.Select((t, i) => new KeyValuePair<string, object>(binder.CallInfo.ArgumentNames[i], t))
-                    .ToArray());
-            return true;
-        }
 
         protected static Databases GetDatabasesCore(string connectionString, string databases = "sys.databases")
             => new Databases(() => GatherDatabases(connectionString, databases));
@@ -88,6 +74,20 @@ namespace Mohammad.Data.SqlServer.Dynamics
                     IsBrokerEnabled = row.Field("is_broker_enabled", Convert.ToBoolean)
                 };
             }
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            result = this.Tables[binder.Name];
+            return true;
+        }
+
+        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+        {
+            result = this.StoredProcedures[binder.Name]
+                .Run(args.Select((t, i) => new KeyValuePair<string, object>(binder.CallInfo.ArgumentNames[i], t))
+                    .ToArray());
+            return true;
         }
 
         private StoredProcedures GetStoredProcedures() => new StoredProcedures(

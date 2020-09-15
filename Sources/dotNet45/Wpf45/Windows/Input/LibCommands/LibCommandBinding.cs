@@ -4,12 +4,6 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
 {
     public class LibCommandBinding : CommandBinding
     {
-        public new ICommand Command
-        {
-            get => base.Command;
-            set => base.Command = value;
-        }
-
         public LibCommandBinding()
         {
         }
@@ -27,6 +21,12 @@ namespace Mohammad.Wpf.Windows.Input.LibCommands
         public LibCommandBinding(ICommand command, ExecutedRoutedEventHandler executed, CanExecuteRoutedEventHandler canExecute)
             : base(command, executed, canExecute)
         {
+        }
+
+        public new ICommand Command
+        {
+            get => base.Command;
+            set => base.Command = value;
         }
     }
 }

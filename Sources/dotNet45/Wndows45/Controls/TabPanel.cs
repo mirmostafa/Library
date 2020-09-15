@@ -32,6 +32,14 @@ namespace Mohammad.Win.Controls
         private int Y0;
         private int YF;
 
+        public TabPanel()
+        {
+            this.timer1.Interval = 1;
+            this.timer1.Tick += this.timer1_Tick;
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+        }
+
         public Color BaseColor
         {
             get => this._BaseColor;
@@ -79,14 +87,6 @@ namespace Mohammad.Win.Controls
                     this.i_Op = value;
                 }
             }
-        }
-
-        public TabPanel()
-        {
-            this.timer1.Interval = 1;
-            this.timer1.Tick += this.timer1_Tick;
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint | ControlStyles.DoubleBuffer, true);
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
         }
 
         public void DrawArc()

@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Reflection;
@@ -30,30 +27,6 @@ namespace Mohammad.Helpers.Console
             internal Dumper(int depth)
                 : base(depth)
             {
-            }
-
-            private void WriteValue(object o)
-            {
-                if (o == null)
-                {
-                    this.Write("null");
-                }
-                else if (o is DateTime)
-                {
-                    this.Write(((DateTime)o).ToShortDateString());
-                }
-                else if (o is ValueType || o is string)
-                {
-                    this.Write(o.ToString());
-                }
-                else if (o is IEnumerable)
-                {
-                    this.Write(string.Format("{0}...", o));
-                }
-                else
-                {
-                    this.Write(string.Concat(o, " { }"));
-                }
             }
 
             internal override void Write(object element, string prefix)
@@ -266,6 +239,30 @@ namespace Mohammad.Helpers.Console
                             }
                         }
                     }
+                }
+            }
+
+            private void WriteValue(object o)
+            {
+                if (o == null)
+                {
+                    this.Write("null");
+                }
+                else if (o is DateTime)
+                {
+                    this.Write(((DateTime)o).ToShortDateString());
+                }
+                else if (o is ValueType || o is string)
+                {
+                    this.Write(o.ToString());
+                }
+                else if (o is IEnumerable)
+                {
+                    this.Write(string.Format("{0}...", o));
+                }
+                else
+                {
+                    this.Write(string.Concat(o, " { }"));
                 }
             }
         }

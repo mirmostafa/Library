@@ -1,7 +1,4 @@
-﻿
-
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Mohammad.Helpers;
 
 namespace Mohammad.DesignPatterns.Behavioral

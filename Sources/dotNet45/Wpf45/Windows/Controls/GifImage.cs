@@ -27,6 +27,11 @@ namespace Mohammad.Wpf.Windows.Controls
         private GifBitmapDecoder _GifDecoder;
         private bool _IsInitialized;
 
+        static GifImage()
+        {
+            VisibilityProperty.OverrideMetadata(typeof(GifImage), new FrameworkPropertyMetadata(VisibilityPropertyChanged));
+        }
+
         /// <summary>
         ///     Defines whether the animation starts on it's own
         /// </summary>
@@ -48,9 +53,35 @@ namespace Mohammad.Wpf.Windows.Controls
             set => this.SetValue(GifSourceProperty, value);
         }
 
-        static GifImage()
+        private static void AutoStartPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            VisibilityProperty.OverrideMetadata(typeof(GifImage), new FrameworkPropertyMetadata(VisibilityPropertyChanged));
+            if ((bool)e.NewValue)
+            {
+                (sender as GifImage).StartAnimation();
+            }
+        }
+
+        private static void ChangingFrameIndex(DependencyObject obj, DependencyPropertyChangedEventArgs ev)
+        {
+            var gifImage = obj as GifImage;
+            gifImage.Source = gifImage._GifDecoder.Frames[(int)ev.NewValue];
+        }
+
+        private static void GifSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            (sender as GifImage).Initialize();
+        }
+
+        private static void VisibilityPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((Visibility)e.NewValue == Visibility.Visible)
+            {
+                ((GifImage)sender).StartAnimation();
+            }
+            else
+            {
+                ((GifImage)sender).StopAnimation();
+            }
         }
 
         /// <summary>
@@ -74,25 +105,6 @@ namespace Mohammad.Wpf.Windows.Controls
             this.BeginAnimation(FrameIndexProperty, null);
         }
 
-        private static void AutoStartPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            if ((bool)e.NewValue)
-            {
-                (sender as GifImage).StartAnimation();
-            }
-        }
-
-        private static void ChangingFrameIndex(DependencyObject obj, DependencyPropertyChangedEventArgs ev)
-        {
-            var gifImage = obj as GifImage;
-            gifImage.Source = gifImage._GifDecoder.Frames[(int)ev.NewValue];
-        }
-
-        private static void GifSourcePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            (sender as GifImage).Initialize();
-        }
-
         private void Initialize()
         {
             this._GifDecoder = new GifBitmapDecoder(new Uri("pack://application:,,," + this.GifSource),
@@ -112,18 +124,6 @@ namespace Mohammad.Wpf.Windows.Controls
             this.Source = this._GifDecoder.Frames[0];
 
             this._IsInitialized = true;
-        }
-
-        private static void VisibilityPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
-        {
-            if ((Visibility)e.NewValue == Visibility.Visible)
-            {
-                ((GifImage)sender).StartAnimation();
-            }
-            else
-            {
-                ((GifImage)sender).StopAnimation();
-            }
         }
     }
 }

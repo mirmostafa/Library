@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -17,6 +14,12 @@ namespace Mohammad.Logging
         public const string DEFAULT_LOG_TEXT_FORMAT = "[%datetime%][%level%][%sender%][%text%][%name%]";
         private string _LogTextFormat;
         private string _MoreInfoTextFormat;
+
+        public Logger(string name) => this.Name = name ?? throw new ArgumentNullException(nameof(name));
+
+        public Logger()
+        {
+        }
 
         public static Logger Empty { get; } = new Logger("Empty Logger")
         {
@@ -43,12 +46,6 @@ namespace Mohammad.Logging
         public bool IsEnabled { get; set; } = true;
 
         public object Sender { get; set; }
-
-        public Logger(string name) => this.Name = name ?? throw new ArgumentNullException(nameof(name));
-
-        public Logger()
-        {
-        }
 
         public event EventHandler<LogEventArgs> Logged;
         public event EventHandler<LogEventArgs> Logging;
@@ -179,21 +176,6 @@ namespace Mohammad.Logging
             }
         }
 
-        public void Log(LogEventArgs e)
-        {
-            if (e == null)
-            {
-                throw new ArgumentNullException(nameof(e));
-            }
-
-            this.Log(e.Log, e.MoreInfo, e.Sender, e.Level, e.MemberName, e.SourceFilePath, e.SourceLineNumber);
-        }
-
-        public void WriteLine(string log)
-        {
-            this.Log(log);
-        }
-
         public static string FormatLogText(object text,
             LogLevel level = LogLevel.None,
             DateTime? dateTime = null,
@@ -213,9 +195,6 @@ namespace Mohammad.Logging
         }
 
         public static string FormatLogText(LogEventArgs e) => FormatLogText(e.Log, e.Level, sender: e.Sender);
-
-        protected virtual LogEventArgs OnLogged(LogEventArgs e) => this.Logged.Raise(this, e);
-        protected virtual LogEventArgs OnLogging(LogEventArgs e) => this.Logging.Raise(this, e);
 
         private static StringBuilder ParseException(Exception ex)
         {
@@ -238,5 +217,23 @@ namespace Mohammad.Logging
             moreInfo.AppendLine("\t\t" + ex.StackTrace);
             return moreInfo;
         }
+
+        public void Log(LogEventArgs e)
+        {
+            if (e == null)
+            {
+                throw new ArgumentNullException(nameof(e));
+            }
+
+            this.Log(e.Log, e.MoreInfo, e.Sender, e.Level, e.MemberName, e.SourceFilePath, e.SourceLineNumber);
+        }
+
+        public void WriteLine(string log)
+        {
+            this.Log(log);
+        }
+
+        protected virtual LogEventArgs OnLogged(LogEventArgs e) => this.Logged.Raise(this, e);
+        protected virtual LogEventArgs OnLogging(LogEventArgs e) => this.Logging.Raise(this, e);
     }
 }

@@ -30,6 +30,13 @@ namespace Mohammad.Wpf.Windows.Controls
         public static readonly DependencyProperty SepratorColorProperty =
             DependencyProperty.Register("SepratorColor", typeof(Brush), typeof(HeaderedPanel), new PropertyMetadata(default(Brush)));
 
+        public HeaderedPanel()
+        {
+            this.IsChildEnabled = true;
+            this.InitializeComponent();
+            this.SepratorColor = Brushes.RoyalBlue;
+        }
+
         [Bindable(true)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         public object Child
@@ -60,13 +67,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => (Brush)this.GetValue(SepratorColorProperty);
             set => this.SetValue(SepratorColorProperty, value);
-        }
-
-        public HeaderedPanel()
-        {
-            this.IsChildEnabled = true;
-            this.InitializeComponent();
-            this.SepratorColor = Brushes.RoyalBlue;
         }
     }
 }

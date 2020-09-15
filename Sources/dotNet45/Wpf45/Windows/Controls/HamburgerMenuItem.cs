@@ -36,6 +36,11 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(HamburgerMenuItem),
             new PropertyMetadata(string.Empty));
 
+        static HamburgerMenuItem()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(HamburgerMenuItem), new FrameworkPropertyMetadata(typeof(HamburgerMenuItem)));
+        }
+
         public ImageSource Icon
         {
             get => (ImageSource)this.GetValue(IconProperty);
@@ -74,11 +79,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => (ILibInputElement)this.GetValue(CommandTargetProperty);
             set => this.SetValue(CommandTargetProperty, value);
-        }
-
-        static HamburgerMenuItem()
-        {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(HamburgerMenuItem), new FrameworkPropertyMetadata(typeof(HamburgerMenuItem)));
         }
     }
 }

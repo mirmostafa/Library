@@ -22,9 +22,6 @@ namespace TestConsole45
         /// </summary>
         public static int Precision = 50;
 
-        public BigInteger Mantissa { get; set; }
-        public int Exponent { get; set; }
-
         public BigDecimal(BigInteger mantissa, int exponent)
             : this()
         {
@@ -36,6 +33,21 @@ namespace TestConsole45
                 this.Truncate();
             }
         }
+
+        public BigInteger Mantissa { get; set; }
+        public int Exponent { get; set; }
+
+        public int CompareTo(object obj)
+        {
+            if (ReferenceEquals(obj, null) || !(obj is BigDecimal))
+            {
+                throw new ArgumentException();
+            }
+
+            return this.CompareTo((BigDecimal)obj);
+        }
+
+        public int CompareTo(BigDecimal other) => this < other ? -1 : this > other ? 1 : 0;
 
         public static implicit operator BigDecimal(int value) => new BigDecimal(value, 0);
 
@@ -125,17 +137,43 @@ namespace TestConsole45
         public static bool operator >=(BigDecimal left, BigDecimal right)
             => left.Exponent > right.Exponent ? AlignExponent(left, right) >= right.Mantissa : left.Mantissa >= AlignExponent(right, left);
 
-        public int CompareTo(object obj)
+        public static BigDecimal Exp(double exponent)
         {
-            if (ReferenceEquals(obj, null) || !(obj is BigDecimal))
+            var tmp = (BigDecimal)1;
+            while (Math.Abs(exponent) > 100)
             {
-                throw new ArgumentException();
+                var diff = exponent > 0 ? 100 : -100;
+                tmp *= Math.Exp(diff);
+                exponent -= diff;
             }
 
-            return this.CompareTo((BigDecimal)obj);
+            return tmp * Math.Exp(exponent);
         }
 
-        public int CompareTo(BigDecimal other) => this < other ? -1 : this > other ? 1 : 0;
+        public static BigDecimal Pow(double basis, double exponent)
+        {
+            var tmp = (BigDecimal)1;
+            while (Math.Abs(exponent) > 100)
+            {
+                var diff = exponent > 0 ? 100 : -100;
+                tmp *= Math.Pow(basis, diff);
+                exponent -= diff;
+            }
+
+            return tmp * Math.Pow(basis, exponent);
+        }
+
+        private static int NumberOfDigits(BigInteger value) => (value * value.Sign).ToString().Length;
+
+        private static BigDecimal Add(BigDecimal left, BigDecimal right) => left.Exponent > right.Exponent
+            ? new BigDecimal(AlignExponent(left, right) + right.Mantissa, right.Exponent)
+            : new BigDecimal(AlignExponent(right, left) + left.Mantissa, left.Exponent);
+
+        /// <summary>
+        ///     Returns the mantissa of value, aligned to the exponent of reference.
+        ///     Assumes the exponent of value is larger than of reference.
+        /// </summary>
+        private static BigInteger AlignExponent(BigDecimal value, BigDecimal reference) => value.Mantissa * BigInteger.Pow(10, value.Exponent - reference.Exponent);
 
         /// <summary>
         ///     Removes trailing zeros on the mantissa
@@ -195,43 +233,5 @@ namespace TestConsole45
                 return (this.Mantissa.GetHashCode() * 397) ^ this.Exponent;
             }
         }
-
-        public static BigDecimal Exp(double exponent)
-        {
-            var tmp = (BigDecimal)1;
-            while (Math.Abs(exponent) > 100)
-            {
-                var diff = exponent > 0 ? 100 : -100;
-                tmp *= Math.Exp(diff);
-                exponent -= diff;
-            }
-
-            return tmp * Math.Exp(exponent);
-        }
-
-        public static BigDecimal Pow(double basis, double exponent)
-        {
-            var tmp = (BigDecimal)1;
-            while (Math.Abs(exponent) > 100)
-            {
-                var diff = exponent > 0 ? 100 : -100;
-                tmp *= Math.Pow(basis, diff);
-                exponent -= diff;
-            }
-
-            return tmp * Math.Pow(basis, exponent);
-        }
-
-        private static int NumberOfDigits(BigInteger value) => (value * value.Sign).ToString().Length;
-
-        private static BigDecimal Add(BigDecimal left, BigDecimal right) => left.Exponent > right.Exponent
-            ? new BigDecimal(AlignExponent(left, right) + right.Mantissa, right.Exponent)
-            : new BigDecimal(AlignExponent(right, left) + left.Mantissa, left.Exponent);
-
-        /// <summary>
-        ///     Returns the mantissa of value, aligned to the exponent of reference.
-        ///     Assumes the exponent of value is larger than of reference.
-        /// </summary>
-        private static BigInteger AlignExponent(BigDecimal value, BigDecimal reference) => value.Mantissa * BigInteger.Pow(10, value.Exponent - reference.Exponent);
     }
 }

@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Linq;
 using Mohammad.Collections.ObjectModel;
@@ -10,6 +7,13 @@ namespace Mohammad.Helpers.Console.Controls
     public class MenuItem
     {
         private Menu _DropDownMenu;
+
+        public MenuItem(string text, ConsoleKey key, EventHandler handler)
+        {
+            this.Text = text;
+            this.Key = key;
+            this.Handler = handler;
+        }
 
         public Menu DropDownMenu
         {
@@ -21,13 +25,6 @@ namespace Mohammad.Helpers.Console.Controls
 
         public ConsoleKey Key { get; set; }
         public string Text { get; set; }
-
-        public MenuItem(string text, ConsoleKey key, EventHandler handler)
-        {
-            this.Text = text;
-            this.Key = key;
-            this.Handler = handler;
-        }
     }
 
     public class Menu

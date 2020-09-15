@@ -3,16 +3,16 @@
     "",
     "\\Sources",
     "\\Sources\\dotNet45",
-    "\\Sources\\dotNet45\\Wpf45APICodePack",
-    "\\Sources\\dotNet45\\Wpf45APICodePack\\Windows",
-    "\\Sources\\dotNet45\\Wpf45APICodePack\\Windows\\Controls",
-    "\\Sources\\SharedProject",
-    "\\Sources\\SharedProject\\Helpers",
-    "\\Sources\\SharedProject\\Helpers\\Internals",
+    "\\Sources\\dotNet45\\CoreLib45",
+    "\\Sources\\dotNet45\\CoreLib45\\Data",
+    "\\Sources\\dotNet45\\CoreLib45\\Data\\SqlServer",
+    "\\Sources\\dotNet45\\CoreLib45\\Data\\SqlServer\\Dynamics",
+    "\\Sources\\dotNet45\\CoreLib45\\Helpers",
+    "\\Sources\\dotNet45\\CoreLib45\\Remoting",
+    "\\Sources\\dotNet45\\CoreLib45\\ServiceModel",
     "\\Sources\\Tests",
-    "\\Sources\\Tests\\CoreLibCore30ConApp",
-    "\\Sources\\Tests\\TestWpfApp45"
+    "\\Sources\\Tests\\TestConsole45"
   ],
-  "SelectedNode": "\\Sources\\SharedProject\\Globalization\\PersianDateTime.cs",
+  "SelectedNode": "\\Sources\\dotNet45\\CoreLib45\\Helpers\\WcfHelper.cs",
   "PreviewInSolutionExplorer": false
 }

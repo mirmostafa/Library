@@ -17,6 +17,11 @@ namespace Mohammad.Wpf.Windows.Controls
         private IEnumerable _ItemsSource;
         private IList _SelectedItems;
 
+        public LookupBoxItemPage()
+        {
+            this.InitializeComponent();
+        }
+
         [Localizability(LocalizationCategory.NeverLocalize)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public IEnumerable ItemsSource
@@ -36,11 +41,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public bool OwnedBindData { get; set; }
         public IEnumerable SelectedItems => this._SelectedItems != null ? (IEnumerable)this._SelectedItems : Enumerable.Empty<object>();
-
-        public LookupBoxItemPage()
-        {
-            this.InitializeComponent();
-        }
 
         public void Connect(int connectionId, object target)
         {

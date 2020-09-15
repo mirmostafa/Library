@@ -1,7 +1,4 @@
-﻿
-
-
-using Mohammad.DesignPatterns.Creational;
+﻿using Mohammad.DesignPatterns.Creational;
 using Mohammad.Logging;
 using Mohammad.Settings;
 

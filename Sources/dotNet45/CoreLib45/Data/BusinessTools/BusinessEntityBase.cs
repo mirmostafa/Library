@@ -1,6 +1,3 @@
-
-
-
 using System.ComponentModel;
 using Mohammad.DesignPatterns.ExceptionHandlingPattern;
 using Mohammad.Validation;
@@ -11,6 +8,11 @@ namespace Mohammad.Data.BusinessTools
     public abstract class BusinessEntityBase<TBusinessEntity>
         where TBusinessEntity : BusinessEntityBase<TBusinessEntity>, new()
     {
+        private static TBusinessEntity _Instance;
+        private ExceptionHandling _ExceptionHandling;
+
+        protected BusinessEntityBase() => this.Initialize();
+
         public ExceptionHandling ExceptionHandling
         {
             get => this._ExceptionHandling ?? (this._ExceptionHandling = this.OnExceptionHandlingRequired());
@@ -25,8 +27,6 @@ namespace Mohammad.Data.BusinessTools
 
         protected Validator Validator { get; private set; }
 
-        protected BusinessEntityBase() => this.Initialize();
-
         protected virtual ExceptionHandling OnExceptionHandlingRequired() => new ExceptionHandling {RaiseExceptions = true};
 
         protected virtual void OnInitializing()
@@ -38,8 +38,5 @@ namespace Mohammad.Data.BusinessTools
             this.OnInitializing();
             this.Validator = new Validator(this.ExceptionHandling);
         }
-
-        private static TBusinessEntity _Instance;
-        private ExceptionHandling _ExceptionHandling;
     }
 }

@@ -5,11 +5,6 @@ namespace Mohammad.Win.Internals
 {
     public class ProChartLine
     {
-        public float[] Values { get; }
-        public string Name { get; }
-        public Color Color { get; }
-        public float Avrage => this.Values.Count() == 0 ? 0 : this.Values.Average();
-
         public ProChartLine(float[] values, string name, Color color)
         {
             this.Values = values;
@@ -24,5 +19,10 @@ namespace Mohammad.Win.Internals
 #warning check this out
             //this.Color = ColorHelper.RandomColor();
         }
+
+        public float[] Values { get; }
+        public string Name { get; }
+        public Color Color { get; }
+        public float Avrage => this.Values.Count() == 0 ? 0 : this.Values.Average();
     }
 }

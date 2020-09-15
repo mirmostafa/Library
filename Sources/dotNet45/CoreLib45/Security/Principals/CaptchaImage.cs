@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -10,10 +7,6 @@ namespace Mohammad.Security.Principals
 {
     public class CaptchaImage
     {
-        public string Text { get; set; }
-        public Size ImageSize { get; set; }
-        public Font Font { get; set; }
-
         public CaptchaImage()
         {
         }
@@ -25,7 +18,9 @@ namespace Mohammad.Security.Principals
             this.Font = font;
         }
 
-        public Bitmap GenerateImage() => GenerateImage(this.Text, this.ImageSize, this.Font);
+        public string Text { get; set; }
+        public Size ImageSize { get; set; }
+        public Font Font { get; set; }
 
         public static Bitmap GenerateImage(string text, Size imageSize, Font font)
         {
@@ -61,10 +56,10 @@ namespace Mohammad.Security.Principals
             PointF[] points =
             {
                 new PointF(random.Next(rect.Width) / v, random.Next(rect.Height) / v),
-                new PointF(rect.Width - (random.Next(rect.Width) / v), random.Next(rect.Height) / v),
-                new PointF(random.Next(rect.Width) / v, rect.Height - (random.Next(rect.Height) / v)),
-                new PointF(rect.Width - (random.Next(rect.Width) / v),
-                    rect.Height - (random.Next(rect.Height) / v))
+                new PointF(rect.Width - random.Next(rect.Width) / v, random.Next(rect.Height) / v),
+                new PointF(random.Next(rect.Width) / v, rect.Height - random.Next(rect.Height) / v),
+                new PointF(rect.Width - random.Next(rect.Width) / v,
+                    rect.Height - random.Next(rect.Height) / v)
             };
             var matrix = new Matrix();
             matrix.Translate(0F, 0F);
@@ -74,7 +69,7 @@ namespace Mohammad.Security.Principals
             graphics.FillPath(hatchBrush, path);
 
             var max = Math.Max(rect.Width, rect.Height);
-            for (var i = 0; i < (int)((rect.Width * rect.Height) / 30F); i++)
+            for (var i = 0; i < (int)(rect.Width * rect.Height / 30F); i++)
             {
                 var x = random.Next(rect.Width);
                 var y = random.Next(rect.Height);
@@ -89,5 +84,7 @@ namespace Mohammad.Security.Principals
 
             return bitmap;
         }
+
+        public Bitmap GenerateImage() => GenerateImage(this.Text, this.ImageSize, this.Font);
     }
 }

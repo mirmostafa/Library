@@ -11,24 +11,6 @@ namespace Mohammad.Win.Renderers
     /// </summary>
     public class Office2007Renderer : ToolStripProfessionalRenderer
     {
-        public static Office2007Renderer Initialize(IContainerControl containerControl)
-        {
-            var result = new Office2007Renderer();
-
-            ToolStripManager.Renderer = result;
-
-            return result;
-
-            //foreach (ToolStrip toolStrip in ControlHelper.GetControls<ToolStrip>(form))
-            //    toolStrip.Renderer = windowsVistaRenderer;
-
-            //foreach (ToolStripPanel toolStripPanel in ControlHelper.GetControls<ToolStripPanel>(form))
-            //    toolStripPanel.Renderer = windowsVistaRenderer;
-
-            //foreach (ToolStripContentPanel toolStripContentPanel in ControlHelper.GetControls<ToolStripContentPanel>(form))
-            //    toolStripContentPanel.Renderer = windowsVistaRenderer;
-        }
-
         private const int _MarginInset = 2;
         private static readonly Blend _StatusStripBlend;
 
@@ -57,6 +39,53 @@ namespace Mohammad.Win.Renderers
         public Office2007Renderer(ProfessionalColorTable professionalColorTable)
             : base(professionalColorTable)
         {
+        }
+
+        public static Office2007Renderer Initialize(IContainerControl containerControl)
+        {
+            var result = new Office2007Renderer();
+
+            ToolStripManager.Renderer = result;
+
+            return result;
+
+            //foreach (ToolStrip toolStrip in ControlHelper.GetControls<ToolStrip>(form))
+            //    toolStrip.Renderer = windowsVistaRenderer;
+
+            //foreach (ToolStripPanel toolStripPanel in ControlHelper.GetControls<ToolStripPanel>(form))
+            //    toolStripPanel.Renderer = windowsVistaRenderer;
+
+            //foreach (ToolStripContentPanel toolStripContentPanel in ControlHelper.GetControls<ToolStripContentPanel>(form))
+            //    toolStripContentPanel.Renderer = windowsVistaRenderer;
+        }
+
+        private static GraphicsPath CreateBorderPath(Rectangle rectangle, float cut)
+        {
+            // Drawing lines requires we draw inside the area we want
+            rectangle.Width--;
+            rectangle.Height--;
+
+            // Create path using a simple set of lines that cut the corner
+            var path = new GraphicsPath();
+            path.AddLine(rectangle.Left + cut, rectangle.Top, rectangle.Right - cut, rectangle.Top);
+            path.AddLine(rectangle.Right - cut, rectangle.Top, rectangle.Right, rectangle.Top + cut);
+            path.AddLine(rectangle.Right, rectangle.Top + cut, rectangle.Right, rectangle.Bottom - cut);
+            path.AddLine(rectangle.Right, rectangle.Bottom - cut, rectangle.Right - cut, rectangle.Bottom);
+            path.AddLine(rectangle.Right - cut, rectangle.Bottom, rectangle.Left + cut, rectangle.Bottom);
+            path.AddLine(rectangle.Left + cut, rectangle.Bottom, rectangle.Left, rectangle.Bottom - cut);
+            path.AddLine(rectangle.Left, rectangle.Bottom - cut, rectangle.Left, rectangle.Top + cut);
+            path.AddLine(rectangle.Left, rectangle.Top + cut, rectangle.Left + cut, rectangle.Top);
+            return path;
+        }
+
+        private static GraphicsPath CreateClipBorderPath(Rectangle rectangle, float cut)
+        {
+            // Clipping happens inside the rect, so make 1 wider and taller
+            rectangle.Width++;
+            rectangle.Height++;
+
+            // Now create a path based on this inner rectangle
+            return CreateBorderPath(rectangle, cut);
         }
 
         /// <summary>
@@ -219,35 +248,6 @@ namespace Mohammad.Win.Renderers
             {
                 base.OnRenderImageMargin(e);
             }
-        }
-
-        private static GraphicsPath CreateBorderPath(Rectangle rectangle, float cut)
-        {
-            // Drawing lines requires we draw inside the area we want
-            rectangle.Width--;
-            rectangle.Height--;
-
-            // Create path using a simple set of lines that cut the corner
-            var path = new GraphicsPath();
-            path.AddLine(rectangle.Left + cut, rectangle.Top, rectangle.Right - cut, rectangle.Top);
-            path.AddLine(rectangle.Right - cut, rectangle.Top, rectangle.Right, rectangle.Top + cut);
-            path.AddLine(rectangle.Right, rectangle.Top + cut, rectangle.Right, rectangle.Bottom - cut);
-            path.AddLine(rectangle.Right, rectangle.Bottom - cut, rectangle.Right - cut, rectangle.Bottom);
-            path.AddLine(rectangle.Right - cut, rectangle.Bottom, rectangle.Left + cut, rectangle.Bottom);
-            path.AddLine(rectangle.Left + cut, rectangle.Bottom, rectangle.Left, rectangle.Bottom - cut);
-            path.AddLine(rectangle.Left, rectangle.Bottom - cut, rectangle.Left, rectangle.Top + cut);
-            path.AddLine(rectangle.Left, rectangle.Top + cut, rectangle.Left + cut, rectangle.Top);
-            return path;
-        }
-
-        private static GraphicsPath CreateClipBorderPath(Rectangle rectangle, float cut)
-        {
-            // Clipping happens inside the rect, so make 1 wider and taller
-            rectangle.Width++;
-            rectangle.Height++;
-
-            // Now create a path based on this inner rectangle
-            return CreateBorderPath(rectangle, cut);
         }
     }
 }

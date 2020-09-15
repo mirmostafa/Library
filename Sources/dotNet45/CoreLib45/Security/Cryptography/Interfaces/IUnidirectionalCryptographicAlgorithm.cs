@@ -1,6 +1,3 @@
-
-
-
 namespace Mohammad.Security.Cryptography.Interfaces
 {
     /// <summary>

@@ -1,7 +1,4 @@
-﻿
-
-
-using System.DirectoryServices.AccountManagement;
+﻿using System.DirectoryServices.AccountManagement;
 using Mohammad.Helpers;
 
 namespace Mohammad.Security

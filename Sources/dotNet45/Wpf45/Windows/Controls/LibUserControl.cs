@@ -10,17 +10,17 @@ namespace Mohammad.Wpf.Windows.Controls
 {
     public class LibUserControl : UserControl, INotifyPropertyChanged, ILibControl
     {
-        protected LibUserControlDynamicCollection Controls { get; }
-        protected LibCommandDynamicCollection Commands { get; }
-        public string InnerName { get; set; }
-        public TaskScheduler UiTaskScheduler { get; private set; }
-
         public LibUserControl()
         {
             this.InitializedComponents();
             this.Commands = new LibCommandDynamicCollection(this);
             this.Controls = new LibUserControlDynamicCollection(this);
         }
+
+        protected LibUserControlDynamicCollection Controls { get; }
+        protected LibCommandDynamicCollection Commands { get; }
+        public string InnerName { get; set; }
+        public TaskScheduler UiTaskScheduler { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -49,17 +49,17 @@ namespace Mohammad.Wpf.Windows.Controls
 
     public class LibConentControl : ContentControl, INotifyPropertyChanged, ILibControl
     {
-        protected LibUserControlDynamicCollection Controls { get; }
-        protected LibCommandDynamicCollection Commands { get; }
-        public string InnerName { get; set; }
-        public TaskScheduler UiTaskScheduler { get; private set; }
-
         public LibConentControl()
         {
             this.InitializedComponents();
             this.Commands = new LibCommandDynamicCollection(this);
             this.Controls = new LibUserControlDynamicCollection(this);
         }
+
+        protected LibUserControlDynamicCollection Controls { get; }
+        protected LibCommandDynamicCollection Commands { get; }
+        public string InnerName { get; set; }
+        public TaskScheduler UiTaskScheduler { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

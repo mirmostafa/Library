@@ -1,6 +1,3 @@
-
-
-
 using Mohammad.Dynamic;
 
 namespace Mohammad.Settings

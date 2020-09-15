@@ -7,6 +7,10 @@ namespace Mohammad.CqrsInfra
 {
     public static class Cqrs
     {
+        private static Assembly _Assembly;
+
+        private static IContainer _container;
+
         public static void Init(Assembly assembly)
         {
             _Assembly = assembly;
@@ -73,9 +77,5 @@ namespace Mohammad.CqrsInfra
 
             return builder;
         }
-
-        private static Assembly _Assembly;
-
-        private static IContainer _container;
     }
 }

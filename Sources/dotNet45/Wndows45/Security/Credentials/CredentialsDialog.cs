@@ -31,6 +31,55 @@ namespace Mohammad.Win.Security.Credentials
         private string _Target = string.Empty;
 
         /// <summary>
+        ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
+        ///     with the specified target.
+        /// </summary>
+        /// <param name="target">The name of the target for the credentials, typically a server name.</param>
+        public CredentialsDialog(string target)
+            : this(target, null)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
+        ///     with the specified target and caption.
+        /// </summary>
+        /// <param name="target">The name of the target for the credentials, typically a server name.</param>
+        /// <param name="caption">The caption of the dialog (null will cause a system default title to be used).</param>
+        public CredentialsDialog(string target, string caption)
+            : this(target, caption, null)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
+        ///     with the specified target, caption and message.
+        /// </summary>
+        /// <param name="target">The name of the target for the credentials, typically a server name.</param>
+        /// <param name="caption">The caption of the dialog (null will cause a system default title to be used).</param>
+        /// <param name="message">The message of the dialog (null will cause a system default message to be used).</param>
+        public CredentialsDialog(string target, string caption, string message)
+            : this(target, caption, message, null)
+        {
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
+        ///     with the specified target, caption, message and banner.
+        /// </summary>
+        /// <param name="target">The name of the target for the credentials, typically a server name.</param>
+        /// <param name="caption">The caption of the dialog (null will cause a system default title to be used).</param>
+        /// <param name="message">The message of the dialog (null will cause a system default message to be used).</param>
+        /// <param name="banner">The image to display on the dialog (null will cause a system default image to be used).</param>
+        public CredentialsDialog(string target, string caption, string message, Image banner)
+        {
+            this.Target = target;
+            this.Caption = caption;
+            this.Message = message;
+            this.Banner = banner;
+        }
+
+        /// <summary>
         ///     Gets or sets if the dialog will be shown even if the credentials
         ///     can be returned from an existing credential in the credential manager.
         /// </summary>
@@ -213,55 +262,6 @@ namespace Mohammad.Win.Security.Credentials
 
                 this._Banner = value;
             }
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
-        ///     with the specified target.
-        /// </summary>
-        /// <param name="target">The name of the target for the credentials, typically a server name.</param>
-        public CredentialsDialog(string target)
-            : this(target, null)
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
-        ///     with the specified target and caption.
-        /// </summary>
-        /// <param name="target">The name of the target for the credentials, typically a server name.</param>
-        /// <param name="caption">The caption of the dialog (null will cause a system default title to be used).</param>
-        public CredentialsDialog(string target, string caption)
-            : this(target, caption, null)
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
-        ///     with the specified target, caption and message.
-        /// </summary>
-        /// <param name="target">The name of the target for the credentials, typically a server name.</param>
-        /// <param name="caption">The caption of the dialog (null will cause a system default title to be used).</param>
-        /// <param name="message">The message of the dialog (null will cause a system default message to be used).</param>
-        public CredentialsDialog(string target, string caption, string message)
-            : this(target, caption, message, null)
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:SecureCredentialsLibrary.CredentialsDialog" /> class
-        ///     with the specified target, caption, message and banner.
-        /// </summary>
-        /// <param name="target">The name of the target for the credentials, typically a server name.</param>
-        /// <param name="caption">The caption of the dialog (null will cause a system default title to be used).</param>
-        /// <param name="message">The message of the dialog (null will cause a system default message to be used).</param>
-        /// <param name="banner">The image to display on the dialog (null will cause a system default image to be used).</param>
-        public CredentialsDialog(string target, string caption, string message, Image banner)
-        {
-            this.Target = target;
-            this.Caption = caption;
-            this.Message = message;
-            this.Banner = banner;
         }
 
         /// <summary>

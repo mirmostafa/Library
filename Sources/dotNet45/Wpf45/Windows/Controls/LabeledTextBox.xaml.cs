@@ -23,6 +23,12 @@ namespace Mohammad.Wpf.Windows.Controls
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register("Text", typeof(string), typeof(LabeledTextBox), new PropertyMetadata(default(string)));
 
+        public LabeledTextBox()
+        {
+            this.InitializeComponent();
+            this.HeaderWidth = 80;
+        }
+
         [DefaultValue("")]
         [Localizability(LocalizationCategory.Title)]
         public string Header
@@ -112,12 +118,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public DependencyProperty BindingFieldProperty => TextProperty;
         public FrameworkElement FlickerTextBlock => this.TextBlock.FlickerTextBlock;
-
-        public LabeledTextBox()
-        {
-            this.InitializeComponent();
-            this.HeaderWidth = 80;
-        }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {

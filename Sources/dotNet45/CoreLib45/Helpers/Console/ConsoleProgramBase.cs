@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +14,10 @@ namespace Mohammad.Helpers.Console
     public abstract class ConsoleProgramBase<TProgram> : ApplicationMainThreadBase<TProgram>
         where TProgram : ConsoleProgramBase<TProgram>
     {
+        private readonly ManualResetEvent _ResetEvent = new ManualResetEvent(true);
+
+        private bool _IsPaused;
+        private Task _Task;
         public IReadOnlyList<string> Args { get; private set; }
         public bool CatchExceptions { get; set; }
         public object CommandsObject { get; set; }
@@ -195,9 +196,5 @@ namespace Mohammad.Helpers.Console
                 run();
             }
         }
-
-        private bool _IsPaused;
-        private readonly ManualResetEvent _ResetEvent = new ManualResetEvent(true);
-        private Task _Task;
     }
 }

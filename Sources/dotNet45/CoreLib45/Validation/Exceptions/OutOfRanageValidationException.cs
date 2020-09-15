@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Runtime.Serialization;
 
@@ -9,10 +6,6 @@ namespace Mohammad.Validation.Exceptions
     [Serializable]
     public class OutOfRanageValidationException : ValidationExceptionBase
     {
-        public object Value { get; set; }
-        public object MinValue { get; set; }
-        public object MaxValue { get; set; }
-
         public OutOfRanageValidationException()
         {
         }
@@ -48,5 +41,9 @@ namespace Mohammad.Validation.Exceptions
             : base(message, inner, instruction)
         {
         }
+
+        public object Value { get; set; }
+        public object MinValue { get; set; }
+        public object MaxValue { get; set; }
     }
 }

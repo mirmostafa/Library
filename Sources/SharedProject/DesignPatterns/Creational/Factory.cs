@@ -43,3 +43,4 @@
 //        private static Tuple<Type, Delegate, object> FindByType<T>() => _Manufacturares.FirstOrDefault(manufacturare => manufacturare.Item1 == typeof(T));
 //    }
 //}
+

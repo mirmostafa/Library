@@ -192,6 +192,12 @@ namespace Mohammad.Wpf.Windows.Controls
         private abstract class AnimationValueAdapter
         {
             /// <summary>
+            ///     Initializes a new instance of the AnimationValueAdapter type.
+            /// </summary>
+            /// <param name="dimension">The dimension of interest for updates.</param>
+            public AnimationValueAdapter(DoubleAnimationDimension dimension) => this.Dimension = dimension;
+
+            /// <summary>
             ///     Gets or sets the original double value.
             /// </summary>
             protected double OriginalValue { get; set; }
@@ -200,12 +206,6 @@ namespace Mohammad.Wpf.Windows.Controls
             ///     Gets the dimension of interest for the control.
             /// </summary>
             public DoubleAnimationDimension Dimension { get; }
-
-            /// <summary>
-            ///     Initializes a new instance of the AnimationValueAdapter type.
-            /// </summary>
-            /// <param name="dimension">The dimension of interest for updates.</param>
-            public AnimationValueAdapter(DoubleAnimationDimension dimension) => this.Dimension = dimension;
 
             /// <summary>
             ///     Updates the original instance based on new dimension information
@@ -338,17 +338,6 @@ namespace Mohammad.Wpf.Windows.Controls
             private readonly double _Ratio;
 
             /// <summary>
-            ///     Stores the animation instance.
-            /// </summary>
-            protected T Instance { get; }
-
-            /// <summary>
-            ///     Gets the initial value (minus the identifying value portion) that the
-            ///     designer stored within the visual state animation property.
-            /// </summary>
-            protected double InitialValue { get; }
-
-            /// <summary>
             ///     Initializes a new instance of the GeneralAnimationValueAdapter
             ///     type.
             /// </summary>
@@ -364,14 +353,15 @@ namespace Mohammad.Wpf.Windows.Controls
             }
 
             /// <summary>
-            ///     Approximately removes the identifying value from a value.
+            ///     Stores the animation instance.
             /// </summary>
-            /// <param name="number">The initial number.</param>
-            /// <returns>
-            ///     Returns a double with an adjustment for the identifying
-            ///     value portion of the number.
-            /// </returns>
-            public double StripIdentifyingValueOff(double number) => this.Dimension == DoubleAnimationDimension.Width ? number - .1 : number - .2;
+            protected T Instance { get; }
+
+            /// <summary>
+            ///     Gets the initial value (minus the identifying value portion) that the
+            ///     designer stored within the visual state animation property.
+            /// </summary>
+            protected double InitialValue { get; }
 
             /// <summary>
             ///     Retrieves the dimension, if any, from the number. If the number
@@ -399,6 +389,16 @@ namespace Mohammad.Wpf.Windows.Controls
 
                 return null;
             }
+
+            /// <summary>
+            ///     Approximately removes the identifying value from a value.
+            /// </summary>
+            /// <param name="number">The initial number.</param>
+            /// <returns>
+            ///     Returns a double with an adjustment for the identifying
+            ///     value portion of the number.
+            /// </returns>
+            public double StripIdentifyingValueOff(double number) => this.Dimension == DoubleAnimationDimension.Width ? number - .1 : number - .2;
 
             /// <summary>
             ///     Updates the animation instance based on the dimensions of the

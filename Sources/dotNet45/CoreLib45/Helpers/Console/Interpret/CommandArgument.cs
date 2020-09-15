@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,6 +8,8 @@ namespace Mohammad.Helpers.Console.Interpret
     public class CommandArgument
     {
         private string _Syntax;
+
+        public CommandArgument() => this.IsOptional = true;
 
         public Delegate Action { get; set; }
         public string Description { get; set; }
@@ -23,8 +22,6 @@ namespace Mohammad.Helpers.Console.Interpret
             get => this._Syntax ?? this.Switch.ToUpper();
             set => this._Syntax = value;
         }
-
-        public CommandArgument() => this.IsOptional = true;
     }
 
     public class CommandArgumentCollection : Collection<CommandArgument>
@@ -33,6 +30,10 @@ namespace Mohammad.Helpers.Console.Interpret
 
     public class CommandArgumentInterpreter
     {
+        private readonly string _AppName;
+        private string _Syntax;
+
+        public CommandArgumentInterpreter() => this._AppName = this.GetType().Assembly.FullName.Substring(0, this.GetType().Assembly.FullName.IndexOf(","));
         public CommandArgumentCollection Arguments { get; } = new CommandArgumentCollection();
         public string Description { get; set; }
 
@@ -61,8 +62,6 @@ namespace Mohammad.Helpers.Console.Interpret
             set => this._Syntax = value;
         }
 
-        public CommandArgumentInterpreter() => this._AppName = this.GetType().Assembly.FullName.Substring(0, this.GetType().Assembly.FullName.IndexOf(","));
-
         public void ShowHelp()
         {
             if (this.Syntax.IsNullOrEmpty())
@@ -79,15 +78,6 @@ namespace Mohammad.Helpers.Console.Interpret
                         string.Format("    -{0,-10}{1,-25}{2}", arg.Syntax, arg.Description, Environment.NewLine)));
             help = string.Concat(help, string.Format("{0}{0}Note:{1}", Environment.NewLine, this.Note));
             help.WriteLine();
-        }
-
-        protected virtual void InitailizeSyntax()
-        {
-            this.Syntax = this._AppName;
-            foreach (var argument in this.Arguments)
-            {
-                string.Concat(this.Syntax, string.Empty, argument.Switch.ToUpper());
-            }
         }
 
         internal void Interpret(IEnumerable<string> args, Action<string> log = null)
@@ -122,7 +112,13 @@ namespace Mohammad.Helpers.Console.Interpret
             log("Interpreting ended.");
         }
 
-        private readonly string _AppName;
-        private string _Syntax;
+        protected virtual void InitailizeSyntax()
+        {
+            this.Syntax = this._AppName;
+            foreach (var argument in this.Arguments)
+            {
+                string.Concat(this.Syntax, string.Empty, argument.Switch.ToUpper());
+            }
+        }
     }
 }

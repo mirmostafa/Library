@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Threading;
 
@@ -9,6 +6,12 @@ namespace Mohammad.Threading.Tasks
     public partial class Timer : IEquatable<Timer>
     {
         internal readonly ManualResetEvent Working = new ManualResetEvent(false);
+
+        internal Timer(int id, long? tickCount)
+        {
+            this.Id = id;
+            this.TickCount = tickCount;
+        }
 
         public int Id { get; }
         public long? TickIndex { get; internal set; }
@@ -19,15 +22,6 @@ namespace Mohammad.Threading.Tasks
         internal bool IsStopRequested { get; set; }
 
         internal TimeSpan Interval { get; set; }
-
-        internal Timer(int id, long? tickCount)
-        {
-            this.Id = id;
-            this.TickCount = tickCount;
-        }
-
-        public static bool operator ==(Timer left, Timer right) => Equals(left, right);
-        public static bool operator !=(Timer left, Timer right) => !Equals(left, right);
 
         public bool Equals(Timer other)
         {
@@ -43,6 +37,9 @@ namespace Mohammad.Threading.Tasks
 
             return this.Id == other.Id;
         }
+
+        public static bool operator ==(Timer left, Timer right) => Equals(left, right);
+        public static bool operator !=(Timer left, Timer right) => !Equals(left, right);
 
         public override bool Equals(object obj)
         {

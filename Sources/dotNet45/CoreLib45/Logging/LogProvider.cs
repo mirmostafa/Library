@@ -1,6 +1,3 @@
-
-
-
 using System;
 using Mohammad.Logging.Gateways;
 
@@ -9,10 +6,6 @@ namespace Mohammad.Logging
     public class LogProvider : ILogProvider
     {
         private ILogger _Logger;
-
-        public ILogger Logger => this._Logger ?? (this._Logger = this.OnInitializingLogger());
-
-        public object DefaultLogSender { get; }
 
         public LogProvider()
         {
@@ -30,6 +23,10 @@ namespace Mohammad.Logging
                 defaultSender)
         {
         }
+
+        public ILogger Logger => this._Logger ?? (this._Logger = this.OnInitializingLogger());
+
+        public object DefaultLogSender { get; }
 
         protected virtual ILogger OnInitializingLogger() => throw new NotImplementedException(
             "Please implement OnInitializingLogger or use suitable constructor.");

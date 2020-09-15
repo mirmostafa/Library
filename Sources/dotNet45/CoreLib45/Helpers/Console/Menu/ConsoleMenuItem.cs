@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,20 +6,15 @@ namespace Mohammad.Helpers.Console.Menu
 {
     public class ConsoleMenuItemHotKeyPressedEventArgs : EventArgs
     {
+        public ConsoleMenuItemHotKeyPressedEventArgs(object extraArgs) => this.ExtraArgs = extraArgs;
         public bool Back { get; set; }
         public bool Exit { get; set; }
         public object ExtraArgs { get; set; }
-        public ConsoleMenuItemHotKeyPressedEventArgs(object extraArgs) => this.ExtraArgs = extraArgs;
     }
 
     public class ConsoleMenuItem : IEquatable<ConsoleMenuItem>
     {
         private readonly object _ExtraArgs;
-
-        public ConsoleMenuItemList Children { get; } = new ConsoleMenuItemList();
-        public char HotKey { get; internal set; }
-
-        public string Text { get; }
 
         public ConsoleMenuItem(char hotKey, string text, IEnumerable<ConsoleMenuItem> children)
             : this(hotKey, text, children, null, null)
@@ -59,6 +51,13 @@ namespace Mohammad.Helpers.Console.Menu
             }
         }
 
+        public ConsoleMenuItemList Children { get; } = new ConsoleMenuItemList();
+        public char HotKey { get; internal set; }
+
+        public string Text { get; }
+
+        public bool Equals(ConsoleMenuItem other) => other == this;
+
         public static bool operator ==(ConsoleMenuItem menu1, ConsoleMenuItem menu2)
         {
             // ReSharper disable PossibleNullReferenceException
@@ -69,30 +68,6 @@ namespace Mohammad.Helpers.Console.Menu
         }
 
         public static bool operator !=(ConsoleMenuItem menu1, ConsoleMenuItem menu2) => !(menu1 == menu2);
-
-        public bool Equals(ConsoleMenuItem other) => other == this;
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != this.GetType())
-            {
-                return false;
-            }
-
-            return this.Equals((ConsoleMenuItem)obj);
-        }
-
-        public override int GetHashCode() => this.HotKey;
 
         public static ConsoleMenuItem Show(IEnumerable<ConsoleMenuItem> menuItems,
             string menuTitle,
@@ -205,8 +180,6 @@ namespace Mohammad.Helpers.Console.Menu
             }
         }
 
-        protected virtual void OnHotKeyPressed(ConsoleMenuItemHotKeyPressedEventArgs e) => this.HotKeyPressed?.Invoke(this, e);
-
         private static void AddSeparator() => ConsoleHelper.Inform(" ---------------------------------");
 
         private static void DrawItem(KeyValuePair<char, string> item)
@@ -216,6 +189,30 @@ namespace Mohammad.Helpers.Console.Menu
             " - ".Write();
             ConsoleHelper.Inform(item.Value);
         }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return this.Equals((ConsoleMenuItem)obj);
+        }
+
+        public override int GetHashCode() => this.HotKey;
+
+        protected virtual void OnHotKeyPressed(ConsoleMenuItemHotKeyPressedEventArgs e) => this.HotKeyPressed?.Invoke(this, e);
 
         public event EventHandler<ConsoleMenuItemHotKeyPressedEventArgs> HotKeyPressed;
     }

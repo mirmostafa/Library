@@ -14,6 +14,15 @@ namespace Mohammad.Win.Controls
         private readonly ListViewColumnSorter _Sorter;
         private bool _AllowRowReorder = true;
 
+        public ListView()
+        {
+            this.InitializeComponent();
+            this.Printer = new ListViewPrinter(this);
+            this._Sorter = new ListViewColumnSorter(this);
+            this.Sortable = false;
+            this.AllowRowReorder = true;
+        }
+
         [DefaultValue("FileDrop")]
         public string DragDataFormat { get; set; } = DataFormats.FileDrop;
 
@@ -47,15 +56,6 @@ namespace Mohammad.Win.Controls
 
         [DefaultValue(false)]
         public bool IsSelectAllEnabled { get; set; }
-
-        public ListView()
-        {
-            this.InitializeComponent();
-            this.Printer = new ListViewPrinter(this);
-            this._Sorter = new ListViewColumnSorter(this);
-            this.Sortable = false;
-            this.AllowRowReorder = true;
-        }
 
         public new DragDropEffects DoDragDrop(object data, DragDropEffects allowedEffects = DragDropEffects.Copy)
         {

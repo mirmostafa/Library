@@ -1,7 +1,4 @@
-﻿
-
-
-namespace Mohammad.Definitions
+﻿namespace Mohammad.Definitions
 {
     // ReSharper disable InconsistentNaming
     public class VectorVideoStandardResolutions

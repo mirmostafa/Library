@@ -27,6 +27,31 @@ namespace Mohammad.Win.Renderers
             this.ButtonRadius = 2;
         }
 
+        /// <summary>
+        ///     Gets or sets the buttons rectangle radius
+        /// </summary>
+        public int ButtonRadius { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the radius of the rectangle of the hole ToolStrip
+        /// </summary>
+        public int ToolStripRadius { get; set; }
+
+        /// <summary>
+        ///     Gets ors sets if background glow should be rendered
+        /// </summary>
+        public bool BackgroundGlow { get; set; }
+
+        /// <summary>
+        ///     Gets or sets if glossy effect should be rendered
+        /// </summary>
+        public bool GlossyEffect { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the color table of the renderer
+        /// </summary>
+        public WindowsVistaColorTable ColorTable { get; set; }
+
         public static void Render(ToolStripContainer toolStripContainer)
         {
             var windowsVistaRenderer = new WindowsVistaRenderer();
@@ -58,6 +83,61 @@ namespace Mohammad.Win.Renderers
 
             //foreach (ToolStripContentPanel toolStripContentPanel in ControlHelper.GetControls<ToolStripContentPanel>(form))
             //    toolStripContentPanel.Renderer = windowsVistaRenderer;
+        }
+
+        /// <summary>
+        ///     Creates the glow of the buttons
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <returns></returns>
+        private static GraphicsPath CreateBottomRadialPath(Rectangle rectangle)
+        {
+            var path = new GraphicsPath();
+            RectangleF rect = rectangle;
+            rect.X -= rect.Width * .35f;
+            rect.Y -= rect.Height * .15f;
+            rect.Width *= 1.7f;
+            rect.Height *= 2.3f;
+            path.AddEllipse(rect);
+            path.CloseFigure();
+            return path;
+        }
+
+        /// <summary>
+        ///     Creates the chevron for the overflow button
+        /// </summary>
+        /// <param name="overflowButtonSize"></param>
+        /// <returns></returns>
+        private static GraphicsPath CreateOverflowChevron(Size overflowButtonSize)
+        {
+            var r = new Rectangle(Point.Empty, overflowButtonSize);
+            var path = new GraphicsPath();
+
+            const int segmentWidth = 3;
+            const int segmentHeight = 3;
+            const int segmentSeparation = 5;
+            const int chevronWidth = segmentWidth + segmentSeparation;
+            const int chevronHeight = segmentHeight * 2;
+            var chevronLeft = (r.Width - chevronWidth) / 2;
+            var chevronTop = (r.Height - chevronHeight) / 2;
+
+            // Segment \
+            path.AddLine(new Point(chevronLeft, chevronTop), new Point(chevronLeft + segmentWidth, chevronTop + segmentHeight));
+
+            // Segment /
+            path.AddLine(new Point(chevronLeft + segmentWidth, chevronTop + segmentHeight), new Point(chevronLeft, chevronTop + segmentHeight * 2));
+
+            path.StartFigure();
+
+            // Segment \
+            path.AddLine(new Point(segmentSeparation + chevronLeft, chevronTop),
+                new Point(segmentSeparation + chevronLeft + segmentWidth, chevronTop + segmentHeight));
+
+            // Segment /
+            path.AddLine(new Point(segmentSeparation + chevronLeft + segmentWidth, chevronTop + segmentHeight),
+                new Point(segmentSeparation + chevronLeft, chevronTop + segmentHeight * 2));
+
+            return path;
         }
 
         protected override void Initialize(ToolStrip toolStrip)
@@ -306,86 +386,6 @@ namespace Mohammad.Win.Renderers
                 e.Graphics.DrawPath(p, path);
             }
         }
-
-        /// <summary>
-        ///     Creates the glow of the buttons
-        /// </summary>
-        /// <param name="rectangle"></param>
-        /// <returns></returns>
-        private static GraphicsPath CreateBottomRadialPath(Rectangle rectangle)
-        {
-            var path = new GraphicsPath();
-            RectangleF rect = rectangle;
-            rect.X -= rect.Width * .35f;
-            rect.Y -= rect.Height * .15f;
-            rect.Width *= 1.7f;
-            rect.Height *= 2.3f;
-            path.AddEllipse(rect);
-            path.CloseFigure();
-            return path;
-        }
-
-        /// <summary>
-        ///     Creates the chevron for the overflow button
-        /// </summary>
-        /// <param name="overflowButtonSize"></param>
-        /// <returns></returns>
-        private static GraphicsPath CreateOverflowChevron(Size overflowButtonSize)
-        {
-            var r = new Rectangle(Point.Empty, overflowButtonSize);
-            var path = new GraphicsPath();
-
-            const int segmentWidth = 3;
-            const int segmentHeight = 3;
-            const int segmentSeparation = 5;
-            const int chevronWidth = segmentWidth + segmentSeparation;
-            const int chevronHeight = segmentHeight * 2;
-            var chevronLeft = (r.Width - chevronWidth) / 2;
-            var chevronTop = (r.Height - chevronHeight) / 2;
-
-            // Segment \
-            path.AddLine(new Point(chevronLeft, chevronTop), new Point(chevronLeft + segmentWidth, chevronTop + segmentHeight));
-
-            // Segment /
-            path.AddLine(new Point(chevronLeft + segmentWidth, chevronTop + segmentHeight), new Point(chevronLeft, chevronTop + segmentHeight * 2));
-
-            path.StartFigure();
-
-            // Segment \
-            path.AddLine(new Point(segmentSeparation + chevronLeft, chevronTop),
-                new Point(segmentSeparation + chevronLeft + segmentWidth, chevronTop + segmentHeight));
-
-            // Segment /
-            path.AddLine(new Point(segmentSeparation + chevronLeft + segmentWidth, chevronTop + segmentHeight),
-                new Point(segmentSeparation + chevronLeft, chevronTop + segmentHeight * 2));
-
-            return path;
-        }
-
-        /// <summary>
-        ///     Gets or sets the buttons rectangle radius
-        /// </summary>
-        public int ButtonRadius { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the radius of the rectangle of the hole ToolStrip
-        /// </summary>
-        public int ToolStripRadius { get; set; }
-
-        /// <summary>
-        ///     Gets ors sets if background glow should be rendered
-        /// </summary>
-        public bool BackgroundGlow { get; set; }
-
-        /// <summary>
-        ///     Gets or sets if glossy effect should be rendered
-        /// </summary>
-        public bool GlossyEffect { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the color table of the renderer
-        /// </summary>
-        public WindowsVistaColorTable ColorTable { get; set; }
 
         /// <summary>
         ///     Gets a rounded rectangle representing the hole area of the toolstrip

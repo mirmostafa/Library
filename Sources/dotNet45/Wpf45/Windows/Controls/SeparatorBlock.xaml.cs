@@ -16,16 +16,16 @@ namespace Mohammad.Wpf.Windows.Controls
                 s.As<SeparatorBlock>().SeparatorLabel.Header.As<TextBlock>().Text = e;
             });
 
-        public string Header
-        {
-            get => (string)this.GetValue(HeaderProperty);
-            set => this.SetValue(HeaderProperty, value);
-        }
-
         public SeparatorBlock()
         {
             this.InitializeComponent();
             this.SeparatorLabel.Header.As<TextBlock>().Foreground = this.SeparatorLabel.SepratorColor;
+        }
+
+        public string Header
+        {
+            get => (string)this.GetValue(HeaderProperty);
+            set => this.SetValue(HeaderProperty, value);
         }
     }
 }

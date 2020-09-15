@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,10 +8,10 @@ namespace Mohammad.Collections.Hierarchy
 {
     public class ReadOnlyTreeById<T> : IReadOnlyTreeById<T>
     {
+        public ReadOnlyTreeById(List<NodeById<T>> nodes) => this.Nodes = nodes;
         protected List<NodeById<T>> Nodes { get; }
         public IEnumerable<T> Roots => this.RootNodes.Select(n => n.Current);
         public IEnumerable<NodeById<T>> RootNodes => this.Nodes.Where(n => !n.ParentId.HasValue);
-        public ReadOnlyTreeById(List<NodeById<T>> nodes) => this.Nodes = nodes;
         public bool HasChild(NodeById<T> parent) => this.GetChildNodesOf(parent).Any();
         public IEnumerable<NodeById<T>> GetChildNodesOf(NodeById<T> parent) => this.Nodes.Where(n => n.ParentId == parent.CurrentId);
         public NodeById<T> GetParentNodeOf(NodeById<T> child) => this.Nodes.SingleOrDefault(n => n.CurrentId == child.ParentId);

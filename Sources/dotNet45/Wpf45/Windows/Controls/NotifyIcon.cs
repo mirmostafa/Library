@@ -48,39 +48,6 @@ namespace Mohammad.Wpf.Windows.Controls
         private NotifyIconData _IconData;
 
         /// <summary>
-        ///     Indicates whether the taskbar icon has been created or not.
-        /// </summary>
-        public bool IsTaskbarIconCreated { get; private set; }
-
-        /// <summary>
-        ///     Indicates whether custom tooltips are supported, which depends
-        ///     on the OS. Windows Vista or higher is required in order to
-        ///     support this feature.
-        /// </summary>
-        public bool SupportsCustomToolTips => this._MessageSink.Version == NotifyIconVersion.Vista;
-
-        /// <summary>
-        ///     Checks whether a non-tooltip popup is currently opened.
-        /// </summary>
-        private bool IsPopupOpen
-        {
-            get
-            {
-                var popup = this.TrayPopupResolved;
-                var menu = this.ContextMenu;
-                var balloon = this.CustomBalloon;
-
-                return popup != null && popup.IsOpen || menu != null && menu.IsOpen || balloon != null && balloon.IsOpen;
-            }
-        }
-
-        /// <summary>
-        ///     Set to true as soon as <see cref="Dispose" />
-        ///     has been invoked.
-        /// </summary>
-        public bool IsDisposed { get; private set; }
-
-        /// <summary>
         ///     Inits the taskbar icon and registers a message listener
         ///     in order to receive events from the taskbar area.
         /// </summary>
@@ -113,18 +80,37 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         /// <summary>
-        ///     This destructor will run only if the <see cref="Dispose()" />
-        ///     method does not get called. This gives this base class the
-        ///     opportunity to finalize.
-        ///     <para>
-        ///         Important: Do not provide destructors in types derived from
-        ///         this class.
-        ///     </para>
+        ///     Indicates whether the taskbar icon has been created or not.
         /// </summary>
-        ~NotifyIcon()
+        public bool IsTaskbarIconCreated { get; private set; }
+
+        /// <summary>
+        ///     Indicates whether custom tooltips are supported, which depends
+        ///     on the OS. Windows Vista or higher is required in order to
+        ///     support this feature.
+        /// </summary>
+        public bool SupportsCustomToolTips => this._MessageSink.Version == NotifyIconVersion.Vista;
+
+        /// <summary>
+        ///     Checks whether a non-tooltip popup is currently opened.
+        /// </summary>
+        private bool IsPopupOpen
         {
-            this.Dispose(false);
+            get
+            {
+                var popup = this.TrayPopupResolved;
+                var menu = this.ContextMenu;
+                var balloon = this.CustomBalloon;
+
+                return popup != null && popup.IsOpen || menu != null && menu.IsOpen || balloon != null && balloon.IsOpen;
+            }
         }
+
+        /// <summary>
+        ///     Set to true as soon as <see cref="Dispose" />
+        ///     has been invoked.
+        /// </summary>
+        public bool IsDisposed { get; private set; }
 
         /// <summary>
         ///     Disposes the object.
@@ -970,6 +956,20 @@ namespace Mohammad.Wpf.Windows.Controls
                 //remove icon
                 this.RemoveTaskbarIcon();
             }
+        }
+
+        /// <summary>
+        ///     This destructor will run only if the <see cref="Dispose()" />
+        ///     method does not get called. This gives this base class the
+        ///     opportunity to finalize.
+        ///     <para>
+        ///         Important: Do not provide destructors in types derived from
+        ///         this class.
+        ///     </para>
+        /// </summary>
+        ~NotifyIcon()
+        {
+            this.Dispose(false);
         }
     }
 }

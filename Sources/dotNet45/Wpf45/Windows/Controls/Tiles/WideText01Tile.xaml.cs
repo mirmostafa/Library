@@ -5,6 +5,11 @@
     /// </summary>
     public partial class WideText01Tile
     {
+        public WideText01Tile()
+        {
+            this.InitializeComponent();
+        }
+
         public string Header
         {
             get => this.textBlock1.Text;
@@ -27,11 +32,6 @@
         {
             get => this.textBlock4.Text;
             set => this.textBlock4.Text = value;
-        }
-
-        public WideText01Tile()
-        {
-            this.InitializeComponent();
         }
 
         protected override void HookCommand()

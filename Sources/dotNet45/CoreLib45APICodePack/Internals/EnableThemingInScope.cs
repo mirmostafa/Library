@@ -32,15 +32,20 @@ namespace Mohammad.Internals
             }
         }
 
-        ~EnableThemingInScope()
-        {
-            this.Dispose(false);
-        }
-
         void IDisposable.Dispose()
         {
             this.Dispose(true);
         }
+
+        // All the pinvoke goo...
+        [DllImport("Kernel32.dll")]
+        private static extern IntPtr CreateActCtx(ref ACTCTX actctx);
+
+        [DllImport("Kernel32.dll")]
+        private static extern bool ActivateActCtx(IntPtr hActCtx, out uint lpCookie);
+
+        [DllImport("Kernel32.dll")]
+        private static extern bool DeactivateActCtx(uint dwFlags, uint lpCookie);
 
         private void Dispose(bool disposing)
         {
@@ -113,15 +118,10 @@ namespace Mohammad.Internals
             }
         }
 
-        // All the pinvoke goo...
-        [DllImport("Kernel32.dll")]
-        private static extern IntPtr CreateActCtx(ref ACTCTX actctx);
-
-        [DllImport("Kernel32.dll")]
-        private static extern bool ActivateActCtx(IntPtr hActCtx, out uint lpCookie);
-
-        [DllImport("Kernel32.dll")]
-        private static extern bool DeactivateActCtx(uint dwFlags, uint lpCookie);
+        ~EnableThemingInScope()
+        {
+            this.Dispose(false);
+        }
 
         private struct ACTCTX
         {

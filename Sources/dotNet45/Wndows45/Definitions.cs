@@ -77,16 +77,16 @@ namespace Mohammad.Win
     public class ReportGeneratingEventArgs : EventArgs
     {
         /// <summary>
-        ///     Property description
-        /// </summary>
-        public bool Cancel { get; set; }
-
-        /// <summary>
         ///     Constructor
         ///     <summary>
         internal ReportGeneratingEventArgs()
         {
         }
+
+        /// <summary>
+        ///     Property description
+        /// </summary>
+        public bool Cancel { get; set; }
     }
 
     internal enum Direction

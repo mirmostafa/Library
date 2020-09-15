@@ -13,6 +13,10 @@ namespace Mohammad.Win.Controls
         private readonly GraphicsPath _BackgroundPath2 = new GraphicsPath();
         private readonly GraphicsPath _FreGroundPath = new GraphicsPath();
         private readonly GraphicsPath _ValuePath = new GraphicsPath();
+
+        private bool _AutoProgress;
+
+        private int _Interval = 100;
         private Timer _Timer;
         private int _Value;
         private Color activeForeColor1 = Color.Blue;
@@ -24,6 +28,15 @@ namespace Mohammad.Win.Controls
         private Color inactiveForeColor2 = Color.LightGreen;
         private Region region = new Region();
         private int size = 50;
+
+        /// <summary>
+        ///     Creates a new instance
+        /// </summary>
+        public ProgressDisk()
+        {
+            this.InitializeComponent();
+            this.Render();
+        }
 
         /// <summary>
         ///     Current progress value
@@ -164,12 +177,53 @@ namespace Mohammad.Win.Controls
         public int SliceCount { get; set; }
 
         /// <summary>
-        ///     Creates a new instance
+        ///     Auto-Progressive interval in mili-second
         /// </summary>
-        public ProgressDisk()
+        [DefaultValue(100)]
+        public int Interval
         {
-            this.InitializeComponent();
-            this.Render();
+            get => this._Interval;
+            set
+            {
+                this._Interval = value;
+                if (this._Timer != null)
+                {
+                    this._Timer.Interval = value;
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Moves on, automatically.
+        /// </summary>
+        [DefaultValue(false)]
+        public bool AutoProgress
+        {
+            get => this._AutoProgress;
+            set
+            {
+                if (this._AutoProgress == value)
+                {
+                    return;
+                }
+
+                this._AutoProgress = value;
+                if (this._AutoProgress)
+                {
+                    if (this._Timer == null)
+                    {
+                        this._Timer = new Timer();
+                        this._Timer.Interval = this.Interval;
+                        this._Timer.Tick += this.timer_Tick;
+                    }
+
+                    this._Timer.Start();
+                }
+                else
+                {
+                    this._Timer.Stop();
+                }
+            }
         }
 
         /// <summary>
@@ -259,60 +313,6 @@ namespace Mohammad.Win.Controls
                 360);
             this._FreGroundPath.AddPie(new Rectangle(0, 0, this.size, this.size), this._Value * sliceAngle, sweepAngle);
             this.Invalidate();
-        }
-
-        private int _Interval = 100;
-
-        /// <summary>
-        ///     Auto-Progressive interval in mili-second
-        /// </summary>
-        [DefaultValue(100)]
-        public int Interval
-        {
-            get => this._Interval;
-            set
-            {
-                this._Interval = value;
-                if (this._Timer != null)
-                {
-                    this._Timer.Interval = value;
-                }
-            }
-        }
-
-        private bool _AutoProgress;
-
-        /// <summary>
-        ///     Moves on, automatically.
-        /// </summary>
-        [DefaultValue(false)]
-        public bool AutoProgress
-        {
-            get => this._AutoProgress;
-            set
-            {
-                if (this._AutoProgress == value)
-                {
-                    return;
-                }
-
-                this._AutoProgress = value;
-                if (this._AutoProgress)
-                {
-                    if (this._Timer == null)
-                    {
-                        this._Timer = new Timer();
-                        this._Timer.Interval = this.Interval;
-                        this._Timer.Tick += this.timer_Tick;
-                    }
-
-                    this._Timer.Start();
-                }
-                else
-                {
-                    this._Timer.Stop();
-                }
-            }
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,6 +23,11 @@ namespace Mohammad.Primitives
         private ExceptionHandling _ExceptionHandling;
         private LogProvider _Log;
         private ILogger _Logger;
+
+        // ReSharper disable once EmptyConstructor
+        protected ApplicationMainThreadBase()
+        {
+        }
 
         protected LogProvider Log => this._Log ?? (this._Log = this.OnInitializingLogProvider());
         public TaskScheduler MainTaskScheduler { get; private set; }
@@ -65,11 +67,6 @@ namespace Mohammad.Primitives
         {
             get => this._Logger ?? (this._Logger = this.OnInitializingLogger());
             protected set => this._Logger = value;
-        }
-
-        // ReSharper disable once EmptyConstructor
-        protected ApplicationMainThreadBase()
-        {
         }
 
         public void Start()

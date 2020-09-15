@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Runtime.InteropServices;
 using Mohammad.Win32.Natives.IfacesEnumsStructsClasses;

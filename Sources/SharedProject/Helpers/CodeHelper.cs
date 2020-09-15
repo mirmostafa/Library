@@ -15,7 +15,9 @@ namespace Mohammad.Helpers
 {
     public static class CodeHelper
     {
-        public static readonly Action EmptyDelegate = () => { };
+        public static readonly Action EmptyDelegate = () =>
+        {
+        };
 
         public static void Break() => throw new BreakException();
 
@@ -446,13 +448,15 @@ namespace Mohammad.Helpers
                 var constructors = typeof(TType).GetConstructors();
                 return constructors.Where(constructor => parameters != null)
                     .Where(constructor => parameters != null && constructor.GetParameters().GetLength(0) == parameters.Length)
-                    .Select(constructor => constructor.Invoke(parameters)).FirstOrDefault();
+                    .Select(constructor => constructor.Invoke(parameters))
+                    .FirstOrDefault();
             }
 
             var methods = typeof(TType).GetMethods();
             return methods.Where(method => string.Compare(method.Name, methodName, StringComparison.Ordinal) == 0)
                 .Where(method => method.GetParameters().GetLength(0) == parameters.Length)
-                .Select(method => method.Invoke(target, parameters)).FirstOrDefault();
+                .Select(method => method.Invoke(target, parameters))
+                .FirstOrDefault();
         }
 
         /// <summary>

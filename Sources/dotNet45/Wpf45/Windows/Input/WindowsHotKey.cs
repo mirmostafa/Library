@@ -14,14 +14,6 @@ namespace Mohammad.Wpf.Windows.Input
         private static Dictionary<int, WindowsHotKey> _DictHotKeyToCalBackProc;
         private bool _Disposed;
         private int? _Id;
-        public Key Key { get; private set; }
-        public KeyModifier KeyModifiers { get; private set; }
-
-        public int Id
-        {
-            get => (int)(this._Id ?? (this._Id = KeyInterop.VirtualKeyFromKey(this.Key)));
-            set => this._Id = value;
-        }
 
         public WindowsHotKey(Key key, KeyModifier keyModifiers)
             : this(key, keyModifiers, null, (Action<int>)null)
@@ -73,10 +65,41 @@ namespace Mohammad.Wpf.Windows.Input
             }
         }
 
+        public Key Key { get; private set; }
+        public KeyModifier KeyModifiers { get; private set; }
+
+        public int Id
+        {
+            get => (int)(this._Id ?? (this._Id = KeyInterop.VirtualKeyFromKey(this.Key)));
+            set => this._Id = value;
+        }
+
         public void Dispose()
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        private static void ComponentDispatcherThreadFilterMessage(ref MSG msg, ref bool handled)
+        {
+            if (handled)
+            {
+                return;
+            }
+
+            if (msg.message != WM_HOT_KEY)
+            {
+                return;
+            }
+
+            WindowsHotKey hotKey;
+            if (!_DictHotKeyToCalBackProc.TryGetValue((int)msg.wParam, out hotKey))
+            {
+                return;
+            }
+
+            hotKey.HotkeyPressed?.Invoke(hotKey, new ItemActedEventArgs<int>(hotKey.Id));
+            handled = true;
         }
 
         public bool Register()
@@ -133,28 +156,6 @@ namespace Mohammad.Wpf.Windows.Input
             {
                 this.HotkeyPressed += onHotkeyPressed;
             }
-        }
-
-        private static void ComponentDispatcherThreadFilterMessage(ref MSG msg, ref bool handled)
-        {
-            if (handled)
-            {
-                return;
-            }
-
-            if (msg.message != WM_HOT_KEY)
-            {
-                return;
-            }
-
-            WindowsHotKey hotKey;
-            if (!_DictHotKeyToCalBackProc.TryGetValue((int)msg.wParam, out hotKey))
-            {
-                return;
-            }
-
-            hotKey.HotkeyPressed?.Invoke(hotKey, new ItemActedEventArgs<int>(hotKey.Id));
-            handled = true;
         }
 
         public event EventHandler<ItemActedEventArgs<int>> HotkeyPressed;

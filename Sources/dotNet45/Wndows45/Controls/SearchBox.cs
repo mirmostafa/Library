@@ -11,14 +11,14 @@ namespace Mohammad.Win.Controls
     [DefaultEvent("LookingForFirstMatch")]
     public partial class SearchBox : UserControl
     {
-        [DefaultValue("Search")]
-        public string WatermarkText { get; set; } = "Serach";
-
         public SearchBox()
         {
             this.InitializeComponent();
             this.SetWatermark();
         }
+
+        [DefaultValue("Search")]
+        public string WatermarkText { get; set; } = "Serach";
 
         protected virtual void OnLookingForLastMatch(ItemActingEventArgs<string> e)
         {

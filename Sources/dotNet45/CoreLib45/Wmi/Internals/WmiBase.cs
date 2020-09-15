@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Linq;
 using System.Management;
@@ -10,9 +7,6 @@ namespace Mohammad.Wmi.Internals
 {
     public class WmiBase
     {
-        public bool Initiated { get; protected set; }
-        public bool IsLocal { get; }
-
         public WmiBase(bool initialize = true)
         {
             this.IsLocal = true;
@@ -21,6 +15,9 @@ namespace Mohammad.Wmi.Internals
                 this.Initialize();
             }
         }
+
+        public bool Initiated { get; protected set; }
+        public bool IsLocal { get; }
 
         public virtual void Initialize()
         {

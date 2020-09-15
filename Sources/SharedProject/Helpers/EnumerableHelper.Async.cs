@@ -1,6 +1,3 @@
-
-
-
 namespace Mohammad.Helpers
 {
     partial class EnumerableHelper

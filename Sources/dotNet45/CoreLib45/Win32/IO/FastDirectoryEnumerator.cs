@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,18 +53,6 @@ namespace Mohammad.Win32.IO
         /// </summary>
         public readonly long Size;
 
-        public DateTime CreationTime => this.CreationTimeUtc.ToLocalTime();
-
-        /// <summary>
-        ///     Gets the last access time in local time.
-        /// </summary>
-        public DateTime LastAccesTime => this.LastAccessTimeUtc.ToLocalTime();
-
-        /// <summary>
-        ///     Gets the last access time in local time.
-        /// </summary>
-        public DateTime LastWriteTime => this.LastWriteTimeUtc.ToLocalTime();
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="FileData" /> class.
         /// </summary>
@@ -92,7 +77,17 @@ namespace Mohammad.Win32.IO
             this.Path = System.IO.Path.Combine(dir, findData.cFileName);
         }
 
-        public override string ToString() => this.Name;
+        public DateTime CreationTime => this.CreationTimeUtc.ToLocalTime();
+
+        /// <summary>
+        ///     Gets the last access time in local time.
+        /// </summary>
+        public DateTime LastAccesTime => this.LastAccessTimeUtc.ToLocalTime();
+
+        /// <summary>
+        ///     Gets the last access time in local time.
+        /// </summary>
+        public DateTime LastWriteTime => this.LastWriteTimeUtc.ToLocalTime();
 
         private static long CombineHighLowInts(uint high, uint low) => ((long)high << 0x20) | low;
 
@@ -101,6 +96,8 @@ namespace Mohammad.Win32.IO
             var fileTime = CombineHighLowInts(high, low);
             return DateTime.FromFileTimeUtc(fileTime);
         }
+
+        public override string ToString() => this.Name;
     }
 
     /// <summary>
@@ -282,24 +279,6 @@ namespace Mohammad.Win32.IO
             private string _Path;
 
             /// <summary>
-            ///     Gets the element in the collection at the current position of the enumerator.
-            /// </summary>
-            /// <value></value>
-            /// <returns>
-            ///     The element in the collection at the current position of the enumerator.
-            /// </returns>
-            public FileData Current => new FileData(this._Path, this._Win32FindData);
-
-            /// <summary>
-            ///     Gets the element in the collection at the current position of the enumerator.
-            /// </summary>
-            /// <value></value>
-            /// <returns>
-            ///     The element in the collection at the current position of the enumerator.
-            /// </returns>
-            object IEnumerator.Current => new FileData(this._Path, this._Win32FindData);
-
-            /// <summary>
             ///     Initializes a new instance of the <see cref="FileEnumerator" /> class.
             /// </summary>
             /// <param name="path">The path to search.</param>
@@ -319,6 +298,24 @@ namespace Mohammad.Win32.IO
                     this._Handles = new Stack<SearchContext>();
                 }
             }
+
+            /// <summary>
+            ///     Gets the element in the collection at the current position of the enumerator.
+            /// </summary>
+            /// <value></value>
+            /// <returns>
+            ///     The element in the collection at the current position of the enumerator.
+            /// </returns>
+            public FileData Current => new FileData(this._Path, this._Win32FindData);
+
+            /// <summary>
+            ///     Gets the element in the collection at the current position of the enumerator.
+            /// </summary>
+            /// <value></value>
+            /// <returns>
+            ///     The element in the collection at the current position of the enumerator.
+            /// </returns>
+            object IEnumerator.Current => new FileData(this._Path, this._Win32FindData);
 
             /// <summary>
             ///     Performs application-defined tasks associated with freeing, releasing,
@@ -457,6 +454,10 @@ namespace Mohammad.Win32.IO
             {
             }
 
+            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
+            [DllImport("kernel32.dll")]
+            private static extern bool FindClose(IntPtr handle);
+
             /// <summary>
             ///     When overridden in a derived class, executes the code required to free the handle.
             /// </summary>
@@ -466,10 +467,6 @@ namespace Mohammad.Win32.IO
             ///     generates a releaseHandleFailed MDA Managed Debugging Assistant.
             /// </returns>
             protected override bool ReleaseHandle() => FindClose(this.handle);
-
-            [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
-            [DllImport("kernel32.dll")]
-            private static extern bool FindClose(IntPtr handle);
         }
     }
 }

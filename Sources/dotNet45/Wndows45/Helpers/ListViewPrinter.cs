@@ -17,7 +17,6 @@ namespace Mohammad.Win.Helpers
         private int m_nPageNumber = 1;
         private int m_nStartCol;
         private int m_nStartRow;
-        public ListView ListView { get; }
 
         /// <summary>
         ///     Required designer variable.
@@ -35,6 +34,28 @@ namespace Mohammad.Win.Helpers
 
             this.m_printDlg.AllowSomePages = false;
         }
+
+        public ListView ListView { get; }
+
+        /// <summary>
+        ///     Gets or sets whether to fit the list width on a single page
+        /// </summary>
+        /// <value>
+        ///     <c>True</c> if you want to scale the list width so it will fit on a single page.
+        /// </value>
+        /// <remarks>
+        ///     If you choose false (the default value), and the list width exceeds the page width, the list
+        ///     will be broken in multiple page.
+        /// </remarks>
+        public bool FitToPage { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the title to dispaly as page header in the printed list
+        /// </summary>
+        /// <value>
+        ///     A <see cref="string" /> the represents the title printed as page header.
+        /// </value>
+        public string Title { get; set; } = "";
 
         /// <summary>
         ///     WaitFor the standard page setup dialog box that lets the user specify
@@ -105,26 +126,6 @@ namespace Mohammad.Win.Helpers
 
             this.m_fListWidth += 1; // separator
         }
-
-        /// <summary>
-        ///     Gets or sets whether to fit the list width on a single page
-        /// </summary>
-        /// <value>
-        ///     <c>True</c> if you want to scale the list width so it will fit on a single page.
-        /// </value>
-        /// <remarks>
-        ///     If you choose false (the default value), and the list width exceeds the page width, the list
-        ///     will be broken in multiple page.
-        /// </remarks>
-        public bool FitToPage { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the title to dispaly as page header in the printed list
-        /// </summary>
-        /// <value>
-        ///     A <see cref="string" /> the represents the title printed as page header.
-        /// </value>
-        public string Title { get; set; } = "";
 
         private void OnBeginPrint(object sender, PrintEventArgs e)
         {

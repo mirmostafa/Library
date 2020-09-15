@@ -10,6 +10,11 @@ namespace Mohammad.Wpf.Windows.Controls
     {
         private static OperationWatcherPage _SingleInstance;
 
+        public OperationWatcherPage()
+        {
+            this.InitializeComponent();
+        }
+
         public ILogger Logger
         {
             get => this.Watcher.Logger;
@@ -37,11 +42,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
                 _SingleInstance = value;
             }
-        }
-
-        public OperationWatcherPage()
-        {
-            this.InitializeComponent();
         }
 
         public void Log(object text,

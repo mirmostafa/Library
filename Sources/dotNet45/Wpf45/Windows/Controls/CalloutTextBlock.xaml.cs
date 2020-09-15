@@ -39,6 +39,11 @@ namespace Mohammad.Wpf.Windows.Controls
             (sender, propName) => sender.As<CalloutTextBlock>().OnPropertyChanged("IsValid"),
             defaultValue: true);
 
+        public CalloutTextBlock()
+        {
+            this.InitializeComponent();
+        }
+
         public string Description
         {
             get => (string)this.GetValue(DescriptionProperty);
@@ -55,11 +60,6 @@ namespace Mohammad.Wpf.Windows.Controls
         {
             get => (bool)this.GetValue(IsValidProperty);
             set => this.SetValue(IsValidProperty, value);
-        }
-
-        public CalloutTextBlock()
-        {
-            this.InitializeComponent();
         }
 
         protected virtual void OnHeaderChanged(object sender)

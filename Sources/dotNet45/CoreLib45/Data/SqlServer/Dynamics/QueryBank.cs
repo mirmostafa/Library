@@ -1,7 +1,4 @@
-﻿
-
-
-namespace Mohammad.Data.SqlServer.Dynamics
+﻿namespace Mohammad.Data.SqlServer.Dynamics
 {
     internal class QueryBank
     {

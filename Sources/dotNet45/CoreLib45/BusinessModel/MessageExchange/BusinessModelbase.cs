@@ -1,7 +1,4 @@
-﻿
-
-
-namespace Mohammad.BusinessModel.MessageExchange
+﻿namespace Mohammad.BusinessModel.MessageExchange
 {
     public interface IBusinessModelbase
     {

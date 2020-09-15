@@ -12,7 +12,6 @@ namespace Mohammad.Wpf.Windows.Controls
         public static readonly string Row3SharedSizeGroup = "Row3SharedSizeGroup";
         public static readonly string Row4SharedSizeGroup = "Row4SharedSizeGroup";
         public static readonly string Row5SharedSizeGroup = "Row5SharedSizeGroup";
-        public ProgressBar ModernProgressBar { get; private set; }
 
         public LibraryGridForGlassWindow()
         {
@@ -28,6 +27,8 @@ namespace Mohammad.Wpf.Windows.Controls
             this.RowDefinitions.Add(row4);
             this.Style = this.FindResource("LayoutRoot").As<Style>();
         }
+
+        public ProgressBar ModernProgressBar { get; private set; }
 
         protected override void OnInitialized(EventArgs e)
         {

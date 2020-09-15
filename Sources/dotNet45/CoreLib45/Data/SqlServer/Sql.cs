@@ -17,6 +17,8 @@ namespace Mohammad.Data.SqlServer
     {
         private ILogger? _Logger;
 
+        public Sql(string connectionString) => this.ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+
         public string ConnectionString { get; }
 
         public object DefaultLogSender { get; } = "Sql";
@@ -48,8 +50,6 @@ namespace Mohammad.Data.SqlServer
                 logger.Logging += this.Logger_OnLogging;
             }
         }
-
-        public Sql(string connectionString) => this.ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
 
         public int ExecuteNonQuery(string sql, Action<SqlParameterCollection> fillParams = null)
         {

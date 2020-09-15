@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace Mohammad.Win32.Natives

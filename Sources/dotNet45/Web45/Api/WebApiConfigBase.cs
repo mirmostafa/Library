@@ -50,6 +50,29 @@ namespace Mohammad.Web.Api
             Instance.OnInitialized(config);
         }
 
+        private static void LogException(ExceptionLoggerContext context)
+        {
+            var exception = context.Exception;
+            if (!(exception is ExceptionBase))
+            {
+                CodeHelper.LockAndCatch(() =>
+                    {
+                        var filePath = $@"Logs\WebAPI.Bugs.{DateTime.Now.ToShortDateString().Replace("\\", "-").Replace("/", "-")}.log";
+                        filePath = string.Concat(Debugger.IsAttached ? HttpRuntime.AppDomainAppPath : @".\", filePath);
+                        var logFile = new FileInfo(filePath);
+                        if (!logFile.Directory.Exists)
+                        {
+                            logFile.Directory.Create();
+                        }
+
+                        File.AppendAllText(logFile.FullName, $@"[{DateTime.Now}]{context.Request.RequestUri}{Environment.NewLine}{exception}");
+                    },
+                    _WebApiConfigHelperLockObject);
+            }
+
+            Log(exception.GetBaseException().Message);
+        }
+
         protected virtual bool IsValidArgument((IEnumerable<KeyValuePair<string, object>> Arguments, KeyValuePair<string, object> CurrentArgument) e) => true;
 
         protected virtual void OnApiExecuted(HttpActionExecutedContext httpActionExecutedContext)
@@ -183,29 +206,6 @@ namespace Mohammad.Web.Api
             }
 
             actionExecutedContext.Response = this.OnHandedException(actionExecutedContext, error);
-        }
-
-        private static void LogException(ExceptionLoggerContext context)
-        {
-            var exception = context.Exception;
-            if (!(exception is ExceptionBase))
-            {
-                CodeHelper.LockAndCatch(() =>
-                    {
-                        var filePath = $@"Logs\WebAPI.Bugs.{DateTime.Now.ToShortDateString().Replace("\\", "-").Replace("/", "-")}.log";
-                        filePath = string.Concat(Debugger.IsAttached ? HttpRuntime.AppDomainAppPath : @".\", filePath);
-                        var logFile = new FileInfo(filePath);
-                        if (!logFile.Directory.Exists)
-                        {
-                            logFile.Directory.Create();
-                        }
-
-                        File.AppendAllText(logFile.FullName, $@"[{DateTime.Now}]{context.Request.RequestUri}{Environment.NewLine}{exception}");
-                    },
-                    _WebApiConfigHelperLockObject);
-            }
-
-            Log(exception.GetBaseException().Message);
         }
     }
 }

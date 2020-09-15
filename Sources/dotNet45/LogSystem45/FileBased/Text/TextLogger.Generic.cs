@@ -10,12 +10,12 @@ namespace Mohammad.Logging.FileBased.Text
     public class FileLogger<TLogEntity> : Logger<FileWriter<TLogEntity>, TLogEntity>, IStorageReadable
         where TLogEntity : LogEntity, new()
     {
-        public string StorageFilePath => this.Writer.Log.FullName;
-
         protected FileLogger(FileWriter<TLogEntity> writer, bool raiseEventOnly = false)
             : base(writer, raiseEventOnly)
         {
         }
+
+        public string StorageFilePath => this.Writer.Log.FullName;
 
         public static FileLogger<TLogEntity> Initialize(bool useLogRotation = false) => InitializeByDirectory();
 

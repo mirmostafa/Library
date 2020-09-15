@@ -1,6 +1,3 @@
-
-
-
 using System;
 
 namespace Mohammad.Globalization.Attributes
@@ -8,10 +5,6 @@ namespace Mohammad.Globalization.Attributes
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     internal sealed class LocalizedDescriptionAttribute : Attribute
     {
-        public string CultureName { get; set; }
-
-        public string Description { get; set; }
-
         public LocalizedDescriptionAttribute(string cultureName)
             : this(cultureName, string.Empty)
         {
@@ -27,5 +20,9 @@ namespace Mohammad.Globalization.Attributes
             this.CultureName = cultureName;
             this.Description = description;
         }
+
+        public string CultureName { get; set; }
+
+        public string Description { get; set; }
     }
 }

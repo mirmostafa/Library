@@ -1,6 +1,3 @@
-
-
-
 using System;
 using Mohammad.Globalization;
 
@@ -8,6 +5,8 @@ namespace Mohammad.Helpers.Console
 {
     public static class MessageBox
     {
+        private const ConsoleColor DefaultConstConsoleColor = ConsoleHelper.DEFAULT_CONSTANT_CONSOLE_COLOR;
+        private static int _Width;
         public static int? DefaultWidth { get; set; }
         public static bool InBox { get; private set; }
         public static char SeparatorChar { get; set; } = '*';
@@ -94,8 +93,5 @@ namespace Mohammad.Helpers.Console
         //string.Format("  [{0}] {1}", PersianDateTime.Now, text).WriteLine(foregroundColor);
         public static void WriteLineTimeStamp(this string text, ConsoleColor foregroundColor = DefaultConstConsoleColor)
             => string.Format("[{0}] {1}", PersianDateTime.Now, text).WriteLine(foregroundColor);
-
-        private const ConsoleColor DefaultConstConsoleColor = ConsoleHelper.DEFAULT_CONSTANT_CONSOLE_COLOR;
-        private static int _Width;
     }
 }

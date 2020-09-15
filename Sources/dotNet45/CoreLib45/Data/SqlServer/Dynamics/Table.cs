@@ -16,6 +16,11 @@ namespace Mohammad.Data.SqlServer.Dynamics
     {
         private Columns? _Columns;
 
+        public Table(Database owner, string name, string schema = null, string connectionString = null)
+            : base(owner, name, schema, connectionString ?? owner.ConnectionString)
+        {
+        }
+
         public Row this[int index] => this.Rows.ElementAt(index);
 
         public Columns Columns => this._Columns ??= this.GetColumns();
@@ -34,11 +39,6 @@ namespace Mohammad.Data.SqlServer.Dynamics
                     yield return new Row(this, this.Columns.Select(c => new KeyValuePair<string, object>(c.Name, reader[c.Name])).ToDictionary());
                 }
             }
-        }
-
-        public Table(Database owner, string name, string schema = null, string connectionString = null)
-            : base(owner, name, schema, connectionString ?? owner.ConnectionString)
-        {
         }
 
         public IEnumerator GetEnumerator() => this.ToDataTable(this.Columns.Select(col => col.Name).ToArray()).Rows.GetEnumerator();

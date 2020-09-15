@@ -14,9 +14,6 @@ namespace Mohammad.CodeGeneration
 
         public DataEntityGenerator(string connectionstring) => this._Database = Database.GetDatabase(connectionstring);
 
-        public IEnumerable<Table> GetDabaseTables() => this._Database.Tables;
-        public IEnumerable<StoredProcedure> GetDabaseStoredProcedures() => this._Database.StoredProcedures;
-
         public static void Generate(IEnumerable<ISqlObject> sqlObjects,
             string baseClassName,
             string languageCompnentsFolder,
@@ -47,5 +44,8 @@ namespace Mohammad.CodeGeneration
                 }
             }
         }
+
+        public IEnumerable<Table> GetDabaseTables() => this._Database.Tables;
+        public IEnumerable<StoredProcedure> GetDabaseStoredProcedures() => this._Database.StoredProcedures;
     }
 }

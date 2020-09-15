@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -15,10 +12,6 @@ namespace Mohammad.ServiceModel
     /// <typeparam name="TContract"> The service contract, usually an interface </typeparam>
     public partial class ServiceClient<TContract>
     {
-        public EndpointAddress Endpoint { get; }
-        public ChannelFactory<TContract> ChannelFactory { get; }
-        public Binding Binding { get; }
-
         public ServiceClient(string uri)
             : this(uri, WcfHelper.DefaultBinding)
         {
@@ -61,6 +54,10 @@ namespace Mohammad.ServiceModel
                 ? new ChannelFactory<TContract>(this.Binding, this.Endpoint)
                 : new DuplexChannelFactory<TContract>(callbackObject, this.Binding, this.Endpoint);
         }
+
+        public EndpointAddress Endpoint { get; }
+        public ChannelFactory<TContract> ChannelFactory { get; }
+        public Binding Binding { get; }
 
         public TContract GetChannel() => this.ChannelFactory.CreateChannel();
         public async Task<TContract> GetChannelAsync() => await Task.Run(() => this.GetChannel());

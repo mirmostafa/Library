@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +9,6 @@ namespace Mohammad.Collections.Generic
     {
         private readonly Func<TItem, TIdentity, bool> _Predictator;
         private readonly List<TItem> _Repository;
-
-        public IEnumerable<TItem> this[TIdentity identity] => this._Repository.Where(item => this._Predictator(item, identity));
-
-        public TItem this[int index]
-        {
-            get => this._Repository[index];
-            set => this._Repository[index] = value;
-        }
-
-        public int Count => this._Repository.Count;
-        bool ICollection<TItem>.IsReadOnly => false;
 
         public EqualityComparerList(Func<TItem, TIdentity, bool> predictator)
         {
@@ -41,6 +27,17 @@ namespace Mohammad.Collections.Generic
             this._Predictator = predictator;
             this._Repository = new List<TItem>(collection);
         }
+
+        public IEnumerable<TItem> this[TIdentity identity] => this._Repository.Where(item => this._Predictator(item, identity));
+
+        public TItem this[int index]
+        {
+            get => this._Repository[index];
+            set => this._Repository[index] = value;
+        }
+
+        public int Count => this._Repository.Count;
+        bool ICollection<TItem>.IsReadOnly => false;
 
         public IEnumerator<TItem> GetEnumerator() => this._Repository.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();

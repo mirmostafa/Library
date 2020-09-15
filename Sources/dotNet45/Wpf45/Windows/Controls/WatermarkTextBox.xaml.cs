@@ -8,13 +8,13 @@ namespace Mohammad.Wpf.Windows.Controls
     /// </summary>
     public partial class WatermarkTextBox : TextBox
     {
-        public string Watermark { get; set; }
-        public Style GotFocusStyle { get; set; }
-        public Style LostFocusStyle { get; set; }
-
         public WatermarkTextBox()
         {
             this.InitializeComponent();
         }
+
+        public string Watermark { get; set; }
+        public Style GotFocusStyle { get; set; }
+        public Style LostFocusStyle { get; set; }
     }
 }

@@ -38,6 +38,12 @@ namespace Mohammad.Wpf.Windows.Controls
 
         private bool _AutoFlick;
 
+        public LibTextBlock()
+        {
+            this.InitializeComponent();
+            this.ShadowForeground = Brushes.Navy;
+        }
+
         public Style BlockStyle
         {
             get => (Style)this.GetValue(BlockStyleProperty);
@@ -122,12 +128,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public DependencyProperty BindingFieldProperty => TextProperty;
         public FrameworkElement FlickerTextBlock => this.ShadowTextBlock;
-
-        public LibTextBlock()
-        {
-            this.InitializeComponent();
-            this.ShadowForeground = Brushes.Navy;
-        }
 
         protected virtual void TextChanged()
         {

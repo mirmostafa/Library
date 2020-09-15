@@ -28,7 +28,7 @@ namespace Mohammad.Logging.FileBased.Xml
                 var row = ObjectHelper.GetProperties(logEntity);
                 if (logEntity.Level == LogLevel.Fatal || logEntity.Level == LogLevel.Error)
                 {
-                    row.ByName("StackTrace",logEntity.StackTrace);
+                    row.ByName("StackTrace", logEntity.StackTrace);
                 }
 
                 var doc = new XmlDocument();

@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Sql;
@@ -18,6 +15,10 @@ namespace Mohammad.Data.SqlServer.Dynamics
         private Databases _Databases;
 
         protected SqlConnectionStringBuilder ConnectionStringBuilder = new SqlConnectionStringBuilder();
+
+        protected Server()
+        {
+        }
 
         /// <summary>
         ///     Gets or sets the connection string.
@@ -59,11 +60,17 @@ namespace Mohammad.Data.SqlServer.Dynamics
 
         public string Version { get; protected set; }
 
-        protected Server()
-        {
-        }
-
         public static Server GetServer(string connectionString) => new Server {ConnectionString = connectionString};
+
+        internal static Server GetInstance() => new Server();
+
+        internal static Server GetInstance(string name) => new Server {Name = name};
+
+        internal static Server GetInstance(string name, string connectionString) => new Server
+        {
+            Name = name,
+            ConnectionString = connectionString
+        };
 
         public override string ToString() => !this.Version.IsNullOrEmpty() ? $"{this.Name} - {this.Version}" : $"{this.Name}";
 
@@ -72,6 +79,8 @@ namespace Mohammad.Data.SqlServer.Dynamics
             result = this.Databases[binder.Name];
             return true;
         }
+
+        internal void SetName(string name) => this.Name = name;
 
         protected Databases GetDatabases()
         {
@@ -100,17 +109,5 @@ namespace Mohammad.Data.SqlServer.Dynamics
 
             return new Databases(items);
         }
-
-        internal static Server GetInstance() => new Server();
-
-        internal static Server GetInstance(string name) => new Server {Name = name};
-
-        internal static Server GetInstance(string name, string connectionString) => new Server
-        {
-            Name = name,
-            ConnectionString = connectionString
-        };
-
-        internal void SetName(string name) => this.Name = name;
     }
 }

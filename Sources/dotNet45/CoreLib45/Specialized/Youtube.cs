@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -153,15 +150,6 @@ namespace Mohammad.Specialized
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         internal static YoutubeVideoInfo FromVideoInfoPage(string page)
         {
             var values = HttpUtility.ParseQueryString(page);
@@ -185,6 +173,15 @@ namespace Mohammad.Specialized
             }
 
             return result;
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 
@@ -243,17 +240,6 @@ namespace Mohammad.Specialized
         internal string Url { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        public override string ToString() => string.Format("{0} ({1})", this.Format, this.Resolution);
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            var handler = this.PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
 
         private static string GetFormat(string type)
         {
@@ -363,6 +349,17 @@ namespace Mohammad.Specialized
                 Format = GetFormat(values["type"])
             };
         }
+
+        public override string ToString() => string.Format("{0} ({1})", this.Format, this.Resolution);
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 
     public class YoutubeDownloader : LoggerContainer, INotifyPropertyChanged, IDisposable
@@ -373,6 +370,15 @@ namespace Mohammad.Specialized
         private int _Progress;
         private long _TotalBytesReceived;
         private YoutubeVideoInfo _VideoInfo;
+
+        public YoutubeDownloader(TextWriter writer)
+            : this() => this.Out = writer;
+
+        private YoutubeDownloader()
+        {
+            this._Client.DownloadProgressChanged += this.Client_OnDownloadProgressChanged;
+            this._Client.DownloadFileCompleted += this.Client_OnDownloadFileCompleted;
+        }
 
         public YoutubeVideoFormat Format
         {
@@ -486,15 +492,6 @@ namespace Mohammad.Specialized
             }
         }
 
-        public YoutubeDownloader(TextWriter writer)
-            : this() => this.Out = writer;
-
-        private YoutubeDownloader()
-        {
-            this._Client.DownloadProgressChanged += this.Client_OnDownloadProgressChanged;
-            this._Client.DownloadFileCompleted += this.Client_OnDownloadFileCompleted;
-        }
-
         public void Dispose()
         {
             if (this._Client != null)
@@ -504,6 +501,36 @@ namespace Mohammad.Specialized
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public static YoutubeDownloader FromUrl(string url, TextWriter logWriter = null, bool isDebugModeEnabled = false)
+        {
+            var videoInfoClient = new WebClient();
+
+            if (logWriter != null)
+            {
+                logWriter.WriteLine("Gathering video information");
+            }
+
+            var v = HttpUtility.ParseQueryString(new Uri(url).Query)["v"];
+            var page = videoInfoClient.DownloadString(
+                string.Format("http://www.youtube.com/get_video_info?&video_id={0}&el=detailpage&ps=default&eurl=&gl=US&hl=en", v));
+            if (logWriter != null)
+            {
+                logWriter.WriteLine("Parsing video information");
+            }
+
+            var video = YoutubeVideoInfo.FromVideoInfoPage(page);
+            if (logWriter != null)
+            {
+                logWriter.WriteLine("Initializing");
+            }
+
+            var result = new YoutubeDownloader(logWriter);
+            result.Logger.IsDebugModeEnabled = isDebugModeEnabled;
+            result.VideoInfo = video;
+            result.Format = video.SupportedFormats.FirstOrDefault();
+            return result;
+        }
 
         public void Cancel()
         {
@@ -537,36 +564,6 @@ namespace Mohammad.Specialized
                         this.VideoInfo.Title.Replace("/", "_").Replace(@"\", "_"),
                         youtubeVideoFile.Format)));
             this.Logger.Debug("Download started.", sender: this.VideoInfo.Id);
-        }
-
-        public static YoutubeDownloader FromUrl(string url, TextWriter logWriter = null, bool isDebugModeEnabled = false)
-        {
-            var videoInfoClient = new WebClient();
-
-            if (logWriter != null)
-            {
-                logWriter.WriteLine("Gathering video information");
-            }
-
-            var v = HttpUtility.ParseQueryString(new Uri(url).Query)["v"];
-            var page = videoInfoClient.DownloadString(
-                string.Format("http://www.youtube.com/get_video_info?&video_id={0}&el=detailpage&ps=default&eurl=&gl=US&hl=en", v));
-            if (logWriter != null)
-            {
-                logWriter.WriteLine("Parsing video information");
-            }
-
-            var video = YoutubeVideoInfo.FromVideoInfoPage(page);
-            if (logWriter != null)
-            {
-                logWriter.WriteLine("Initializing");
-            }
-
-            var result = new YoutubeDownloader(logWriter);
-            result.Logger.IsDebugModeEnabled = isDebugModeEnabled;
-            result.VideoInfo = video;
-            result.Format = video.SupportedFormats.FirstOrDefault();
-            return result;
         }
 
         protected virtual void OnBytesReceivedChanged()

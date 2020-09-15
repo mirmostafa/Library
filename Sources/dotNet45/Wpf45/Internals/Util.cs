@@ -15,13 +15,13 @@ namespace Mohammad.Wpf.Internals
     {
         public static readonly object SyncRoot = new object();
 
+        static Util() => IsDesignMode =
+            (bool)DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty, typeof(FrameworkElement)).Metadata.DefaultValue;
+
         /// <summary>
         ///     Checks whether the application is currently in design mode.
         /// </summary>
         public static bool IsDesignMode { get; }
-
-        static Util() => IsDesignMode =
-            (bool)DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty, typeof(FrameworkElement)).Metadata.DefaultValue;
 
         /// <summary>
         ///     Creates an transparent window without dimension that

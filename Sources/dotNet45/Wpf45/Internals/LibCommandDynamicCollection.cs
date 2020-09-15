@@ -14,9 +14,9 @@ namespace Mohammad.Wpf.Internals
 {
     public class LibUserControlDynamicCollection : DynamicObject, IEnumerable<LibUserControl>
     {
+        internal LibUserControlDynamicCollection(FrameworkElement element) => this.Element = element;
         private FrameworkElement Element { get; }
         public dynamic this[string index] => this.Element.FindResource(index).As<LibUserControl>();
-        internal LibUserControlDynamicCollection(FrameworkElement element) => this.Element = element;
         public IEnumerator<LibUserControl> GetEnumerator() => this.GetAll().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
@@ -31,9 +31,9 @@ namespace Mohammad.Wpf.Internals
 
     public class LibCommandDynamicCollection : DynamicObject, IEnumerable<LibCommand>
     {
+        internal LibCommandDynamicCollection(FrameworkElement element) => this.Element = element;
         private FrameworkElement Element { get; }
         public LibCommand this[string index] => this.Element.FindResource(index).As<LibCommand>();
-        internal LibCommandDynamicCollection(FrameworkElement element) => this.Element = element;
         public IEnumerator<LibCommand> GetEnumerator() => this.GetAll().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 

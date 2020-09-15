@@ -21,6 +21,13 @@ namespace Mohammad.Wpf.Windows.Controls
         private bool _AutoVisible;
         private bool _Loading;
 
+        public PageHeader()
+        {
+            this.UseWindows8TextingStyle = true;
+            this._Loading = true;
+            this.InitializeComponent();
+        }
+
         public IDescriptiveObject Owner
         {
             get => (IDescriptiveObject)this.GetValue(OwnerProperty);
@@ -112,13 +119,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public bool UseWindows8TextingStyle { get; set; }
         public PageHeaderAnimation Animation { get; set; } = PageHeaderAnimation.Simple;
-
-        public PageHeader()
-        {
-            this.UseWindows8TextingStyle = true;
-            this._Loading = true;
-            this.InitializeComponent();
-        }
 
         protected virtual void OnOwnerChanged()
         {

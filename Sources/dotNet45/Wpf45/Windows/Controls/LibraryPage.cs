@@ -14,6 +14,23 @@ namespace Mohammad.Wpf.Windows.Controls
         private Type _CommandsStaticClassType;
         private string _Description;
 
+        public LibraryPage()
+        {
+            if (LibraryApplication.InnerCommandsStaticClassType != null)
+            {
+                LibCommandManager.Initialize(this, LibraryApplication.InnerCommandsStaticClassType);
+            }
+
+            this.Commands = new LibCommandDynamicCollection(this);
+            this.Controls = new LibUserControlDynamicCollection(this);
+            this.Loaded += this.LibraryPage_OnLoaded;
+        }
+
+        protected LibraryPage(Window window)
+            : base(window)
+        {
+        }
+
         protected Type CommandsStaticClassType
         {
             get => this._CommandsStaticClassType;
@@ -74,23 +91,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 this.Window = value;
                 this.OnPropertyChanged();
             }
-        }
-
-        public LibraryPage()
-        {
-            if (LibraryApplication.InnerCommandsStaticClassType != null)
-            {
-                LibCommandManager.Initialize(this, LibraryApplication.InnerCommandsStaticClassType);
-            }
-
-            this.Commands = new LibCommandDynamicCollection(this);
-            this.Controls = new LibUserControlDynamicCollection(this);
-            this.Loaded += this.LibraryPage_OnLoaded;
-        }
-
-        protected LibraryPage(Window window)
-            : base(window)
-        {
         }
 
         public override void OnApplyTemplate()

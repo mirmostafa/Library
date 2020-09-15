@@ -634,16 +634,16 @@ namespace Mohammad.Win.Helpers
 
         private sealed class TabPageInfo
         {
-            internal TabControl Parent { get; }
-            internal TabPage TabPage { get; }
-            internal int Index { get; }
-
             internal TabPageInfo(TabControl parent, TabPage tabPage, int index)
             {
                 this.Parent = parent;
                 this.TabPage = tabPage;
                 this.Index = index;
             }
+
+            internal TabControl Parent { get; }
+            internal TabPage TabPage { get; }
+            internal int Index { get; }
         }
     }
 }

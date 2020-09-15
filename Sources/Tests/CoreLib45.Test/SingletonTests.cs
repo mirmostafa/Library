@@ -57,11 +57,11 @@ namespace CoreLib45.Test
     {
         private static readonly Lazy<SingletonTest3> _Instance = ObjectHelper.GenerateLazySingletonInstance<SingletonTest3>();
 
-        public static SingletonTest3 Instance => _Instance.Value;
-
         private SingletonTest3()
         {
         }
+
+        public static SingletonTest3 Instance => _Instance.Value;
     }
 
     internal class SingletonTest4 : ISingleton<SingletonTest4>

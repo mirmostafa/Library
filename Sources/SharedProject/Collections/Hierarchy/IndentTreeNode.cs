@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -10,11 +7,6 @@ namespace Mohammad.Collections.Hierarchy
     [DebuggerDisplay(@"{Depth}: {Text} ({Children.Count} children)")]
     public class IndentTreeNode
     {
-        public string Text { get; }
-        public int Depth { get; }
-        public IndentTreeNode Parent { get; }
-        public List<IndentTreeNode> Children { get; } = new List<IndentTreeNode>();
-
         public IndentTreeNode(string text, int depth = 0, IndentTreeNode parent = null)
         {
             this.Text = text;
@@ -22,13 +14,10 @@ namespace Mohammad.Collections.Hierarchy
             this.Parent = parent;
         }
 
-        public void AddChild(IndentTreeNode child)
-        {
-            if (child != null)
-            {
-                this.Children.Add(child);
-            }
-        }
+        public string Text { get; }
+        public int Depth { get; }
+        public IndentTreeNode Parent { get; }
+        public List<IndentTreeNode> Children { get; } = new List<IndentTreeNode>();
 
         public static List<IndentTreeNode> Parse(IEnumerable<string> lines, int rootDepth = 0, char indentChar = '\t')
         {
@@ -87,6 +76,14 @@ namespace Mohammad.Collections.Hierarchy
             }
 
             return roots;
+        }
+
+        public void AddChild(IndentTreeNode child)
+        {
+            if (child != null)
+            {
+                this.Children.Add(child);
+            }
         }
     }
 }

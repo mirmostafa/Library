@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using Mohammad.Helpers;
 
 namespace Mohammad.Diagnostics
@@ -11,10 +8,17 @@ namespace Mohammad.Diagnostics
         private readonly string _DefaultSender;
         private long _StartMemory;
         private long? _StopMemory;
+
+        public MemoryProfiler() => this._DefaultSender = "Memory Profiler";
         public long UsedMemory => (this._StopMemory ?? GC.GetTotalMemory(false)) - this._StartMemory;
         public long UsingMemory => GC.GetTotalMemory(false) - this._StartMemory;
 
-        public MemoryProfiler() => this._DefaultSender = "Memory Profiler";
+        public static MemoryProfiler StartNew()
+        {
+            var result = new MemoryProfiler();
+            result.Start();
+            return result;
+        }
 
         public void Reset()
         {
@@ -46,13 +50,6 @@ namespace Mohammad.Diagnostics
             }
 
             LibrarySupervisor.Logger.Debug($"Cleaned up. Memory used: {this.UsedMemory.ToMeasuranceSystem()}", sender: this._DefaultSender);
-        }
-
-        public static MemoryProfiler StartNew()
-        {
-            var result = new MemoryProfiler();
-            result.Start();
-            return result;
         }
     }
 }

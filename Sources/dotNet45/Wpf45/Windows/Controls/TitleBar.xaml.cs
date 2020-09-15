@@ -23,6 +23,11 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(TitleBar),
             new PropertyMetadata(default(string)));
 
+        public TitleBar()
+        {
+            this.InitializeComponent();
+        }
+
         public Window ParentWindow
         {
             get => (Window)this.GetValue(ParentWindowProperty);
@@ -53,11 +58,6 @@ namespace Mohammad.Wpf.Windows.Controls
                 this.ItemsBarContentPresenter.Content = value;
                 this.OnPropertyChanged();
             }
-        }
-
-        public TitleBar()
-        {
-            this.InitializeComponent();
         }
 
         private void OnParentFormChanged()

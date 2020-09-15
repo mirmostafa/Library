@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mohammad.Data.SqlServer;
@@ -13,6 +10,9 @@ namespace Mohammad.Data.Ado.BusinessTools
     {
         private ExceptionHandling _ExceptionHandling;
 
+        protected BusinessEntityOnAdo(string connectionString) => this.Sql = new Sql(connectionString);
+        protected BusinessEntityOnAdo(Sql sql) => this.Sql = sql;
+
         public ExceptionHandling ExceptionHandling
         {
             get => this._ExceptionHandling ?? (this._ExceptionHandling = new ExceptionHandling());
@@ -23,9 +23,6 @@ namespace Mohammad.Data.Ado.BusinessTools
         protected string IdentityColumnName { get; set; } = "Id";
         protected virtual bool IsLazy { get; set; } = true;
         protected Sql Sql { get; }
-
-        protected BusinessEntityOnAdo(string connectionString) => this.Sql = new Sql(connectionString);
-        protected BusinessEntityOnAdo(Sql sql) => this.Sql = sql;
 
         public void Delete(TEntity entity) => this.ExecuteAndHandleExceptions(() => this.DeleteCore(entity));
 

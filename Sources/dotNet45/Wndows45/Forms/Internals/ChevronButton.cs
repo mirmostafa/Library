@@ -9,17 +9,22 @@ namespace Mohammad.Win.Forms.Internals
 {
     internal class ChevronButton : Button
     {
-        private bool _IsMouseDown;
-
-        private bool _IsKeyDown;
-
-        private bool _IsHovered;
-
-        private bool _IsFocused;
-
         private readonly IContainer components;
 
         private bool _Expanded;
+
+        private bool _IsFocused;
+
+        private bool _IsHovered;
+
+        private bool _IsKeyDown;
+        private bool _IsMouseDown;
+
+        public ChevronButton()
+        {
+            this.InitializeComponent();
+            this.Image = Resources.chevronmore;
+        }
 
         public bool IsFocusedByKey { get; private set; }
 
@@ -34,22 +39,6 @@ namespace Mohammad.Win.Forms.Internals
             {
                 this._Expanded = value;
                 this.SetImage();
-            }
-        }
-
-        private void SetImage()
-        {
-            if (this._IsPressed)
-            {
-                this.Image = this._Expanded ? Resources.chevronlesspressed : Resources.chevronmorepressed;
-            }
-            else if (this._IsHovered || this._IsFocused)
-            {
-                this.Image = this._Expanded ? Resources.chevronlesshovered : Resources.chevronmorehovered;
-            }
-            else
-            {
-                this.Image = this._Expanded ? Resources.chevronless : Resources.chevronmore;
             }
         }
 
@@ -160,23 +149,6 @@ namespace Mohammad.Win.Forms.Internals
             base.OnClick(e);
         }
 
-        [DebuggerStepThrough]
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            this.BackColor = Color.Transparent;
-            this.FlatAppearance.BorderColor = SystemColors.Control;
-            this.FlatAppearance.BorderSize = 0;
-            this.FlatAppearance.MouseDownBackColor = Color.Transparent;
-            this.FlatAppearance.MouseOverBackColor = Color.Transparent;
-            this.FlatStyle = FlatStyle.Flat;
-            this.ImageAlign = ContentAlignment.MiddleLeft;
-            this.TextAlign = ContentAlignment.MiddleLeft;
-            this.TextImageRelation = TextImageRelation.ImageBeforeText;
-            this.Visible = false;
-            this.ResumeLayout(false);
-        }
-
         [DebuggerNonUserCode]
         protected override void Dispose(bool disposing)
         {
@@ -193,10 +165,37 @@ namespace Mohammad.Win.Forms.Internals
             }
         }
 
-        public ChevronButton()
+        private void SetImage()
         {
-            this.InitializeComponent();
-            this.Image = Resources.chevronmore;
+            if (this._IsPressed)
+            {
+                this.Image = this._Expanded ? Resources.chevronlesspressed : Resources.chevronmorepressed;
+            }
+            else if (this._IsHovered || this._IsFocused)
+            {
+                this.Image = this._Expanded ? Resources.chevronlesshovered : Resources.chevronmorehovered;
+            }
+            else
+            {
+                this.Image = this._Expanded ? Resources.chevronless : Resources.chevronmore;
+            }
+        }
+
+        [DebuggerStepThrough]
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            this.BackColor = Color.Transparent;
+            this.FlatAppearance.BorderColor = SystemColors.Control;
+            this.FlatAppearance.BorderSize = 0;
+            this.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            this.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            this.FlatStyle = FlatStyle.Flat;
+            this.ImageAlign = ContentAlignment.MiddleLeft;
+            this.TextAlign = ContentAlignment.MiddleLeft;
+            this.TextImageRelation = TextImageRelation.ImageBeforeText;
+            this.Visible = false;
+            this.ResumeLayout(false);
         }
     }
 }

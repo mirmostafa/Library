@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,12 +10,13 @@ namespace Mohammad.Validation
 {
     public class Validator : Singleton<Validator>, IExceptionHandlerContainer<Exception>
     {
-        public ExceptionHandling<Exception> ExceptionHandling { get; set; }
         public Validator(ExceptionHandling<Exception> exceptionHandling) => this.ExceptionHandling = exceptionHandling;
 
         public Validator()
         {
         }
+
+        public ExceptionHandling<Exception> ExceptionHandling { get; set; }
 
         public void AssertEqual<TType>(TType obj1, string obj1Name, TType obj2, string obj2Name)
             where TType : IEquatable<TType>

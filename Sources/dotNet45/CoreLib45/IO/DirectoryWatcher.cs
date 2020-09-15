@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -19,9 +16,6 @@ namespace Mohammad.IO
         private CancellationTokenSource _CancellationTokenSource;
         private bool _EnableRaisingEvents;
 
-        public bool WatchSubtree { get; set; } = true;
-        public DirectoryInfo Path { get; }
-
         public DirectoryWatcher(string path)
             : this(new DirectoryInfo(path))
         {
@@ -33,6 +27,9 @@ namespace Mohammad.IO
             //this._TaskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
             this._TaskScheduler = TaskScheduler.Current;
         }
+
+        public bool WatchSubtree { get; set; } = true;
+        public DirectoryInfo Path { get; }
 
         public async void Start()
         {

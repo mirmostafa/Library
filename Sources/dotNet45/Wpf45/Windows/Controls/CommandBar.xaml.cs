@@ -13,15 +13,16 @@ namespace Mohammad.Wpf.Windows.Controls
     public partial class CommandBar
     {
         private readonly LibCommandManager _CommandManager = new LibCommandManager();
-        public Style ButtonsStyle { get; set; }
-        public List<LibCommand> AppCommands { get; } = new List<LibCommand>();
-        public List<LibCommand> PageCommands { get; } = new List<LibCommand>();
-        public ILibCommandManager CommandManager => this._CommandManager;
 
         public CommandBar()
         {
             this.InitializeComponent();
         }
+
+        public Style ButtonsStyle { get; set; }
+        public List<LibCommand> AppCommands { get; } = new List<LibCommand>();
+        public List<LibCommand> PageCommands { get; } = new List<LibCommand>();
+        public ILibCommandManager CommandManager => this._CommandManager;
 
         public LibCommand GetCommandByCommandName(string commandName) => this.Commands.FirstOrDefault(cmd => cmd.CommandName == commandName);
 

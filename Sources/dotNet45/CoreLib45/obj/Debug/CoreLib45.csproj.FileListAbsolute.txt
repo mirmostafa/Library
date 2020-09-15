@@ -1,0 +1,8 @@
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CoreLib45\bin\Debug\Library45.Core.dll
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CoreLib45\bin\Debug\Library45.Core.pdb
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CoreLib45\bin\Debug\System.ValueTuple.dll
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CoreLib45\obj\Debug\CoreLib45.csprojAssemblyReference.cache
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CoreLib45\obj\Debug\CoreLib45.csproj.CoreCompileInputs.cache
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CoreLib45\obj\Debug\CoreLib45.csproj.CopyComplete
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CoreLib45\obj\Debug\Library45.Core.dll
+D:\Mirmostafa\Sources\My\Library\Sources\dotNet45\CoreLib45\obj\Debug\Library45.Core.pdb

@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
@@ -18,8 +15,6 @@ namespace Mohammad.Security.Principals
         private readonly string _Username;
         private WindowsImpersonationContext _Context;
         private IntPtr _Token;
-
-        protected bool IsInContext => this._Context != null;
 
         public ImpersonationContext(string domain, string username, string password)
         {
@@ -42,6 +37,38 @@ namespace Mohammad.Security.Principals
             this._Username = username;
             this._Password = password;
         }
+
+        protected bool IsInContext => this._Context != null;
+
+        public static void Run(string domain, string username, string password, Action action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            var context = new ImpersonationContext(domain, username, password);
+            context.Enter();
+            try
+            {
+                action();
+            }
+            finally
+            {
+                context.Leave();
+            }
+        }
+
+        [DllImport("advapi32.dll", SetLastError = true)]
+        private static extern bool LogonUser(string lpszUsername,
+            string lpszDomain,
+            string lpszPassword,
+            int dwLogonType,
+            int dwLogonProvider,
+            ref IntPtr phToken);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        private static extern bool CloseHandle(IntPtr handle);
 
         [PermissionSet(SecurityAction.Demand, Name = "FullTrust")]
         public void Enter()
@@ -87,25 +114,6 @@ namespace Mohammad.Security.Principals
             this._Context = null;
         }
 
-        public static void Run(string domain, string username, string password, Action action)
-        {
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
-            var context = new ImpersonationContext(domain, username, password);
-            context.Enter();
-            try
-            {
-                action();
-            }
-            finally
-            {
-                context.Leave();
-            }
-        }
-
         public void Run(Action action)
         {
             if (action == null)
@@ -117,16 +125,5 @@ namespace Mohammad.Security.Principals
             action();
             this.Leave();
         }
-
-        [DllImport("advapi32.dll", SetLastError = true)]
-        private static extern bool LogonUser(string lpszUsername,
-            string lpszDomain,
-            string lpszPassword,
-            int dwLogonType,
-            int dwLogonProvider,
-            ref IntPtr phToken);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        private static extern bool CloseHandle(IntPtr handle);
     }
 }

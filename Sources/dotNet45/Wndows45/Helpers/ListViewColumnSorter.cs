@@ -7,6 +7,13 @@ namespace Mohammad.Win.Helpers
     {
         private int _ColIndex;
         private bool _Enabled;
+
+        public ListViewColumnSorter(ListView listView)
+        {
+            this.ListView = listView;
+            this.Enabled = true;
+        }
+
         public ListView ListView { get; }
 
         public bool Enabled
@@ -31,12 +38,6 @@ namespace Mohammad.Win.Helpers
                     this.ListView.ColumnClick -= this.ListViewColumnClick;
                 }
             }
-        }
-
-        public ListViewColumnSorter(ListView listView)
-        {
-            this.ListView = listView;
-            this.Enabled = true;
         }
 
         public int Compare(object x, object y)

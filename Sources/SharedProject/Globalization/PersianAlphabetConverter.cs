@@ -198,14 +198,14 @@ namespace Mohammad.Globalization
 
         private class ConvertedCharacter
         {
-            public byte ByteCode { get; }
-            public bool IsNeedToReverse { get; }
-
             public ConvertedCharacter(byte code, bool isNeedToReverse)
             {
                 this.ByteCode = code;
                 this.IsNeedToReverse = isNeedToReverse;
             }
+
+            public byte ByteCode { get; }
+            public bool IsNeedToReverse { get; }
         }
     }
 }

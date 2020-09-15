@@ -1,16 +1,16 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Mohammad.Helpers.Html
 {
     public sealed class HtmlParser
     {
-        public bool Eof => this._Pos >= this._Html.Length;
+        private string _Html;
+        private int _Pos;
+        private bool _ScriptBegin;
 
         public HtmlParser(string html) => this.Reset(html);
+        public bool Eof => this._Pos >= this._Html.Length;
 
         public IEnumerable<dynamic> GetTagsByName(string tagName)
         {
@@ -239,9 +239,5 @@ namespace Mohammad.Helpers.Html
                 this.Move();
             }
         }
-
-        private string _Html;
-        private int _Pos;
-        private bool _ScriptBegin;
     }
 }

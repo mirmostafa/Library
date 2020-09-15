@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,6 +13,28 @@ namespace Mohammad.Collections.ObjectModel
         private readonly Lazy<IList<T>> _ActualBackingList;
         private readonly int _InitialCount;
         private readonly IEnumerable<T> _Source;
+
+        /// <summary>
+        ///     Initializes a new instance of the DelayedCollection class.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        public DelayedCollection(IEnumerable<T> source)
+        {
+            this._ActualBackingList = new Lazy<IList<T>>(() => this._Source.ToList());
+            this._Source = source;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the DelayedCollection class.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="initialCount">The initial count of the list.</param>
+        public DelayedCollection(IEnumerable<T> source, int initialCount)
+        {
+            this._ActualBackingList = new Lazy<IList<T>>(() => this._Source.ToList());
+            this._InitialCount = initialCount;
+            this._Source = source;
+        }
 
         private IList<T> BackingList => this._ActualBackingList.Value;
 
@@ -46,28 +65,6 @@ namespace Mohammad.Collections.ObjectModel
         ///     true if the <see cref="T:System.Collections.Generic.ICollection`1" /> is read-only; otherwise, false.
         /// </returns>
         public bool IsReadOnly => false;
-
-        /// <summary>
-        ///     Initializes a new instance of the DelayedCollection class.
-        /// </summary>
-        /// <param name="source">The source.</param>
-        public DelayedCollection(IEnumerable<T> source)
-        {
-            this._ActualBackingList = new Lazy<IList<T>>(() => this._Source.ToList());
-            this._Source = source;
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the DelayedCollection class.
-        /// </summary>
-        /// <param name="source">The source.</param>
-        /// <param name="initialCount">The initial count of the list.</param>
-        public DelayedCollection(IEnumerable<T> source, int initialCount)
-        {
-            this._ActualBackingList = new Lazy<IList<T>>(() => this._Source.ToList());
-            this._InitialCount = initialCount;
-            this._Source = source;
-        }
 
         /// <summary>
         ///     Adds an item to the <see cref="T:System.Collections.Generic.ICollection`1" />.

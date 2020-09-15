@@ -14,6 +14,11 @@ namespace Mohammad.Win.Controls
         private string _ConnectionString;
         private bool _InternallyChanging;
 
+        public ConnectionStringBox()
+        {
+            this.InitializeComponent();
+        }
+
         public string ConnectionString
         {
             get => this._ConnectionString;
@@ -33,11 +38,6 @@ namespace Mohammad.Win.Controls
 
         public string DialogPrompt { get; set; }
         public string DialogText { get; set; }
-
-        public ConnectionStringBox()
-        {
-            this.InitializeComponent();
-        }
 
         protected virtual void OnConnectionStringChanged(EventArgs e)
         {

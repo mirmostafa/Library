@@ -36,6 +36,30 @@ namespace Mohammad.Win.Forms.Internals
         private int YC = 20;
         private int YF;
 
+        public InfoForm()
+        {
+            //Transparency and Alpha Channel Enabled
+            this.BackColor = Color.Fuchsia;
+            this.TransparencyKey = Color.Fuchsia;
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            this.SetStyle(ControlStyles.ResizeRedraw, true);
+            this.SetStyle(ControlStyles.UserPaint, true);
+            this.ShowInTaskbar = false;
+            this.SetStyle(ControlStyles.DoubleBuffer, true);
+            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            this.ShowInTaskbar = false;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.Width = 10;
+            this.Height = 10;
+            this.Opacity = 0.8;
+            this.StartPosition = FormStartPosition.Manual;
+
+            this.timer.Interval = 5;
+
+            this.timer.Tick += this.timer_Tick;
+            this.timerClos.Tick += this.timerClos_Tick;
+        }
+
         public string Title
         {
             get => this._title;
@@ -88,30 +112,6 @@ namespace Mohammad.Win.Forms.Internals
         {
             get => this._fillcolor;
             set => this._fillcolor = value;
-        }
-
-        public InfoForm()
-        {
-            //Transparency and Alpha Channel Enabled
-            this.BackColor = Color.Fuchsia;
-            this.TransparencyKey = Color.Fuchsia;
-            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-            this.SetStyle(ControlStyles.ResizeRedraw, true);
-            this.SetStyle(ControlStyles.UserPaint, true);
-            this.ShowInTaskbar = false;
-            this.SetStyle(ControlStyles.DoubleBuffer, true);
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.ShowInTaskbar = false;
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.Width = 10;
-            this.Height = 10;
-            this.Opacity = 0.8;
-            this.StartPosition = FormStartPosition.Manual;
-
-            this.timer.Interval = 5;
-
-            this.timer.Tick += this.timer_Tick;
-            this.timerClos.Tick += this.timerClos_Tick;
         }
 
         public new void Close()
@@ -271,16 +271,6 @@ namespace Mohammad.Win.Forms.Internals
         private int Y;
         private int Y0, YF;
 
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                var cp = base.CreateParams;
-                cp.ExStyle |= 0x20;
-                return cp;
-            }
-        }
-
         public OffInfoShadow()
         {
             this.ShowInTaskbar = false;
@@ -293,6 +283,16 @@ namespace Mohammad.Win.Forms.Internals
             this.Opacity = 0.5;
             this.FormBorderStyle = FormBorderStyle.None;
             this.StartPosition = FormStartPosition.Manual;
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                var cp = base.CreateParams;
+                cp.ExStyle |= 0x20;
+                return cp;
+            }
         }
 
         public void DrawArc()

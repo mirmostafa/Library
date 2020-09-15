@@ -12,20 +12,8 @@ namespace Mohammad.Logging.Internals
         private const int _DefaultTimeout = 2500;
         private static int _ReaderLockAcquireTimeout = _DefaultTimeout;
         private readonly ReaderWriterLock _StructureHolderLock = new ReaderWriterLock();
-        public virtual TLog Log { get; protected set; }
         protected Writer(TLog log) => this.Log = log;
-
-        protected static void SetLockTimeouts(int readerTimeout, int writerTimeout)
-        {
-            _ReaderLockAcquireTimeout = readerTimeout;
-        }
-
-        protected static void ResetLockTimeouts()
-        {
-            _ReaderLockAcquireTimeout = _DefaultTimeout;
-        }
-
-        protected abstract void InnerWrite(TLogEntity logEntity);
+        public virtual TLog Log { get; protected set; }
 
         public bool ShowInDebuggerTracer { get; set; } = true;
 
@@ -48,5 +36,17 @@ namespace Mohammad.Logging.Internals
         }
 
         public abstract void LoadLastLog();
+
+        protected static void SetLockTimeouts(int readerTimeout, int writerTimeout)
+        {
+            _ReaderLockAcquireTimeout = readerTimeout;
+        }
+
+        protected static void ResetLockTimeouts()
+        {
+            _ReaderLockAcquireTimeout = _DefaultTimeout;
+        }
+
+        protected abstract void InnerWrite(TLogEntity logEntity);
     }
 }

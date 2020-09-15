@@ -1,6 +1,3 @@
-
-
-
 using System;
 using Mohammad.Win32.Interop.NetworkList;
 
@@ -16,6 +13,8 @@ namespace Mohammad.Win32.NetworkList
     public class NetworkConnection
     {
         private readonly INetworkConnection networkConnection;
+
+        internal NetworkConnection(INetworkConnection networkConnection) => this.networkConnection = networkConnection;
 
         /// <summary>
         ///     Retrieves an object that represents the network
@@ -78,7 +77,5 @@ namespace Mohammad.Win32.NetworkList
         ///     A <see cref="System.Boolean" /> value.
         /// </value>
         public bool IsConnected => this.networkConnection.IsConnected;
-
-        internal NetworkConnection(INetworkConnection networkConnection) => this.networkConnection = networkConnection;
     }
 }

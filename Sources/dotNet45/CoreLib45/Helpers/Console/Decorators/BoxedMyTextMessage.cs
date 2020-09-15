@@ -1,6 +1,3 @@
-
-
-
 namespace Mohammad.Helpers.Console.Decorators
 {
     internal class BoxedMyTextMessage : ITextDisplay

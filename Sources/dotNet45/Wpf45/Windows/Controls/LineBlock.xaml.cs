@@ -23,6 +23,12 @@ namespace Mohammad.Wpf.Windows.Controls
             typeof(LineBlock),
             new PropertyMetadata(default(string)));
 
+        public LineBlock()
+        {
+            this.InitializeComponent();
+            this.LineBrush = Brushes.RoyalBlue;
+        }
+
         public Brush LineBrush
         {
             get => (Brush)this.GetValue(LineBrushProperty);
@@ -67,12 +73,6 @@ namespace Mohammad.Wpf.Windows.Controls
 
         public DependencyProperty BindingFieldProperty => TextProperty;
         public FrameworkElement FlickerTextBlock => this.LibTextBlock.FlickerTextBlock;
-
-        public LineBlock()
-        {
-            this.InitializeComponent();
-            this.LineBrush = Brushes.RoyalBlue;
-        }
 
         protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
         {

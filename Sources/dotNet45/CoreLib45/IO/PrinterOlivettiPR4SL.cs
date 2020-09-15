@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -28,6 +25,27 @@ namespace Mohammad.IO
         private SerialPort _SerialPort;
         private PrinterStatus _Status;
         private Timer _Timer;
+
+        public PrinterOlivettiPr4Sl(string portName,
+            int baudRate = 9600,
+            Parity parity = Parity.None,
+            int dataBits = 8,
+            StopBits stopBits = StopBits.One,
+            int readTimeout = 750,
+            int writeTimeout = 750)
+        {
+            this._SerialPort = new SerialPort
+            {
+                PortName = portName,
+                BaudRate = baudRate,
+                Parity = parity,
+                DataBits = dataBits,
+                StopBits = stopBits,
+                ReadTimeout = readTimeout,
+                WriteTimeout = writeTimeout
+            };
+            this.Initialize();
+        }
 
         public TextWriter Log
         {
@@ -68,33 +86,31 @@ namespace Mohammad.IO
             }
         }
 
-        public PrinterOlivettiPr4Sl(string portName,
-            int baudRate = 9600,
-            Parity parity = Parity.None,
-            int dataBits = 8,
-            StopBits stopBits = StopBits.One,
-            int readTimeout = 750,
-            int writeTimeout = 750)
-        {
-            this._SerialPort = new SerialPort
-            {
-                PortName = portName,
-                BaudRate = baudRate,
-                Parity = parity,
-                DataBits = dataBits,
-                StopBits = stopBits,
-                ReadTimeout = readTimeout,
-                WriteTimeout = writeTimeout
-            };
-            this.Initialize();
-        }
-
-        ~PrinterOlivettiPr4Sl() => this.Dispose(false);
-
         public void Dispose()
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public static bool TryDetectPrinter(out string portName, TextWriter log = null)
+        {
+            portName = null;
+            foreach (var prtName in SerialPort.GetPortNames())
+            {
+                try
+                {
+                    var printer = new PrinterOlivettiPr4Sl(prtName);
+                    printer.InitializePrinter();
+                    portName = prtName;
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    log?.WriteLine($"Exception: {ex.GetBaseException().Message}");
+                }
+            }
+
+            return false;
         }
 
         public void InitializePrinter() => this.SendCommand(ComPortPrinterCommands.InitializePrinter);
@@ -225,27 +241,6 @@ namespace Mohammad.IO
         public void SetLeftMargin(byte l = 0, byte h = 0) => this.SendCommand(ComPortPrinterCommands.SetLeftMargin, l, h);
 
         public void SetSlipPaperWaitingTime(byte t1 = 0, byte t2 = 5) => this.SendCommand(ComPortPrinterCommands.SetSlipPaperWaitingTime, t1, t2);
-
-        public static bool TryDetectPrinter(out string portName, TextWriter log = null)
-        {
-            portName = null;
-            foreach (var prtName in SerialPort.GetPortNames())
-            {
-                try
-                {
-                    var printer = new PrinterOlivettiPr4Sl(prtName);
-                    printer.InitializePrinter();
-                    portName = prtName;
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    log?.WriteLine($"Exception: {ex.GetBaseException().Message}");
-                }
-            }
-
-            return false;
-        }
 
         public string ReadExisting() => this.Do(() => this._SerialPort.ReadExisting(), "ReadExisting");
 
@@ -634,6 +629,8 @@ namespace Mohammad.IO
         public event EventHandler StatusChanged;
         public event EventHandler<ItemActedEventArgs<string>> DataReceived;
         public event EventHandler<ItemActingEventArgs<Exception>> ExceptionOccurred;
+
+        ~PrinterOlivettiPr4Sl() => this.Dispose(false);
 
         private static class ComPortPrinterCommands
         {

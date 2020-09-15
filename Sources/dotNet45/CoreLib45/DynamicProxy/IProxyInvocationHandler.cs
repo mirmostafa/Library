@@ -1,6 +1,3 @@
-
-
-
 using System.Reflection;
 
 namespace Mohammad.DynamicProxy

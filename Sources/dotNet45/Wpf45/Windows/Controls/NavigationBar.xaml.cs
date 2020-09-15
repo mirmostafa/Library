@@ -34,6 +34,11 @@ namespace Mohammad.Wpf.Windows.Controls
 
         private bool _IsLoaded;
 
+        public NavigationBar()
+        {
+            this.InitializeComponent();
+        }
+
         public LibFrame Frame
         {
             get => (LibFrame)this.GetValue(FrameProperty);
@@ -47,11 +52,6 @@ namespace Mohammad.Wpf.Windows.Controls
         }
 
         public List<NavigationCommand> NavigationCommands { get; } = new List<NavigationCommand>();
-
-        public NavigationBar()
-        {
-            this.InitializeComponent();
-        }
 
         public override void OnApplyTemplate()
         {

@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +14,9 @@ namespace Mohammad.Helpers.Console
         internal const ConsoleColor DEFAULT_CONSTANT_CONSOLE_COLOR = ConsoleColor.Cyan;
 
         private static ILogger _Out;
+
+        public static ConsoleColor DefaultConsoleColor = ConsoleColor.Gray;
+        public static ConsoleColor DefaultHighlightColor = ConsoleColor.Magenta;
 
         public static ILogger Out
         {
@@ -274,8 +274,5 @@ namespace Mohammad.Helpers.Console
         }
 
         public static void WriteSeparatorLine(char separatorchar = '=', int count = 20) => Inform(separatorchar.ToString().Repeat(count));
-
-        public static ConsoleColor DefaultConsoleColor = ConsoleColor.Gray;
-        public static ConsoleColor DefaultHighlightColor = ConsoleColor.Magenta;
     }
 }

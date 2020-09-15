@@ -16,6 +16,7 @@ namespace Mohammad.Wpf.Windows.Output
         public static ToastScale DefaultScale = ToastScale.Large;
         private FrameworkElement _Parent;
         private Popup _Popup;
+        private Toast(FrameworkElement parent) => this.Parent = parent;
         public bool IsHidden => this._Popup == null || !this._Popup.IsOpen;
         public static bool DefaultHostOnWindow { get; set; }
 
@@ -32,7 +33,6 @@ namespace Mohammad.Wpf.Windows.Output
         public bool IsSilent { get; set; }
         public bool HostOnWindow { get; set; } = DefaultHostOnWindow;
         public ToastScale Scale { get; set; }
-        private Toast(FrameworkElement parent) => this.Parent = parent;
 
         public static async void Show(Toast toast, string title, string message, string badge, bool autoHide, TimeSpan timeout, Brush background, Brush forground)
         {
@@ -148,24 +148,6 @@ namespace Mohammad.Wpf.Windows.Output
             return toast;
         }
 
-        public void Hide()
-        {
-            if (this._Popup != null)
-            {
-                this._Popup.IsOpen = false;
-                if (this._Popup.Child is IDisposable)
-                {
-                    (this._Popup.Child as IDisposable).Dispose();
-                }
-
-                this._Popup.Child = null;
-                this._Popup = null;
-            }
-
-            _ActiveToasts.Remove(this);
-            GC.Collect();
-        }
-
         public static Toast GetToast(FrameworkElement parent, ToastScale scale = ToastScale.Default) => new Toast(parent) {Scale = scale};
 
         public static void Inform(Toast toast,
@@ -248,6 +230,24 @@ namespace Mohammad.Wpf.Windows.Output
                 default:
                     throw new ArgumentOutOfRangeException("scale");
             }
+        }
+
+        public void Hide()
+        {
+            if (this._Popup != null)
+            {
+                this._Popup.IsOpen = false;
+                if (this._Popup.Child is IDisposable)
+                {
+                    (this._Popup.Child as IDisposable).Dispose();
+                }
+
+                this._Popup.Child = null;
+                this._Popup = null;
+            }
+
+            _ActiveToasts.Remove(this);
+            GC.Collect();
         }
     }
 

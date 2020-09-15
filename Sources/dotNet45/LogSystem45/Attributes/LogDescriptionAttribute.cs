@@ -12,13 +12,12 @@ namespace Mohammad.Logging.Attributes
 
     public class LogDescriptionAttribute : Attribute
     {
-        public string Description { get; }
-        public AutoFillTag AutoFillTag { get; set; }
-
         public LogDescriptionAttribute()
         {
         }
 
         public LogDescriptionAttribute(string description) => this.Description = description;
+        public string Description { get; }
+        public AutoFillTag AutoFillTag { get; set; }
     }
 }

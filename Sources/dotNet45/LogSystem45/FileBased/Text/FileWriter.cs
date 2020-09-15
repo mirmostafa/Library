@@ -8,12 +8,12 @@ namespace Mohammad.Logging.FileBased.Text
     public class FileWriter<TLogEntity> : Writer<FileInfo, TLogEntity>
         where TLogEntity : LogEntity
     {
-        public string LogFormat { get; set; }
-
         public FileWriter(string textLogFileSpec)
             : base(new FileInfo(textLogFileSpec))
         {
         }
+
+        public string LogFormat { get; set; }
 
         public override void LoadLastLog()
         {

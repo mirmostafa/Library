@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Dynamic;
@@ -11,13 +8,13 @@ namespace Mohammad.Data.SqlServer.Dynamics
 {
     public class DataReader : SqlObject<DataReader, Database>, IDisposable
     {
-        public object this[string index] => this.SqlDataReader[index];
-
-        private SqlDataReader SqlDataReader { get; }
-
         public DataReader(SqlDataReader sqlDataReader, Database owner, string name, string connectionString)
             : base(owner, name, connectionString: connectionString) =>
             this.SqlDataReader = sqlDataReader ?? throw new ArgumentNullException(nameof(sqlDataReader));
+
+        public object this[string index] => this.SqlDataReader[index];
+
+        private SqlDataReader SqlDataReader { get; }
 
         public void Dispose()
         {

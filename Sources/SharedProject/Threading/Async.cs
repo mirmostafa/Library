@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,6 +17,26 @@ namespace Mohammad.Threading
         private Lazy<ExceptionHandling> _ExceptionHandling;
         private string _Name;
         private AsyncPool _Pool;
+
+        protected Async()
+        {
+            this._ExceptionHandling = new Lazy<ExceptionHandling>(() =>
+            {
+                ExceptionHandling result = null;
+                if (this.Pool != null)
+                {
+                    result = this.Pool.ExceptionHandling;
+                }
+
+                return result ?? new ExceptionHandling();
+            });
+        }
+
+        protected Async(IEnumerable<object> parameteres)
+            : this() => this.Parameteres = parameteres.ToList();
+
+        protected Async(AsyncPool pool)
+            : this() => this.Pool = pool;
 
         protected Task Core { get; private set; }
 
@@ -80,29 +97,6 @@ namespace Mohammad.Threading
             set { this._ExceptionHandling = new Lazy<ExceptionHandling>(() => value); }
         }
 
-        protected Async()
-        {
-            this._ExceptionHandling = new Lazy<ExceptionHandling>(() =>
-            {
-                ExceptionHandling result = null;
-                if (this.Pool != null)
-                {
-                    result = this.Pool.ExceptionHandling;
-                }
-
-                return result ?? new ExceptionHandling();
-            });
-        }
-
-        protected Async(IEnumerable<object> parameteres)
-            : this() => this.Parameteres = parameteres.ToList();
-
-        protected Async(AsyncPool pool)
-            : this() => this.Pool = pool;
-
-        public static bool operator ==(Async left, Async right) => Equals(left, right);
-        public static bool operator !=(Async left, Async right) => !Equals(left, right);
-
         public void Dispose()
         {
             this.CancellationTokenSource?.Dispose();
@@ -122,24 +116,8 @@ namespace Mohammad.Threading
             return ReferenceEquals(this, other) || Equals(other.Name, this.Name);
         }
 
-        public void Abort()
-        {
-            this.Status = AsyncStatus.Ended;
-            if (this.Core != null)
-            {
-                this.CancellationTokenSource.Cancel();
-            }
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
-
-            return ReferenceEquals(this, obj) || obj.GetType() == typeof(Async) && this.Equals((Async)obj);
-        }
+        public static bool operator ==(Async left, Async right) => Equals(left, right);
+        public static bool operator !=(Async left, Async right) => !Equals(left, right);
 
         public static Async GetAsyncInstance<T>(Action<T> method,
             T arg1,
@@ -168,13 +146,6 @@ namespace Mohammad.Threading
             return result;
         }
 
-        public override int GetHashCode() => this.Core?.GetHashCode() ?? 0;
-
-        public void Wait()
-        {
-            this.Core?.Wait();
-        }
-
         public static void Sleep(int millisecondsTimeout)
         {
             Thread.Sleep(millisecondsTimeout);
@@ -184,20 +155,6 @@ namespace Mohammad.Threading
         {
             Thread.Sleep(timeout);
         }
-
-        public void Start()
-        {
-            if (this.Pool != null)
-            {
-                this.Pool.Start();
-            }
-            else
-            {
-                this.InnerStart();
-            }
-        }
-
-        public override string ToString() => this.Name;
 
         public static Async Run<T1, T2>(Action<T1, T2> method,
             T1 arg1,
@@ -325,6 +282,64 @@ namespace Mohammad.Threading
             ForEach(Enumerable.Range(start, count), actor, threadCount);
         }
 
+        public void Abort()
+        {
+            this.Status = AsyncStatus.Ended;
+            if (this.Core != null)
+            {
+                this.CancellationTokenSource.Cancel();
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            return ReferenceEquals(this, obj) || obj.GetType() == typeof(Async) && this.Equals((Async)obj);
+        }
+
+        public override int GetHashCode() => this.Core?.GetHashCode() ?? 0;
+
+        public void Wait()
+        {
+            this.Core?.Wait();
+        }
+
+        public void Start()
+        {
+            if (this.Pool != null)
+            {
+                this.Pool.Start();
+            }
+            else
+            {
+                this.InnerStart();
+            }
+        }
+
+        public override string ToString() => this.Name;
+
+        internal void InnerStart()
+        {
+            if (MustStopIt())
+            {
+                return;
+            }
+
+            this.Name = this.Name.IfNullOrEmpty(Guid.NewGuid().ToString());
+            if (this.CancellationTokenSource == null)
+            {
+                this.CancellationTokenSource = new CancellationTokenSource();
+            }
+
+            this.Core = new Task(this.AsyncStart, this.CancellationTokenSource.Token, TaskCreationOptions.LongRunning);
+            this.Core.Start();
+            this.MainTaskScheduler = TaskScheduler.Current;
+        }
+
         protected virtual void AsyncStart()
         {
             if (MustStopIt())
@@ -367,23 +382,5 @@ namespace Mohammad.Threading
 
         public event EventHandler Ended;
         public event EventHandler<ActingEventArgs> Starting;
-
-        internal void InnerStart()
-        {
-            if (MustStopIt())
-            {
-                return;
-            }
-
-            this.Name = this.Name.IfNullOrEmpty(Guid.NewGuid().ToString());
-            if (this.CancellationTokenSource == null)
-            {
-                this.CancellationTokenSource = new CancellationTokenSource();
-            }
-
-            this.Core = new Task(this.AsyncStart, this.CancellationTokenSource.Token, TaskCreationOptions.LongRunning);
-            this.Core.Start();
-            this.MainTaskScheduler = TaskScheduler.Current;
-        }
     }
 }

@@ -11,28 +11,28 @@ namespace Mohammad.Globalization.DataTypes
     [StructLayout(LayoutKind.Sequential)]
     internal struct PersianDateTimeData
     {
-        public override int GetHashCode() 
-            => new StringBuilder()
-            .Append(this.Day)
-            .Append(this.HasDate)
-            .Append(this.HasTime)
-            .Append(this.Hour)
-            .Append(this.Minute)
-            .Append(this.Month)
-            .Append(this.Second)
-            .Append(this.Millisecond)
-            .Append(this.Year)
-            .GetHashCode();
-
         internal int Day;
         internal bool HasDate;
         internal bool HasTime;
         internal int Hour;
+        internal double Millisecond;
         internal int Minute;
         internal int Month;
         internal int Second;
-        internal double Millisecond;
         internal int Year;
+
+        public override int GetHashCode()
+            => new StringBuilder()
+                .Append(this.Day)
+                .Append(this.HasDate)
+                .Append(this.HasTime)
+                .Append(this.Hour)
+                .Append(this.Minute)
+                .Append(this.Month)
+                .Append(this.Second)
+                .Append(this.Millisecond)
+                .Append(this.Year)
+                .GetHashCode();
 
         internal void Init()
         {
@@ -136,11 +136,6 @@ namespace Mohammad.Globalization.DataTypes
     [Serializable]
     public sealed class NumericFormatInfo
     {
-        public NumberFormat Number { get; }
-        public PercentFormat Percent { get; }
-        public CurrencyFormat Currency { get; }
-        public CostFormat Cost { get; set; }
-
         public NumericFormatInfo(NumberFormat number, PercentFormat percent, CurrencyFormat currency, CostFormat cost)
         {
             this.Number = number;
@@ -149,21 +144,17 @@ namespace Mohammad.Globalization.DataTypes
             this.Cost = cost;
         }
 
+        public NumberFormat Number { get; }
+        public PercentFormat Percent { get; }
+        public CurrencyFormat Currency { get; }
+        public CostFormat Cost { get; set; }
+
         public static NumberFormatInfo MapToNumberFormatInfo(NumericFormatInfo numericFormatInfo)
         {
             var result = new NumberFormatInfo();
             MapToNumberFormatInfo(result, numericFormatInfo);
             return result;
         }
-
-        public NumberFormatInfo MapToNumberFormatInfo()
-        {
-            var result = new NumberFormatInfo();
-            MapToNumberFormatInfo(result, this);
-            return result;
-        }
-
-        public void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo) => MapToNumberFormatInfo(numberFormatInfo, this);
 
         public static void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo, NumericFormatInfo numericFormatInfo)
         {
@@ -184,6 +175,15 @@ namespace Mohammad.Globalization.DataTypes
             numberFormatInfo.NegativeSign = numericFormatInfo.Number.NegativeSign;
             numberFormatInfo.PositiveSign = numericFormatInfo.Number.PositiveSign;
         }
+
+        public NumberFormatInfo MapToNumberFormatInfo()
+        {
+            var result = new NumberFormatInfo();
+            MapToNumberFormatInfo(result, this);
+            return result;
+        }
+
+        public void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo) => MapToNumberFormatInfo(numberFormatInfo, this);
     }
 
     public interface INumericFormat

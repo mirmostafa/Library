@@ -1,7 +1,4 @@
-﻿
-
-
-using Mohammad.Wmi.Internals;
+﻿using Mohammad.Wmi.Internals;
 
 namespace Mohammad.Wmi.Win32
 {

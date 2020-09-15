@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 
 namespace Mohammad.DesignPatterns.DecisionRequiringPattern
 {
@@ -27,11 +24,6 @@ namespace Mohammad.DesignPatterns.DecisionRequiringPattern
 
     public class DecisionRequiredEventArgs : EventArgs
     {
-        public Exception Exception { get; }
-        public ResponseType Response { get; set; }
-        public DecisionLevel Level { get; }
-        public ResponseType AllowedResponseTypes { get; set; }
-
         public DecisionRequiredEventArgs(Exception exception,
             DecisionLevel level,
             ResponseType allowedResponseTypes = ResponseType.Cancel | ResponseType.Continue | ResponseType.Retry)
@@ -40,6 +32,11 @@ namespace Mohammad.DesignPatterns.DecisionRequiringPattern
             this.AllowedResponseTypes = allowedResponseTypes;
             this.Exception = exception;
         }
+
+        public Exception Exception { get; }
+        public ResponseType Response { get; set; }
+        public DecisionLevel Level { get; }
+        public ResponseType AllowedResponseTypes { get; set; }
     }
 
     public class NotifyDecisionRequired : INotifyDecisionRequired

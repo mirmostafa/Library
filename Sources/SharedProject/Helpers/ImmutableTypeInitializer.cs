@@ -64,6 +64,9 @@ namespace Mohammad.Helpers
 
         public static implicit operator T(in ImmutableTypeInitializer<T> initializer) => initializer.Build();
 
+        public static ImmutableTypeInitializer<T> New() => new ImmutableTypeInitializer<T>();
+        public static dynamic NewDynamic() => new ImmutableTypeInitializer<T>();
+
         public T Build()
         {
             var target = typeof(T).GetConstructors()
@@ -88,9 +91,6 @@ namespace Mohammad.Helpers
             this[name] = value;
             return this;
         }
-
-        public static ImmutableTypeInitializer<T> New() => new ImmutableTypeInitializer<T>();
-        public static dynamic NewDynamic() => new ImmutableTypeInitializer<T>();
 
         /// <inheritdoc />
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)

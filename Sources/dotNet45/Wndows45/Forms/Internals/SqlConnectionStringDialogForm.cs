@@ -13,6 +13,11 @@ namespace Mohammad.Win.Forms.Internals
 {
     public partial class SqlConnectionStringDialogForm : LibraryForm
     {
+        public SqlConnectionStringDialogForm()
+        {
+            this.InitializeComponent();
+        }
+
         public string ConnectionString
         {
             get
@@ -29,11 +34,6 @@ namespace Mohammad.Win.Forms.Internals
                 this.passwordTextBox.Text = scsb.Password;
                 this.dbsComboBox.Text = scsb.InitialCatalog;
             }
-        }
-
-        public SqlConnectionStringDialogForm()
-        {
-            this.InitializeComponent();
         }
 
         private SqlConnectionStringBuilder ParseConnectionString(bool full)

@@ -28,19 +28,6 @@ namespace TestWpfApp45
         /// <summary> Token that can be used to represent a particular user. </summary>
         public IntPtr UserToken;
 
-        /// <summary> Address of a buffer to receive the display name of the folder selected by the user. </summary>
-        public string DisplayName { get; private set; }
-
-        /// <summary> Return the result of the dialog </summary>
-        public string FullName { get; private set; }
-
-        /// <summary> valid only if RootType is RootTypeOptions.ByPath </summary>
-        public string RootPath
-        {
-            get => this._RootPath;
-            set => this._RootPath = value;
-        }
-
         public ShellBrowseForFolderDialog()
         {
             this.hwndOwner = IntPtr.Zero;
@@ -55,6 +42,42 @@ namespace TestWpfApp45
             // Default flags values
             this.DetailsFlags = WindowsConstants.BIF_BROWSEINCLUDEFILES | WindowsConstants.BIF_EDITBOX | WindowsConstants.BIF_NEWDIALOGSTYLE |
                                 WindowsConstants.BIF_SHAREABLE | WindowsConstants.BIF_STATUSTEXT | WindowsConstants.BIF_USENEWUI | WindowsConstants.BIF_VALIDATE;
+        }
+
+        /// <summary> Address of a buffer to receive the display name of the folder selected by the user. </summary>
+        public string DisplayName { get; private set; }
+
+        /// <summary> Return the result of the dialog </summary>
+        public string FullName { get; private set; }
+
+        /// <summary> valid only if RootType is RootTypeOptions.ByPath </summary>
+        public string RootPath
+        {
+            get => this._RootPath;
+            set => this._RootPath = value;
+        }
+
+        private static IMalloc GetMalloc()
+        {
+            IntPtr ptrRet;
+            Api.SHGetMalloc(out ptrRet);
+
+            var obj = Marshal.GetTypedObjectForIUnknown(ptrRet, typeof(IMalloc));
+            var imalloc = (IMalloc)obj;
+
+            return imalloc;
+        }
+
+        private static IShellFolder GetDesktopFolder()
+        {
+            IntPtr ptrRet;
+            Api.SHGetDesktopFolder(out ptrRet);
+
+            var shellFolderType = typeof(IShellFolder);
+            var obj = Marshal.GetTypedObjectForIUnknown(ptrRet, shellFolderType);
+            var ishellFolder = (IShellFolder)obj;
+
+            return ishellFolder;
         }
 
         public bool ShowDialog()
@@ -119,29 +142,6 @@ namespace TestWpfApp45
             GC.Collect(GC.GetGeneration(this));
             GC.WaitForFullGCComplete();
             return pidlSelected != IntPtr.Zero;
-        }
-
-        private static IMalloc GetMalloc()
-        {
-            IntPtr ptrRet;
-            Api.SHGetMalloc(out ptrRet);
-
-            var obj = Marshal.GetTypedObjectForIUnknown(ptrRet, typeof(IMalloc));
-            var imalloc = (IMalloc)obj;
-
-            return imalloc;
-        }
-
-        private static IShellFolder GetDesktopFolder()
-        {
-            IntPtr ptrRet;
-            Api.SHGetDesktopFolder(out ptrRet);
-
-            var shellFolderType = typeof(IShellFolder);
-            var obj = Marshal.GetTypedObjectForIUnknown(ptrRet, shellFolderType);
-            var ishellFolder = (IShellFolder)obj;
-
-            return ishellFolder;
         }
 
         private enum RootTypeOptions

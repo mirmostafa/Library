@@ -1,6 +1,3 @@
-
-
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,26 +21,6 @@ namespace Mohammad.ServiceModel
         private readonly List<ServiceEndpoint> _Endpoints = new List<ServiceEndpoint>();
         private readonly Lazy<EventHandlerList> _Events = new Lazy<EventHandlerList>();
         private readonly System.ServiceModel.ServiceHost _Host;
-
-        public ServiceDescription Description => this._Host.Description;
-
-        /// <summary>
-        /// </summary>
-        public Type ServiceType { get; }
-
-        /// <summary>
-        /// </summary>
-        public Type ContractType { get; }
-
-        /// <summary>
-        ///     Get the uri, which the service is being up.
-        /// </summary>
-        public IEnumerable<string> Addresses => this._Endpoints.Select(ep => ep.Address.ToString());
-
-        /// <summary>
-        ///     Gets the list of event handlers that are attached to this component.
-        /// </summary>
-        protected EventHandlerList Events => this._Events.Value;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ServiceHost&lt;TContract, TService&gt;" /> class.
@@ -81,6 +58,26 @@ namespace Mohammad.ServiceModel
 
             this.AddServiceEndpoint(binding, uri);
         }
+
+        public ServiceDescription Description => this._Host.Description;
+
+        /// <summary>
+        /// </summary>
+        public Type ServiceType { get; }
+
+        /// <summary>
+        /// </summary>
+        public Type ContractType { get; }
+
+        /// <summary>
+        ///     Get the uri, which the service is being up.
+        /// </summary>
+        public IEnumerable<string> Addresses => this._Endpoints.Select(ep => ep.Address.ToString());
+
+        /// <summary>
+        ///     Gets the list of event handlers that are attached to this component.
+        /// </summary>
+        protected EventHandlerList Events => this._Events.Value;
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.

@@ -19,6 +19,20 @@ namespace TestConsole45.ProgressiveApproach
         /// <inheritdoc />
         public void Dispose() => this._CancellationTokenSource?.Dispose();
 
+        public static Actor Run(IEnumerable<IStep> steps)
+        {
+            var actor = new Actor();
+            actor.Start(steps);
+            return actor;
+        }
+
+        public static Actor Run(params IStep[] steps)
+        {
+            var actor = new Actor();
+            actor.Start(steps);
+            return actor;
+        }
+
         public void Cancel() => this._CancellationTokenSource.Cancel();
 
         public void Start(params IStep[] steps) => this.Start(steps.AsEnumerable());
@@ -95,20 +109,6 @@ namespace TestConsole45.ProgressiveApproach
             }
 
             this.OnExecutionDone();
-        }
-
-        public static Actor Run(IEnumerable<IStep> steps)
-        {
-            var actor = new Actor();
-            actor.Start(steps);
-            return actor;
-        }
-
-        public static Actor Run(params IStep[] steps)
-        {
-            var actor = new Actor();
-            actor.Start(steps);
-            return actor;
         }
 
         protected virtual void OnExecutionDone()

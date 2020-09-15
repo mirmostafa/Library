@@ -14,6 +14,9 @@ namespace TestConsole45
     {
         private Data _Data;
 
+        private static TimeSpan Run((Func<IEnumerable<long>, long> Sun, string Name) actor)
+            => Diag.Stopwatch(() => actor.Sun(Enumerable.Range(1, 100000000).Select(n => n.ToLong()))).Elapsed;
+
         /// <inheritdoc />
         protected override void OnInitializingMainOperationSteps(MultiStepOperationStepCollection steps)
         {
@@ -70,9 +73,6 @@ namespace TestConsole45
             },
             Info = new List<(TimeSpan Calc, string Name)>()
         };
-
-        private static TimeSpan Run((Func<IEnumerable<long>, long> Sun, string Name) actor)
-            => Diag.Stopwatch(() => actor.Sun(Enumerable.Range(1, 100000000).Select(n => n.ToLong()))).Elapsed;
 
         private static class SumAlgorithms
         {

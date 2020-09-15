@@ -10,16 +10,6 @@ namespace Mohammad.Collections.Generic
     {
         private readonly List<HierarchicalItem<TData>> _InnerList;
 
-        public HierarchicalItem<TData> this[TData data] => this._InnerList.FirstOrDefault(item => item.Data.Equals(data));
-        public int Count => this._InnerList.Count;
-        bool ICollection<HierarchicalItem<TData>>.IsReadOnly => throw new NotSupportedException();
-
-        public HierarchicalItem<TData> this[int index]
-        {
-            get => this._InnerList[index];
-            set => this._InnerList[index] = value;
-        }
-
         public HierarchicalList(List<HierarchicalItem<TData>> innerList) => this._InnerList = innerList;
 
         public HierarchicalList()
@@ -31,6 +21,16 @@ namespace Mohammad.Collections.Generic
         {
             this._InnerList = new List<HierarchicalItem<TData>>();
             this._InnerList.AddRange(rawData.Select(data => new HierarchicalItem<TData>(data)));
+        }
+
+        public HierarchicalItem<TData> this[TData data] => this._InnerList.FirstOrDefault(item => item.Data.Equals(data));
+        public int Count => this._InnerList.Count;
+        bool ICollection<HierarchicalItem<TData>>.IsReadOnly => throw new NotSupportedException();
+
+        public HierarchicalItem<TData> this[int index]
+        {
+            get => this._InnerList[index];
+            set => this._InnerList[index] = value;
         }
 
         public IEnumerator<HierarchicalItem<TData>> GetEnumerator() => this._InnerList.GetEnumerator();

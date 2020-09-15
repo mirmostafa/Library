@@ -31,6 +31,8 @@ namespace Mohammad.ProgressiveOperations
         private double _MainStepIndex;
         private long _MainStepsCount;
         private TaskScheduler _Scheduler;
+
+        protected MultiStepOperation(MultiStepOperationStepCollection steps = null) => this._Steps = steps ?? new MultiStepOperationStepCollection();
         public bool IsCancellationRequested => this._CancellationTokenSource.IsCancellationRequested;
 
         protected Task Task { get; private set; }
@@ -131,10 +133,6 @@ namespace Mohammad.ProgressiveOperations
             set => this._ExceptionHandling = value;
         }
 
-        protected MultiStepOperation(MultiStepOperationStepCollection steps = null) => this._Steps = steps ?? new MultiStepOperationStepCollection();
-
-        ~MultiStepOperation() => this.Dispose(false);
-
         public void Dispose()
         {
             this.Dispose(true);
@@ -142,6 +140,14 @@ namespace Mohammad.ProgressiveOperations
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public static MultiStepOperation CreateInstance(params IMultiStepOperationStep[] steps) =>
+            CreateInstance(new MultiStepOperationStepCollection(steps));
+
+        public static MultiStepOperation CreateInstance(IEnumerable<MultiStepOperationStep> steps) => CreateInstance(
+            new MultiStepOperationStepCollection(steps));
+
+        public static MultiStepOperation CreateInstance(MultiStepOperationStepCollection steps) => new MultiStepOperationImpl(steps);
 
         public Task Start()
         {
@@ -260,14 +266,6 @@ namespace Mohammad.ProgressiveOperations
             this.ExceptionHandling.HandleException(new OperationCancelledException("Operation cancelled."));
             this.OnMainOperationCanceled();
         }
-
-        public static MultiStepOperation CreateInstance(params IMultiStepOperationStep[] steps) =>
-            CreateInstance(new MultiStepOperationStepCollection(steps));
-
-        public static MultiStepOperation CreateInstance(IEnumerable<MultiStepOperationStep> steps) => CreateInstance(
-            new MultiStepOperationStepCollection(steps));
-
-        public static MultiStepOperation CreateInstance(MultiStepOperationStepCollection steps) => new MultiStepOperationImpl(steps);
 
         public void StartCurrentOperation(double max, object description = null, double initialValue = 0)
         {
@@ -574,6 +572,8 @@ namespace Mohammad.ProgressiveOperations
         public event EventHandler<MultiStepLogEventArgs> CurrentOperationStepIncreased;
         public event EventHandler<MultiStepEndedLogEventArgs> CurrentOperationEnded;
         public event EventHandler CurrentOperationCanceled;
+
+        ~MultiStepOperation() => this.Dispose(false);
 
         private sealed class MultiStepOperationImpl : MultiStepOperation
         {

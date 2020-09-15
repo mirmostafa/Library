@@ -1,5 +1,4 @@
-﻿
-//namespace Mohammad.Collections.Generic
+﻿//namespace Mohammad.Collections.Generic
 //{
 //    public class Tuple<T1, T2>
 //    {
@@ -55,3 +54,4 @@
 //        }
 //    }
 //}
+

@@ -1,7 +1,4 @@
-﻿
-
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.Caching;
@@ -14,6 +11,18 @@ namespace Mohammad.Primitives
         private static ObjectCache _DefaultCacheContainer;
         private ObjectCache _CacheContainer;
 
+        public AppCache()
+        {
+        }
+
+        public AppCache(ObjectCache cacheContainer)
+            : this() => this._CacheContainer = cacheContainer;
+
+        public AppCache(string name)
+            : this(new MemoryCache(name))
+        {
+        }
+
         public ObjectCache CacheContainer => this._CacheContainer ?? (this._CacheContainer = new MemoryCache(Guid.NewGuid().ToString()));
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -25,18 +34,6 @@ namespace Mohammad.Primitives
         {
             get => this.CacheContainer[key];
             set => InnerSetToCache(this.CacheContainer, key, value, expirationDate);
-        }
-
-        public AppCache()
-        {
-        }
-
-        public AppCache(ObjectCache cacheContainer)
-            : this() => this._CacheContainer = cacheContainer;
-
-        public AppCache(string name)
-            : this(new MemoryCache(name))
-        {
         }
 
         public static void InitializeCacheContainer(ObjectCache defaultCacheContainer) => _DefaultCacheContainer = defaultCacheContainer;

@@ -14,18 +14,6 @@ namespace Mohammad.Win.Actions
         {
         }
 
-        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
-        {
-            if (this.returnedTypes == null)
-            {
-                this.returnedTypes = GetReturnedTypes(provider);
-            }
-
-            return base.EditValue(context, provider, value);
-        }
-
-        protected override Type[] CreateNewItemTypes() => this.returnedTypes;
-
         private static Type[] GetReturnedTypes(IServiceProvider provider)
         {
             var res = new List<Type>();
@@ -45,5 +33,17 @@ namespace Mohammad.Win.Actions
 
             return res.ToArray();
         }
+
+        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
+        {
+            if (this.returnedTypes == null)
+            {
+                this.returnedTypes = GetReturnedTypes(provider);
+            }
+
+            return base.EditValue(context, provider, value);
+        }
+
+        protected override Type[] CreateNewItemTypes() => this.returnedTypes;
     }
 }

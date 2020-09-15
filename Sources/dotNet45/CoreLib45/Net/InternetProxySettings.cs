@@ -1,6 +1,5 @@
 ﻿// Created on     2018/07/23
 
-
 using System.Text;
 using Mohammad.Net.Internals;
 

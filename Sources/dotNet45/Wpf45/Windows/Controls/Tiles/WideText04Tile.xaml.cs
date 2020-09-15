@@ -5,15 +5,15 @@
     /// </summary>
     public partial class WideText04Tile
     {
+        public WideText04Tile()
+        {
+            this.InitializeComponent();
+        }
+
         public string Header
         {
             get => this.textBlock1.Text;
             set => this.textBlock1.Text = value;
-        }
-
-        public WideText04Tile()
-        {
-            this.InitializeComponent();
         }
     }
 }

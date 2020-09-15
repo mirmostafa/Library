@@ -1,6 +1,5 @@
 // Created on     2018/07/23
 
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
