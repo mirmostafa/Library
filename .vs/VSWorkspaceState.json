@@ -6,13 +6,8 @@
     "\\Sources\\dotNet45\\CoreLib45",
     "\\Sources\\dotNet45\\CoreLib45\\Data",
     "\\Sources\\dotNet45\\CoreLib45\\Data\\SqlServer",
-    "\\Sources\\dotNet45\\CoreLib45\\Data\\SqlServer\\Dynamics",
-    "\\Sources\\dotNet45\\CoreLib45\\Helpers",
-    "\\Sources\\dotNet45\\CoreLib45\\Remoting",
-    "\\Sources\\dotNet45\\CoreLib45\\ServiceModel",
-    "\\Sources\\Tests",
-    "\\Sources\\Tests\\TestConsole45"
+    "\\Sources\\dotNet45\\CoreLib45\\Data\\SqlServer\\Dynamics"
   ],
-  "SelectedNode": "\\Sources\\dotNet45\\CoreLib45\\Helpers\\WcfHelper.cs",
+  "SelectedNode": "\\Sources\\dotNet45\\CoreLib45\\Data\\SqlServer\\Dynamics\\QueryBank.cs",
   "PreviewInSolutionExplorer": false
 }

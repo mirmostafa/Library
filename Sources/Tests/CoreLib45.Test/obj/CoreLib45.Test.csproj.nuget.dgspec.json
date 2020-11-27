@@ -1,24 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLib45.Test\\CoreLib45.Test.csproj": {}
+    "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLib45.Test\\CoreLib45.Test.csproj": {}
   },
   "projects": {
-    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj": {
+    "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
+        "projectUniqueName": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
         "projectName": "CoreLib45",
-        "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
-        "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
-        "outputPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\obj\\",
+        "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
+        "packagesPath": "C:\\Users\\Mirmostafa\\.nuget\\packages\\",
+        "outputPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -57,21 +57,21 @@
         }
       }
     },
-    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLib45.Test\\CoreLib45.Test.csproj": {
+    "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLib45.Test\\CoreLib45.Test.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLib45.Test\\CoreLib45.Test.csproj",
+        "projectUniqueName": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLib45.Test\\CoreLib45.Test.csproj",
         "projectName": "CoreLib45.Test",
-        "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLib45.Test\\CoreLib45.Test.csproj",
-        "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
-        "outputPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLib45.Test\\obj\\",
+        "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLib45.Test\\CoreLib45.Test.csproj",
+        "packagesPath": "C:\\Users\\Mirmostafa\\.nuget\\packages\\",
+        "outputPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLib45.Test\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -85,8 +85,8 @@
         "frameworks": {
           "net45": {
             "projectReferences": {
-              "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj": {
-                "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj"
+              "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj": {
+                "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj"
               }
             }
           }

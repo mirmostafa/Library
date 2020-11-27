@@ -1,10 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "F9KTADXcaNBz974SBDyo30d6JqffVH6Eq2D5/ce4dZmk7Oq34rdyaWVdhPztXRq9/S9Wpu0GGnytqghSvsEEmw==",
+  "dgSpecHash": "kMzxMixh/92E5lYp6QQZgNuQI4o+vf8gZc/ZpaOl8N+G4gn5agJHPBQ4ghjQ5BBgq/y0nQT6bGt3872mR/Wo5Q==",
   "success": true,
-  "projectFilePath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj",
+  "projectFilePath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\autofac\\5.2.0\\autofac.5.2.0.nupkg.sha512"
+    "C:\\Users\\Mirmostafa\\.nuget\\packages\\autofac\\5.2.0\\autofac.5.2.0.nupkg.sha512",
+    "C:\\Users\\Mirmostafa\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\3.0.1\\microsoft.aspnetcore.app.ref.3.0.1.nupkg.sha512",
+    "C:\\Users\\Mirmostafa\\.nuget\\packages\\microsoft.netcore.app.ref\\3.0.0\\microsoft.netcore.app.ref.3.0.0.nupkg.sha512",
+    "C:\\Users\\Mirmostafa\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.0.3\\microsoft.netcore.app.host.win-x64.3.0.3.nupkg.sha512",
+    "C:\\Users\\Mirmostafa\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\3.0.0\\microsoft.windowsdesktop.app.ref.3.0.0.nupkg.sha512"
   ],
   "logs": []
 }

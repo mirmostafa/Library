@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "X4Ch0/x/GWdJpYzK33644HIyZhGDwdLEGoONX5towrowlFNTN+VX9SrKYmKfMEiYJXRiFIrnKfKSiC/ZxtLaPw==",
+  "dgSpecHash": "K2/otc0ysiBtcwGKAjmJXpXvgG3x5brDlTNWIpMk4ASEbPzAZ4XAejEhIqgPDYozMwTi35D8WQzGyEXcTsikQA==",
   "success": true,
-  "projectFilePath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\CoreLib45APICodePack.csproj",
+  "projectFilePath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\CoreLib45APICodePack.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\microsoft.windowsapicodepack-core\\1.1.0.2\\microsoft.windowsapicodepack-core.1.1.0.2.nupkg.sha512",
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
+    "C:\\Users\\Mirmostafa\\.nuget\\packages\\microsoft.windowsapicodepack-core\\1.1.0.2\\microsoft.windowsapicodepack-core.1.1.0.2.nupkg.sha512",
+    "C:\\Users\\Mirmostafa\\.nuget\\packages\\system.valuetuple\\4.5.0\\system.valuetuple.4.5.0.nupkg.sha512"
   ],
   "logs": []
 }

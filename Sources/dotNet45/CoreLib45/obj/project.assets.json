@@ -98,24 +98,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\": {},
+    "C:\\Users\\Mirmostafa\\.nuget\\packages\\": {},
     "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Mirmostafa\\Sources\\my\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
+      "projectUniqueName": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
       "projectName": "CoreLib45",
-      "projectPath": "D:\\Mirmostafa\\Sources\\my\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
-      "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
-      "outputPath": "D:\\Mirmostafa\\Sources\\my\\Library\\Sources\\dotNet45\\CoreLib45\\obj\\",
+      "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj",
+      "packagesPath": "C:\\Users\\Mirmostafa\\.nuget\\packages\\",
+      "outputPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],

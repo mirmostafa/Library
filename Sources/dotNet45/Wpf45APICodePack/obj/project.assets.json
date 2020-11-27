@@ -397,24 +397,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\m.mirmostafa\\.nuget\\packages\\": {},
+    "C:\\Users\\Mirmostafa\\.nuget\\packages\\": {},
     "C:\\Microsoft\\Xamarin\\NuGet\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Wpf45APICodePack\\Wpf45APICodePack.csproj",
+      "projectUniqueName": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\Wpf45APICodePack\\Wpf45APICodePack.csproj",
       "projectName": "Wpf45APICodePack",
-      "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Wpf45APICodePack\\Wpf45APICodePack.csproj",
-      "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
-      "outputPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Wpf45APICodePack\\obj\\",
+      "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\Wpf45APICodePack\\Wpf45APICodePack.csproj",
+      "packagesPath": "C:\\Users\\Mirmostafa\\.nuget\\packages\\",
+      "outputPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\Wpf45APICodePack\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "fallbackFolders": [
         "C:\\Microsoft\\Xamarin\\NuGet\\"
       ],
       "configFilePaths": [
-        "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
       ],
@@ -428,14 +428,14 @@
       "frameworks": {
         "net452": {
           "projectReferences": {
-            "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\CoreLib45APICodePack.csproj": {
-              "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\CoreLib45APICodePack.csproj"
+            "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\CoreLib45APICodePack.csproj": {
+              "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45APICodePack\\CoreLib45APICodePack.csproj"
             },
-            "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj": {
-              "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj"
+            "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj": {
+              "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\CoreLib45\\CoreLib45.csproj"
             },
-            "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Wpf45\\Wpf45.csproj": {
-              "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\dotNet45\\Wpf45\\Wpf45.csproj"
+            "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\Wpf45\\Wpf45.csproj": {
+              "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\dotNet45\\Wpf45\\Wpf45.csproj"
             }
           }
         }

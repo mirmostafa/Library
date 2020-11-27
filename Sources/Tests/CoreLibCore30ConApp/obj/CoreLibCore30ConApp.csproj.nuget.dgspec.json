@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj": {}
+    "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj": {}
   },
   "projects": {
-    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj": {
+    "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj",
+        "projectUniqueName": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj",
         "projectName": "LibCore30.Core",
-        "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj",
-        "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
-        "outputPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\obj\\",
+        "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj",
+        "packagesPath": "C:\\Users\\Mirmostafa\\.nuget\\packages\\",
+        "outputPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -30,6 +30,7 @@
         },
         "frameworks": {
           "netcoreapp3.0": {
+            "targetAlias": "netcoreapp3.0",
             "projectReferences": {}
           }
         },
@@ -41,6 +42,7 @@
       },
       "frameworks": {
         "netcoreapp3.0": {
+          "targetAlias": "netcoreapp3.0",
           "dependencies": {
             "Autofac": {
               "target": "Package",
@@ -57,29 +59,43 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.0.1, 3.0.1]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[3.0.0, 3.0.0]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[3.0.0, 3.0.0]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj": {
+    "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj",
+        "projectUniqueName": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj",
         "projectName": "CoreLibCore30ConApp",
-        "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj",
-        "packagesPath": "C:\\Users\\m.mirmostafa\\.nuget\\packages\\",
-        "outputPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\obj\\",
+        "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\CoreLibCore30ConApp.csproj",
+        "packagesPath": "C:\\Users\\Mirmostafa\\.nuget\\packages\\",
+        "outputPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Tests\\CoreLibCore30ConApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
         ],
         "configFilePaths": [
-          "C:\\Users\\m.mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Mirmostafa\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
@@ -92,9 +108,10 @@
         },
         "frameworks": {
           "netcoreapp3.0": {
+            "targetAlias": "netcoreapp3.0",
             "projectReferences": {
-              "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj": {
-                "projectPath": "D:\\Mirmostafa\\Sources\\My\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj"
+              "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj": {
+                "projectPath": "D:\\Programming\\VS\\mirmostafa\\Library\\Sources\\Core\\Core30\\CoreLibCore30\\CoreLibCore30.csproj"
               }
             }
           }
@@ -107,6 +124,7 @@
       },
       "frameworks": {
         "netcoreapp3.0": {
+          "targetAlias": "netcoreapp3.0",
           "imports": [
             "net461",
             "net462",
@@ -117,12 +135,30 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[3.0.1, 3.0.1]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[3.0.3, 3.0.3]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[3.0.0, 3.0.0]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[3.0.0, 3.0.0]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.401\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
