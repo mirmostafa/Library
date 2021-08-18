@@ -3,8 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Library.Exceptions.Validations;
 
-namespace Library.Helpers
-    [DebuggerStepThrough]
+namespace Library.Helpers;
+[DebuggerStepThrough]
 public static class Check
 {
     public static void ArgumentBiggerThan(in int arg, in int min, in string argName)

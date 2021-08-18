@@ -283,14 +283,14 @@ public static class EnumerableHelper
         }
     }
 
-    //public static void ForEach<T>(this IEnumerable<T> items, in Action<T> action)
-    //{
-    //    Check.IfArgumentNotNull(items, nameof(items));
-    //    foreach (var item in items)
-    //    {
-    //        action?.Invoke(item);
-    //    }
-    //}
+    public static void ForEach<T>(this IEnumerable<T> items, in Action<T> action)
+    {
+        Check.IfArgumentNotNull(items, nameof(items));
+        foreach (var item in items)
+        {
+            action?.Invoke(item);
+        }
+    }
 
     public static void ForEachTreeNode<T>(T root, Func<T, IEnumerable<T>>? getChildren, Action<T>? rootAction, Action<T, T>? childAction)
         where T : class
