@@ -1,6 +1,4 @@
-﻿using Library.Helpers;
-
-namespace LibraryTest
+﻿namespace LibraryTest
 {
     [TestClass]
     public class EnumerableHelperTest

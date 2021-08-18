@@ -10,7 +10,7 @@
 		<Configurations>Debug;Release;Release Infra</Configurations>
 	</PropertyGroup>
 	<PropertyGroup>
-		<AssemblyName>Library</AssemblyName>
+		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<RootNamespace>Library</RootNamespace>
 	</PropertyGroup>
 

@@ -19,7 +19,6 @@ using HanyCo.Infra.CodeGeneration.UI.Wpf.Helpers;
 using HanyCo.Infra.CodeGeneration.UI.Wpf.Media;
 using Library.Helpers;
 using static Library.Coding.CodeHelper;
-using static Library.Coding.Functional;
 
 namespace WpfLibrary.Helpers;
 

@@ -78,7 +78,6 @@ public static partial class AdoHelper
     public static SqlCommand CreateCommand(this SqlConnection connection, string commandText, Action<SqlParameterCollection>? fillParams = null)
     {
         Check.IfArgumentNotNull(connection, nameof(connection));
-
         Check.IfArgumentNotNull(commandText, nameof(commandText));
 
         var result = connection.CreateCommand();

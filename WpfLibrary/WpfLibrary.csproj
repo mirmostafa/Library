@@ -3,6 +3,9 @@
   <PropertyGroup>
     <UseWPF>true</UseWPF>
     <Configurations>Debug;Release;Release Infra</Configurations>
+    <RootNamespace>Library</RootNamespace>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <Product>Library</Product>
   </PropertyGroup>
 
   <ItemGroup>

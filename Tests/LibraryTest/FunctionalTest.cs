@@ -19,11 +19,11 @@ public class FunctionalTest
     public void IfConditionTest()
     {
         var bolleanTest = true;
-        var trueResult =  bolleanTest.IfTrue(() => "true");
+        var trueResult = bolleanTest.IfTrue(() => "true");
         _ = bolleanTest.IfTrue(EmptyAction);
 
         bolleanTest = false;
-        var falseResult =  bolleanTest.IfFalse(() => "false");
+        var falseResult = bolleanTest.IfFalse(() => "false");
         _ = bolleanTest.IfFalse(EmptyAction);
 
         Assert.AreEqual("true", trueResult);
@@ -34,7 +34,7 @@ public class FunctionalTest
     public void FluentTest()
     {
         this.Fluent(EmptyAction);
-        var two = Fluent<int>(2,_ => { });
+        var two = Fluent<int>(2, _ => { });
         Assert.AreEqual(2, two);
     }
 
