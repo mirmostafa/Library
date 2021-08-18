@@ -18,6 +18,14 @@ public static class Functional
         }
         return @this;
     }
+    public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Action<TInstance> ifTrue)
+    {
+        if (b is true)
+        {
+            ifTrue?.Invoke(@this);
+        }
+        return @this;
+    }
 
     public static T? IfTrue<T>(this bool b, in Func<T> ifTrue, in T? defaultValue = default) => b is true ? ifTrue.Invoke() : defaultValue;
 
