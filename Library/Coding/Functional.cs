@@ -9,6 +9,16 @@ public static class Functional
         }
         return b;
     }
+
+    public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Action ifTrue)
+    {
+        if (b is true)
+        {
+            ifTrue?.Invoke();
+        }
+        return @this;
+    }
+
     public static T? IfTrue<T>(this bool b, in Func<T> ifTrue, in T? defaultValue = default) => b is true ? ifTrue.Invoke() : defaultValue;
 
     public static bool IfFalse(this bool b, in Action ifFalse)
@@ -27,18 +37,27 @@ public static class Functional
         return instance;
     }
 
-    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TResult> action)
-        => (instance, action.Invoke());
+    public static TInstance Fluent<TInstance>(in TInstance instance, in Action<TInstance> action)
+    {
+        action(instance);
+        return instance;
+    }
+
+    public static TInstance Fluent<TInstance>(in TInstance instance, in Action? action = null)
+    {
+        action?.Invoke();
+        return instance;
+    }
+
+    public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance> func) => func.Invoke();
+    public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance, TInstance> func) => func.Invoke(instance);
+
+    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TResult> func) => (instance, func.Invoke());
+    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TInstance, TResult> action) => (instance, action.Invoke(instance));
 
     public static async Task<TInstance> FluentAsync<TInstance>(this TInstance instance, Func<Task> action)
     {
         await action.Invoke();
-        return instance;
-    }
-
-    public static TInstance Fluent<TInstance>(in TInstance instance, in Action<TInstance>? action = null)
-    {
-        action?.Invoke(instance);
         return instance;
     }
 
