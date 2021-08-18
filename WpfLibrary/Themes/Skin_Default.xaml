@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Brush x:Key="HighlightBlockForeground">Red</Brush>
+    <Brush x:Key="HeadingTextBlockFoegound">RoyalBlue</Brush>
+    <Brush x:Key="IsDisabledForeground">#FF6D6D6D</Brush>
+    <Brush x:Key="AppTitleBlockForeground">Navy</Brush>
+    <Brush x:Key="SkinBackground">White</Brush>
+    <Brush x:Key="SkinForeground">Black</Brush>
+
+</ResourceDictionary>

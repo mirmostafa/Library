@@ -1,0 +1,41 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:System="clr-namespace:System;assembly=mscorlib">
+
+    <FontFamily x:Key="DefaultHeadingFontName">Segoe UI Semilight</FontFamily>
+    <FontFamily x:Key="DefaultHeadingBoldFontName">Segoe UI Semibold</FontFamily>
+    <FontFamily x:Key="DefaultFontName">Segoe UI</FontFamily>
+    <System:Double x:Key="DefaultFontSize">12</System:Double>
+    <System:Double x:Key="DefaultHeadingFontSize">28</System:Double>
+    <System:Double x:Key="DefaultLargeHeadingFontSize">52</System:Double>
+    <System:Double x:Key="DefaultVeryLargeHeadingFontSize">68</System:Double>
+    <Thickness x:Key="DefaultMargin">2</Thickness>
+    <FontFamily x:Key="CodingFontName">Fira Code</FontFamily>
+    <System:Double x:Key="CodingFontSize">12</System:Double>
+    <SolidColorBrush x:Key="CodingTextColor" Color="Blue" />
+    <!--
+        <FontFamily x:Key="DefaultBodyFontName">Segoe UI</FontFamily>
+        <System:Double x:Key="DefaultBodyFontSize">14</System:Double>
+    -->
+
+    <Thickness x:Key="Indent1">10,2,5,2</Thickness>
+    <Thickness x:Key="Indent2">20,2,5,2</Thickness>
+    <Thickness x:Key="Indent3">30,2,5,2</Thickness>
+    <Thickness x:Key="Indent4">40,2,5,2</Thickness>
+    <Thickness x:Key="Indent5">50,2,5,2</Thickness>
+    <Thickness x:Key="Indent6">60,2,5,2</Thickness>
+    <Thickness x:Key="Indent7">70,2,5,2</Thickness>
+    <Thickness x:Key="Indent8">80,2,5,2</Thickness>
+    <Thickness x:Key="Indent9">90,2,5,2</Thickness>
+    <System:Double x:Key="LabelWidth">80</System:Double>
+    <System:Double x:Key="ControlWidth">75</System:Double>
+    <System:Double x:Key="ControlHeight">27</System:Double>
+    <System:Double x:Key="ControlLongWidth">120</System:Double>
+    <System:Double x:Key="ContentControlLongWidth">240</System:Double>
+    <System:Double x:Key="ContentControlLongHeight">75</System:Double>
+    <GridLength x:Key="LabelColumn">80</GridLength>
+    <GridLength x:Key="LongLabelColumn">120</GridLength>
+    <System:Double x:Key="LongLabel">120</System:Double>
+
+</ResourceDictionary>

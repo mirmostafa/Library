@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:HanyCo.Infra.CodeGeneration.UI.Wpf">
+    <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" TargetType="Button">
+        <Setter Property="MinWidth" Value="50" />
+        <Setter Property="Height" Value="25" />
+    </Style>
+    <Style TargetType="{x:Type CheckBox}">
+        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="Margin" Value="10" />
+    </Style>
+    <Style TargetType="{x:Type TextBox}">
+        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="Margin" Value="10" />
+    </Style>
+    <Style TargetType="{x:Type ComboBox}">
+        <Setter Property="MinWidth" Value="200" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="Margin" Value="10" />
+    </Style>
+    <Style TargetType="{x:Type TextBlock}">
+        <Setter Property="MinWidth" Value="79" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style
+            x:Key="TitleText"
+            BasedOn="{StaticResource {x:Type TextBlock}}"
+            TargetType="{x:Type TextBlock}">
+        <Setter Property="Foreground" Value="Green" />
+    </Style>
+
+    <Style TargetType="{x:Type Button}">
+        <Setter Property="Width" Value="97" />
+        <Setter Property="Height" Value="25" />
+        <Setter Property="Margin" Value="10" />
+    </Style>
+    <Style x:Key="CodeTextBox" TargetType="TextBox">
+        <Setter Property="AcceptsReturn" Value="True" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="IsReadOnly" Value="True" />
+    </Style>
+</ResourceDictionary>
