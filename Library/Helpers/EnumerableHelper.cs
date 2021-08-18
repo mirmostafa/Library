@@ -58,7 +58,7 @@ public static class EnumerableHelper
     }
 
     public static TList AddRange<TList, TItem>(this TList list, in IEnumerable<TItem> items)
-        where TList : IList<TItem>
+        where TList : ICollection<TItem>
     {
         Check.IfArgumentNotNull(list, nameof(list));
         if (items?.Any() is true)
@@ -226,13 +226,13 @@ public static class EnumerableHelper
         return AddRange(collection, items);
     }
 
-    public static TList ClearAndAddRange<TList, TItem>(this TList collection, in IEnumerable<TItem> items)
-        where TList : IList<TItem>
+    public static TList ClearAndAddRange<TList, TItem>(this TList list, in IEnumerable<TItem> items)
+        where TList : ICollection<TItem>
     {
         Check.IfArgumentNotNull(items, nameof(items));
 
-        collection.Clear();
-        return AddRange(collection, items);
+        list.Clear();
+        return AddRange(list, items);
     }
 
     public static T AddRange<T>(T collection, IEnumerable items)

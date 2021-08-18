@@ -9,7 +9,7 @@ public static class QueryableHelper
     public static async Task<TResult?> FirstOrDefaultLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock)
         => await asyncLock.ArgumentNotNull(nameof(asyncLock)).LockAsync(async () => await query.ArgumentNotNull(nameof(query)).FirstOrDefaultAsync());
 
-    public static async Task<PagingResult<T>> ApplyPagingAsync<T>(this IQueryable<T> query, Paging? paging)
+    public static async Task<PagingResult<T>> ApplyPagingAsync<T>(this IQueryable<T> query, PagingParams? paging)
     {
         var total = await query.CountAsync();
         if (paging?.PageSize is null or 0)
