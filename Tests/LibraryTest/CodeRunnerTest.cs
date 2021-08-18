@@ -1,4 +1,4 @@
-﻿using Library;
+﻿using Library.Coding;
 
 namespace LibraryTest;
 [TestClass]

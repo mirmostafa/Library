@@ -18,8 +18,8 @@ using System.Windows.Threading;
 using HanyCo.Infra.CodeGeneration.UI.Wpf.Helpers;
 using HanyCo.Infra.CodeGeneration.UI.Wpf.Media;
 using Library.Helpers;
-using static Library.Helpers.CodeHelper;
-using static Library.Helpers.Functional;
+using static Library.Coding.CodeHelper;
+using static Library.Coding.Functional;
 
 namespace WpfLibrary.Helpers;
 

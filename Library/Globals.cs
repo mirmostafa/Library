@@ -4,8 +4,8 @@ global using System.Linq;
 global using System.Text;
 global using System.Threading.Tasks;
 global using Library.Helpers;
-global using static Library.Helpers.CodeHelper;
-global using static Library.Helpers.Functional;
+global using static Library.Coding.CodeHelper;
+global using static Library.Coding.Functional;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("WpfLibrary")]

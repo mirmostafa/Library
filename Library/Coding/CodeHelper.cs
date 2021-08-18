@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
 
-namespace Library.Helpers;
+namespace Library.Coding;
 public static class CodeHelper
 {
     public static async Task Async() => await Task.CompletedTask;
@@ -14,7 +14,7 @@ public static class CodeHelper
         => await Task.Run(action, cancellationToken);
 
     public static async Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default)
-        => await Task.Run(() => Check.ArgumentNotNull(action, nameof(action))(cancellationToken), cancellationToken);
+        => await Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
 
     /// <summary>
     ///     Breaks code execution.
@@ -27,7 +27,7 @@ public static class CodeHelper
         in ExceptionHandling? handling = null,
         bool throwException = false)
     {
-        Check.IfArgumentNotNull(tryMethod, nameof(tryMethod));
+        tryMethod.IfArgumentNotNull(nameof(tryMethod));
 
         handling?.Reset();
         try
@@ -83,8 +83,8 @@ public static class CodeHelper
         in ExceptionHandling? handling = null,
         bool throwException = false)
     {
-        Check.IfArgumentNotNull(tryAction, nameof(tryAction));
-        Check.IfArgumentNotNull(catchAction, nameof(catchAction));
+        tryAction.IfArgumentNotNull(nameof(tryAction));
+        catchAction.IfArgumentNotNull(nameof(catchAction));
 
         handling?.Reset();
         exception = null;

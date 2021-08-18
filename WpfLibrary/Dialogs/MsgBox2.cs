@@ -11,7 +11,7 @@ using Library.Exceptions;
 using Library.Helpers;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using WpfLibrary.Helpers;
-using static Library.Helpers.CodeHelper;
+using static Library.Coding.CodeHelper;
 
 namespace HanyCo.Infra.CodeGeneration.UI.Dialogs
 {

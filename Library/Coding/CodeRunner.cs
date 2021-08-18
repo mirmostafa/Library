@@ -1,4 +1,4 @@
-﻿namespace Library;
+﻿namespace Library.Coding;
 public class CodeRunner
 {
     private readonly List<Action> _Statements = new();

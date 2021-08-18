@@ -1,4 +1,4 @@
-﻿namespace Library.Helpers;
+﻿namespace Library.Coding;
 public static class Functional
 {
     public static bool IfTrue(this bool b, in Action ifTrue)
@@ -55,7 +55,7 @@ public static class Functional
         return @this;
     }
 
-    public static void Lock(this object? lockObject, Action action) => _ = Lock(lockObject, () =>
+    public static void Lock(this object? lockObject, Action action) => _ = lockObject.Lock(() =>
        {
            action.ArgumentNotNull()();
            return true;
@@ -73,8 +73,8 @@ public static class Functional
 
     public static IEnumerable<TResult> While<TResult>(Func<bool> predicate, Func<TResult> action, Action? onIterationDone = null)
     {
-        Check.IfArgumentNotNull(predicate, nameof(predicate));
-        Check.IfArgumentNotNull(action, nameof(action));
+        predicate.IfArgumentNotNull(nameof(predicate));
+        action.IfArgumentNotNull(nameof(action));
 
         while (predicate())
         {
@@ -86,7 +86,7 @@ public static class Functional
 
     public static void While(in Func<bool> predicate, in Action? action = null)
     {
-        Check.IfArgumentNotNull(predicate, nameof(predicate));
+        predicate.IfArgumentNotNull(nameof(predicate));
 
         while (predicate())
         {

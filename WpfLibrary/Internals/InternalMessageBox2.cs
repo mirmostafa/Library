@@ -9,7 +9,7 @@ using HanyCo.Infra.CodeGeneration.UI.Wpf.Internals;
 using Library.Helpers;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
-using static Library.Helpers.CodeHelper;
+using static Library.Coding.CodeHelper;
 
 namespace HanyCo.Infra.CodeGeneration.UI.Dialogs
 {

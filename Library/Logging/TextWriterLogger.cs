@@ -1,4 +1,6 @@
-﻿namespace Library.Logging
+﻿using Library.Coding;
+
+namespace Library.Logging
 {
     public sealed class TextWriterLogger : FastLoggerBase<string>, ILogger
     {

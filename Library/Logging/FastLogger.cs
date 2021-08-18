@@ -1,4 +1,5 @@
-﻿using Library.EventsArgs;
+﻿using Library.Coding;
+using Library.EventsArgs;
 
 namespace Library.Logging
 {
