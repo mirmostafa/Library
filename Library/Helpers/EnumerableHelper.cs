@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Runtime.CompilerServices;
-using Microsoft.EntityFrameworkCore;
 
 namespace Library.Helpers;
 public static class EnumerableHelper
@@ -414,24 +413,50 @@ public static class EnumerableHelper
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
          where TKey : notnull => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-    public static IEnumerable<T> ToEnumerable<T>(this IQueryable<T> query)
-    {
-        if (query is null)
-        {
-            yield break;
-        }
+    public static TList AddFluent<TList, TItem>(this TList list, TItem item)
+        where TList : ICollection<TItem> => list.ArgumentNotNull(nameof(list)).Fluent(() => list.Add(item));
 
-        foreach (var item in query)
+    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>(this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(asyncItems, nameof(asyncItems));
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
+            yield return action(item);
+        }
+    }
+    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>(this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(asyncItems, nameof(asyncItems));
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            action(item);
             yield return item;
         }
     }
 
-    public static async IAsyncEnumerable<TSource> ToEnumerableAsync<TSource>(this IQueryable<TSource> source, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public static async Task<List<TResult>> ToListAsync<TResult>(this IAsyncEnumerable<TResult> items, CancellationToken cancellationToken = default)
+        => await New<List<TResult>>().AddRangeAsync(items, cancellationToken);
+
+    public static async Task<TList> AddRangeAsync<TList, TResult>(this TList list, ConfiguredCancelableAsyncEnumerable<TResult> asyncItems)
+        where TList : ICollection<TResult>
     {
-        await foreach (var element in source.AsAsyncEnumerable().WithCancellation(cancellationToken))
+        Check.IfArgumentNotNull(list, nameof(list));
+        await foreach (var item in asyncItems)
         {
-            yield return element;
+            list.Add(item);
         }
+        return list;
     }
+
+    public static async Task<TList> AddRangeAsync<TList, TItem>(this TList list, IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
+        where TList : ICollection<TItem>
+    {
+        Check.IfArgumentNotNull(list, nameof(list));
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            list.Add(item);
+        }
+        return list;
+    }
+
 }
