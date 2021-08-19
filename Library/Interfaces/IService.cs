@@ -158,5 +158,5 @@ public interface IHierarchicalViewModelService<TViewModel> : IService
     IEnumerable<TViewModel> GetRootModels();
 }
 
-public record PagingParams(int PageIndex = 0, int? PageSize = null);
-public record PagingResult<T>(IReadOnlyList<T> Result, PagingParams? Paging, long TotalCount);
+public record PagingParams(in int PageIndex = 0, in int? PageSize = null);
+public record PagingResult<T>(IReadOnlyList<T> Result, in PagingParams? Paging, in long TotalCount);
