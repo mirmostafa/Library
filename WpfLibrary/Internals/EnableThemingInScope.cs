@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Security.Permissions;
 
-namespace HanyCo.Infra.CodeGeneration.UI.Wpf.Internals
+namespace HanyCo.Infra.UI.Wpf.Internals
 {
     [SuppressUnmanagedCodeSecurity]
     internal class EnableThemingInScope : IDisposable

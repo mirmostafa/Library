@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Library.Helpers;
 
-namespace HanyCo.Infra.CodeGeneration.UI.Wpf.Media
+namespace HanyCo.Infra.UI.Wpf.Media
 {
     public static class Animations
     {

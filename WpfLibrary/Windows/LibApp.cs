@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using HanyCo.Infra.CodeGeneration.UI.Dialogs;
-using HanyCo.Infra.CodeGeneration.UI.Wpf.Helpers;
+using HanyCo.Infra.UI.Dialogs;
+using HanyCo.Infra.UI.Wpf.Helpers;
 using Library;
 using Library.Exceptions;
 using Library.Helpers;

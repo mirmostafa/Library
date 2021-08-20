@@ -2,7 +2,7 @@
 using System.Windows;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
-namespace HanyCo.Infra.CodeGeneration.UI.Wpf.Helpers
+namespace HanyCo.Infra.UI.Wpf.Helpers
 {
     public static class TaskDialogHelper
     {

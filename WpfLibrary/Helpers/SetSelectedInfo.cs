@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Mohammad.Wpf.Helpers;
 
-namespace HanyCo.Infra.CodeGeneration.UI.Wpf.Helpers
+namespace HanyCo.Infra.UI.Wpf.Helpers
 {
     public record SetSelectedInfo<T>
     {

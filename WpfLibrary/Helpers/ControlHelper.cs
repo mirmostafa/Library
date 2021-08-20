@@ -15,8 +15,8 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using HanyCo.Infra.CodeGeneration.UI.Wpf.Helpers;
-using HanyCo.Infra.CodeGeneration.UI.Wpf.Media;
+using HanyCo.Infra.UI.Wpf.Helpers;
+using HanyCo.Infra.UI.Wpf.Media;
 using Library.Helpers;
 using static Library.Coding.CodeHelper;
 

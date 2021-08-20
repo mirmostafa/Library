@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using HanyCo.Infra.CodeGeneration.UI.Wpf.Helpers;
+using HanyCo.Infra.UI.Wpf.Helpers;
 
-namespace HanyCo.Infra.CodeGeneration.UI.Dialogs
+namespace HanyCo.Infra.UI.Dialogs
 {
     public static class MsgBox
     {

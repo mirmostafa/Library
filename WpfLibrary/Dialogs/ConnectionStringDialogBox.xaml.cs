@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using HanyCo.Infra.CodeGeneration.UI.Dialogs;
+using HanyCo.Infra.UI.Dialogs;
 using Library.Data.SqlServer.Dynamics;
 using Library.Exceptions.Validations;
 using Library.Helpers;
@@ -25,10 +25,10 @@ public partial class ConnectionStringDialog
 
     private ConnectionStringDialog() => this.InitializeComponent();
 
-    public static string? ShowDlg(string? connectionString = null, Window? owner = null)
+    public static (bool? IsOk, string? ConnectionString) ShowDlg(string? connectionString = null, Window? owner = null)
     {
         var dlg = new ConnectionStringDialog { ConnectionString = connectionString, Owner = owner };
-        return dlg.ShowDialog() is true ? dlg.ConnectionString : connectionString;
+        return (dlg.ShowDialog(), dlg.ShowDialog() is true ? dlg.ConnectionString : connectionString);
     }
 
     public string? ConnectionString
