@@ -1,6 +1,6 @@
-#pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 
 namespace Library.Helpers;
 
@@ -62,12 +62,12 @@ public static partial class AdoHelper
         return command.ExecuteReader(CommandBehavior.CloseConnection).Select<T>();
     }
 
-    public static bool CanConnect(this SqlConnection conn) => conn.TryConnect() == null;
+    public static bool CanConnect(this SqlConnection conn) => conn.TryConnectAsync() == null;
 
-    public static Exception? CheckConnectionString(string connectionString)
+    public static async Task<Exception?> CheckConnectionStringAsync(string connectionString)
     {
         using var conn = new SqlConnection(connectionString);
-        return conn.TryConnect();
+        return await conn.TryConnectAsync();
     }
 
     public static T CheckDbNull<T>(this SqlDataReader reader, string columnName, T defaultValue, Func<object, T> converter)
@@ -109,7 +109,6 @@ public static partial class AdoHelper
     public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<SqlConnection, TResult> action, bool openConnection = false)
     {
         Check.IfArgumentNotNull(connection, nameof(connection));
-
         Check.IfArgumentNotNull(action, nameof(action));
 
         try
@@ -132,17 +131,37 @@ public static partial class AdoHelper
         bool openConnection = false)
     {
         Check.IfArgumentNotNull(connection, nameof(connection));
-
         Check.IfArgumentNotNull(actionAsync, nameof(actionAsync));
 
         try
         {
             if (openConnection)
             {
-                connection.Open();
+                await connection.OpenAsync();
             }
 
             return await actionAsync(connection);
+        }
+        finally
+        {
+            connection.Close();
+        }
+    }
+    public static async Task EnsureClosedAsync(this SqlConnection connection,
+        Func<SqlConnection, Task> actionAsync,
+        bool openConnection = false)
+    {
+        Check.IfArgumentNotNull(connection, nameof(connection));
+        Check.IfArgumentNotNull(actionAsync, nameof(actionAsync));
+
+        try
+        {
+            if (openConnection)
+            {
+                await connection.OpenAsync();
+            }
+
+            await actionAsync(connection);
         }
         finally
         {
@@ -238,7 +257,7 @@ public static partial class AdoHelper
                 for (var index = 0; index < cmd.Parameters.Count; index++)
                 {
                     var parameter = cmd.Parameters[index];
-                    _ = cmdText.Append($"\t{Environment.NewLine}{parameter.ParameterName} = '{parameter.Value}'");
+                    _ = cmdText.Append(CultureInfo.InvariantCulture, $"\t{Environment.NewLine}{parameter.ParameterName} = '{parameter.Value}'");
                     if (index != cmd.Parameters.Count - 1)
                     {
                         _ = cmdText.Append(", ");
@@ -464,7 +483,7 @@ public static partial class AdoHelper
         ? throw new ArgumentNullException(nameof(row))
         : row[columnTitle] is null || StringHelper.IsEmpty(row[columnTitle].ToString()) || row[columnTitle] == DBNull.Value;
 
-    public static bool IsValidConnectionString(string connectionString) => CheckConnectionString(connectionString) == null;
+    public static bool IsValidConnectionString(string connectionString) => CheckConnectionStringAsync(connectionString) == null;
 
     /// <summary>
     ///     Selects the specified table.
@@ -563,8 +582,18 @@ public static partial class AdoHelper
             selectCommandText,
             fillParam);
 
-    public static Exception? TryConnect(this SqlConnection conn)
-        => Catch(() => conn.EnsureClosed(c => c.Open()));
+    public static async Task<Exception?> TryConnectAsync(this SqlConnection conn)
+    {
+        try
+        {
+            await conn.EnsureClosedAsync(c => c.OpenAsync());
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
+    }
 
     private static T InnerReaderSelect<T>(IDataReader reader, Func<T> creator)
     {
@@ -584,4 +613,3 @@ public static partial class AdoHelper
         return t;
     }
 }
-#pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
