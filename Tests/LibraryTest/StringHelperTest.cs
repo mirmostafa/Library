@@ -5,6 +5,8 @@ namespace LibraryTest
     [TestClass]
     public class StringHelperTest
     {
+        private const string text = "There 'a text', inside 'another text'. I want 'to find\" it.";
+
         [TestMethod]
         public void IsNullOrEmptyTest()
         {
@@ -41,6 +43,45 @@ namespace LibraryTest
 
             var cShartDeveloper = sliceStr.Slice(25);
             Assert.AreEqual(cShartDeveloper, "C# Developer.");
+        }
+
+        [TestMethod]
+        public void SinglarizeTest()
+        {
+            Assert.AreEqual("number", StringHelper.Singularize("numbers"));
+            Assert.AreEqual("case", StringHelper.Singularize("cases"));
+            Assert.AreEqual("handy", StringHelper.Singularize("handies"));
+            Assert.AreEqual("person", StringHelper.Singularize("people"));
+        }
+
+        [TestMethod]
+        public void SpaceTest() => Assert.AreEqual("     ", StringHelper.Space(5));
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void SpaceExceptionTest() => Assert.AreEqual("     ", StringHelper.Space(-5));
+
+        [TestMethod]
+        public void GetPhraseTest()
+        {
+            var result1 = text.GetPhrase(0, '\'', '\'');
+            Assert.AreEqual("a text", result1);
+
+            result1 = text.GetPhrase(0, '\'');
+            Assert.AreEqual("a text", result1);
+
+            var result2 = text.GetPhrase(1, '\'', '\'');
+            Assert.AreEqual("another text", result2);
+
+            var result3 = text.GetPhrase(1, 'q');
+            Assert.AreEqual(null, result3);
+        }
+
+        [TestMethod]
+        public void GetPhraseTest2()
+        {
+            var result4 = text.GetPhrase(0, '\'', '\"');
+            Assert.AreEqual("a text', inside 'another text'. I want 'to find\"", result4);
         }
     }
 }

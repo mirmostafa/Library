@@ -19,8 +19,8 @@ public static class StringHelper
 
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
-        var buffer = ignoreCase ? str.CheckNull(nameof(str)).ToLower(CultureInfo.CurrentCulture) : str.CheckNull(nameof(str));
-        var stat = ignoreCase ? value.CheckNull(nameof(value)).ToLower(CultureInfo.CurrentCulture) : value.CheckNull(nameof(value));
+        var buffer = ignoreCase ? str.ArgumentNotNull(nameof(str)).ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull(nameof(str));
+        var stat = ignoreCase ? value.ArgumentNotNull(nameof(value)).ToLower(CultureInfo.CurrentCulture) : value.ArgumentNotNull(nameof(value));
         var result = 0;
         int currentIndex;
         while ((currentIndex = buffer.IndexOf(stat, StringComparison.Ordinal)) != -1)
@@ -40,8 +40,6 @@ public static class StringHelper
 
     public static bool CheckAnyValidations(in string text, in Func<char, bool> regularValidate) => text.Any(regularValidate);
 
-    public static string CheckNull([NotNullWhen(true)] this string? obj, in string argName) => obj.IsNullOrEmpty() ? throw new ArgumentNullException(argName ?? throw new ArgumentNullException(nameof(argName))) : obj;
-
     public static string[] Compact(params string[] strings) => strings.Where(item => !item.IsNullOrEmpty()).ToArray();
 
     public static IEnumerable<string> Compact(this IEnumerable<string?>? strings) => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
@@ -51,8 +49,8 @@ public static class StringHelper
     public static string ConcatStrings(this IEnumerable<string> values) => string.Concat(values.ToArray());
 
     public static bool Contains(string str, in string value, bool ignoreCase = true) => ignoreCase
-        ? str.CheckNull(nameof(str)).ToLowerInvariant().Contains(value.CheckNull(nameof(value)).ToLowerInvariant())
-        : str.CheckNull(nameof(str)).Contains(value);
+        ? str.ArgumentNotNull(nameof(str)).ToLowerInvariant().Contains(value.ArgumentNotNull(nameof(value)).ToLowerInvariant())
+        : str.ArgumentNotNull(nameof(str)).Contains(value);
 
     public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase) => array.Any(s => s.CompareTo(str, ignoreCase) == 0);
 
@@ -86,7 +84,8 @@ public static class StringHelper
 
     public static bool EqualsToAny(this string str1, params string[] array) => array.Any(s => str1.EqualsTo(s));
 
-    public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';') => keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
+    public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';')
+        => keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
 
     public static string? GetLongest(this string[] strings) => strings?.Max();
 
@@ -101,7 +100,7 @@ public static class StringHelper
         int startIndex;
         int endIndex;
         int len;
-        (var lenOfStart, var succeed1) = str.TryLengthOf(start, index * 2);
+        (var lenOfStart, var succeed1) = str.TryCountOf(start, index * 2);
         if (!succeed1)
         {
             return null;
@@ -116,7 +115,7 @@ public static class StringHelper
         else
         {
             startIndex = index != 0 ? lenOfStart + 1 : str.IndexOf(start, 0) + 1;
-            (var lenOfEnd, var succeed2) = str.TryLengthOf(end, index * 2);
+            (var lenOfEnd, var succeed2) = str.TryCountOf(end, index * 2);
             if (!succeed2)
             {
                 return null;
@@ -257,7 +256,7 @@ public static class StringHelper
         return false;
     }
 
-    public static int LengthOf(this string str, in char c, int index)
+    public static int CountOf(this string str, in char c, int index)
     {
         if (index == 0)
         {
@@ -434,10 +433,7 @@ public static class StringHelper
 
     public static IEnumerable<string> Split(this string value, int groupSize)
     {
-        if (value == null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
+        Check.IfArgumentNotNull(value, nameof(value));
 
         for (var x = 0; x < value.Length; x += groupSize)
         {
@@ -523,7 +519,7 @@ public static class StringHelper
 
         if (correctPersianChars)
         {
-            value = value.ReplaceAll(((char)1610, (char)1740), ((char)1603, (char)1705)); // ی, ک
+            value = ArabicCharsToPersian(value);
         }
 
         return value;
@@ -559,10 +555,10 @@ public static class StringHelper
 
     public static string? Truncate(this string? value, in int length) => value?[..^length];
 
-    public static (int Result, bool Succeed) TryLengthOf(this string str, char c, int index)
+    public static (int Result, bool Succeed) TryCountOf(this string str, char c, int index)
     {
-        var result = CatchFunc(() => LengthOf(str, c, index), out var ex);
-        return (result, ex == null);
+        var result = CatchFunc(() => CountOf(str, c, index));
+        return (result.Result, result.Exception is null);
     }
 
     public static string Slice(this string s, in int start, in int? length = null)

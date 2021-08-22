@@ -11,8 +11,8 @@ public record struct Code : IEquatable<Code>
 
     public Code(in string name, in Language language, in string statement, in bool isPartial = false)
     {
-        this.Name = name.CheckNull(nameof(name));
-        this.Statement = statement.CheckNull(nameof(statement));
+        this.Name = name.ArgumentNotNull(nameof(name));
+        this.Statement = statement.ArgumentNotNull(nameof(statement));
         this.Language = language;
         this.IsPartial = isPartial;
         this._FileName = null;

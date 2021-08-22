@@ -76,33 +76,29 @@ public static class CodeHelper
     /// <param name="throwException"> if set to <c> true </c> [throw exception]. </param>
     /// <returns> </returns>
     /// <exception cref="ArgumentNullException"> tryAction or catchAction </exception>
-    public static TResult? CatchFunc<TResult>(in Func<TResult> tryAction,
-        in Func<Exception, TResult> catchAction,
-        out Exception? exception,
+    public static (TResult? Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> tryAction,
+        in Func<Exception, TResult>? catchAction = null,
         in Action? finallyAction = null,
         in ExceptionHandling? handling = null,
         bool throwException = false)
     {
         tryAction.IfArgumentNotNull(nameof(tryAction));
-        catchAction.IfArgumentNotNull(nameof(catchAction));
-
+        
         handling?.Reset();
-        exception = null;
         try
         {
-            return tryAction();
+            return (tryAction(), null);
         }
         catch (Exception ex)
         {
-            var result = catchAction(ex);
+            var result = catchAction is not null ? catchAction(ex) : default;
             handling?.HandleException(ex);
             if (throwException)
             {
                 throw;
             }
 
-            exception = ex;
-            return result;
+            return (result, ex);
         }
         finally
         {
@@ -110,35 +106,7 @@ public static class CodeHelper
         }
     }
 
-    /// <summary>
-    ///     Catches the exceptions the function.
-    /// </summary>
-    /// <typeparam name="TResult"> The type of the result. </typeparam>
-    /// <param name="tryAction"> The try action. </param>
-    /// <param name="exception"> The exception. </param>
-    /// <param name="defaultResult"> The default result. </param>
-    /// <param name="finallyAction"> The finally action. </param>
-    /// <param name="handling"> The handling. </param>
-    /// <param name="throwException"> if set to <c> true </c> [throw exception]. </param>
-    /// <returns> </returns>
-    public static TResult? CatchFunc<TResult>(in Func<TResult> tryAction,
-        out Exception? exception,
-        TResult? defaultResult = default,
-        in Action? finallyAction = null,
-        in ExceptionHandling? handling = null,
-        bool throwException = false)
-    {
-        var result = CatchFunc(tryAction,
-                ex => defaultResult,
-                out var buffer,
-                finallyAction,
-                handling,
-                throwException);
-        exception = buffer;
-        return result;
-    }
-
-    public static (TResult? Result, Exception? Exception) Catch<TResult>(Func<TResult> action)
+    public static (TResult? Result, Exception? Exception) Catch<TResult>(in Func<TResult> action)
     {
         try
         {
