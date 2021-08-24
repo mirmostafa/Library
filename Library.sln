@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A54916A1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryTest", "Tests\LibraryTest\LibraryTest.csproj", "{8BBFEE09-5506-4A44-92D6-EFB1CD10C57E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConApp", "Tests\TestConApp\TestConApp.csproj", "{6AFD469D-676C-4FDE-9EB1-7D5735066903}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,12 +38,19 @@ Global
 		{8BBFEE09-5506-4A44-92D6-EFB1CD10C57E}.Release Infra|Any CPU.Build.0 = Release Infra|Any CPU
 		{8BBFEE09-5506-4A44-92D6-EFB1CD10C57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BBFEE09-5506-4A44-92D6-EFB1CD10C57E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Release Infra|Any CPU.ActiveCfg = Release|Any CPU
+		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Release Infra|Any CPU.Build.0 = Release|Any CPU
+		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8BBFEE09-5506-4A44-92D6-EFB1CD10C57E} = {A54916A1-AF48-44CE-B567-E0DA62359D69}
+		{6AFD469D-676C-4FDE-9EB1-7D5735066903} = {A54916A1-AF48-44CE-B567-E0DA62359D69}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E41C98D7-44FE-4CA3-8633-5DC69ACF816E}
