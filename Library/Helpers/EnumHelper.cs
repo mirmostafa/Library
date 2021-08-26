@@ -235,6 +235,5 @@ namespace Library.Helpers
             : value;
 
         public static IEnumerable<TEnum> GetItems<TEnum>() where TEnum : Enum => Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
-        public static string FastToString<TEnum>(TEnum value) where TEnum : Enum => nameof(value);
     }
 }
