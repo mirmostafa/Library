@@ -5,36 +5,56 @@ using Library.DesignPatterns.Markers;
 namespace Library.Collections;
 
 [Fluent]
-public class FluentList<T> : IFluentList<FluentList<T>, T>
+public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
+    where TList : FluentListBase<TItem, TList>
 {
-    private readonly List<T> _List;
+    private readonly List<TItem> _List;
 
     public int Count => this._List.Count;
 
-    bool IFluentCollection<FluentList<T>, T>.IsReadOnly { get; }
+    bool IFluentCollection<TList, TItem>.IsReadOnly { get; }
 
-    public T this[int index] { get => this._List[index]; set => this._List[index] = value; }
+    public TItem this[int index] { get => this._List[index]; set => this._List[index] = value; }
 
-    private FluentList(List<T> list) => this._List = list;
-    private FluentList(IEnumerable<T> list) => this._List = new(list);
+    protected FluentListBase(List<TItem> list) => this._List = list;
+    protected FluentListBase(IEnumerable<TItem> list) => this._List = new(list);
+    protected FluentListBase(int capacity) => this._List = new(capacity);
+    protected FluentListBase() => this._List = new();
 
-    private FluentList() : this(new()) { }
+    public (TList List, int Result) IndexOf(TItem item) => (this.This, this._List.IndexOf(item));
+    public TList Insert(int index, TItem item) => this.This.Fluent(() => this._List.Insert(index, item));
+    public TList RemoveAt(int index) => this.This.Fluent(() => this._List.RemoveAt(index));
+    public TList Add(TItem item) => this.This.Fluent(() => this._List.Add(item));
+    public TList Clear() => this.This.Fluent(() => this._List.Clear());
+    public (TList List, bool Result) Contains(TItem item) => (this.This, this._List.Contains(item));
+    public TList CopyTo(TItem[] array, int arrayIndex) => this.This.Fluent(() => this._List.CopyTo(array, arrayIndex));
+    public (TList, bool) Remove(TItem item) => this.This.FluentByResult(() => this._List.Remove(item));
 
-    public static FluentList<T> Create() => new();
-    public static FluentList<T> Create(List<T> list) => new(list);
-    public static FluentList<T> Create(IEnumerable<T> list) => new(list);
-
-    public (FluentList<T> List, int Result) IndexOf(T item) => (this, this._List.IndexOf(item));
-    public FluentList<T> Insert(int index, T item) => this.Fluent(() => this._List.Insert(index, item));
-    public FluentList<T> RemoveAt(int index) => this.Fluent(() => this._List.RemoveAt(index));
-    public FluentList<T> Add(T item) => this.Fluent(() => this._List.Add(item));
-    public FluentList<T> Clear() => this.Fluent(() => this._List.Clear());
-    public (FluentList<T> List, bool Result) Contains(T item) => (this, this._List.Contains(item));
-    public FluentList<T> CopyTo(T[] array, int arrayIndex) => this.Fluent(() => this._List.CopyTo(array, arrayIndex));
-    public (FluentList<T>, bool) Remove(T item) => this.FluentByResult(() => this._List.Remove(item));
-
-    public IEnumerator<T> GetEnumerator() => this._List.GetEnumerator();
+    public IEnumerator<TItem> GetEnumerator() => this._List.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this._List).GetEnumerator();
 
-    public static implicit operator List<T>(in FluentList<T> wrapper) => wrapper._List;
+    public List<TItem> AsList() => this._List;
+
+    private TList This => this.As<TList>()!;
+}
+public class FluentList<TItem> : FluentListBase<TItem, FluentList<TItem>>, IFluentList<FluentList<TItem>, TItem>
+{
+    protected FluentList()
+    {
+    }
+
+    protected FluentList(List<TItem> list) : base(list)
+    {
+    }
+
+    protected FluentList(IEnumerable<TItem> list) : base(list)
+    {
+    }
+
+    public static FluentList<TItem> Create() => new();
+    public static FluentList<TItem> Create(List<TItem> list) => new(list);
+    public static FluentList<TItem> Create(IEnumerable<TItem> list) => new(list);
+
+    public static implicit operator List<TItem>(in FluentList<TItem> fluentList) => fluentList.AsList();
+
 }

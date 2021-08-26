@@ -5,9 +5,18 @@ namespace Library.Data.SqlServer;
 [Fluent]
 public class ConnectionStringBuilder
 {
-    private readonly SqlConnectionStringBuilder _builder = new();
+    private readonly SqlConnectionStringBuilder _builder;
 
-    public static ConnectionStringBuilder Create() => new();
+    private ConnectionStringBuilder()
+        => this._builder = new();
+    private ConnectionStringBuilder(string connectionString)
+        => this._builder = new(connectionString);
+
+    public static ConnectionStringBuilder Create()
+        => new();
+    public static ConnectionStringBuilder WithConnectionString(string value)
+        => new(value);
+
     public ConnectionStringBuilder WithDataBase(string value)
         => this.Fluent(() => this._builder.DataSource = value);
     public ConnectionStringBuilder AsUserName(string value)
@@ -32,31 +41,36 @@ public class ConnectionStringBuilder
         => this.Fluent(() => this._builder.Encrypt = value);
     public ConnectionStringBuilder IsUserInstance(bool value)
         => this.Fluent(() => this._builder.UserInstance = value);
+    public ConnectionStringBuilder IsReadOnly(bool value)
+        => this.Fluent(() => this._builder.ApplicationIntent = value ? ApplicationIntent.ReadOnly : ApplicationIntent.ReadWrite);
     public string Build() => this._builder.ConnectionString;
 
-    public static string Build(string dataSource,
-        string? userId = null,
+    public static string Build(string server,
+        string? userName = null,
         string? password = null,
-        string? initialCatalog = null,
-        bool? integratedSecurity = null,
-        bool? persistSecurityInfo = null,
+        string? database = null,
+        bool? isIntegratedSecurity = null,
+        bool? shouldPersistSecurityInfo = null,
         int? connectTimeout = 30,
         string? attachDbFilename = null,
         string? applicationName = null,
-        bool? multipleActiveResultSets = null,
-        bool? encrypt = null,
-        bool? userInstance = null) =>
+        bool? hasMultipleActiveResultSets = null,
+        bool? isEncrypt = null,
+        bool? isUserInstance = null,
+        bool? isReadOnly = null) =>
             Create()
-           .ForServer(dataSource)
-           .IfTrue(!userId.IsNullOrEmpty(), builder => builder.AsUserName(userId!))
-           .IfTrue(!initialCatalog.IsNullOrEmpty(), builder => builder.WithDataBase(initialCatalog!))
-           .IfTrue(integratedSecurity.HasValue, builder => builder.IsIntegratedSecurity(integratedSecurity!.Value))
-           .IfTrue(persistSecurityInfo.HasValue, builder => builder.ShouldPersistSecurityInfo(persistSecurityInfo!.Value))
+           .ForServer(server)
+           .IfTrue(!userName.IsNullOrEmpty(), builder => builder.AsUserName(userName!))
+           .IfTrue(!password.IsNullOrEmpty(), builder => builder.AsUserName(password!))
+           .IfTrue(!database.IsNullOrEmpty(), builder => builder.WithDataBase(database!))
+           .IfTrue(isIntegratedSecurity.HasValue, builder => builder.IsIntegratedSecurity(isIntegratedSecurity!.Value))
+           .IfTrue(shouldPersistSecurityInfo.HasValue, builder => builder.ShouldPersistSecurityInfo(shouldPersistSecurityInfo!.Value))
            .IfTrue(connectTimeout.HasValue, builder => builder.WithConnectTimeout(connectTimeout!.Value))
-           .IfTrue(!attachDbFilename.IsNullOrEmpty(), builder => builder.WithDataBase(attachDbFilename!))
-           .IfTrue(!applicationName.IsNullOrEmpty(), builder => builder.WithDataBase(applicationName!))
-           .IfTrue(multipleActiveResultSets.HasValue, builder => builder.HasMultipleActiveResultSets(multipleActiveResultSets!.Value))
-           .IfTrue(encrypt.HasValue, builder => builder.IsEncrypted(encrypt!.Value))
-           .IfTrue(userInstance.HasValue, builder => builder.IsUserInstance(userInstance!.Value))
+           .IfTrue(!attachDbFilename.IsNullOrEmpty(), builder => builder.AttachDbFilename(attachDbFilename!))
+           .IfTrue(!applicationName.IsNullOrEmpty(), builder => builder.ApplicationName(applicationName!))
+           .IfTrue(hasMultipleActiveResultSets.HasValue, builder => builder.HasMultipleActiveResultSets(hasMultipleActiveResultSets!.Value))
+           .IfTrue(isEncrypt.HasValue, builder => builder.IsEncrypted(isEncrypt!.Value))
+           .IfTrue(isUserInstance.HasValue, builder => builder.IsUserInstance(isUserInstance!.Value))
+           .IfTrue(isReadOnly.HasValue, builder => builder.IsReadOnly(isReadOnly!.Value))
            .Build();
 }
