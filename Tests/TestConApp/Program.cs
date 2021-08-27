@@ -6,7 +6,7 @@ internal class Program
     {
         var dto = new Models.ProductDto { };
 
-        var vm = new ExampleViewModel();
+        var vm = new AutoNotifyTestModel();
         var text = vm.Text;
         Console.WriteLine($"Text = {text}");
         var count = vm.Count;

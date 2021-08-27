@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-namespace SourceGeneratorSamples;
+namespace Library.SourceGenerator;
 
 [Generator]
 public class AutoNotifyGenerator : ISourceGenerator
@@ -44,7 +44,7 @@ internal sealed class AutoNotifyAttribute : Attribute
         }
 
         // get the added attribute, and INotifyPropertyChanged
-        var attributeSymbol = context.Compilation.GetTypeByMetadataName("AutoNotify.AutoNotifyAttribute");
+        var attributeSymbol = context.Compilation.GetTypeByMetadataName("Library.SourceGenerator.Contracts.AutoNotifyAttribute");
         var notifySymbol = context.Compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
         // group the fields by class, and generate the source
@@ -165,7 +165,7 @@ public {fieldType} {propertyName}
                 {
                     // Get the symbol being declared by the field, and keep it if its annotated
                     var fieldSymbol = context.SemanticModel.GetDeclaredSymbol(variable) as IFieldSymbol;
-                    if (fieldSymbol.GetAttributes().Any(ad => ad.AttributeClass.ToDisplayString() == "AutoNotify.AutoNotifyAttribute"))
+                    if (fieldSymbol.GetAttributes().Any(ad => ad.AttributeClass.ToDisplayString() == "Library.SourceGenerator.Contracts.AutoNotifyAttribute"))
                     {
                         this.Fields.Add(fieldSymbol);
                     }

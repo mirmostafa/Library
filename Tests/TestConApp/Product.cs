@@ -10,7 +10,7 @@ public class Product
     public string Description { get; set; }
 }
 
-public partial class ExampleViewModel
+public partial class AutoNotifyTestModel
 {
     [AutoNotify]
     private string _Text = "private field text";
