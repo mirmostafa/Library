@@ -2,6 +2,7 @@
 using Library.DesignPatterns.Markers;
 
 namespace Library.Data.SqlServer;
+
 [Fluent]
 public class ConnectionStringBuilder
 {
@@ -14,7 +15,7 @@ public class ConnectionStringBuilder
 
     public static ConnectionStringBuilder Create()
         => new();
-    public static ConnectionStringBuilder WithConnectionString(string value)
+    public static ConnectionStringBuilder Create(string value)
         => new(value);
 
     public ConnectionStringBuilder WithDataBase(string value)
@@ -43,7 +44,13 @@ public class ConnectionStringBuilder
         => this.Fluent(() => this._builder.UserInstance = value);
     public ConnectionStringBuilder IsReadOnly(bool value)
         => this.Fluent(() => this._builder.ApplicationIntent = value ? ApplicationIntent.ReadOnly : ApplicationIntent.ReadWrite);
-    public string Build() => this._builder.ConnectionString;
+    public string Build()
+        => this._builder.ConnectionString;
+
+    public void Validate() { }
+    public static void Validate(string connectionString) =>
+         Create(connectionString)
+        .Validate();
 
     public static string Build(string server,
         string? userName = null,
@@ -73,4 +80,5 @@ public class ConnectionStringBuilder
            .IfTrue(isUserInstance.HasValue, builder => builder.IsUserInstance(isUserInstance!.Value))
            .IfTrue(isReadOnly.HasValue, builder => builder.IsReadOnly(isReadOnly!.Value))
            .Build();
+
 }
