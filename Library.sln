@@ -11,7 +11,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A54916A1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LibraryTest", "Tests\LibraryTest\LibraryTest.csproj", "{8BBFEE09-5506-4A44-92D6-EFB1CD10C57E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConApp", "Tests\TestConApp\TestConApp.csproj", "{6AFD469D-676C-4FDE-9EB1-7D5735066903}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConApp", "Tests\TestConApp\TestConApp.csproj", "{6AFD469D-676C-4FDE-9EB1-7D5735066903}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator", "SourceGenerator\SourceGenerator.csproj", "{BED49594-032C-4F17-9633-DE5A19826558}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceGeneratorContracts", "SourceGeneratorContracts\SourceGeneratorContracts.csproj", "{396094FA-38D7-48BE-B640-00B78CCA70DD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +48,18 @@ Global
 		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Release Infra|Any CPU.Build.0 = Release|Any CPU
 		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BED49594-032C-4F17-9633-DE5A19826558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BED49594-032C-4F17-9633-DE5A19826558}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BED49594-032C-4F17-9633-DE5A19826558}.Release Infra|Any CPU.ActiveCfg = Release|Any CPU
+		{BED49594-032C-4F17-9633-DE5A19826558}.Release Infra|Any CPU.Build.0 = Release|Any CPU
+		{BED49594-032C-4F17-9633-DE5A19826558}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BED49594-032C-4F17-9633-DE5A19826558}.Release|Any CPU.Build.0 = Release|Any CPU
+		{396094FA-38D7-48BE-B640-00B78CCA70DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{396094FA-38D7-48BE-B640-00B78CCA70DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{396094FA-38D7-48BE-B640-00B78CCA70DD}.Release Infra|Any CPU.ActiveCfg = Release|Any CPU
+		{396094FA-38D7-48BE-B640-00B78CCA70DD}.Release Infra|Any CPU.Build.0 = Release|Any CPU
+		{396094FA-38D7-48BE-B640-00B78CCA70DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{396094FA-38D7-48BE-B640-00B78CCA70DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

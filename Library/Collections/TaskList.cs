@@ -16,7 +16,7 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
     public TaskList()
         => this._CancellationTokenSource = new CancellationTokenSource();
 
-    public static TaskList New => new();
+    public static TaskList New() => new();
 
     public bool IsCancellationRequested => this._CancellationTokenSource.IsCancellationRequested;
 
