@@ -10,6 +10,14 @@ namespace Library.SourceGenerator;
 [Generator]
 public class ModelDtoGenerator : ISourceGenerator
 {
+    private const string attributeText = @"
+namespace Library.SourceGenerator.Contracts;
+
+[AttributeUsage(AttributeTargets.Class)]
+public sealed class GenerateDtoAttribute : System.Attribute
+{
+    public string? DtoClassName { get; set; }
+}";
     public void Execute(GeneratorExecutionContext context)
     {
         var syntaxTrees = context.Compilation.SyntaxTrees;
@@ -33,7 +41,7 @@ namespace Models
 ");
 
                 sourceBuilder.AppendLine(splitClass[1].Replace(className, dtoClassName));
-                sourceBuilder.AppendLine("}");
+                sourceBuilder.AppendLine("    }");
                 context.AddSource($"{dtoClassName}.Generated.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
                 Debug.WriteLine($"{dtoClassName} generated.");
             }
@@ -41,11 +49,12 @@ namespace Models
     }
     public void Initialize(GeneratorInitializationContext context)
     {
-        //#if DEBUG
-        //        if (!Debugger.IsAttached)
-        //        {
-        //            Debugger.Launch();
-        //        }
-        //#endif
+        context.RegisterForPostInitialization((i) => i.AddSource("AutoNotifyAttribute", attributeText));
+#if DEBUG1
+        if (!Debugger.IsAttached)
+        {
+            Debugger.Launch();
+        }
+#endif
     }
 }
