@@ -3,7 +3,7 @@
     [TestClass]
     public class EnumerableHelperTest
     {
-        [TestMethod]
+        //[TestMethod]
         public void AddRangeAsyncTest()
         {
             //var numberQuery = Enumerable.Range(1, 10).AsQueryable();

@@ -26,7 +26,7 @@ public class ModelDtoGenerator : ISourceGenerator
                 var dtoClassName = $"{className}Dto";
                 var splitClass = generateDtoClass.ToString().Split(new[] { '{' }, 2);
                 sourceBuilder.Append($@"
-namespace GeneratedMappers
+namespace Models
 {{
     public class {dtoClassName}
     {{
@@ -34,19 +34,18 @@ namespace GeneratedMappers
 
                 sourceBuilder.AppendLine(splitClass[1].Replace(className, dtoClassName));
                 sourceBuilder.AppendLine("}");
-                context.AddSource($"MapperGenerator_{dtoClassName}", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
-
-
+                context.AddSource($"{dtoClassName}.Generated.cs", SourceText.From(sourceBuilder.ToString(), Encoding.UTF8));
+                Debug.WriteLine($"{dtoClassName} generated.");
             }
         }
     }
     public void Initialize(GeneratorInitializationContext context)
     {
-#if DEBUG
-        if (!Debugger.IsAttached)
-        {
-            Debugger.Launch();
-        }
-#endif
+        //#if DEBUG
+        //        if (!Debugger.IsAttached)
+        //        {
+        //            Debugger.Launch();
+        //        }
+        //#endif
     }
 }

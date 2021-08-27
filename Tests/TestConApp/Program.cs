@@ -1,6 +1,9 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿namespace TestConApp;
 
-using TestConApp;
-
-Console.WriteLine("Hello, World!");
-//var dto = new ProductDto();
+internal class Program
+{
+    public static void Main()
+    {
+        var dto = new Models.ProductDto { };
+    }
+}
