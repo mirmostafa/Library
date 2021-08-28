@@ -49,12 +49,16 @@ namespace Models
     }
     public void Initialize(GeneratorInitializationContext context)
     {
-        context.RegisterForPostInitialization((i) => i.AddSource("AutoNotifyAttribute", attributeText));
 #if DEBUG1
         if (!Debugger.IsAttached)
         {
             Debugger.Launch();
         }
 #endif
+        // Register the attribute source
+        context.RegisterForPostInitialization((i) => i.AddSource("GenerateDtoAttribute", attributeText));
+
+        // Register a syntax receiver that will be created for each generation pass
+        context.RegisterForSyntaxNotifications(() => new SyntaxReceiver("Library.SourceGenerator.Contracts.GenerateDtoAttribute"));
     }
 }

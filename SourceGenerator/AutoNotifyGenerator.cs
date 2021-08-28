@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 namespace Library.SourceGenerator;
 
 [Generator]
-public class AutoNotifyGenerator : ISourceGenerator
+public class AutoNotifyGenerator : AttibuteBasedGeneratorBase
 {
     private const string attributeText = @"
 namespace Library.SourceGenerator.Contracts;
@@ -24,34 +22,23 @@ internal sealed class AutoNotifyAttribute : Attribute
     }
     public string PropertyName { get; set; }
 }";
+    private const string _Attribute = "Library.SourceGenerator.Contracts.AutoNotifyAttribute";
 
-
-    public void Initialize(GeneratorInitializationContext context)
+    public AutoNotifyGenerator()
+        : base(_Attribute, attributeText)
     {
-        // Register the attribute source
-        context.RegisterForPostInitialization((i) => i.AddSource("AutoNotifyAttribute", attributeText));
-
-        // Register a syntax receiver that will be created for each generation pass
-        context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
     }
-
-    public void Execute(GeneratorExecutionContext context)
+    protected override void OnExecuting(GeneratorExecutionContext context, SyntaxReceiver receiver)
     {
-        // retrieve the populated receiver 
-        if (context.SyntaxContextReceiver is not SyntaxReceiver receiver)
-        {
-            return;
-        }
-
         // get the added attribute, and INotifyPropertyChanged
-        var attributeSymbol = context.Compilation.GetTypeByMetadataName("Library.SourceGenerator.Contracts.AutoNotifyAttribute");
+        var attributeSymbol = context.Compilation.GetTypeByMetadataName(this._Attribute);
         var notifySymbol = context.Compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
         // group the fields by class, and generate the source
         foreach (var group in receiver.Fields.GroupBy(f => f.ContainingType))
         {
             var classSource = this.ProcessClass(group.Key, group.ToList(), attributeSymbol, notifySymbol, context);
-            context.AddSource($"{group.Key.Name}_autoNotify.cs", SourceText.From(classSource, Encoding.UTF8));
+            context.AddSource($"{group.Key.Name}.Generated.cs", SourceText.From(classSource, Encoding.UTF8));
         }
     }
 
@@ -141,36 +128,6 @@ public {fieldType} {propertyName}
             }
 
             return fieldName.Substring(0, 1).ToUpper() + fieldName.Substring(1);
-        }
-
-    }
-
-    /// <summary>
-    /// Created on demand before each generation pass
-    /// </summary>
-    private class SyntaxReceiver : ISyntaxContextReceiver
-    {
-        public List<IFieldSymbol> Fields { get; } = new List<IFieldSymbol>();
-
-        /// <summary>
-        /// Called for every syntax node in the compilation, we can inspect the nodes and save any information useful for generation
-        /// </summary>
-        public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
-        {
-            // any field with at least one attribute is a candidate for property generation
-            if (context.Node is FieldDeclarationSyntax fieldDeclarationSyntax
-                && fieldDeclarationSyntax.AttributeLists.Count > 0)
-            {
-                foreach (var variable in fieldDeclarationSyntax.Declaration.Variables)
-                {
-                    // Get the symbol being declared by the field, and keep it if its annotated
-                    var fieldSymbol = context.SemanticModel.GetDeclaredSymbol(variable) as IFieldSymbol;
-                    if (fieldSymbol.GetAttributes().Any(ad => ad.AttributeClass.ToDisplayString() == "Library.SourceGenerator.Contracts.AutoNotifyAttribute"))
-                    {
-                        this.Fields.Add(fieldSymbol);
-                    }
-                }
-            }
         }
     }
 }

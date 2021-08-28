@@ -83,7 +83,7 @@ public static class CodeHelper
         bool throwException = false)
     {
         tryAction.IfArgumentNotNull(nameof(tryAction));
-        
+
         handling?.Reset();
         try
         {
@@ -186,6 +186,17 @@ public static class CodeHelper
     /// </summary>
     /// <returns> </returns>
     public static MethodBase? GetCurrentMethod() => GetCallerMethod();
+
+    public static TypePath ExtractTypePath(string? typePath)
+    {
+        if (typePath.IsNullOrEmpty())
+        {
+            return default;
+        }
+
+        var dotLastIndex = typePath.LastIndexOf('.');
+        return dotLastIndex == -1 ? new(typePath, null) : new(typePath.Substring(dotLastIndex), typePath.Substring(dotLastIndex - 1));
+    }
 
     /// <summary>
     ///     Gets the delegate.
