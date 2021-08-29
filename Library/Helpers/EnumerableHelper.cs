@@ -232,7 +232,7 @@ public static class EnumerableHelper
         Check.IfArgumentNotNull(items, nameof(items));
 
         list.Clear();
-        return AddRange(list, items);
+        return list.AddRange(items);
     }
 
     public static T AddRange<T>(T collection, IEnumerable items)

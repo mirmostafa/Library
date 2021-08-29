@@ -302,11 +302,13 @@
         <Setter Property="Orientation" Value="Horizontal" />
     </Style>
 
+    <!--BasedOn="{StaticResource CommandPanel}"-->
     <Style
         x:Key="PageCommandPanel"
         BasedOn="{StaticResource CommandPanel}"
         TargetType="StackPanel">
-        <Setter Property="DockPanel.Dock" Value="Left" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Margin" Value="10" />
     </Style>
 
     <Style

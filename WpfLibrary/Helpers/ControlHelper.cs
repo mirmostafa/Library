@@ -197,6 +197,7 @@ public static class ControlHelper
         CoerceValueCallback? coerceValueCallback = null,
         TType? defaultValue = default) where TOwnerType : class
     {
+
         return coerceValueCallback is null
             ? DependencyProperty.Register(
                 propertyName,

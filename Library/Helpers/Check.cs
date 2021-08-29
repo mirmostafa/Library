@@ -40,6 +40,13 @@ public static class Check
     public static void IfArgumentNotNull<T>([NotNull] this string? obj, string? argName = null)
         => _ = NotValid(obj, StringHelper.IsNullOrEmpty, () => new ArgumentNullException(argName))!;
 
+    /// <summary>
+    /// Makes sure the specified argument is not null.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="obj"></param>
+    /// <param name="argName"></param>
+    /// <exception cref="ArgumentNullException"/>
     public static void IfArgumentNotNull<T>([NotNull] this T? obj, string argName)
         => _ = NotValid(obj, x => x is null, () => new ArgumentNullException(argName))!;
 
