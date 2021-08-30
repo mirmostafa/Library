@@ -5,6 +5,6 @@ public class EnumHelperTest
     [TestMethod]
     public void GetStringTest()
     {
-        
+
     }
 }

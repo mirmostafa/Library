@@ -1,5 +1,3 @@
-using Library.Helpers;
-
 namespace LibraryTest
 {
     [TestClass]

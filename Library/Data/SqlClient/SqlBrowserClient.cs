@@ -2,107 +2,104 @@
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 
-namespace Library.Data.SqlClient
+namespace Library.Data.SqlClient;
+
+public static class SqlBrowserClient
 {
-    public static class SqlBrowserClient
+    private const int SQL_BROWSER_PORT = 1434;
+
+    private static readonly byte[] _getInstancesMessage = new byte[1] { 2 };
+    private static IEnumerable<SqlInstance> instances;
+
+    public static IEnumerable<SqlInstance> Instances
     {
-        private const int SQL_BROWSER_PORT = 1434;
-
-        private static readonly byte[] _getInstancesMessage = new byte[1] { 2 };
-        private static IEnumerable<SqlInstance> instances;
-
-        public static IEnumerable<SqlInstance> Instances
+        get
         {
-            get
+            if (instances is null)
             {
-                if (instances is null)
-                {
-                    GetInstances();
-                }
-
-                return instances;
+                InitInstances();
             }
+
+            return instances;
         }
-
-
-        private static void GetInstances()
-        {
-            using var client = new UdpBroadcastMessage(SQL_BROWSER_PORT, _getInstancesMessage, new TimeSpan(0, 0, 5));
-
-            var responses = client.GetResponse();
-            instances = ParseBrowserResponses(responses);
-        }
-
-        private static IEnumerable<SqlInstance> ParseBrowserResponses(IEnumerable<string> responses)
-        {
-            var parserRegex = new Regex(@"[^;]*ServerName;(?<ServerName>[\w\d]+);InstanceName;(?<InstanceName>[\w\d]+);IsClustered;(?<IsClustered>[\w]+);Version;(?<Version>[\d]+\.[\d]+\.[\d]+\.[\d]+)(;tcp;(?<tcp>\d+))?(;np;(?<np>[^;]+))?;;");
-            var instances = new List<SqlInstance>();
-            return responses
-                .SelectMany(s => parserRegex.Matches(s))
-                .Select(MapFromMatch);
-        }
-
-        private static SqlInstance MapFromMatch(Match match) => new SqlInstance(match.Groups["ServerName"].Captures[0].Value,
-                match.Groups["InstanceName"].Captures[0].Value,
-                match.Groups["IsClustered"].Captures[0].Value != "No",
-                match.Groups["Version"].Captures[0].Value,
-                match.Groups["tcp"].Captures.Count > 0 ? int.Parse(match.Groups["tcp"].Captures[0].Value) : 0,
-                match.Groups["np"].Captures.Count > 0 ? match.Groups["np"].Captures[0].Value : string.Empty);
     }
 
-    public record SqlInstance(string ServerName, string InstanceName, bool IsClustered, string Version, int TcpPort, string NamedPipe);
 
-    internal class UdpBroadcastMessage : IDisposable
+    private static void InitInstances()
     {
-        private const int SOCKET_TIMEOUT_EXCEPTION_CODE = 10060;
+        using var client = new UdpBroadcastMessage(SQL_BROWSER_PORT, _getInstancesMessage, new TimeSpan(0, 0, 5));
 
-        private readonly int _port;
-        private readonly byte[] _message;
-        private readonly UdpClient _udpClient;
-        private readonly CancellationTokenSource _cancellation;
+        var responses = client.GetResponse();
+        instances = ParseBrowserResponses(responses);
+    }
 
-        public UdpBroadcastMessage(int port, byte[] message, TimeSpan timeout)
+    private static IEnumerable<SqlInstance> ParseBrowserResponses(IEnumerable<string> responses)
+    {
+        var parserRegex = new Regex(@"[^;]*ServerName;(?<ServerName>[\w\d]+);InstanceName;(?<InstanceName>[\w\d]+);IsClustered;(?<IsClustered>[\w]+);Version;(?<Version>[\d]+\.[\d]+\.[\d]+\.[\d]+)(;tcp;(?<tcp>\d+))?(;np;(?<np>[^;]+))?;;");
+        return responses.SelectMany(s => parserRegex.Matches(s)).Select(MapFromMatch);
+    }
+
+    private static SqlInstance MapFromMatch(Match match)
+        => new(match.Groups["ServerName"].Captures[0].Value,
+               match.Groups["InstanceName"].Captures[0].Value,
+               match.Groups["IsClustered"].Captures[0].Value != "No",
+               match.Groups["Version"].Captures[0].Value,
+               match.Groups["tcp"].Captures.Count > 0 ? int.Parse(match.Groups["tcp"].Captures[0].Value) : 0,
+               match.Groups["np"].Captures.Count > 0 ? match.Groups["np"].Captures[0].Value : string.Empty);
+}
+
+public record SqlInstance(string ServerName, string InstanceName, bool IsClustered, string Version, int TcpPort, string NamedPipe);
+
+internal class UdpBroadcastMessage : IDisposable
+{
+    private const int SOCKET_TIMEOUT_EXCEPTION_CODE = 10060;
+
+    private readonly int _port;
+    private readonly byte[] _message;
+    private readonly UdpClient _udpClient;
+    private readonly CancellationTokenSource _cancellation;
+
+    public UdpBroadcastMessage(int port, byte[] message, TimeSpan timeout)
+    {
+        this._port = port;
+        this._message = message;
+        this._udpClient = new UdpClient { Client = { ReceiveTimeout = 1000 } };
+        this._udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
+        this._udpClient.EnableBroadcast = true;
+        this._cancellation = new CancellationTokenSource();
+        this._cancellation.CancelAfter(timeout);
+    }
+
+    public List<string> GetResponse()
+    {
+        var responses = new List<string>();
+
+        var receive = new Task((cancelToken) =>
         {
-            this._port = port;
-            this._message = message;
-            this._udpClient = new UdpClient { Client = { ReceiveTimeout = 1000 } };
-            this._udpClient.Client.Bind(new IPEndPoint(IPAddress.Any, 0));
-            this._udpClient.EnableBroadcast = true;
-            this._cancellation = new CancellationTokenSource();
-            this._cancellation.CancelAfter(timeout);
-        }
-
-        public List<string> GetResponse()
-        {
-            var responses = new List<string>();
-
-            var receive = new Task((cancelToken) =>
+            var anyEndPoint = new IPEndPoint(IPAddress.Any, 0);
+            while (!this._cancellation.IsCancellationRequested)
             {
-                var anyEndPoint = new IPEndPoint(IPAddress.Any, 0);
-                while (!this._cancellation.IsCancellationRequested)
+                try
                 {
-                    try
-                    {
-                        var receiveBuffer = this._udpClient.Receive(ref anyEndPoint);
-                        responses.Add(Encoding.UTF8.GetString(receiveBuffer));
-                    }
-                    catch (SocketException se) when (se.ErrorCode == SOCKET_TIMEOUT_EXCEPTION_CODE)
-                    {
-
-                    }
+                    var receiveBuffer = this._udpClient.Receive(ref anyEndPoint);
+                    responses.Add(Encoding.UTF8.GetString(receiveBuffer));
                 }
-            }, this._cancellation.Token);
+                catch (SocketException se) when (se.ErrorCode == SOCKET_TIMEOUT_EXCEPTION_CODE)
+                {
 
-            receive.Start();
-            _ = this._udpClient.Send(this._message, this._message.Length, new IPEndPoint(IPAddress.Broadcast, this._port));
-            Task.WaitAll(receive);
-            return responses;
-        }
+                }
+            }
+        }, this._cancellation.Token);
 
-        public void Dispose()
-        {
-            this._udpClient?.Dispose();
-            this._cancellation?.Dispose();
-        }
+        receive.Start();
+        _ = this._udpClient.Send(this._message, this._message.Length, new IPEndPoint(IPAddress.Broadcast, this._port));
+        receive.Wait();
+        return responses;
+    }
+
+    public void Dispose()
+    {
+        this._udpClient?.Dispose();
+        this._cancellation?.Dispose();
     }
 }

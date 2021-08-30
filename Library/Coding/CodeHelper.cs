@@ -1,11 +1,11 @@
-﻿#pragma warning disable CA1031 // Do not catch general exception types
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Serialization;
 using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
 
 namespace Library.Coding;
+
 public static class CodeHelper
 {
     public static async Task Async() => await Task.CompletedTask;
@@ -21,7 +21,8 @@ public static class CodeHelper
     /// </summary>
     public static void Break() => throw new BreakException();
 
-    public static Exception? Catch(in Action tryMethod,
+    public static Exception? Catch(
+        in Action tryMethod,
         in Action<Exception>? catchMethod = null,
         in Action? finallyMethod = null,
         in ExceptionHandling? handling = null,
@@ -76,14 +77,15 @@ public static class CodeHelper
     /// <param name="throwException"> if set to <c> true </c> [throw exception]. </param>
     /// <returns> </returns>
     /// <exception cref="ArgumentNullException"> tryAction or catchAction </exception>
-    public static (TResult? Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> tryAction,
+    public static (TResult? Result, Exception? Exception) CatchFunc<TResult>(
+        in Func<TResult> tryAction,
         in Func<Exception, TResult>? catchAction = null,
         in Action? finallyAction = null,
         in ExceptionHandling? handling = null,
         bool throwException = false)
     {
         tryAction.IfArgumentNotNull(nameof(tryAction));
-        
+
         handling?.Reset();
         try
         {
@@ -215,4 +217,3 @@ public static class CodeHelper
     public static Func<Task> GetAction(Func<Task> func) => func;
     public static Func<Task> ReturnsTask => async () => await Task.CompletedTask;
 }
-#pragma warning restore CA1031 // Do not catch general exception types

@@ -8,7 +8,7 @@ namespace HanyCo.Infra.UI.Wpf.Media
 {
     public static class Animations
     {
-        public static void MoveIn(FrameworkElement element, int fromValue = 5000, int toValue = 0, int duration = 350)
+        private static void InnerMove(Action<DoubleAnimation, FrameworkElement> animate, FrameworkElement element, int fromValue = 5000, int toValue = 0, int duration = 350)
         {
             if (element is null)
             {
@@ -17,7 +17,7 @@ namespace HanyCo.Infra.UI.Wpf.Media
 
             var animation = new DoubleAnimation(fromValue, toValue, new Duration(TimeSpan.FromMilliseconds(duration))) { DecelerationRatio = 0.65 };
             element.RenderTransform = new TranslateTransform(0, 0);
-            Storyboard.SetTarget(animation, element);
+            animate(animation, element);
             Storyboard.SetTargetProperty(animation, new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
             var storyboard = new Storyboard();
             storyboard.Children.Add(animation);
@@ -25,24 +25,12 @@ namespace HanyCo.Infra.UI.Wpf.Media
             element.Visibility = Visibility.Visible;
             storyboard.Begin(element);
         }
+
+        public static void MoveIn(FrameworkElement element, int fromValue = 5000, int toValue = 0, int duration = 350)
+            => InnerMove((a, e) => Storyboard.SetTarget(a, e), element, fromValue, toValue, duration);
 
         public static void MoveOut(FrameworkElement element, int fromValue = 0, int toValue = 5000, int duration = 350)
-        {
-            if (element is null)
-            {
-                throw new ArgumentNullException(nameof(element));
-            }
-
-            var animation = new DoubleAnimation(fromValue, toValue, new Duration(TimeSpan.FromMilliseconds(duration))) { DecelerationRatio = 0.65 };
-            element.RenderTransform = new TranslateTransform(0, 0);
-            Storyboard.SetTargetName(animation, element.Name);
-            Storyboard.SetTargetProperty(animation, new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.X)"));
-            var storyboard = new Storyboard();
-            storyboard.Children.Add(animation);
-
-            element.Visibility = Visibility.Visible;
-            storyboard.Begin(element);
-        }
+            => InnerMove((a, e) => Storyboard.SetTargetName(a, e.Name), element, fromValue, toValue, duration);
 
         public static void SkewIn(FrameworkElement element, int duration = 350)
         {

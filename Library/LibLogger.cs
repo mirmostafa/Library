@@ -4,19 +4,19 @@ using Library.Logging;
 namespace Library;
 public static class LibLogger
 {
-
     public static event EventHandler<ItemActedEventArgs<LogRecord<object>>> Logged;
 
-    public static bool IsEnabled { get => Logger.IsEnabled; set => Logger.IsEnabled = value; }
-    public static LogLevel LogLevel { get => Logger.LogLevel; set => Logger.LogLevel = value; }
-    private static Loggers Logger => new(new VsOutputLogger());
+    public static bool IsEnabled { get => Loggers.IsEnabled; set => Loggers.IsEnabled = value; }
+    public static LogLevel LogLevel { get => Loggers.LogLevel; set => Loggers.LogLevel = value; }
+    private static Loggers Loggers => new(new VsOutputLogger());
 
-    public static void AddLogger(ILogger value) => Logger.Add(value);
+    public static void AddLogger(ILogger value) => Loggers.Add(value);
+    public static void AddLogger(Microsoft.Extensions.Logging.ILogger logger) => AddLogger(new MsLoggerProxy(logger));
 
     internal static void Log(object message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
     {
         _ = Catch(() => OnLogging(new(message, level, sender, time, stackTrace)));
-        Logger.Log(message, level, sender, time, stackTrace);
+        Loggers.Log(message, level, sender, time, stackTrace);
     }
 
     /// <summary>
