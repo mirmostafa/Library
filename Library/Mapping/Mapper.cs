@@ -110,28 +110,28 @@ namespace Library.Mapping
         public TDestination Map<TDestination>(in object source) where TDestination : class, new()
             => this.Map(source, new TDestination());
 
-        public TDestination MapExcept<TDestination>(in object source, in Func<TDestination, object> except)
-            where TDestination : class, new()
-        {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
+        ////public TDestination MapExcept<TDestination>(in object source, in Func<TDestination, object> except)
+        ////    where TDestination : class, new()
+        ////{
+        ////    if (source == null)
+        ////    {
+        ////        throw new ArgumentNullException(nameof(source));
+        ////    }
 
-            var destination = new TDestination();
-            var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
-            var props = typeof(TDestination).GetProperties();
-            var result = destination;
-            foreach (var prop in props)
-            {
-                if (!exceptProps.Contains(prop.Name))
-                {
-                    Copy(source, result, prop);
-                }
-            }
+        ////    var destination = new TDestination();
+        ////    var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
+        ////    var props = typeof(TDestination).GetProperties();
+        ////    var result = destination;
+        ////    foreach (var prop in props)
+        ////    {
+        ////        if (!exceptProps.Contains(prop.Name))
+        ////        {
+        ////            Copy(source, result, prop);
+        ////        }
+        ////    }
 
-            return result;
-        }
+        ////    return result;
+        ////}
 
         public IEnumerable<TDestination?> Map<TDestination>(IEnumerable? sources)
             where TDestination : class, new()
