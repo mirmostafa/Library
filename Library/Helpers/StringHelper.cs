@@ -11,6 +11,14 @@ namespace Library.Helpers;
 /// </summary>
 public static class StringHelper
 {
+    //public static string Add(this string s, in string s2)
+    //{
+    //    return string.Create(s.Length + s2.Length, s, (span, value) =>
+    //      {
+    //          value.AsSpan().CopyTo(span);
+    //          var a = span;
+    //      });
+    //}
     public static string Add(this string s, in string s1)
         => string.Concat(s, s1);
 
@@ -31,6 +39,21 @@ public static class StringHelper
             buffer = buffer[(currentIndex + stat.Length)..];
         }
     }
+
+    //public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
+    //{
+    //    ReadOnlySpan<char> buffer = ignoreCase ? str.ArgumentNotNull(nameof(str)).ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull(nameof(str));
+    //    var stat = ignoreCase ? value.ArgumentNotNull(nameof(value)).ToLower(CultureInfo.CurrentCulture) : value.ArgumentNotNull(nameof(value));
+    //    var result = 0;
+    //    int currentIndex;
+    //    while ((currentIndex = buffer.IndexOf(stat, StringComparison.Ordinal)) != -1)
+    //    {
+    //        result += currentIndex;
+    //        yield return result;
+    //        result += stat.Length;
+    //        buffer = buffer[(currentIndex + stat.Length)..];
+    //    }
+    //}
 
     public static bool AnyCharInString(this string str, in string range) => range.Any(c => str.Contains(c.ToString()));
 
@@ -125,7 +148,7 @@ public static class StringHelper
             len = endIndex - startIndex;
         }
 
-        var result = buffer.Substring(startIndex, len);
+        var result = buffer.Slice(startIndex, len);
         return result;
     }
 
@@ -334,7 +357,7 @@ public static class StringHelper
 
     public static string? Remove(this string? s, in string? value) => s is null ? null : (value is null ? s : s.Replace(value, ""));
 
-    public static string RemoveFromEnd(this string str, in int count) => str.ArgumentNotNull(nameof(str)).Substring(0, str.Length - count);
+    public static string RemoveFromEnd(this string str, in int count) => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
 
     public static string RemoveFromEnd(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
     {
@@ -342,7 +365,7 @@ public static class StringHelper
         return oldValue.IsNullOrEmpty()
             ? str
             : str.EndsWith(oldValue, comparison)
-                ? str.Substring(0, str.Length - oldValue.Length)
+                ? str.Slice(0, str.Length - oldValue.Length)
                 : str;
     }
     public static string RemoveFromStart(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
@@ -350,7 +373,7 @@ public static class StringHelper
         str.IfArgumentNotNull(nameof(str));
         return oldValue.IsNullOrEmpty()
             ? str
-            : str.StartsWith(oldValue, comparison) ? str.Substring(oldValue.Length, str.Length - oldValue.Length) : str;
+            : str.StartsWith(oldValue, comparison) ? str.Slice(oldValue.Length, str.Length - oldValue.Length) : str;
     }
 
     public static string Repeat(this string text, in int count)
@@ -410,14 +433,14 @@ public static class StringHelper
 
     public static string? SetPhrase(this string str, int index, string newStr, char start, char end = default)
     {
-        var startStr = str.Substring(0, index + 1);
+        var startStr = str.Slice(0, index + 1);
         var phrase = GetPhrase(str, index, start, end);
         if (phrase is null)
         {
             return null;
         }
 
-        var endEnd = str.Substring(index + phrase.Length);
+        var endEnd = str.Slice(index + phrase.Length);
         var result = string.Concat(startStr, newStr, endEnd);
         return result;
     }
@@ -437,7 +460,7 @@ public static class StringHelper
 
         for (var x = 0; x < value.Length; x += groupSize)
         {
-            yield return value.Substring(x, Math.Min(groupSize, value.Length - x));
+            yield return value.Slice(x, Math.Min(groupSize, value.Length - x));
         }
     }
 
@@ -567,5 +590,20 @@ public static class StringHelper
         ReadOnlySpan<char> span = s;
         var slice = length is { } l ? span.Slice(start, l) : span[start..];
         return new(slice);
+    }
+
+    public static bool IsValidIranianNationalCode(string input)
+    {
+        if (!Regex.IsMatch(input, @"^\d{10}$"))
+        {
+            return false;
+        }
+
+        var check = Convert.ToInt32(input.Slice(9, 1));
+        var sum = Enumerable.Range(0, 9)
+            .Select(x => Convert.ToInt32(input.Slice(x, 1)) * (10 - x))
+            .Sum() % 11;
+
+        return sum < 2 ? check == sum : check + sum == 11;
     }
 }

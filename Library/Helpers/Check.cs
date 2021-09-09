@@ -4,6 +4,7 @@ using System.Globalization;
 using Library.Exceptions.Validations;
 
 namespace Library.Helpers;
+
 [DebuggerStepThrough]
 public static class Check
 {
@@ -33,7 +34,13 @@ public static class Check
 
     public static void IfArgumentIsNotValid<T>(this T? obj, Predicate<T?> validator, string? argName)
         => _ = NotValid(obj, validator.ArgumentNotNull(nameof(validator)), () => new ArgumentNullException(argName))!;
-
+    internal static void Require(bool required)
+    {
+        if (!required)
+        {
+            throw new ValidationException();
+        }
+    }
     public static void IfArgumentNotNull([NotNull] this string? obj, string argName)
         => _ = NotValid(obj, x => x is null, () => new ArgumentNullException(argName))!;
 

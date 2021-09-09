@@ -8,7 +8,7 @@ namespace Library.Helpers;
 public static class DbContextHelper
 {
     public static TDbContext Detach<TDbContext, TEntity>(this TDbContext dbContext, TEntity entity)
-        where TDbContext : DbContext
+        where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
@@ -22,7 +22,7 @@ public static class DbContextHelper
     }
 
     public static TEntity Detach<TDbContext, TEntity>(this TEntity entity, TDbContext dbContext)
-        where TDbContext : DbContext
+        where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
         dbContext.IfArgumentNotNull(nameof(dbContext));

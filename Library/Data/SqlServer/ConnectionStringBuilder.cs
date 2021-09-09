@@ -15,8 +15,8 @@ public class ConnectionStringBuilder
 
     public static ConnectionStringBuilder Create()
         => new();
-    public static ConnectionStringBuilder Create(string value)
-        => new(value);
+    public static ConnectionStringBuilder Create(string connectionString)
+        => new(connectionString);
 
     public ConnectionStringBuilder WithDataBase(string value)
         => this.Fluent(() => this._builder.DataSource = value);
@@ -66,19 +66,18 @@ public class ConnectionStringBuilder
         bool? isUserInstance = null,
         bool? isReadOnly = null) =>
             Create()
-           .ForServer(server)
-           .IfTrue(!userName.IsNullOrEmpty(), builder => builder.AsUserName(userName!))
-           .IfTrue(!password.IsNullOrEmpty(), builder => builder.AsUserName(password!))
-           .IfTrue(!database.IsNullOrEmpty(), builder => builder.WithDataBase(database!))
-           .IfTrue(isIntegratedSecurity.HasValue, builder => builder.IsIntegratedSecurity(isIntegratedSecurity!.Value))
-           .IfTrue(shouldPersistSecurityInfo.HasValue, builder => builder.ShouldPersistSecurityInfo(shouldPersistSecurityInfo!.Value))
-           .IfTrue(connectTimeout.HasValue, builder => builder.WithConnectTimeout(connectTimeout!.Value))
-           .IfTrue(!attachDbFilename.IsNullOrEmpty(), builder => builder.AttachDbFilename(attachDbFilename!))
-           .IfTrue(!applicationName.IsNullOrEmpty(), builder => builder.ApplicationName(applicationName!))
-           .IfTrue(hasMultipleActiveResultSets.HasValue, builder => builder.HasMultipleActiveResultSets(hasMultipleActiveResultSets!.Value))
-           .IfTrue(isEncrypt.HasValue, builder => builder.IsEncrypted(isEncrypt!.Value))
-           .IfTrue(isUserInstance.HasValue, builder => builder.IsUserInstance(isUserInstance!.Value))
-           .IfTrue(isReadOnly.HasValue, builder => builder.IsReadOnly(isReadOnly!.Value))
-           .Build();
-
+               .ForServer(server)
+               .IfTrue(!userName.IsNullOrEmpty(), builder => builder.AsUserName(userName!))
+               .IfTrue(!password.IsNullOrEmpty(), builder => builder.WithPassword(password!))
+               .IfTrue(!database.IsNullOrEmpty(), builder => builder.WithDataBase(database!))
+               .IfTrue(isIntegratedSecurity.HasValue, builder => builder.IsIntegratedSecurity(isIntegratedSecurity!.Value))
+               .IfTrue(shouldPersistSecurityInfo.HasValue, builder => builder.ShouldPersistSecurityInfo(shouldPersistSecurityInfo!.Value))
+               .IfTrue(connectTimeout.HasValue, builder => builder.WithConnectTimeout(connectTimeout!.Value))
+               .IfTrue(!attachDbFilename.IsNullOrEmpty(), builder => builder.AttachDbFilename(attachDbFilename!))
+               .IfTrue(!applicationName.IsNullOrEmpty(), builder => builder.ApplicationName(applicationName!))
+               .IfTrue(hasMultipleActiveResultSets.HasValue, builder => builder.HasMultipleActiveResultSets(hasMultipleActiveResultSets!.Value))
+               .IfTrue(isEncrypt.HasValue, builder => builder.IsEncrypted(isEncrypt!.Value))
+               .IfTrue(isUserInstance.HasValue, builder => builder.IsUserInstance(isUserInstance!.Value))
+               .IfTrue(isReadOnly.HasValue, builder => builder.IsReadOnly(isReadOnly!.Value))
+               .Build();
 }

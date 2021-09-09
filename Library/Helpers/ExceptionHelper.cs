@@ -2,6 +2,22 @@
 {
     public static class ExceptionHelper
     {
+        public static string GetFullMessage(this Exception? exception, Func<Exception, string> format, string? separator)
+        {
+            var result = new StringBuilder();
+            var ex = exception;
+            while (ex is not null)
+            {
+                result.AppendLine(format(ex));
+                if (!separator.IsNullOrEmpty())
+                {
+                    result.AppendLine(separator);
+                }
+                ex = ex.InnerException;
+            }
+            return result.ToString();
+        }
+
         public static string GetFullMessage(this Exception? exception, bool inculdeStackTrace = false)
         {
             Action<Exception, StringBuilder> addStackTrace = inculdeStackTrace

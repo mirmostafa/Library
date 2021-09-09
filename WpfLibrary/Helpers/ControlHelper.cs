@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -130,7 +131,7 @@ public static class ControlHelper
     public static void Flick(FrameworkElement element, int duration = 500)
         => Catch(() => Animations.Flick(element, duration));
 
-    public static IEnumerable<TreeViewItem> GetAllItems(this TreeView tree)
+    public static IEnumerable<TreeViewItem> GetAllItems([DisallowNull] this TreeView tree)
         => EnumerableHelper.GetAll(() => tree.ArgumentNotNull(nameof(tree)).Items.Cast<TreeViewItem>(), item => item.Items.Cast<TreeViewItem>());
 
     public static DataGridCell? GetCell(this DataGrid grid, int row, int column)

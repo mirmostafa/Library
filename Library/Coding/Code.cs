@@ -37,11 +37,11 @@ public record struct Code : IEquatable<Code>
         => Path.ChangeExtension(isPartial ? $"{name}.partial.tmp" : name, language.FileExtension);
 
     private string? _FileName { get; init; }
-    public string FileName => this._FileName.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial));
     public string Name { get; init; }
     public string Statement { get; init; }
     public Language Language { get; init; }
     public bool IsPartial { get; init; }
+    public string FileName => this._FileName.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial));
 
     public override int GetHashCode()
         => HashCode.Combine(this.Name);
