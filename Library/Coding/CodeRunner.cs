@@ -1,16 +1,22 @@
-﻿namespace Library.Coding;
-public class CodeRunner
-{
-    private readonly List<Action> _Statements = new();
+﻿//using Library.Web;
 
-    public static CodeRunner StartWith(Action statement)
-    {
-        var result = new CodeRunner();
-        result._Statements.Add(statement);
-        return result;
-    }
+//namespace Library.Coding;
 
-    public CodeRunner Then(Action statement) => this.Fluent(() => this._Statements.Add(statement));
+//public class CodeRunner
+//{
+//    private readonly List<(Func<Result> Func, bool OnSucceed)> _Statements = new();
 
-    public CodeRunner Run() => ForEach(this, this._Statements, statement => statement?.Invoke());
-}
+//    public static CodeRunner StartWith(Func<Result> statement)
+//    {
+//        var result = new CodeRunner();
+//        result._Statements.Add(statement);
+//        return result;
+//    }
+
+//    public CodeRunner OnSucceed(Func<Result> statement) => this.Fluent(() => this._Statements.Add(statement, true));
+
+//    public CodeRunner Run()
+//    {
+
+//    }
+//}

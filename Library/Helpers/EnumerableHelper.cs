@@ -467,4 +467,14 @@ public static class EnumerableHelper
     /// <typeparam name="T"> </typeparam>
     /// <returns> </returns>
     public static T[] EmptyArray<T>() => Array.Empty<T>();
+
+    public static void RunAllWhile(this IEnumerable<Action> actions, Func<bool> predicate)
+    {
+        foreach (var action in actions)
+        {
+            if (!predicate())
+                break;
+            action();
+        }
+    }
 }

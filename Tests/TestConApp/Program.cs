@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Library;
 using Library.Helpers;
 using Library.Helpers.ConsoleHelper;
@@ -11,7 +12,7 @@ internal class Program
     private static ILogger _logger;
     public static void Main()
     {
-        Startup();
+
     }
 
     private static void ProgressBarTest()
@@ -48,7 +49,8 @@ internal class Program
         vm.Count = 123;
     }
 
-    private static void Startup()
+    [ModuleInitializer]
+    public static void Startup()
     {
         SetupLogger();
         LibLogger.AddLogger(_logger);

@@ -145,7 +145,18 @@ public static class CodeHelper
             return default;
         }
     }
-
+    public static async Task<Exception?> CatchAsync(Action action)
+    {
+        try
+        {
+            await Task.Factory.StartNew(action);
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
+    }
     /// <summary>
     ///     Gets the caller method.
     /// </summary>

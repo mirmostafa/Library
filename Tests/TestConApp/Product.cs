@@ -18,3 +18,14 @@ public partial class AutoNotifyTestModel
     [AutoNotify(PropertyName = "Count")]
     private int _Amount = 5;
 }
+
+partial class FluentCodeTest
+{
+    //[FluentProp]
+    public string? Name { get; set; }
+    
+    //[FluentProp]
+    public int Age { get; set; }
+    
+    public string? Address { get; set; }
+}
