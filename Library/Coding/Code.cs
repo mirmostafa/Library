@@ -7,7 +7,7 @@ namespace Library.CodeGeneration.Models;
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 public record struct Code : IEquatable<Code>
 {
-    public static readonly Code Default = new("Default", Languages.None, "(No Code)");
+    public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
 
     public Code(in string name, in Language language, in string statement, in bool isPartial = false)
     {
