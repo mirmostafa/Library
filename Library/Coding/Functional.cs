@@ -18,6 +18,19 @@ public static class Functional
         }
         return @this;
     }
+    public static TInstance If<TInstance>(this TInstance @this, bool b, in Action ifTrue, in Action ifFalse)
+    {
+        if (b is true)
+        {
+            ifTrue?.Invoke();
+        }
+        else
+        {
+            ifFalse?.Invoke();
+        }
+
+        return @this;
+    }
     public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Action<TInstance> ifTrue)
     {
         if (b is true)
@@ -46,6 +59,7 @@ public static class Functional
         action?.Invoke();
         return instance;
     }
+    public static TInstance Fluent<TInstance>(this TInstance instance, in object? obj) => instance;
 
     public static TInstance Fluent<TInstance>(in TInstance instance, in Action<TInstance> action)
     {

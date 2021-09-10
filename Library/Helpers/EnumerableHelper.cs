@@ -411,7 +411,11 @@ public static class EnumerableHelper
         list.Add(new(key, value));
         return list;
     }
-
+    public static Dictionary<TKey, TValue> SetByKey<TKey, TValue>([DisallowNull] this Dictionary<TKey, TValue> dic, TKey key, TValue value)
+        where TKey : notnull
+        => dic
+            .ArgumentNotNull(nameof(dic))
+            .If(dic.ContainsKey(key), () => dic[key] = value, () => dic.Add(key, value));
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
          where TKey : notnull => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
@@ -473,7 +477,10 @@ public static class EnumerableHelper
         foreach (var action in actions)
         {
             if (!predicate())
+            {
                 break;
+            }
+
             action();
         }
     }
