@@ -18,6 +18,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
     private double _mainStepIndex;
     private long _mainStepsCount;
     //private TaskScheduler _scheduler;
+    
     public bool IsCancellationRequested => this._cancellationTokenSource.IsCancellationRequested;
 
     protected Task Task { get; private set; }
@@ -112,7 +113,8 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
         }
     }
 
-    protected MultiStepOperation(MultiStepOperationStepCollection? steps = null) => this._steps = steps ?? new MultiStepOperationStepCollection();
+    protected MultiStepOperation(MultiStepOperationStepCollection? steps = null) 
+        => this._steps = steps ?? new MultiStepOperationStepCollection();
 
     ~MultiStepOperation() { this.Dispose(false); }
 
@@ -134,7 +136,8 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
         this._isDisposed = true;
     }
 
-    protected virtual void OnMultiStepErrorOccurred(MultiStepErrorOccurredEventArgs e) => MultiStepErrorOccurred?.Invoke(this, e);//this.Fatal(e.Log, e.Exception, e.Sender, e.MemberName, e.SourceFilePath, e.SourceLineNumber);
+    protected virtual void OnMultiStepErrorOccurred(MultiStepErrorOccurredEventArgs e) 
+        => MultiStepErrorOccurred?.Invoke(this, e);//this.Fatal(e.Log, e.Exception, e.Sender, e.MemberName, e.SourceFilePath, e.SourceLineNumber);
 
     public Task Start()
     {
