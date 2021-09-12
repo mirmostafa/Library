@@ -30,8 +30,6 @@ internal class Program
         Console.WriteLine("Done.");
     }
 
-    private static Person Get() => new() { Name = "Ali", Age = 5 };
-
     public static void Test<T>([DisallowNull] T t)
         where T : notnull => t.IfArgumentNotNull(nameof(t));
 
@@ -52,27 +50,27 @@ internal class Program
     [ModuleInitializer]
     public static void Startup()
     {
-        SetupLogger();
+        setupLogger();
         LibLogger.AddLogger(_logger);
-        _logger.LogInformation("System is started");
-    }
-
-    private static void SetupLogger()
-    {
-        using var loggerFactory = LoggerFactory.Create(builder =>
+        _logger.LogInformation("System initialized.");
+        
+        static void setupLogger()
         {
-            builder.AddSimpleConsole(options =>
+            using var loggerFactory = LoggerFactory.Create(builder =>
             {
-                options.IncludeScopes = true;
-                options.TimestampFormat = "HH:mm:ss";
-                options.UseUtcTimestamp = false;
+                builder.AddSimpleConsole(options =>
+                {
+                    options.IncludeScopes = true;
+                    options.TimestampFormat = "HH:mm:ss";
+                    options.UseUtcTimestamp = false;
+                });
             });
-        });
-        var logger = loggerFactory.CreateLogger<Program>();
-        using (logger.BeginScope("[Scope is enabled]"))
-        {
-            //logger.LogInformation("System is started");
+            var logger = loggerFactory.CreateLogger<Program>();
+            using (logger.BeginScope("[Scope is enabled]"))
+            {
+                //logger.LogInformation("System is started");
+            }
+            _logger = logger;
         }
-        _logger = logger;
     }
 }
