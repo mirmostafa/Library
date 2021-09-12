@@ -112,19 +112,13 @@ public static class Functional
         }
     }
 
-    public static T New<T>() where T : new() => new();
-    
     /// <summary>
     ///     Creates a new instance of TType.
     /// </summary>
     /// <typeparam name="T"> The type of the type. </typeparam>
     /// <returns> </returns>
-    public static T? New<T>()
-        where T : class
-    {
-        var ctor = typeof(T).GetConstructor(EnumerableHelper.EmptyArray<Type>());
-        return ctor is not null ? (T)ctor.Invoke(null) : default;
-    }
+    public static T New<T>()
+        where T : class, new() => new();
 
     /// <summary>
     ///     Creates a new instance in object o.
@@ -133,7 +127,7 @@ public static class Functional
     /// <param name="type"> The type. </param>
     /// <returns> </returns>
     public static T? New<T>(in Type type)
-        where T : class => (T?)type.GetConstructor(EnumerableHelper.EmptyArray<Type>())?.Invoke(null);
+    where T : class => (T?)type.GetConstructor(EnumerableHelper.EmptyArray<Type>())?.Invoke(null);
 
     /// <summary>
     ///     Creates an new instance of TType.
