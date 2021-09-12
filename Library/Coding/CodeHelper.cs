@@ -26,7 +26,7 @@ public static class CodeHelper
         in Action<Exception>? catchMethod = null,
         in Action? finallyMethod = null,
         in ExceptionHandling? handling = null,
-        bool throwException = false)
+        in bool throwException = false)
     {
         tryMethod.IfArgumentNotNull(nameof(tryMethod));
 

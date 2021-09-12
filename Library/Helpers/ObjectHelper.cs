@@ -18,14 +18,6 @@ public static class ObjectHelper
     public static T? As<T>(this object? obj)
         where T : class => obj as T;
 
-    //[return: NotNull]
-    //public static T IsNotNull<T>(this object? obj, string objName)
-    //     where T : class => obj.As<T>().ArgumentNotNull(objName);
-
-    //[return: NotNull]
-    //public static T IsNotNull<T>(this object? obj, Func<Exception> getException)//!!)
-    //     where T : class => obj.As<T>() ?? throw getException();
-
     /// <summary>
     ///     Checks the database null.
     /// </summary>
@@ -36,42 +28,7 @@ public static class ObjectHelper
     /// <returns> </returns>
     public static T CheckDbNull<T>(in object o, in T defaultValue, in Func<object, T> converter)
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
-
-    /// <summary>
-    ///     Creates a new instance of TType.
-    /// </summary>
-    /// <typeparam name="T"> The type of the type. </typeparam>
-    /// <returns> </returns>
-    public static T? CreateInstance<T>()
-        where T : class
-    {
-        var ctor = typeof(T).GetConstructor(EnumerableHelper.EmptyArray<Type>());
-        return ctor is not null ? (T)ctor.Invoke(null) : default;
-    }
-
-    /// <summary>
-    ///     Creates a new instance in object o.
-    /// </summary>
-    /// <typeparam name="T"> The type of the type. </typeparam>
-    /// <param name="type"> The type. </param>
-    /// <returns> </returns>
-    public static T? CreateInstance<T>(in Type type)
-        where T : class => (T?)type.GetConstructor(EnumerableHelper.EmptyArray<Type>())?.Invoke(null);
-
-    /// <summary>
-    ///     Creates an new instance of TType.
-    /// </summary>
-    /// <typeparam name="T"> The type of the type. </typeparam>
-    /// <param name="types"> The types. </param>
-    /// <param name="args"> The constructor's arguments. </param>
-    /// <returns> </returns>
-    public static T? CreateInstance<T>(in Type[] types, in object?[] args)
-        where T : class
-    {
-        var constructorInfo = typeof(T).GetConstructor(types);
-        return constructorInfo is not null ? (T)constructorInfo.Invoke(args) : null;
-    }
-
+        
     /// <summary>
     ///     Disposes the specified disposable object.
     /// </summary>
@@ -571,6 +528,7 @@ public static class ObjectHelper
     /// <typeparam name="T"></typeparam>
     /// <param name="obj">The object.</param>
     /// <returns></returns>
+    [Obsolete("No more is required.")]
     public static T? ToNullable<T>(this object? obj)
         => obj is T result ? result : default;
 
@@ -579,6 +537,7 @@ public static class ObjectHelper
     /// </summary>
     /// <param name="obj"> The object. </param>
     /// <returns> </returns>
+    [Obsolete("No more is required.")]
     public static int ToInt(this object obj)
         => Convert.ToInt32(obj);
 
@@ -588,6 +547,7 @@ public static class ObjectHelper
     /// <param name="obj"> The object. </param>
     /// <param name="defaultValue"> The default value. </param>
     /// <returns> </returns>
+    [Obsolete("No more is required.")]
     public static int ToInt(this object? obj, in int defaultValue) => obj is null ? defaultValue : obj.ToString().ToIntNullable() ?? defaultValue;
 
     /// <summary>
@@ -602,6 +562,7 @@ public static class ObjectHelper
     /// </summary>
     /// <param name="obj"> The object. </param>
     /// <returns> </returns>
+    [Obsolete("No more is required.")]
     public static long ToLong(this object obj) => Convert.ToInt64(obj);
 
     /// <summary>
@@ -610,6 +571,7 @@ public static class ObjectHelper
     /// <param name="obj"> The object. </param>
     /// <param name="defaultValue"> The default value. </param>
     /// <returns> </returns>
+    [Obsolete("No more is required.")]
     public static long ToLong(this object? obj, in long defaultValue) => obj is null ? defaultValue : obj.ToString().ToLongNullable() ?? defaultValue;
 
     /// <summary>
@@ -617,6 +579,7 @@ public static class ObjectHelper
     /// </summary>
     /// <param name="str"> The string. </param>
     /// <returns> </returns>
+    [Obsolete("No more is required.")]
     public static long? ToLongNullable(this string? str) => long.TryParse(str, out var result) ? result : default(long?);
 
     public static T ToNotNull<T>(this T? t, in T defaultValue = default)

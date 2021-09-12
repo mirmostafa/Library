@@ -113,6 +113,41 @@ public static class Functional
     }
 
     public static T New<T>() where T : new() => new();
+    
+    /// <summary>
+    ///     Creates a new instance of TType.
+    /// </summary>
+    /// <typeparam name="T"> The type of the type. </typeparam>
+    /// <returns> </returns>
+    public static T? New<T>()
+        where T : class
+    {
+        var ctor = typeof(T).GetConstructor(EnumerableHelper.EmptyArray<Type>());
+        return ctor is not null ? (T)ctor.Invoke(null) : default;
+    }
+
+    /// <summary>
+    ///     Creates a new instance in object o.
+    /// </summary>
+    /// <typeparam name="T"> The type of the type. </typeparam>
+    /// <param name="type"> The type. </param>
+    /// <returns> </returns>
+    public static T? New<T>(in Type type)
+        where T : class => (T?)type.GetConstructor(EnumerableHelper.EmptyArray<Type>())?.Invoke(null);
+
+    /// <summary>
+    ///     Creates an new instance of TType.
+    /// </summary>
+    /// <typeparam name="T"> The type of the type. </typeparam>
+    /// <param name="types"> The types. </param>
+    /// <param name="args"> The constructor's arguments. </param>
+    /// <returns> </returns>
+    public static T? New<T>(in Type[] types, in object?[] args)
+        where T : class
+    {
+        var constructorInfo = typeof(T).GetConstructor(types);
+        return constructorInfo is not null ? (T)constructorInfo.Invoke(args) : null;
+    }
 
     public static IEnumerable<TResult> While<TResult>(Func<bool> predicate, Func<TResult> action, Action? onIterationDone = null)
     {
