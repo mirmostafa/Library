@@ -9,10 +9,11 @@ namespace TestConApp;
 
 internal class Program
 {
-    private static ILogger _logger;
+    private static ILogger _logger = null!;
+
     public static void Main()
     {
-
+        
     }
 
     private static void ProgressBarTest()
@@ -23,7 +24,7 @@ internal class Program
             const int max = 200;
             for (var i = 0; i <= max; i++)
             {
-                progress.Report((double)i / max);
+                progress.Report(i, max);
                 Thread.Sleep(20);
             }
         }
@@ -53,7 +54,7 @@ internal class Program
         setupLogger();
         LibLogger.AddLogger(_logger);
         _logger.LogInformation("System initialized.");
-        
+
         static void setupLogger()
         {
             using var loggerFactory = LoggerFactory.Create(builder =>

@@ -29,6 +29,8 @@ public class ConsoleProgressBar : IDisposable, IProgress<double>
         }
     }
 
+    public void Report(double current, double max) => this.Report(current / max);
+
     public void Report(double value)
     {
         // Make sure value is in [0..1] range
