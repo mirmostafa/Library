@@ -3,7 +3,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace HanyCo.Infra.UI.Wpf.Helpers
+namespace Library.Wpf.Helpers
 {
     public static class UiUtility
     {

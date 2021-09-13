@@ -16,12 +16,12 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using HanyCo.Infra.UI.Wpf.Helpers;
-using HanyCo.Infra.UI.Wpf.Media;
+using Library.Wpf.Helpers;
+using Library.Wpf.Media;
 using Library.Helpers;
 using static Library.Coding.CodeHelper;
 
-namespace WpfLibrary.Helpers;
+namespace Library.Wpf.Helpers;
 
 public static class ControlHelper
 {

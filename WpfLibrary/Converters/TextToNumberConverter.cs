@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace WpfLibrary.Converters
+namespace Library.Wpf.Converters
 {
     public sealed class TextToNumberConverter : IValueConverter
     {

@@ -4,14 +4,14 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using HanyCo.Infra.UI.Wpf.Helpers;
-using HanyCo.Infra.UI.Wpf.Internals;
+using Library.Wpf.Helpers;
+using Library.Wpf.Internals;
 using Library.Helpers;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 using static Library.Coding.CodeHelper;
 
-namespace HanyCo.Infra.UI.Dialogs
+namespace Library.Wpf.Dialogs
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     public abstract class InternalMessageBox2

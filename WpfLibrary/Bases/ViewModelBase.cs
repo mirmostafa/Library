@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using WpfLibrary.Markers;
+using Library.Wpf.Markers;
 
-namespace WpfLibrary.Bases
+namespace Library.Wpf.Bases
 {
     [ViewModel]
     public abstract class ViewModelBase : IViewModel, INotifyPropertyChanged

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Library.Helpers;
 
-namespace WpfLibrary.Windows.Input.Commands
+namespace Library.Wpf.Windows.Input.Commands
 {
     public class LibCommandBinding : CommandBinding
     {

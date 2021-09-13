@@ -34,19 +34,19 @@ internal class Program
     public static void Test<T>([DisallowNull] T t)
         where T : notnull => t.IfArgumentNotNull(nameof(t));
 
-    private static void SourceGeneratorTest()
-    {
-        var dto = new Models.ProductDto { };
+    //private static void SourceGeneratorTest()
+    //{
+    //    var dto = new Models.ProductDto { };
 
-        var vm = new AutoNotifyTestModel();
-        var text = vm.Text;
-        _logger.LogInformation($"Text = {text}");
-        var count = vm.Count;
-        _logger.LogInformation($"Count = {count}");
-        vm.PropertyChanged += (o, e) => _logger.LogInformation($"Property {e.PropertyName} was changed");
-        vm.Text = "abc";
-        vm.Count = 123;
-    }
+    //    var vm = new AutoNotifyTestModel();
+    //    var text = vm.Text;
+    //    _logger.LogInformation($"Text = {text}");
+    //    var count = vm.Count;
+    //    _logger.LogInformation($"Count = {count}");
+    //    vm.PropertyChanged += (o, e) => _logger.LogInformation($"Property {e.PropertyName} was changed");
+    //    vm.Text = "abc";
+    //    vm.Count = 123;
+    //}
 
     [ModuleInitializer]
     public static void Startup()

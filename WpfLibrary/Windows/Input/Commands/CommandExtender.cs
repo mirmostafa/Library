@@ -4,7 +4,7 @@ using System.Windows.Input;
 using Library.Exceptions.Validations;
 using Library.Helpers;
 
-namespace WpfLibrary.Windows.Input.Commands
+namespace Library.Wpf.Windows.Input.Commands
 {
     public sealed class CommandExtender : IEquatable<RoutedUICommand>, IEquatable<CommandExtender>, ICommand
     {

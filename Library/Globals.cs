@@ -8,4 +8,4 @@ global using static Library.Coding.CodeHelper;
 global using static Library.Coding.Functional;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("WpfLibrary")]
+[assembly: InternalsVisibleTo("Library.Wpf")]

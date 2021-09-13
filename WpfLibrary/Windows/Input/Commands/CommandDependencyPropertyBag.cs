@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Data;
 using Library.Helpers;
-using WpfLibrary.Commands;
+using Library.Wpf.Commands;
 
-namespace WpfLibrary.Windows.Input.Commands
+namespace Library.Wpf.Windows.Input.Commands
 {
     public class CommandDependencyPropertyBag<TUiElement>
         where TUiElement : UIElement

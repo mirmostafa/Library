@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Threading.Tasks;
 
-namespace WpfLibrary.Windows.Controls
+namespace Library.Wpf.Windows.Controls
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
