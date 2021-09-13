@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using HanyCo.Infra.UI.Dialogs;
+using Library.Wpf.Dialogs;
 using Library.Data.SqlServer.Dynamics;
 using Library.Exceptions.Validations;
 using Library.Helpers;
-using WpfLibrary.Helpers;
+using Library.Wpf.Helpers;
 
-namespace Mohammad.Wpf.Internals.Dialogs;
+namespace Library.Wpf.Internals.Dialogs;
 /// <summary>
 ///     Interaction logic for ConnectionStringDialog.xaml
 /// </summary>

@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Markup;
 
-namespace HanyCo.Infra.UI.Wpf.Extensions
+namespace Library.Wpf.Extensions
 {
     public class EnumBindingSourceExtension : MarkupExtension
     {

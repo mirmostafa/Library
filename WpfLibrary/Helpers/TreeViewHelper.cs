@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Controls;
 
-namespace HanyCo.Infra.UI.Wpf.Helpers
+namespace Library.Wpf.Helpers
 {
     public static class TreeViewHelper
     {

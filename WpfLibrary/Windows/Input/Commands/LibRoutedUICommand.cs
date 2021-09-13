@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace WpfLibrary.Commands
+namespace Library.Wpf.Commands
 {
     public class LibRoutedUICommand : RoutedUICommand
     {

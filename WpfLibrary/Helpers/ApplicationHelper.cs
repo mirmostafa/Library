@@ -6,7 +6,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Library.Helpers;
 
-namespace HanyCo.Infra.UI.Wpf.Helpers
+namespace Library.Wpf.Helpers
 {
     public static partial class ApplicationHelper
     {

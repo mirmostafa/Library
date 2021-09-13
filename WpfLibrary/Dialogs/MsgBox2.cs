@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using HanyCo.Infra.UI.Wpf.Helpers;
-using HanyCo.Infra.UI.Wpf.Media;
+using Library.Wpf.Helpers;
+using Library.Wpf.Media;
 using Library.Collections;
 using Library.EventsArgs;
 using Library.Exceptions;
 using Library.Helpers;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using WpfLibrary.Helpers;
+using Library.Wpf.Helpers;
 using static Library.Coding.CodeHelper;
 
-namespace HanyCo.Infra.UI.Dialogs
+namespace Library.Wpf.Dialogs
 {
     public sealed class MsgBox2 : InternalMessageBox2
     {

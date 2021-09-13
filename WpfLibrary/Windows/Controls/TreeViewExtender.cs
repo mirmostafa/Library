@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Library.Helpers;
 
-namespace WpfLibrary.Windows.Controls
+namespace Library.Wpf.Windows.Controls
 {
     public class TreeViewExtender
     {

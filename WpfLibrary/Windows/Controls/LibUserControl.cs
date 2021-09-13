@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using WpfLibrary.Helpers;
+using Library.Wpf.Helpers;
 
-namespace WpfLibrary.Windows.Controls
+namespace Library.Wpf.Windows.Controls
 {
     public class LibUserControl : UserControl, ISupportAsyncDataBinding
     {

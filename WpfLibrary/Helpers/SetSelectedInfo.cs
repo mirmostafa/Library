@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Mohammad.Wpf.Helpers;
+using Library.Wpf.Helpers;
 
-namespace HanyCo.Infra.UI.Wpf.Helpers
+namespace Library.Wpf.Helpers
 {
     public record SetSelectedInfo<T>
     {

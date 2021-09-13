@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using HanyCo.Infra.UI.Wpf.Helpers;
+using Library.Wpf.Helpers;
 
-namespace HanyCo.Infra.UI.Dialogs
+namespace Library.Wpf.Dialogs
 {
     public static class MsgBox
     {
@@ -50,11 +50,11 @@ namespace Mohammad.EventsArgs
 {
 }
 
-namespace Mohammad.Wpf.Helpers
+namespace Library.Wpf.Helpers
 {
 }
 
-namespace Mohammad.Wpf.Windows.Media
+namespace Library.Wpf.Windows.Media
 {
 }
 
@@ -62,11 +62,11 @@ namespace Mohammad.Collections.Specialized
 {
 }
 
-namespace Mohammad.Wpf.Helpers
+namespace Library.Wpf.Helpers
 {
 }
 
-namespace Mohammad.Wpf.Helpers
+namespace Library.Wpf.Helpers
 {
 
     public delegate void SetSelectedEventHandler<T>(ItemsControl container, SetSelectedInfo<T> info);

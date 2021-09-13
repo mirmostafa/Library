@@ -1,4 +1,4 @@
-﻿namespace WpfLibrary.Windows.Dialogs
+﻿namespace Library.Wpf.Windows.Dialogs
 {
     public class LibDialog : LibWindow
     {

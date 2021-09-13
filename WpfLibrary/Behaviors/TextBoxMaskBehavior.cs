@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Mohammad.Wpf.Windows.Behaviors
+namespace Library.Wpf.Windows.Behaviors
 {
     /// <summary>
     ///     WPF Maskable TextBox class. Just specify the TextBoxMaskBehavior.Mask attached property to a TextBox.

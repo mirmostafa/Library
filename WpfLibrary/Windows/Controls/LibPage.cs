@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using WpfLibrary.Helpers;
-using WpfLibrary.Windows.Input.Commands;
+using Library.Wpf.Helpers;
+using Library.Wpf.Windows.Input.Commands;
 
-namespace WpfLibrary.Windows.Controls
+namespace Library.Wpf.Windows.Controls
 {
     public class LibPage : Page, ISupportAsyncDataBinding
     {

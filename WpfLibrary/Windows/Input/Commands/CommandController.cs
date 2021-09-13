@@ -5,7 +5,7 @@ using Library.Collections;
 using Library.Exceptions.Validations;
 using Library.Helpers;
 
-namespace WpfLibrary.Windows.Input.Commands
+namespace Library.Wpf.Windows.Input.Commands
 {
     public sealed class CommandController : IIndexable<CommandExtender, string>, IIndexable<CommandExtender, CommandBinding>
     {

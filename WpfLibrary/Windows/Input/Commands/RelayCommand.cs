@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using Library.Helpers;
 
-namespace WpfLibrary.Commands
+namespace Library.Wpf.Commands
 {
     public class RelayCommand : ICommand
     {
