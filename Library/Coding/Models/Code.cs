@@ -5,14 +5,14 @@ namespace Library.CodeGeneration.Models;
 
 [Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public record struct Code : IEquatable<Code>
+public readonly record struct Code : IEquatable<Code>
 {
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
 
     public Code(in string name, in Language language, in string statement, in bool isPartial = false)
     {
-        this.Name = name.ArgumentNotNull(nameof(name));
-        this.Statement = statement.ArgumentNotNull(nameof(statement));
+        this.Name = name.As<object>().ArgumentNotNull(nameof(name)).ToString()!;
+        this.Statement = statement.As<object>().ArgumentNotNull(nameof(statement)).ToString()!;
         this.Language = language;
         this.IsPartial = isPartial;
         this._FileName = null;
