@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
-using Library.Wpf.Dialogs;
-using Library.Wpf.Helpers;
-using Library;
 using Library.Exceptions;
 using Library.Helpers;
 using Library.Logging;
 using Library.Mapping;
+using Library.Wpf.Dialogs;
+using Library.Wpf.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Wpf.Windows

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Library.Wpf.Helpers;
 
 namespace Library.Wpf.Helpers
 {

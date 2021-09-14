@@ -1,4 +1,5 @@
 ﻿using System.CodeDom;
+using Library.Coding.Models;
 
 namespace Library.CodeGeneration.Models
 {

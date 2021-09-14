@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
+using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 
-namespace Library.CodeGeneration.Models;
+namespace Library.Coding.Models;
 
 [Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]

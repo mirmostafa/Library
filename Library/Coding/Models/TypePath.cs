@@ -1,4 +1,4 @@
-﻿namespace Library.Coding;
+﻿namespace Library.Coding.Models;
 
 public sealed class TypePath : IEquatable<TypePath>
 {

@@ -1,4 +1,5 @@
-﻿using Library.Collections;
+﻿using Library.Coding.Models;
+using Library.Collections;
 using Library.DesignPatterns.Markers;
 
 namespace Library.CodeGeneration.Models

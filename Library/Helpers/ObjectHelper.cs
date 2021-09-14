@@ -28,7 +28,7 @@ public static class ObjectHelper
     /// <returns> </returns>
     public static T CheckDbNull<T>(in object o, in T defaultValue, in Func<object, T> converter)
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
-        
+
     /// <summary>
     ///     Disposes the specified disposable object.
     /// </summary>

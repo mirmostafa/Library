@@ -226,6 +226,6 @@ public static class EnumHelper
             : value
         : value;
 
-    public static IEnumerable<TEnum> GetItems<TEnum>() 
+    public static IEnumerable<TEnum> GetItems<TEnum>()
         where TEnum : Enum => Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
 }

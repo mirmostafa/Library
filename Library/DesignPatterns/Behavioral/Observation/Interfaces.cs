@@ -1,4 +1,6 @@
-﻿namespace Library.DesignPatterns.Behavioral.Observation
+﻿using Library.Interfaces;
+
+namespace Library.DesignPatterns.Behavioral.Observation
 {
     public sealed record RegisterObservable(in IPropertyChangeRepositoryNotifier Observable, in Type PropertyType, in string PropertyName);
     public sealed record RegisterObserver(in IObserver Observer, in string? PropertyType, Action<NotifyPropertyChanged> PropertyChanged, in string? PropertyName = null, in Type? TypeOfObserable = null);

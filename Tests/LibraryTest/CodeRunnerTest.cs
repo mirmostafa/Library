@@ -1,6 +1,4 @@
-﻿using Library.Coding;
-
-namespace LibraryTest;
+﻿namespace LibraryTest;
 [TestClass]
 public class CodeRunnerTest
 {
