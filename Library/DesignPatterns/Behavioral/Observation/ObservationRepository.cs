@@ -1,4 +1,5 @@
 ﻿using Library.EventsArgs;
+using Library.Interfaces;
 
 namespace Library.DesignPatterns.Behavioral.Observation
 {

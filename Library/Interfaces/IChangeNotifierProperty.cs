@@ -1,6 +1,6 @@
 ﻿using Library.EventsArgs;
 
-namespace Library
+namespace Library.Interfaces
 {
     public sealed record NotifyPropertyChanged(in object? Sender, in string? PropertyType, in string PropertyName, in object? PropertyValue);
 

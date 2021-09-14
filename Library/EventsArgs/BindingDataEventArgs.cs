@@ -1,4 +1,4 @@
-﻿namespace Library.CodeGeneration.UI.EventsArgs
+﻿namespace Library.EventsArgs
 {
     public sealed class BindingDataEventArgs : EventArgs
     {

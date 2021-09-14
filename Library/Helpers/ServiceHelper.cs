@@ -1,5 +1,5 @@
 ﻿using Library.Data.Markers;
-using Library.Services;
+using Library.Interfaces;
 
 namespace Library.Helpers;
 public static class ServiceHelper

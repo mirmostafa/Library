@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Library.Wpf.Helpers;
-using Library.Wpf.Media;
 using Library.Collections;
 using Library.EventsArgs;
 using Library.Exceptions;
 using Library.Helpers;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using Library.Wpf.Helpers;
+using Library.Wpf.Media;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using static Library.Coding.CodeHelper;
 
 namespace Library.Wpf.Dialogs

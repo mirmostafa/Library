@@ -4,11 +4,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Library.Helpers;
 using Library.Wpf.Helpers;
 using Library.Wpf.Internals;
-using Library.Helpers;
 using Microsoft.WindowsAPICodePack.Dialogs;
-
 using static Library.Coding.CodeHelper;
 
 namespace Library.Wpf.Dialogs

@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<LangVersion>Preview</LangVersion>
-		<AnalysisLevel>latest</AnalysisLevel>
+		<AnalysisLevel>preview</AnalysisLevel>
 		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<Nullable>enable</Nullable>
@@ -12,6 +12,7 @@
 	<PropertyGroup>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<RootNamespace>Library</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
