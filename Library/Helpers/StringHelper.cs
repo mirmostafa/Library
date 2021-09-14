@@ -14,16 +14,16 @@ public static class StringHelper
     //! Old way
     ////public static string? Add(this string? s, in int count, char add = ' ', bool before = false)
     ////    => count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
-    
-    public static string? Add(this string? s, int count, char add = ' ', bool before = false) => string.Create(s?.Length ?? 0, s, (span, value) =>
-    {
-        value.AsSpan().CopyTo(span);
-        (before ? span[..count] : span[count..]).Fill(add);
-    });
 
-    public static string Add(this string s, in string s1)
-        => string.Concat(s, s1);
-        
+    public static string? Add(this string? s, int count, char add = ' ', bool before = false)
+        => string.Create(s?.Length ?? 0, s, (span, value) =>
+            {
+                value.AsSpan().CopyTo(span);
+                (before ? span[..count] : span[count..]).Fill(add);
+            });
+
+    public static string Add(this string s, in string s1) => string.Concat(s, s1);
+
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
         var buffer = ignoreCase ? str.ArgumentNotNull(nameof(str)).ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull(nameof(str));
