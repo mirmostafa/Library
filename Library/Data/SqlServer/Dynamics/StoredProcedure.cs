@@ -34,11 +34,11 @@ namespace Library.Data.SqlServer.Dynamics
                                           SqlDataType = row.Field("DataType", Convert.ToString)
                                       }));
 
-        public string Schema { get; set; }
+        public new string Schema { get; set; }
 
         public bool Run(params KeyValuePair<string, object>[] args) => true;
 
-        public bool TryGatherResultSet(out Dictionary<string, string> prms, Action<Exception> exceptionHandler = null)
+        public bool TryGatherResultSet(out Dictionary<string, string> prms, Action<Exception>? exceptionHandler = null)
         {
             bool flag;
             prms = new Dictionary<string, string>();

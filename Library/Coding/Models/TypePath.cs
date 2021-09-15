@@ -47,7 +47,7 @@ public sealed class TypePath : IEquatable<TypePath>
     public bool Equals(TypePath? other) => (this.Name, this.NameSpace) == (other?.Name, other?.NameSpace);
     public override string ToString() => this.FullPath;
 
-    public override bool Equals(object obj) => this.Equals(obj as TypePath);
+    public override bool Equals(object? obj) => this.Equals(obj as TypePath);
 
     public override int GetHashCode() => this.Name?.GetHashCode() ?? 0 + this.NameSpace?.GetHashCode() ?? 0;
 }

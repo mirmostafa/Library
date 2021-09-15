@@ -11,7 +11,7 @@ namespace Library.Data.SqlServer.Dynamics
     {
         private Columns? _Columns;
 
-        public Table(Database owner, string name, string schema = null, string connectionString = null)
+        public Table(Database owner, string name, string? schema = null, string? connectionString = null)
             : base(owner, name, schema, connectionString ?? owner.ConnectionString)
         {
         }
@@ -45,7 +45,7 @@ namespace Library.Data.SqlServer.Dynamics
 
         public static Tables GetByConnectionString(string connectionstring) => Database.GetDatabase(connectionstring).Tables;
 
-        public IEnumerable<string> PrintFormatted(CancellationTokenSource cancellation = null,
+        public IEnumerable<string> PrintFormatted(CancellationTokenSource? cancellation = null,
             string columnsSeparator = "\t",
             string cellsSeparator = "\t",
             params string[] columns)

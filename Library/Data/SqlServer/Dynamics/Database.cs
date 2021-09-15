@@ -86,10 +86,10 @@ namespace Library.Data.SqlServer.Dynamics
             return true;
         }
 
-        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+        public override bool TryInvokeMember(InvokeMemberBinder binder, object?[]? args, out object result)
         {
             result = this.StoredProcedures[binder.Name]
-                .Run(args.Select((t, i) => new KeyValuePair<string, object>(binder.CallInfo.ArgumentNames[i], t))
+                .Run(args.Compact().Select((t, i) => new KeyValuePair<string, object>(binder.CallInfo.ArgumentNames[i], t))
                     .ToArray());
             return true;
         }
