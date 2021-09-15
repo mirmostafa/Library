@@ -1,27 +1,26 @@
-﻿namespace Library.Helpers
+﻿namespace Library.Helpers;
+
+public class PromiseOnDispose : PromiseOnDisposeBase
 {
-    public class PromiseOnDispose : PromiseOnDisposeBase
+    private readonly Action _OnDispose;
+
+    public PromiseOnDispose(Action onDispose)
+        => this._OnDispose = onDispose;
+
+    public static PromiseOnDispose Begin(Action onBegin, Action onDispose)
     {
-        private readonly Action _OnDispose;
-
-        public PromiseOnDispose(Action onDispose)
-            => this._OnDispose = onDispose;
-
-        public static PromiseOnDispose Begin(Action onBegin, Action onDispose)
+        try
         {
-            try
-            {
-                onBegin.ArgumentNotNull(nameof(onBegin))();
-                return new(onDispose);
-            }
-            catch
-            {
-                onDispose?.Invoke();
-                throw;
-            }
+            onBegin.ArgumentNotNull(nameof(onBegin))();
+            return new(onDispose);
         }
-
-        protected override void OnDispose()
-            => this._OnDispose();
+        catch
+        {
+            onDispose?.Invoke();
+            throw;
+        }
     }
+
+    protected override void OnDispose()
+        => this._OnDispose();
 }
