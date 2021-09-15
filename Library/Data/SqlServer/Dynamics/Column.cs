@@ -18,7 +18,7 @@ namespace Library.Data.SqlServer.Dynamics
         public int Position { get; set; }
         public int Precision { get; set; }
 
-        public bool Equals(Column other)
+        public bool Equals(Column? other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -31,7 +31,7 @@ namespace Library.Data.SqlServer.Dynamics
         public static bool operator ==(Column left, Column right) => Equals(left, right);
         public static bool operator !=(Column left, Column right) => !Equals(left, right);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj))
             {
