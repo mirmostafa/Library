@@ -1,0 +1,119 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using Library.Coding;
+using Library.Data.SqlServer.Builders.Bases;
+
+namespace Library.Data.SqlServer.Builders;
+
+public static partial class SqlStatementBuilder
+{
+    public static ISelectStatement Select([DisallowNull] string tableName)
+        => new SelectStatement { TableName = tableName.ArgumentNotNull(nameof(tableName)) };
+    public static ISelectStatement Select()
+        => new SelectStatement();
+
+    public static ISelectStatement From([DisallowNull] this ISelectStatement statement, [DisallowNull] string tableName)
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.TableName = tableName.ArgumentNotNull(nameof(tableName)));
+
+    public static ISelectStatement AllColumns([DisallowNull] this ISelectStatement statement)
+        => statement.Star();
+    public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.Columns.Clear());
+    public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, params string[] columns)
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.Columns.ClearAndAddRange(columns.Compact()));
+    public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
+    {
+        Check.IfArgumentNotNull(statement, nameof(statement));
+        statement.Columns.Clear();
+        return statement.AddColumns(columns);
+    }
+    public static ISelectStatement AddColumn([DisallowNull] this ISelectStatement statement, params string[] columns)
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => columns.Compact().ForEach(c => statement.Columns.Add(c)));
+    public static ISelectStatement AddColumns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
+        => statement.AddColumn(columns.ToArray());
+
+    public static ISelectStatement Where([DisallowNull] this ISelectStatement statement, string? whereClause)
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.WhereClause = whereClause);
+
+    public static ISelectStatement OrderBy([DisallowNull] this ISelectStatement statement, string? column)
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.OrderByColumn = column);
+    public static ISelectStatement Ascending([DisallowNull] this ISelectStatement statement)
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.OrderByDirection = OrderByDirection.Ascending);
+    public static ISelectStatement Descending([DisallowNull] this ISelectStatement statement)
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.OrderByDirection = OrderByDirection.Descending);
+    public static ISelectStatement ClearOrdering([DisallowNull] this ISelectStatement statement)
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() =>
+        {
+            statement.OrderByColumn = null;
+            statement.OrderByDirection = OrderByDirection.None;
+        });
+
+    private static string AddBrackets(in string entity)
+    {
+        var entities = entity.Split('.');
+        var result = entities.Select(e =>
+        {
+            var r = e.StartsWith("[") ? e : $"[{e}";
+            r = r.EndsWith("]") ? r : $"{r}]";
+            return r;
+        }).Merge('.');
+        return result;
+    }
+    private static string FormatValue(object value) => value switch
+    {
+        int i => i.ToString(),
+        float f => f.ToString(),
+        decimal d => d.ToString(),
+        long l => l.ToString(),
+        string and { Length: 0 } => "''",
+        string s => $"'{s}'",
+        null => DBNull.Value.ToString(),
+        _ => $"'{value}'",
+    };
+
+    public static string Build([DisallowNull] this ISelectStatement statement, string indent = "    ")
+    {
+        Check.IfNotNull(statement.TableName, nameof(statement.TableName));
+        var result = new StringBuilder("SELECT");
+        if (statement.Columns.Any())
+        {
+            foreach (var column in statement.Columns)
+            {
+                _ = result.Append($" {AddBrackets(column)},");
+            }
+            _ = result.Remove(result.Length - 1, 1);
+        }
+        else
+        {
+            _ = result.Append(" *");
+        }
+        _ = AddClause($"FROM { AddBrackets(statement.TableName)}", indent, result);
+        if (!statement.WhereClause.IsNullOrEmpty())
+        {
+            _ = AddClause($"WHERE {statement.WhereClause}", indent, result);
+        }
+        if (statement.OrderByDirection != OrderByDirection.None)
+        {
+            _ = AddClause($"ORDER BY {AddBrackets(statement.OrderByColumn.NotNull(nameof(statement.OrderByColumn)))}", indent, result);
+            result = statement.OrderByDirection switch
+            {
+                OrderByDirection.Ascending => result.Append(" ASC"),
+                OrderByDirection.Descending => result.Append(" DESC"),
+                _ => throw new NotImplementedException(),
+            };
+        }
+        return result.ToString();
+    }
+
+    private static StringBuilder AddClause(in string clause, in string indent, in StringBuilder result)
+        => result.AppendLine().Append($"{indent}{clause}");
+
+    private struct SelectStatement : ISelectStatement
+    {
+        public string TableName { get; set; }
+        public string? WhereClause { get; set; }
+        public string? OrderBy { get; set; }
+        public List<string> Columns { get; } = new();
+        public string? OrderByColumn { get; set; }
+        public OrderByDirection OrderByDirection { get; set; } = OrderByDirection.None;
+    }
+}
