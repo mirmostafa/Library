@@ -31,6 +31,10 @@ public static class Functional
 
         return @this;
     }
+    public static TInstance If<TInstance>(this TInstance @this, bool b, in Func<TInstance> ifTrue, in Func<TInstance> ifFalse)
+    {
+        return b is true ? ifTrue() : ifFalse();
+    }
     public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Action<TInstance> ifTrue)
     {
         if (b is true)

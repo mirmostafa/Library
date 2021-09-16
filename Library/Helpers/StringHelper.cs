@@ -39,21 +39,6 @@ public static class StringHelper
         }
     }
 
-    //public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
-    //{
-    //    ReadOnlySpan<char> buffer = ignoreCase ? str.ArgumentNotNull(nameof(str)).ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull(nameof(str));
-    //    var stat = ignoreCase ? value.ArgumentNotNull(nameof(value)).ToLower(CultureInfo.CurrentCulture) : value.ArgumentNotNull(nameof(value));
-    //    var result = 0;
-    //    int currentIndex;
-    //    while ((currentIndex = buffer.IndexOf(stat, StringComparison.Ordinal)) != -1)
-    //    {
-    //        result += currentIndex;
-    //        yield return result;
-    //        result += stat.Length;
-    //        buffer = buffer[(currentIndex + stat.Length)..];
-    //    }
-    //}
-
     public static bool AnyCharInString(this string str, in string range) => range.Any(c => str.Contains(c.ToString()));
 
     public static string ArabicCharsToPersian(this string value) => value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
@@ -310,6 +295,7 @@ public static class StringHelper
     }
 
     public static string Merge(this IEnumerable<string> array, in string separator) => string.Join(separator, array.ToArray());
+    public static string Merge(this IEnumerable<string> array, in char separator) => string.Join(separator, array.ToArray());
 
     public static string Merge(this IEnumerable<string> array, string quat, string separator) => array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator} ").Trim()[..^1];
 

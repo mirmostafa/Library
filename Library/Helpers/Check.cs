@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Library.Exceptions.Validations;
@@ -69,6 +70,12 @@ public static class Check
     [return: NotNull]
     public static string NotNull([NotNull] this string? obj, string name)
         => NotValid(obj, x => x.IsNullOrEmpty(), () => new NullValueValidationException(name))!;
+
+    public static void IfAny([NotNull] IEnumerable obj, string name)
+    {
+        IfNotNull(obj, name);
+        IfNotValid(obj, _ => !obj.Any(), () => new NoItemValidationException(name));
+    }
 
     [return: NotNull]
     public static T NotNull<T>([NotNull] this T obj, Func<Exception> getException)
