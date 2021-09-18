@@ -1,13 +1,12 @@
 ﻿using Library.Coding;
 using Library.EventsArgs;
 
-namespace Library.Logging
-{
-    public class FastLogger : FastLoggerBase<object>, ILogger, IEventualLogger
-    {
-        public event EventHandler<ItemActedEventArgs<object>> Logging;
+namespace Library.Logging;
 
-        protected override void OnLogging(LogRecord<object> logRecord)
-            => CodeHelper.Catch(() => this.Logging?.Invoke(logRecord.Sender, new ItemActedEventArgs<object>(logRecord)));
-    }
+public class FastLogger : FastLoggerBase<object>, ILogger, IEventualLogger
+{
+    public event EventHandler<ItemActedEventArgs<object>>? Logging;
+
+    protected override void OnLogging(LogRecord<object> logRecord)
+        => Catch(() => this.Logging?.Invoke(logRecord.Sender, new ItemActedEventArgs<object>(logRecord)));
 }

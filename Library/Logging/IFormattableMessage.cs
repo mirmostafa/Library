@@ -1,7 +1,6 @@
-﻿namespace Library.Logging
+﻿namespace Library.Logging;
+
+public interface IFormattableMessage
 {
-    public interface IFormattableMessage
-    {
-        string Format();
-    }
+    string Format();
 }

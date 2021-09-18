@@ -10,28 +10,19 @@ public sealed class LogToTextWriter<TLogMessage> : ILogger<TLogMessage>
     public LogToTextWriter([DisallowNull] TextWriter writer, Func<LogRecord, string>? formatter = null)
     {
         this._writer = writer.ArgumentNotNull(nameof(writer));
-        this._formatter = formatter ?? DefaulFormatter;
+        this._formatter = formatter ?? (log => LoggingHelper.Reformat(log));
     }
+
     public bool IsEnabled { get; set; }
     public LogLevel LogLevel { get; set; }
-    public static Func<LogRecord, string> DefaulFormatter = log => LoggingHelper.Reformat(log);
 
     public void Log(TLogMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
     {
-        if (message == null)
+        if (message == null || !this.IsEnabled || level.MeetsLevel(this.LogLevel))
         {
             return;
         }
 
-        if (!this.IsEnabled)
-        {
-            return;
-        }
-
-        if (level < this.LogLevel)
-        {
-            return;
-        }
         this._writer.WriteLine(this._formatter(new LogRecord(message, level, sender, time, stackTrace)));
     }
 }

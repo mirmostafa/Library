@@ -11,7 +11,7 @@ public static class LibLogger
     private static Loggers Loggers => new(new VsOutputLogger());
 
     public static void AddLogger(ILogger value) => Loggers.Add(value);
-    public static void AddLogger(Microsoft.Extensions.Logging.ILogger logger) => AddLogger(new MsLoggerProxy(logger));
+    public static void AddLogger(Microsoft.Extensions.Logging.ILogger logger) => AddLogger(new MsLoggerWrapper(logger));
 
     internal static void Log(object message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
     {

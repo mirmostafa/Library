@@ -1,10 +1,9 @@
-﻿namespace Library.Logging
+﻿namespace Library.Logging;
+
+public interface ILogger : ILogger<object>
 {
-    public interface ILogger : ILogger<object>
-    {
-        /// <summary>
-        /// The empty Logger
-        /// </summary>
-        static readonly ILogger Empty = new EmptyLogger();
-    }
+    /// <summary>
+    /// The empty Logger
+    /// </summary>
+    static new readonly ILogger Empty = new EmptyLogger();
 }

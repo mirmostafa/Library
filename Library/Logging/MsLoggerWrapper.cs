@@ -1,19 +1,23 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Logging;
 
-namespace Library.Logging
+namespace Library.Logging;
+
+public sealed class MsLoggerWrapper : FastLoggerBase<string>, ILogger
 {
-    public sealed class MsLoggerWrapper : FastLoggerBase<string>
+    private readonly Microsoft.Extensions.Logging.ILogger _logger;
+
+    public MsLoggerWrapper(Microsoft.Extensions.Logging.ILogger logger) => this._logger = logger;
+
+    public void Log([DisallowNull] object message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
+        => base.Log(message?.ToString()!, level, sender, time, stackTrace);
+
+    protected override void OnLogging(LogRecord<string> logRecord)
     {
-        private readonly Microsoft.Extensions.Logging.ILogger _logger;
-
-        public MsLoggerWrapper(Microsoft.Extensions.Logging.ILogger logger) => this._logger = logger;
-
-        protected override void OnLogging(LogRecord<string> logRecord)
+        if (logRecord is null or { Message: null })
         {
-            if (logRecord is not null)
-            {
-                this._logger.Log(logRecord.Level.ToMsLogLevel(), logRecord.Message);
-            }
+            return;
         }
+        this._logger.Log(logRecord.Level.ToMsLogLevel(), logRecord.Message);
     }
 }

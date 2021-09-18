@@ -28,7 +28,7 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     public TList Clear() => this.This.Fluent(() => this._List.Clear());
     public (TList List, bool Result) Contains(TItem item) => (this.This, this._List.Contains(item));
     public TList CopyTo(TItem[] array, int arrayIndex) => this.This.Fluent(() => this._List.CopyTo(array, arrayIndex));
-    public (TList, bool) Remove(TItem item) => this.This.FluentByResult(() => this._List.Remove(item));
+    public (TList List, bool Result) Remove(TItem item) => this.This.FluentByResult(() => this._List.Remove(item));
 
     public IEnumerator<TItem> GetEnumerator() => this._List.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this._List).GetEnumerator();
