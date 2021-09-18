@@ -1,6 +1,5 @@
-﻿namespace Library.Logging
+﻿namespace Library.Logging;
+
+internal class EmptyLogger : EmptyLogger<object>, ILogger
 {
-    internal class EmptyLogger : EmptyLogger<object>, ILogger
-    {
-    }
 }
