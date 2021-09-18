@@ -1,41 +1,31 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using Library;
-using Library.Data.SqlServer.Builders;
-using Library.Helpers;
-using Library.Helpers.ConsoleHelper;
 using Microsoft.Extensions.Logging;
 
 namespace TestConApp;
 
-internal class Program
+internal partial class Program
 {
     private static ILogger _logger = null!;
 
     public static void Main()
     {
-       
+        //Console.Out
     }
 
-    private static void ProgressBarTest()
-    {
-        Console.Write("Doing... ");
-        using (var progress = new ConsoleProgressBar())
-        {
-            const int max = 200;
-            for (var i = 0; i <= max; i++)
-            {
-                progress.Report(i, max);
-                Thread.Sleep(20);
-            }
-        }
-        Console.WriteLine("Done.");
-    }
-
-    public static void Test<T>([DisallowNull] T t)
-        where T : notnull => t.IfArgumentNotNull(nameof(t));
+    //private static void ProgressBarTest()
+    //{
+    //    Console.Write("Doing... ");
+    //    using (var progress = new ConsoleProgressBar())
+    //    {
+    //        const int max = 200;
+    //        for (var i = 0; i <= max; i++)
+    //        {
+    //            progress.Report(i, max);
+    //            Thread.Sleep(20);
+    //        }
+    //    }
+    //    Console.WriteLine("Done.");
+    //}
 
     //private static void SourceGeneratorTest()
     //{
@@ -50,31 +40,4 @@ internal class Program
     //    vm.Text = "abc";
     //    vm.Count = 123;
     //}
-
-    [ModuleInitializer]
-    public static void Startup()
-    {
-        setupLogger();
-        LibLogger.AddLogger(_logger);
-        _logger.LogInformation("System initialized.");
-
-        static void setupLogger()
-        {
-            using var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.AddSimpleConsole(options =>
-                {
-                    options.IncludeScopes = true;
-                    options.TimestampFormat = "HH:mm:ss";
-                    options.UseUtcTimestamp = false;
-                });
-            });
-            var logger = loggerFactory.CreateLogger<Program>();
-            using (logger.BeginScope("[Scope is enabled]"))
-            {
-                //logger.LogInformation("System is started");
-            }
-            _logger = logger;
-        }
-    }
 }

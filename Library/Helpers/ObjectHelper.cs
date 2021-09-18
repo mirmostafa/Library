@@ -562,7 +562,7 @@ public static class ObjectHelper
     /// </summary>
     /// <param name="obj"> The object. </param>
     /// <returns> </returns>
-    [Obsolete("No more is required.")]
+    //[Obsolete("No more is required.")]
     public static long ToLong(this object obj) => Convert.ToInt64(obj);
 
     /// <summary>
