@@ -57,7 +57,12 @@ namespace LibraryTest
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
-        public void SpaceExceptionTest() => Assert.AreEqual("     ", StringHelper.Space(-5));
+        public void SpaceExceptionTest()
+        {
+            var expected = "     ";
+            var actual = StringHelper.Space(-5);
+            Assert.AreEqual(expected, actual);
+        }
 
         [TestMethod]
         public void GetPhraseTest()
