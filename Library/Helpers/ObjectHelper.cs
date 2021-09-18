@@ -537,7 +537,6 @@ public static class ObjectHelper
     /// </summary>
     /// <param name="obj"> The object. </param>
     /// <returns> </returns>
-    [Obsolete("No more is required.")]
     public static int ToInt(this object obj)
         => Convert.ToInt32(obj);
 

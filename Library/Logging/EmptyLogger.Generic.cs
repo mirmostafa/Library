@@ -2,7 +2,7 @@
 {
     internal class EmptyLogger<TMessage> : ILogger<TMessage>
     {
-        public bool IsEnabled { get; set; }
+        public bool IsEnabled { get; set; } = false;
 
         public LogLevel LogLevel { get; set; } = LogLevel.None;
 
