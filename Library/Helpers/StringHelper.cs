@@ -11,16 +11,15 @@ namespace Library.Helpers;
 /// </summary>
 public static class StringHelper
 {
-    //! Old way
-    ////public static string? Add(this string? s, in int count, char add = ' ', bool before = false)
-    ////    => count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
+    public static string? Add(this string? s, in int count, char add = ' ', bool before = false)
+        => count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 
-    public static string? Add(this string? s, int count, char add = ' ', bool before = false)
-        => string.Create(s?.Length ?? 0, s, (span, value) =>
-            {
-                value.AsSpan().CopyTo(span);
-                (before ? span[..count] : span[count..]).Fill(add);
-            });
+    //public static string? Add(this string? s, int count, char add = ' ', bool before = false)
+    //    => string.Create(s?.Length ?? 0, s, (span, value) =>
+    //        {
+    //            value.AsSpan().CopyTo(span);
+    //            (before ? span[..count] : span[count..]).Fill(add);
+    //        });
 
     public static string Add(this string s, in string s1) => string.Concat(s, s1);
 
