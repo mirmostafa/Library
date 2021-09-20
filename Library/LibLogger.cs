@@ -4,7 +4,7 @@ using Library.Logging;
 namespace Library;
 public static class LibLogger
 {
-    public static event EventHandler<ItemActedEventArgs<LogRecord<object>>> Logged;
+    public static event EventHandler<ItemActedEventArgs<LogRecord<object>>>? Logged;
 
     public static bool IsEnabled { get => Loggers.IsEnabled; set => Loggers.IsEnabled = value; }
     public static LogLevel LogLevel { get => Loggers.LogLevel; set => Loggers.LogLevel = value; }
