@@ -23,15 +23,16 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// <param name="dateTime"> A DateTime instance. </param>
     public PersianDateTime(in DateTime dateTime)
     {
-        this.Data = new PersianDateTimeData();
-        this.Data.Init();
-        this.Data.Year = PersianCalendar.GetYear(dateTime);
-        this.Data.Month = PersianCalendar.GetMonth(dateTime);
-        this.Data.Day = PersianCalendar.GetDayOfMonth(dateTime);
-        this.Data.Hour = PersianCalendar.GetHour(dateTime);
-        this.Data.Minute = PersianCalendar.GetMinute(dateTime);
-        this.Data.Second = PersianCalendar.GetSecond(dateTime);
-        this.Data.Millisecond = PersianCalendar.GetMilliseconds(dateTime);
+        this.Data = new PersianDateTimeData
+        {
+            Year = PersianCalendar.GetYear(dateTime),
+            Month = PersianCalendar.GetMonth(dateTime),
+            Day = PersianCalendar.GetDayOfMonth(dateTime),
+            Hour = PersianCalendar.GetHour(dateTime),
+            Minute = PersianCalendar.GetMinute(dateTime),
+            Second = PersianCalendar.GetSecond(dateTime),
+            Millisecond = PersianCalendar.GetMilliseconds(dateTime)
+        };
         this.IsInitiated = true;
     }
 
@@ -53,15 +54,16 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         in int second,
         in double millisecond)
     {
-        this.Data = new PersianDateTimeData();
-        this.Data.Init();
-        this.Data.Year = year;
-        this.Data.Month = month;
-        this.Data.Day = day;
-        this.Data.Hour = hour;
-        this.Data.Minute = minute;
-        this.Data.Second = second;
-        this.Data.Millisecond = millisecond;
+        this.Data = new PersianDateTimeData
+        {
+            Year = year,
+            Month = month,
+            Day = day,
+            Hour = hour,
+            Minute = minute,
+            Second = second,
+            Millisecond = millisecond
+        };
         this.IsInitiated = true;
     }
 
@@ -349,50 +351,60 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     public static PersianDateTime ParsePersian(in string dateTimeString)
     {
         Check.IfArgumentNotNull(dateTimeString, nameof(dateTimeString));
-        var data = new PersianDateTimeData
-        {
-            HasDate = dateTimeString.IndexOf(DateSeparator, StringComparison.Ordinal) > 0,
-            HasTime = dateTimeString.IndexOf(":", StringComparison.Ordinal) > 0
-        };
+
         var indexOfSpace = dateTimeString.IndexOf(" ", StringComparison.Ordinal);
-        if (data.HasDate)
+        var hasDate = dateTimeString.IndexOf(DateSeparator, StringComparison.Ordinal) > 0;
+        var hasTime = dateTimeString.IndexOf(":", StringComparison.Ordinal) > 0;
+        int year = 0, month = 0, day = 0, hour = 0, min = 0;
+
+        if (hasDate)
         {
-            var datePart = data.HasTime ? dateTimeString.Substring(0, indexOfSpace) : dateTimeString;
-            if (int.TryParse(datePart.AsSpan(0, datePart.IndexOf(DateSeparator, StringComparison.Ordinal)),
-                out data.Year) is false)
+            var datePart = hasTime ? dateTimeString.Substring(0, indexOfSpace) : dateTimeString;
+            if (int.TryParse(datePart.AsSpan(0, datePart.IndexOf(DateSeparator, StringComparison.Ordinal)), out year) is false)
             {
                 throw new ArgumentException("not valid date", nameof(dateTimeString));
             }
 
             datePart = datePart.Remove(0, datePart.IndexOf(DateSeparator, StringComparison.Ordinal) + 1);
             if (int.TryParse(datePart.AsSpan(0, datePart.IndexOf(DateSeparator, StringComparison.Ordinal)),
-                out data.Month) is false)
+                out month) is false)
             {
                 throw new ArgumentException("not valid date", nameof(dateTimeString));
             }
 
             datePart = datePart.Remove(0, datePart.IndexOf(DateSeparator, StringComparison.Ordinal) + 1);
-            if (int.TryParse(datePart, out data.Day) is false)
+            if (int.TryParse(datePart, out day) is false)
             {
                 throw new ArgumentException("not valid date", nameof(dateTimeString));
             }
         }
 
-        if (data.HasTime)
+        if (hasTime)
         {
-            var timePart = data.HasDate ? dateTimeString[indexOfSpace..] : dateTimeString;
+            var timePart = hasDate ? dateTimeString[indexOfSpace..] : dateTimeString;
             if (int.TryParse(timePart.AsSpan(0, timePart.IndexOf(TimeSeparator, StringComparison.Ordinal)),
-                out data.Hour) is false)
+                out hour) is false)
             {
                 throw new ArgumentException("not valid date", nameof(dateTimeString));
             }
 
             timePart = timePart.Remove(0, timePart.IndexOf(TimeSeparator, StringComparison.Ordinal) + 1);
-            if (int.TryParse(timePart, out data.Minute) is false)
+            if (int.TryParse(timePart, out min) is false)
             {
                 throw new ArgumentException("not valid date", nameof(dateTimeString));
             }
         }
+
+        var data = new PersianDateTimeData
+        {
+            HasDate = hasDate,
+            HasTime = hasTime,
+            Year = year,
+            Month = month,
+            Day = day,
+            Hour = hour,
+            Minute = min
+        };
 
         return data.ToString()?.Equals("00:00:00 0000/00/00", StringComparison.Ordinal) switch
         {
