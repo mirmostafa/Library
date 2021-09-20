@@ -1,3 +1,1 @@
-﻿namespace TestConApp;
-
-internal readonly record struct Person(string Name, int Age);
+﻿internal readonly record struct Person(string Name, int Age);

@@ -134,17 +134,7 @@ public static class EnumerableHelper
         yield return item;
     }
 
-    public static IReadOnlyList<T> AsReadOnlyList<T>([DisallowNull] this IEnumerable<T> items)
-    {
-        Check.IfArgumentNotNull(items, nameof(items));
-
-        var result = new List<T>();
-        foreach (var item in items)
-        {
-            result.Add(item);
-        }
-        return result.AsReadOnly();
-    }
+    public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items) => new List<T>(items).AsReadOnly();
 
     /// <summary>
     ///     Builds a tree.
