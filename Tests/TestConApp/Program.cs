@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Library.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace TestConApp;
@@ -9,23 +11,27 @@ internal partial class Program
 
     public static void Main()
     {
-        //Console.Out
+        var ali = new Person("Ali", 5);
+        var reza = ali with { Name = "Reza" };
+
+        var ppl = new List<Person>() { ali };
+
+        //var people = ppl.AsReadOnly();
+        var people = ppl.ToReadOnlyList();
+        Display(people);
+        Console.WriteLine("===");
+
+        ppl.Add(reza);
+        Display(people);
     }
 
-    //private static void ProgressBarTest()
-    //{
-    //    Console.Write("Doing... ");
-    //    using (var progress = new ConsoleProgressBar())
-    //    {
-    //        const int max = 200;
-    //        for (var i = 0; i <= max; i++)
-    //        {
-    //            progress.Report(i, max);
-    //            Thread.Sleep(20);
-    //        }
-    //    }
-    //    Console.WriteLine("Done.");
-    //}
+    private static void Display(IEnumerable<Person> people)
+    {
+        foreach (var person in people)
+        {
+            Console.WriteLine(person.Name);
+        }
+    }
 
     //private static void SourceGeneratorTest()
     //{
