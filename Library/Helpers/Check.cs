@@ -9,7 +9,7 @@ namespace Library.Helpers;
 [DebuggerStepThrough]
 public static class Check
 {
-    public static void ArgumentBiggerThan(in int arg, in int min, in string argName)
+    public static void IfArgumentBiggerThan(in int arg, in int min, in string argName)
     {
         IfArgumentNotNull(argName, nameof(argName));
         if (arg <= min)
@@ -21,6 +21,8 @@ public static class Check
                 min));
         }
     }
+    public static void IfArgumentIsNotValid<T>(this T? obj, Predicate<T?> validator, string? argName)
+        => _ = NotValid(obj, validator.ArgumentNotNull(nameof(validator)), () => new ArgumentNullException(argName))!;
 
     [return: NotNull]
     public static string ArgumentNotNull([NotNull] this string? obj, string? argName = null)
@@ -33,15 +35,18 @@ public static class Check
     public static T ArgumentOutOfRange<T>(this T obj, Predicate<T> validate, string? argName = null)
         => NotValid(obj, validate, () => new ArgumentOutOfRangeException(argName));
 
-    public static void IfArgumentIsNotValid<T>(this T? obj, Predicate<T?> validator, string? argName)
-        => _ = NotValid(obj, validator.ArgumentNotNull(nameof(validator)), () => new ArgumentNullException(argName))!;
-    internal static void Require(bool required)
+
+    internal static void Require<TValidationException>(bool required)
+        where TValidationException : ValidationExceptionBase, new()
     {
         if (!required)
         {
-            throw new ValidationException();
+            throw new TValidationException();
         }
     }
+
+    internal static void Require(bool required) => Require<Exceptions.Validations.ValidationException>(required);
+
     public static void IfArgumentNotNull([NotNull] this string? obj, string argName)
         => _ = NotValid(obj, x => x is null, () => new ArgumentNullException(argName))!;
 
@@ -94,16 +99,11 @@ public static class Check
     public static void IfNotNull<T>(this T @this, string? obj, string name)
         => _ = NotValid(@this, _ => obj.IsNullOrEmpty(), () => new NullValueValidationException(name))!;
 
-    public static T NotValid<T, TException>(this T obj, Predicate<T> validate)
-        where TException : Exception, new()
-        => NotValid(obj, validate, static () => new TException());
-
-    public static T NotValid<T>(this T obj, Predicate<T> validate, Func<Exception> getException)
+    public static T NotValid<T>(this T obj, [DisallowNull] in Predicate<T> validate, [DisallowNull] in Func<Exception> getException)
         => !(validate?.Invoke(obj) ?? false) ? obj : (getException is null ? obj : throw getException());
 
-    public static T NotValid<T>(this T obj, Predicate<T> validate, Func<T, Exception> getException)
-        => !(validate?.Invoke(obj) ?? false) ? obj : (getException is null ? obj : throw getException(obj));
-
-    public static T NotValid<T>(this T obj, Predicate<T> validate, string? message = null)
-        => !(validate?.Invoke(obj) ?? false) ? obj : throw new ValidationException(message ?? string.Empty);
+    public static T NotValid<T, TValidationException>(this T t, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in string argName, [DisallowNull] in Func<string, TValidationException> getException)
+        where TValidationException : ValidationExceptionBase
+        => !validate.ArgumentNotNull(nameof(validate))(t) ? t : throw getException(argName.ArgumentNotNull(nameof(argName)));
 }
+

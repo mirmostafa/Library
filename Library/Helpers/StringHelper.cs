@@ -362,7 +362,7 @@ public static class StringHelper
 
     public static string Repeat(this string text, in int count)
     {
-        Check.ArgumentBiggerThan(count, 0, "count");
+        Check.IfArgumentBiggerThan(count, 0, "count");
         var result = new StringBuilder(string.Empty);
         for (var counter = 0; counter < count; counter++)
         {
