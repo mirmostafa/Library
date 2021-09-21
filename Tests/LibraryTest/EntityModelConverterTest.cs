@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Library.Data.SqlServer;
+using Library.Data.SqlServer.Builders;
 
 namespace LibraryTest;
 
@@ -13,6 +14,20 @@ public class EntityModelConverterTest
         var columns = EntityModelConverter.GetColumns<Person>().OrderBy(c => c.Order).ToList();
         Assert.AreEqual(5, columns.Count);
         Assert.AreEqual("LName", columns[2].Name);
+    }
+
+    [TestMethod]
+    public void SqlStamentBuiByEntityModelTest()
+    {
+        var columns = EntityModelConverter.GetColumns<Person>();
+        var builder = Library.Data.SqlServer.Builders.SqlStatementBuilder
+                             .Select()
+                             .Columns(columns.Select(c => c.Name))
+                             .From(nameof(Person));
+        var actual = builder.Build();
+        var expected = @"SELECT [Id], [Name], [AddressId], [Address], [LName]
+    FROM [Person]";
+        Assert.AreEqual(expected, actual);
     }
 }
 

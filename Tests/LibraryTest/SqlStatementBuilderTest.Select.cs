@@ -36,6 +36,19 @@ public class SelectStatementBuilderTest
     }
 
     [TestMethod]
+    public void CreateStandardMinimizeSelectTest()
+    {
+        var specQueryActual = SqlStatementBuilder
+                        .Select()
+                        .Star()
+                        .From("Person")
+                        .Build();
+        var specQueryExpected = @"SELECT *
+    FROM [Person]";
+        Assert.AreEqual(specQueryExpected, specQueryActual);
+    }
+
+    [TestMethod]
     public void CreateSelectClearOrderingTest()
     {
         var specQueryActual = SqlStatementBuilder
