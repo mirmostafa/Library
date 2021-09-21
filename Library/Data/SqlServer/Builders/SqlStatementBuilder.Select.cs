@@ -6,6 +6,14 @@ namespace Library.Data.SqlServer.Builders;
 
 public static partial class SqlStatementBuilder
 {
+    public static ISelectStatement Select<TEntity>()
+    {
+        var table = EntityModelConverter.GetTableInfo<TEntity>();
+        var result = Select()
+                    .Columns(table.Columns.OrderBy(c => c.Order).Select(c => c.Name))
+                    .From(table.Name);
+        return result;
+    }
     public static ISelectStatement Select([DisallowNull] string tableName)
         => new SelectStatement { TableName = tableName.ArgumentNotNull(nameof(tableName)) };
     public static ISelectStatement Select()

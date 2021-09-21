@@ -28,6 +28,24 @@ public static class EntityModelConverter
             yield return new ColumnInfo(name, type, isKey, isFk, fkName, order);
         }
     }
+    public static TableInfo GetTableInfo<TEntity>()
+        => GetTableInfo(typeof(TEntity));
+    public static TableInfo GetTableInfo(Type tableType)
+        => new(GetTableName(tableType), GetColumns(tableType));
+    public static string GetTableName<Entity>()
+    {
+        var tableType = typeof(Entity);
+        return GetTableName(tableType);
+    }
+
+    private static string GetTableName(Type tableType)
+    {
+        var tableAttr = ObjectHelper.GetAttribute<TableAttribute>(tableType);
+        return tableAttr is not null
+            ? tableAttr.Schema.IsNullOrEmpty() ? tableAttr.Name : $"{tableAttr.Schema}.{tableAttr.Name}"
+            : tableType.Name;
+    }
 }
 
 public readonly record struct ColumnInfo(string Name, Type Type, bool IsKey, bool IsForiegnKey, string? ForiegnKeyName, int Order);
+public readonly record struct TableInfo(string Name, IEnumerable<ColumnInfo> Columns);

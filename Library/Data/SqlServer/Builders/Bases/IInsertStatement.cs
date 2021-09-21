@@ -1,6 +1,6 @@
 ﻿namespace Library.Data.SqlServer.Builders.Bases;
 
-public interface IInsertStatement
+public interface IInsertStatement : IStatementOnTable
 {
 
 }

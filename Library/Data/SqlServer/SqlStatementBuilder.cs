@@ -24,47 +24,6 @@ public static class SqlStatementBuilder
     public static string CreateDelete<TEntity>(string tableName, TEntity entity)
         => CreateDelete(tableName, false, typeof(TEntity).GetProperties().Select(p => (p.Name, p.GetValue(entity, null))));
 
-    public static string CreateExecuteStoredProcedure(string spName, Action<List<SqlParameter>> fillParams = null)
-    {
-        var cmdText = new StringBuilder($"Exec [{spName}]");
-        if (fillParams == null)
-        {
-            return cmdText.ToString();
-        }
-
-        var parameters = new List<SqlParameter>();
-        fillParams(parameters);
-        for (var index = 0; index < parameters.Count; index++)
-        {
-            var parameter = parameters[index];
-            _ = cmdText.Append($"\t{Environment.NewLine}{parameter.ParameterName} = '{parameter.Value}'");
-            if (index != parameters.Count - 1)
-            {
-                cmdText.Append(", ");
-            }
-        }
-
-        return cmdText.ToString();
-    }
-
-    public static string CreateInsertValue(string tableName, params (string Value1, object Value2)[] keyValues) =>
-        CreateInsertValueCore(tableName, keyValues.ToList());
-
-    public static string CreateInsertValue(string tableName, IEnumerable<(string Value1, object Value2)> keyValues) =>
-        CreateInsertValueCore(tableName, keyValues);
-
-    public static string CreateInsertValue<TTableEntity>(string tableName, TTableEntity entity) =>
-        CreateInsertValueCore(tableName, InternalServices.Refactor(entity, false).Columns.ToArray());
-
-    public static string CreateInsertValue<TTableEntity>(TTableEntity entity, params string[] columnNames)
-    {
-        var schema = InternalServices.Refactor(entity);
-        return CreateInsertValueCore(schema.TableName,
-            columnNames.Length != 0
-                ? schema.Columns.Where(col => columnNames.Contains(col.Value1.Remove("[").Remove("]")))
-                : schema.Columns.ToArray());
-    }
-
     public static string CreateSelect(string tablename, params string[] columns)
     {
         if (tablename == null)
