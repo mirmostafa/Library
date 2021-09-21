@@ -1,6 +1,5 @@
 ﻿using System.CodeDom;
 using Library.CodeGeneration.Models;
-using Library.Coding.Models;
 using Library.Helpers.CodeGen;
 
 namespace Library.CodeGeneration;
@@ -20,23 +19,17 @@ public sealed class CodeDomCodeGenProvider : ICodeGenProvider
             var codeType = (type.IsPartial ? partNs : mainNs).UseNameSpace(type.UsingNameSpaces).NewClass(type.Name, type.BaseTypes, type.IsPartial);
             foreach (var member in type.Members)
             {
-                if (member is FieldInfo field)
+                switch (member)
                 {
-                    codeType = codeType.AddField(field.Type, field.Type, field.Comment, field.AccessModifier);
-                }
-                else if (member is PropertyInfo property)
-                {
-                    if (property.HasBackingField)
-                    { }
-                    codeType = codeType.AddProperty(
-                        property.Type,
-                        property.Name,
-                        property.Comment,
-                        property.AccessModifier,
-                        property.Getter,
-                        property.Setter,
-                        property.InitCode,
-                        property.IsNullable);
+                    case FieldInfo field:
+                        codeType = codeType.AddField(field.Type, field.Type, field.Comment, field.AccessModifier);
+                        break;
+                    case PropertyInfo property when (property.HasBackingField):
+                        codeType = addProperty(codeType, property);
+                        break; 
+                    case PropertyInfo property:
+                        codeType = addProperty(codeType, property);
+                        break;
                 }
             }
         }
@@ -46,5 +39,15 @@ public sealed class CodeDomCodeGenProvider : ICodeGenProvider
         var result = new Codes(mainCode, partCode);
         LibLogger.Debug("Generated Behind Code");
         return result;
+
+        static CodeTypeDeclaration addProperty(in CodeTypeDeclaration codeType, in PropertyInfo property) => codeType.AddProperty(
+            property.Type,
+            property.Name,
+            property.Comment,
+            property.AccessModifier,
+            property.Getter,
+            property.Setter,
+            property.InitCode,
+            property.IsNullable);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Library.DesignPatterns.Markers;
 
 namespace Library.Collections;
+
 [Fluent]
 public abstract class SpecializedListBase<TItem, TEnumerable> : ReadOnlySpecializedList<TItem, TEnumerable>, IList<TItem?>
         where TEnumerable : SpecializedListBase<TItem?, TEnumerable>

@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Library.Coding;
 using Library.Helpers;
 using Library.Wpf.Media;
 using static Library.Coding.CodeHelper;
@@ -396,7 +397,7 @@ public static class ControlHelper
     {
         Check.IfArgumentNotNull(uiElement, nameof(uiElement));
 
-        _ = uiElement.Dispatcher.Invoke(DispatcherPriority.Render, EmptyAction);
+        _ = uiElement.Dispatcher.Invoke(DispatcherPriority.Render, Methods.Empty);
     }
 
     public static IEnumerable<dynamic>? RetieveCheckedItems(this MultiSelector dg)

@@ -46,7 +46,7 @@ public static class DbContextHelper
             var entity = new TEntity { Id = id };
             if (detach)
             {
-                _ = Catch(() => dbContext.Detach(entity));
+                _ = CatchFunc(() => dbContext.Detach(entity));
             }
 
             _ = dbContext.Remove(entity);
@@ -60,7 +60,7 @@ public static class DbContextHelper
         var entity = new TEntity { Id = id };
         if (detach)
         {
-            _ = CodeHelper.Catch(() => dbContext.Detach(entity));
+            _ = CodeHelper.CatchFunc(() => dbContext.Detach(entity));
         }
 
         return dbContext.Remove(entity);

@@ -8,18 +8,20 @@ namespace Library.Coding;
 
 public static class CodeHelper
 {
-    public static async Task Async() => await Task.CompletedTask;
+    /// <summary>
+    ///     Breaks code execution.
+    /// </summary>
+    public static void Break()
+        => throw new BreakException();
+
+    public static async Task Async()
+        => await Task.CompletedTask;
 
     public static async Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default)
         => await Task.Run(action, cancellationToken);
 
     public static async Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default)
         => await Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
-
-    /// <summary>
-    ///     Breaks code execution.
-    /// </summary>
-    public static void Break() => throw new BreakException();
 
     public static Exception? Catch(
         in Action tryMethod,
@@ -108,7 +110,7 @@ public static class CodeHelper
         }
     }
 
-    public static (TResult? Result, Exception? Exception) Catch<TResult>(in Func<TResult> action)
+    public static (TResult? Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> action)
     {
         try
         {
@@ -133,7 +135,7 @@ public static class CodeHelper
         }
     }
 
-    public static TResult? Catch<TResult, TException>(Func<TResult> action, Predicate<TException> predicate)
+    public static TResult? CatchFunc<TResult, TException>(Func<TResult> action, Predicate<TException> predicate)
         where TException : Exception
     {
         try
@@ -157,6 +159,7 @@ public static class CodeHelper
             return ex;
         }
     }
+
     /// <summary>
     ///     Gets the caller method.
     /// </summary>
@@ -192,13 +195,15 @@ public static class CodeHelper
     /// </summary>
     /// <param name="index"> The index. </param>
     /// <returns> </returns>
-    public static string? GetCallerMethodName(in int index = 2) => GetCallerMethod(index)?.Name;
+    public static string? GetCallerMethodName(in int index = 2)
+        => GetCallerMethod(index)?.Name;
 
     /// <summary>
     ///     Gets the current method.
     /// </summary>
     /// <returns> </returns>
-    public static MethodBase? GetCurrentMethod() => GetCallerMethod();
+    public static MethodBase? GetCurrentMethod()
+        => GetCallerMethod();
 
     /// <summary>
     ///     Gets the delegate.
@@ -220,11 +225,14 @@ public static class CodeHelper
     /// </returns>
     public static bool HasException(in Action tryFunc)
         => Catch(tryFunc) is not null;
+}
 
-    public static Action<T> EmptyIntAction<T>() => x => { };
-    public static Func<T, T> SelfIntFunc<T>() => x => x;
-    public static Action EmptyAction => () => { };
-    public static Func<Task> EmptyActionTask => () => Task.CompletedTask;
-    public static Func<Task> GetAction(Func<Task> func) => func;
-    public static Func<Task> ReturnsTask => async () => await Task.CompletedTask;
+public static class Methods
+{
+    public static Action<T> EmptyArg<T>() => x => { };
+    public static Func<T, T> Self<T>() => x => x;
+    public static Action Empty => () => { };
+    public static Func<Task> EmptyTask => () => Task.CompletedTask;
+    public static Func<Task> ToFunc(Func<Task> func) => func;
+    public static Func<Task> Async => async () => await Task.CompletedTask;
 }
