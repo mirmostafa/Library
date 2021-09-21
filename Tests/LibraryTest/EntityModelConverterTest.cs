@@ -22,15 +22,27 @@ public class EntityModelConverterTest
         var columns = EntityModelConverter.GetColumns<Person>();
         var builder = Library.Data.SqlServer.Builders.SqlStatementBuilder
                              .Select()
-                             .Columns(columns.Select(c => c.Name))
+                             .Columns(columns.OrderBy(c => c.Order).Select(c => c.Name))
                              .From(nameof(Person));
         var actual = builder.Build();
-        var expected = @"SELECT [Id], [Name], [AddressId], [Address], [LName]
+        var expected = @"SELECT [Id], [Name], [LName], [AddressId], [Address]
     FROM [Person]";
+        Assert.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    public void CreateSelectByEntityTest()
+    {
+        var actual = Library.Data.SqlServer.Builders.SqlStatementBuilder
+                        .Select<Person>()
+                        .Build();
+        var expected = @"SELECT [Id], [Name], [LName], [AddressId], [Address]
+    FROM [dbo].[Person]";
         Assert.AreEqual(expected, actual);
     }
 }
 
+[Table("Person", Schema = "dbo")]
 internal class Person
 {
     [Key]
@@ -41,7 +53,7 @@ internal class Person
     public string? Name { get; set; }
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
-    public string? Name2 { get; set; }
+    public string? FullName { get; set; }
 
     [Column(Order = 3)]
     public long AddressId { get; set; }

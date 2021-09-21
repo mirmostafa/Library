@@ -2,5 +2,5 @@
 
 public interface IWhereClause
 {
-    string WhereClause { get; set; }
+    string? WhereClause { get; set; }
 }

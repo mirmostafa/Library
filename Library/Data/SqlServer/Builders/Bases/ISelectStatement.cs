@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
+﻿namespace Library.Data.SqlServer.Builders.Bases;
 
-namespace Library.Data.SqlServer.Builders.Bases;
-
-public interface ISelectStatement
+public interface ISelectStatement : IStatementOnTable, IWhereClause
 {
-    string TableName { get; set; }
     List<string> Columns { get; }
-    string? WhereClause { get; set; }
     string? OrderByColumn { get; set; }
     OrderByDirection OrderByDirection { get; set; }
 }
