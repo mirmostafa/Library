@@ -2,7 +2,7 @@
 public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnumerable<Task>
 {
     private readonly CancellationTokenSource _CancellationTokenSource;
-    private bool _DisposedValue;
+    private bool _disposedValue;
 
     public TaskList(List<Task> list) : base(list)
         => this._CancellationTokenSource = new CancellationTokenSource();
@@ -74,13 +74,13 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
 
     private void Dispose(bool disposing)
     {
-        if (!this._DisposedValue)
+        if (!this._disposedValue)
         {
             if (disposing)
             {
                 this._CancellationTokenSource.Dispose();
             }
-            this._DisposedValue = true;
+            this._disposedValue = true;
         }
     }
 

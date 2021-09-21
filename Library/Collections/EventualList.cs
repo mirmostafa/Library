@@ -27,7 +27,8 @@ public sealed class EventualList<TItem> : IList<TItem>
     public int Count
         => this._innerList.Count;
 
-    bool ICollection<TItem>.IsReadOnly => this._innerList.As<IList<TItem>>()!.IsReadOnly;
+    bool ICollection<TItem>.IsReadOnly
+        => this._innerList.As<IList<TItem>>()!.IsReadOnly;
 
     public void Add(TItem item)
     {
@@ -40,10 +41,14 @@ public sealed class EventualList<TItem> : IList<TItem>
         this._innerList.Clear();
         Cleared?.Invoke(this, EventArgs.Empty);
     }
-    public bool Contains(TItem item) => this._innerList.Contains(item);
-    public void CopyTo(TItem[] array, int arrayIndex) => this._innerList.CopyTo(array, arrayIndex);
-    public IEnumerator<TItem> GetEnumerator() => this._innerList.GetEnumerator();
-    public int IndexOf(TItem item) => this._innerList.IndexOf(item);
+    public bool Contains(TItem item)
+        => this._innerList.Contains(item);
+    public void CopyTo(TItem[] array, int arrayIndex)
+        => this._innerList.CopyTo(array, arrayIndex);
+    public IEnumerator<TItem> GetEnumerator()
+        => this._innerList.GetEnumerator();
+    public int IndexOf(TItem item)
+        => this._innerList.IndexOf(item);
     public void Insert(int index, TItem item)
     {
         this._innerList.Insert(index, item);
@@ -63,5 +68,6 @@ public sealed class EventualList<TItem> : IList<TItem>
         ItemIndexRemoved?.Invoke(this, new(index));
     }
 
-    IEnumerator IEnumerable.GetEnumerator() => this._innerList.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+        => this._innerList.GetEnumerator();
 }

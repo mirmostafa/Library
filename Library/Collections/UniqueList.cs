@@ -36,17 +36,8 @@ public class UniqueList<T> : IList<T>
     public void Clear()
         => this._InnerList.Clear();
 
-    public bool Contains(T item)
-    {
-        foreach (var i in this)
-        {
-            if (this.IsEqual(item, i))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    public bool Contains(T item) 
+        => this.Any(i => this.IsEqual(item, i));
 
     protected virtual bool IsEqual(T? item1, T? item2)
         => item1?.Equals(item2) ?? item2 is null;
