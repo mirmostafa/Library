@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Library.Coding;
 using Library.Data.Markers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -9,7 +8,7 @@ public static class DbContextHelper
 {
     public static TDbContext Detach<TDbContext, TEntity>(this TDbContext dbContext, TEntity entity)
         where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity<long>
+        where TEntity : class, IIdenticalEntity
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
         Check.IfArgumentNotNull(entity, nameof(entity));
@@ -23,7 +22,7 @@ public static class DbContextHelper
 
     public static TEntity Detach<TDbContext, TEntity>(this TEntity entity, TDbContext dbContext)
         where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity<long>
+        where TEntity : class, IIdenticalEntity
     {
         dbContext.IfArgumentNotNull(nameof(dbContext));
         entity.IfArgumentNotNull(nameof(entity));
@@ -37,7 +36,7 @@ public static class DbContextHelper
     }
 
     public static void RemoveById<TEntity>(this DbContext dbContext, IEnumerable<long> ids, bool detach = false)
-        where TEntity : class, IIdenticalEntity<long>, new()
+        where TEntity : class, IIdenticalEntity, new()
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
         Check.IfArgumentNotNull(ids, nameof(ids));
@@ -54,13 +53,13 @@ public static class DbContextHelper
     }
 
     public static EntityEntry<TEntity> RemoveById<TEntity>(this DbContext dbContext, long id, bool detach = false)
-        where TEntity : class, IIdenticalEntity<long>, new()
+        where TEntity : class, IIdenticalEntity, new()
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
         var entity = new TEntity { Id = id };
         if (detach)
         {
-            _ = CodeHelper.CatchFunc(() => dbContext.Detach(entity));
+            _ = CatchFunc(() => dbContext.Detach(entity));
         }
 
         return dbContext.Remove(entity);
@@ -93,7 +92,7 @@ public static class DbContextHelper
         Func<TModel, Task>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
-        where TEntity : class, IIdenticalEntity<long>
+        where TEntity : class, IIdenticalEntity
         => await InnerManipulate(dbContext, model, convert, validatorAsync, finalizeEntity, persist, dbContext.Add);
     public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> UpdateAsync<TModel, TEntity>(
         this DbContext dbContext,
@@ -102,7 +101,7 @@ public static class DbContextHelper
         Func<TModel, Task>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
-        where TEntity : class, IIdenticalEntity<long>
+        where TEntity : class, IIdenticalEntity
         => await InnerManipulate(dbContext, model, convert, validatorAsync, finalizeEntity, persist, dbContext.Update);
 
     private static async Task<(EntityEntry<TEntity> entry, TEntity entity, int writtenCount)> InnerManipulate<TModel, TEntity>(
@@ -113,7 +112,7 @@ public static class DbContextHelper
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity,
         bool persist,
         Func<TEntity, EntityEntry<TEntity>> manipulate)
-        where TEntity : class, IIdenticalEntity<long>
+        where TEntity : class, IIdenticalEntity
     {
         if (validatorAsync is not null)
         {
