@@ -20,7 +20,7 @@ public partial class SqlStatementBuilder
         decimal d => d.ToString(),
         long l => l.ToString(),
         string and { Length: 0 } => "''",
-        string s => $"'{s}'",
+        string s => $"N'{s}'",
         null => DBNull.Value.ToString(),
         _ => $"'{value}'",
     };

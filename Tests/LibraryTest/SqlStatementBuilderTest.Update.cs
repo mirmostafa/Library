@@ -17,7 +17,7 @@ public class UpdateStatementBuilderTest
 
         var expected = @"Update [dbo].[Person]
     SET ([Name], [Age])
-    VALUES ('Ali', 5)
+    VALUES (N'Ali', 5)
     WHERE Id = 5";
 
         Assert.AreEqual(expected, actual);
@@ -33,7 +33,7 @@ public class UpdateStatementBuilderTest
 
         var expected = @"Update [dbo].[Person]
     SET ([Name])
-    VALUES ('Ali')";
+    VALUES (N'Ali')";
 
         Assert.AreEqual(expected, actual);
     }
@@ -47,7 +47,7 @@ public class UpdateStatementBuilderTest
 
         var expected = @"Update [dbo].[Person]
     SET ([Name], [Age])
-    VALUES ('Ali', 5)";
+    VALUES (N'Ali', 5)";
 
         Assert.AreEqual(expected, actual);
     }
@@ -63,7 +63,7 @@ public class UpdateStatementBuilderTest
 
         var expected = @"Update [dbo].[Person]
     SET ([Name], [Age])
-    VALUES ('Ali', 5)";
+    VALUES (N'Ali', 5)";
 
         Assert.AreEqual(expected, actual);
     }
