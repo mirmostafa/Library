@@ -9,18 +9,18 @@ public static class SqlBrowserClient
     private const int SQL_BROWSER_PORT = 1434;
 
     private static readonly byte[] _getInstancesMessage = new byte[1] { 2 };
-    private static IEnumerable<SqlInstance> instances;
+    private static IEnumerable<SqlInstance>? _instances;
 
     public static IEnumerable<SqlInstance> Instances
     {
         get
         {
-            if (instances is null)
+            if (_instances is null)
             {
                 InitInstances();
             }
 
-            return instances;
+            return _instances;
         }
     }
 
@@ -30,7 +30,7 @@ public static class SqlBrowserClient
         using var client = new UdpBroadcastMessage(SQL_BROWSER_PORT, _getInstancesMessage, new TimeSpan(0, 0, 5));
 
         var responses = client.GetResponse();
-        instances = ParseBrowserResponses(responses);
+        _instances = ParseBrowserResponses(responses);
     }
 
     private static IEnumerable<SqlInstance> ParseBrowserResponses(IEnumerable<string> responses)

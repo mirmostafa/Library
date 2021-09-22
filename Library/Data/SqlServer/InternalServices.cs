@@ -59,7 +59,7 @@ namespace Library.Data.SqlServer
                 .GetProperties()
                 .Select(prop => new Tuple<string, object, Type>(prop.Name, prop.GetValue(obj), prop.PropertyType)));
 
-        internal static TableSchema RefactorCore(Type tableEntity, bool includeAutoIcreamentals, Func<PropertyInfo, object> getValue = null)
+        internal static TableSchema RefactorCore(Type tableEntity, bool includeAutoIcreamentals, Func<PropertyInfo, object>? getValue = null)
         {
             if (getValue == null)
             {
