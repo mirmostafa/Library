@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Library.Coding.ProgressiveOperations;
+namespace Library.ProgressiveOperations;
 
 public class MultiStepOperationStepCollection : Collection<IMultiStepOperationStep>
 {

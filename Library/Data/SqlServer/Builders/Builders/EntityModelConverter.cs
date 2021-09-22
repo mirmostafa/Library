@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Library.Data.SqlServer;
+namespace Library.Data.SqlServer.Builders.Builders;
 
 public static class EntityModelConverter
 {

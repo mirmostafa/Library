@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Dynamic;
+using Library.Data.SqlServer.Builders.Builders;
 using Library.Data.SqlServer.Dynamics.Collections;
 
 namespace Library.Data.SqlServer.Dynamics

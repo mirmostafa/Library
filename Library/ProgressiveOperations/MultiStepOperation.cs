@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Library.Coding;
 using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
 
-namespace Library.Coding.ProgressiveOperations;
+namespace Library.ProgressiveOperations;
 
 public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContainer, INotifyPropertyChanged
 {

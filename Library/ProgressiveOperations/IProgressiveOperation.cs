@@ -1,4 +1,4 @@
-﻿namespace Library.Coding.ProgressiveOperations;
+﻿namespace Library.ProgressiveOperations;
 
 public interface IProgressiveOperation<T>
 {

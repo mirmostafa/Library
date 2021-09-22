@@ -1,4 +1,4 @@
-﻿namespace Library.Coding.ProgressiveOperations;
+﻿namespace Library.ProgressiveOperations;
 
 internal class SimpleProgressive<T> : Progressive<T>
 {

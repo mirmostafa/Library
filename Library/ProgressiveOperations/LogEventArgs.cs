@@ -1,6 +1,6 @@
 ﻿using Library.Logging;
 
-namespace Library.Coding.ProgressiveOperations;
+namespace Library.ProgressiveOperations;
 
 public class LogEventArgs : EventArgs
 {
