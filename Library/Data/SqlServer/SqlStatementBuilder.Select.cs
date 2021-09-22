@@ -2,7 +2,7 @@
 using Library.Coding;
 using Library.Data.SqlServer.Builders.Bases;
 
-namespace Library.Data.SqlServer.Builders;
+namespace Library.Data.SqlServer;
 
 public static partial class SqlStatementBuilder
 {

@@ -17,10 +17,10 @@ public class EntityModelConverterTest
     }
 
     [TestMethod]
-    public void SqlStamentBuiByEntityModelTest()
+    public void SqlStamentBuildByEntityModelTest()
     {
         var columns = EntityModelConverter.GetColumns<Person>();
-        var builder = Library.Data.SqlServer.Builders.SqlStatementBuilder
+        var builder = SqlStatementBuilder
                              .Select()
                              .Columns(columns.OrderBy(c => c.Order).Select(c => c.Name))
                              .From(nameof(Person));
@@ -33,7 +33,7 @@ public class EntityModelConverterTest
     [TestMethod]
     public void CreateSelectByEntityTest()
     {
-        var actual = Library.Data.SqlServer.Builders.SqlStatementBuilder
+        var actual = SqlStatementBuilder
                         .Select<Person>()
                         .Build();
         var expected = @"SELECT [Id], [Name], [LName], [AddressId], [Address]
