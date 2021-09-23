@@ -639,6 +639,9 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         return format;
     }
 
+    public override string? ToString()
+        => this.ToString("yyyy/MM/dd HH:mm:ss");
+
     /// <summary>
     ///     Converts to persian time string.
     /// </summary>
