@@ -26,7 +26,7 @@ public sealed class CodeDomCodeGenProvider : ICodeGenProvider
                         break;
                     case PropertyInfo property when (property.HasBackingField):
                         codeType = addProperty(codeType, property);
-                        break; 
+                        break;
                     case PropertyInfo property:
                         codeType = addProperty(codeType, property);
                         break;

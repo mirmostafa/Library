@@ -5,10 +5,10 @@ namespace Library.Validations;
 
 public static class Validator
 {
-    public static TEntity Validate<TEntity>([DisallowNull]this TEntity entity)
+    public static TEntity Validate<TEntity>([DisallowNull] this TEntity entity)
         where TEntity : notnull, IEntity
     {
-        if(entity == null)
+        if (entity == null)
         {
             throw new Exceptions.Validations.NullValueValidationException(nameof(entity));
         }

@@ -27,4 +27,11 @@ public static class GlobalizationHelper
         DayOfWeek.Saturday => PersianDayOfWeek.Shanbeh,
         _ => throw new NotImplementedException(),
     };
+
+    public static bool IsPersianHoliday(this PersianDayOfWeek dow) => dow switch
+    {
+        PersianDayOfWeek.Jomeh => true,
+        PersianDayOfWeek.Shanbeh => true,
+        _ => false,
+    };
 }

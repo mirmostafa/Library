@@ -172,7 +172,7 @@ public class Table : SqlObject<Table, Database>, IEnumerable
         }
     }
 
-    public DataTable ToDataTable(params string[] columns) 
+    public DataTable ToDataTable(params string[] columns)
         => this.GetSql().FillDataTable(CreateSelect(this.ToString(), columns));
 
     public DataTable ToDataTableWhere([DisallowNull] string condition, params string[] columns) =>
