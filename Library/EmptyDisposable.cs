@@ -1,16 +1,16 @@
 ﻿namespace Library;
 public class EmptyDisposable : IDisposable
 {
-    private bool disposedValue;
+    private bool _disposedValue;
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!this.disposedValue)
+        if (!this._disposedValue)
         {
             if (disposing)
             {
             }
-            this.disposedValue = true;
+            this._disposedValue = true;
         }
     }
 

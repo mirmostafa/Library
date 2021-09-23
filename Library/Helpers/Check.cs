@@ -106,4 +106,3 @@ public static class Check
         where TValidationException : ValidationExceptionBase
         => !validate.ArgumentNotNull(nameof(validate))(t) ? t : throw getException(argName.ArgumentNotNull(nameof(argName)));
 }
-

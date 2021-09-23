@@ -9,13 +9,13 @@ public partial class SqlStatementBuilder
         => new DeleteStatement { TableName = tableName.ArgumentNotNull(nameof(tableName)) };
     public static IDeleteStatement Delete()
         => new DeleteStatement();
-    
+
     public static IDeleteStatement From([DisallowNull] this IDeleteStatement statement, [DisallowNull] string tableName)
         => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.TableName = tableName.ArgumentNotNull(nameof(tableName)));
 
     public static IDeleteStatement Where([DisallowNull] this IDeleteStatement statement, string? whereClause)
         => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.WhereClause = whereClause);
-    
+
     public static string Build([DisallowNull] this IDeleteStatement statement, string indent = "    ")
     {
         Check.IfNotNull(statement.TableName, nameof(statement.TableName));

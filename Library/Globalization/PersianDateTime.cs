@@ -812,4 +812,6 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// <param name="right"> The right. </param>
     /// <returns> The result of the operator. </returns>
     public static bool operator >=(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) >= 0;
+
+    public bool IsHoliday => this.DayOfWeek.IsPersianHoliday();
 }

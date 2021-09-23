@@ -33,6 +33,6 @@ public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>
         yield return Blazor;
         yield return Html;
     }
-    IEnumerator IEnumerable.GetEnumerator() 
+    IEnumerator IEnumerable.GetEnumerator()
         => this.GetEnumerator();
 }

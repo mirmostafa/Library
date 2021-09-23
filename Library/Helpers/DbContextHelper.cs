@@ -8,7 +8,7 @@ public static class DbContextHelper
 {
     public static TDbContext Detach<TDbContext, TEntity>(this TDbContext dbContext, TEntity entity)
         where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity
+        where TEntity : class, IIdenticalEntity<long>
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
         Check.IfArgumentNotNull(entity, nameof(entity));
@@ -22,7 +22,7 @@ public static class DbContextHelper
 
     public static TEntity Detach<TDbContext, TEntity>(this TEntity entity, TDbContext dbContext)
         where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity
+        where TEntity : class, IIdenticalEntity<long>
     {
         dbContext.IfArgumentNotNull(nameof(dbContext));
         entity.IfArgumentNotNull(nameof(entity));
@@ -36,7 +36,7 @@ public static class DbContextHelper
     }
 
     public static void RemoveById<TEntity>(this DbContext dbContext, IEnumerable<long> ids, bool detach = false)
-        where TEntity : class, IIdenticalEntity, new()
+        where TEntity : class, IIdenticalEntity<long>, new()
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
         Check.IfArgumentNotNull(ids, nameof(ids));
@@ -53,7 +53,7 @@ public static class DbContextHelper
     }
 
     public static EntityEntry<TEntity> RemoveById<TEntity>(this DbContext dbContext, long id, bool detach = false)
-        where TEntity : class, IIdenticalEntity, new()
+        where TEntity : class, IIdenticalEntity<long>, new()
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
         var entity = new TEntity { Id = id };
@@ -92,7 +92,7 @@ public static class DbContextHelper
         Func<TModel, Task>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
-        where TEntity : class, IIdenticalEntity
+        where TEntity : class, IIdenticalEntity<long>
         => await InnerManipulate(dbContext, model, convert, validatorAsync, finalizeEntity, persist, dbContext.Add);
     public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> UpdateAsync<TModel, TEntity>(
         this DbContext dbContext,
@@ -101,7 +101,7 @@ public static class DbContextHelper
         Func<TModel, Task>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
-        where TEntity : class, IIdenticalEntity
+        where TEntity : class, IIdenticalEntity<long>
         => await InnerManipulate(dbContext, model, convert, validatorAsync, finalizeEntity, persist, dbContext.Update);
 
     private static async Task<(EntityEntry<TEntity> entry, TEntity entity, int writtenCount)> InnerManipulate<TModel, TEntity>(
@@ -112,7 +112,7 @@ public static class DbContextHelper
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity,
         bool persist,
         Func<TEntity, EntityEntry<TEntity>> manipulate)
-        where TEntity : class, IIdenticalEntity
+        where TEntity : class, IIdenticalEntity<long>
     {
         if (validatorAsync is not null)
         {

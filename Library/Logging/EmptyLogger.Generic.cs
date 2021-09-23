@@ -1,12 +1,11 @@
-﻿namespace Library.Logging
+﻿namespace Library.Logging;
+
+internal class EmptyLogger<TMessage> : ILogger<TMessage>
 {
-    internal class EmptyLogger<TMessage> : ILogger<TMessage>
-    {
-        public bool IsEnabled { get; set; } = false;
+    public bool IsEnabled { get; set; } = false;
 
-        public LogLevel LogLevel { get; set; } = LogLevel.None;
+    public LogLevel LogLevel { get; set; } = LogLevel.None;
 
-        public void Log(TMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
-        { }
-    }
+    public void Log(TMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
+    { }
 }

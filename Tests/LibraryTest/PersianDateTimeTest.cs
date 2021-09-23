@@ -36,7 +36,7 @@ public class PersianDateTimeTest
         => Assert.AreEqual(PersianDateTime.Now.ToDateTime().ToString(), DateTime.Now.ToString());
 
     [TestMethod]
-    public void PersianWeekDaysTest() 
+    public void PersianWeekDaysTest()
         => Assert.AreEqual(DayOfWeek.Friday, PersianDateTime.PersianWeekDays.ElementAt(6).Day);
 
     [TestMethod]
