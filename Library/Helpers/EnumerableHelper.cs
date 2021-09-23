@@ -328,8 +328,18 @@ public static class EnumerableHelper
             }
         }
     }
-
-    public static TValue GetByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, in TKey key)
+    public static KeyValuePair<TKey, TValue> GetItemByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, in TKey key)
+    {
+        foreach (var item in source.ArgumentNotNull())
+        {
+            if (item.Key?.Equals(key) is true)
+            {
+                return item;
+            }
+        }
+        throw new KeyNotFoundException(nameof(key));
+    }
+    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, in TKey key)
     {
         foreach (var item in source.ArgumentNotNull())
         {
@@ -341,14 +351,20 @@ public static class EnumerableHelper
         throw new KeyNotFoundException(nameof(key));
     }
 
-    public static KeyValuePair<TKey, TValue> GetByKey<TKey, TValue>(this IList<KeyValuePair<TKey, TValue>> list, TKey key)
-        => list.FirstOrDefault(item => item.Key?.Equals(key) is true);
+    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
+    {
+        foreach (var item in source.ArgumentNotNull())
+        {
+            if (item.Key?.Equals(key) is true)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
-    {
-        var query = items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
-        return query;
-    }
+        => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
 
     public static IEnumerable<T> InsertImmuted<T>(this IEnumerable<T> source, int index, T item)
     {
@@ -370,7 +386,7 @@ public static class EnumerableHelper
     public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
     {
         Check.IfArgumentNotNull(list, nameof(list));
-        _ = list.Remove(GetByKey(list, key));
+        _ = list.Remove(list.GetItemByKey(key));
         return list;
     }
 

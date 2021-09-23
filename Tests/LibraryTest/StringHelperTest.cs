@@ -50,10 +50,21 @@ namespace LibraryTest
             Assert.AreEqual("case", StringHelper.Singularize("cases"));
             Assert.AreEqual("handy", StringHelper.Singularize("handies"));
             Assert.AreEqual("person", StringHelper.Singularize("people"));
+            Assert.AreEqual("child", StringHelper.Singularize("children"));
+        }
+        [TestMethod]
+        public void PluralizeTest()
+        {
+            Assert.AreEqual("numbers", StringHelper.Pluralize("number"));
+            Assert.AreEqual("cases", StringHelper.Pluralize("case"));
+            Assert.AreEqual("handies", StringHelper.Pluralize("handy"));
+            Assert.AreEqual("people", StringHelper.Pluralize("person"));
+            Assert.AreEqual("children", StringHelper.Pluralize("child"));
         }
 
         [TestMethod]
-        public void SpaceTest() => Assert.AreEqual("     ", StringHelper.Space(5));
+        public void SpaceTest()
+            => Assert.AreEqual("     ", StringHelper.Space(5));
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
