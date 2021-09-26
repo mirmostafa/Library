@@ -11,7 +11,7 @@ public class EntityModelConverterTest
     [TestMethod]
     public void SqlTypeToNetType()
     {
-        var columns = EntityModelConverter.GetColumns<Person>().OrderBy(c => c.Order).ToList();
+        var columns = EntityModelConverter.GetColumns<PersonEntity>().OrderBy(c => c.Order).ToList();
         Assert.AreEqual(5, columns.Count);
         Assert.AreEqual("LName", columns[2].Name);
     }
@@ -19,14 +19,14 @@ public class EntityModelConverterTest
     [TestMethod]
     public void SqlStamentBuildByEntityModelTest()
     {
-        var columns = EntityModelConverter.GetColumns<Person>();
+        var columns = EntityModelConverter.GetColumns<PersonEntity>();
         var builder = SqlStatementBuilder
                              .Select()
                              .Columns(columns.OrderBy(c => c.Order).Select(c => c.Name))
-                             .From(nameof(Person));
+                             .From(nameof(PersonEntity));
         var actual = builder.Build();
         var expected = @"SELECT [Id], [Name], [LName], [AddressId], [Address]
-    FROM [Person]";
+    FROM [PersonEntity]";
         Assert.AreEqual(expected, actual);
     }
 
@@ -34,7 +34,7 @@ public class EntityModelConverterTest
     public void CreateSelectByEntityTest()
     {
         var actual = SqlStatementBuilder
-                        .Select<Person>()
+                        .Select<PersonEntity>()
                         .Build();
         var expected = @"SELECT [Id], [Name], [LName], [AddressId], [Address]
     FROM [dbo].[Person]";
@@ -43,7 +43,7 @@ public class EntityModelConverterTest
 }
 
 [Table("Person", Schema = "dbo")]
-internal class Person
+internal class PersonEntity
 {
     [Key]
     [Column(Order = 0)]
