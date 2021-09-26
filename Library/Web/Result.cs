@@ -2,40 +2,46 @@
 
 namespace Library.Web;
 
-public record Result
+public class Result
 {
-    public string? Error { get; private set; }
-    public bool Success => this.StatusCode.ToInt() is >= 200 and < 300;
+    public HttpStatusCode? StatusCode { get; }
+    public string? Message { get; private set; }
+    public bool Success => this.StatusCode?.ToInt() is null or (>= 200 and < 300);
     public bool Failure => !this.Success;
-    public HttpStatusCode StatusCode { get; set; }
 
-    protected Result(string error) => this.Error = error;
+    protected Result(HttpStatusCode? statusCode = null, string? message = null)
+        => (this.StatusCode, this.Message) = (statusCode, message);
 
-    public static Result Fail(string message) => new(message);
+    public void Deconstruct(out HttpStatusCode? statusCode, out string? message)
+        => (statusCode, message) = (this.StatusCode, this.Message);
 
-    public static Result<T> Fail<T>(string message) => new(default, message);
+    public static Result Ok() => new(HttpStatusCode.OK);
+    public static Result Ok(string? message) => new(HttpStatusCode.OK, message);
 
-    public static Result Ok() => new(string.Empty);
+    public static Result Fail(HttpStatusCode statusCode) => new(statusCode);
+    public static Result Fail(HttpStatusCode statusCode, string message) => new(statusCode, message);
 
-    public static Result<T> Ok<T>(T value) => new(value, string.Empty);
+    public static Result BadRequest() => new(HttpStatusCode.BadRequest);
+    public static Result BadRequest(string? message) => new(HttpStatusCode.BadRequest, message);
 
-    public static Result Combine(params Result[] results)
-    {
-        foreach (var result in results)
-        {
-            if (result.Failure)
-            {
-                return result;
-            }
-        }
+    public static Result Unauthorized() => new(HttpStatusCode.Unauthorized);
+    public static Result Unauthorized(string? message) => new(HttpStatusCode.Unauthorized, message);
 
-        return Ok();
-    }
+    public static Result NotFound() => new(HttpStatusCode.NotFound);
+    public static Result NotFound(string? message) => new(HttpStatusCode.NotFound, message);
+
+    public static Result NoContent() => new(HttpStatusCode.NoContent);
+    public static Result NoContent(string? message) => new(HttpStatusCode.NoContent, message);
 }
 
-
-public record Result<T> : Result
+public class Result<T> : Result
 {
+    protected Result(HttpStatusCode? httpStatusCode = null, string? message = null, T? value = default)
+        : base(httpStatusCode, message) => this.Value = value;
+
+    public void Deconstruct(out HttpStatusCode? statusCode, out string? message, out T? value)
+        => (statusCode, message, value) = (this.StatusCode, this.Message, this.Value);
+
     private T? _value;
     public T? Value
     {
@@ -48,9 +54,8 @@ public record Result<T> : Result
         private set => this._value = value;
     }
 
-    protected internal Result(T? value, string error)
-        : base(error) => this.Value = value;
+    public static Result<T> Ok(T value) => new(HttpStatusCode.OK) { Value = value };
+    public static Result<T> Ok(T value, string? message) => new(HttpStatusCode.OK, message);
 
-    public static implicit operator T?(in Result<T> result) => result.Value;
-    public static implicit operator Result<T>(in T value) => Ok(value);
+    public static explicit operator T?(Result<T> result) => result.Value;
 }
