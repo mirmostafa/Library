@@ -4,21 +4,22 @@ namespace Library.Helpers;
 
 public static class ResultHelper
 {
-    public static Result OnSuccess(this Result result, Func<Result> func) => result.Failure ? result : func();
+    public static WebResult OnSuccess(this WebResult result, Func<WebResult, WebResult> func) 
+        => result.Failure ? result : func(result);
 
-    public static Result OnSuccess(this Result result, Action action)
+    public static WebResult OnSuccess(this WebResult result, Action<WebResult> action)
     {
         if (result.Failure)
         {
             return result;
         }
 
-        action();
+        action(result);
 
-        return Result.Ok();
+        return WebResult.Ok();
     }
 
-    public static Result OnSuccess<T>(this Result<T> result, Action<T?> action)
+    public static WebResult OnSuccess<T>(this WebResult<T> result, Action<T?> action)
     {
         if (result.Failure)
         {
@@ -27,34 +28,29 @@ public static class ResultHelper
 
         action(result.Value);
 
-        return Result.Ok();
+        return WebResult.Ok();
     }
 
-    public static Result<T> OnSuccess<T>(this Result result, Func<T> func)
-        => result.Failure ? Result.Fail<T>(result.Error!) : Result.Ok(func());
-
-    public static Result<T> OnSuccess<T>(this Result result, Func<Result<T>> func)
-        => result.Failure ? Result.Fail<T>(result.Error!) : func();
-
-    public static Result OnSuccess<T>(this Result<T> result, Func<T?, Result> func)
+    public static WebResult OnSuccess<T>(this WebResult<T> result, Func<T?, WebResult> func)
         => result.Failure ? result : func(result.Value);
 
-    public static Result OnFailure(this Result result, Action action)
+    public static WebResult OnFailure(this WebResult result, Action<WebResult> action)
     {
         if (result.Failure)
         {
-            action();
+            action(result);
         }
 
         return result;
     }
 
-    public static Result OnBoth(this Result result, Action<Result> action)
+    public static WebResult OnBoth(this WebResult result, Action<WebResult> action)
     {
         action(result);
 
         return result;
     }
 
-    public static T OnBoth<T>(this Result result, Func<Result, T> func) => func(result);
+    public static T OnBoth<T>(this WebResult result, Func<WebResult, T> func) 
+        => func(result);
 }

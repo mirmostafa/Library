@@ -45,7 +45,8 @@ public static class Check
         }
     }
 
-    internal static void Require(bool required) => Require<Exceptions.Validations.ValidationException>(required);
+    internal static void Require(bool required)
+        => Require<ValidationException>(required);
 
     public static void IfArgumentNotNull([NotNull] this string? obj, string argName)
         => _ = NotValid(obj, x => x is null, () => new ArgumentNullException(argName))!;
