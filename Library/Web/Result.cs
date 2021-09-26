@@ -1,10 +1,13 @@
-﻿namespace Library.Web;
+﻿using System.Net;
+
+namespace Library.Web;
 
 public record Result
 {
     public string? Error { get; private set; }
-    public bool Success => this.Error.IsNullOrEmpty();
+    public bool Success => this.StatusCode.ToInt() is >= 200 and < 300;
     public bool Failure => !this.Success;
+    public HttpStatusCode StatusCode { get; set; }
 
     protected Result(string error) => this.Error = error;
 
