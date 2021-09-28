@@ -188,12 +188,11 @@ public static class EnumerableHelper
     /// <returns>An enumerable collection of the output type.</returns>
     public static IEnumerable<TOutput> Cast<TInput, TOutput>(this IEnumerable<TInput> input, [DisallowNull] Converter<TInput, TOutput> converter)
     {
-        Check.IfArgumentNotNull(converter, nameof(converter));
-
         if (input is null)
         {
             yield break;
         }
+        Check.IfArgumentNotNull(converter, nameof(converter));
 
         foreach (var item in input)
         {
@@ -490,4 +489,21 @@ public static class EnumerableHelper
             action();
         }
     }
+
+    //public static IEnumerable<TDestination> Cast<TSource, TDestination>(this IEnumerable<TSource> source, [DisallowNull] Func<TSource, TDestination> converter)
+    //{
+    //    if (source?.Any() is not true)
+    //    {
+    //        yield break;
+    //    }
+    //    Check.IfArgumentNotNull(converter, nameof(converter));
+
+    //    foreach (var item in source)
+    //    {
+    //        yield return converter(item);
+    //    }
+    //}
+
+    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
+        => source.ArgumentNotNull(nameof(source)).Where(x => !exclude(x));
 }
