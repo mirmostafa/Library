@@ -485,12 +485,17 @@ public static class StringHelper
         return result.ToString();
     }
 
-    public static IEnumerable<(string, string)> SplitPair(string str, string keyValueSeparator = "=", string statementSeparator = ";")
+    public static IEnumerable<(string Key, string Value)> SplitPair([DisallowNull] string str, [DisallowNull] string keyValueSeparator = "=", [DisallowNull] string statementSeparator = ";")
     {
-        var split = str.Split(new[] { keyValueSeparator, statementSeparator }, StringSplitOptions.None);
-        for (var i = 0; i < split.Length; i += 2)
+        Check.IfArgumentNotNull(str, nameof(str));
+        Check.IfArgumentNotNull(keyValueSeparator, nameof(keyValueSeparator));
+        Check.IfArgumentNotNull(statementSeparator, nameof(statementSeparator));
+
+        var keyValuePirs = str.Split(statementSeparator).Trim();
+        foreach (var keyValuePair in keyValuePirs)
         {
-            yield return (split[i], split[i + 1]);
+            var keyValue = keyValuePair.Split(keyValueSeparator);
+            yield return (keyValue[0], keyValue[1]);
         }
     }
 
@@ -515,7 +520,7 @@ public static class StringHelper
         return encoding.GetBytes(value);
     }
 
-    public static string ToCulturalNumber(this string value, in bool correctPersianChars, in Language toLanguage = Language.None)
+    public static string ToCulturalNumber(this string value, in bool correctPersianChars, in Language toLanguage)
     {
         value = toLanguage switch
         {
@@ -531,6 +536,8 @@ public static class StringHelper
 
         return value;
     }
+
+    public static string ToPersianDigits(this string value) => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
 
     public static string ToEnglishDigits(this string value) => value.ReplaceAll(PersianTools.Digits.Select(n => (n.Persian, n.English)));
 
@@ -549,8 +556,6 @@ public static class StringHelper
     public static IEnumerable<int> ToInt(this IEnumerable<string> array) => array.Where(str => str.IsNumber()).Select(str => str.ToInt());
 
     public static IEnumerable<string> ToLower(this IEnumerable<string> strings) => strings.Select(str => str.ToLower());
-
-    public static string ToPersianDigits(this string value) => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
 
     public static string ToUnicode(this string str) => Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
 

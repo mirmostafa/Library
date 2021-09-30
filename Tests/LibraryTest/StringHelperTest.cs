@@ -97,4 +97,35 @@ public class StringHelperTest
         var result4 = text.GetPhrase(0, '\'', '\"');
         Assert.AreEqual("a text', inside 'another text'. I want 'to find\"", result4);
     }
+
+    [TestMethod]
+    public void NationalCodeTest()
+    {
+        var nc1 = "0062614614";
+        var nc2 = "0062614615";
+        var nc3 = "006261461";
+        var isValid1 = StringHelper.IsValidIranianNationalCode(nc1);
+        var isValid2 = StringHelper.IsValidIranianNationalCode(nc2);
+        var isValid3 = StringHelper.IsValidIranianNationalCode(nc3);
+
+        Assert.IsTrue(isValid1);
+        Assert.IsFalse(isValid2);
+        Assert.IsFalse(isValid3);
+    }
+
+    [TestMethod]
+    public void TruncateTest()
+    {
+        var result = text.Truncate(text.Length - 5);
+        Assert.AreEqual("There", result);
+    }
+
+    [TestMethod]
+    public void SplitPairTest()
+    {
+        var cs = @"Server=myServerAddress;Database=myDatabase;Trusted_Connection=True;";
+        var pairs = StringHelper.SplitPair(cs);
+        (_, var value) = pairs.Where(kv => kv.Key == "Database").Single();
+        Assert.AreEqual("myDatabase", value);
+    }
 }
