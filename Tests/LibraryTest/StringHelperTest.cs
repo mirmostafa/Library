@@ -112,4 +112,11 @@ public class StringHelperTest
         Assert.IsFalse(isValid2);
         Assert.IsFalse(isValid3);
     }
+
+    [TestMethod]
+    public void TruncateTest()
+    {
+        var result = text.Truncate(text.Length - 5);
+        Assert.AreEqual("There", result);
+    }
 }
