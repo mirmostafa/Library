@@ -68,12 +68,8 @@ public class StringHelperTest
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentOutOfRangeException))]
-    public void SpaceExceptionTest()
-    {
-        var expected = "     ";
-        var actual = StringHelper.Space(-5);
-        Assert.AreEqual(expected, actual);
-    }
+    public void SpaceExceptionTest() 
+        => StringHelper.Space(-5);
 
     [TestMethod]
     public void GetPhraseTest()
