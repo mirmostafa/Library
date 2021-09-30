@@ -119,4 +119,13 @@ public class StringHelperTest
         var result = text.Truncate(text.Length - 5);
         Assert.AreEqual("There", result);
     }
+
+    [TestMethod]
+    public void SplitPairTest()
+    {
+        var cs = @"Server=myServerAddress;Database=myDatabase;Trusted_Connection=True;";
+        var pairs = StringHelper.SplitPair(cs);
+        (_, var value) = pairs.Where(kv => kv.Key == "Database").Single();
+        Assert.AreEqual("myDatabase", value);
+    }
 }
