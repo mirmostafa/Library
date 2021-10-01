@@ -32,6 +32,14 @@ public static class Check
     public static T ArgumentNotNull<T>([NotNull] this T? obj, string? argName = null)
         => NotValid(obj, x => x is null, () => new ArgumentNullException(argName))!;
 
+    [return: NotNull]
+    public static void IfIs<T>(this object obj, string argName)
+        => _ = NotValid(obj, x => x is not T, () => new TypeMismatchValidationException(argName));
+
+    [return: NotNull]
+    public static T Is<T>(this object obj, string argName)
+        => NotValid(obj, x => x is not T, () => new TypeMismatchValidationException(argName)).To<T>();
+
     public static T ArgumentOutOfRange<T>(this T obj, Predicate<T> validate, string? argName = null)
         => NotValid(obj, validate, () => new ArgumentOutOfRangeException(argName));
 

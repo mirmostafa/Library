@@ -520,7 +520,9 @@ public static class ObjectHelper
         }
     }
 
-    public static T To<T>(this object obj) => (T)obj;
+    [return: NotNull]
+    public static T To<T>(this object obj)
+        => (T)obj;
 
     /// <summary>
     /// Converts to nullable.

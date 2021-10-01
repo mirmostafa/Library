@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace Library.Dynamic;
+
 [Serializable]
 public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 {
@@ -22,26 +24,26 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
         }
     }
 
-    public virtual object? this[string index]
+    public virtual object? this[[DisallowNull]string propName]
     {
-        get => this.Properties.ContainsKey(index) ? this.Properties[index] : null;
+        get => this.Properties.ContainsKey(propName) ? this.Properties[propName] : null;
         set
         {
-            if (this.Properties.ContainsKey(index))
+            if (this.Properties.ContainsKey(propName))
             {
-                if (this.Properties[index] == value)
+                if (this.Properties[propName] == value)
                 {
                     return;
                 }
 
-                this.Properties[index] = value;
+                this.Properties[propName] = value;
             }
             else
             {
-                this.Properties.Add(index, value);
+                this.Properties.Add(propName, value);
             }
 
-            this.OnPropertyChanged(index);
+            this.OnPropertyChanged(propName);
         }
     }
 
@@ -49,10 +51,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        if (info == null)
-        {
-            throw new ArgumentNullException(nameof(info));
-        }
+        Check.IfArgumentNotNull(info, nameof(info));
 
         this.FillByProperties(info, context);
     }
@@ -76,12 +75,12 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     protected virtual void FillByProperties(SerializationInfo info, StreamingContext context)
     {
-        foreach (var kvp in this.Properties)
+        foreach (var (key, value) in this.Properties)
         {
-            info?.AddValue(kvp.Key, kvp.Value);
+            info?.AddValue(key, value);
         }
     }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
-        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
