@@ -1,4 +1,6 @@
-﻿namespace Library.Helpers
+﻿using Library.Validations;
+
+namespace Library.Helpers
 {
     public static class ExceptionHelper
     {

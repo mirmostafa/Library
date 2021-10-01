@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.Reflection;
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
+using Library.Validations;
 using Microsoft.CSharp;
 using static Library.Helpers.CodeGen.TypeMemberNameHelper;
 

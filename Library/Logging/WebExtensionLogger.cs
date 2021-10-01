@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Library.Validations;
+using Microsoft.Extensions.Logging;
 
 namespace Library.Logging
 {

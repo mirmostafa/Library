@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using Library.Data.SqlServer.Dynamics;
 using Library.Exceptions.Validations;
 using Library.Helpers;
+using Library.Validations;
 using Library.Wpf.Dialogs;
 using Library.Wpf.Helpers;
 

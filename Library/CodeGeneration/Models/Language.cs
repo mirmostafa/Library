@@ -1,4 +1,6 @@
-﻿namespace Library.CodeGeneration.Models;
+﻿using Library.Validations;
+
+namespace Library.CodeGeneration.Models;
 
 public readonly struct Language : IEquatable<Language>
 {

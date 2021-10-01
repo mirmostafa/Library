@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using Library.Validations;
 
 namespace Library.Helpers;
 public static class EnumerableHelper
@@ -59,6 +60,21 @@ public static class EnumerableHelper
     }
 
     public static TList AddRange<TList, TItem>([DisallowNull] this TList list, in IEnumerable<TItem> items)
+        where TList : notnull, ICollection<TItem>
+    {
+        Check.IfArgumentNotNull(list, nameof(list));
+        if (items?.Any() is true)
+        {
+            foreach (var item in items)
+            {
+                list.Add(item);
+            }
+        }
+
+        return list!;
+    }
+
+    public static TList AddRange<TList, TItem>([DisallowNull] this TList list, params TItem[] items)
         where TList : notnull, ICollection<TItem>
     {
         Check.IfArgumentNotNull(list, nameof(list));

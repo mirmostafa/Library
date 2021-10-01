@@ -1,4 +1,6 @@
-﻿namespace Library.Threading
+﻿using Library.Validations;
+
+namespace Library.Threading
 {
     public sealed class AsyncLock : IAsyncLock, IDisposable
     {

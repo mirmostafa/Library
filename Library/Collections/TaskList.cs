@@ -1,4 +1,6 @@
-﻿namespace Library.Collections;
+﻿using Library.Validations;
+
+namespace Library.Collections;
 public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnumerable<Task>
 {
     private readonly CancellationTokenSource _CancellationTokenSource;

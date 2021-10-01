@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using Library.Exceptions.Validations;
 using Library.Helpers;
+using Library.Validations;
 
 namespace Library.Wpf.Windows.Input.Commands
 {
