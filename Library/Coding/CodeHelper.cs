@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
+using Library.Validations;
 
 namespace Library.Coding;
 

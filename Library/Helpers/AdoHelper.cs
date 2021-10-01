@@ -1,6 +1,7 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using Library.Validations;
 
 namespace Library.Helpers;
 

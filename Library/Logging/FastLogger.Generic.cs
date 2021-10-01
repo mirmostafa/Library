@@ -1,4 +1,6 @@
-﻿namespace Library.Logging;
+﻿using Library.Validations;
+
+namespace Library.Logging;
 
 public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
 {

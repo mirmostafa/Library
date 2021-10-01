@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using Library.Validations;
 
 namespace Library.Dynamic;
 
@@ -18,17 +19,19 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
     protected Expando(SerializationInfo info, StreamingContext context)
     {
         var buffer = info?.GetValue("Properties", typeof(Dictionary<string, object?>));
-        if (buffer is Dictionary<string, object?> dic)
+        if (buffer is not null and Dictionary<string, object?> dic)
         {
             this.Properties = dic;
         }
     }
 
-    public virtual object? this[[DisallowNull]string propName]
+    public virtual object? this[[DisallowNull] string propName]
     {
-        get => this.Properties.ContainsKey(propName) ? this.Properties[propName] : null;
+        get => this.Properties.ContainsKey(propName.ArgumentNotNull(nameof(propName))) ? this.Properties[propName] : null;
         set
         {
+            Check.IfArgumentNotNull(propName, nameof(propName));
+
             if (this.Properties.ContainsKey(propName))
             {
                 if (this.Properties[propName] == value)
@@ -83,4 +86,11 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+    public object? GetByPropName([DisallowNull] string propName)
+        => this[propName];
+    public static object? GetByPropName([DisallowNull] Expando expando, [DisallowNull] string propName)
+        => expando.ArgumentNotNull(nameof(expando)).GetByPropName(propName);
+    public static object? GetByPropName([DisallowNull] dynamic expando, [DisallowNull] string propName)
+        => expando.Is<Expando>(nameof(expando)).GetByPropName(propName);
 }

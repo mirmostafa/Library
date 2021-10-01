@@ -7,6 +7,7 @@ using Library.Collections;
 using Library.EventsArgs;
 using Library.Exceptions;
 using Library.Helpers;
+using Library.Validations;
 using Library.Wpf.Helpers;
 using Library.Wpf.Media;
 using Microsoft.WindowsAPICodePack.Dialogs;

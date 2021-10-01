@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Library.Coding;
 using Library.Helpers;
+using Library.Validations;
 using Library.Wpf.Media;
 using static Library.Coding.CodeHelper;
 

@@ -1,12 +1,14 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using Library.Data.Markers;
+using Library.Validations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Library.Helpers;
 public static class DbContextHelper
 {
-    public static TDbContext Detach<TDbContext, TEntity>(this TDbContext dbContext, TEntity entity)
+    public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
@@ -20,7 +22,7 @@ public static class DbContextHelper
         return dbContext;
     }
 
-    public static TEntity Detach<TDbContext, TEntity>(this TEntity entity, TDbContext dbContext)
+    public static TEntity Detach<TDbContext, TEntity>([DisallowNull] this TEntity entity, [DisallowNull] TDbContext dbContext)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
@@ -35,7 +37,7 @@ public static class DbContextHelper
         return entity;
     }
 
-    public static void RemoveById<TEntity>(this DbContext dbContext, IEnumerable<long> ids, bool detach = false)
+    public static void RemoveById<TEntity>([DisallowNull] this DbContext dbContext, IEnumerable<long> ids, bool detach = false)
         where TEntity : class, IIdenticalEntity<long>, new()
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
@@ -52,7 +54,7 @@ public static class DbContextHelper
         }
     }
 
-    public static EntityEntry<TEntity> RemoveById<TEntity>(this DbContext dbContext, long id, bool detach = false)
+    public static EntityEntry<TEntity> RemoveById<TEntity>([DisallowNull] this DbContext dbContext, long id, bool detach = false)
         where TEntity : class, IIdenticalEntity<long>, new()
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));

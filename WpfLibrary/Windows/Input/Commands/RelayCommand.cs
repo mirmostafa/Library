@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
-using Library.Helpers;
+using Library.Validations;
 
 namespace Library.Wpf.Commands
 {
