@@ -282,18 +282,9 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         get
         {
             var self = this;
-            return self.ToCode();
+            return self.ToString();
         }
     }
-
-    /// <summary>
-    ///     Adds the specified persian date time1.
-    /// </summary>
-    /// <param name="persianDateTime1"> The persian date time1. </param>
-    /// <param name="persianDateTime2"> The persian date time2. </param>
-    /// <returns> </returns>
-    public static PersianDateTime Add(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
-        => persianDateTime1 + persianDateTime2;
 
     /// <summary>
     ///     Compares the specified persian date time1.
@@ -356,7 +347,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         var indexOfSpace = dateTimeString.IndexOf(" ", StringComparison.Ordinal);
         var hasDate = dateTimeString.IndexOf(DateSeparator, StringComparison.Ordinal) > 0;
         var hasTime = dateTimeString.IndexOf(":", StringComparison.Ordinal) > 0;
-        int year = 0, month = 0, day = 0, hour = 0, min = 0;
+        int year = 0, month = 0, day = 0, hour = 0, min = 0, sec = 0;
 
         if (hasDate)
         {
@@ -383,16 +374,20 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         if (hasTime)
         {
             var timePart = hasDate ? dateTimeString[indexOfSpace..] : dateTimeString;
-            if (int.TryParse(timePart.AsSpan(0, timePart.IndexOf(TimeSeparator, StringComparison.Ordinal)),
-                out hour) is false)
+            var timeParts = timePart.Split(TimeSeparator);
+            if (timeParts.Length > 0)
             {
-                throw new ArgumentException("not valid date", nameof(dateTimeString));
+                hour = Throw(() => int.Parse(timeParts[0]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
 
-            timePart = timePart.Remove(0, timePart.IndexOf(TimeSeparator, StringComparison.Ordinal) + 1);
-            if (int.TryParse(timePart, out min) is false)
+            if (timePart.Length > 1)
             {
-                throw new ArgumentException("not valid date", nameof(dateTimeString));
+                min = Throw(() => int.Parse(timeParts[1]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+            }
+
+            if (timeParts.Length > 2)
+            {
+                sec = Throw(() => int.Parse(timeParts[2]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
         }
 
@@ -404,7 +399,8 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
             Month = month,
             Day = day,
             Hour = hour,
-            Minute = min
+            Minute = min,
+            Second = sec
         };
 
         return data.ToString()?.Equals("00:00:00 0000/00/00", StringComparison.Ordinal) switch
@@ -415,20 +411,12 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     }
 
     /// <summary>
-    ///     Subtracts the specified persian date time1.
-    /// </summary>
-    /// <param name="persianDateTime1"> The persian date time1. </param>
-    /// <param name="persianDateTime2"> The persian date time2. </param>
-    /// <returns> </returns>
-    public static PersianDateTime Subtract(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
-        => persianDateTime1 - persianDateTime2;
-
-    /// <summary>
     ///     Converts to persian.
     /// </summary>
     /// <param name="dateTime"> The date time. </param>
     /// <returns> </returns>
-    public static string ToPersian(in DateTime dateTime) => new PersianDateTime(dateTime).ToCode()!;
+    public static string ToPersian(in DateTime dateTime)
+        => new PersianDateTime(dateTime).ToString()!;
 
     public static (PersianDateTime Result, bool Succeed) TryParsePersian(in string str)
     {
@@ -457,12 +445,48 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     }
 
     /// <summary>
+    ///     Adds the specified persian date time1.
+    /// </summary>
+    /// <param name="persianDateTime1"> The persian date time1. </param>
+    /// <param name="persianDateTime2"> The persian date time2. </param>
+    /// <returns> </returns>
+    public static PersianDateTime Add(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
+        => persianDateTime1 + persianDateTime2;
+
+    /// <summary>
     ///     Adds the specified PersianDate time.
     /// </summary>
     /// <param name="persianDateTime"> The PersianDate time. </param>
     /// <returns> </returns>
     public PersianDateTime Add(in PersianDateTime persianDateTime)
         => Add(this, persianDateTime);
+
+    public PersianDateTime AddYears(in int value)
+        => this.ToDateTime().AddYears(value).ToPersianDateTime();
+    public PersianDateTime AddMonths(in int value)
+        => this.ToDateTime().AddMonths(value).ToPersianDateTime();
+    public PersianDateTime AddDays(in int value)
+        => this.ToDateTime().AddDays(value).ToPersianDateTime();
+    public PersianDateTime AddHours(in int value)
+        => this.ToDateTime().AddHours(value).ToPersianDateTime();
+    public PersianDateTime AddMinutes(in int value)
+        => this.ToDateTime().AddMinutes(value).ToPersianDateTime();
+    public PersianDateTime AddSeconds(in int value)
+        => this.ToDateTime().AddSeconds(value).ToPersianDateTime();
+    public PersianDateTime AddMilliseconds(in int value)
+        => this.ToDateTime().AddMilliseconds(value).ToPersianDateTime();
+    public PersianDateTime AddTocks(long ticks)
+        => this.ToDateTime().AddTicks(ticks).ToPersianDateTime();
+
+    /// <summary>
+    ///     Subtracts the specified persian date time1.
+    /// </summary>
+    /// <param name="persianDateTime1"> The persian date time1. </param>
+    /// <param name="persianDateTime2"> The persian date time2. </param>
+    /// <returns> </returns>
+    public static PersianDateTime Subtract(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
+        => persianDateTime1 - persianDateTime2;
+
 
     /// <summary>
     ///     Creates a new object that is a copy of the current instance.
@@ -580,7 +604,8 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     ///     Returns a <see cref="string" /> that represents this instance.
     /// </summary>
     /// <returns> A <see cref="string" /> that represents this instance. </returns>
-    public string? ToCode() => this.ToString(ToStringFormat);
+    public override string? ToString()
+        => this.ToString(ToStringFormat);
 
     /// <summary>
     ///     Converts to persian date string.
@@ -630,17 +655,22 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         }
 
         _ = Check.ArgumentNotNull(format, "format");
+        var isPm = this.Hour > 12;
+        var tmpHrs = isPm ? this.Hour - 12 : this.Hour;
         format = format.Trim().Replace("yyyy", this.Year.ToString("0000", CultureInfo.CurrentCulture));
         format = format.Trim().Replace("MMMM", MonthNames.ToArray()[this.Month - 1]);
         format = format.Trim().Replace("MM", this.Month.ToString("00", CultureInfo.CurrentCulture));
         format = format.Trim().Replace("dd", this.Day.ToString("00", CultureInfo.CurrentCulture));
         format = format.Trim().Replace("HH", this.Hour.ToString("00", CultureInfo.CurrentCulture));
+        format = format.Trim().Replace("hh", tmpHrs.ToString("00", CultureInfo.CurrentCulture));
         format = format.Trim().Replace("mm", this.Minute.ToString("00", CultureInfo.CurrentCulture));
         format = format.Trim().Replace("ss", this.Second.ToString("00", CultureInfo.CurrentCulture));
+        format = format.Trim().Replace("tt", isPm ? CultureInfo.CurrentCulture.DateTimeFormat.PMDesignator : CultureInfo.CurrentCulture.DateTimeFormat.AMDesignator);
+
         return format;
     }
 
-    public override string? ToString()
+    public string? ToDefaultFomratString()
         => this.ToString("yyyy/MM/dd HH:mm:ss");
 
     /// <summary>
@@ -717,7 +747,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         persianDateTime.Day,
         persianDateTime.Hour,
         persianDateTime.Minute,
-        persianDateTime.Second,
+        persianDateTime.Second == -1 ? 0 : persianDateTime.Second,
         0);
 
     public static implicit operator PersianDateTime(in string persianDateTimeString)
@@ -735,7 +765,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// </summary>
     /// <param name="persianDateTime"> The persian date time. </param>
     /// <returns> The result of the conversion. </returns>
-    public static implicit operator string?(in PersianDateTime persianDateTime) => persianDateTime.ToCode();
+    public static implicit operator string?(in PersianDateTime persianDateTime) => persianDateTime.ToString();
 
     /// <summary>
     ///     Implements the operator -.

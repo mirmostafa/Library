@@ -10,8 +10,8 @@ internal readonly struct PersianDateTimeData
 {
     public PersianDateTimeData()
     {
-        this.Year = this.Month = this.Day = this.Hour = this.Minute = this.Second = -1;
-        this.Millisecond = -1d;
+        this.Year = this.Month = this.Day = this.Hour = this.Minute = this.Second = 0;
+        this.Millisecond = 0d;
         this.HasDate = true;
         this.HasTime = true;
     }
