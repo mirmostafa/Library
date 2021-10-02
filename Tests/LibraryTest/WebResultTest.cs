@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Library.Web.Results;
-using Library.Helpers;
 
 namespace LibraryTest;
 
@@ -46,7 +45,7 @@ public class WebResultTest
     }
 
     [TestMethod]
-    public void ExtensionsTest1()
+    public void FluentTest1()
     {
         var num = -1;
         var result = Succeed()
@@ -56,7 +55,7 @@ public class WebResultTest
     }
 
     [TestMethod]
-    public void ExtensionsTest2()
+    public void FluentTest2()
     {
         var num = -1;
         var result = Failed()
@@ -65,7 +64,7 @@ public class WebResultTest
         Assert.AreEqual(6, num);
     }
     [TestMethod]
-    public void ExtensionsTest3()
+    public void FluentTest3()
     {
         var num = -1;
         var result = Failed()

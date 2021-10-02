@@ -226,6 +226,24 @@ public static class CodeHelper
     /// </returns>
     public static bool HasException(in Action tryFunc)
         => Catch(tryFunc) is not null;
+    
+    public static TResult Throw<TResult>(Func<TResult> action, Func<Exception, Exception>? getException)
+    {
+        Check.IfArgumentNotNull(action, nameof(action));
+        try
+        {
+            return action();
+        }
+        catch (Exception ex)
+        {
+            if (getException is not null)
+            {
+                throw getException(ex);
+            }
+
+            throw;
+        }
+    }
 }
 
 public static class Methods
