@@ -1,11 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+﻿namespace Library.Web.Results;
 
-namespace Library.Web.Results;
-
-public interface IApiResult : IActionResult, IStatusCodeActionResult
+public interface IApiResult
 {
-    string? Message { get; init; }
-    public bool IsSucceed { get; init; }
-    Dictionary<string, object>? Extra { get; }
+    bool Failure { get; }
+    string? Message { get; }
+    int? StatusCode { get; }
+    bool IsSucceed { get; }
+}
+
+public interface IApiResult<T> : IApiResult
+{
+    T? Value {  get; }
 }

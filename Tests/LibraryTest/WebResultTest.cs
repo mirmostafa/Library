@@ -1,66 +1,75 @@
 ﻿using System.Net;
-using Library.Web;
+using Library.Web.Results;
+using Library.Helpers;
 
 namespace LibraryTest;
 
 [TestClass]
 public class WebResultTest
 {
+    private static ApiResult Failed() => ApiResult.BadRequest();
+    private static ApiResult Succeed() => ApiResult.Ok();
+
     [TestMethod]
     public void OkTest1()
     {
-        var result = WebResult.Ok();
+        var result = Succeed();
         Assert.IsNotNull(result);
     }
 
     [TestMethod]
     public void OkTest2()
     {
-        var result = WebResult<int>.Ok(5);
+        var result = ApiResult<int>.Ok(5);
         Assert.AreEqual(5, result.Value);
     }
 
     [TestMethod]
     public void OkTest3()
     {
-        var result = WebResult.Ok(message: "Ok");
+        var result = ApiResult.Ok(message: "Ok");
         Assert.AreEqual("Ok", result.Message);
     }
 
     [TestMethod]
     public void OkTest4()
     {
-        var result = WebResult<int>.Ok(message: "Ok", value: 5);
+        var result = ApiResult<int>.Ok(message: "Ok", value: 5);
         Assert.AreEqual(5, result.Value);
     }
 
     [TestMethod]
     public void FailTest1()
     {
-        var result = WebResult.BadRequest();
-        Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
+        var result = Failed();
+        Assert.AreEqual(HttpStatusCode.BadRequest, result.HttpStatusCode);
     }
 
     [TestMethod]
     public void ExtensionsTest1()
     {
         var num = -1;
-        var result = succeed()
-                        .OnSuccess(r => num = 5)
-                        .OnFailure(r => num = 6);
+        var result = Succeed()
+                        .OnSucceed(x => num = 5)
+                        .OnFailure(x => num = 6);
         Assert.AreEqual(5, num);
-
-        static WebResult succeed() => WebResult.Ok();
     }
+
     [TestMethod]
     public void ExtensionsTest2()
     {
         var num = -1;
-        var result = failed()
-                        .OnSuccess(r => num = 5)
+        var result = Failed()
+                        .OnSucceed(r => num = 5)
                         .OnFailure(r => num = 6);
         Assert.AreEqual(6, num);
-
-        static WebResult failed() => WebResult.BadRequest();
+    }
+    [TestMethod]
+    public void ExtensionsTest3()
+    {
+        var num = -1;
+        var result = Failed()
+                        .OnDone(r => num = 5);
+        Assert.AreEqual(5, num);
     }
 }
