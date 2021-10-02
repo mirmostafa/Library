@@ -21,6 +21,7 @@ public static class Check
                 min));
         }
     }
+    
     public static void IfArgumentIsNotValid<T>(this T obj, Func<T, bool> validator, string argName)
         => _ = obj.NotValid(validator.ArgumentNotNull(nameof(validator)), () => new ArgumentNullException(argName))!;
 
@@ -43,18 +44,20 @@ public static class Check
     public static T ArgumentOutOfRange<T>(this T obj, Func<T, bool> validate, string argName = null)
         => obj.NotValid(validate, () => new ArgumentOutOfRangeException(argName));
 
-
-    internal static void Require<TValidationException>(bool required)
-        where TValidationException : ValidationExceptionBase, new()
+    public static void Require(bool required, Func<Exception> getException)
     {
         if (!required)
         {
-            throw new TValidationException();
+            throw getException();
         }
     }
+    
+    public static void Require<TValidationException>(bool required)
+        where TValidationException : Exception, new() 
+        => Require(required, () => new TValidationException());
 
-    internal static void Require(bool required)
-        => Require<ValidationException>(required);
+    public static void Require(bool required)
+        => Require<RequiredValidationException>(required);
 
     public static void IfArgumentNotNull([NotNull] this string obj, string argName)
         => _ = obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
