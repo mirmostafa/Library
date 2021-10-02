@@ -1,0 +1,36 @@
+﻿using System.Net;
+using Library.Helpers;
+using Library.Validations;
+
+namespace Library.Web.Results;
+
+public class ApiResult<T> : ApiResult, IApiResult<T>
+{
+    protected ApiResult(int? httpStatusCode = null, string? message = null, T? value = default)
+        : base(httpStatusCode, message) => this.Value = value;
+
+    public void Deconstruct(out int? statusCode, out string? message, out T? value)
+        => (statusCode, message, value) = (this.StatusCode, this.Message, this.Value);
+
+    private T? _value;
+    public T? Value
+    {
+        get
+        {
+            Check.Require(this.IsSucceed);
+
+            return this._value;
+        }
+        private set => this._value = value;
+    }
+
+    public static ApiResult<T> Ok(T value, string? message = null)
+        => new(System.Net.HttpStatusCode.OK.ToInt(), message) { Value = value };
+
+    public static ApiResult<T?> New(int? statusCode = null, string? message = null, bool isSucceed = true, T? value = default)
+        => new(statusCode, message, value);
+    public static ApiResult<T?> New(HttpStatusCode? statusCode = null, string? message = null, bool isSucceed = true, T? value = default)
+        => new(statusCode?.ToInt(), message, value);
+
+    public static explicit operator T?(ApiResult<T> result) => result.Value;
+}

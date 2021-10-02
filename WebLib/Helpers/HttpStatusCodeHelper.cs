@@ -18,8 +18,10 @@ public static class HttpStatusCodeHelper
     public static bool IsSucceed(this HttpStatusCode code)
         => code.GetKind().IsIn(HttpStatusCodeKind.Success, HttpStatusCodeKind.Informational);
 
-    public static HttpStatusCode ToHttpStatusCode(int? code)
-        => code is null ? HttpStatusCode.NoContent : (HttpStatusCode)code;
+    public static HttpStatusCode ToHttpStatusCode(int code)
+        => (HttpStatusCode)code;
+    public static HttpStatusCode? ToHttpStatusCode(int? code)
+        => code is null ? null : (HttpStatusCode)code;
 }
 
 public enum HttpStatusCodeKind
