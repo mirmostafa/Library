@@ -55,12 +55,13 @@ public class SelectStatementBuilderTest
                         .Select("Person")
                         .AllColumns()
                         .OrderBy("Id")
-                        .Descending()
-                        .ClearOrdering()
-                        .Build();
+                        .Descending();
+        specQueryActual = specQueryActual
+                        .ClearOrdering();
+        var actual = specQueryActual.Build();
         var specQueryExpected = @"SELECT *
     FROM [Person]";
-        Assert.AreEqual(specQueryExpected, specQueryActual);
+        Assert.AreEqual(specQueryExpected, actual);
     }
 
     [TestMethod]
