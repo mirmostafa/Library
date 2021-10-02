@@ -1,0 +1,35 @@
+﻿using Library.Web.Helpers;
+
+namespace LibraryTest;
+
+[TestClass]
+public class ApiHelperTest
+{
+    [TestMethod]
+    public void ResultTest1()
+    {
+        var result = ApiHelper.Result(250);
+        Assert.AreEqual(250, result?.StatusCode);
+    }
+
+    [TestMethod]
+    public void ResultTest2()
+    {
+        var result = ApiHelper.Result(207);
+        Assert.AreEqual(true, result.IsSucceed());
+    }
+
+    [TestMethod]
+    public void ResultTest3()
+    {
+        var result = ApiHelper.Result(250);
+        Assert.AreEqual(true, result.IsSucceed());
+    }
+
+    [TestMethod]
+    public void ResultTest4()
+    {
+        var result = ApiHelper.OkResult();
+        Assert.AreEqual(true, result.IsSucceed());
+    }
+}
