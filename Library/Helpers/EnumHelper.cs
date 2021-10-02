@@ -136,7 +136,8 @@ public static class EnumHelper
         return pairs?.ToDictionary(t => t.Value, t => t.Text);
     }
 
-    public static bool IsEnumInRange(Enum value, params Enum[] range) => range.Contains(value);
+    public static bool IsIn(this Enum value, params Enum[] range) 
+        => range.Contains(value);
 
     /// <summary>
     /// </summary>
@@ -222,7 +223,7 @@ public static class EnumHelper
     }
 
     private static object Parse(object value) => value is string
-        ? value.ToString()!.Contains(".")
+        ? value.ToString()!.Contains('.')
             ? value.ToString()!.Substring(value.ToString()!.LastIndexOf(".") + 1)
             : value
         : value;

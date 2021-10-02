@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Net;
+using Microsoft.Extensions.Logging;
 
 namespace TestConApp;
 
@@ -8,5 +9,7 @@ internal partial class Program
 
     public static void Main()
     {
+        HttpStatusCode code = (HttpStatusCode)200;
+        System.Console.WriteLine(code);
     }
 }
