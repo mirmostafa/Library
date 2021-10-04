@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Library.Data.SqlServer;
-using Library.Data.SqlServer.Builders.Builders;
+using Library.Data.SqlServer.Builders;
 
 namespace LibraryTest;
 
