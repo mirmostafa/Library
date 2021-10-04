@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Library.Coding;
+using Library.Data.SqlServer.Builders;
 using Library.Data.SqlServer.Builders.Bases;
-using Library.Data.SqlServer.Builders.Builders;
 using Library.Validations;
 
 namespace Library.Data.SqlServer;
@@ -12,12 +12,14 @@ public static partial class SqlStatementBuilder
     {
         var table = EntityModelConverter.GetTableInfo<TEntity>();
         var result = Select()
-                    .Columns(table.Columns.OrderBy(c => c.Order).Select(c => c.Name))
-                    .From(table.Name);
+                        .Columns(table.Columns.OrderBy(c => c.Order).Select(c => c.Name))
+                        .From(table.Name);
         return result;
     }
+
     public static ISelectStatement Select([DisallowNull] string tableName)
         => new SelectStatement { TableName = tableName.ArgumentNotNull(nameof(tableName)) };
+
     public static ISelectStatement Select()
         => new SelectStatement();
 

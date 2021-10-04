@@ -98,14 +98,24 @@ public class StringHelperTest
     public void NationalCodeTest()
     {
         var nc1 = "0062614614";
-        var nc2 = "0062614615";
-        var nc3 = "006261461";
         var isValid1 = StringHelper.IsValidIranianNationalCode(nc1);
-        var isValid2 = StringHelper.IsValidIranianNationalCode(nc2);
-        var isValid3 = StringHelper.IsValidIranianNationalCode(nc3);
 
         Assert.IsTrue(isValid1);
+    }
+    [TestMethod]
+    public void NationalCodeTest2()
+    {
+        var nc2 = "0062614615";
+        var isValid2 = StringHelper.IsValidIranianNationalCode(nc2);
+
         Assert.IsFalse(isValid2);
+    }
+    [TestMethod]
+    public void NationalCodeTest3()
+    {
+        var nc3 = "006261461";
+        var isValid3 = StringHelper.IsValidIranianNationalCode(nc3);
+
         Assert.IsFalse(isValid3);
     }
 
@@ -123,5 +133,22 @@ public class StringHelperTest
         var pairs = StringHelper.SplitPair(cs);
         (_, var value) = pairs.Where(kv => kv.Key == "Database").Single();
         Assert.AreEqual("myDatabase", value);
+    }
+
+    [TestMethod]
+    public void AddTest()
+    {
+        var actual = "Mohammad ".Add("reza");
+        var expected = "Mohammad reza";
+        Assert.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    public void AllIndexesOfTest()
+    {
+        var test = "Mohammad";
+        var indexes = test.AllIndexesOf("m");
+        Assert.AreEqual(2, indexes.Count());
+        Assert.AreEqual(5, indexes.ElementAt(1));
     }
 }

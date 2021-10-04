@@ -25,7 +25,7 @@ public class PersianDateTimeTest
     public void Ctor1Test()
     {
         var pers = new PersianDateTime(1356, 06, 12, 13, 0, 0, 0);
-        Assert.AreEqual("1356/06/12 13:00:00", pers.ToString());
+        Assert.AreEqual("1356/06/12 01:00:00 PM", pers.ToString());
     }
 
     [TestMethod]
