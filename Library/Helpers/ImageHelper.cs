@@ -14,12 +14,9 @@ public static class ImageHelper
     /// </summary>
     /// <param name="imageData"></param>
     /// <returns></returns>
-    public static byte[] ConvertToThumbnail(byte[] imageData)
+    public static byte[] ConvertToThumbnail(byte[] imageData, double maxWidth = 96, double maxHeight = 96)
     {
         Image image = new Bitmap(new MemoryStream(imageData));
-
-        const double maxWidth = 96;
-        const double maxHeight = 96;
 
         var aspectRatio = image.Width / image.Height;
         double scaleFactor = 0;
@@ -38,7 +35,7 @@ public static class ImageHelper
         return ms.ToArray();
     }
 
-    public static byte[] GetThumbnail(byte[] value, int thumbWidth)
+    public static byte[] GetThumbnail(byte[] value, int thumbWidth = 96)
     {
         var image = Image.FromStream(new MemoryStream(value));
         var thumbValue = value;

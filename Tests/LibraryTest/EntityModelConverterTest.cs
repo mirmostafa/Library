@@ -41,31 +41,3 @@ public class EntityModelConverterTest
         Assert.AreEqual(expected, actual);
     }
 }
-
-[Table("Person", Schema = "dbo")]
-internal class PersonEntity
-{
-    [Key]
-    [Column(Order = 0)]
-    public long Id { get; set; }
-
-    [Column(Order = 1)]
-    public string? Name { get; set; }
-
-    [DatabaseGenerated(DatabaseGeneratedOption.None)]
-    public string? FullName { get; set; }
-
-    [Column(Order = 3)]
-    public long AddressId { get; set; }
-
-    [ForeignKey(nameof(AddressId))]
-    public Address? Address { get; set; }
-
-    [Column("LName", Order = 2)]
-    public string? LastName { get; set; }
-}
-
-internal class Address
-{
-
-}

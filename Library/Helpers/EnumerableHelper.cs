@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using Library.Collections;
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -522,4 +523,20 @@ public static class EnumerableHelper
 
     public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
         => source.ArgumentNotNull(nameof(source)).Where(x => !exclude(x));
+
+    public static TFluentList AddRange<TFluentList, TItem>([DisallowNull] this TFluentList list, IEnumerable<TItem>? items)
+        where TFluentList : IFluentList<TFluentList, TItem>
+    {
+        Check.IfArgumentNotNull(list, nameof(list));
+        if (items?.Any() is true)
+        {
+            foreach (var item in items)
+            {
+                list.Add(item);
+            }
+        }
+        return list;
+    }
+
+    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source) => source?.Select(x => x) ?? Enumerable.Empty<T>();
 }
