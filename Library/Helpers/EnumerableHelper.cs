@@ -257,12 +257,13 @@ public static class EnumerableHelper
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
         where TSource : class
     {
-        if (items?.Any() is not true)
+        var buffer = items;
+        if (buffer?.Any() is not true)
         {
-            items = Enumerable.Empty<TSource>();
+            buffer = Enumerable.Empty<TSource>();
         }
 
-        foreach (var item in items)
+        foreach (var item in buffer)
         {
             if (item is not null)
             {
@@ -462,11 +463,11 @@ public static class EnumerableHelper
         }
     }
 
-    public static async Task<List<TResult>> ToListAsync<TResult>(this IAsyncEnumerable<TResult> items, CancellationToken cancellationToken = default)
-        => await New<List<TResult>>().AddRangeAsync(items, cancellationToken);
+    public static async Task<List<TItem>> ToListAsync<TItem>(this IAsyncEnumerable<TItem> items, CancellationToken cancellationToken = default)
+        => await New<List<TItem>>().AddRangeAsync(items, cancellationToken);
 
-    public static async Task<TList> AddRangeAsync<TList, TResult>([DisallowNull] this TList list, ConfiguredCancelableAsyncEnumerable<TResult> asyncItems)
-        where TList : notnull, ICollection<TResult>
+    public static async Task<TList> AddRangeAsync<TList, TItem>([DisallowNull] this TList list, ConfiguredCancelableAsyncEnumerable<TItem> asyncItems)
+        where TList : notnull, ICollection<TItem>
     {
         Check.IfArgumentNotNull(list, nameof(list));
         await foreach (var item in asyncItems)
@@ -492,7 +493,8 @@ public static class EnumerableHelper
     /// </summary>
     /// <typeparam name="T"> </typeparam>
     /// <returns> </returns>
-    public static T[] EmptyArray<T>() => Array.Empty<T>();
+    public static T[] EmptyArray<T>() 
+        => Array.Empty<T>();
 
     public static void RunAllWhile(this IEnumerable<Action> actions, Func<bool> predicate)
     {
@@ -506,20 +508,6 @@ public static class EnumerableHelper
             action();
         }
     }
-
-    //public static IEnumerable<TDestination> Cast<TSource, TDestination>(this IEnumerable<TSource> source, [DisallowNull] Func<TSource, TDestination> converter)
-    //{
-    //    if (source?.Any() is not true)
-    //    {
-    //        yield break;
-    //    }
-    //    Check.IfArgumentNotNull(converter, nameof(converter));
-
-    //    foreach (var item in source)
-    //    {
-    //        yield return converter(item);
-    //    }
-    //}
 
     public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
         => source.ArgumentNotNull(nameof(source)).Where(x => !exclude(x));

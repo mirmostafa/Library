@@ -1,8 +1,11 @@
-﻿namespace Library.Collections;
+﻿using System.Diagnostics.CodeAnalysis;
+using Library.Validations;
+
+namespace Library.Collections;
 
 public class Node<T>
 {
-    private Node<T?>? _parent;
+    private Node<T>? _parent;
 
     public Node() { }
 
@@ -10,55 +13,38 @@ public class Node<T>
         : this()
         => this.Value = value;
 
-    public Node(in T value, in Node<T?> parent, in IEnumerable<T>? children = null)
-        : this(value)
-    {
-        this.Parent = parent;
-        this.Childs.AddRange(children?.Select(v => new Node<T>(v)));
-    }
-
-    public Node(in T value, in T? parent, in IEnumerable<T>? children = null)
-        : this(value, new(parent), children)
-    {
-    }
-
-    public T? Value { get; init; }
-    public Node<T?>? Parent { get => this._parent; init => this._parent = value; }
+    public T Value { get; init; }
+    public Node<T>? Parent { get => this._parent; init => this._parent = value; }
     protected FluentList<Node<T>> Childs { get; } = new();
     public IEnumerable<T> ChildValues => this.Children.Select(x => x.To<T>());
     public IEnumerable<Node<T>> Children => this.Childs.ToEnumerable();
 
     public Node<T> AddChild(in T value)
+        => this.AddChild(ToNode(value));
+
+    public Node<T> AddChild([DisallowNull] Node<T> node)
     {
-        var node = new Node<T>(value, parent: this);
+        Check.IfArgumentNotNull(node, nameof(node));
+        node._parent = this;
         this.Childs.Add(node);
         return this;
     }
 
-    public Node<T> AddChild(Node<T> node)
+    public Node<T> AddChildren([DisallowNull] IEnumerable<T> values)
     {
-        this._parent = this;
-        this.Childs.Add(node);
-        return this;
-    }
-
-    public IEnumerable<Node<T>> AddChild(IEnumerable<T> values)
-    {
-        if (values is null)
-        {
-            throw new ArgumentNullException(nameof(values));
-        }
+        Check.IfArgumentNotNull(values, nameof(values));
 
         foreach (var value in values)
         {
-            yield return this.AddChild(value);
+            this.AddChild(value);
         }
+        return this;
     }
 
     public override string ToString()
         => this.Value?.ToString() ?? "Empty Value!";
 
-    public static implicit operator T?(Node<T?> node)
+    public static implicit operator T?(Node<T> node)
         => node is null ? default : node.Value;
 
     public static bool operator ==(Node<T> x, Node<T> y)
@@ -86,6 +72,9 @@ public class Node<T>
         return false;
     }
 
-    public T? ToType()
+    public T ToType()
         => this.Value;
+
+    public static Node<T> ToNode(T t) 
+        => new(t);
 }
