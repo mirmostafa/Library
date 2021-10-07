@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace TestConApp;
 
@@ -9,6 +8,6 @@ internal partial class Program
 
     public static void Main()
     {
-        
+
     }
 }

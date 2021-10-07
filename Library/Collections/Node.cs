@@ -4,48 +4,41 @@ public class Node<T>
 {
     private Node<T?>? _parent;
 
-    public Node()
-        => this.Children = new();
+    public Node() { }
 
-    public Node(T value)
+    public Node(in T value)
         : this()
         => this.Value = value;
 
-    public Node(T value, Node<T?> parent, IEnumerable<T>? children = null)
+    public Node(in T value, in Node<T?> parent, in IEnumerable<T>? children = null)
         : this(value)
     {
-        if (parent is not null)
-        {
-            this.Parent = parent;
-        }
-
-        if (children?.Any() is true)
-        {
-            this.Children.AddRange(children.Select(v => new Node<T>(v)));
-        }
+        this.Parent = parent;
+        this.Childs.AddRange(children?.Select(v => new Node<T>(v)));
     }
 
-    public Node(T value, T? parent, IEnumerable<T>? children = null)
+    public Node(in T value, in T? parent, in IEnumerable<T>? children = null)
         : this(value, new(parent), children)
     {
     }
 
     public T? Value { get; init; }
     public Node<T?>? Parent { get => this._parent; init => this._parent = value; }
-    public List<Node<T>> Children { get; }
+    protected FluentList<Node<T>> Childs { get; } = new();
     public IEnumerable<T> ChildValues => this.Children.Select(x => x.To<T>());
+    public IEnumerable<Node<T>> Children => this.Childs.ToEnumerable();
 
-    public Node<T> AddChild(T value)
+    public Node<T> AddChild(in T value)
     {
         var node = new Node<T>(value, parent: this);
-        this.Children.Add(node);
+        this.Childs.Add(node);
         return this;
     }
 
     public Node<T> AddChild(Node<T> node)
     {
         this._parent = this;
-        this.Children.Add(node);
+        this.Childs.Add(node);
         return this;
     }
 
