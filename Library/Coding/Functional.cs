@@ -85,6 +85,7 @@ public static class Functional
         action?.Invoke();
         return instance;
     }
+
     public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance> func)
         => func.Invoke();
 

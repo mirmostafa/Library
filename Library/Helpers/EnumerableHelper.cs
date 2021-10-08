@@ -526,5 +526,6 @@ public static class EnumerableHelper
         return list;
     }
 
-    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source) => source?.Select(x => x) ?? Enumerable.Empty<T>();
+    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source) 
+        => source?.Select(x => x) ?? Enumerable.Empty<T>();
 }
