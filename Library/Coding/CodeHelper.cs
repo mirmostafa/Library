@@ -15,9 +15,6 @@ public static class CodeHelper
     public static void Break()
         => throw new BreakException();
 
-    public static async Task Async()
-        => await Task.CompletedTask;
-
     public static async Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default)
         => await Task.Run(action, cancellationToken);
 
@@ -57,16 +54,7 @@ public static class CodeHelper
     }
 
     public static void Catch(in Action action, in ExceptionHandling exceptionHandling)
-    {
-        try
-        {
-            action?.Invoke();
-        }
-        catch (Exception ex)
-        {
-            exceptionHandling?.HandleException(ex);
-        }
-    }
+        => Catch(action, handling: exceptionHandling);
 
     /// <summary>
     ///     Catches the exceptions in specific function.
@@ -87,7 +75,7 @@ public static class CodeHelper
         in ExceptionHandling? handling = null,
         bool throwException = false)
     {
-        tryAction.IfArgumentNotNull(nameof(tryAction));
+        Check.IfArgumentNotNull(tryAction, nameof(tryAction));
 
         handling?.Reset();
         try
@@ -226,7 +214,7 @@ public static class CodeHelper
     /// </returns>
     public static bool HasException(in Action tryFunc)
         => Catch(tryFunc) is not null;
-    
+
     public static TResult Throw<TResult>(Func<TResult> action, Func<Exception, Exception>? getException = null)
     {
         Check.IfArgumentNotNull(action, nameof(action));
