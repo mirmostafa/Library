@@ -20,7 +20,7 @@ jobs:
         dotnet-version: '6.0.100-preview.4.21255.9'
         include-prerelease: true
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore /Library.sln
     - name: Build
       run: dotnet build /Library.sln --no-restore
     - name: Test
