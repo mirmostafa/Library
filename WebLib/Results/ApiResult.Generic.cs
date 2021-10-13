@@ -6,7 +6,10 @@ namespace Library.Web.Results;
 
 public class ApiResult<T> : ApiResult, IApiResult<T>
 {
-    protected ApiResult(int? httpStatusCode = null, string? message = null, T? value = default)
+    public ApiResult(int? httpStatusCode = null, string? message = null, T? value = default)
+        : base(httpStatusCode, message) => this.Value = value;
+    
+    public ApiResult(HttpStatusCode? httpStatusCode = null, string? message = null, T? value = default)
         : base(httpStatusCode, message) => this.Value = value;
 
     public void Deconstruct(out int? statusCode, out string? message, out T? value)
