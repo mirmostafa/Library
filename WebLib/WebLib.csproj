@@ -13,6 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\CqrsLib\CqrsLib.csproj" />
 		<ProjectReference Include="..\Library\Library.csproj" />
 	</ItemGroup>
 

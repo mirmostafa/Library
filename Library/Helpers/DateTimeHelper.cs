@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using Library.Validations;
 
 namespace Library.Helpers;
 
@@ -115,4 +117,8 @@ public static class DateTimeHelper
     /// <returns></returns>
     public static TimeSpan ToTimeSpan(this DateTime source)
         => new(source.Ticks);
+
+    public static bool IsWeekend([DisallowNull] this DateTime dateTime, CultureInfo? culture = null) 
+        => (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(dateTime.ArgumentNotNull(nameof(dateTime)).DayOfWeek) 
+            is CultureInfoExtensions.WeekdayState.Weekend or CultureInfoExtensions.WeekdayState.WorkdayMorning;
 }
