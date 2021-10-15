@@ -120,7 +120,7 @@ public static class Functional
     public static void Lock(this object? lockObject, Action action)
         => _ = lockObject.Lock(() =>
         {
-            action.ArgumentNotNull()(); 
+            action.ArgumentNotNull()();
             return true;
         });
 
@@ -137,7 +137,7 @@ public static class Functional
     /// </summary>
     /// <typeparam name="T"> The type of the type. </typeparam>
     /// <returns> </returns>
-    public static T New<T>() 
+    public static T New<T>()
         where T : class, new()
         => new();
 
@@ -147,7 +147,7 @@ public static class Functional
     /// <typeparam name="T"> The type of the type. </typeparam>
     /// <param name="type"> The type. </param>
     /// <returns> </returns>
-    public static T? New<T>(in Type type) 
+    public static T? New<T>(in Type type)
         where T : class
         => (T?)type.GetConstructor(EnumerableHelper.EmptyArray<Type>())?.Invoke(null);
 
