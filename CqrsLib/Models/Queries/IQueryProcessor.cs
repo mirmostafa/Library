@@ -2,5 +2,5 @@
 
 public interface IQueryProcessor
 {
-    Task<TResult> ExecuteAsync<TResult>(IQueryParameter<TResult> query);
+    Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> query);
 }

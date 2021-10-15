@@ -1,6 +1,6 @@
 ﻿namespace Library.Cqrs;
 
-public interface IQueryParameter<TQueryResult>
+public interface IQuery<TQueryResult>
 {
 }
 public interface IQueryResult<TResult> : IQueryResult

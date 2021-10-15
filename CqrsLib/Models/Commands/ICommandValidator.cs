@@ -1,7 +1,7 @@
 ﻿namespace Library.Cqrs;
 
 public interface ICommandValidator<in TCommand>
-    where TCommand : ICommandParameter
+    where TCommand : ICommand
 {
     ValueTask ValidateAsync(TCommand command);
 }

@@ -1,17 +1,18 @@
 ﻿using Autofac;
 
-namespace Library.Cqrs;
+namespace Library.Cqrs.Engine.Query;
 
-public sealed class QueryProcessor : IQueryProcessor
+internal sealed class QueryProcessor : IQueryProcessor
 {
     private readonly ILifetimeScope _container;
 
-    public QueryProcessor(ILifetimeScope container) => this._container = container;
+    public QueryProcessor(ILifetimeScope container)
+        => this._container = container;
 
 #if !DEBUG
         [System.Diagnostics.DebuggerStepThrough]
 #endif
-    public Task<TResult> ExecuteAsync<TResult>(IQueryParameter<TResult> query)
+    public Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> query)
     {
         if (query is null)
         {

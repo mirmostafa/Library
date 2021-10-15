@@ -1,18 +1,14 @@
-﻿
-namespace Library.Cqrs;
+﻿namespace Library.Cqrs.Engine.Command;
 
 public class ValidationCommandHandlerDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult>
-    where TCommand : ICommandParameter
+    where TCommand : ICommand
     where TResult : ICommandResult
 {
     private readonly ICommandHandler<TCommand, TResult> _decoratedHandler;
     private readonly ICommandValidator<TCommand> _validator;
 
     public ValidationCommandHandlerDecorator(ICommandHandler<TCommand, TResult> decoratedHandler, ICommandValidator<TCommand> validator)
-    {
-        this._decoratedHandler = decoratedHandler;
-        this._validator = validator;
-    }
+        => (this._decoratedHandler, this._validator) = (decoratedHandler, validator);
 
     public async Task<TResult> HandleAsync(TCommand command)
     {
