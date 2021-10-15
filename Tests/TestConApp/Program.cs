@@ -1,7 +1,7 @@
-﻿using Library.Coding;
-using Library.Threading;
+﻿using Library.Threading;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Immutable;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,12 +14,13 @@ internal partial class Program
 
     public static async Task Main()
     {
-        Console.WriteLine(TimeOnly.MaxValue.ToString("O"));
+        var a = ImmutableList<string>.Empty;
+        a = a.Add("Hi");
         return;
         using var t = BackgroundTimer
                         .Start(() => Console.WriteLine("Hi"), 420, "My Task")
                         .Sleep(TimeSpan.FromSeconds(5))
-                        .StopAsync(); //.WaitAsync(TimeSpan.FromSeconds(2));
+                        .StopAsync();
         Console.ReadKey();
 
         var cts = new CancellationTokenSource();
