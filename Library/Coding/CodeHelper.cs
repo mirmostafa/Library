@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.Serialization;
-using Library.DesignPatterns.ExceptionHandlingPattern;
+﻿using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
 using Library.Validations;
+using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace Library.Coding;
 
@@ -231,5 +231,5 @@ public static class CodeHelper
 
             throw;
         }
-    }
+    }    
 }
