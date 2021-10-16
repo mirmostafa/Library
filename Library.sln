@@ -18,6 +18,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebLib", "WebLib\WebLib.csproj", "{9D27B192-A3DB-4FA2-AFB1-942E0E2A8E7A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CqrsLib", "CqrsLib\CqrsLib.csproj", "{606B37DF-8ECC-405F-BA44-8B02707E1FE7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{87B7803A-DEC4-48BC-9B81-BA88ECA38BA7} = {87B7803A-DEC4-48BC-9B81-BA88ECA38BA7}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

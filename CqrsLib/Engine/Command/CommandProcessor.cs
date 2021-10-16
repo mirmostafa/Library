@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using System;
+using System.Threading.Tasks;
 
 namespace Library.Cqrs.Engine.Command;
 

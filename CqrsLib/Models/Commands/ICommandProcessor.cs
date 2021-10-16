@@ -1,4 +1,6 @@
-﻿namespace Library.Cqrs;
+﻿using System.Threading.Tasks;
+
+namespace Library.Cqrs;
 
 public interface ICommandProcessor
 {
