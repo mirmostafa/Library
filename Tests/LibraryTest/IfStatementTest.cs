@@ -15,7 +15,6 @@ public class IfStatementTest
     public void TestMethod1()
     {
         true.If().Then(Methods.Empty).Else(Methods.Empty).Build();
-        Assert.That.ItsOk();
     }
 
     [TestMethod]
