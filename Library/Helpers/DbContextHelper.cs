@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
-using Library.Data.Markers;
+﻿using Library.Data.Markers;
 using Library.Validations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 
 namespace Library.Helpers;
 public static class DbContextHelper
@@ -14,6 +14,7 @@ public static class DbContextHelper
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
         Check.IfArgumentNotNull(entity, nameof(entity));
+
         var local = dbContext.Set<TEntity>().Local.FirstOrDefault(entry => entry.Id.Equals(entity.Id));
         if (local is not null)
         {
@@ -26,8 +27,8 @@ public static class DbContextHelper
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
-        dbContext.IfArgumentNotNull(nameof(dbContext));
-        entity.IfArgumentNotNull(nameof(entity));
+        Check.IfArgumentNotNull(dbContext, nameof(dbContext));
+        Check.IfArgumentNotNull(entity, nameof(entity));
 
         var local = dbContext.Set<TEntity>().Local.FirstOrDefault(entry => entry.Id.Equals(entity.Id));
         if (local is not null)
@@ -42,6 +43,7 @@ public static class DbContextHelper
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
         Check.IfArgumentNotNull(ids, nameof(ids));
+
         foreach (var id in ids)
         {
             var entity = new TEntity { Id = id };
@@ -58,6 +60,7 @@ public static class DbContextHelper
         where TEntity : class, IIdenticalEntity<long>, new()
     {
         Check.IfArgumentNotNull(dbContext, nameof(dbContext));
+
         var entity = new TEntity { Id = id };
         if (detach)
         {
@@ -96,6 +99,7 @@ public static class DbContextHelper
         bool persist = true)
         where TEntity : class, IIdenticalEntity<long>
         => await InnerManipulate(dbContext, model, convert, validatorAsync, finalizeEntity, persist, dbContext.Add);
+
     public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> UpdateAsync<TModel, TEntity>(
         this DbContext dbContext,
         TModel model,
@@ -104,6 +108,7 @@ public static class DbContextHelper
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<long>
+        //=> await InnerManipulate(dbContext, model, convert, validatorAsync, finalizeEntity, persist, dbContext.Attach);
         => await InnerManipulate(dbContext, model, convert, validatorAsync, finalizeEntity, persist, dbContext.Update);
 
     private static async Task<(EntityEntry<TEntity> entry, TEntity entity, int writtenCount)> InnerManipulate<TModel, TEntity>(
@@ -132,19 +137,18 @@ public static class DbContextHelper
         {
             entity = finalizeEntity(entry);
         }
-        if (!persist)
-        {
-            return (entry, entity, default);
-        }
-
+        int writterCount = default;
         try
         {
-            var writterCount = await dbContext.SaveChangesAsync();
-            return (entry, entity, writterCount);
+            if (persist)
+            {
+                writterCount = await dbContext.SaveChangesAsync();
+            }
         }
         finally
         {
             _ = dbContext.Detach(entity);
         }
+        return (entry, entity, writterCount);
     }
 }

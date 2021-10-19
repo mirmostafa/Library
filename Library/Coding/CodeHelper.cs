@@ -111,6 +111,18 @@ public static class CodeHelper
         }
     }
 
+    public static (TResult Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> action, TResult defaultValue)
+    {
+        try
+        {
+            return (action.ArgumentNotNull(nameof(action))(), null);
+        }
+        catch (Exception ex)
+        {
+            return (defaultValue, ex);
+        }
+    }
+
     public static TResult? Catch<TResult, TException>(Func<TResult> action)
         where TException : Exception
     {
@@ -231,5 +243,5 @@ public static class CodeHelper
 
             throw;
         }
-    }    
+    }
 }
