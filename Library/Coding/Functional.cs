@@ -62,6 +62,20 @@ public static class Functional
         return @this;
     }
 
+    public static TInstance If<TInstance>(this TInstance @this, Func<bool> b, in Action ifTrue, in Action ifFalse)
+    {
+        if (b() is true)
+        {
+            ifTrue?.Invoke();
+        }
+        else
+        {
+            ifFalse?.Invoke();
+        }
+
+        return @this;
+    }
+
     public static TInstance If<TInstance>(this TInstance @this, bool b, in Func<TInstance> ifTrue, in Func<TInstance> ifFalse)
         => b is true ? ifTrue() : ifFalse();
 
