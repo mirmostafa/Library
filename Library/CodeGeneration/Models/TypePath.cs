@@ -83,4 +83,7 @@ public readonly struct TypePath : IEquatable<TypePath>
         => new(typePath.Name, typePath.NameSpace);
     public static TypePath New(in Type? type)
         => new(type?.FullName);
+
+    public static TypePath New<TType>()
+        => new(typeof(TType).FullName);
 }
