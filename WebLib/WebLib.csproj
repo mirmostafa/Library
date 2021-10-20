@@ -6,6 +6,7 @@
 		<Nullable>enable</Nullable>
 		<RootNamespace>Library.Web</RootNamespace>
 		<Product>Library</Product>
+		<AssemblyName>Library.Web</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
