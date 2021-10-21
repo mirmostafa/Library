@@ -1,9 +1,11 @@
 ﻿using Library.DesignPatterns.Markers;
 using Library.Validations;
+using System.Diagnostics;
 
 namespace Library.Coding;
 
 [Fluent]
+[DebuggerStepThrough]
 public static class Functional
 {
     public static bool IfTrue(this bool b, in Action ifTrue)
