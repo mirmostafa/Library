@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using Library.Collections;
+using Library.Validations;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Library.Collections;
-using Library.Validations;
 
 namespace Library.Helpers;
 public static class EnumerableHelper
@@ -356,29 +356,11 @@ public static class EnumerableHelper
         }
         throw new KeyNotFoundException(nameof(key));
     }
-    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, in TKey key)
-    {
-        foreach (var item in source.ArgumentNotNull())
-        {
-            if (item.Key?.Equals(key) is true)
-            {
-                return item.Value;
-            }
-        }
-        throw new KeyNotFoundException(nameof(key));
-    }
+    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
+        => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
 
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
-    {
-        foreach (var item in source.ArgumentNotNull())
-        {
-            if (item.Key?.Equals(key) is true)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+        => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
 
     public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
         => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
@@ -493,7 +475,7 @@ public static class EnumerableHelper
     /// </summary>
     /// <typeparam name="T"> </typeparam>
     /// <returns> </returns>
-    public static T[] EmptyArray<T>() 
+    public static T[] EmptyArray<T>()
         => Array.Empty<T>();
 
     public static void RunAllWhile(this IEnumerable<Action> actions, Func<bool> predicate)
@@ -526,6 +508,21 @@ public static class EnumerableHelper
         return list;
     }
 
-    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source) 
+    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
         => source?.Select(x => x) ?? Enumerable.Empty<T>();
+
+    [Obsolete("Use .Net 6.0 Check, instead.")]
+    public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> source, int chunkSize)
+        => source.Select((x, i) => new { Index = i, Value = x })
+                 .GroupBy(x => x.Index / chunkSize)
+                 .Select(x => x.Select(v => v.Value));
+
+    public static (bool Succeed, int Count) TryCountNotEnumerated<T>(this IEnumerable<T> source)
+        => (source.TryGetNonEnumeratedCount(out var count), count);
+
+    public static int CountNotEnumerated<T>(this IEnumerable<T> source)
+    {
+        var (succeed, count) = TryCountNotEnumerated(source);
+        return succeed ? count : -1;
+    }
 }
