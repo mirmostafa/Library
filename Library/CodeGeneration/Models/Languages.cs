@@ -7,7 +7,7 @@ public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>
     public static readonly Language None = new("(Unknown)", "");
     public static readonly Language CSharp = new("C#", "cs");
     public static readonly Language Xaml = new("XAML", "xaml.cs");
-    public static readonly Language Blazor = new("Blazor", "cshtml.cs");
+    public static readonly Language Blazor = new("Blazor", "razor.cs");
     public static readonly Language Html = new("HTML", "htm");
 
     public override bool Equals(object? obj)

@@ -18,15 +18,34 @@ public readonly struct TypePath : IEquatable<TypePath>
         => typeInfo.ToString();
     public static implicit operator TypePath(in string? typeInfo)
         => new(typeInfo);
+    public IList<TypePath> GenericTypes { get; } = new List<TypePath>();
 
     public string? Name { get; }
     public string? NameSpace { get; }
     public string FullPath
-        => (string.IsNullOrEmpty(this.Name)
-                ? string.Empty
-                : string.IsNullOrEmpty(this.NameSpace)
-                    ? this.Name
-                    : $"{this.NameSpace}.{this.Name}")!;
+    {
+        get
+        {
+            if (this.Name.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+            string result;
+            if (this.NameSpace.IsNullOrEmpty())
+            {
+                result = this.Name;
+            }
+            else
+            {
+                result = $"{this.NameSpace}.{this.Name}";
+            }
+            if (this.GenericTypes.Any())
+            {
+                result = $"{result}<{StringHelper.Merge(this.GenericTypes.Select(x => x.FullPath), ',')}>";
+            }
+            return result;
+        }
+    }
 
     public static (string? Name, string? NameSpace) SplitTypePath(in string? typePath)
     {
@@ -61,8 +80,15 @@ public readonly struct TypePath : IEquatable<TypePath>
         return SplitTypePath($"{nameSpace}.{name}");
     }
 
+    public TypePath AddGenericType(TypePath typePath)
+    {
+        this.GenericTypes.Add(typePath);
+        return this;
+    }
+
     public override string ToString()
         => this.FullPath;
+
     public override int GetHashCode()
         => this.Name?.GetHashCode() ?? 0 + this.NameSpace?.GetHashCode() ?? 0;
     public bool Equals(TypePath? other)
@@ -86,4 +112,5 @@ public readonly struct TypePath : IEquatable<TypePath>
 
     public static TypePath New<TType>()
         => new(typeof(TType).FullName);
+
 }
