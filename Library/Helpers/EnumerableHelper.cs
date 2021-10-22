@@ -291,12 +291,13 @@ public static class EnumerableHelper
         }
     }
 
-    public static void ForEach<T>(this IEnumerable<T> items, [DisallowNull] in Action<T> action)
+    public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
         Check.IfArgumentNotNull(items, nameof(items));
         foreach (var item in items)
         {
             action?.Invoke(item);
+            yield return item;
         }
     }
 
