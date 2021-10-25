@@ -90,7 +90,7 @@ public static class DbContextHelper
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<long>
-        => await InnerManipulate(dbContext, model, dbContext.Update, convert, validatorAsync, finalizeEntity, persist);
+        => await InnerManipulate(dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist);
 
     private static async Task<(EntityEntry<TEntity> entry, TEntity entity, int writtenCount)> InnerManipulate<TModel, TEntity>(
         DbContext dbContext,

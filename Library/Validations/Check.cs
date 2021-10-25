@@ -1,15 +1,16 @@
-﻿using System.Collections;
+﻿#nullable disable
+using Library.Exceptions.Validations;
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Library.Exceptions.Validations;
 
 namespace Library.Validations;
-#nullable disable
+
 [DebuggerStepThrough]
 public static class Check
 {
-    public static void IfArgumentBiggerThan(in int arg, in int min, in string argName)
+    public static void IfArgumentBiggerThan(in int arg, in int min, [NotNull] in string argName)
     {
         argName.IfArgumentNotNull(nameof(argName));
         if (arg <= min)
@@ -21,43 +22,39 @@ public static class Check
                 min));
         }
     }
-    
-    public static void IfArgumentIsNotValid<T>(this T obj, Func<T, bool> validator, string argName)
-        => _ = obj.NotValid(validator.ArgumentNotNull(nameof(validator)), () => new ArgumentNullException(argName))!;
 
     [return: NotNull]
-    public static string ArgumentNotNull([NotNull] this string obj, string argName = null)
+    public static string ArgumentNotNull([NotNull] this string obj, [NotNull] string argName)
         => obj.NotValid(x => x.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
     [return: NotNull]
-    public static T ArgumentNotNull<T>([NotNull] this T obj, string argName = null)
+    public static T ArgumentNotNull<T>([NotNull] this T obj, [NotNull] string argName = null)
         => obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
 
-    [return: NotNull]
-    public static void IfIs<T>(this object obj, string argName)
+    public static void IfIs<T>([NotNull] this object obj, [NotNull] string argName)
         => _ = obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName));
 
     [return: NotNull]
     public static T Is<T>(this object obj, string argName)
         => obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName)).To<T>();
 
-    public static T ArgumentOutOfRange<T>(this T obj, Func<T, bool> validate, string argName = null)
+    public static T ArgumentOutOfRange<T>(this T obj, Func<T, bool> validate, [NotNull] string argName = null)
         => obj.NotValid(validate, () => new ArgumentOutOfRangeException(argName));
 
-    public static void Require(bool required, Func<Exception> getException)
+    public static void MustBe(bool ok, in Func<Exception> getException)
     {
-        if (!required)
+        if (ok)
         {
             throw getException();
         }
     }
-    
-    public static void Require<TValidationException>(bool required)
-        where TValidationException : Exception, new() 
-        => Require(required, () => new TValidationException());
+
+    public static void MustBe<TValidationException>(bool ok)
+        where TValidationException : Exception, new()
+        => MustBe(ok, () => new TValidationException());
 
     public static void Require(bool required)
-        => Require<RequiredValidationException>(required);
+        => MustBe<RequiredValidationException>(required);
 
     public static void IfArgumentNotNull([NotNull] this string obj, string argName)
         => _ = obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
@@ -73,7 +70,8 @@ public static class Check
     /// <param name="argName"></param>
     /// <exception cref="ArgumentNullException"/>
     public static void IfArgumentNotNull<T>([NotNull] this T obj, string argName)
-        => _ = obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
+        //=> _ = obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
+        => MustBe(obj is not null, () => new ArgumentNullException(argName));
 
     public static void IfNotNull<T>([NotNull] this T obj, Func<Exception> getException)
         => _ = obj.NotValid(x => x is null, getException);
@@ -99,7 +97,7 @@ public static class Check
         => obj.NotValid(x => x is null, getException);
 
     [return: NotNull]
-    public static T NotNull<T>([NotNull] this T obj, string name)
+    public static T NotNull<T>(this T obj, string name)
         => obj.NotValid(x => x is null, () => new NullValueValidationException(name))!;
 
     public static T NotNull<T>(this T @this, [NotNull] object obj, string name)
