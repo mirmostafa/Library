@@ -10,8 +10,14 @@ public static class ServiceHelper
     {
         Check.IfArgumentNotNull(service, nameof(service));
         Check.IfArgumentNotNull(model, nameof(model));
-        return model.Id is { } id
-            ? await service.UpdateAsync(id, model, persist)
-            : await service.InsertAsync(model, persist);
+        if (model.Id is { } id)
+        {
+            return await service.UpdateAsync(id, model, persist);
+        }
+        else
+        {
+            model.Id = await service.InsertAsync(model, persist);
+            return model.Id.Value;
+        }
     }
 }

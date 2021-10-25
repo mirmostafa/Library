@@ -1,6 +1,7 @@
 ﻿using Library.DesignPatterns.Markers;
 using Library.Validations;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Library.Coding;
 
@@ -202,5 +203,10 @@ public static class Functional
         {
             action?.Invoke();
         }
+    }
+    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] Action<TInstance> action)
+    {
+        action.ArgumentNotNull(nameof(action))(instance);
+        return instance;
     }
 }

@@ -1,10 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Library.Validations;
+﻿using Library.Validations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Library.Collections;
 
 public class Node<T>
 {
+    public static readonly Node<T?> Empty = new(default);
+
     private Node<T>? _parent;
 
     public Node() { }
@@ -75,6 +77,6 @@ public class Node<T>
     public T ToType()
         => this.Value;
 
-    public static Node<T> ToNode(T t) 
+    public static Node<T> ToNode(T t)
         => new(t);
 }
