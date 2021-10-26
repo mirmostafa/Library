@@ -137,7 +137,7 @@ public static class Functional
     public static void Lock(this object? lockObject, Action action)
         => _ = lockObject.Lock(() =>
         {
-            action.ArgumentNotNull()();
+            action.ArgumentNotNull(nameof(action))();
             return true;
         });
 
@@ -145,7 +145,7 @@ public static class Functional
     {
         lock (lockObject ?? GetCallerMethod()!.DeclaringType!)
         {
-            return action.ArgumentNotNull()();
+            return action.ArgumentNotNull(nameof(action))();
         }
     }
 

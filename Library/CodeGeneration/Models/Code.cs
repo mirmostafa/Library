@@ -77,7 +77,7 @@ public readonly record struct Code : IEquatable<Code>
         => new(name, language, statement, isPartial) { _FileName = fileName };
 }
 
-public static class CodeHelpers
+public static class CodeStatementHelpers
 {
     public static Codes ToCodes(this IEnumerable<Code> codes)
         => new(codes);

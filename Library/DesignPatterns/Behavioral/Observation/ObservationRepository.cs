@@ -1,6 +1,7 @@
 ﻿using Library.EventsArgs;
 using Library.Interfaces;
 using Library.Validations;
+using System;
 
 namespace Library.DesignPatterns.Behavioral.Observation
 {
@@ -37,8 +38,8 @@ namespace Library.DesignPatterns.Behavioral.Observation
 
         public void Add(in RegisterObservable observable)
         {
-            this._Observables.Add(observable);
-            observable.ArgumentNotNull().Observable.Changed += this.Subject_PropertyChanged;
+            this._Observables.Add(observable.ArgumentNotNull(nameof(observable)));
+            observable.Observable.Changed += this.Subject_PropertyChanged;
         }
         public void Add(in RegisterObserver observer)
             => this._Observers.Add(observer);

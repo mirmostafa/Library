@@ -94,7 +94,7 @@ public static class EnumerableHelper
     {
         if (source is not null)
         {
-            foreach (var i in source.ArgumentNotNull())
+            foreach (var i in source.ArgumentNotNull(nameof(source)))
             {
                 yield return i;
             }
@@ -102,7 +102,7 @@ public static class EnumerableHelper
 
         if (items is not null)
         {
-            foreach (var item in items.ArgumentNotNull())
+            foreach (var item in items.ArgumentNotNull(nameof(items)))
             {
                 yield return item;
             }
@@ -111,7 +111,7 @@ public static class EnumerableHelper
 
     public static IEnumerable<T> Aggregate<T>(this IEnumerable<IEnumerable<T>> sources)
     {
-        foreach (var items in sources.ArgumentNotNull())
+        foreach (var items in sources.ArgumentNotNull(nameof(sources)))
         {
             foreach (var item in items)
             {
@@ -348,7 +348,7 @@ public static class EnumerableHelper
     }
     public static KeyValuePair<TKey, TValue> GetItemByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, in TKey key)
     {
-        foreach (var item in source.ArgumentNotNull())
+        foreach (var item in source.ArgumentNotNull(nameof(source)))
         {
             if (item.Key?.Equals(key) is true)
             {
@@ -358,10 +358,10 @@ public static class EnumerableHelper
         throw new KeyNotFoundException(nameof(key));
     }
     public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
-        => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
+        => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
 
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
-        => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
+        => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
 
     public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
         => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));

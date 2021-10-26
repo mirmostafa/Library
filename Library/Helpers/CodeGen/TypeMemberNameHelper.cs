@@ -70,19 +70,19 @@ namespace Library.Helpers.CodeGen
 
         public static string ToFieldName(in string name)
         {
-            var buffer = name.ArgumentNotNull().Trim().TrimStart('_').TrimStart('I');
+            var buffer = name.ArgumentNotNull(nameof(name)).Trim().TrimStart('_').TrimStart('I');
             return $"_{buffer[Range.EndAt(1)].ToLower(CultureInfo.InvariantCulture)}{buffer[1..]}";
         }
 
         public static string ToArgName(in string name)
         {
-            var buffer = name.ArgumentNotNull().Trim().TrimStart('_');
+            var buffer = name.ArgumentNotNull(nameof(name)).Trim().TrimStart('_');
             return $"{buffer[Range.EndAt(1)].ToLower(CultureInfo.InvariantCulture)}{buffer[1..]}";
         }
 
         public static string ToPropName(in string name)
         {
-            var propName = name.ArgumentNotNull().StartsWith("_") ? name[1..] : name;
+            var propName = name.ArgumentNotNull(nameof(name)).StartsWith("_") ? name[1..] : name;
             return $"{propName[Range.EndAt(1)].ToUpper(CultureInfo.InvariantCulture)}{propName[1..]}";
         }
 

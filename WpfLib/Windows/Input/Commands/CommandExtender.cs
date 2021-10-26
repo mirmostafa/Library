@@ -21,7 +21,7 @@ namespace Library.Wpf.Windows.Input.Commands
             this.IsEnabled = this.Command.CanExecute(null, null);
             this.Command.CanExecuteChanged += this.Command_CanExecuteChanged;
         }
-
+                
         public RoutedUICommand Command { get; }
         public CommandBinding CommandBinding { get; }
         public bool IsEnabled
