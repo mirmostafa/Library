@@ -119,7 +119,7 @@ public static class StringHelper
         int startIndex;
         int endIndex;
         int len;
-        (var lenOfStart, var succeed1) = str.TryCountOf(start, index * 2);
+        (var succeed1, var lenOfStart) = str.TryCountOf(start, index * 2);
         if (!succeed1)
         {
             return null;
@@ -134,7 +134,7 @@ public static class StringHelper
         else
         {
             startIndex = index != 0 ? lenOfStart + 1 : str.IndexOf(start, 0) + 1;
-            (var lenOfEnd, var succeed2) = str.TryCountOf(end, index * 2);
+            (var succeed2, var lenOfEnd) = str.TryCountOf(end, index * 2);
             if (!succeed2)
             {
                 return null;
@@ -625,10 +625,10 @@ public static class StringHelper
     public static string? Truncate(this string? value, in int length)
         => value?[..^length];
 
-    public static (int Result, bool Succeed) TryCountOf(this string str, char c, int index)
+    public static (bool Succeed, int Result) TryCountOf(this string str, char c, int index)
     {
         var result = CatchFunc(() => CountOf(str, c, index));
-        return (result.Result, result.Exception is null);
+        return (result.Exception is null, result.Result);
     }
 
     public static string Slice(this string s, in int start, in int? length = null)
