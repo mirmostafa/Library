@@ -1,10 +1,10 @@
-﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using Library.DesignPatterns.Creational;
+﻿using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
 using Library.Validations;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace Library.Helpers;
 
@@ -588,7 +588,7 @@ public static class ObjectHelper
         where T : struct => t ?? defaultValue;
 
     public static string? ToString(in object? value, in string defaultValue = "")
-        => (value ?? defaultValue.ArgumentNotNull()).ToString();
+        => (value ?? defaultValue)?.ToString();
 
     public static bool IsNull<TStruct>(this TStruct @struct)
         where TStruct : struct => @struct.Equals(default(TStruct));

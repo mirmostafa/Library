@@ -1,4 +1,5 @@
 ﻿using Library.Validations;
+using System.Xml.Linq;
 
 namespace Library.Collections;
 public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnumerable<Task>
@@ -44,14 +45,14 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
         => await Task.Run(() => this.WaitAny());
 
     public TaskList Run(Action action)
-        => this.Add(Task.Run(action.ArgumentNotNull(), this._CancellationTokenSource.Token));
+        => this.Add(Task.Run(action.ArgumentNotNull(nameof(action)), this._CancellationTokenSource.Token));
 
     public TaskList Run(Func<Task> action)
-        => this.Add(action.ArgumentNotNull()());
+        => this.Add(action.ArgumentNotNull(nameof(action))());
 
     public async Task<TaskList> RunAsync(Func<Task> action)
     {
-        var task = action.ArgumentNotNull()();
+        var task = action.ArgumentNotNull(nameof(action))();
         await task;
         return this.Add(task);
     }

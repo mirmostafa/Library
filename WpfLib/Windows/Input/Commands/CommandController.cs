@@ -1,38 +1,38 @@
-﻿using System.Linq;
-using System.Windows;
-using System.Windows.Input;
+﻿using Library.Coding;
 using Library.Collections;
 using Library.Exceptions.Validations;
 using Library.Validations;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 
-namespace Library.Wpf.Windows.Input.Commands
+namespace Library.Wpf.Windows.Input.Commands;
+
+public sealed class CommandController : IIndexable<CommandExtender, string>, IIndexable<CommandExtender, CommandBinding>
 {
-    public sealed class CommandController : IIndexable<CommandExtender, string>, IIndexable<CommandExtender, CommandBinding>
+    private readonly UIElement _Owner;
+    private readonly CommandExtenderList _CommandExtenders = new();
+
+    public CommandExtender this[CommandBinding index] => this._CommandExtenders[index].NotNull(New<NotFoundValidationException>);
+    public CommandExtender this[string commandName] => this._CommandExtenders[commandName].NotNull(New<NotFoundValidationException>);
+
+    public CommandController(UIElement owner)
     {
-        private readonly UIElement _Owner;
-        private readonly CommandExtenderList _CommandExtenders = new();
+        this._Owner = owner;
+        this.Initialize();
+    }
 
-        public CommandExtender this[CommandBinding index] => this._CommandExtenders[index].ArgumentNotNull();
-        public CommandExtender this[string commandName] => this._CommandExtenders[commandName].NotNull(() => new NotFoundValidationException());
-
-        public CommandController(UIElement owner)
+    private void Initialize()
+    {
+        foreach (var cb in this._Owner.CommandBindings.Cast<CommandBinding>())
         {
-            this._Owner = owner;
-            this.Initialize();
+            this._CommandExtenders.Add(new(cb));
         }
+    }
 
-        private void Initialize()
-        {
-            foreach (var cb in this._Owner.CommandBindings.Cast<CommandBinding>())
-            {
-                this._CommandExtenders.Add(new(cb));
-            }
-        }
-
-        public CommandController SetEnabled(CommandBinding commandBinding, bool isEnabled)
-        {
-            this[commandBinding].NotNull(() => new NotFoundValidationException()).IsEnabled = isEnabled;
-            return this;
-        }
+    public CommandController SetEnabled(CommandBinding commandBinding, bool isEnabled)
+    {
+        this[commandBinding].NotNull(New<NotFoundValidationException>).IsEnabled = isEnabled;
+        return this;
     }
 }

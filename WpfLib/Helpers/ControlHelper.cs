@@ -283,13 +283,13 @@ public static class ControlHelper
 
     public static T? GetSelectedValue<T>(this TreeView treeView)
         where T : class
-        => treeView.ArgumentNotNull().SelectedItem.As<TreeViewItem>()?.DataContext.As<T>();
+        => treeView.ArgumentNotNull(nameof(treeView)).SelectedItem.As<TreeViewItem>()?.DataContext.As<T>();
 
     public static T? GetSelection<T>(this SelectionChangedEventArgs e)
-        => e.ArgumentNotNull().AddedItems.Cast<object?>().FirstOrDefault().ToNullable<T>();
+        => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().ToNullable<T>();
 
     public static IEnumerable<T?> GetSelections<T>(this SelectionChangedEventArgs e)
-        => e.ArgumentNotNull().AddedItems.Cast<object?>().Select(x => x.ToNullable<T>());
+        => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().Select(x => x.ToNullable<T>());
 
     public static string GetText(this RichTextBox rtb)
     {
