@@ -134,7 +134,7 @@ public static class EnumerableHelper
         return false;
     }
 
-    public static IReadOnlyList<T> Apply<T>([DisallowNull] this IEnumerable<T> items)
+    public static IReadOnlyList<T> Build<T>([DisallowNull] this IEnumerable<T> items)
     {
         Check.IfArgumentNotNull(items, nameof(items));
 

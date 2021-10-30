@@ -39,7 +39,7 @@ public static partial class SqlStatementBuilder
         return statement.AddColumns(columns);
     }
     public static ISelectStatement AddColumn([DisallowNull] this ISelectStatement statement, params string[] columns)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => columns.Compact().ForEach(c => statement.Columns.Add(c)).Apply());
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => columns.Compact().ForEach(c => statement.Columns.Add(c)).Build());
     public static ISelectStatement AddColumns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
         => statement.AddColumn(columns.ToArray());
 
