@@ -193,22 +193,26 @@ public static class StringHelper
         }
     }
 
-    public static bool HasPersian(this string text) => CheckAnyValidations(text, IsPersian);
+    public static bool HasPersian(this string text)
+        => CheckAnyValidations(text, IsPersian);
 
-    public static string? IfNull(this string? s, in string? value) => string.IsNullOrWhiteSpace(s) ? value : s;
+    public static string? IfNull(this string? s, in string? value)
+        => string.IsNullOrWhiteSpace(s) ? value : s;
 
-    public static string IfNullOrEmpty(this string? str, string defaultValue) => str.IsNullOrEmpty() ? defaultValue : str;
+    public static string IfNullOrEmpty(this string? str, string defaultValue)
+        => str.IsNullOrEmpty() ? defaultValue : str;
 
-    public static int? IndexOf(this IEnumerable<string> items, string item, bool trimmed = false, bool ignoreCase = true)
+    public static int? IndexOf([DisallowNull] this IEnumerable<string?> items, in string? item, bool trimmed = false, bool ignoreCase = true)
     {
-        var itm = trimmed ? item.Trim() : item;
+        Check.ArgumentNotNull(items, nameof(items));
+
+        var itm = get(item, trimmed);
         var index = 0;
         var enumerator = items.GetEnumerator();
-        static string? getCurrent(string? current, bool trimmed) => trimmed ? current?.Trim() : current;
-        static bool equals(string? current, string? item, bool ignoreCase) => string.Compare(current, item, ignoreCase) == 0;
+
         while (enumerator.MoveNext())
         {
-            if (equals(getCurrent(enumerator.Current, trimmed), itm, ignoreCase))
+            if (equals(get(enumerator.Current, trimmed), itm, ignoreCase))
             {
                 return index;
             }
@@ -217,13 +221,18 @@ public static class StringHelper
         }
 
         return null;
+
+        static string? get(string? current, bool trimmed)
+            => trimmed ? current?.Trim() : current;
+        static bool equals(string? current, string? item, bool ignoreCase)
+            => string.Compare(current, item, ignoreCase) == 0;
     }
 
     public static bool IsCommon(this char c)
         => c == ' ';
 
     public static bool IsDigit(this char c, in bool canAcceptMinusKey = false)
-        => canAcceptMinusKey && c == '-' || char.IsDigit(c);
+        => (canAcceptMinusKey && c == '-') || char.IsDigit(c);
 
     public static bool IsDigitOrControl(this char key)
         => char.IsDigit(key) || char.IsControl(key);
@@ -240,16 +249,16 @@ public static class StringHelper
     public static bool IsEnglishOrNumber(this string text, bool canAcceptMinusKey = false)
         => CheckAllValidations(text, c => IsDigit(c, canAcceptMinusKey) || IsEnglish(c));
 
-    public static bool IsInRange(this string text, bool ignoreCase, params string[] range)
+    public static bool IsInRange(this string? text, bool ignoreCase, params string[] range)
         => IsInRange(text, false, ignoreCase, range);
 
-    public static bool IsInRange(this string text, bool trimmed, bool ignoreCase, IEnumerable<string> range)
+    public static bool IsInRange(this string? text, bool trimmed, bool ignoreCase, IEnumerable<string> range)
         => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
-    public static bool IsInRange(this string text, bool trimmed, bool ignoreCase, params string[] range)
+    public static bool IsInRange(this string? text, bool trimmed, bool ignoreCase, params string[] range)
         => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
-    public static bool IsInRange(this string text, params string[] range)
+    public static bool IsInRange(this string? text, params string[] range)
         => IsInRange(text, true, range);
 
     public static bool IsInString(this char c, in string text)
