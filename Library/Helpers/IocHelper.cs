@@ -24,8 +24,8 @@ public static class IocHelper
                                                    .Where(x => typeof(TService).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
                                                    .Cast(x => x.AsType())
                                                    .ForEach(x => install(services, x))
-                                                   .Apply())
-                      .Apply();
+                                                   .Build())
+                      .Build();
         return services;
     }
 

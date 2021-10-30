@@ -20,7 +20,7 @@ public static partial class SqlStatementBuilder
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, params (string Column, object Value)[] columnsValue)
     {
         nameof(statement).IfArgumentNotNull(nameof(statement));
-        columnsValue.ForEach(cv => statement.Set(cv.Column, cv.Value)).Apply();
+        columnsValue.ForEach(cv => statement.Set(cv.Column, cv.Value)).Build();
         return statement;
     }
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, IEnumerable<(string Column, object Value)> columnsValue)

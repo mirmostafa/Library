@@ -73,6 +73,10 @@ public static class Check
         //=> _ = obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
         => MustBe(obj is not null, () => new ArgumentNullException(argName));
 
+    public static void IfArgumentNotNull([NotNull] this object obj, [DisallowNull] string argName)
+        //=> _ = obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
+        => MustBe(obj is not null, () => new ArgumentNullException(argName));
+
     public static void IfNotNull<T>([NotNull] this T obj, [DisallowNull] Func<Exception> getException)
         => _ = obj.NotValid(x => x is null, getException);
 
