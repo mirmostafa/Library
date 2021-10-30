@@ -1,4 +1,5 @@
 ﻿using Library.Collections;
+using Library.Results;
 using Library.Validations;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
@@ -518,8 +519,8 @@ public static class EnumerableHelper
                  .GroupBy(x => x.Index / chunkSize)
                  .Select(x => x.Select(v => v.Value));
 
-    public static (bool Succeed, int Count) TryCountNotEnumerated<T>(this IEnumerable<T> source)
-        => (source.TryGetNonEnumeratedCount(out var count), count);
+    public static TryMethodResult<int> TryCountNotEnumerated<T>(this IEnumerable<T> source)
+        => new(source.TryGetNonEnumeratedCount(out var count), count);
 
     public static int CountNotEnumerated<T>(this IEnumerable<T> source)
     {

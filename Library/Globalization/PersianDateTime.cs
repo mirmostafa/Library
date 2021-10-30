@@ -1,4 +1,5 @@
 using Library.Globalization.DataTypes;
+using Library.Results;
 using Library.Validations;
 using System.Diagnostics;
 using System.Globalization;
@@ -418,8 +419,8 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     public static string ToPersian(in DateTime dateTime)
         => new PersianDateTime(dateTime).ToString()!;
 
-    public static (bool Succeed, PersianDateTime Result) TryParsePersian(in string str) 
-        => (TryParsePersian(str, out var result), result);
+    public static TryMethodResult<PersianDateTime> TryParsePersian(in string str) 
+        => new(TryParsePersian(str, out var result), result);
 
     /// <summary>
     ///     Tries to parse a string to PersianDateTime.

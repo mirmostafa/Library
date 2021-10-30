@@ -1,5 +1,6 @@
 ﻿using Library.Globalization;
 using Library.Globalization.Pluralization;
+using Library.Results;
 using Library.Validations;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -634,10 +635,10 @@ public static class StringHelper
     public static string? Truncate(this string? value, in int length)
         => value?[..^length];
 
-    public static (bool Succeed, int Result) TryCountOf(this string str, char c, int index)
+    public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
     {
         var result = CatchFunc(() => CountOf(str, c, index));
-        return (result.Exception is null, result.Result);
+        return new(result.Exception is null, result.Result);
     }
 
     public static string Slice(this string s, in int start, in int? length = null)

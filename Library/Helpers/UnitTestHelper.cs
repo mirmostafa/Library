@@ -22,6 +22,6 @@ public class EqualityAssertion
     private readonly object actual;
 
     public EqualityAssertion(object actual) => this.actual = actual;
-    public void With(object expected)
+    public void To(object expected)
         => Assert.AreEqual(expected, this.actual);
 }
