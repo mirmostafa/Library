@@ -273,16 +273,10 @@ public static class EnumerableHelper
         }
     }
 
-    public static bool ContainsKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, TKey key)
-        where TKey : notnull => source.Any(x => x.Key?.Equals(key) ?? key is null);
-
     public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items)
-    {
-        var query = items.GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
-        return query;
-    }
+        => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
 
-    public static IEnumerable<TResult> ForEach<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
+    public static IEnumerable<TResult> ForEachItem<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
     {
         Check.IfArgumentNotNull(items, nameof(items));
         Check.IfArgumentNotNull(action, nameof(action));
@@ -423,11 +417,14 @@ public static class EnumerableHelper
         => dic
             .ArgumentNotNull(nameof(dic))
             .If(dic.ContainsKey(key), () => dic[key] = value, () => dic.Add(key, value));
+
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
-         where TKey : notnull => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
+        where TKey : notnull
+        => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
     public static TList AddFluent<TList, TItem>(this TList list, TItem item)
-        where TList : ICollection<TItem> => list.ArgumentNotNull(nameof(list)).Fluent(() => list.Add(item));
+        where TList : ICollection<TItem>
+        => list.ArgumentNotNull(nameof(list)).Fluent(() => list.Add(item));
 
     public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {

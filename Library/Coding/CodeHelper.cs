@@ -18,6 +18,9 @@ public static class CodeHelper
     public static async Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default)
         => await Task.Run(action, cancellationToken);
 
+    public static async Task<TResult> Async<TResult>(TResult result)
+        => await Task.FromResult(result);
+
     public static async Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default)
         => await Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
 
