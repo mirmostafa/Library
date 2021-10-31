@@ -275,8 +275,8 @@ public static class StringHelper
         => CheckAllValidations(text, c => IsEnglish(c) || IsPersian(c));
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
-        => str?.Trim() is null or { Length: 0 };
-
+        => string.IsNullOrEmpty(str);
+    
     public static bool IsNumber(this string text)
         => float.TryParse(text, out _);
 
@@ -643,11 +643,28 @@ public static class StringHelper
 
     public static string Slice(this string s, in int start, in int? length = null)
     {
-        Check.IfArgumentNotNull(s, nameof(s));
+        //Check.IfArgumentNotNull(s, nameof(s));
         ReadOnlySpan<char> span = s;
         var slice = length is { } l ? span.Slice(start, l) : span[start..];
         return new(slice);
     }
+
+    //! [Obsolete("Failed in performance test. Use Slice instead.")]
+    ////public static string SliceRange(this string s, in int start, in int? length = null)
+    ////{
+    ////    //Check.IfArgumentNotNull(s, nameof(s));
+    ////    ReadOnlySpan<char> span = s;
+    ////    var slice = length is { } l ? span[start..l] : span[start..];
+    ////    return new(slice);
+    ////}
+
+    //! [Obsolete("Failed in performance test. Use Slice instead.")]
+    ////public static string Range(this string s, in int start, in int? length = null)
+    ////{
+    ////    //Check.IfArgumentNotNull(s, nameof(s));
+    ////    var slice = length is { } l ? s[start..l] : s[start..];
+    ////    return new(slice);
+    ////}
 
     public static bool IsValidIranianNationalCode(string input)
     {

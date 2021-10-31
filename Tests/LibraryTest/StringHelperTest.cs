@@ -1,9 +1,20 @@
+using BenchmarkDotNet.Attributes;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading;
+
 namespace LibraryTest;
 
+[MemoryDiagnoser]
 [TestClass]
 public class StringHelperTest
 {
     private const string text = "There 'a text', inside 'another text'. I want 'to find\" it.";
+
+    [Benchmark]
+    public void _WasteTime()
+    {
+        Thread.Sleep(3000);
+    }
 
     [TestMethod]
     public void IsNullOrEmptyTest()
@@ -52,6 +63,8 @@ public class StringHelperTest
         Assert.AreEqual("person", StringHelper.Singularize("people"));
         Assert.AreEqual("child", StringHelper.Singularize("children"));
     }
+
+
     [TestMethod]
     public void PluralizeTest()
     {
@@ -62,14 +75,17 @@ public class StringHelperTest
         Assert.AreEqual("children", StringHelper.Pluralize("child"));
     }
 
+
     [TestMethod]
     public void SpaceTest()
         => Assert.AreEqual("     ", StringHelper.Space(5));
+
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentOutOfRangeException))]
     public void SpaceExceptionTest()
         => Assert.AreEqual("     ", StringHelper.Space(-5));
+
 
     [TestMethod]
     public void GetPhraseTest()
@@ -87,12 +103,14 @@ public class StringHelperTest
         Assert.AreEqual(null, result3);
     }
 
+
     [TestMethod]
     public void GetPhraseTest2()
     {
         var result4 = text.GetPhrase(0, '\'', '\"');
         Assert.AreEqual("a text', inside 'another text'. I want 'to find\"", result4);
     }
+
 
     [TestMethod]
     public void NationalCodeTest()
@@ -102,6 +120,8 @@ public class StringHelperTest
 
         Assert.IsTrue(isValid1);
     }
+
+
     [TestMethod]
     public void NationalCodeTest2()
     {
@@ -110,6 +130,8 @@ public class StringHelperTest
 
         Assert.IsFalse(isValid2);
     }
+
+
     [TestMethod]
     public void NationalCodeTest3()
     {
@@ -119,12 +141,14 @@ public class StringHelperTest
         Assert.IsFalse(isValid3);
     }
 
+
     [TestMethod]
     public void TruncateTest()
     {
         var result = text.Truncate(text.Length - 5);
         Assert.AreEqual("There", result);
     }
+
 
     [TestMethod]
     public void SplitPairTest()
@@ -135,6 +159,7 @@ public class StringHelperTest
         Assert.AreEqual("myDatabase", value);
     }
 
+
     [TestMethod]
     public void AddTest()
     {
@@ -142,6 +167,7 @@ public class StringHelperTest
         var expected = "Mohammad reza";
         Assert.AreEqual(expected, actual);
     }
+
 
     [TestMethod]
     public void AllIndexesOfTest()
