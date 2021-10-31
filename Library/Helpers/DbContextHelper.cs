@@ -53,10 +53,10 @@ public static class DbContextHelper
         => RemoveById<TEntity>(dbContext, new[] { id }, detach);
 
     public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-          => await entityEntry?.Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)!;
+        => await entityEntry?.Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)!;
 
     public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, CancellationToken cancellationToken = default)
-          => await entityEntry?.Context.SaveChangesAsync(cancellationToken)!;
+        => await entityEntry?.Context.SaveChangesAsync(cancellationToken)!;
 
     public static EntityEntry<TEntity> SetModified<TEntity, TProperty>(
         this EntityEntry<TEntity> entityEntry,
@@ -70,6 +70,27 @@ public static class DbContextHelper
         }
 
         return entityEntry!;
+    }
+    public static EntityEntry<TEntity> WithEntry<TEntity>(this EntityEntry<TEntity> instance, [DisallowNull] Action<EntityEntry<TEntity>> action)
+        where TEntity : class
+    {
+        action.ArgumentNotNull(nameof(action))(instance);
+        return instance;
+    }
+
+    public static EntityEntry<TEntity> WithEntry<TEntity, TProperty>(this EntityEntry<TEntity> instance, [DisallowNull] Func<TEntity, TProperty> selector, Func<TProperty, EntityEntry<TProperty>?>? action)
+        where TEntity : class
+        where TProperty : class
+    {
+        Check.IfArgumentNotNull(instance, nameof(instance));
+        Check.IfArgumentNotNull(selector, nameof(selector));
+        var obj = selector(instance.Entity);
+        if (action is not null)
+        {
+            _ = action(obj);
+        }
+
+        return instance;
     }
 
     public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> InsertAsync<TModel, TEntity>(

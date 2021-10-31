@@ -1,5 +1,4 @@
 using BenchmarkDotNet.Attributes;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Threading;
 
 namespace LibraryTest;
@@ -11,10 +10,7 @@ public class StringHelperTest
     private const string text = "There 'a text', inside 'another text'. I want 'to find\" it.";
 
     [Benchmark]
-    public void _WasteTime()
-    {
-        Thread.Sleep(3000);
-    }
+    public void _WasteTimeToWarmUpBenchmark() => Thread.Sleep(3000);
 
     [TestMethod]
     public void IsNullOrEmptyTest()

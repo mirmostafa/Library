@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Library.Coding;
+using Library.Helpers;
+using Library.Validations;
+using Library.Wpf.Media;
 using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Automation.Peers;
@@ -16,10 +17,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Library.Coding;
-using Library.Helpers;
-using Library.Validations;
-using Library.Wpf.Media;
 using static Library.Coding.CodeHelper;
 
 namespace Library.Wpf.Helpers;
@@ -285,11 +282,14 @@ public static class ControlHelper
         where T : class
         => treeView.ArgumentNotNull(nameof(treeView)).SelectedItem.As<TreeViewItem>()?.DataContext.As<T>();
 
+    [Obsolete("Use listView.GetSelection, instead.")]
     public static T? GetSelection<T>(this SelectionChangedEventArgs e)
         => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().ToNullable<T>();
 
-    public static IEnumerable<T?> GetSelections<T>(this SelectionChangedEventArgs e)
-        => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().Select(x => x.ToNullable<T>());
+    public static IEnumerable<T?> GetSelections<T>(this ListView listView)
+        => listView.ArgumentNotNull(nameof(listView)).SelectedItems.Cast<object?>().Select(x => x.ToNullable<T>());
+    public static T? GetSelection<T>(this ListView listView)
+        => GetSelections<T>(listView).FirstOrDefault();
 
     public static string GetText(this RichTextBox rtb)
     {
@@ -335,7 +335,7 @@ public static class ControlHelper
             case Key.Space:
                 {
                     var items = multiSelector.SelectedItems.Cast<dynamic>().ToArray();
-                    _ = items.ForEach(instance => instance.IsChecked = items.Any(o => !o.IsChecked));
+                    _ = items.ForEachItem(instance => instance.IsChecked = items.Any(o => !o.IsChecked));
                     break;
                 }
 
