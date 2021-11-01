@@ -419,7 +419,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     public static string ToPersian(in DateTime dateTime)
         => new PersianDateTime(dateTime).ToString()!;
 
-    public static TryMethodResult<PersianDateTime> TryParsePersian(in string str) 
+    public static TryMethodResult<PersianDateTime> TryParsePersian(in string str)
         => new(TryParsePersian(str, out var result), result);
 
     /// <summary>
