@@ -247,4 +247,51 @@ public static class CodeHelper
             throw;
         }
     }
+
+    /// <summary>
+    ///     Disposes the specified disposable object.
+    /// </summary>
+    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
+    /// <param name="disposable"> The disposable. </param>
+    /// <param name="action"> The action. </param>
+    public static void Dispose<TDisposable>(TDisposable disposable, in Action<TDisposable>? action = null)
+        where TDisposable : IDisposable 
+        => ObjectHelper.Dispose(disposable, action);
+
+    /// <summary>
+    ///     Disposes the specified disposable object.
+    /// </summary>
+    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
+    /// <typeparam name="TResult"> The type of the result. </typeparam>
+    /// <param name="disposable"> The disposable. </param>
+    /// <param name="action"> The action. </param>
+    /// <returns> </returns>
+    public static TResult Dispose<TDisposable, TResult>( TDisposable disposable, in Func<TDisposable, TResult> action)
+        where TDisposable : IDisposable
+        => ObjectHelper.Dispose(disposable, action);
+
+    /// <summary>
+    ///     Disposes the specified disposable object.
+    /// </summary>
+    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
+    /// <typeparam name="TResult"> The type of the result. </typeparam>
+    /// <param name="disposable"> The disposable. </param>
+    /// <param name="result"> The result. </param>
+    /// <returns> </returns>
+    public static TResult Dispose<TDisposable, TResult>( TDisposable disposable, in TResult result)
+        where TDisposable : IDisposable
+        => ObjectHelper.Dispose(disposable, result);
+
+
+    /// <summary>
+    ///     Disposes the specified disposable object.
+    /// </summary>
+    /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
+    /// <typeparam name="TResult"> The type of the result. </typeparam>
+    /// <param name="disposable"> The disposable. </param>
+    /// <param name="action"> The action. </param>
+    /// <returns> </returns>
+    public static TResult Dispose<TDisposable, TResult>( TDisposable disposable, in Func<TResult> action)
+        where TDisposable : IDisposable
+        => ObjectHelper.Dispose(disposable, action);
 }

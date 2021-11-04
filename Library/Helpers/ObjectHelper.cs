@@ -36,7 +36,6 @@ public static class ObjectHelper
     /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
-    [Obsolete("Moved to CodeHelper.", true)]
     public static void Dispose<TDisposable>(this TDisposable disposable, in Action<TDisposable>? action = null)
         where TDisposable : IDisposable
     {
@@ -58,7 +57,6 @@ public static class ObjectHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
     /// <returns> </returns>
-    [Obsolete("Moved to CodeHelper.", true)]
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TDisposable, TResult> action)
         where TDisposable : IDisposable
     {
@@ -80,7 +78,6 @@ public static class ObjectHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="result"> The result. </param>
     /// <returns> </returns>
-    [Obsolete("Moved to CodeHelper.", true)]
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in TResult result)
         where TDisposable : IDisposable
     {
@@ -102,7 +99,6 @@ public static class ObjectHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
     /// <returns> </returns>
-    [Obsolete("Moved to CodeHelper.", true)]
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TResult> action)
         where TDisposable : IDisposable
     {
@@ -292,7 +288,6 @@ public static class ObjectHelper
     public static TFieldType GetField<TFieldType>(in object? obj, string fieldName)
     {
         var field = obj?.GetType().GetFields().FirstOrDefault(fld => string.Compare(fld.Name, fieldName, StringComparison.Ordinal) == 0);
-
         return field switch
         {
             not null => field.GetValue(obj)!.To<TFieldType>(),
@@ -369,9 +364,9 @@ public static class ObjectHelper
     /// <param name="propName"> Name of the property. </param>
     /// <param name="searchPrivates"> if set to <c> true </c> [search privates]. </param>
     /// <returns> </returns>
-    public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, string propName, bool searchPrivates = false)
+    public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, [DisallowNull] string propName, bool searchPrivates = false)
     {
-        var type = obj.GetType();
+        var type = obj.ArgumentNotNull(nameof(obj)).GetType();
         var properties = type.GetProperties();
         if (!properties.Any())
         {
@@ -381,8 +376,7 @@ public static class ObjectHelper
                 : BindingFlags.Default);
         }
 
-        var property =
-            properties.FirstOrDefault(prop => string.Compare(prop.Name, propName, StringComparison.Ordinal) == 0);
+        var property = properties.FirstOrDefault(prop => string.Compare(prop.Name, propName, StringComparison.Ordinal) == 0);
         return property is not null ? (TPropertyType?)property.GetValue(obj, null) : default;
     }
 
@@ -444,7 +438,8 @@ public static class ObjectHelper
     /// <returns>
     ///     <c> true </c> if [is database null] [the specified o]; otherwise, <c> false </c>.
     /// </returns>
-    public static bool IsDbNull(in object? o) => o is null || DBNull.Value.Equals(o);
+    public static bool IsDbNull(in object? o)
+        => o is null || DBNull.Value.Equals(o);
 
     /// <summary>
     ///     Determines whether the specified value is default (null or zero or ...).
@@ -454,7 +449,8 @@ public static class ObjectHelper
     /// <returns>
     ///     <c> true </c> if the specified value is default; otherwise, <c> false </c>.
     /// </returns>
-    public static bool IsDefault<T>(in T value) => value?.Equals(default(T)) ?? true;
+    public static bool IsDefault<T>(in T value)
+        => value?.Equals(default(T)) ?? true;
 
     /// <summary>
     ///     Determines whether the specified item is in range.
@@ -463,16 +459,19 @@ public static class ObjectHelper
     /// <param name="item"> The item. </param>
     /// <param name="range"> The range. </param>
     /// <returns> <c> true </c> if the specified item is in; otherwise, <c> false </c>. </returns>
-    public static bool IsIn<TSource>(in TSource item, params TSource[] range) => range.Contains(item);
+    public static bool IsIn<TSource>(in TSource item, params TSource[] range)
+        => range.Contains(item);
 
     /// <summary>
     ///     Determines whether the specified value is null.
     /// </summary>
     /// <param name="value"> The value. </param>
     /// <returns> <c> true </c> if the specified value is null; otherwise, <c> false </c>. </returns>
-    public static bool IsNull([NotNullWhen(false)] in object? value) => value is null;
+    public static bool IsNull([NotNullWhen(false)] in object? value)
+        => value is null;
 
-    public static bool IsNullOrEmpty([NotNullWhen(false)] in object? o) => o?.ToString().IsNullOrEmpty() is not false;
+    public static bool IsNullOrEmpty([NotNullWhen(false)] in object? o)
+        => o?.ToString().IsNullOrEmpty() is not false;
 
     /// <summary>
     ///     Determines whether [is null or empty string] [the specified value].
@@ -481,29 +480,8 @@ public static class ObjectHelper
     /// <returns>
     ///     <c> true </c> if [is null or empty string] [the specified value]; otherwise, <c> false </c>.
     /// </returns>
-    public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value) => string.IsNullOrEmpty(ToString(value));
-
-    //public static T NotNull<T>(this T a, T defaultValue) => a.NotNull(o => o, () => defaultValue);
-
-    //public static TResult? NotNull<T, TResult>(this T a, TResult defaultValue)
-    //    where TResult : class
-    //    => a.NotNull(o => typeof(TResult) == typeof(string) ? o?.ToString().To<TResult>() : o?.To<TResult>(),
-    //        () => defaultValue);
-
-    //public static TResult NotNull<T, TResult>(this T a, in Func<T, TResult> whenNotNull, Func<TResult>? whenNull = null)
-    //{
-    //    if (Equals(a, default(T)))
-    //    {
-    //        return whenNull is null ? default : whenNull();
-    //    }
-
-    //    if (a is string s && string.IsNullOrEmpty(s))
-    //    {
-    //        return whenNull is null ? default : whenNull();
-    //    }
-
-    //    return whenNotNull(a);
-    //}
+    public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
+        => string.IsNullOrEmpty(ToString(value));
 
     public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
     {
@@ -553,14 +531,16 @@ public static class ObjectHelper
     /// <param name="defaultValue"> The default value. </param>
     /// <returns> </returns>
     [Obsolete("No more is required.")]
-    public static int ToInt(this object? obj, in int defaultValue) => obj is null ? defaultValue : obj.ToString().ToIntNullable() ?? defaultValue;
+    public static int ToInt(this object? obj, in int defaultValue)
+        => obj is null ? defaultValue : obj.ToString().ToIntNullable() ?? defaultValue;
 
     /// <summary>
     ///     Converts to int-nullable.
     /// </summary>
     /// <param name="str"> The string. </param>
     /// <returns> </returns>
-    public static int? ToIntNullable(this string? str) => int.TryParse(str, out var result) ? result : default(int?);
+    public static int? ToIntNullable(this string? str)
+        => int.TryParse(str, out var result) ? result : default(int?);
 
     /// <summary>
     ///     Converts to long.
@@ -568,7 +548,8 @@ public static class ObjectHelper
     /// <param name="obj"> The object. </param>
     /// <returns> </returns>
     //[Obsolete("No more is required.")]
-    public static long ToLong(this object obj) => Convert.ToInt64(obj);
+    public static long ToLong(this object obj)
+        => Convert.ToInt64(obj);
 
     /// <summary>
     ///     Converts to long.
@@ -577,7 +558,8 @@ public static class ObjectHelper
     /// <param name="defaultValue"> The default value. </param>
     /// <returns> </returns>
     [Obsolete("No more is required.")]
-    public static long ToLong(this object? obj, in long defaultValue) => obj is null ? defaultValue : obj.ToString().ToLongNullable() ?? defaultValue;
+    public static long ToLong(this object? obj, in long defaultValue)
+        => obj is null ? defaultValue : obj.ToString().ToLongNullable() ?? defaultValue;
 
     /// <summary>
     ///     Converts to long-nullable.
@@ -585,20 +567,22 @@ public static class ObjectHelper
     /// <param name="str"> The string. </param>
     /// <returns> </returns>
     [Obsolete("No more is required.")]
-    public static long? ToLongNullable(this string? str) => long.TryParse(str, out var result) ? result : default(long?);
+    public static long? ToLongNullable(this string? str)
+        => long.TryParse(str, out var result) ? result : default(long?);
 
     public static T ToNotNull<T>(this T? t, in T defaultValue = default)
-        where T : struct => t ?? defaultValue;
+        where T : struct
+        => t ?? defaultValue;
 
     public static string? ToString(in object? value, in string defaultValue = "")
         => (value ?? defaultValue)?.ToString();
 
     public static bool IsNull<TStruct>(this TStruct @struct)
-        where TStruct : struct => @struct.Equals(default(TStruct));
+        where TStruct : struct
+        => @struct.Equals(default(TStruct));
 
     public static int GetHashCode(this object o, params object[] properties)
     {
-        Check.IfArgumentNotNull(properties, nameof(properties));
         var hashCode = new HashCode();
         foreach (var prop in properties)
         {
