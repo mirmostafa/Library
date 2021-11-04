@@ -36,6 +36,7 @@ public static class ObjectHelper
     /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
+    [Obsolete("Moved to CodeHelper.", true)]
     public static void Dispose<TDisposable>(this TDisposable disposable, in Action<TDisposable>? action = null)
         where TDisposable : IDisposable
     {
@@ -57,6 +58,7 @@ public static class ObjectHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
     /// <returns> </returns>
+    [Obsolete("Moved to CodeHelper.", true)]
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TDisposable, TResult> action)
         where TDisposable : IDisposable
     {
@@ -78,6 +80,7 @@ public static class ObjectHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="result"> The result. </param>
     /// <returns> </returns>
+    [Obsolete("Moved to CodeHelper.", true)]
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in TResult result)
         where TDisposable : IDisposable
     {
@@ -99,6 +102,7 @@ public static class ObjectHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
     /// <returns> </returns>
+    [Obsolete("Moved to CodeHelper.", true)]
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TResult> action)
         where TDisposable : IDisposable
     {
@@ -287,9 +291,8 @@ public static class ObjectHelper
     /// <returns> </returns>
     public static TFieldType GetField<TFieldType>(in object? obj, string fieldName)
     {
-        var field = obj?.GetType()
-            .GetFields()
-            .FirstOrDefault(fld => string.Compare(fld.Name, fieldName, StringComparison.Ordinal) == 0);
+        var field = obj?.GetType().GetFields().FirstOrDefault(fld => string.Compare(fld.Name, fieldName, StringComparison.Ordinal) == 0);
+
         return field switch
         {
             not null => field.GetValue(obj)!.To<TFieldType>(),
