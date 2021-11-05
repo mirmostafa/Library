@@ -64,8 +64,8 @@ public static class Check
     public static void IfNotNull<T>([NotNull] this T obj, [DisallowNull] Func<Exception> getException) =>
         _ = obj.NotValid(x => x is null, getException)!;
 
-    public static void IfNotNull<T>([NotNull] this T obj, [DisallowNull] string name) =>
-        _ = obj.NotValid(x => x is null, () => new NullValueValidationException(name))!;
+    public static void IfNotNull<T>([NotNull] this T obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+        _ = obj.NotValid(x => x is null, () => new NullValueValidationException(argName))!;
 
     public static void IfNotValid(object obj, [DisallowNull] in Func<object, bool> validate, in Func<Exception> getException) =>
         obj.NotValid(validate, getException);
@@ -74,7 +74,7 @@ public static class Check
     public static string NotNull([NotNull] this string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         obj.NotValid(x => x.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
-    public static void IfAny([NotNull] IEnumerable obj, [CallerArgumentExpression("obj")] string? argName = null) => 
+    public static void IfAny([NotNull] IEnumerable obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         IfNotValid(obj, _ => !obj.Any(), () => new NoItemValidationException(argName!));
 
     [return: NotNull]
@@ -96,7 +96,7 @@ public static class Check
     public static T NotNull<T>([NotNull] this T @this, string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
-    public static void IfNotNull<T>([NotNull] this T @this, string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+    public static void IfNotNull<T>([NotNull] this T @this, string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
     public static T NotValid<T>(this T obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException) =>
@@ -116,4 +116,7 @@ public static class Check
 
     public static void Require([DoesNotReturnIf(false)] bool required) =>
         MustBe<RequiredValidationException>(required);
+
+    public static void Require([DoesNotReturnIf(false)] bool required, Func<Exception> getException) =>
+        MustBe(required, getException);
 }
