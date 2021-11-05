@@ -265,6 +265,7 @@ public static class CodeHelper
     [DoesNotReturn]
     public static void Throw(Func<Exception> getException) =>
         throw getException();
+
     /// <summary>
     ///     Disposes the specified disposable object.
     /// </summary>
