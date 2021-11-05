@@ -47,12 +47,19 @@ public static class IfStatementExtensions
         => new(() => x);
 
     public static IfStatememt<TResult> Then<TResult>(this IfStatememt<TResult> ifStatememt, Func<TResult> @then)
-        => ifStatememt.Fluent(ifStatememt.Then = then);
+    {
+        ifStatememt.Then = then;
+        return ifStatememt;
+    }
 
     public static IfStatememt<TResult> Else<TResult>(this IfStatememt<TResult> ifStatememt, Func<TResult> @else)
-        => ifStatememt.Fluent(ifStatememt.Else = @else);
+    {
+        ifStatememt.Else = @else;
+        return ifStatememt;
+    }
 
-    public static TResult Build<TResult>(this IfStatememt<TResult> ifStatememt) => ifStatememt.If.NotNull(nameof(ifStatememt.If))()
+    public static TResult Build<TResult>(this IfStatememt<TResult> ifStatememt) =>
+        ifStatememt.If.NotNull(nameof(ifStatememt.If))()
                    ? ifStatememt.Then.NotNull(nameof(ifStatememt.Then))()
                    : ifStatememt.Else.NotNull(nameof(ifStatememt.Else))();
 }

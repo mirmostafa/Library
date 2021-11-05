@@ -1,10 +1,4 @@
 ﻿using Library.Coding;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LibraryTest;
 
@@ -12,22 +6,19 @@ namespace LibraryTest;
 public class IfStatementTest
 {
     [TestMethod]
-    public void TestMethod1()
-    {
-        true.If().Then(Methods.Empty).Else(Methods.Empty).Build();
-    }
+    public void IfStatementTestMethod1() => true.If().Then(Methods.Empty).Else(Methods.Empty).Build();
 
     [TestMethod]
-    public void TestMethod2()
+    public void IfStatementTestMethod2()
     {
-        var actual = true.If<int>().Then<int>(() => 1).Else<int>(() => 0).Build();
+        var actual = true.If<int>().Then<int>(() => 1).Else<int>(() => 2).Build();
         Assert.AreEqual(1, actual);
     }
 
     [TestMethod]
-    public void TestMethod3()
+    public void IfStatementTestMethod3()
     {
-        var actual = false.If<int>().Then<int>(() => 1).Else<int>(() => 0).Build();
-        Assert.AreEqual(0, actual);
+        var actual = false.If<int>().Then<int>(() => 1).Else<int>(() => 2).Build();
+        Assert.AreEqual(2, actual);
     }
 }

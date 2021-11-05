@@ -2,6 +2,7 @@
 using Library.Exceptions;
 using Library.Validations;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -12,6 +13,7 @@ public static class CodeHelper
     /// <summary>
     ///     Breaks code execution.
     /// </summary>
+    [DoesNotReturn]
     public static void Break()
         => throw new BreakException();
 
