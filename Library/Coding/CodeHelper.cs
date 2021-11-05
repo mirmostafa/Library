@@ -250,6 +250,21 @@ public static class CodeHelper
         }
     }
 
+    [DoesNotReturn]
+    public static T Throw<T>(Exception exception) =>
+        throw exception;
+
+    [DoesNotReturn]
+    public static void Throw(Exception exception) =>
+        throw exception;
+
+    [DoesNotReturn]
+    public static T Throw<T>(Func<Exception> getException) =>
+        throw getException();
+
+    [DoesNotReturn]
+    public static void Throw(Func<Exception> getException) =>
+        throw getException();
     /// <summary>
     ///     Disposes the specified disposable object.
     /// </summary>
@@ -257,7 +272,7 @@ public static class CodeHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
     public static void Dispose<TDisposable>(TDisposable disposable, in Action<TDisposable>? action = null)
-        where TDisposable : IDisposable 
+        where TDisposable : IDisposable
         => ObjectHelper.Dispose(disposable, action);
 
     /// <summary>
@@ -268,7 +283,7 @@ public static class CodeHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
     /// <returns> </returns>
-    public static TResult Dispose<TDisposable, TResult>( TDisposable disposable, in Func<TDisposable, TResult> action)
+    public static TResult Dispose<TDisposable, TResult>(TDisposable disposable, in Func<TDisposable, TResult> action)
         where TDisposable : IDisposable
         => ObjectHelper.Dispose(disposable, action);
 
@@ -280,7 +295,7 @@ public static class CodeHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="result"> The result. </param>
     /// <returns> </returns>
-    public static TResult Dispose<TDisposable, TResult>( TDisposable disposable, in TResult result)
+    public static TResult Dispose<TDisposable, TResult>(TDisposable disposable, in TResult result)
         where TDisposable : IDisposable
         => ObjectHelper.Dispose(disposable, result);
 
@@ -293,7 +308,7 @@ public static class CodeHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
     /// <returns> </returns>
-    public static TResult Dispose<TDisposable, TResult>( TDisposable disposable, in Func<TResult> action)
+    public static TResult Dispose<TDisposable, TResult>(TDisposable disposable, in Func<TResult> action)
         where TDisposable : IDisposable
         => ObjectHelper.Dispose(disposable, action);
 }
