@@ -286,14 +286,14 @@ public static class ControlHelper
     public static T? GetSelection<T>(this SelectionChangedEventArgs e)
         => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().ToNullable<T>();
 
-    public static IEnumerable<T?> GetSelections<T>(this ListView listView)
-        => listView.ArgumentNotNull(nameof(listView)).SelectedItems.Cast<object?>().Select(x => x.ToNullable<T>());
-    public static T? GetSelection<T>(this ListView listView)
-        => GetSelections<T>(listView).FirstOrDefault();
+    public static IEnumerable<T?> GetSelections<T>(this ListView listView) =>
+        listView.ArgumentNotNull(nameof(listView)).SelectedItems.Cast<object?>().Select(x => x.ToNullable<T>());
+    public static T? GetSelection<T>(this ListView listView, SelectionChangedEventArgs e) =>
+        e?.AddedItems.Any() is true ? e.AddedItems[0].ToNullable<T>() : GetSelections<T>(listView).FirstOrDefault();
 
     public static string GetText(this RichTextBox rtb)
     {
-        Check.IfArgumentNotNull(rtb, nameof(rtb));
+        Check.IfArgumentNotNull(rtb);
 
         var textRange = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
         return textRange.Text;
