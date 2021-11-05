@@ -229,8 +229,8 @@ public static class CodeHelper
     /// <returns>
     ///     <c> true </c> if the specified tryFunc has exception; otherwise, <c> false </c>.
     /// </returns>
-    public static bool HasException(in Action tryFunc)
-        => Catch(tryFunc) is not null;
+    public static bool HasException(in Action tryFunc) => 
+        Catch(tryFunc) is not null;
 
     public static TResult Throw<TResult>(Func<TResult> action, Func<Exception, Exception>? getException = null)
     {
