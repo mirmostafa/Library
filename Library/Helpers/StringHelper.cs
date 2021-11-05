@@ -276,7 +276,7 @@ public static class StringHelper
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
         => string.IsNullOrEmpty(str);
-    
+
     public static bool IsNumber(this string text)
         => float.TryParse(text, out _);
 
@@ -416,7 +416,7 @@ public static class StringHelper
 
     public static string Repeat(this string text, in int count)
     {
-        Check.IfArgumentBiggerThan(count, 0, "count");
+        Check.IfArgumentBiggerThan(count, 0);
         var result = new StringBuilder(string.Empty);
         for (var counter = 0; counter < count; counter++)
         {
