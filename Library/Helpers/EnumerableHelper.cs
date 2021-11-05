@@ -278,22 +278,37 @@ public static class EnumerableHelper
 
     public static IEnumerable<TResult> ForEachItem<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
     {
-        Check.IfArgumentNotNull(items, nameof(items));
-        Check.IfArgumentNotNull(action, nameof(action));
+        Check.IfArgumentNotNull(items);
+        Check.IfArgumentNotNull(action);
         foreach (var item in items)
         {
             yield return action(item);
         }
     }
 
-    public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
+    public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action, bool build = false)
     {
-        Check.IfArgumentNotNull(items, nameof(items));
+        Check.IfArgumentNotNull(items);
+        if (build)
+        {
+            _ = items.Build();
+        }
+
         foreach (var item in items)
         {
             action?.Invoke(item);
             yield return item;
         }
+    }
+
+    public static IReadOnlyList<T> ForEachEager<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
+    {
+        Check.IfArgumentNotNull(items);
+        foreach (var item in items)
+        {
+            action?.Invoke(item);
+        }
+        return items.Build();
     }
 
     public static void ForEachTreeNode<T>(T root, Func<T, IEnumerable<T>>? getChildren, Action<T>? rootAction, Action<T, T>? childAction)
