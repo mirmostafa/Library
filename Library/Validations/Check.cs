@@ -42,10 +42,10 @@ public static class Check
     public static T ArgumentOutOfRange<T>(this T obj, Func<T, bool> validate, [CallerArgumentExpression("obj")] string? argName = null) =>
         obj.NotValid(validate, () => new ArgumentOutOfRangeException(argName));
 
-    public static void IfArgumentNotNull([NotNull] string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+    public static void IfArgumentNotNull([NotNull] in string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
 
-    public static void IfArgumentNotNull<T>([NotNull] this string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+    public static void IfArgumentNotNull<T>([NotNull] this string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = obj.NotValid(StringHelper.IsNullOrEmpty, () => new ArgumentNullException(argName));
 
     /// <summary>
@@ -55,10 +55,7 @@ public static class Check
     /// <param name="obj"></param>
     /// <param name="argName"></param>
     /// <exception cref="ArgumentNullException"/>
-    public static void IfArgumentNotNull<T>([NotNull] this T obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        MustBe(obj is not null, () => new ArgumentNullException(argName));
-
-    public static void IfArgumentNotNull([NotNull] this object obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+    public static void IfArgumentNotNull([NotNull] this object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         MustBe(obj is not null, () => new ArgumentNullException(argName));
 
     public static void IfNotNull<T>([NotNull] this T obj, [DisallowNull] Func<Exception> getException) =>
@@ -119,4 +116,7 @@ public static class Check
 
     public static void Require([DoesNotReturnIf(false)] bool required, Func<Exception> getException) =>
         MustBe(required, getException);
+
+    public static T HasAny<T>(this T obj, IEnumerable items, [CallerArgumentExpression("items")] string? atemsName = null) =>
+        NotValid(obj, _ => items?.Any() ?? false, () => new Exceptions.Validations.NoItemValidationException($"No items founds in '{atemsName}'."));
 }

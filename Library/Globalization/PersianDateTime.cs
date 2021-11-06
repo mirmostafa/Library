@@ -378,17 +378,17 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
             var timeParts = timePart.Split(TimeSeparator);
             if (timeParts.Length > 0)
             {
-                hour = Throw(() => int.Parse(timeParts[0]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+                hour = ThrowOnError(() => int.Parse(timeParts[0]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
 
             if (timePart.Length > 1)
             {
-                min = Throw(() => int.Parse(timeParts[1]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+                min = ThrowOnError(() => int.Parse(timeParts[1]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
 
             if (timeParts.Length > 2)
             {
-                sec = Throw(() => int.Parse(timeParts[2]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+                sec = ThrowOnError(() => int.Parse(timeParts[2]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
         }
 
