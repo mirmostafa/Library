@@ -1,9 +1,9 @@
-﻿using System.ComponentModel;
+﻿using Library.Validations;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using Library.Validations;
 
 namespace Library.Dynamic;
 
@@ -19,7 +19,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
     protected Expando(SerializationInfo info, StreamingContext context)
     {
         var buffer = info?.GetValue("Properties", typeof(Dictionary<string, object?>));
-        if (buffer is not null and Dictionary<string, object?> dic)
+        if (buffer is Dictionary<string, object?> dic)
         {
             this.Properties = dic;
         }
@@ -27,10 +27,10 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     public virtual object? this[[DisallowNull] string propName]
     {
-        get => this.Properties.ContainsKey(propName.ArgumentNotNull(nameof(propName))) ? this.Properties[propName] : null;
+        get => this.Properties.TryGetValue(propName, out var value) ? value : null;
         set
         {
-            Check.IfArgumentNotNull(propName, nameof(propName));
+            Check.IfArgumentNotNull(propName);
 
             if (this.Properties.ContainsKey(propName))
             {
@@ -78,9 +78,12 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     protected virtual void FillByProperties(SerializationInfo info, StreamingContext context)
     {
-        foreach (var (key, value) in this.Properties)
+        if (info is not null && Properties.Any())
         {
-            info?.AddValue(key, value);
+            foreach (var (key, value) in this.Properties)
+            {
+                info.AddValue(key, value);
+            }
         }
     }
 

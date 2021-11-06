@@ -15,7 +15,7 @@ public static class CodeHelper
     /// </summary>
     [DoesNotReturn]
     public static void Break()
-        => throw new BreakException();
+        => Throw<BreakException>();
 
     public static async Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default)
         => await Task.Run(action, cancellationToken);
@@ -220,7 +220,7 @@ public static class CodeHelper
     /// <returns> </returns>
     /// <exception cref="InvalidOperationException"> </exception>
     public static TDelegate GetDelegate<TType, TDelegate>(in string methodName) =>
-        (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate), typeof(TType).GetMethod(methodName) ?? throw new InvalidOperationException());
+        (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate), typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new InvalidOperationException()));
 
     /// <summary>
     ///     Determines whether the specified try function has exception.
@@ -229,10 +229,10 @@ public static class CodeHelper
     /// <returns>
     ///     <c> true </c> if the specified tryFunc has exception; otherwise, <c> false </c>.
     /// </returns>
-    public static bool HasException(in Action tryFunc) => 
+    public static bool HasException(in Action tryFunc) =>
         Catch(tryFunc) is not null;
 
-    public static TResult Throw<TResult>(Func<TResult> action, Func<Exception, Exception>? getException = null)
+    public static TResult ThrowOnError<TResult>(Func<TResult> action, Func<Exception, Exception>? getException = null)
     {
         Check.IfArgumentNotNull(action, nameof(action));
         try
@@ -243,7 +243,7 @@ public static class CodeHelper
         {
             if (getException is not null)
             {
-                throw getException(ex);
+                Throw(() => getException(ex));
             }
 
             throw;
@@ -251,10 +251,13 @@ public static class CodeHelper
     }
 
     [DoesNotReturn]
+    public static void Throw<TException>() where TException : Exception, new() =>
+        throw new TException();
+    [DoesNotReturn]
     public static T Throw<T>(Exception exception) =>
         throw exception;
 
-    [DoesNotReturn]
+    [DoesNotReturn()]
     public static void Throw(Exception exception) =>
         throw exception;
 
