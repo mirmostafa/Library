@@ -1,5 +1,4 @@
 ﻿namespace Library;
-
 public class EmptyDisposable : IDisposable
 {
     private bool _disposedValue;
