@@ -1,10 +1,10 @@
 ﻿//#nullable disable
-using Library.Exceptions.Validations;
 using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using Library.Exceptions.Validations;
 
 namespace Library.Validations;
 
@@ -29,8 +29,12 @@ public static class Check
         obj.NotValid(x => x.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
     [return: NotNull]
+#pragma warning disable CS8607 // A possible null value may not be used for a type marked with [NotNull] or [DisallowNull]
+#pragma warning disable CS8777 // Parameter must have a non-null value when exiting.
     public static T ArgumentNotNull<T>([NotNull] this T obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
+#pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
+#pragma warning restore CS8607 // A possible null value may not be used for a type marked with [NotNull] or [DisallowNull]
 
     public static void IfIs<T>([NotNull] this object obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!));
@@ -56,19 +60,20 @@ public static class Check
     /// <param name="argName"></param>
     /// <exception cref="ArgumentNullException"/>
     public static void IfArgumentNotNull([NotNull] this object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        MustBe(obj is not null, () => new ArgumentNullException(argName));
+        IsArgumentNull(obj is not null, argName!);
 
     public static void IfNotNull<T>([NotNull] this T obj, [DisallowNull] Func<Exception> getException) =>
         _ = obj.NotValid(x => x is null, getException)!;
 
     public static void IfNotNull<T>([NotNull] this T obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        _ = obj.NotValid(x => x is null, () => new NullValueValidationException(argName))!;
+        //_ = obj.NotValid(x => x is null, () => new NullValueValidationException(argName!))!;
+        IsNull(obj is null, argName!);
 
     public static void IfNotValid(object obj, [DisallowNull] in Func<object, bool> validate, in Func<Exception> getException) =>
         obj.NotValid(validate, getException);
-
+        
     [return: NotNull]
-    public static string NotNull([NotNull] this string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+    public static string NotNull([NotNull] this string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         obj.NotValid(x => x.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
     public static void IfAny([NotNull] IEnumerable obj, [CallerArgumentExpression("obj")] string? argName = null) =>
@@ -117,6 +122,15 @@ public static class Check
     public static void Require([DoesNotReturnIf(false)] bool required, Func<Exception> getException) =>
         MustBe(required, getException);
 
+    public static void IsNull([DoesNotReturnIf(false)] bool isNull) =>
+        MustBe<NullValueValidationException>(isNull);
+
+    public static void IsNull([DoesNotReturnIf(false)] bool isNull, string argName) =>
+        MustBe(isNull, () => new NullValueValidationException(argName));
+
+    public static void IsArgumentNull([DoesNotReturnIf(false)] bool isNull, [DisallowNull] string argName) =>
+        MustBe(isNull, () => new ArgumentNullException(argName));
+
     public static T HasAny<T>(this T obj, IEnumerable items, [CallerArgumentExpression("items")] string? atemsName = null) =>
-        NotValid(obj, _ => items?.Any() ?? false, () => new Exceptions.Validations.NoItemValidationException($"No items founds in '{atemsName}'."));
+        NotValid(obj, _ => items?.Any() ?? false, () => new NoItemValidationException($"No items founds in '{atemsName}'."));
 }
