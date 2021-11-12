@@ -1,4 +1,4 @@
-using BenchmarkDotNet.Attributes;
+﻿using BenchmarkDotNet.Attributes;
 using System.Threading;
 
 namespace LibraryTest;
@@ -21,7 +21,7 @@ public class StringHelperTest
         var emptyStrIsEmpty = emptyStr.IsNullOrEmpty();
         var sampleStrIsEmpty = sampleStr.IsNullOrEmpty();
 
-        Assert.IsTrue(emptyStrIsEmpty);
+        Assert.IsTrue(emptyStrIsEmpty, "Hey, Why did you change it?😡 I was working like a charm!");
         Assert.IsFalse(sampleStrIsEmpty);
     }
 
