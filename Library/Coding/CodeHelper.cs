@@ -253,6 +253,7 @@ public static class CodeHelper
     [DoesNotReturn]
     public static void Throw<TException>() where TException : Exception, new() =>
         throw new TException();
+
     [DoesNotReturn]
     public static T Throw<T>(Exception exception) =>
         throw exception;
