@@ -1,13 +1,9 @@
-﻿using Library.Coding;
+﻿using System.Windows.Input;
 using Library.Collections;
 using Library.Exceptions.Validations;
 using Library.Validations;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
 
 namespace Library.Wpf.Windows.Input.Commands;
-
 public sealed class CommandController : IIndexable<CommandExtender, string>, IIndexable<CommandExtender, CommandBinding>
 {
     private readonly UIElement _Owner;
@@ -19,15 +15,9 @@ public sealed class CommandController : IIndexable<CommandExtender, string>, IIn
     public CommandController(UIElement owner)
     {
         this._Owner = owner;
-        this.Initialize();
-    }
-
-    private void Initialize()
-    {
-        foreach (var cb in this._Owner.CommandBindings.Cast<CommandBinding>())
-        {
-            this._CommandExtenders.Add(new(cb));
-        }
+        this._CommandExtenders.AddRange(this._Owner.CommandBindings.Cast<CommandBinding>().Compact()
+                                                                   .Select(x => new CommandExtender(x)))
+                              .Build();
     }
 
     public CommandController SetEnabled(CommandBinding commandBinding, bool isEnabled)

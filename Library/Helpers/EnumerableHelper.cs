@@ -1,9 +1,9 @@
-﻿using Library.Collections;
-using Library.Results;
-using Library.Validations;
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
+using Library.Collections;
+using Library.Results;
+using Library.Validations;
 
 namespace Library.Helpers;
 public static class EnumerableHelper
@@ -289,12 +289,9 @@ public static class EnumerableHelper
     public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action, bool build = false)
     {
         Check.IfArgumentNotNull(items);
-        if (build)
-        {
-            _ = items.Build();
-        }
+        var buffer = build ? items.Build() : items;
 
-        foreach (var item in items)
+        foreach (var item in buffer)
         {
             action?.Invoke(item);
             yield return item;

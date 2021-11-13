@@ -1,7 +1,7 @@
-﻿using Library.DesignPatterns.Markers;
-using Library.Validations;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using Library.DesignPatterns.Markers;
+using Library.Validations;
 
 namespace Library.Coding;
 
@@ -157,6 +157,9 @@ public static class Functional
     public static T New<T>()
         where T : class, new()
         => new();
+
+    public static T New<T>(params object[] args) =>
+        Activator.CreateInstance(typeof(T), args).NotNull().To<T>();
 
     /// <summary>
     ///     Creates a new instance in object o.

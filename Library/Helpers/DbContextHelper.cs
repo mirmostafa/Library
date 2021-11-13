@@ -1,29 +1,86 @@
-﻿using Library.Data.Markers;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
+using Library.Data.Markers;
 using Library.Validations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
 
 namespace Library.Helpers;
 public static class DbContextHelper
 {
-    public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] TEntity entity)
+    public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<long> =>
+        dbContext.SetStateOf(entity, EntityState.Detached);
+
+    public static EntityEntry<TEntity> EnsureAttached<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
-        Check.IfArgumentNotNull(dbContext, nameof(dbContext));
-        Check.IfArgumentNotNull(entity, nameof(entity));
-
-        var local = dbContext.Set<TEntity>().Local.FirstOrDefault(entry => entry.Id.Equals(entity.Id));
-        if (local is not null)
+        var result = dbContext.GetLocalEntry(entity);
+        if (result is null or { State: EntityState.Detached })
         {
-            dbContext.Entry(local).State = EntityState.Detached;
+            result = dbContext.Attach(entity);
+        }
+        return result;
+    }
+
+
+    public static TDbContext SetStateOf<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity, [DisallowNull] in EntityState state)
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<long>
+    {
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
+
+        if (GetLocalEntry(dbContext, entity) is { } entry && entry.State != state)
+        {
+            entry.State = state;
         }
         return dbContext;
     }
 
-    public static TEntity Detach<TDbContext, TEntity>([DisallowNull] this TEntity entity, [DisallowNull] TDbContext dbContext)
+    public static EntityState? GetStateOf<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<long>
+    {
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
+
+        return GetLocalEntry(dbContext, entity)?.State;
+    }
+
+    public static EntityEntry<TEntity>? GetLocalEntry<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<long>
+    {
+        var id = entity.ArgumentNotNull().Id;
+        var ntt = dbContext.ArgumentNotNull().Set<TEntity>()?.Local?.FirstOrDefault(x => x.Id.Equals(id));
+        if (ntt is null)
+        {
+            return null;
+        }
+
+        var entry = dbContext.Entry(ntt);
+        return entry;
+    }
+
+    public static EntityEntry<TEntity>? GetEntry<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<long>
+    {
+        var id = entity.ArgumentNotNull().Id;
+        var ntt = dbContext.ArgumentNotNull().Set<TEntity>()?.FirstOrDefault(x => x.Id.Equals(id));
+        if (ntt is null)
+        {
+            return null;
+        }
+
+        var entry = dbContext.Entry(ntt);
+        return entry;
+    }
+
+    public static TEntity Detach<TDbContext, TEntity>([DisallowNull] this TEntity entity, [DisallowNull] in TDbContext dbContext)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
@@ -31,11 +88,11 @@ public static class DbContextHelper
         return entity;
     }
 
-    public static DbContext RemoveById<TEntity>([DisallowNull] this DbContext dbContext, IEnumerable<long> ids, bool detach = false)
+    public static DbContext RemoveById<TEntity>([DisallowNull] this DbContext dbContext, in IEnumerable<long> ids, bool detach = false)
         where TEntity : class, IIdenticalEntity<long>, new()
     {
-        Check.IfArgumentNotNull(dbContext, nameof(dbContext));
-        Check.IfArgumentNotNull(ids, nameof(ids));
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(ids);
 
         Action<TEntity> det = detach ? entity => Catch(() => dbContext.Detach(entity)) : _ => { };
 
@@ -60,7 +117,7 @@ public static class DbContextHelper
 
     public static EntityEntry<TEntity> SetModified<TEntity, TProperty>(
         this EntityEntry<TEntity> entityEntry,
-        Expression<Func<TEntity, TProperty>> propertyExpression,
+        in Expression<Func<TEntity, TProperty>> propertyExpression,
         bool isModified = true)
         where TEntity : class
     {
@@ -70,27 +127,6 @@ public static class DbContextHelper
         }
 
         return entityEntry!;
-    }
-    public static EntityEntry<TEntity> WithEntry<TEntity>(this EntityEntry<TEntity> instance, [DisallowNull] Action<EntityEntry<TEntity>> action)
-        where TEntity : class
-    {
-        action.ArgumentNotNull(nameof(action))(instance);
-        return instance;
-    }
-
-    public static EntityEntry<TEntity> WithEntry<TEntity, TProperty>(this EntityEntry<TEntity> instance, [DisallowNull] Func<TEntity, TProperty> selector, Func<TProperty, EntityEntry<TProperty>?>? action)
-        where TEntity : class
-        where TProperty : class
-    {
-        Check.IfArgumentNotNull(instance, nameof(instance));
-        Check.IfArgumentNotNull(selector, nameof(selector));
-        var obj = selector(instance.Entity);
-        if (action is not null)
-        {
-            _ = action(obj);
-        }
-
-        return instance;
     }
 
     public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> InsertAsync<TModel, TEntity>(
