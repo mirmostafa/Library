@@ -5,7 +5,8 @@ using Library.DesignPatterns.Markers;
 namespace Library.Collections;
 
 [Fluent]
-public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
+[Immutable]
+public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>//, IImmutableList<TItem>
     where TList : FluentListBase<TItem, TList>
 {
     private readonly List<TItem> _List;
@@ -47,7 +48,7 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     IEnumerator IEnumerable.GetEnumerator()
         => ((IEnumerable)this._List).GetEnumerator();
 
-    public List<TItem> AsList() => this._List;
+    public List<TItem> AsList() => this._List.ToList();
 
     private TList This => this.As<TList>()!;
 }

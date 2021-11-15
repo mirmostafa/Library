@@ -24,7 +24,7 @@ public static class Check
     }
 
     [return: NotNull]
-    public static string ArgumentNotNull([NotNull] this string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+    public static string ArgumentNotNull([NotNull] this string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         obj.NotValid(x => x.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
     [return: NotNull]
