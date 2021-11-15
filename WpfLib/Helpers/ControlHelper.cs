@@ -434,7 +434,7 @@ public static class ControlHelper
         [CallerMemberName] in string? propertyName = null)
         where T : INotifyPropertyChanged
     {
-        if (!Equals(field, newValue))
+        //if (!Equals(field, newValue))
         {
             field = newValue;
             invokePropertyChanged?.Invoke(propertyName);

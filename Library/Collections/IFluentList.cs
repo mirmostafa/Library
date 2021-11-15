@@ -4,7 +4,7 @@ using Library.DesignPatterns.Markers;
 namespace Library.Collections;
 
 [Fluent]
-public interface IFluentList<TList, TItem> : IFluentCollection<TList, TItem>, IEnumerable<TItem>, IEnumerable
+public interface IFluentList<TList, TItem> : IFluentCollection<TList, TItem>, IEnumerable<TItem>, IEnumerable//, IFluentList<TItem>
     where TList : IFluentList<TList, TItem>
 {
     TItem this[int index]
