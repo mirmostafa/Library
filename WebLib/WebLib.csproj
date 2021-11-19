@@ -14,8 +14,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\CoreLib\CoreLib.csproj" />
 		<ProjectReference Include="..\CqrsLib\CqrsLib.csproj" />
-		<ProjectReference Include="..\Library\Library.csproj" />
 	</ItemGroup>
 
 </Project>

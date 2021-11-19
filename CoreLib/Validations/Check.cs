@@ -1,5 +1,5 @@
-﻿//#nullable disable
-using System.Collections;
+﻿using System.Collections;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -7,7 +7,7 @@ using Library.Exceptions.Validations;
 
 namespace Library.Validations;
 
-//[DebuggerStepThrough]
+[DebuggerStepThrough]
 public static class Check
 {
     public static void IfArgumentBiggerThan(in int arg, in int min, [CallerArgumentExpression("arg")] in string? argName = null)
@@ -135,8 +135,8 @@ public static class Check
     public static void Require([DoesNotReturnIf(false)] bool required) =>
         MustBe<RequiredValidationException>(required);
 
-    public static void MustBeNotNull([DoesNotReturnIf(false)] bool isNotNull) =>
-        MustBe<NullValueValidationException>(isNotNull);
+    public static void Require([DoesNotReturnIf(false)] bool required, string message, string? instruction = null, string? title = null) =>
+        MustBe(required, () => new RequiredValidationException(message, instruction, title));
 
     public static void MustBeNotNull([DoesNotReturnIf(false)] bool isNotNull, string argName) =>
         MustBe(isNotNull, () => new NullValueValidationException(argName));

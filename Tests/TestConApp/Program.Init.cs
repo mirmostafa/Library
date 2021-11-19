@@ -6,6 +6,8 @@ namespace TestConApp;
 
 internal partial class Program
 {
+    private static ILogger _logger = null!;
+
     [ModuleInitializer]
     public static void Startup()
     {
