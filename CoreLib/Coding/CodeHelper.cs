@@ -1,13 +1,14 @@
-﻿using Library.DesignPatterns.ExceptionHandlingPattern;
-using Library.Exceptions;
-using Library.Validations;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Library.DesignPatterns.ExceptionHandlingPattern;
+using Library.Exceptions;
+using Library.Validations;
 
 namespace Library.Coding;
 
+[DebuggerStepThrough]
 public static class CodeHelper
 {
     /// <summary>
@@ -220,7 +221,7 @@ public static class CodeHelper
     /// <returns> </returns>
     /// <exception cref="InvalidOperationException"> </exception>
     public static TDelegate GetDelegate<TType, TDelegate>(in string methodName) =>
-        (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate), typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new InvalidOperationException()));
+        (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate), typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new Exceptions.InvalidOperationException()));
 
     /// <summary>
     ///     Determines whether the specified try function has exception.
