@@ -21,7 +21,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\CoreLib\CoreLib.csproj" />
-	  <ProjectReference Include="..\..\Library\CoreLib.csproj" />
 	  <ProjectReference Include="..\..\WebLib\WebLib.csproj" />
 	</ItemGroup>
 
