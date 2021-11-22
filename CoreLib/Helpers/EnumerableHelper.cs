@@ -10,7 +10,7 @@ public static class EnumerableHelper
 {
     public static IList<KeyValuePair<TKey, TValue>>? Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
     {
-        Check.IfArgumentNotNull(list, nameof(list));
+        Check.IfArgumentNotNull(list);
         list.Add(new(key, value));
         return list;
     }
@@ -37,7 +37,7 @@ public static class EnumerableHelper
 
     public static void AddRange<T>([DisallowNull] this ICollection<T> collection, params T[] newItems)
     {
-        Check.IfArgumentNotNull(collection, nameof(collection));
+        Check.IfArgumentNotNull(collection);
         if (newItems?.Any() is true)
         {
             foreach (var item in newItems)
@@ -49,7 +49,7 @@ public static class EnumerableHelper
 
     public static IList<T> AddRange<T>([DisallowNull] this IList<T> list, in IEnumerable<T> items)
     {
-        Check.IfArgumentNotNull(list, nameof(list));
+        Check.IfArgumentNotNull(list);
         if (items?.Any() is true)
         {
             foreach (var item in items)
@@ -64,7 +64,7 @@ public static class EnumerableHelper
     public static TList AddRange<TList, TItem>([DisallowNull] this TList list, in IEnumerable<TItem> items)
         where TList : notnull, ICollection<TItem>
     {
-        Check.IfArgumentNotNull(list, nameof(list));
+        Check.IfArgumentNotNull(list);
         if (items?.Any() is true)
         {
             foreach (var item in items)
@@ -79,7 +79,7 @@ public static class EnumerableHelper
     public static TList AddRange<TList, TItem>([DisallowNull] this TList list, params TItem[] items)
         where TList : notnull, ICollection<TItem>
     {
-        Check.IfArgumentNotNull(list, nameof(list));
+        Check.IfArgumentNotNull(list);
         if (items?.Any() is true)
         {
             foreach (var item in items)
@@ -137,7 +137,7 @@ public static class EnumerableHelper
 
     public static IReadOnlyList<T> Build<T>([DisallowNull] this IEnumerable<T> items)
     {
-        Check.IfArgumentNotNull(items, nameof(items));
+        Check.IfArgumentNotNull(items);
 
         var result = new List<T>();
         foreach (var item in items)
@@ -172,11 +172,11 @@ public static class EnumerableHelper
         [DisallowNull] in Action<TItem> addToRoots,
         [DisallowNull] Action<TItem, TItem> addChild)
     {
-        getChildren.IfArgumentNotNull(nameof(getChildren));
-        getNewItem.IfArgumentNotNull(nameof(getNewItem));
-        addToRoots.IfArgumentNotNull(nameof(addToRoots));
-        addChild.IfArgumentNotNull(nameof(addChild));
-        rootElements.IfArgumentNotNull(nameof(rootElements));
+        getChildren.IfArgumentNotNull();
+        getNewItem.IfArgumentNotNull();
+        addToRoots.IfArgumentNotNull();
+        addChild.IfArgumentNotNull();
+        rootElements.IfArgumentNotNull();
 
         foreach (var siteMap in rootElements)
         {
@@ -210,7 +210,7 @@ public static class EnumerableHelper
         {
             yield break;
         }
-        Check.IfArgumentNotNull(converter, nameof(converter));
+        Check.IfArgumentNotNull(converter);
 
         foreach (var item in input)
         {
@@ -229,7 +229,7 @@ public static class EnumerableHelper
     public static T ClearAndAddRange<T>(this T collection, [DisallowNull] in IEnumerable items)
         where T : notnull, IList
     {
-        Check.IfArgumentNotNull(items, nameof(items));
+        Check.IfArgumentNotNull(items);
 
         collection.Clear();
         return AddRange(collection, items);
@@ -238,7 +238,7 @@ public static class EnumerableHelper
     public static TList ClearAndAddRange<TList, TItem>(this TList list, [DisallowNull] in IEnumerable<TItem> items)
         where TList : notnull, ICollection<TItem>
     {
-        Check.IfArgumentNotNull(items, nameof(items));
+        Check.IfArgumentNotNull(items);
 
         list.Clear();
         return list.AddRange(items);
@@ -247,7 +247,7 @@ public static class EnumerableHelper
     public static T AddRange<T>(T collection, [DisallowNull] IEnumerable items)
         where T : IList
     {
-        Check.IfArgumentNotNull(items, nameof(items));
+        Check.IfArgumentNotNull(items);
         foreach (var item in items)
         {
             _ = collection.Add(item);
@@ -327,8 +327,8 @@ public static class EnumerableHelper
 
     public static IEnumerable<T> GetAll<T>([DisallowNull] Func<IEnumerable<T>> getRootElements, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
     {
-        getRootElements.IfArgumentNotNull(nameof(getRootElements));
-        getChildren.IfArgumentNotNull(nameof(getChildren));
+        getRootElements.IfArgumentNotNull();
+        getChildren.IfArgumentNotNull();
 
         var result = new List<T>();
 
