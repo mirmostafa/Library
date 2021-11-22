@@ -392,7 +392,7 @@ public static class EnumerableHelper
 
     public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
     {
-        Check.IfArgumentNotNull(list, nameof(list));
+        Check.IfArgumentNotNull(list);
         _ = list.Remove(list.GetItemByKey(key));
         return list;
     }
@@ -419,7 +419,7 @@ public static class EnumerableHelper
 
     public static IList<KeyValuePair<TKey, TValue>> SetByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
     {
-        Check.IfArgumentNotNull(list, nameof(list));
+        Check.IfArgumentNotNull(list);
         _ = list.RemoveByKey(key);
         list.Add(new(key, value));
         return list;
@@ -440,7 +440,7 @@ public static class EnumerableHelper
 
     public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems, nameof(asyncItems));
+        Check.IfArgumentNotNull(asyncItems);
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             yield return action(item);
@@ -448,7 +448,7 @@ public static class EnumerableHelper
     }
     public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems, nameof(asyncItems));
+        Check.IfArgumentNotNull(asyncItems);
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             action(item);
@@ -462,7 +462,7 @@ public static class EnumerableHelper
     public static async Task<TList> AddRangeAsync<TList, TItem>([DisallowNull] this TList list, ConfiguredCancelableAsyncEnumerable<TItem> asyncItems)
         where TList : notnull, ICollection<TItem>
     {
-        Check.IfArgumentNotNull(list, nameof(list));
+        Check.IfArgumentNotNull(list);
         await foreach (var item in asyncItems)
         {
             list.Add(item);
@@ -473,7 +473,7 @@ public static class EnumerableHelper
     public static async Task<TList> AddRangeAsync<TList, TItem>([DisallowNull] this TList list, IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
         where TList : notnull, ICollection<TItem>
     {
-        Check.IfArgumentNotNull(list, nameof(list));
+        Check.IfArgumentNotNull(list);
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             list.Add(item);
@@ -508,7 +508,7 @@ public static class EnumerableHelper
     public static TFluentList AddRange<TFluentList, TItem>([DisallowNull] this TFluentList list, IEnumerable<TItem>? items)
         where TFluentList : IFluentList<TFluentList, TItem>
     {
-        Check.IfArgumentNotNull(list, nameof(list));
+        Check.IfArgumentNotNull(list);
         if (items?.Any() is true)
         {
             foreach (var item in items)
