@@ -13,7 +13,6 @@ public abstract class LoggersBase<TMessage> :
     public IEnumerable<ILogger<TMessage>> Loggers => this.AsEnumerable();
     public bool IsEnabled { get; set; }
     public LogLevel LogLevel { get; set; }
-    public bool IsReadOnly { get; }
     public ExceptionHandling ExceptionHandling { get; private set; }
 
     protected LoggersBase(IEnumerable<ILogger<TMessage>> loggers, ExceptionHandling? exceptionHandling = null)

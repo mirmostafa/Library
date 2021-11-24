@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
+using Library.Validations;
 
 namespace Library.Data.SqlClient;
 
@@ -20,10 +21,9 @@ public static class SqlBrowserClient
                 InitInstances();
             }
 
-            return _instances;
+            return _instances.NotNull();
         }
     }
-
 
     private static void InitInstances()
     {

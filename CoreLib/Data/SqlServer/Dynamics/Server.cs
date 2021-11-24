@@ -70,7 +70,7 @@ namespace Library.Data.SqlServer.Dynamics
 
         public override string ToString() => !this.Version.IsNullOrEmpty() ? $"{this.Name} - {this.Version}" : $"{this.Name}";
 
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        public override bool TryGetMember(GetMemberBinder binder, out object? result)
         {
             result = this.Databases[binder.Name];
             return true;

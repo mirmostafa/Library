@@ -5,7 +5,7 @@ namespace Library.Data.SqlServer.Dynamics;
 
 public class Row : SqlObject<Row, Table>
 {
-    public Row(Table owner, IEnumerable<KeyValuePair<string, object>> data, string? connectionString = null)
+    public Row(Table owner, IEnumerable<KeyValuePair<string, object?>> data, string? connectionString = null)
         : base(owner, string.Empty, connectionString: connectionString ?? owner.ConnectionString) => this.Data = data;
 
     public object this[Column index] => this[index.Name];

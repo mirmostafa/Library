@@ -20,4 +20,6 @@ public class EmptyDisposable : IDisposable
         this.Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
+
+    public readonly static IDisposable Empty = new EmptyDisposable();
 }
