@@ -9,7 +9,7 @@ namespace Library.Data.SqlServer.Dynamics.Collections
         {
         }
 
-        public Server GetCurrent()
+        public Server? GetCurrent()
         {
             if (!this.Items.Any())
             {

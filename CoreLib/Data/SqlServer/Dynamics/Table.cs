@@ -32,7 +32,7 @@ public class Table : SqlObject<Table, Database>, IEnumerable
             using var reader = this.ToSqlDataReader();
             while (reader.Read())
             {
-                yield return new Row(this, this.Columns.Select(c => new KeyValuePair<string, object>(c.Name, reader[c.Name])).ToDictionary());
+                yield return new Row(this, this.Columns.Select(c => new KeyValuePair<string, object?>(c.Name, reader[c.Name])).ToDictionary());
             }
 
         }
