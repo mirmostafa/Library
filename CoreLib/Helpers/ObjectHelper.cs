@@ -1,10 +1,10 @@
-﻿using Library.DesignPatterns.Creational;
+﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
 using Library.Validations;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 
 namespace Library.Helpers;
 
@@ -523,6 +523,14 @@ public static class ObjectHelper
     /// <returns> </returns>
     public static int ToInt(this object obj)
         => Convert.ToInt32(obj);
+
+    /// <summary>
+    ///     Converts the string representation of a number to an Int16.
+    /// </summary>
+    /// <param name="obj"> The object. </param>
+    /// <returns> </returns>
+    public static Int16 ToShort(this object obj)
+        => Convert.ToInt16(obj);
 
     /// <summary>
     ///     Converts the string representation of a number to an integer.
