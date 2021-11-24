@@ -1,8 +1,11 @@
-﻿using Library.Validations;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using Library.DesignPatterns.Markers;
+using Library.Validations;
 
 namespace Library.Collections;
 
+[Immutable]
+[Fluent]
 public class Node<T>
 {
     public static readonly Node<T?> Empty = new(default);
@@ -79,4 +82,14 @@ public class Node<T>
 
     public static Node<T> ToNode(T t)
         => new(t);
+
+    public Node<T> WithParent(Node<T> parent)
+    {
+        var result = new Node<T>(this.Value) { Parent = parent };
+        result.Childs.AddRange(this.Childs);
+        return result;
+    }
+
+    public Node<T> WithParent(T parent) => 
+        this.WithParent(new(parent));
 }

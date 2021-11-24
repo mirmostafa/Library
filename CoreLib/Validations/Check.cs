@@ -28,12 +28,8 @@ public static class Check
         obj.NotValid(x => x.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
     [return: NotNull]
-#pragma warning disable CS8607 // A possible null value may not be used for a type marked with [NotNull] or [DisallowNull]
-#pragma warning disable CS8777 // Parameter must have a non-null value when exiting.
     public static T ArgumentNotNull<T>([NotNull] this T obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
-#pragma warning restore CS8777 // Parameter must have a non-null value when exiting.
-#pragma warning restore CS8607 // A possible null value may not be used for a type marked with [NotNull] or [DisallowNull]
 
     public static void IfIs<T>([NotNull] this object obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!));
