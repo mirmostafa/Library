@@ -2,7 +2,7 @@
 
 public interface IApiResult
 {
-    bool Failure { get; }
+    bool IsFailure { get; }
     string? Message { get; }
     int? StatusCode { get; }
     bool IsSucceed { get; }

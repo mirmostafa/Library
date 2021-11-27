@@ -14,7 +14,7 @@ public static class WebResultFluent
     public static TWebResult OnFailure<TWebResult>(this TWebResult result, Action<TWebResult> action)
         where TWebResult : IApiResult
     {
-        _ = result?.Failure.IfTrue(() => action(result));
+        _ = result?.IsFailure.IfTrue(() => action(result));
         return result;
     }
     public static TWebResult OnDone<TWebResult>(this TWebResult result, Action<TWebResult> action)
