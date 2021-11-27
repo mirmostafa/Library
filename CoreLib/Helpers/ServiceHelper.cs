@@ -6,7 +6,7 @@ namespace Library.Helpers;
 public static class ServiceHelper
 {
     public static async Task<long> SaveAsync<TViewModel>(this IWriteAsyncService<TViewModel> service, TViewModel? model, bool persist = true)
-        where TViewModel : IHasId<long?>
+        where TViewModel : ICanSetKey<long?>
     {
         Check.IfArgumentNotNull(service);
         Check.IfArgumentNotNull(model);
