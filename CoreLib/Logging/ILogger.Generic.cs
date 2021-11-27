@@ -35,7 +35,7 @@ public interface ILogger<TLogMessage>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     /// <param name="stackTrace">The stack trace.</param>
-    void Log([DisallowNull] TLogMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null);
+    void Log([DisallowNull] TLogMessage message, LogLevel level = LogLevel.Info, [CallerMemberName] object? sender = null, DateTime? time = null, string? stackTrace = null);
 
     /// <summary>
     /// Logs the specified message with LogLevel.Info.
