@@ -187,8 +187,8 @@ public static class Functional
 
     public static IEnumerable<TResult> While<TResult>(Func<bool> predicate, Func<TResult> action, Action? onIterationDone = null)
     {
-        predicate.IfArgumentNotNull(nameof(predicate));
-        action.IfArgumentNotNull(nameof(action));
+        predicate.ArgumentNotNull(nameof(predicate));
+        action.ArgumentNotNull(nameof(action));
 
         while (predicate())
         {
@@ -200,7 +200,7 @@ public static class Functional
 
     public static void While(in Func<bool> predicate, in Action? action = null)
     {
-        predicate.IfArgumentNotNull(nameof(predicate));
+        predicate.ArgumentNotNull(nameof(predicate));
 
         while (predicate())
         {

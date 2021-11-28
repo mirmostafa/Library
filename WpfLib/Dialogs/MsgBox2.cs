@@ -645,7 +645,7 @@ namespace Library.Wpf.Dialogs
             Window? window = null,
             params TaskDialogControl[] controls)
         {
-            ex.IfArgumentNotNull(nameof(ex));
+            ex.ArgumentNotNull(nameof(ex));
             var message = ex.Message;
             var innerMessage = ex.GetBaseException().Message;
             return Error(instructionText,
@@ -696,7 +696,7 @@ namespace Library.Wpf.Dialogs
             Window? window = null,
             params TaskDialogControl[] controls)
         {
-            ex.IfArgumentNotNull(nameof(ex));
+            ex.ArgumentNotNull();
             var message = ex.Message;
             var innerMessage = ex.GetBaseException()?.Message;
             return Error(ex.Instruction,

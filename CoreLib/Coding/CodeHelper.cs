@@ -34,7 +34,7 @@ public static class CodeHelper
         in ExceptionHandling? handling = null,
         in bool throwException = false)
     {
-        tryMethod.IfArgumentNotNull(nameof(tryMethod));
+        tryMethod.ArgumentNotNull(nameof(tryMethod));
 
         handling?.Reset();
         try

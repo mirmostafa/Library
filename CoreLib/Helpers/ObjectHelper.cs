@@ -343,7 +343,7 @@ public static class ObjectHelper
     /// <returns> </returns>
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, string propName, in int eventNoDefault)
     {
-        obj.IfArgumentNotNull(nameof(obj));
+        obj.ArgumentNotNull(nameof(obj));
 
         if (eventNoDefault != 0)
         {
@@ -406,12 +406,6 @@ public static class ObjectHelper
             : typeof(TType).GetProperties();
         return properties.Select(property => property.Name);
     }
-
-    public static TStruct IfDefault<TStruct>(this TStruct t, in TStruct value, in TStruct defaultValue = default)
-        where TStruct : struct => Equals(t, defaultValue) ? value : t;
-
-    public static TResult Iif<TResult>(this bool booleanExpr, in TResult trueResult, in TResult falseResult)
-        => booleanExpr ? trueResult : falseResult;
 
     public static bool Implements([DisallowNull] in object obj, Type type)
         => obj.GetType()
@@ -512,9 +506,8 @@ public static class ObjectHelper
     /// <typeparam name="T"></typeparam>
     /// <param name="obj">The object.</param>
     /// <returns></returns>
-    [Obsolete("No more is required.")]
-    public static T? ToNullable<T>(this object? obj)
-        => obj is T result ? result : default;
+    public static T? ToNullable<T>(this object? obj) =>
+        obj is T t ? t : default;
 
     /// <summary>
     ///     Converts the string representation of a number to an integer.
@@ -529,7 +522,7 @@ public static class ObjectHelper
     /// </summary>
     /// <param name="obj"> The object. </param>
     /// <returns> </returns>
-    public static Int16 ToShort(this object obj)
+    public static short ToShort(object obj)
         => Convert.ToInt16(obj);
 
     /// <summary>

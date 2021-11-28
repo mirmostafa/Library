@@ -9,7 +9,7 @@ public static class Operations
 
     public static OperationList<TState> AsSequenctial<TState>(this OperationList<TState> operations)
     {
-        operations.IfArgumentNotNull();
+        operations.ArgumentNotNull();
         var seq = operations.Max(x => x.Sequence) ?? 0;
         foreach (var item in operations)
         {
@@ -23,14 +23,14 @@ public static class Operations
 
     public static OperationList<TState> Build<TState>(this OperationList<TState> operations)
     {
-        operations.IfArgumentNotNull();
+        operations.ArgumentNotNull();
         operations.IsBuilt = true;
         return operations;
     }
 
     public static TState Run<TState>(this OperationList<TState> operations)
     {
-        operations.IfArgumentNotNull();
+        operations.ArgumentNotNull();
         Check.Require(operations.IsReadOnly, $"Please call .Build() method in {operations}", $"{operations} is not built yet.");
 
         operations.State = operations.DefaultState;

@@ -172,11 +172,11 @@ public static class EnumerableHelper
         [DisallowNull] in Action<TItem> addToRoots,
         [DisallowNull] Action<TItem, TItem> addChild)
     {
-        getChildren.IfArgumentNotNull();
-        getNewItem.IfArgumentNotNull();
-        addToRoots.IfArgumentNotNull();
-        addChild.IfArgumentNotNull();
-        rootElements.IfArgumentNotNull();
+        getChildren.ArgumentNotNull();
+        getNewItem.ArgumentNotNull();
+        addToRoots.ArgumentNotNull();
+        addChild.ArgumentNotNull();
+        rootElements.ArgumentNotNull();
 
         foreach (var siteMap in rootElements)
         {
@@ -327,8 +327,8 @@ public static class EnumerableHelper
 
     public static IEnumerable<T> GetAll<T>([DisallowNull] Func<IEnumerable<T>> getRootElements, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
     {
-        getRootElements.IfArgumentNotNull();
-        getChildren.IfArgumentNotNull();
+        getRootElements.ArgumentNotNull();
+        getChildren.ArgumentNotNull();
 
         var result = new List<T>();
 
@@ -366,6 +366,10 @@ public static class EnumerableHelper
     }
     public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
         => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
+
+    [return: NotNull]
+    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T> result) =>
+               result is null ? Enumerable.Empty<T>() : result;
 
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
         => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
@@ -434,9 +438,9 @@ public static class EnumerableHelper
         where TKey : notnull
         => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-    public static TList AddFluent<TList, TItem>(this TList list, TItem item)
-        where TList : ICollection<TItem>
-        => list.ArgumentNotNull(nameof(list)).Fluent(() => list.Add(item));
+    //public static TList AddFluent<TList, TItem>(this TList list, TItem item)
+    //    where TList : ICollection<TItem>
+    //    => list.ArgumentNotNull(nameof(list)).Fluent(() => list.Add(item));
 
     public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -459,19 +463,8 @@ public static class EnumerableHelper
     public static async Task<List<TItem>> ToListAsync<TItem>(this IAsyncEnumerable<TItem> items, CancellationToken cancellationToken = default)
         => await New<List<TItem>>().AddRangeAsync(items, cancellationToken);
 
-    public static async Task<TList> AddRangeAsync<TList, TItem>([DisallowNull] this TList list, ConfiguredCancelableAsyncEnumerable<TItem> asyncItems)
-        where TList : notnull, ICollection<TItem>
-    {
-        Check.IfArgumentNotNull(list);
-        await foreach (var item in asyncItems)
-        {
-            list.Add(item);
-        }
-        return list;
-    }
-
     public static async Task<TList> AddRangeAsync<TList, TItem>([DisallowNull] this TList list, IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
-        where TList : notnull, ICollection<TItem>
+        where TList : ICollection<TItem>
     {
         Check.IfArgumentNotNull(list);
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
