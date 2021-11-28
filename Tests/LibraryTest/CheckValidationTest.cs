@@ -48,7 +48,7 @@ public class CheckValidationTest
     public void NotValidTest1()
     {
         var lname = "Mirmostafa";
-        Check.NotValid(lname, x => x is null, () => new NullValueValidationException());
+        Check.IfNotValid(lname, x => x is null, () => new NullValueValidationException());
     }
 
     [TestMethod]
@@ -56,7 +56,7 @@ public class CheckValidationTest
     public void NotValidTest2()
     {
         string? lname = null;
-        Check.NotValid(lname, x => x is null, () => new NullValueValidationException());
+        Check.IfNotValid(lname, x => x is null, () => new NullValueValidationException());
     }
 
     [TestMethod]

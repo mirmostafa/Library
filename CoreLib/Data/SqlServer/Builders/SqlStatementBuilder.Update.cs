@@ -19,13 +19,13 @@ public static partial class SqlStatementBuilder
     }
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, params (string Column, object Value)[] columnsValue)
     {
-        nameof(statement).IfArgumentNotNull(nameof(statement));
+        nameof(statement).ArgumentNotNull(nameof(statement));
         columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value)).Build();
         return statement;
     }
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, IEnumerable<(string Column, object Value)> columnsValue)
     {
-        nameof(statement).IfArgumentNotNull(nameof(statement));
+        nameof(statement).ArgumentNotNull(nameof(statement));
         columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value));
         return statement;
     }
@@ -35,7 +35,7 @@ public static partial class SqlStatementBuilder
 
     public static string Build([DisallowNull] this IUpdateStatement statement, string indent = "    ")
     {
-        statement.TableName.IfNotNull(nameof(statement.TableName));
+        statement.TableName.NotNull(nameof(statement.TableName));
         Check.IfAny(statement.ColumnsValue, nameof(statement.ColumnsValue));
         var result = new StringBuilder($"Update {AddBrackets(statement.TableName)}");
         AddClause($"SET ({statement.ColumnsValue.Select(cv => AddBrackets(cv.Key)).Merge(", ")})", indent, result);

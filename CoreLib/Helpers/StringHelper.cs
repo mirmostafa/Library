@@ -399,7 +399,7 @@ public static class StringHelper
 
     public static string RemoveFromEnd(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
     {
-        str.IfArgumentNotNull(nameof(str));
+        str.ArgumentNotNull(nameof(str));
         return oldValue.IsNullOrEmpty()
             ? str
             : str.EndsWith(oldValue, comparison)
@@ -408,7 +408,7 @@ public static class StringHelper
     }
     public static string RemoveFromStart(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
     {
-        str.IfArgumentNotNull(nameof(str));
+        str.ArgumentNotNull(nameof(str));
         return oldValue.IsNullOrEmpty()
             ? str
             : str.StartsWith(oldValue, comparison) ? str.Slice(oldValue.Length, str.Length - oldValue.Length) : str;
