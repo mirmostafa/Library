@@ -5,6 +5,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
     public int? StatusCode { get; }
     public string? Message { get; set; }
     public virtual bool IsSucceed => this.StatusCode?.ToInt() is 0;
+    public virtual bool IsFailure => !this.IsSucceed;
     public bool Failure => !this.IsSucceed;
     public Dictionary<string, object> Extra { get; } = new();
     public List<(object Id, object Message)> Errors { get; } = new();
@@ -14,6 +15,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     public void Deconstruct(out int? statusCode, out string? message)
         => (statusCode, message) = (this.StatusCode, this.Message);
+
     public override bool Equals(object? obj) => this.Equals(obj as ResultBase);
     public bool Equals(ResultBase? other) => other != null && this.StatusCode == other.StatusCode;
     public override int GetHashCode() => HashCode.Combine(this.StatusCode);

@@ -10,7 +10,7 @@ public class ApiResult : ResultBase, IApiResult
     public override bool IsSucceed => this.StatusCode?.ToInt() is null or >= 200 and < 300;
 
     public HttpStatusCode? HttpStatusCode => HttpStatusCodeHelper.ToHttpStatusCode(this.StatusCode);
-
+        
     public ApiResult(int? statusCode = null, string? message = null)
         : base(statusCode, message) { }
 

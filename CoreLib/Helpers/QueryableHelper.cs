@@ -37,14 +37,12 @@ public static class QueryableHelper
     }
     public static IEnumerable<T> ToEnumerable<T>(this IQueryable<T> query)
     {
-        if (query is null)
+        if (query is not null)
         {
-            yield break;
-        }
-
-        foreach (var item in query)
-        {
-            yield return item;
+            foreach (var item in query)
+            {
+                yield return item;
+            }
         }
     }
 
