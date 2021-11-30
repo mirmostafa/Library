@@ -11,6 +11,4 @@ public static class ClaimHelper
 
     public static Claim New(object claimName) =>
         New(claimName.ArgumentNotNull().ToString()!);
-
-    public void
 }
