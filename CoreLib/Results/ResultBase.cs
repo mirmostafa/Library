@@ -5,7 +5,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
     public int? StatusCode { get; }
     public string? Message { get; set; }
     public virtual bool IsSucceed => this.StatusCode?.ToInt() is 0;
-    public bool Failure => !this.IsSucceed;
+    public bool IsFailure => !this.IsSucceed;
     public Dictionary<string, object> Extra { get; } = new();
     public List<(object Id, object Message)> Errors { get; } = new();
 
