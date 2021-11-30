@@ -9,14 +9,11 @@ public static class LibCrudClaims
     public const string CREATE_CLAIM_TYPE = "CreateClaim";
     public const string UPDATE_CLAIM_TYPE = "UpdateClaim";
     public const string DELETE_CLAIM_TYPE = "DeleteClaim";
-
-    public static readonly string VALID_CLAIM_VALUE = true.ToString();
-    public static readonly string INVALID_CLAIM_VALUE = false.ToString();
-
+        
     public static readonly Claim Read = new(READ_CLAIM_TYPE, true.ToString());
-    public static readonly Claim Create = new(CREATE_CLAIM_TYPE, VALID_CLAIM_VALUE);
-    public static readonly Claim Update = new(UPDATE_CLAIM_TYPE, VALID_CLAIM_VALUE);
-    public static readonly Claim Delete = new(DELETE_CLAIM_TYPE, VALID_CLAIM_VALUE);
+    public static readonly Claim Create = new(CREATE_CLAIM_TYPE, LibClaims.VALID_CLAIM_VALUE);
+    public static readonly Claim Update = new(UPDATE_CLAIM_TYPE, LibClaims.VALID_CLAIM_VALUE);
+    public static readonly Claim Delete = new(DELETE_CLAIM_TYPE, LibClaims.VALID_CLAIM_VALUE);
 
     public static IEnumerable<string> GetClaimTypes()
     {
