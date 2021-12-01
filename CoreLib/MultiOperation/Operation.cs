@@ -10,6 +10,10 @@ public sealed class Operation<TState>
 
 
 
+
+
+
+
     public Operation(Func<(TState State, int Index, int Count), TState> action, int? sequence = null, string? description = null) =>
         (this.Action, this.Sequence, this.Description) = (action, sequence, description);
 }
