@@ -10,10 +10,10 @@ public static class LibCrudClaims
     public const string UPDATE_CLAIM_TYPE = "UpdateClaim";
     public const string DELETE_CLAIM_TYPE = "DeleteClaim";
         
-    public static readonly Claim Read = new(READ_CLAIM_TYPE, LibClaims.VALID_CLAIM_VALUE);
-    public static readonly Claim Create = new(CREATE_CLAIM_TYPE, LibClaims.VALID_CLAIM_VALUE);
-    public static readonly Claim Update = new(UPDATE_CLAIM_TYPE, LibClaims.VALID_CLAIM_VALUE);
-    public static readonly Claim Delete = new(DELETE_CLAIM_TYPE, LibClaims.VALID_CLAIM_VALUE);
+    public static readonly Claim Read = new(READ_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
+    public static readonly Claim Create = new(CREATE_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
+    public static readonly Claim Update = new(UPDATE_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
+    public static readonly Claim Delete = new(DELETE_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
 
     public static IEnumerable<string> GetClaimTypes()
     {
@@ -50,7 +50,7 @@ public static class LibCrudPolicies
     {
         get
         {
-            void configurePolicy(AuthorizationPolicyBuilder policy) => policy.RequireAssertion(context => context.User.IsInRole("Admin") || context.User.IsInRole("SuperAdmin") || LibCrudClaims.GetClaimTypes().All(x => context.User.HasClaim(x, LibClaims.VALID_CLAIM_VALUE)));
+            void configurePolicy(AuthorizationPolicyBuilder policy) => policy.RequireAssertion(context => context.User.IsInRole("Admin") || context.User.IsInRole("SuperAdmin") || LibCrudClaims.GetClaimTypes().All(x => context.User.HasClaim(x, LibClaimDefaultValues.VALID_CLAIM_VALUE)));
             return (ADMIN_OR_FULL_ACCESS_POLICY_NAME, configurePolicy);
         }
     }
