@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Library.Collections;
+using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
 

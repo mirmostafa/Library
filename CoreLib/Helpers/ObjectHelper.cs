@@ -500,6 +500,12 @@ public static class ObjectHelper
     public static T To<T>(this object obj)
         => (T)obj;
 
+    public static T To<T>(this object obj, [DisallowNull] Func<object, T> convert)
+        => convert.ArgumentNotNull().Invoke(obj);
+
+    public static T To<T, U>(this U obj, [DisallowNull] Func<U, T> convert)
+        => convert.ArgumentNotNull().Invoke(obj);
+
     /// <summary>
     /// Converts to nullable.
     /// </summary>

@@ -108,7 +108,7 @@ public static class Check
 
     public static T NotValid<T>(this T obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException) =>
         !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
-    
+
     public static void MustBe([DoesNotReturnIf(false)] bool ok, in Func<Exception> getException)
     {
         if (!ok)
@@ -133,4 +133,10 @@ public static class Check
     public static void MustBeArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName) =>
         MustBe(isNotNull, () => new ArgumentNullException(argName));
 
+    public static T? ThrowIfDisposed<T>(T @this, [DoesNotReturnIf(true)] bool disposed)
+        where T : IDisposable
+    {
+        MustBe(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
+        return @this;
+    }
 }
