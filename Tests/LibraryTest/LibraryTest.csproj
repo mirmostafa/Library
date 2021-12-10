@@ -4,6 +4,7 @@
 		<IsPackable>false</IsPackable>
 		<Configurations>Debug;Release</Configurations>
 		<TargetFramework>net6.0</TargetFramework>
+		<AnalysisLevel>latest</AnalysisLevel>
 	</PropertyGroup>
 
 	<ItemGroup>
