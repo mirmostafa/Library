@@ -10,7 +10,7 @@ using static Library.Helpers.CodeGen.TypeMemberNameHelper;
 namespace Library.Helpers.CodeGen;
 
 [Fluent]
-public static class CodeDomExtension
+public static class CodeDomHelper
 {
     /// <summary>
     /// Uses the name space.
