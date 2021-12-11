@@ -25,7 +25,7 @@ public static class QueryableHelper
     }
 
     public static async Task<List<TResult>> ToListLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock)
-        => await asyncLock.ArgumentNotNull(nameof(asyncLock)).LockAsync(async () => await query.ArgumentNotNull(nameof(query)).ToListAsync());
+        => await asyncLock.ArgumentNotNull(nameof(asyncLock)).LockAsync(async () => await query.ToListAsync());
 
     public static async IAsyncEnumerable<TSource> AsEnumerableAsync<TSource>(this IQueryable<TSource> query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
