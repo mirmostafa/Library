@@ -2,7 +2,6 @@
 
 namespace LibraryTest;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2252:This API requires opting into preview features", Justification = "<Pending>")]
 [TestClass]
 public class SmartEnumTest
 {
@@ -50,7 +49,6 @@ public class SmartEnumTest
     }
 }
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2252:This API requires opting into preview features", Justification = "<Pending>")]
 internal class GenderSmartEnum : SmartEnum<GenderSmartEnum>
 {
     public static readonly GenderSmartEnum None = new(0, "Unknown");

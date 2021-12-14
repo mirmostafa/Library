@@ -1,15 +1,14 @@
-﻿using BenchmarkDotNet.Attributes;
-using System.Threading;
+﻿using System.Threading;
 
 namespace LibraryTest;
 
-[MemoryDiagnoser]
+//[MemoryDiagnoser]
 [TestClass]
 public class StringHelperTest
 {
     private const string text = "There 'a text', inside 'another text'. I want 'to find\" it.";
 
-    [Benchmark]
+    //[Benchmark]
     public void _WasteTimeToWarmUpBenchmark() => Thread.Sleep(3000);
 
     [TestMethod]
