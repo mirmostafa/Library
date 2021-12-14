@@ -1,16 +1,15 @@
 <Project>
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<TargetFramework>net6.0-windows</TargetFramework>
-		<LangVersion>Preview</LangVersion>
-		<AnalysisLevel>latest</AnalysisLevel>
-		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
-		<!--<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>-->
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<!--<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>-->
-		<Nullable>enable</Nullable>
-		<!--<WarningsAsErrors>nullable</WarningsAsErrors>-->
-		<!--<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>-->
-		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <LangVersion>Preview</LangVersion>
+        <AnalysisLevel>latest</AnalysisLevel>
+        <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+        <!--<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>-->
+        <!--<EnableNETAnalyzers>true</EnableNETAnalyzers>-->
+        <!--<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>-->
+        <!--<WarningsAsErrors>nullable</WarningsAsErrors>-->
+        <!--<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>-->
+        <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+        <EnablePreviewFeatures>true</EnablePreviewFeatures>
+    </PropertyGroup>
 </Project>

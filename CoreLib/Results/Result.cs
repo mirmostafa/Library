@@ -2,7 +2,7 @@
 
 namespace Library.Results;
 
-public sealed class Result : ResultBase
+public class Result : ResultBase
 {
     public Result(int? statusCode = null, string? message = null)
         : base(statusCode, message) { }
@@ -16,29 +16,36 @@ public sealed class Result : ResultBase
         new(erroCode, message);
 }
 
-public sealed class Result<TValue> : ResultBase
+public class Result<TValue> : ResultBase
 {
     public TValue Value { get; }
 
-    public Result(TValue value, int? statusCode = null, string? message = null)
-        : base(statusCode, message) => this.Value = value;
+    public Result(in TValue value, in int? statusCode = null, in string? message = null)
+        : base(statusCode, message) =>
+        this.Value = value;
 
     public static Result<TValue?> Fail =>
         CreateFail(-1);
 
-    public static Result<TValue?> CreateFail(int errorCode = -1, string? message = null, TValue? value = default!) =>
+    public static Result<TValue?> CreateFail(in int errorCode = -1, in string? message = null, in TValue? value = default!) =>
         new(value, errorCode, message);
 
     [return: NotNull]
-    public static Result<TValue?> CreateSuccess(TValue value, int errorCode = 0, string? message = null) =>
+    public static Result<TValue?> CreateSuccess(in TValue value, in int errorCode = 0, in string? message = null) =>
         new(value, errorCode, message);
 
-    public static implicit operator TValue(Result<TValue> result) =>
-        result.Value;
+    public bool Equals(Result<TValue?> other) =>
+        other is not null &&
+        (other.StatusCode, other.IsSucceed) == (this.StatusCode, this.IsSucceed) &&
+        (other.Value?.Equals(this.Value) ?? this.Value is null);
 
     public void Deconstruct(out int? StatusCode, out string? Message, out TValue Value) =>
         (StatusCode, Message, Value) = (this.StatusCode, this.Message, this.Value);
-
     public void Deconstruct(out bool isSucceed, out TValue Value) =>
         (isSucceed, Value) = (this.IsSucceed, this.Value);
+
+    public static implicit operator TValue(in Result<TValue> result) =>
+        result.Value;
+    public static implicit operator bool(in Result<TValue> result) =>
+        result.IsSucceed;
 }

@@ -2,7 +2,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Library.Collections;
-using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
 
@@ -530,4 +529,12 @@ public static class EnumerableHelper
         var (succeed, count) = TryCountNotEnumerated(source);
         return succeed ? count : -1;
     }
+
+    public static TryMethodResult<TResult?> GetValue<TResult>(this HashSet<TResult> resultSet, TResult equalValue)
+        where TResult : new()
+    {
+        var tryResult = resultSet.TryGetValue(equalValue, out var actualValue);
+        return new(tryResult, actualValue);
+    }
+
 }
