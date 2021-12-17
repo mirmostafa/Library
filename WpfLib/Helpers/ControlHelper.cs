@@ -426,13 +426,13 @@ public static class ControlHelper
         return false;
     }
 
-    public static T SetProperty<T, TValue>(
-        this T item,
+    public static TViewModel SetProperty<TViewModel, TValue>(
+        this TViewModel item,
         ref TValue field,
         in TValue newValue,
         in Action<string?> invokePropertyChanged,
         [CallerMemberName] in string? propertyName = null)
-        where T : INotifyPropertyChanged
+        where TViewModel : INotifyPropertyChanged
     {
         //if (!Equals(field, newValue))
         {
