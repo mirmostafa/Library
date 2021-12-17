@@ -34,6 +34,10 @@ public static class Check
     public static void IfIs<T>([NotNull] object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!));
 
+    [return: NotNull]
+    public static T Is<T>([NotNull] this object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+        obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!)).To<T>()!;
+
     public static void IfArgumentNotNull([NotNull] in string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
 
@@ -106,7 +110,7 @@ public static class Check
     public static void IfNotNull<T>([NotNull] T? @this, string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
-    public static T NotValid<T>(this T obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException) =>
+    public static T NotValid<T>(this T? obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException) =>
         !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
 
     public static void MustBe([DoesNotReturnIf(false)] bool ok, in Func<Exception> getException)

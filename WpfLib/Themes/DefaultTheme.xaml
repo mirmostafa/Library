@@ -302,7 +302,7 @@
         <Setter Property="Orientation" Value="Horizontal" />
     </Style>
 
-    <!--BasedOn="{StaticResource CommandPanel}"-->
+    <!--  BasedOn="{StaticResource CommandPanel}"  -->
     <Style
         x:Key="PageCommandPanel"
         BasedOn="{StaticResource CommandPanel}"
