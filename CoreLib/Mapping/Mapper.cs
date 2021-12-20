@@ -7,8 +7,8 @@ namespace Library.Mapping;
 [DebuggerStepThrough]
 public sealed class Mapper : IMapper
 {
-    public TDestination Map<TSource, TDestination>(in TSource source, in TDestination destination)
-        where TDestination : class
+    public TDestination? Map<TSource, TDestination>(in TSource source, in TDestination destination)
+        where TDestination : class?
     {
         if (destination == null)
         {
@@ -108,7 +108,8 @@ public sealed class Mapper : IMapper
         return result;
     }
 
-    public TDestination Map<TDestination>(in object source) where TDestination : class, new()
+    public TDestination? Map<TDestination>(in object? source)
+        where TDestination : class?, new()
         => this.Map(source, new TDestination());
 
     ////public TDestination MapExcept<TDestination>(in object source, in Func<TDestination, object> except)

@@ -3,7 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LibraryTest;
 
-internal record struct Person(string Name, int Age);
+internal record struct Person(string Name, DateOnly DateOfBirth, Gender Gender)
+{
+    public int Age => DateTime.Now.Year - this.DateOfBirth.Year;
+
+    public void Desconstruct(out string name, out int age)
+        => (name, age) = (this.Name, this.Age);
+}
 
 internal enum Gender
 {
