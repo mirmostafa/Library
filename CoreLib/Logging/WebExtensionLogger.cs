@@ -30,3 +30,11 @@ public class WebExtensionLogger : Microsoft.Extensions.Logging.ILogger, ILogger<
                             Func<TState, Exception?, string> formatter) =>
          this._mainLogger.Log(formatter.ArgumentNotNull()(state, exception));
 }
+
+public class WebExtensionLogger<TCategoryName> : WebExtensionLogger, Microsoft.Extensions.Logging.ILogger<TCategoryName>
+{
+    public WebExtensionLogger(ILogger mainLogger)
+        : base(mainLogger)
+    {
+    }
+}
