@@ -2,7 +2,7 @@
 
 namespace Library.Wpf.Markers
 {
-    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true, AllowMultiple = false)]
     public sealed class ViewModelAttribute : Attribute
     {
 

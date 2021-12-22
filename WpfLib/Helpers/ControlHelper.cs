@@ -1,12 +1,7 @@
-﻿using Library.Coding;
-using Library.Helpers;
-using Library.Validations;
-using Library.Wpf.Media;
-using System.Collections;
+﻿using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
@@ -17,6 +12,9 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Library.Coding;
+using Library.Validations;
+using Library.Wpf.Media;
 using static Library.Coding.CodeHelper;
 
 namespace Library.Wpf.Helpers;
@@ -50,7 +48,7 @@ public static class ControlHelper
         return itemsControl;
     }
 
-    public static void BindItemsSource<TSelector>(this TSelector selector, IEnumerable items, string? displayMemebrPath = null, int? selectedIndex = null)
+    public static void BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath = null, int? selectedIndex = null)
         where TSelector : Selector
     {
         BindItemsSourceInner(selector, items, displayMemebrPath);
@@ -61,7 +59,7 @@ public static class ControlHelper
         }
     }
 
-    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable items, string? displayMemebrPath, object? selectedItem)
+    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath, object? selectedItem)
         where TSelector : Selector
     {
         BindItemsSourceInner(selector, items, displayMemebrPath);
@@ -474,14 +472,18 @@ public static class ControlHelper
         where TWindow : Window, new()
         => owner.ShowDialog(() => new TWindow(), out window);
 
-    private static void BindItemsSourceInner<TSelector>(TSelector selector, IEnumerable items, string? displayMemebrPath) where TSelector : Selector
+    private static void BindItemsSourceInner<TSelector>(TSelector selector, IEnumerable? items, string? displayMemebrPath)
+        where TSelector : Selector
     {
         Check.IfArgumentNotNull(selector, nameof(selector));
-        //selector.ItemsSource = null;
+
+        selector.ItemsSource = null;
         selector.ItemsSource = items;
         if (displayMemebrPath is not null)
         {
             selector.DisplayMemberPath = displayMemebrPath;
         }
+        //var binding = new Binding { Mode = model, Source = items, Path = new PropertyPath(displayMemebrPath ?? ".") };
+        //BindingOperations.SetBinding(selector, ItemsControl.ItemsSourceProperty, binding);
     }
 }

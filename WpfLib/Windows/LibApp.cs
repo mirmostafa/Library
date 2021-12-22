@@ -11,8 +11,8 @@ public abstract class LibApp : Application
 {
     protected LibApp()
     {
-        SetupServices();
         SetupLogger();
+        SetupServices();
         AppLogger.Debug("Application constructed.");
         return;
 
