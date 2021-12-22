@@ -17,7 +17,8 @@ namespace Library.Wpf.Windows.Controls
             this.Loaded += this.LibPage_LoadedAsync;
         }
 
-        private async void LibPage_LoadedAsync(object sender, RoutedEventArgs e) => await this.BindDataAsync();
+        private async void LibPage_LoadedAsync(object sender, RoutedEventArgs e) => 
+            await this.BindDataAsync();
 
         /// <summary>
         /// Gets the command manager.
