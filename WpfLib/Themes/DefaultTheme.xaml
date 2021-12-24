@@ -414,8 +414,15 @@
     </Style>
 
     <Style TargetType="DataGrid">
-        <Setter Property="AlternatingRowBackground" Value="#FFF4F4F4" />
         <Setter Property="ClipboardCopyMode" Value="IncludeHeader" />
+    </Style>
+
+    <Style
+        x:Key="AlternatingRowDataGrid"
+        BasedOn="{StaticResource {x:Type DataGrid}}"
+        TargetType="DataGrid">
+        <Setter Property="AlternatingRowBackground" Value="{StaticResource AlternatingTableRowColor}" />
+        <Setter Property="AlternationCount" Value="2" />
     </Style>
 
     <Style TargetType="TreeView">

@@ -6,14 +6,14 @@
     <FontFamily x:Key="DefaultHeadingFontName">Segoe UI Semilight</FontFamily>
     <FontFamily x:Key="DefaultHeadingBoldFontName">Segoe UI Semibold</FontFamily>
     <FontFamily x:Key="DefaultFontName">Segoe UI</FontFamily>
+    <FontFamily x:Key="CodingFontName">Fira Code</FontFamily>
     <System:Double x:Key="DefaultFontSize">12</System:Double>
     <System:Double x:Key="DefaultHeadingFontSize">28</System:Double>
     <System:Double x:Key="DefaultLargeHeadingFontSize">52</System:Double>
     <System:Double x:Key="DefaultVeryLargeHeadingFontSize">68</System:Double>
-    <Thickness x:Key="DefaultMargin">2</Thickness>
-    <FontFamily x:Key="CodingFontName">Fira Code</FontFamily>
     <System:Double x:Key="CodingFontSize">12</System:Double>
     <SolidColorBrush x:Key="CodingTextColor" Color="Blue" />
+    <Thickness x:Key="DefaultMargin">2</Thickness>
     <!--
         <FontFamily x:Key="DefaultBodyFontName">Segoe UI</FontFamily>
         <System:Double x:Key="DefaultBodyFontSize">14</System:Double>
