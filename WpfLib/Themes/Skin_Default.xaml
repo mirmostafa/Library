@@ -6,5 +6,6 @@
     <Brush x:Key="AppTitleBlockForeground">Navy</Brush>
     <Brush x:Key="SkinBackground">White</Brush>
     <Brush x:Key="SkinForeground">Black</Brush>
+    <Brush x:Key="AlternatingTableRowColor">LightBlue</Brush>
 
 </ResourceDictionary>

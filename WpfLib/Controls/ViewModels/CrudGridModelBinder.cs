@@ -7,7 +7,7 @@ using Library.Wpf.Markers;
 namespace Library.Wpf.Controls.ViewModels;
 
 [ViewModel]
-public interface ICrudGridViewModel : IViewModel<ICrudGridViewModel>
+public interface ICrudGridModelBinder : IViewModel<ICrudGridModelBinder>
 {
     IEnumerable<DataColumnBindingInfo> GetHeaders();
     IEnumerable GetItems();
@@ -15,26 +15,26 @@ public interface ICrudGridViewModel : IViewModel<ICrudGridViewModel>
     object Update(object item);
     void Delete(object item);
 
-    static ICrudGridViewModel New<TItem>(IEnumerable<TItem> items, IEnumerable<DataColumnBindingInfo> headers)
+    static ICrudGridModelBinder New<TItem>(IEnumerable<TItem> items, IEnumerable<DataColumnBindingInfo> headers)
         where TItem : new() =>
-        new CrudGridViewModel<TItem>(items, headers);
+        new CrudGridModelBinder<TItem>(items, headers);
 
-    static ICrudGridViewModel New<TItem>(IEnumerable<TItem> items, params DataColumnBindingInfo[] headers)
+    static ICrudGridModelBinder New<TItem>(IEnumerable<TItem> items, params DataColumnBindingInfo[] headers)
         where TItem : new() =>
-        new CrudGridViewModel<TItem>(items, headers);
+        new CrudGridModelBinder<TItem>(items, headers);
 }
 
-internal class CrudGridViewModel<TItem> : ICrudGridViewModel
+internal class CrudGridModelBinder<TItem> : ICrudGridModelBinder
     where TItem : new()
 {
     private readonly ObservableCollection<TItem> _items;
     private readonly IEnumerable<DataColumnBindingInfo> _headers;
 
-    public CrudGridViewModel(IEnumerable<TItem> items, IEnumerable<DataColumnBindingInfo> headers)
+    public CrudGridModelBinder(IEnumerable<TItem> items, IEnumerable<DataColumnBindingInfo> headers)
         : this(items, headers.ToArray())
     {
     }
-    public CrudGridViewModel(IEnumerable<TItem> items, params DataColumnBindingInfo[] headers)
+    public CrudGridModelBinder(IEnumerable<TItem> items, params DataColumnBindingInfo[] headers)
     {
         this._items = items is ObservableCollection<TItem> c ? c : new ObservableCollection<TItem>(items);
         this._headers = headers;

@@ -1,6 +1,6 @@
 ﻿namespace Library.Data.Models;
 
-public record struct DataColumnBindingInfo(string? Title, string? BindingPath, DataColumnBindingType DataType = DataColumnBindingType.None)
+public record struct DataColumnBindingInfo(string? Title, string? BindingPath, DataColumnBindingType DataType = DataColumnBindingType.None) : IDataColumnBindingInfo
 {
     public void Deconstruct(out string? title, out string? bindingPath) =>
         (title, bindingPath) = (this.Title, this.BindingPath);

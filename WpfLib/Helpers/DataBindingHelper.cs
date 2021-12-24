@@ -7,13 +7,16 @@ namespace Library.Wpf.Helpers;
 
 public static class DataBindingHelper
 {
-    public static Binding ToBinding(this DataColumnBindingInfo dataColumn)
-        => new(nameof(Tuple<string, string>.Item2));
+    public static Binding ToBinding(this IDataColumnBindingInfo dataColumn)
+        => new(dataColumn.ArgumentNotNull().BindingPath);
 
-    public static DataGridColumn ToDataGridColumn(this DataColumnBindingInfo dataColumn) =>
+    public static DataGridColumn ToDataGridColumn(this IDataColumnBindingInfo dataColumn) =>
         dataColumn.ArgumentNotNull().DataType switch
         {
             DataColumnBindingType.None or DataColumnBindingType.Text or _ =>
                  new DataGridTextColumn { Header = dataColumn.Title, Binding = dataColumn.ToBinding() }
         };
+
+    public static IEnumerable<DataGridColumn> ToDataGridColumn(this IEnumerable<IDataColumnBindingInfo> dataColumns) =>
+            dataColumns.Select(ToDataGridColumn);
 }
