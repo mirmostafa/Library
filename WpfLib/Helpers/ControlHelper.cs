@@ -13,6 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Library.Coding;
+using Library.Data.Models;
 using Library.Validations;
 using Library.Wpf.Media;
 using static Library.Coding.CodeHelper;
@@ -31,7 +32,7 @@ public static class ControlHelper
         return itemsControl;
     }
 
-    public static TItemsControl BindItems<TItemsControl>(this TItemsControl itemsControl, IEnumerable items)
+    public static TItemsControl BindItems<TItemsControl>(this TItemsControl itemsControl, IEnumerable? items)
         where TItemsControl : ItemsControl
     {
         Check.IfArgumentNotNull(itemsControl, nameof(itemsControl));
@@ -48,7 +49,7 @@ public static class ControlHelper
         return itemsControl;
     }
 
-    public static void BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath = null, int? selectedIndex = null)
+    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath = null, int? selectedIndex = null)
         where TSelector : Selector
     {
         BindItemsSourceInner(selector, items, displayMemebrPath);
@@ -57,6 +58,7 @@ public static class ControlHelper
         {
             selector.SelectedIndex = selectedIndex.Value;
         }
+        return selector;
     }
 
     public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath, object? selectedItem)
@@ -485,5 +487,12 @@ public static class ControlHelper
         }
         //var binding = new Binding { Mode = model, Source = items, Path = new PropertyPath(displayMemebrPath ?? ".") };
         //BindingOperations.SetBinding(selector, ItemsControl.ItemsSourceProperty, binding);
+    }
+
+    public static DataGrid AddColumns(this DataGrid dataGrid, IEnumerable<IDataColumnBindingInfo> dataColumns)
+    {
+        Check.IfArgumentNotNull(dataGrid);
+        dataColumns.ToDataGridColumn().ForEach(dataGrid.Columns.Add).Build();
+        return dataGrid;
     }
 }
