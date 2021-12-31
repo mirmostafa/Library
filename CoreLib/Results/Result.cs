@@ -25,13 +25,13 @@ public class Result<TValue> : ResultBase
         this.Value = value;
 
     public static Result<TValue?> Fail =>
-        CreateFail(-1);
+        CreateFail(errorCode: -1);
 
-    public static Result<TValue?> CreateFail(in int errorCode = -1, in string? message = null, in TValue? value = default!) =>
+    public static Result<TValue> CreateFail(in string? message = null, in TValue value = default, in int errorCode = -1) =>
         new(value, errorCode, message);
 
     [return: NotNull]
-    public static Result<TValue?> CreateSuccess(in TValue value, in int errorCode = 0, in string? message = null) =>
+    public static Result<TValue?> CreateSuccess(in TValue value, in string? message = null, in int errorCode = 0) =>
         new(value, errorCode, message);
 
     public bool Equals(Result<TValue?> other) =>
