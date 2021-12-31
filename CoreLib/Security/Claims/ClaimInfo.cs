@@ -6,9 +6,8 @@ namespace Library.Security.Claims;
 
 public readonly record struct ClaimInfo([DisallowNull] in string Type, in string? Value) : IEquatable<ClaimInfo>, IEquatable<Claim>
 {
-    public void Deconstruct(out string type, out string? value)
-        => (type, value) = (this.Type, this.Value);
-
+    public void Deconstruct(out string type, out string? value) => 
+        (type, value) = (this.Type, this.Value);
     public static implicit operator (string Type, string? Value)(ClaimInfo claim) =>
         (claim.Type, claim.Value);
 
@@ -33,7 +32,7 @@ public readonly record struct ClaimInfo([DisallowNull] in string Type, in string
     public static string FormatString((string Type, string? Value) claim) =>
         $"{claim.Type}:'{claim.Value}'";
 
-    public static ClaimInfo ToClaimInfo(in Claim claim) =>
+    public static ClaimInfo FromClaim(in Claim claim) =>
         new(claim.ArgumentNotNull().Type, claim.Value);
     public Claim ToClaim() =>
         new(this.Type, this.Value ?? string.Empty);
