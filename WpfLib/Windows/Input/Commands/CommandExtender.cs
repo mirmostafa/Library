@@ -1,13 +1,10 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Library.Exceptions.Validations;
-using Library.Helpers;
 using Library.Validations;
 
 namespace Library.Wpf.Windows.Input.Commands
 {
-    public sealed class CommandExtender : IEquatable<RoutedUICommand>, IEquatable<CommandExtender>, ICommand
+    public sealed class CommandExtender : IEquatable<RoutedUICommand>, IEquatable<CommandExtender>, ILibCommand
     {
         private bool _IsEnabled;
 
@@ -21,12 +18,13 @@ namespace Library.Wpf.Windows.Input.Commands
             this.IsEnabled = this.Command.CanExecute(null, null);
             this.Command.CanExecuteChanged += this.Command_CanExecuteChanged;
         }
-                
+
         public RoutedUICommand Command { get; }
         public CommandBinding CommandBinding { get; }
         public bool IsEnabled
         {
-            get => this._IsEnabled; set => this._IsEnabled = value;//_ = this.Command.
+            get => this._IsEnabled;
+            set => this._IsEnabled = value;//_ = this.Command.
         }
         public string Text { get => this.Command.Text; set => this.Command.Text = value; }
 

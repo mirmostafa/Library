@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="clr-namespace:Library.Wpf.Windows.Behaviors"
     xmlns:libConverters="clr-namespace:Library.Wpf.Converters"
-    Title="Connection Settings"    
     x:Name="Me"
+    Title="Connection Settings"
     Width="451"
     Height="544"
     Background="White"
@@ -13,8 +13,8 @@
     ResizeMode="NoResize"
     ShowInTaskbar="False">
     <Window.Resources>
-        <Style TargetType="{x:Type TextBox}"/>
-        <Style TargetType="{x:Type ComboBox}"/>
+        <Style TargetType="{x:Type TextBox}" />
+        <Style TargetType="{x:Type ComboBox}" />
         <libConverters:BooleanInverterConverter x:Key="BooleanInverterConverter" />
     </Window.Resources>
     <Grid Margin="10">
@@ -34,13 +34,15 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Style="{StaticResource FieldPanel}">
                 <TextBlock Text="Server name:" />
-                <ComboBox Name="ServersComboBox" 
+                <ComboBox
+                    Name="ServersComboBox"
                     DropDownOpened="ServersComboBox_OnDropDownOpened"
-                    Style="{StaticResource LongComboBox}"
-                    IsEditable="True" />
-                <Button Name="RefreshButton"
+                    IsEditable="True"
+                    Style="{StaticResource LongComboBox}" />
+                <Button
+                    Name="RefreshButton"
                     Click="RefreshButton_OnClick"
-                    Content="_Refresh"/>
+                    Content="_Refresh" />
             </StackPanel>
             <GroupBox Grid.Row="1" Header="Log on to the server">
                 <Grid Margin="0,10">
@@ -119,10 +121,11 @@
                     </StackPanel>
                 </Grid>
             </GroupBox>
-            <GroupBox IsEnabled="{Binding ElementName=Me, Path=IsWorking}"
+            <GroupBox
                 Name="SelectDbGroupBox"
                 Grid.Row="4"
-                Header="Connect to a database">
+                Header="Connect to a database"
+                IsEnabled="{Binding ElementName=Me, Path=IsWorking}">
                 <DockPanel>
                     <Grid Margin="0,10">
                         <Grid.ColumnDefinitions>
@@ -159,27 +162,28 @@
         </Grid>
         <DockPanel Grid.Row="1" LastChildFill="False">
             <Button
-                IsEnabled="{Binding ElementName=Me, Path=IsWorking, Converter={StaticResource BooleanInverterConverter}}"
                 Name="TestConnectionButton"
                 Width="120"
                 Margin="2"
                 Click="TestConnectionButton_OnClick"
                 Content="_Test Connection"
-                DockPanel.Dock="Left" />
+                DockPanel.Dock="Left"
+                IsEnabled="{Binding ElementName=Me, Path=IsWorking, Converter={StaticResource BooleanInverterConverter}}" />
             <Button
                 Width="75"
                 Margin="2"
                 Content="Cancel"
                 DockPanel.Dock="Right"
                 IsCancel="True" />
-            <Button IsEnabled="{Binding ElementName=Me, Path=IsWorking}"
+            <Button
                 Name="OkButton"
                 Width="75"
                 Margin="2"
                 Click="OkButton_OnClick"
                 Content="OK"
                 DockPanel.Dock="Right"
-                IsDefault="True" />
+                IsDefault="True"
+                IsEnabled="{Binding ElementName=Me, Path=IsWorking}" />
         </DockPanel>
     </Grid>
 </Window>

@@ -20,6 +20,7 @@
     -->
 
     <Thickness x:Key="Indent1">10,2,5,2</Thickness>
+    <Thickness x:Key="Indent15">15,2,5,2</Thickness>
     <Thickness x:Key="Indent2">20,2,5,2</Thickness>
     <Thickness x:Key="Indent3">30,2,5,2</Thickness>
     <Thickness x:Key="Indent4">40,2,5,2</Thickness>
