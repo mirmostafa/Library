@@ -7,7 +7,7 @@ namespace Library.Collections;
 
 [Fluent]
 [Immutable]
-public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>//, IImmutableList<TItem>
+public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     where TList : FluentListBase<TItem, TList>
 {
     private readonly IList<TItem> _list;

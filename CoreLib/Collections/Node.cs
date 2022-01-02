@@ -8,24 +8,28 @@ namespace Library.Collections;
 [Fluent]
 public class Node<T>
 {
-    public static readonly Node<T?> Empty = new(default);
+    public static readonly Node<T?> Empty = new(default, null);
 
     private Node<T>? _parent;
 
     public Node() { }
 
-    public Node(in T value)
+    public Node(in T value, in string? display = null)
         : this()
-        => this.Value = value;
+    {
+        this.Value = value;
+        this.Display = display;
+    }
 
     public T Value { get; init; }
+    public string? Display { get; init; }
     public Node<T>? Parent { get => this._parent; init => this._parent = value; }
     protected FluentList<Node<T>> Childs { get; } = new();
     public IEnumerable<T> ChildValues => this.Children.Select(x => x.To<T>());
     public IEnumerable<Node<T>> Children => this.Childs.ToEnumerable();
 
-    public Node<T> AddChild(in T value)
-        => this.AddChild(ToNode(value));
+    public Node<T> AddChild(in T value, string? display = null)
+        => this.AddChild(ToNode(value, display));
 
     public Node<T> AddChild([DisallowNull] Node<T> node)
     {
@@ -41,13 +45,13 @@ public class Node<T>
 
         foreach (var value in values)
         {
-            this.AddChild(value);
+            this.AddChild(value, this.Display);
         }
         return this;
     }
 
     public override string ToString()
-        => this.Value?.ToString() ?? "Empty Value!";
+        => this.Display ?? this.Value?.ToString() ?? "Empty Value!";
 
     public static implicit operator T?(Node<T> node)
         => node is null ? default : node.Value;
@@ -80,16 +84,16 @@ public class Node<T>
     public T ToType()
         => this.Value;
 
-    public static Node<T> ToNode(T t)
-        => new(t);
+    public static Node<T> ToNode(T t, string? display = null)
+        => new(t, display);
 
-    public Node<T> WithParent(Node<T> parent)
+    public Node<T> WithParent(Node<T> parent, string? display = null)
     {
-        var result = new Node<T>(this.Value) { Parent = parent };
+        var result = new Node<T>(this.Value, display ?? this.Display) { Parent = parent };
         result.Childs.AddRange(this.Childs);
         return result;
     }
 
-    public Node<T> WithParent(T parent) => 
-        this.WithParent(new(parent));
+    public Node<T> WithParent(T parent, string? display = null) =>
+        this.WithParent(new(parent, display), display);
 }
