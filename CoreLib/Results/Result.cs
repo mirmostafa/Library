@@ -7,13 +7,13 @@ public class Result : ResultBase
     public Result(int? statusCode = null, string? message = null)
         : base(statusCode, message) { }
 
-    public static Result Success => new();
-    public static Result Fail => CreateFail(-1);
+    public static Result Success => CreateSuccess();
+    public static Result Fail => CreateFail();
 
-    public static Result CreateFail(int erroCode = -1, string? message = null) =>
-        new(erroCode, message);
+    public static Result CreateFail(string? message = null, int erroCode = -1) =>
+        new(erroCode, message) { IsSucceed = false };
     public static Result CreateSuccess(int erroCode = 0, string? message = null) =>
-        new(erroCode, message);
+        new(erroCode, message) { IsSucceed = true };
 }
 
 public class Result<TValue> : ResultBase
@@ -27,7 +27,8 @@ public class Result<TValue> : ResultBase
     public static Result<TValue?> Fail =>
         CreateFail(errorCode: -1);
 
-    public static Result<TValue> CreateFail(in string? message = null, in TValue value = default, in int errorCode = -1) =>
+    [return: NotNull]
+    public static Result<TValue?> CreateFail(in string? message = null, in TValue? value = default, in int errorCode = -1) =>
         new(value, errorCode, message);
 
     [return: NotNull]

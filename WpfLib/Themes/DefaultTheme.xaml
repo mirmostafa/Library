@@ -168,27 +168,17 @@
         <Setter Property="FontFamily" Value="{StaticResource DefaultHeadingFontName}" />
         <Setter Property="Foreground" Value="{StaticResource HeadingTextBlockFoegound}" />
     </Style>
-
+    <Style
+        x:Key="ErrorMessageTextBlock"
+        BasedOn="{StaticResource NormalTextBlock}"
+        TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource HighlightBlockForeground}" />
+    </Style>
     <Style
         x:Key="Heading1"
         BasedOn="{StaticResource Heading}"
         TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource DefaultHeadingFontSize}" />
-    </Style>
-
-    <Style
-        x:Key="Heading1Colored"
-        BasedOn="{StaticResource Heading1}"
-        TargetType="TextBlock">
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush>
-                    <GradientStop Offset="0" Color="RoyalBlue" />
-                    <GradientStop Offset="1" Color="SkyBlue" />
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Foreground" Value="GraySmoke" />
     </Style>
 
     <Style
@@ -379,7 +369,8 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="HorizontalAlignment" Value="Right" />
         <Setter Property="Foreground" Value="{StaticResource AppTitleBlockForeground}" />
-        <Setter Property="Margin" Value="0,-15,5,0" />
+        <!--<Setter Property="Margin" Value="0,-15,5,0" />-->
+        <Setter Property="Margin" Value="10" />
     </Style>
 
     <Style x:Key="ControlClientGrid" TargetType="Grid">
