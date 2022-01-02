@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.ComponentModel;
+using System.Windows.Controls;
 using Library.Validations;
 
 namespace Library.Wpf.Dialogs;
@@ -20,9 +21,14 @@ internal partial class UserControlDialogBox : Window
         get => (UserControl)this.GetValue(UserControlProperty);
         set => this.SetValue(UserControlProperty, value);
     }
-    public static readonly DependencyProperty UserControlProperty = ControlHelper.GetDependencyProperty<UserControl?, UserControlDialogBox>(
-        nameof(UserControl));//, onPropertyChanged: (s, e) => { s.Width = s.UserControl?.Width ?? s.Width; });
-
+    public static readonly DependencyProperty UserControlProperty = ControlHelper.GetDependencyProperty<UserControl?, UserControlDialogBox>(nameof(UserControl),
+        onPropertyChanged: (s, _) =>
+        {
+            if (s.UserControl is INotifyPropertyChanged x)
+            {
+                x.PropertyChanged += (_, _) => s.ValidationErrorText = null;
+            }
+        });
     public bool IsOkEnabled
     {
         get => (bool)this.GetValue(IsOkEnabledProperty);
@@ -44,6 +50,13 @@ internal partial class UserControlDialogBox : Window
     }
     public static readonly DependencyProperty PromptProperty = ControlHelper.GetDependencyProperty<string?, UserControlDialogBox>(nameof(Prompt));
 
+    public string? ValidationErrorText
+    {
+        get => (string?)this.GetValue(ValidationErrorTextProperty);
+        set => this.SetValue(ValidationErrorTextProperty, value);
+    }
+    public static readonly DependencyProperty ValidationErrorTextProperty = ControlHelper.GetDependencyProperty<string?, UserControlDialogBox>(nameof(ValidationErrorText));
+
     public UserControlDialogBox() =>
         this.InitializeComponent();
 
@@ -59,6 +72,10 @@ internal partial class UserControlDialogBox : Window
         {
             this.DialogResult = true;
             this.Close();
+        }
+        else
+        {
+            this.ValidationErrorText = validationResult?.Message;
         }
     }
 }

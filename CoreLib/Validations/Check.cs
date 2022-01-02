@@ -14,12 +14,7 @@ public static class Check
     {
         if (arg <= min)
         {
-            Throw(new ArgumentException(string.Format(
-                CultureInfo.CurrentCulture,
-                "The argument {0}(:'{1}') cannot be lass than {2}",
-                argName,
-                arg,
-                min)));
+            Throw(new ArgumentException(string.Format(CultureInfo.CurrentCulture, "The argument {0}(:'{1}') cannot be lass than {2}", argName, arg, min)));
         }
     }
 
