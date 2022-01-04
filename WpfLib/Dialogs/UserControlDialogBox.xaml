@@ -23,24 +23,29 @@
             <RowDefinition Height="Auto" ToolTip="Separator" />
             <RowDefinition Height="*" ToolTip="User Control" />
             <RowDefinition Height="Auto" ToolTip="Separator" />
+            <RowDefinition Height="Auto" ToolTip="ValidationErrors" />
             <RowDefinition Height="Auto" ToolTip="Command Bar" />
         </Grid.RowDefinitions>
         <TextBlock
             Grid.Row="0"
-            Margin="10"
             d:Text="Adds a key/value to the activation arguments that will be returned when the toast notification or its buttons are clicked."
-            Style="{StaticResource HighlightBlock}"
+            Style="{StaticResource PageDescriptionBlock}"
             Text="{Binding ElementName=Me, Path=Prompt}"
             TextWrapping="WrapWithOverflow" />
         <Separator Grid.Row="1" Margin="10" />
         <ContentPresenter Grid.Row="2" Content="{Binding ElementName=Me, Path=UserControl}" />
         <Separator Grid.Row="3" />
-        <StackPanel Grid.Row="4" Style="{StaticResource PageCommandPanel}">
+        <TextBlock
+            Grid.Row="4"
+            d:Text="Error Message"
+            Style="{StaticResource ErrorMessageTextBlock}"
+            Text="{Binding ValidationErrorText, ElementName=Me}" />
+        <StackPanel Grid.Row="5" Style="{StaticResource PageCommandPanel}">
             <Button
                 Name="OkButton"
+                Click="OkButton_Click"
                 Content="OK"
                 IsDefault="True"
-                Click="OkButton_Click"
                 IsEnabled="{Binding ElementName=Me, Path=IsOkEnabled}" />
             <Button
                 Name="CancelButton"

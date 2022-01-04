@@ -3,7 +3,7 @@ public interface IService
 {
 }
 
-public interface IReadAsyncService<TViewModel> : IService
+public interface IReadAsyncService<TViewModel, in TId> : IService
 {
     /// <summary>
     /// Gets all db entities asynchronously.
@@ -16,10 +16,12 @@ public interface IReadAsyncService<TViewModel> : IService
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    Task<TViewModel?> GetByIdAsync(long id);
+    Task<TViewModel?> GetByIdAsync(TId id);
 }
 
-public interface IReadAsyncPagingService<TViewModel> : IService
+public interface IReadAsyncService<TViewModel> : IReadAsyncService<TViewModel, long> { }
+
+public interface IReadAsyncPagingService<TViewModel, in TId> : IService
 {
     /// <summary>
     /// Gets all db entities asynchronously.
@@ -32,24 +34,25 @@ public interface IReadAsyncPagingService<TViewModel> : IService
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    Task<TViewModel?> GetByIdAsync(long id);
+    Task<TViewModel?> GetByIdAsync(TId id);
 }
+public interface IReadAsyncPagingService<TViewModel> : IReadAsyncPagingService<TViewModel, long> { }
 
-public interface IWriteAsyncService<in TViewModel> : IService
+public interface IWriteAsyncService<in TViewModel, TId> : IService
 {
     /// <summary>
     /// Deletes an entity asynchronously.
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    Task<bool> DeleteAsync(long id, bool persist = true);
+    Task<bool> DeleteAsync(TId id, bool persist = true);
 
     /// <summary>
     /// Inserts an entity asynchronously.
     /// </summary>
     /// <param name="model">The model.</param>
     /// <returns></returns>
-    Task<long> InsertAsync(TViewModel model, bool persist = true);
+    Task<TId> InsertAsync(TViewModel model, bool persist = true);
 
     /// <summary>
     /// Updates an entity asynchronously.
@@ -57,23 +60,29 @@ public interface IWriteAsyncService<in TViewModel> : IService
     /// <param name="id">The identifier.</param>
     /// <param name="model">The model.</param>
     /// <returns></returns>
-    Task<long> UpdateAsync(long id, TViewModel model, bool persist = true);
+    Task<TId> UpdateAsync(TId id, TViewModel model, bool persist = true);
 }
 
-public interface IAsyncValidatable<in TViewModel>
+public interface IWriteAsyncService<in TViewModel> : IWriteAsyncService<TViewModel, long> { }
+
+public interface IAsyncValidatable<in TViewModel, TId>
 {
     Task ValidateAsync(TViewModel model);
 }
+
+public interface IAsyncValidatable<in TViewModel> : IAsyncValidatable<TViewModel, long> { }
 
 public interface IValidatable<in TViewModel>
 {
     void Validate(TViewModel model);
 }
 
-public interface IAsyncViewModelCrudService<TViewModel>
-    : IService, IReadAsyncService<TViewModel>, IWriteAsyncService<TViewModel>, IAsyncValidatable<TViewModel>
+public interface IAsyncViewModelCrudService<TViewModel, TId>
+    : IService, IReadAsyncService<TViewModel, TId>, IWriteAsyncService<TViewModel, TId>, IAsyncValidatable<TViewModel, TId>
 {
 }
+
+public interface IAsyncViewModelCrudService<TViewModel> : IAsyncViewModelCrudService<TViewModel, long> { }
 
 public interface ILazySaveService : IService
 {

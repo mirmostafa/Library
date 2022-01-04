@@ -259,7 +259,7 @@ public static class CodeHelper
     public static T Throw<T>(Exception exception) =>
         throw exception;
 
-    [DoesNotReturn()]
+    [DoesNotReturn]
     public static void Throw(Exception exception) =>
         throw exception;
 

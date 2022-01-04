@@ -35,17 +35,17 @@ public static class EnumerableHelper
         yield return item;
     }
 
-    public static void AddRange<T>([DisallowNull] this ICollection<T> collection, params T[] newItems)
-    {
-        Check.IfArgumentNotNull(collection);
-        if (newItems?.Any() is true)
-        {
-            foreach (var item in newItems)
-            {
-                collection.Add(item);
-            }
-        }
-    }
+    //public static void AddRange<T>([DisallowNull] this ICollection<T> collection, params T[] newItems)
+    //{
+    //    Check.IfArgumentNotNull(collection);
+    //    if (newItems?.Any() is true)
+    //    {
+    //        foreach (var item in newItems)
+    //        {
+    //            collection.Add(item);
+    //        }
+    //    }
+    //}
 
     public static IList<T> AddRange<T>([DisallowNull] this IList<T> list, in IEnumerable<T> items)
     {
@@ -57,12 +57,9 @@ public static class EnumerableHelper
                 list.Add(item);
             }
         }
-
-        return list!;
+        return list;
     }
-
-    public static TList AddRange<TList, TItem>([DisallowNull] this TList list, in IEnumerable<TItem> items)
-        where TList : notnull, ICollection<TItem>
+    public static ICollection<T> AddRange<T>([DisallowNull] this ICollection<T> list, in IEnumerable<T> items)
     {
         Check.IfArgumentNotNull(list);
         if (items?.Any() is true)
@@ -72,12 +69,10 @@ public static class EnumerableHelper
                 list.Add(item);
             }
         }
-
-        return list!;
+        return list;
     }
-
-    public static TList AddRange<TList, TItem>([DisallowNull] this TList list, params TItem[] items)
-        where TList : notnull, ICollection<TItem>
+    public static void AddRange<TFluentList, TItem>([DisallowNull] this IFluentList<TFluentList, TItem> list, IEnumerable<TItem>? items)
+        where TFluentList : IFluentList<TFluentList, TItem>
     {
         Check.IfArgumentNotNull(list);
         if (items?.Any() is true)
@@ -87,9 +82,21 @@ public static class EnumerableHelper
                 list.Add(item);
             }
         }
-
-        return list!;
     }
+
+    //public static IList AddRange<TItem>([DisallowNull] this IList list, in IEnumerable<TItem> items)
+    //{
+    //    Check.IfArgumentNotNull(list);
+    //    if (items?.Any() is true)
+    //    {
+    //        foreach (var item in items)
+    //        {
+    //            list.Add(item);
+    //        }
+    //    }
+
+    //    return list!;
+    //}
 
     public static IEnumerable<T> AddRangeImmuted<T>(this IEnumerable<T>? source, IEnumerable<T>? items)
     {
@@ -152,7 +159,8 @@ public static class EnumerableHelper
         yield return item;
     }
 
-    public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items) => new List<T>(items).AsReadOnly();
+    public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items) =>
+        new List<T>(items).AsReadOnly();
 
     /// <summary>
     ///     Builds a tree.
@@ -226,34 +234,19 @@ public static class EnumerableHelper
         return collection;
     }
 
-    public static T ClearAndAddRange<T>(this T collection, [DisallowNull] in IEnumerable items)
-        where T : notnull, IList
-    {
-        Check.IfArgumentNotNull(items);
-
-        collection.Clear();
-        return AddRange(collection, items);
-    }
-
-    public static TList ClearAndAddRange<TList, TItem>(this TList list, [DisallowNull] in IEnumerable<TItem> items)
-        where TList : notnull, ICollection<TItem>
+    public static ICollection<TItem> ClearAndAddRange<TItem>(this ICollection<TItem> list, [DisallowNull] in IEnumerable<TItem> items)
     {
         Check.IfArgumentNotNull(items);
 
         list.Clear();
-        return list.AddRange(items);
-    }
-
-    public static T AddRange<T>(T collection, [DisallowNull] IEnumerable items)
-        where T : IList
-    {
-        Check.IfArgumentNotNull(items);
         foreach (var item in items)
         {
-            _ = collection.Add(item);
+            list.Add(item);
         }
-        return collection;
+        return list;
     }
+
+    //public 
 
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
         where TSource : class
@@ -461,10 +454,13 @@ public static class EnumerableHelper
     }
 
     public static async Task<List<TItem>> ToListAsync<TItem>(this IAsyncEnumerable<TItem> items, CancellationToken cancellationToken = default)
-        => await New<List<TItem>>().AddRangeAsync(items, cancellationToken);
+    {
+        var result = New<List<TItem>>();
+        await result.AddRangeAsync(items, cancellationToken);
+        return result;
+    }
 
-    public static async Task<TList> AddRangeAsync<TList, TItem>([DisallowNull] this TList list, IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
-        where TList : ICollection<TItem>
+    public static async Task<ICollection<TItem>> AddRangeAsync<TItem>([DisallowNull] this ICollection<TItem> list, IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
         Check.IfArgumentNotNull(list);
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
@@ -498,19 +494,6 @@ public static class EnumerableHelper
     public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
         => source.ArgumentNotNull(nameof(source)).Where(x => !exclude(x));
 
-    public static TFluentList AddRange<TFluentList, TItem>([DisallowNull] this TFluentList list, IEnumerable<TItem>? items)
-        where TFluentList : IFluentList<TFluentList, TItem>
-    {
-        Check.IfArgumentNotNull(list);
-        if (items?.Any() is true)
-        {
-            foreach (var item in items)
-            {
-                list.Add(item);
-            }
-        }
-        return list;
-    }
 
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
         => source?.Select(x => x) ?? Enumerable.Empty<T>();
