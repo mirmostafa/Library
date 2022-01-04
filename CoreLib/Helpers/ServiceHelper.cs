@@ -5,7 +5,7 @@ using Library.Validations;
 namespace Library.Helpers;
 public static class ServiceHelper
 {
-    public static async Task<long> SaveAsync<TViewModel>(this IWriteAsyncService<TViewModel> service, TViewModel? model, bool persist = true)
+    public static async Task<long> SaveAsync<TViewModel>(this IWriteAsyncService<TViewModel, long> service, TViewModel? model, bool persist = true)
         where TViewModel : ICanSetKey<long?>
     {
         Check.IfArgumentNotNull(service);

@@ -1,16 +1,18 @@
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Runtime.Serialization;
 using Library.Globalization.DataTypes;
 using Library.Results;
 using Library.Validations;
-using System.Diagnostics;
-using System.Globalization;
-using System.Runtime.Serialization;
 
 namespace Library.Globalization;
+
+// Created: 85/5/4
 [Serializable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-// Created: 85/5/4
 public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime>, IEquatable<PersianDateTime>,
-        IConvertible, ISerializable
+        IConvertible, ISerializable, IComparable, IComparable<DateTime>, IEquatable<DateTime>, ISpanFormattable, IFormattable
 {
     #region Fields
 
@@ -48,13 +50,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// <param name="minute"> The minute. </param>
     /// <param name="second"> The second. </param>
     /// <param name="millisecond"> </param>
-    public PersianDateTime(in int year,
-        in int month,
-        in int day,
-        in int hour,
-        in int minute,
-        in int second,
-        in double millisecond)
+    public PersianDateTime(in int year, in int month, in int day, in int hour, in int minute, in int second, in double millisecond)
     {
         this.Data = new PersianDateTimeData
         {
@@ -74,7 +70,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
 
     private PersianDateTime(in SerializationInfo info, in StreamingContext context)
     {
-        Check.IfArgumentNotNull(info, nameof(info));
+        Check.IfArgumentNotNull(info);
 
         this.Data = (PersianDateTimeData)info.GetValue("Data", typeof(PersianDateTimeData))!;
         this.IsInitiated = true;
@@ -142,6 +138,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     public static string TimeSeparator { get; set; } = CultureConstants.TIME_SEPARATOR;
 
     public static string ToStringFormat { get; set; } = CultureConstants.DEFAULT_DATE_TIME_PATTERN;
+    public bool IsInitiated { get; }
 
     /// <summary>
     ///     Gets the day.
@@ -166,8 +163,6 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// </summary>
     /// <value> The hour. </value>
     public int Hour => this.Data.Hour;
-
-    public bool IsInitiated { get; }
 
     public double Millisecond => this.Data.Millisecond;
 
@@ -278,14 +273,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     }
 
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-    private string? DebuggerDisplay
-    {
-        get
-        {
-            var self = this;
-            return self.ToString();
-        }
-    }
+    private string? DebuggerDisplay => this.ToString();
 
     /// <summary>
     ///     Compares the specified persian date time1.
@@ -311,14 +299,16 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         return p1.CompareTo(p2);
     }
 
-    public static bool IsPersianDateTime(in string s) => TryParsePersian(s, out _);
+    public static bool IsPersianDateTime(in string s) =>
+        TryParsePersian(s).IsSucceed;
 
     /// <summary>
     ///     Parses the date time.
     /// </summary>
     /// <param name="dateTime"> The date time. </param>
     /// <returns> </returns>
-    public static PersianDateTime ParseDateTime(in DateTime dateTime) => new(dateTime);
+    public static PersianDateTime ParseDateTime(in DateTime dateTime) =>
+        new(dateTime);
 
     /// <summary>
     ///     Parses the english string datetime.
@@ -327,7 +317,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// <returns> </returns>
     public static PersianDateTime ParseEnglish(in string dateTimeString)
     {
-        Check.IfArgumentNotNull(dateTimeString, nameof(dateTimeString));
+        Check.IfArgumentNotNull(dateTimeString);
         return DateTime.Parse(dateTimeString, CultureInfo.CurrentCulture).ToPersianDateTime();
     }
 
@@ -343,7 +333,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// </exception>
     public static PersianDateTime ParsePersian(in string dateTimeString)
     {
-        Check.IfArgumentNotNull(dateTimeString, nameof(dateTimeString));
+        Check.IfArgumentNotNull(dateTimeString);
 
         var indexOfSpace = dateTimeString.IndexOf(" ", StringComparison.Ordinal);
         var hasDate = dateTimeString.IndexOf(DateSeparator, StringComparison.Ordinal) > 0;
@@ -352,15 +342,14 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
 
         if (hasDate)
         {
-            var datePart = hasTime ? dateTimeString.Substring(0, indexOfSpace) : dateTimeString;
+            var datePart = hasTime ? dateTimeString[..indexOfSpace] : dateTimeString;
             if (int.TryParse(datePart.AsSpan(0, datePart.IndexOf(DateSeparator, StringComparison.Ordinal)), out year) is false)
             {
                 throw new ArgumentException("not valid date", nameof(dateTimeString));
             }
 
             datePart = datePart.Remove(0, datePart.IndexOf(DateSeparator, StringComparison.Ordinal) + 1);
-            if (int.TryParse(datePart.AsSpan(0, datePart.IndexOf(DateSeparator, StringComparison.Ordinal)),
-                out month) is false)
+            if (int.TryParse(datePart.AsSpan(0, datePart.IndexOf(DateSeparator, StringComparison.Ordinal)), out month) is false)
             {
                 throw new ArgumentException("not valid date", nameof(dateTimeString));
             }
@@ -419,9 +408,6 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     public static string ToPersian(in DateTime dateTime)
         => new PersianDateTime(dateTime).ToString()!;
 
-    public static TryMethodResult<PersianDateTime> TryParsePersian(in string str)
-        => new(TryParsePersian(str, out var result), result);
-
     /// <summary>
     ///     Tries to parse a string to PersianDateTime.
     /// </summary>
@@ -441,6 +427,9 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
             return false;
         }
     }
+    public static TryMethodResult<PersianDateTime> TryParsePersian(in string str) =>
+        new(TryParsePersian(str, out var result), result);
+
 
     /// <summary>
     ///     Adds the specified persian date time1.
@@ -473,7 +462,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         => this.ToDateTime().AddSeconds(value).ToPersianDateTime();
     public PersianDateTime AddMilliseconds(in int value)
         => this.ToDateTime().AddMilliseconds(value).ToPersianDateTime();
-    public PersianDateTime AddTocks(long ticks)
+    public PersianDateTime AddTocks(in long ticks)
         => this.ToDateTime().AddTicks(ticks).ToPersianDateTime();
 
     /// <summary>
@@ -490,13 +479,8 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     ///     Creates a new object that is a copy of the current instance.
     /// </summary>
     /// <returns> A new object that is a copy of this instance. </returns>
-    public object Clone() => new PersianDateTime(this.Year,
-        this.Month,
-        this.Day,
-        this.Hour,
-        this.Minute,
-        this.Second,
-        this.Millisecond);
+    public object Clone() =>
+        new PersianDateTime(this.Year, this.Month, this.Day, this.Hour, this.Minute, this.Second, this.Millisecond);
 
     /// <summary>
     ///     Compares the current instance with another object of the same type and returns an
@@ -511,7 +495,8 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     ///     position in the sort order as <paramref name="other" />. Greater than zero This
     ///     instance follows <paramref name="other" /> in the sort order.
     /// </returns>
-    public int CompareTo(PersianDateTime other) => DateTime.Compare(this, other);
+    public int CompareTo(PersianDateTime other) =>
+        DateTime.Compare(this, other);
 
     /// <summary>
     ///     Deconstructs this instance.
@@ -551,13 +536,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// <param name="minute"> The minute. </param>
     /// <param name="second"> The second. </param>
     /// <param name="millisecond"> The millisecond. </param>
-    public void Deconstruct(out int year,
-        out int month,
-        out int day,
-        out int hour,
-        out int minute,
-        out int second,
-        out double millisecond)
+    public void Deconstruct(out int year, out int month, out int day, out int hour, out int minute, out int second, out double millisecond)
     {
         year = this.Year;
         month = this.Month;
@@ -576,18 +555,11 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     ///     <c> true </c> if the specified <see cref="object" /> is equal to this instance;
     ///     otherwise, <c> false </c>.
     /// </returns>
-    public override bool Equals(object? obj)
-    {
-        if (obj is not PersianDateTime)
-        {
-            return false;
-        }
+    public override bool Equals(object? obj) =>
+        obj is PersianDateTime target && this.CompareTo(target) == 0;
 
-        var target = (PersianDateTime)obj;
-        return this.CompareTo(target) == 0;
-    }
-
-    public bool Equals(PersianDateTime other) => this.CompareTo(other) is 0;
+    public bool Equals(PersianDateTime other) =>
+        this.CompareTo(other) == 0;
 
     /// <summary>
     ///     Returns a hash code for this instance.
@@ -596,28 +568,29 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     ///     A hash code for this instance, suitable for use in hashing algorithms and data
     ///     structures like a hash table.
     /// </returns>
-    public override int GetHashCode() => this.Data.GetHashCode();
+    public override int GetHashCode() =>
+        this.Data.GetHashCode();
 
     /// <summary>
     ///     Returns a <see cref="string" /> that represents this instance.
     /// </summary>
     /// <returns> A <see cref="string" /> that represents this instance. </returns>
-    public override string? ToString()
-        => this.ToString(ToStringFormat);
+    public override string? ToString() =>
+        this.ToString(ToStringFormat);
 
     /// <summary>
     ///     Converts to persian date string.
     /// </summary>
     /// <param name="separator"> The separator. </param>
     /// <returns> </returns>
-    public string ToDateString(string? separator = null)
+    public string ToDateString(in string? separator = null)
     {
-        separator ??= DateSeparator;
+        var buffer = separator ?? DateSeparator;
 
         return string.Concat(this.Year.ToString("0000", CultureInfo.CurrentCulture),
-            separator,
+            buffer,
             this.Month.ToString("00", CultureInfo.CurrentCulture),
-            separator,
+            buffer,
             this.Day.ToString("00", CultureInfo.CurrentCulture));
     }
 
@@ -645,27 +618,28 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// </summary>
     /// <param name="format"> The format. </param>
     /// <returns> A <see cref="string" /> that represents this instance. </returns>
-    public string? ToString(string format)
+    public string? ToString(in string format)
     {
+        var buffer = format;
         if (this.IsInitiated is false)
         {
             return this.ToString();
         }
 
-        _ = Check.ArgumentNotNull(format, "format");
+        _ = Check.ArgumentNotNull(buffer, "format");
         var isPm = this.Hour > 12;
         var tmpHrs = isPm ? this.Hour - 12 : this.Hour;
-        format = format.Trim().Replace("yyyy", this.Year.ToString("0000", CultureInfo.CurrentCulture));
-        format = format.Trim().Replace("MMMM", MonthNames.ToArray()[this.Month - 1]);
-        format = format.Trim().Replace("MM", this.Month.ToString("00", CultureInfo.CurrentCulture));
-        format = format.Trim().Replace("dd", this.Day.ToString("00", CultureInfo.CurrentCulture));
-        format = format.Trim().Replace("HH", this.Hour.ToString("00", CultureInfo.CurrentCulture));
-        format = format.Trim().Replace("hh", tmpHrs.ToString("00", CultureInfo.CurrentCulture));
-        format = format.Trim().Replace("mm", this.Minute.ToString("00", CultureInfo.CurrentCulture));
-        format = format.Trim().Replace("ss", this.Second.ToString("00", CultureInfo.CurrentCulture));
-        format = format.Trim().Replace("tt", isPm ? CultureInfo.CurrentCulture.DateTimeFormat.PMDesignator : CultureInfo.CurrentCulture.DateTimeFormat.AMDesignator);
+        buffer = buffer.Trim().Replace("yyyy", this.Year.ToString("0000", CultureInfo.CurrentCulture));
+        buffer = buffer.Trim().Replace("MMMM", MonthNames.ToArray()[this.Month - 1]);
+        buffer = buffer.Trim().Replace("MM", this.Month.ToString("00", CultureInfo.CurrentCulture));
+        buffer = buffer.Trim().Replace("dd", this.Day.ToString("00", CultureInfo.CurrentCulture));
+        buffer = buffer.Trim().Replace("HH", this.Hour.ToString("00", CultureInfo.CurrentCulture));
+        buffer = buffer.Trim().Replace("hh", tmpHrs.ToString("00", CultureInfo.CurrentCulture));
+        buffer = buffer.Trim().Replace("mm", this.Minute.ToString("00", CultureInfo.CurrentCulture));
+        buffer = buffer.Trim().Replace("ss", this.Second.ToString("00", CultureInfo.CurrentCulture));
+        buffer = buffer.Trim().Replace("tt", isPm ? CultureInfo.CurrentCulture.DateTimeFormat.PMDesignator : CultureInfo.CurrentCulture.DateTimeFormat.AMDesignator);
 
-        return format;
+        return buffer;
     }
 
     public string? ToDefaultFomratString()
@@ -676,13 +650,13 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// </summary>
     /// <param name="separator"> The separator. </param>
     /// <returns> </returns>
-    public string ToTimeString(string? separator = null)
+    public string ToTimeString(in string? separator = null)
     {
-        separator ??= TimeSeparator;
+        var sep = separator ?? TimeSeparator;
         return string.Concat(this.Hour.ToString("00", CultureInfo.CurrentCulture),
-            separator,
+            sep,
             this.Minute.ToString("00", CultureInfo.CurrentCulture),
-            separator,
+            sep,
             this.Second.ToString("00", CultureInfo.CurrentCulture));
     }
 
@@ -690,49 +664,76 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     ///     Raises the invalid type cast exception.
     /// </summary>
     /// <returns> </returns>
+    [DoesNotReturn]
     private static InvalidCastException RaiseInvalidTypeCastException()
     {
         var targetType = GetCallerMethodName()![2..];
-        return new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
+        throw new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
     }
 
     private string GetDebuggerDisplay() => this.ToString()!;
 
-    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) => info.AddValue("Data", this.Data);
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) =>
+        info.AddValue("Data", this.Data);
 
-    TypeCode IConvertible.GetTypeCode() => throw new NotSupportedException();
+    TypeCode IConvertible.GetTypeCode() =>
+        throw new NotSupportedException();
 
-    bool IConvertible.ToBoolean(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    bool IConvertible.ToBoolean(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    byte IConvertible.ToByte(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    byte IConvertible.ToByte(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    char IConvertible.ToChar(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    char IConvertible.ToChar(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    decimal IConvertible.ToDecimal(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    decimal IConvertible.ToDecimal(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    double IConvertible.ToDouble(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    double IConvertible.ToDouble(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    short IConvertible.ToInt16(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    short IConvertible.ToInt16(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    int IConvertible.ToInt32(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    int IConvertible.ToInt32(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    long IConvertible.ToInt64(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    long IConvertible.ToInt64(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    sbyte IConvertible.ToSByte(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    sbyte IConvertible.ToSByte(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    float IConvertible.ToSingle(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    float IConvertible.ToSingle(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    string IConvertible.ToString(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    string IConvertible.ToString(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
     object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
         => throw RaiseInvalidTypeCastException();
 
-    ushort IConvertible.ToUInt16(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    ushort IConvertible.ToUInt16(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    uint IConvertible.ToUInt32(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    uint IConvertible.ToUInt32(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
-    ulong IConvertible.ToUInt64(IFormatProvider? provider) => throw RaiseInvalidTypeCastException();
+    ulong IConvertible.ToUInt64(IFormatProvider? provider) =>
+        throw RaiseInvalidTypeCastException();
 
+    public int CompareTo(object? obj) =>
+        obj is PersianDateTime pdt ? this.CompareTo(pdt) : 1;
+    public int CompareTo(DateTime other) =>
+        ((PersianDateTime)other).CompareTo(this);
+    public bool Equals(DateTime other) =>
+        ((PersianDateTime)other).Equals(this);
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+        => throw new NotImplementedException();
+    public string ToString(string? format, IFormatProvider? formatProvider)
+        => throw new NotImplementedException();
 
     /// <summary>
     ///     Performs an implicit conversion from <see cref="PersianDateTime" /> to <see cref="DateTime" />.
@@ -840,7 +841,16 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// <param name="left"> The left. </param>
     /// <param name="right"> The right. </param>
     /// <returns> The result of the operator. </returns>
-    public static bool operator >=(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) >= 0;
+    public static bool operator >=(in PersianDateTime left, in PersianDateTime right) =>
+        left.CompareTo(right) >= 0;
+    public static bool operator <(in PersianDateTime left, in DateTime right) =>
+        left.CompareTo(right) < 0;
+    public static bool operator <=(in PersianDateTime left, in DateTime right) =>
+        left.CompareTo(right) <= 0;
+    public static bool operator >(in PersianDateTime left, in DateTime right) =>
+        left.CompareTo(right) > 0;
+    public static bool operator >=(in PersianDateTime left, in DateTime right) =>
+        left.CompareTo(right) >= 0;
 
     public bool IsHoliday => this.DayOfWeek.IsPersianHoliday();
 }
