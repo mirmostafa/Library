@@ -334,13 +334,11 @@ public static partial class AdoHelper
         return converter(reader[columnName]);
     }
 
-    public static T? Field<T>(this DataRow row, string columnName, Converter<object?, T?> converter)
+    public static T? Field<T>(this DataRow row, string columnName, Converter<object?, T?>? converter)
     {
         Check.IfArgumentNotNull(row, nameof(row));
         Check.IfArgumentNotNull(columnName, nameof(columnName));
-        Check.IfArgumentNotNull(converter, nameof(converter));
-
-        return converter(row.Field<object>(columnName));
+        return converter is not null ? converter(row.Field<object>(columnName)) : row.Field<T>(columnName);
     }
 
     public static DataSet FillDataSet(this SqlConnection connection, string sql)

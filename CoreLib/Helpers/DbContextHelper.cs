@@ -4,6 +4,7 @@ using Library.Data.Markers;
 using Library.Validations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Library.Helpers;
 public static class DbContextHelper
@@ -159,6 +160,24 @@ public static class DbContextHelper
         where TEntity : class, IIdenticalEntity<TId>, new()
         where TId : notnull =>
         RemoveById<TEntity, TId>(dbContext, new[] { id }, detach);
+    public static async Task<TDbContext> RemoveByEntityAsync<TDbContext, TEntity>([DisallowNull] TDbContext dbContext, [DisallowNull] Action<TEntity> setEntityId, bool persist = true, bool detach = false)
+        where TDbContext : DbContext
+        where TEntity : class, new()
+    {
+        var entity = new TEntity();
+        setEntityId(entity);
+        dbContext.Remove(entity);
+        if (persist)
+        {
+            await dbContext.SaveChangesAsync();
+        }
+        if (detach)
+        {
+            //dbContext.Detach<TDbContext, TEntity>(entity);
+        }
+
+        return dbContext;
+    }
 
     public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         => await entityEntry?.Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)!;
@@ -179,7 +198,7 @@ public static class DbContextHelper
         return entityEntry!;
     }
 
-    public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> InsertAsync<TModel, TEntity>(
+    public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> InsertAsync<TModel, TEntity>(
         this DbContext dbContext,
         TModel model,
         Func<TModel, TEntity?> convert,
@@ -187,8 +206,8 @@ public static class DbContextHelper
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<long> =>
-        await InnerManipulate<TModel, TEntity, long>(dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist);
-    public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> InsertAsync<TModel, TEntity, TId>(
+        await InnerManipulate<TModel, TEntity, long>((dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist, (true, null)));
+    public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> InsertAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
         TModel model,
         Func<TModel, TEntity?> convert,
@@ -197,18 +216,18 @@ public static class DbContextHelper
         bool persist = true)
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull =>
-        await InnerManipulate<TModel, TEntity, TId>(dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist);
+        await InnerManipulate<TModel, TEntity, TId>((dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist, (true, null)));
 
-    public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> UpdateAsync<TModel, TEntity>(
+    public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> UpdateAsync<TModel, TEntity>(
         this DbContext dbContext,
         TModel model,
         Func<TModel, TEntity?> convert,
         Func<TModel, Task>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
-        where TEntity : class, IIdenticalEntity<long>
-        => await InnerManipulate<TModel, TEntity, long>(dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist);
-    public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> UpdateAsync<TModel, TEntity, TId>(
+        where TEntity : class, IIdenticalEntity<long> =>
+        await InnerManipulate<TModel, TEntity, long>((dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist, (true, null)));
+    public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> UpdateAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
         TModel model,
         Func<TModel, TEntity?> convert,
@@ -217,23 +236,27 @@ public static class DbContextHelper
         bool persist = true)
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull =>
-        await InnerManipulate<TModel, TEntity, TId>(dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist);
+        await InnerManipulate<TModel, TEntity, TId>((dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist, (true, null)));
 
-    private static async Task<(EntityEntry<TEntity> entry, TEntity entity, int writtenCount)> InnerManipulate<TModel, TEntity, TId>(
-        DbContext dbContext,
-        TModel model,
-        Func<TEntity, EntityEntry<TEntity>> manipulate,
-        Func<TModel, TEntity?> convertToEntity,
-        Func<TModel, Task>? validatorAsync,
-        Func<EntityEntry<TEntity>, TEntity>? finalizeEntity,
-        bool persist)
+    private static async Task<InnerManipulateRet<TModel, TEntity, TId>> InnerManipulate<TModel, TEntity, TId>(InnerManipulateArg<TModel, TEntity, TId> args)
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull
     {
-        Check.ArgumentNotNull(model);
-        Check.ArgumentNotNull(manipulate);
-        Check.ArgumentNotNull(convertToEntity);
+        Check.IfArgumentNotNull(args);
+        var (dbContext, model, manipulate, convertToEntity, validatorAsync, finalizeEntity, persist, trans) = args;
 
+        Check.IfArgumentNotNull(model);
+        Check.IfArgumentNotNull(manipulate);
+        Check.IfArgumentNotNull(convertToEntity);
+
+        IDbContextTransaction? transaction = null;
+        if (persist && trans is { } t)
+        {
+            if (t.UseTransaction)
+            {
+                transaction = t.transaction ?? (await dbContext.Database.BeginTransactionAsync());
+            }
+        }
         if (validatorAsync is not null)
         {
             await validatorAsync(model);
@@ -256,7 +279,12 @@ public static class DbContextHelper
             try
             {
                 var writterCount = await dbContext.SaveChangesAsync();
-                return (entry, entity, writterCount);
+                if (transaction is not null)
+                {
+                    await transaction.CommitAsync();
+                }
+
+                return new(entry, entity, writterCount);
             }
             finally
             {
@@ -264,6 +292,38 @@ public static class DbContextHelper
             }
         }
 
-        return (entry, entity, default);
+        return new(entry, entity, default);
     }
+}
+
+internal record struct InnerManipulateArg<TModel, TEntity, TId>(
+        in DbContext DbContext,
+        in TModel Model,
+        in Func<TEntity, EntityEntry<TEntity>> Manipulate,
+        in Func<TModel, TEntity?> ConvertToEntity,
+        in Func<TModel, Task>? ValidatorAsync,
+        in Func<EntityEntry<TEntity>, TEntity>? FinalizeEntity,
+        in bool Persist,
+        in (bool UseTransaction, IDbContextTransaction? transaction)? TransactionInfo = null)
+        where TEntity : class, IIdenticalEntity<TId>
+        where TId : notnull
+{
+    public static implicit operator InnerManipulateArg<TModel, TEntity, TId>((
+        DbContext DbContext,
+        TModel Model,
+        Func<TEntity, EntityEntry<TEntity>> Manipulate,
+        Func<TModel, TEntity?> ConvertToEntity,
+        Func<TModel, Task>? ValidatorAsync,
+        Func<EntityEntry<TEntity>, TEntity>? FinalizeEntity,
+        bool Persist,
+        (bool UseTransaction, IDbContextTransaction? transaction)? TransactionInfo) arg) =>
+    new(arg.DbContext, arg.Model, arg.Manipulate, arg.ConvertToEntity, arg.ValidatorAsync, arg.FinalizeEntity, arg.Persist, arg.TransactionInfo);
+}
+
+internal record struct InnerManipulateRet<TModel, TEntity, TId>(in EntityEntry<TEntity>? Entry, in TEntity? Entity, in int WrittenCount)
+    where TEntity : class, IIdenticalEntity<TId>
+    where TId : notnull
+{
+    public static implicit operator (EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)(InnerManipulateRet<TModel, TEntity, TId> @this) =>
+        new(@this.Entry, @this.Entity, @this.WrittenCount);
 }
