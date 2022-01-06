@@ -8,6 +8,7 @@ using Library.Exceptions.Validations;
 namespace Library.Validations;
 
 [DebuggerStepThrough]
+[StackTraceHidden]
 public static class Check
 {
     public static void IfArgumentBiggerThan(in int arg, in int min, [CallerArgumentExpression("arg")] in string? argName = null)
@@ -33,11 +34,15 @@ public static class Check
     public static T Is<T>([NotNull] this object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!)).To<T>()!;
 
+    /// <summary>
+    /// Makes sure the specified argument is not null.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="obj"></param>
+    /// <param name="argName"></param>
+    /// <exception cref="ArgumentNullException"/>
     public static void IfArgumentNotNull([NotNull] in string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        _ = obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
-
-    public static void IfArgumentNotNull<T>([NotNull] string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        _ = obj.NotValid(StringHelper.IsNullOrEmpty, () => new ArgumentNullException(argName));
+        MustBeArgumentNotNull(!obj.IsNullOrEmpty(), argName!);
 
     /// <summary>
     /// Makes sure the specified argument is not null.
@@ -81,7 +86,7 @@ public static class Check
         obj.NotValid(x => x.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
     public static void IfAny([NotNull] IEnumerable? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        IfNotValid(obj, _ => !obj.Any(), () => new NoItemValidationException(argName!));
+        IfNotValid(obj, _ => !obj?.Any() ?? false, () => new NoItemValidationException(argName!));
 
     [return: NotNull]
     public static T NotNull<T>([NotNull] this T? obj, [DisallowNull] Func<Exception> getException) =>
@@ -105,16 +110,17 @@ public static class Check
     public static void IfNotNull<T>([NotNull] T? @this, string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
-    public static T NotValid<T>(this T? obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException) =>
+    public static T? NotValid<T>(this T? obj, [DisallowNull] in Func<T?, bool> validate, [DisallowNull] in Func<Exception> getException) =>
         !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
 
-    public static void MustBe([DoesNotReturnIf(false)] bool ok, in Func<Exception> getException)
+    public static void MustBe([DoesNotReturnIf(false)] bool ok, in Func<Exception> getExceptionIfNot)
     {
         if (!ok)
         {
-            Throw(getException);
+            Throw(getExceptionIfNot);
         }
     }
+    //ExceptionDispatchInfo
 
     public static void MustBe<TValidationException>([DoesNotReturnIf(false)] bool ok)
         where TValidationException : Exception, new() =>
@@ -132,7 +138,7 @@ public static class Check
     public static void MustBeArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName) =>
         MustBe(isNotNull, () => new ArgumentNullException(argName));
 
-    public static T? ThrowIfDisposed<T>(T @this, [DoesNotReturnIf(true)] bool disposed)
+    public static T ThrowIfDisposed<T>(T @this, [DoesNotReturnIf(true)] bool disposed)
         where T : IDisposable
     {
         MustBe(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));

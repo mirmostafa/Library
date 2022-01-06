@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
 using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
@@ -9,23 +10,24 @@ using Library.Validations;
 namespace Library.Coding;
 
 [DebuggerStepThrough]
+[StackTraceHidden]
 public static class CodeHelper
 {
     /// <summary>
     ///     Breaks code execution.
     /// </summary>
     [DoesNotReturn]
-    public static void Break()
-        => Throw<BreakException>();
+    public static void Break() =>
+        Throw<BreakException>();
 
-    public static async Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default)
-        => await Task.Run(action, cancellationToken);
+    public static async Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default) =>
+        await Task.Run(action, cancellationToken);
 
-    public static async Task<TResult> Async<TResult>(TResult result)
-        => await Task.FromResult(result);
+    public static async Task<TResult> Async<TResult>(TResult result) =>
+        await Task.FromResult(result);
 
-    public static async Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default)
-        => await Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
+    public static async Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default) =>
+        await Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
 
     public static Exception? Catch(
         in Action tryMethod,
@@ -59,8 +61,8 @@ public static class CodeHelper
         }
     }
 
-    public static void Catch(in Action action, in ExceptionHandling exceptionHandling)
-        => Catch(action, handling: exceptionHandling);
+    public static void Catch(in Action action, in ExceptionHandling exceptionHandling) =>
+        Catch(action, handling: exceptionHandling);
 
     /// <summary>
     ///     Catches the exceptions in specific function.
@@ -117,7 +119,7 @@ public static class CodeHelper
         }
     }
 
-    public static (TResult Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> action, TResult defaultValue)
+    public static (TResult Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> action, in TResult defaultValue)
     {
         try
         {
@@ -142,7 +144,7 @@ public static class CodeHelper
         }
     }
 
-    public static TResult? CatchFunc<TResult, TException>(Func<TResult> action, Predicate<TException> predicate)
+    public static TResult? CatchFunc<TResult, TException>(in Func<TResult> action, in Predicate<TException> predicate)
         where TException : Exception
     {
         try
@@ -172,8 +174,8 @@ public static class CodeHelper
     /// </summary>
     /// <param name="index"> The index. </param>
     /// <returns> </returns>
-    public static MethodBase? GetCallerMethod(in int index = 2)
-        => new StackTrace(true).GetFrame(index)?.GetMethod();
+    public static MethodBase? GetCallerMethod(in int index = 2) =>
+        new StackTrace(true).GetFrame(index)?.GetMethod();
 
     /// <summary>
     ///     Gets the caller method.
@@ -202,15 +204,15 @@ public static class CodeHelper
     /// </summary>
     /// <param name="index"> The index. </param>
     /// <returns> </returns>
-    public static string? GetCallerMethodName(in int index = 2)
-        => GetCallerMethod(index)?.Name;
+    public static string? GetCallerMethodName(in int index = 2) =>
+        GetCallerMethod(index)?.Name;
 
     /// <summary>
     ///     Gets the current method.
     /// </summary>
     /// <returns> </returns>
-    public static MethodBase? GetCurrentMethod()
-        => GetCallerMethod();
+    public static MethodBase? GetCurrentMethod() =>
+        GetCallerMethod();
 
     /// <summary>
     ///     Gets the delegate.
@@ -233,7 +235,7 @@ public static class CodeHelper
     public static bool HasException(in Action tryFunc) =>
         Catch(tryFunc) is not null;
 
-    public static TResult ThrowOnError<TResult>(Func<TResult> action, Func<Exception, Exception>? getException = null)
+    public static TResult ThrowOnError<TResult>(in Func<TResult> action, Func<Exception, Exception>? getException = null)
     {
         Check.IfArgumentNotNull(action, nameof(action));
         try
@@ -253,23 +255,23 @@ public static class CodeHelper
 
     [DoesNotReturn]
     public static void Throw<TException>() where TException : Exception, new() =>
-        throw new TException();
+        ExceptionDispatchInfo.Throw(new TException());
 
     [DoesNotReturn]
-    public static T Throw<T>(Exception exception) =>
+    public static T Throw<T>(in Exception exception) =>
         throw exception;
 
     [DoesNotReturn]
-    public static void Throw(Exception exception) =>
-        throw exception;
+    public static void Throw(in Exception exception) =>
+        ExceptionDispatchInfo.Throw(exception);
 
     [DoesNotReturn]
-    public static T Throw<T>(Func<Exception> getException) =>
+    public static T Throw<T>(in Func<Exception> getException) =>
         throw getException();
 
     [DoesNotReturn]
-    public static void Throw(Func<Exception> getException) =>
-        throw getException();
+    public static void Throw(in Func<Exception> getException) =>
+        ExceptionDispatchInfo.Throw(getException());
 
     /// <summary>
     ///     Disposes the specified disposable object.
@@ -277,7 +279,7 @@ public static class CodeHelper
     /// <typeparam name="TDisposable"> The type of the disposable. </typeparam>
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
-    public static void Dispose<TDisposable>(TDisposable disposable, in Action<TDisposable>? action = null)
+    public static void Dispose<TDisposable>(in TDisposable disposable, in Action<TDisposable>? action = null)
         where TDisposable : IDisposable
         => ObjectHelper.Dispose(disposable, action);
 
@@ -289,7 +291,7 @@ public static class CodeHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
     /// <returns> </returns>
-    public static TResult Dispose<TDisposable, TResult>(TDisposable disposable, in Func<TDisposable, TResult> action)
+    public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TDisposable, TResult> action)
         where TDisposable : IDisposable
         => ObjectHelper.Dispose(disposable, action);
 
@@ -301,7 +303,7 @@ public static class CodeHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="result"> The result. </param>
     /// <returns> </returns>
-    public static TResult Dispose<TDisposable, TResult>(TDisposable disposable, in TResult result)
+    public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in TResult result)
         where TDisposable : IDisposable
         => ObjectHelper.Dispose(disposable, result);
 
@@ -314,7 +316,7 @@ public static class CodeHelper
     /// <param name="disposable"> The disposable. </param>
     /// <param name="action"> The action. </param>
     /// <returns> </returns>
-    public static TResult Dispose<TDisposable, TResult>(TDisposable disposable, in Func<TResult> action)
+    public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TResult> action)
         where TDisposable : IDisposable
         => ObjectHelper.Dispose(disposable, action);
 }

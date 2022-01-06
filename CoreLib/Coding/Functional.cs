@@ -88,8 +88,8 @@ public static class Functional
         return instance;
     }
 
-    public static TInstance Fluent<TInstance>(this TInstance instance, in object? obj)
-        => instance;
+    public static TInstance Fluent<TInstance>(this TInstance instance, in object? obj) =>
+        instance;
 
     public static TInstance Fluent<TInstance>(in TInstance instance, in Action<TInstance> action)
     {
@@ -103,14 +103,14 @@ public static class Functional
         return instance;
     }
 
-    public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance> func)
-        => func.Invoke();
+    public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance> func) =>
+        func.Invoke();
 
-    public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance, TInstance> func)
-        => func.Invoke(instance);
+    public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance, TInstance> func) =>
+        func.Invoke(instance);
 
-    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TResult> func)
-        => (instance, func.Invoke());
+    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TResult> func) =>
+        (instance, func.Invoke());
 
     public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TInstance, TResult> action)
         => (instance, action.Invoke(instance));
@@ -134,11 +134,10 @@ public static class Functional
         return @this;
     }
 
-    public static void Lock(this object? lockObject, Action action)
-        => _ = lockObject.Lock(() =>
+    public static void Lock(this object? lockObject, Action action) =>
+        _ = lockObject.Lock(() =>
         {
-            action.ArgumentNotNull(nameof(action))();
-            return true;
+            action.ArgumentNotNull(nameof(action))(); return true;
         });
 
     public static TResult Lock<TResult>(this object? lockObject, in Func<TResult> action)
@@ -155,8 +154,8 @@ public static class Functional
     /// <typeparam name="T"> The type of the type. </typeparam>
     /// <returns> </returns>
     public static T New<T>()
-        where T : class, new()
-        => new();
+        where T : class, new() => 
+        new();
 
     public static T New<T>(params object[] args) =>
         Activator.CreateInstance(typeof(T), args).NotNull().To<T>();

@@ -1,57 +1,65 @@
-﻿using Library.Validations;
-using System.Xml.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using Library.Validations;
 
 namespace Library.Collections;
 public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnumerable<Task>
 {
-    private readonly CancellationTokenSource _CancellationTokenSource;
+    private readonly CancellationTokenSource _cancellationTokenSource;
     private bool _disposedValue;
 
-    public TaskList(List<Task> list) : base(list)
-        => this._CancellationTokenSource = new CancellationTokenSource();
+    public TaskList(List<Task> list) : base(list) =>
+        this._cancellationTokenSource = new CancellationTokenSource();
+    public TaskList(IEnumerable<Task> list) : base(list) =>
+        this._cancellationTokenSource = new CancellationTokenSource();
+    public TaskList(int capacity) : base(capacity) =>
+        this._cancellationTokenSource = new CancellationTokenSource();
+    public TaskList() =>
+        this._cancellationTokenSource = new CancellationTokenSource();
+    public TaskList([DisallowNull] CancellationTokenSource cancellationTokenSource) =>
+        this._cancellationTokenSource = cancellationTokenSource.ArgumentNotNull();
 
-    public TaskList(IEnumerable<Task> list) : base(list)
-        => this._CancellationTokenSource = new CancellationTokenSource();
+    public static TaskList New() =>
+        new();
 
-    public TaskList(int capacity) : base(capacity)
-        => this._CancellationTokenSource = new CancellationTokenSource();
+    public bool IsCancellationRequested => this.CancellationTokenSource.IsCancellationRequested;
+    private CancellationTokenSource CancellationTokenSource => this.This()._cancellationTokenSource;
 
-    public TaskList()
-        => this._CancellationTokenSource = new CancellationTokenSource();
+    private TaskList This() =>
+        Check.ThrowIfDisposed(this, this._disposedValue);
 
-    public static TaskList New() => new();
-
-    public bool IsCancellationRequested => this._CancellationTokenSource.IsCancellationRequested;
-
-    public bool WaitAll(TimeSpan timeout)
-        => Task.WaitAll(this.ToArray(), timeout);
-
-    public TaskList WaitAll()
+    public TaskList WaitAll(TimeSpan timeout)
     {
-        Task.WaitAll(this.ToArray(), this._CancellationTokenSource.Token);
+        Task.WaitAll(this.This().ToArray(), timeout);
         return this;
     }
 
-    public async Task WaitAllAsync()
-        => await Task.WhenAll(this);
+    public TaskList WaitAll()
+    {
+        Task.WaitAll(this.ToArray(), this.CancellationTokenSource.Token);
+        return this;
+    }
+
+    public async Task WhenAll() =>
+        await Task.WhenAll(this.This());
 
     public TaskList WaitAny()
     {
-        _ = Task.WaitAny(this.ToArray());
+        _ = Task.WaitAny(this.This().ToArray());
         return this;
     }
 
     public async Task<TaskList> WaitAnyAsync()
-        => await Task.Run(() => this.WaitAny());
+        => await Task.Run(() => this.This().WaitAny());
 
     public TaskList Run(Action action)
-        => this.Add(Task.Run(action.ArgumentNotNull(nameof(action)), this._CancellationTokenSource.Token));
+        => this.Add(Task.Run(action.ArgumentNotNull(nameof(action)), this.CancellationTokenSource.Token));
 
     public TaskList Run(Func<Task> action)
-        => this.Add(action.ArgumentNotNull(nameof(action))());
+        => this.This().Add(action.ArgumentNotNull(nameof(action))());
 
     public async Task<TaskList> RunAsync(Func<Task> action)
     {
+        Check.ThrowIfDisposed(this, this._disposedValue);
         var task = action.ArgumentNotNull(nameof(action))();
         await task;
         return this.Add(task);
@@ -64,16 +72,16 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
     {
         foreach (var action in actions)
         {
-            _ = this.Run(action);
+            _ = this.This().Run(action);
         }
-        return this;
+        return this.This();
     }
 
     public TaskList Run(IEnumerable<Action> actions)
-        => this.Run(actions.ToArray());
+        => this.This().Run(actions.ToArray());
 
-    public void CancelAll()
-        => this._CancellationTokenSource.Cancel();
+    public void CancelAll() =>
+        this.CancellationTokenSource.Cancel();
 
     private void Dispose(bool disposing)
     {
@@ -81,7 +89,7 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
         {
             if (disposing)
             {
-                this._CancellationTokenSource.Dispose();
+                this.CancellationTokenSource.Dispose();
             }
             this._disposedValue = true;
         }
