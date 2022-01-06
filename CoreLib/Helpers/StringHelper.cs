@@ -13,11 +13,11 @@ namespace Library.Helpers;
 /// </summary>
 public static class StringHelper
 {
-    public static string? Add(this string? s, in int count, char add = ' ', bool before = false)
-        => count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
+    public static string? Add(this string? s, in int count, char add = ' ', bool before = false) =>
+        count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 
-    public static string Add(this string s, in string s1)
-        => string.Concat(s, s1);
+    public static string Add(this string s, in string s1) =>
+        string.Concat(s, s1);
 
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
@@ -46,16 +46,19 @@ public static class StringHelper
     public static bool CheckAnyValidations(in string text, in Func<char, bool> regularValidate)
         => text.Any(regularValidate);
 
+    [return: NotNull]
     public static string[] Compact(params string[] strings) => strings.Where(item
-        => !item.IsNullOrEmpty()).ToArray();
+         => !item.IsNullOrEmpty()).ToArray();
 
+    [return: NotNull]
     public static IEnumerable<string> Compact(this IEnumerable<string?>? strings)
         => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     public static int CompareTo(this string str1, in string str, bool ignoreCase = false)
         => string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
-    public static string ConcatStrings(this IEnumerable<string> values) => string.Concat(values.ToArray());
+    public static string ConcatStrings(this IEnumerable<string> values) =>
+        string.Concat(values.ToArray());
 
     public static bool Contains(string str, in string value, bool ignoreCase = true)
         => ignoreCase
@@ -86,7 +89,7 @@ public static class StringHelper
     }
 
     public static bool EndsWithAny(this string str, in IEnumerable<object> array)
-        => array.Any(item => item is not null && str.EndsWith(item!.ToString()));
+        => array.Any(item => item is { } s && str.EndsWith(s.ToString() ?? string.Empty));
 
     public static bool EndsWithAny(this string str, in IEnumerable<string> values)
         => values.Any(str.EndsWith);
@@ -198,7 +201,7 @@ public static class StringHelper
         => CheckAnyValidations(text, IsPersian);
 
     public static string? IfNull(this string? s, in string? value)
-        => string.IsNullOrWhiteSpace(s) ? value : s;
+        => s is null ? value : s;
 
     public static string IfNullOrEmpty(this string? str, string defaultValue)
         => str.IsNullOrEmpty() ? defaultValue : str;
@@ -223,23 +226,23 @@ public static class StringHelper
 
         return null;
 
-        static string? get(string? current, bool trimmed)
-            => trimmed ? current?.Trim() : current;
-        static bool equals(string? current, string? item, bool ignoreCase)
-            => string.Compare(current, item, ignoreCase) == 0;
+        static string? get(string? current, bool trimmed) =>
+            trimmed ? current?.Trim() : current;
+        static bool equals(string? current, string? item, bool ignoreCase) =>
+            string.Compare(current, item, ignoreCase) == 0;
     }
 
-    public static bool IsCommon(this char c)
-        => c == ' ';
+    public static bool IsCommon(this char c) =>
+        c == ' ';
 
-    public static bool IsDigit(this char c, in bool canAcceptMinusKey = false)
-        => (canAcceptMinusKey && c == '-') || char.IsDigit(c);
+    public static bool IsDigit(this char c, in bool canAcceptMinusKey = false) =>
+        (canAcceptMinusKey && c == '-') || char.IsDigit(c);
 
-    public static bool IsDigitOrControl(this char key)
-        => char.IsDigit(key) || char.IsControl(key);
+    public static bool IsDigitOrControl(this char key) =>
+        char.IsDigit(key) || char.IsControl(key);
 
-    public static bool IsEmpty([NotNullWhen(false)] in string? s)
-        => s?.Length is 0;
+    public static bool IsEmpty([NotNullWhen(false)] in string? s) =>
+        s?.Length is 0;
 
     public static bool IsEnglish(this char c)
         => IsCommon(c) || (c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z'));
@@ -316,6 +319,7 @@ public static class StringHelper
         var foundCount = 0;
         index++;
         var i = 0;
+        //While(() => foundCount < index, (str[i] == c).IfTrue(() => foundCount++));
         while (foundCount < index)
         {
             if (str[i] == c)
@@ -329,26 +333,22 @@ public static class StringHelper
         return i - 1;
     }
 
-    public static string Merge(string quat, string separator, params string[] array)
-        => array.Merge(quat, separator);
-
     public static string Merge(string quatStart, string quatEnd, string separator, params object[] array)
     {
         var result = array.Aggregate(string.Empty, (current, str) => current + quatStart + str + quatEnd + separator + " ").Trim();
         return result[..^1];
     }
 
-    public static string Merge(this IEnumerable<string> array, in string separator)
-        => string.Join(separator, array.ToArray());
-    public static string Merge(this IEnumerable<string> array, in char separator)
-        => string.Join(separator, array.ToArray());
-
+    public static string Merge(string quat, string separator, params string[] array) =>
+        array.Merge(quat, separator);
+    public static string Merge(this IEnumerable<string> array, in string separator) =>
+        string.Join(separator, array.ToArray());
+    public static string Merge(this IEnumerable<string> array, in char separator) =>
+        string.Join(separator, array.ToArray());
     public static string Merge(this IEnumerable<string> array, string quat, string separator)
         => array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator} ").Trim()[..^1];
 
-    public static string MergePair(this IEnumerable<(string, string)> splitPair,
-        string keyValueSeparator = "=",
-        string statementSeparator = ";")
+    public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";")
     {
         var result = new StringBuilder();
         foreach (var pair in splitPair)
@@ -358,15 +358,6 @@ public static class StringHelper
 
         return result.ToString();
     }
-
-    public static bool NotEndsWithAny(this string str, in IEnumerable<object> array)
-        => array.Any(item => !str.EndsWith(item.ToString() ?? string.Empty));
-
-    public static bool NotEndsWithAny(this string str, params object[] array)
-        => str.NotEndsWithAny(array.AsEnumerable());
-
-    public static string? NullIfEmpty(this string? s)
-        => string.IsNullOrEmpty(s) ? null : s;
 
     public static string PatternPolicy(in string text)
     {

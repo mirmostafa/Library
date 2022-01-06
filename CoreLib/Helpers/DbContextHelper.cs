@@ -14,8 +14,16 @@ public static class DbContextHelper
         dbContext.SetStateOf(entity, EntityState.Detached);
     public static TDbContext Detach<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity<TId> =>
+        where TEntity : class, IIdenticalEntity<TId>
+        where TId : notnull =>
         SetStateOf<TDbContext, TEntity, TId>(dbContext, entity, EntityState.Detached);
+    public static TEntity Detach<TDbContext, TEntity>([DisallowNull] this TEntity entity, [DisallowNull] in TDbContext dbContext)
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<long>
+    {
+        Detach(dbContext, entity);
+        return entity;
+    }
 
     public static EntityEntry<TEntity> EnsureAttached<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
@@ -45,6 +53,7 @@ public static class DbContextHelper
     public static TDbContext SetStateOf<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity, [DisallowNull] in EntityState state)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<TId>
+        where TId : notnull
     {
         Check.IfArgumentNotNull(dbContext);
         Check.IfArgumentNotNull(entity);
@@ -110,14 +119,6 @@ public static class DbContextHelper
         return entry;
     }
 
-    public static TEntity Detach<TDbContext, TEntity>([DisallowNull] this TEntity entity, [DisallowNull] in TDbContext dbContext)
-        where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity<long>
-    {
-        Detach(dbContext, entity);
-        return entity;
-    }
-
     public static DbContext RemoveById<TEntity>([DisallowNull] this DbContext dbContext, in IEnumerable<long> ids, bool detach = false)
         where TEntity : class, IIdenticalEntity<long>, new()
     {
@@ -134,14 +135,14 @@ public static class DbContextHelper
         }
         return dbContext;
     }
-    public static TDbContext RemoveById<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, in IEnumerable<TId> ids, bool detach = false)
-        where TDbContext : DbContext
+    public static DbContext RemoveById<TEntity, TId>([DisallowNull] DbContext dbContext, in IEnumerable<TId> ids, bool detach = false)
         where TEntity : class, IIdenticalEntity<TId>, new()
+        where TId : notnull
     {
         Check.IfArgumentNotNull(dbContext);
         Check.IfArgumentNotNull(ids);
 
-        Action<TEntity> det = detach ? entity => Catch(() => Detach<TDbContext, TEntity, TId>(dbContext, entity)) : _ => { };
+        Action<TEntity> det = detach ? entity => Catch(() => Detach<DbContext, TEntity, TId>(dbContext, entity)) : _ => { };
 
         foreach (var id in ids)
         {
@@ -151,18 +152,16 @@ public static class DbContextHelper
         }
         return dbContext;
     }
-
     public static DbContext RemoveById<TEntity>([DisallowNull] this DbContext dbContext, long id, bool detach = false)
-        where TEntity : class, IIdenticalEntity<long>, new()
-        => RemoveById<TEntity>(dbContext, new[] { id }, detach);
-    public static TDbContext RemoveById<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, TId id, bool detach = false)
-        where TDbContext : DbContext
+        where TEntity : class, IIdenticalEntity<long>, new() =>
+        RemoveById<TEntity>(dbContext, new[] { id }, detach);
+    public static DbContext RemoveById<TDbContext, TEntity, TId>([DisallowNull] DbContext dbContext, TId id, bool detach = false)
         where TEntity : class, IIdenticalEntity<TId>, new()
-        => RemoveById<TDbContext, TEntity, TId>(dbContext, new[] { id }, detach);
+        where TId : notnull =>
+        RemoveById<TEntity, TId>(dbContext, new[] { id }, detach);
 
     public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         => await entityEntry?.Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)!;
-
     public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, CancellationToken cancellationToken = default)
         => await entityEntry?.Context.SaveChangesAsync(cancellationToken)!;
 
@@ -187,8 +186,8 @@ public static class DbContextHelper
         Func<TModel, Task>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
-        where TEntity : class, IIdenticalEntity<long>
-        => await InnerManipulate<TModel, TEntity, long>(dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist);
+        where TEntity : class, IIdenticalEntity<long> =>
+        await InnerManipulate<TModel, TEntity, long>(dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist);
     public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> InsertAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
         TModel model,
@@ -197,7 +196,8 @@ public static class DbContextHelper
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<TId>
-        => await InnerManipulate<TModel, TEntity, TId>(dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist);
+        where TId : notnull =>
+        await InnerManipulate<TModel, TEntity, TId>(dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist);
 
     public static async Task<(EntityEntry<TEntity>? entry, TEntity? entity, int writtenCount)> UpdateAsync<TModel, TEntity>(
         this DbContext dbContext,
@@ -216,7 +216,8 @@ public static class DbContextHelper
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<TId>
-        => await InnerManipulate<TModel, TEntity, TId>(dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist);
+        where TId : notnull =>
+        await InnerManipulate<TModel, TEntity, TId>(dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist);
 
     private static async Task<(EntityEntry<TEntity> entry, TEntity entity, int writtenCount)> InnerManipulate<TModel, TEntity, TId>(
         DbContext dbContext,
@@ -227,7 +228,12 @@ public static class DbContextHelper
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity,
         bool persist)
         where TEntity : class, IIdenticalEntity<TId>
+        where TId : notnull
     {
+        Check.ArgumentNotNull(model);
+        Check.ArgumentNotNull(manipulate);
+        Check.ArgumentNotNull(convertToEntity);
+
         if (validatorAsync is not null)
         {
             await validatorAsync(model);
@@ -245,18 +251,19 @@ public static class DbContextHelper
             entity = finalizeEntity(entry);
         }
 
-        int writterCount = default;
-        try
+        if (persist)
         {
-            if (persist)
+            try
             {
-                writterCount = await dbContext.SaveChangesAsync();
+                var writterCount = await dbContext.SaveChangesAsync();
+                return (entry, entity, writterCount);
+            }
+            finally
+            {
+                _ = Detach<DbContext, TEntity, TId>(dbContext, entity);
             }
         }
-        finally
-        {
-            _ = Detach<DbContext, TEntity, TId>(dbContext, entity);
-        }
-        return (entry, entity, writterCount);
+
+        return (entry, entity, default);
     }
 }

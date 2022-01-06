@@ -128,7 +128,7 @@ public static class EnumerableHelper
         }
     }
 
-    public static bool Any(this IEnumerable source)
+    public static bool Any([NotNullWhen(true)] this IEnumerable source)
     {
         if (source is null)
         {
@@ -180,11 +180,11 @@ public static class EnumerableHelper
         [DisallowNull] in Action<TItem> addToRoots,
         [DisallowNull] Action<TItem, TItem> addChild)
     {
-        getChildren.ArgumentNotNull();
-        getNewItem.ArgumentNotNull();
-        addToRoots.ArgumentNotNull();
-        addChild.ArgumentNotNull();
-        rootElements.ArgumentNotNull();
+        Check.ArgumentNotNull(getChildren);
+        Check.ArgumentNotNull(getNewItem);
+        Check.ArgumentNotNull(addToRoots);
+        Check.ArgumentNotNull(addChild);
+        Check.ArgumentNotNull(rootElements);
 
         foreach (var siteMap in rootElements)
         {
@@ -246,16 +246,10 @@ public static class EnumerableHelper
         return list;
     }
 
-    //public 
-
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
         where TSource : class
     {
-        var buffer = items;
-        if (buffer?.Any() is not true)
-        {
-            buffer = Enumerable.Empty<TSource>();
-        }
+        var buffer = DefaultIfEmpty(items);
 
         foreach (var item in buffer)
         {
@@ -273,16 +267,17 @@ public static class EnumerableHelper
     {
         Check.IfArgumentNotNull(items);
         Check.IfArgumentNotNull(action);
+
         foreach (var item in items)
         {
             yield return action(item);
         }
     }
 
-    public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action, bool build = false)
+    public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
         Check.IfArgumentNotNull(items);
-        var buffer = build ? items.Build() : items;
+        var buffer = items;
 
         foreach (var item in buffer)
         {
@@ -346,6 +341,7 @@ public static class EnumerableHelper
             }
         }
     }
+
     public static KeyValuePair<TKey, TValue> GetItemByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, in TKey key)
     {
         foreach (var item in source.ArgumentNotNull(nameof(source)))
@@ -357,12 +353,13 @@ public static class EnumerableHelper
         }
         throw new KeyNotFoundException(nameof(key));
     }
+
     public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
         => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
 
     [return: NotNull]
-    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T> result) =>
-               result is null ? Enumerable.Empty<T>() : result;
+    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items) =>
+               items is null ? Enumerable.Empty<T>() : items;
 
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
         => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
