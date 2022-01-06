@@ -32,8 +32,11 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <Compile Remove="Bcl\**" />
         <Compile Remove="Web\**" />
+        <EmbeddedResource Remove="Bcl\**" />
         <EmbeddedResource Remove="Web\**" />
+        <None Remove="Bcl\**" />
         <None Remove="Web\**" />
     </ItemGroup>
 
@@ -52,10 +55,6 @@
         <PackageReference Include="System.CodeDom" Version="6.0.0" />
         <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
         <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Bcl\" />
     </ItemGroup>
 
 </Project>
