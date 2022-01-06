@@ -95,6 +95,11 @@ public static partial class SqlStatementBuilder
 
     private struct SelectStatement : ISelectStatement
     {
+        public SelectStatement()
+        {
+            this.TableName = string.Empty;
+            this.WhereClause = this.OrderBy = this.OrderByColumn = null;
+        }
         public string TableName { get; set; }
         public string? WhereClause { get; set; }
         public string? OrderBy { get; set; }
