@@ -294,6 +294,10 @@ public static class DbContextHelper
 
         return new(entry, entity, default);
     }
+    public static (TDbContext DbContext, EntityEntry<TEntity> Entry) ReAttach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
+    where TDbContext : notnull, DbContext
+    where TEntity : class, IIdenticalEntity<long> => 
+        (dbContext, dbContext.Detach(entity).Attach(entity));
 }
 
 internal record struct InnerManipulateArg<TModel, TEntity, TId>(
