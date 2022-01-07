@@ -1,10 +1,13 @@
 ﻿using System.Reflection;
+using Library.Coding;
 
 namespace Library.Mapping;
 public static class MapperExtensions
 {
     public static TEntity ForMember<TEntity>(this TEntity entity, in Action<TEntity> action)
         => Fluent(entity, action);
+    public static TEntity ForMemberIfNotNull<TEntity>(this TEntity entity, Action<TEntity> action)
+        => IfTrue(entity is not null, () => Fluent(entity, action));
 
     public static TEntity ForMember<TEntity>(in TEntity entity, in Action<TEntity> action)
         => Fluent(entity, action);

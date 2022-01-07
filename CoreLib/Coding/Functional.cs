@@ -36,7 +36,8 @@ public static class Functional
     public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Func<TInstance, TInstance> ifTrue)
         => b is true ? ifTrue(@this) : @this;
 
-    public static T? IfTrue<T>(this bool b, in Func<T> ifTrue, in T? defaultValue = default)
+    //public static T? IfTrue<T>(this bool b, in Func<T> ifTrue, in T? defaultValue = default)
+    public static T IfTrue<T>(bool b, in Func<T> ifTrue, in T defaultValue = default)
         => b is true ? ifTrue.Invoke() : defaultValue;
 
     public static bool IfFalse(this bool b, in Action ifFalse)
