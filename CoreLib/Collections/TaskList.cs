@@ -38,8 +38,13 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
         Task.WaitAll(this.ToArray(), this.CancellationTokenSource.Token);
         return this;
     }
+    public async Task<TaskList> WaitAllAsync()
+    {
+        await Task.Run(() => Task.WaitAll(this.ToArray(), this.CancellationTokenSource.Token));
+        return this;
+    }
 
-    public async Task WhenAll() =>
+    public async Task WhenAllAsync() =>
         await Task.WhenAll(this.This());
 
     public TaskList WaitAny()
@@ -57,16 +62,16 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
     public TaskList Run(Func<Task> action)
         => this.This().Add(action.ArgumentNotNull(nameof(action))());
 
-    public async Task<TaskList> RunAsync(Func<Task> action)
-    {
-        Check.ThrowIfDisposed(this, this._disposedValue);
-        var task = action.ArgumentNotNull(nameof(action))();
-        await task;
-        return this.Add(task);
-    }
+    //public async Task<TaskList> RunAsync(Func<Task> action)
+    //{
+    //    Check.ThrowIfDisposed(this, this._disposedValue);
+    //    var task = action.ArgumentNotNull(nameof(action))();
+    //    await task;
+    //    return this.Add(task);
+    //}
 
-    public async Task<TaskList> RunAsync(Action action)
-        => await Task.Run(() => this.Run(action));
+    //public async Task<TaskList> RunAsync(Action action)
+    //    => await Task.Run(() => this.Run(action));
 
     public TaskList Run(params Action[] actions)
     {
