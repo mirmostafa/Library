@@ -107,6 +107,9 @@ public static class Check
     public static T NotNull<T>([NotNull] this T? @this, string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
+    public static void IfNotNull<T>([NotNull] this T? obj, Func<string> getMessage) =>
+        obj.NotValid(x => x is null, () => new ValidationException(getMessage()));
+
     public static void IfNotNull<T>([NotNull] T? @this, string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         _ = @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
