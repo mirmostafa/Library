@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using static Library.Mapping.MapperExtensions;
 
 namespace Library.Mapping;
@@ -7,17 +8,17 @@ namespace Library.Mapping;
 [DebuggerStepThrough]
 public sealed class Mapper : IMapper
 {
-    public TDestination? Map<TSource, TDestination>(in TSource source, in TDestination destination)
+    [return: MaybeNull]
+    public TDestination Map<TSource, TDestination>(in TSource source, in TDestination destination)
         where TDestination : class?
     {
-        if (destination == null)
-        {
-            throw new ArgumentNullException(nameof(destination));
-        }
-
         if (source is null)
         {
             return null;
+        }
+        if (destination == null)
+        {
+            throw new ArgumentNullException(nameof(destination));
         }
 
         var props = typeof(TDestination).GetProperties();
@@ -108,7 +109,7 @@ public sealed class Mapper : IMapper
         return result;
     }
 
-    public TDestination? Map<TDestination>(in object? source)
+    public TDestination Map<TDestination>(in object source)
         where TDestination : class?, new()
         => this.Map(source, new TDestination());
 
