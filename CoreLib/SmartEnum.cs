@@ -26,7 +26,7 @@ public abstract class SmartEnum<TSmartEnum, TId> : IEquatable<TSmartEnum>
         !(enum1 == enum2);
 
     public override bool Equals(object? obj) =>
-        obj is SmartEnum<TSmartEnum, TId> other && this.Equals(other);
+        obj is SmartEnum<TSmartEnum, TId> other && this.Id.Equals(other.Id);
 
     public override int GetHashCode() =>
         this.Id?.GetHashCode() ?? default;
