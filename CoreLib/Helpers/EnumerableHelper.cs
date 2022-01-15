@@ -507,7 +507,7 @@ public static class EnumerableHelper
     public static int CountNotEnumerated<T>(this IEnumerable<T> source)
     {
         var (succeed, count) = TryCountNotEnumerated(source);
-        return succeed ? count : -1;
+        return succeed ? count : throw new Exceptions.Validations.InvalidOperationValidationException();
     }
 
     public static TryMethodResult<TResult?> GetValue<TResult>(this HashSet<TResult> resultSet, TResult equalValue)

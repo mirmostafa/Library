@@ -1,24 +1,30 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Library.MultiOperation;
 
 namespace TestConApp;
 
 internal partial class Program
 {
-    private static void Main()
+    private static void Main(params string[] args)
     {
         var display = (int state, int index, int count) => Console.WriteLine($"state: {state}, index: {index}, count: {count}");
-        var result = Operations.New(state: 5)
-                               //.Add(display)
+        var result = Operations.New(5)
                                .Add((state) => 10)
-                               //.Add(display)
                                .Add((state, index) => 20)
-                               //.Add(display)
                                .Add((state, index, count) => 30)
-                               //.Add(display)
-                               .AsSequenctial()
+                               //.AsSequenctial()
                                .Build()
-                               .Watch(display)
-                               .Run();
+                               .Watch(display);
+        //.Run();
+        var r = Operations.New(Task.FromResult(1))
+                          .Add(state => Task.FromResult(2))
+                          .Add(state => Task.FromResult(3))
+                          .Add(state => Task.FromResult(4))
+                          .Add(state => Task.FromResult(5))
+                          .Build()
+                          .Watch((state, index, count) => Console.WriteLine(state.Id))
+                          .Run();
+        r.Wait();
     }
 }

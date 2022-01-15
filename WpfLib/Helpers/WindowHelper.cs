@@ -1,10 +1,16 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using System.Windows.Interop;
+using Library.Validations;
 
 namespace Library.Wpf.Helpers;
 
 public static class WindowHelper
 {
+    [return: NotNull]
+    public static TService Service<TService>(this Window? window) =>
+    DI.GetService<TService>().NotNull();
+
     // this code is taken from a sample application provided by Rafael Rivera
     // see the full code sample here: (2016/08)
     // https://github.com/riverar/sample-win10-aeroglass
