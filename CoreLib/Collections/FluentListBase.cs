@@ -26,7 +26,8 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
 
     public TItem this[int index]
     {
-        get => this._list[index]; set
+        get => this._list[index]; 
+        set
         {
             this.CheckReadOnly();
             this._list[index] = value;
@@ -47,9 +48,15 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
         this._list = new List<TItem>();
 
     public (TList List, int Result) IndexOf(TItem item) =>
+        this.OnIndexOf(item);
+    private (TList List, int Result) OnIndexOf(TItem item) =>
         (this.This, this._list.IndexOf(item));
+
     public TList Insert(int index, TItem item) =>
+        this.OnInsert(index, item);
+    private TList OnInsert(int index, TItem item) =>
         this.Fluent(this.CheckReadOnly).This.Fluent(() => this._list.Insert(index, item));
+
     public TList RemoveAt(int index) =>
         this.Fluent(this.CheckReadOnly).This.Fluent(() => this._list.RemoveAt(index));
     public TList Add(TItem item) =>

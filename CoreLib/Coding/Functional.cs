@@ -134,7 +134,51 @@ public static class Functional
 
         return @this;
     }
-
+    public static TInstance For<TInstance, Item>(in TInstance @this, IEnumerable<Item>? items, in Action<(Item Item, int Index)> action, Func<int, int>? getNext = null)
+    {
+        var act = action;
+        For(items, (Item item, int index) => act((item, index)), getNext);
+        return @this;
+    }
+    public static TInstance For<TInstance, Item>(in TInstance @this, IEnumerable<Item>? items, in Action<Item, int> action, Func<int, int>? getNext = null)
+    {
+        var act = action;
+        For(items, (Item item, int index) => act(item, index), getNext);
+        return @this;
+    }
+    public static void For<Item>(IEnumerable<Item>? items, in Action<(Item Item, int Index)> action, Func<int, int>? getNext = null)
+    {
+        var act = action;
+        For(items, (Item item, int index) => act((item, index)), getNext);
+    }
+    public static void For<Item>(IEnumerable<Item>? items, in Action<Item, int> action, Func<int, int>? getNext = null)
+    {
+        if (action is not null)
+        {
+            getNext ??= i => ++i;
+            if (items is Item[] arr)
+            {
+                for (var i = 0; i < arr.Length; i = getNext(i))
+                {
+                    action(arr[i], i);
+                }
+            }
+            else if (items is IList<Item> list)
+            {
+                for (var i = 0; i < list.Count; i = getNext(i))
+                {
+                    action(list[i], i);
+                }
+            }
+            else if (items is not null)
+            {
+                for (var i = 0; i < items.Count(); i = getNext(i))
+                {
+                    action(items.ElementAt(i), i);
+                }
+            }
+        }
+    }
     public static void Lock(this object? lockObject, Action action) =>
         _ = lockObject.Lock(() =>
         {
@@ -155,7 +199,7 @@ public static class Functional
     /// <typeparam name="T"> The type of the type. </typeparam>
     /// <returns> </returns>
     public static T New<T>()
-        where T : class, new() => 
+        where T : class, new() =>
         new();
 
     public static T New<T>(params object[] args) =>
