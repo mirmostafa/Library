@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.Serialization;
 using Library.Globalization.DataTypes;
+using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
 
@@ -11,8 +12,10 @@ namespace Library.Globalization;
 // Created: 85/5/4
 [Serializable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime>, IEquatable<PersianDateTime>,
-        IConvertible, ISerializable, IComparable, IComparable<DateTime>, IEquatable<DateTime>, ISpanFormattable, IFormattable
+public readonly struct PersianDateTime :
+    IComparable, IComparable<DateTime>, IConvertible, IEquatable<DateTime>, ISpanFormattable, IFormattable, ISerializable,
+    ICloneable, IComparable<PersianDateTime>, IEquatable<PersianDateTime>,
+    IConvertible<PersianDateTime, DateTime>, IConvertible<PersianDateTime, string>
 {
     #region Fields
 
@@ -76,6 +79,9 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         this.IsInitiated = true;
     }
 
+    /// <summary>
+    /// Gets or Sets the date separator.
+    /// </summary>
     public static string DateSeparator { get; set; } = CultureConstants.DATE_SEPARATOR;
 
     /// <summary>
@@ -134,9 +140,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     }
 
     public static string ShortDatePattern { get; set; } = CultureConstants.SHORT_DATE_PATTERN;
-
     public static string TimeSeparator { get; set; } = CultureConstants.TIME_SEPARATOR;
-
     public static string ToStringFormat { get; set; } = CultureConstants.DEFAULT_DATE_TIME_PATTERN;
     public bool IsInitiated { get; }
 
@@ -286,21 +290,14 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// </exception>
     public static int Compare(in string persianDateTime1, in string persianDateTime2)
     {
-        if (!TryParsePersian(persianDateTime1, out var p1))
-        {
-            throw new InvalidCastException("cannot cast persianDateTime1 to PersianDateTime");
-        }
-
-        if (!TryParsePersian(persianDateTime2, out var p2))
-        {
-            throw new InvalidCastException("cannot cast persianDateTime2 to PersianDateTime");
-        }
+        Check.MustBe(TryParse(persianDateTime1, out var p1), () => new InvalidCastException("cannot cast persianDateTime1 to PersianDateTime"));
+        Check.MustBe(TryParse(persianDateTime2, out var p2), () => new InvalidCastException("cannot cast persianDateTime2 to PersianDateTime"));
 
         return p1.CompareTo(p2);
     }
 
     public static bool IsPersianDateTime(in string s) =>
-        TryParsePersian(s).IsSucceed;
+        TryParse(s).IsSucceed;
 
     /// <summary>
     ///     Parses the date time.
@@ -414,7 +411,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// <param name="str"> The STR. </param>
     /// <param name="result"> The result. </param>
     /// <returns> </returns>
-    public static bool TryParsePersian(in string str, out PersianDateTime result)
+    public static bool TryParse(in string str, out PersianDateTime result)
     {
         result = Now;
         try
@@ -427,8 +424,8 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
             return false;
         }
     }
-    public static TryMethodResult<PersianDateTime> TryParsePersian(in string str) =>
-        new(TryParsePersian(str, out var result), result);
+    public static TryMethodResult<PersianDateTime> TryParse(in string str) =>
+        new(TryParse(str, out var result), result);
 
 
     /// <summary>
@@ -611,7 +608,8 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// <returns>
     ///     A <see cref="T:System.DateTime" /> instance equivalent to the value of this instance.
     /// </returns>
-    public DateTime ToDateTime(IFormatProvider? provider) => this;
+    public DateTime ToDateTime(IFormatProvider? provider) =>
+        this;
 
     /// <summary>
     ///     Returns a <see cref="string" /> that represents this instance.
@@ -671,7 +669,8 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         throw new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
     }
 
-    private string GetDebuggerDisplay() => this.ToString()!;
+    private string GetDebuggerDisplay() =>
+        this.ToString()!;
 
     void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) =>
         info.AddValue("Data", this.Data);
@@ -730,10 +729,17 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
         ((PersianDateTime)other).CompareTo(this);
     public bool Equals(DateTime other) =>
         ((PersianDateTime)other).Equals(this);
+
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
         => throw new NotImplementedException();
     public string ToString(string? format, IFormatProvider? formatProvider)
         => throw new NotImplementedException();
+
+    public DateTime Convert() => this;
+    public static PersianDateTime Convert([DisallowNull] DateTime other) => other;
+
+    string IConvertible<PersianDateTime, string>.Convert() => this;
+    public static PersianDateTime Convert([DisallowNull] string other) => other;
 
     /// <summary>
     ///     Performs an implicit conversion from <see cref="PersianDateTime" /> to <see cref="DateTime" />.
@@ -764,7 +770,7 @@ public readonly struct PersianDateTime : ICloneable, IComparable<PersianDateTime
     /// </summary>
     /// <param name="persianDateTime"> The persian date time. </param>
     /// <returns> The result of the conversion. </returns>
-    public static implicit operator string?(in PersianDateTime persianDateTime) => persianDateTime.ToString();
+    public static implicit operator string(in PersianDateTime persianDateTime) => persianDateTime.ToString();
 
     /// <summary>
     ///     Implements the operator -.

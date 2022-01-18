@@ -22,10 +22,25 @@ public class CheckValidationTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentNullException))]
     public void ArgumentNullTest()
     {
+        var lname = "Mirmostafa";
+        Check.IfArgumentNotNull(lname);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void ArgumentNullTest2()
+    {
         string? lname = null;
+        Check.IfArgumentNotNull(lname);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void ArgumentNullTest3()
+    {
+        var lname = string.Empty;
         Check.IfArgumentNotNull(lname);
     }
 

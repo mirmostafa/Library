@@ -50,7 +50,7 @@ public class PersianDateTimeTest
     [TestMethod]
     public void ParsePersianTest()
     {
-        var date = PersianDateTime.TryParsePersian("1400/7/10").Value;
+        var date = PersianDateTime.TryParse("1400/7/10").Value;
         Assert.AreEqual("1400/07/10", date.ToDateString());
     }
 

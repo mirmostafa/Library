@@ -1,28 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
 using Library.Data.Models;
-using Library.Wpf.Bases;
-using Library.Wpf.Markers;
 
 namespace Library.Wpf.Controls.ViewModels;
-
-[ViewModel]
-public interface ICrudGridModelBinder : IViewModel<ICrudGridModelBinder>
-{
-    IEnumerable<DataColumnBindingInfo> GetHeaders();
-    IEnumerable GetItems();
-    object AddNew();
-    object Update(object item);
-    void Delete(object item);
-
-    static ICrudGridModelBinder New<TItem>(IEnumerable<TItem> items, IEnumerable<DataColumnBindingInfo> headers)
-        where TItem : new() =>
-        new CrudGridModelBinder<TItem>(items, headers);
-
-    static ICrudGridModelBinder New<TItem>(IEnumerable<TItem> items, params DataColumnBindingInfo[] headers)
-        where TItem : new() =>
-        new CrudGridModelBinder<TItem>(items, headers);
-}
 
 internal class CrudGridModelBinder<TItem> : ICrudGridModelBinder
     where TItem : new()
