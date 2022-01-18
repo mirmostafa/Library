@@ -7,5 +7,5 @@ namespace Library.Interfaces;
 public interface IConvertible<TThis, TOther>
 {
     TOther Convert();
-    static abstract TThis ConvertBack([DisallowNull] TOther other);
+    static abstract TThis Convert([DisallowNull] TOther other);
 }

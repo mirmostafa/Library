@@ -3,11 +3,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Library.Logging;
 
-public class WebExtensionLogger : Microsoft.Extensions.Logging.ILogger, ILogger<string>
+public class WebLogger : Microsoft.Extensions.Logging.ILogger, ILogger<string>
 {
     private readonly ILogger _mainLogger;
 
-    public WebExtensionLogger(ILogger mainLogger) =>
+    public WebLogger(ILogger mainLogger) =>
         this._mainLogger = mainLogger.ArgumentNotNull(nameof(mainLogger));
 
     public LogLevel LogLevel { get; set; }
@@ -15,7 +15,7 @@ public class WebExtensionLogger : Microsoft.Extensions.Logging.ILogger, ILogger<
     public bool IsEnabled { get => this._mainLogger.IsEnabled; set => this._mainLogger.IsEnabled = value; }
 
     public IDisposable BeginScope<TState>(TState state) =>
-        EmptyDisposable.Empty;
+        EmptyDisposable.NewEmpty();
 
     bool Microsoft.Extensions.Logging.ILogger.IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) =>
         this._mainLogger.IsEnabled;
@@ -31,9 +31,9 @@ public class WebExtensionLogger : Microsoft.Extensions.Logging.ILogger, ILogger<
          this._mainLogger.Log(formatter.ArgumentNotNull()(state, exception));
 }
 
-public class WebExtensionLogger<TCategoryName> : WebExtensionLogger, Microsoft.Extensions.Logging.ILogger<TCategoryName>
+public class WebLogger<TCategoryName> : WebLogger, Microsoft.Extensions.Logging.ILogger<TCategoryName>
 {
-    public WebExtensionLogger(ILogger mainLogger)
+    public WebLogger(ILogger mainLogger)
         : base(mainLogger)
     {
     }

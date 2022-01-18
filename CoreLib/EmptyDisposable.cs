@@ -1,7 +1,12 @@
-﻿namespace Library;
-public class EmptyDisposable : IDisposable
+﻿using Library.Interfaces;
+
+namespace Library;
+public class EmptyDisposable : IDisposable, ISupportEmpty<EmptyDisposable>
 {
     private bool _disposedValue;
+    private static EmptyDisposable _empty;
+
+    public static EmptyDisposable Empty => _empty ??= NewEmpty();
 
     protected virtual void Dispose(bool disposing)
     {
@@ -16,10 +21,9 @@ public class EmptyDisposable : IDisposable
 
     public void Dispose()
     {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
         this.Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
-    public readonly static IDisposable Empty = new EmptyDisposable();
+    public static EmptyDisposable NewEmpty() => new();
 }

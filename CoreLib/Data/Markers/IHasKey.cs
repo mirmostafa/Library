@@ -2,8 +2,8 @@
 
 namespace Library.Data.Markers;
 
-public interface ICanSetKey<TIdType> : IHasKey<TIdType>
+public interface IHasKey<TKey>
 {
     [Key]
-    new TIdType Id { get; set; }
+    TKey Id { get; }
 }

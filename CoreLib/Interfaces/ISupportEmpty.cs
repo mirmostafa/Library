@@ -2,6 +2,6 @@
 
 public interface ISupportEmpty<TClass>
 {
-    static abstract TClass Empty();
+    static abstract TClass Empty { get; }
     static abstract TClass NewEmpty();
 }

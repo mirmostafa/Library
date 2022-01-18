@@ -12,13 +12,6 @@ public class ResultTest
     public void SimpleTest()
     {
         var five = Add(2, 3);
-        Assert.AreEqual(6, five);
-    }
-
-    [TestMethod]
-    public void SimpleTest1()
-    {
-        var five = Add(2, 3);
-        Assert.AreEqual(6, five);
+        Assert.AreEqual(5, five);
     }
 }
