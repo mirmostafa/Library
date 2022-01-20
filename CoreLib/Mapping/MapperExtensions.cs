@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Library.Coding;
 
 namespace Library.Mapping;
 public static class MapperExtensions
@@ -12,7 +11,7 @@ public static class MapperExtensions
     public static TEntity ForMember<TEntity>(in TEntity entity, in Action<TEntity> action)
         => Fluent(entity, action);
 
-    public static void Copy<TSource, TDestination>(TSource source, TDestination destination, PropertyInfo dstProp)
+    internal static void Copy<TSource, TDestination>(TSource source, TDestination destination, PropertyInfo dstProp)
         where TDestination : class
     {
         var mapping = dstProp.GetCustomAttribute<MappingAttribute>()?.MapFrom;

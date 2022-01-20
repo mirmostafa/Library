@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 
@@ -256,4 +255,6 @@ public static class Functional
         action.ArgumentNotNull(nameof(action))(instance);
         return instance;
     }
+    public static TInstance Return<TInstance>(this object _, TInstance instance) =>
+        instance;
 }

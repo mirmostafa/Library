@@ -32,7 +32,7 @@ public static class Check
 
     [return: NotNull]
     public static T Is<T>([NotNull] this object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!)).To<T>()!;
+        obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!)).To<T>();
 
     /// <summary>
     /// Makes sure the specified argument is not null.
@@ -55,7 +55,7 @@ public static class Check
         MustBeArgumentNotNull(obj is not null, argName!);
 
     public static void IfNotNull<T>([NotNull] T? obj, [DisallowNull] Func<Exception> getException) =>
-        _ = obj.NotValid(x => x is null, getException)!;
+        _ = obj.NotValid(x => x is null, getException);
 
     public static void IfHasAny([NotNull] IEnumerable? obj, [DisallowNull] Func<Exception> getException)
     {

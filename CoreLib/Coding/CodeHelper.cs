@@ -5,6 +5,7 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
 using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
+using Library.Results;
 using Library.Validations;
 
 namespace Library.Coding;
@@ -319,4 +320,18 @@ public static class CodeHelper
     public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TResult> action)
         where TDisposable : IDisposable
         => ObjectHelper.Dispose(disposable, action);
+
+    public static Result CatchResult([DisallowNull] in Action action)
+    {
+        Check.ArgumentNotNull(action);
+        try
+        {
+            action();
+            return Result.Success;
+        }
+        catch (Exception ex)
+        {
+            return Result.CreateFail(ex.GetBaseException().Message);
+        }
+    }
 }

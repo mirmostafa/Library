@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Controls;
+using Library.Results;
 using Library.Validations;
 
 namespace Library.Wpf.Dialogs;
@@ -64,8 +65,8 @@ internal partial class UserControlDialogBox : Window
     {
         var validationResult = this.UserControl switch
         {
-            IValidatable validatable => validatable.IsValid(),
-            IAsyncValidatable asyncValidatable => await asyncValidatable.IsValidAsync(),
+            IValidatable validatable => validatable.Validate(),
+            IAsyncValidatable asyncValidatable => await asyncValidatable.ValidateAsync(),
             _ => null,
         };
         if (validationResult?.IsSucceed ?? true)

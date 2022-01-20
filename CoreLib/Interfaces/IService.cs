@@ -1,4 +1,6 @@
-﻿namespace Library.Interfaces;
+﻿using Library.Validations;
+
+namespace Library.Interfaces;
 public interface IService
 {
 }
@@ -65,20 +67,8 @@ public interface IWriteAsyncService<in TViewModel, TId> : IService
 
 public interface IWriteAsyncService<in TViewModel> : IWriteAsyncService<TViewModel, long> { }
 
-public interface IAsyncValidatable<in TViewModel, TId>
-{
-    Task ValidateAsync(TViewModel model);
-}
-
-public interface IAsyncValidatable<in TViewModel> : IAsyncValidatable<TViewModel, long> { }
-
-public interface IValidatable<in TViewModel>
-{
-    void Validate(TViewModel model);
-}
-
 public interface IAsyncViewModelCrudService<TViewModel, TId>
-    : IService, IReadAsyncService<TViewModel, TId>, IWriteAsyncService<TViewModel, TId>, IAsyncValidatable<TViewModel, TId>
+    : IService, IReadAsyncService<TViewModel, TId>, IWriteAsyncService<TViewModel, TId>//// , IAsyncValidatable<TViewModel>
 {
 }
 
