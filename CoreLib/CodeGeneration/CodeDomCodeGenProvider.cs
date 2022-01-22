@@ -17,7 +17,7 @@ public sealed class CodeDomCodeGenProvider : ICodeGenProvider
         var partNs = partUnit.AddNewNameSpace(nameSpace.FullName).UseNameSpace(myNameSpace.UsingNameSpaces);
         foreach (var type in nameSpace.CodeGenTypes)
         {
-            var codeType = (type.IsPartial ? partNs : mainNs).UseNameSpace(type.UsingNameSpaces).NewClass(type.Name, type.BaseTypes, type.IsPartial);
+            var codeType = (type.IsPartial ? partNs : mainNs).UseNameSpace(type.UsingNameSpaces).AddNewClass(type.Name, type.BaseTypes, type.IsPartial);
             foreach (var member in type.Members)
             {
                 switch (member)
