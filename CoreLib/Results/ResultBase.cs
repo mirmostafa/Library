@@ -6,10 +6,10 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     public int? StatusCode { get; }
     public string? Message { get; set; }
-    public virtual bool IsSucceed { get => this._isSucceed ?? this.StatusCode?.ToInt() is 0 or 200; init => this._isSucceed = value; }
+    public virtual bool IsSucceed { get => this._isSucceed ?? (this.StatusCode?.ToInt() is 0 or 200) && (!this.Errors.Any()); init => this._isSucceed = value; }
     public bool IsFailure => !this.IsSucceed;
     public Dictionary<string, object> Extra { get; } = new();
-    public List<(object Id, object Message)> Errors { get; } = new();
+    public List<(object? Id, object Message)> Errors { get; } = new();
 
     protected ResultBase(int? statusCode = null, string? message = null)
         => (this.StatusCode, this.Message) = (statusCode, message);

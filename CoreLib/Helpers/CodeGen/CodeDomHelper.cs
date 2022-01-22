@@ -1,10 +1,10 @@
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using System.Reflection;
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 using Microsoft.CSharp;
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Reflection;
 using static Library.Helpers.CodeGen.TypeMemberNameHelper;
 
 namespace Library.Helpers.CodeGen;
@@ -20,9 +20,11 @@ public static class CodeDomHelper
     /// <returns></returns>
     public static CodeNamespace UseNameSpace(this CodeNamespace ns, in string nameSpace)
     {
+        Check.IfArgumentNotNull(ns);
+
         if (!nameSpace.IsNullOrEmpty())
         {
-            ns.ArgumentNotNull(nameof(ns)).Imports.Add(new CodeNamespaceImport(nameSpace));
+            ns.Imports.Add(new CodeNamespaceImport(nameSpace));
         }
 
         return ns;
@@ -37,12 +39,7 @@ public static class CodeDomHelper
     /// <exception cref="ArgumentNullException">ns</exception>
     public static CodeNamespace UseNameSpace(this CodeNamespace ns, in IEnumerable<string> nameSpaces)
     {
-        if (ns is null)
-        {
-            throw new ArgumentNullException(nameof(ns));
-        }
-
-        foreach (var nameSpace in nameSpaces.ArgumentNotNull(nameof(nameSpaces)))
+        foreach (var nameSpace in nameSpaces.ArgumentNotNull())
         {
             ns.UseNameSpace(nameSpace);
         }
@@ -57,7 +54,7 @@ public static class CodeDomHelper
     /// <returns></returns>
     public static CodeNamespace AddNewNameSpace(this CodeCompileUnit unit, in string? nameSpace = null)
     {
-        Check.ArgumentNotNull(unit, nameof(unit));
+        Check.ArgumentNotNull(unit);
 
         CodeNamespace? result = nameSpace is null ? new() : new(nameSpace);
         _ = unit.Namespaces.Add(result);
@@ -72,12 +69,9 @@ public static class CodeDomHelper
     /// <param name="baseTypes">The base types.</param>
     /// <param name="isPartial">if set to <c>true</c> [is partial].</param>
     /// <returns></returns>
-    public static CodeTypeDeclaration NewClass(this CodeNamespace ns, in string className, in IEnumerable<string>? baseTypes = null, bool isPartial = false)
+    public static CodeTypeDeclaration AddNewClass(this CodeNamespace ns, in string className, in IEnumerable<string>? baseTypes = null, bool isPartial = false)
     {
-        if (ns is null)
-        {
-            throw new ArgumentNullException(nameof(ns));
-        }
+        Check.IfArgumentNotNull(ns);
 
         CodeTypeDeclaration? result = new(className)
         {
@@ -97,7 +91,8 @@ public static class CodeDomHelper
 
     public static CodeTypeDeclaration AddInterfaces(this CodeTypeDeclaration codeTypeDeclaration, in IEnumerable<string> interfaces)
     {
-        interfaces?.ToList().ForEach(codeTypeDeclaration.ArgumentNotNull(nameof(interfaces)).BaseTypes.Add);
+        Check.IfArgumentNotNull(codeTypeDeclaration);
+        interfaces?.ToList().ForEach(codeTypeDeclaration.BaseTypes.Add);
         return codeTypeDeclaration;
     }
     /// <summary>
@@ -112,10 +107,7 @@ public static class CodeDomHelper
     public static T AddSummary<T>(this T t, in string comment)
         where T : CodeTypeMember
     {
-        if (t is null)
-        {
-            throw new ArgumentNullException(nameof(t));
-        }
+        Check.IfArgumentNotNull(t);
 
         _ = t.Comments.Add(new CodeCommentStatement("<summary>", true));
         _ = t.Comments.Add(new CodeCommentStatement(comment, true));
@@ -133,17 +125,15 @@ public static class CodeDomHelper
     /// <param name="accessModifier">The access modifier.</param>
     /// <returns></returns>
     public static CodeTypeDeclaration AddField(this CodeTypeDeclaration c,
-        in string type,
-        in string name,
-        in string? comment = null,
-        in MemberAttributes? accessModifier = null) => AddField(c, new(type, name, comment, accessModifier ?? MemberAttributes.Private));
+                                               in string type,
+                                               in string name,
+                                               in string? comment = null,
+                                               in MemberAttributes? accessModifier = null) =>
+        AddField(c, new(type, name, comment, accessModifier ?? MemberAttributes.Private));
 
     public static CodeTypeDeclaration AddField(this CodeTypeDeclaration c, in CodeGeneration.Models.FieldInfo fieldInfo)
     {
-        if (c is null)
-        {
-            throw new ArgumentNullException(nameof(c));
-        }
+        Check.IfArgumentNotNull(c);
 
         var field = NewField(fieldInfo);
 

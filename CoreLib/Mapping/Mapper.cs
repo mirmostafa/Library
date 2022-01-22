@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using static Library.Mapping.MapperExtensions;
 
 namespace Library.Mapping;
 
 [DebuggerStepThrough]
+[StackTraceHidden]
 public sealed class Mapper : IMapper
 {
     [return: MaybeNull]
