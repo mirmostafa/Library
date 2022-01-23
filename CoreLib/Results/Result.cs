@@ -70,4 +70,18 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue>, Result>
         result.Value;
     public static implicit operator bool(in Result<TValue> result) =>
         result.IsSucceed;
+    public Result<TValue> MustBe(bool condition, in object errorMessage, object? errorId = null)
+    {
+        if (!condition)
+        {
+            this.Errors.Add((errorId, errorMessage));
+        }
+
+        return this;
+    }
+
+    public static Result<TValue> New(TValue item) =>
+        new(item);
+    public Task<Result<TValue>> ToTask() =>
+        Task.FromResult(this);
 }

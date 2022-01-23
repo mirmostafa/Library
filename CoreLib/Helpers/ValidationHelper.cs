@@ -6,17 +6,18 @@ namespace Library.Helpers;
 
 public static class ValidationHelper
 {
-    public static TItem Handle<TItem>([DisallowNull] this Result<TItem> validationResult)
-    {
-        if (validationResult.IsSucceed is not true)
-        {
-            Throw(new ValidationException(validationResult.Message!));
-        }
-        return validationResult.Value;
-    }
+    public static TValue Handle<TValue>([DisallowNull] this Result<TValue> validationResult) =>
+        validationResult.IsSucceed is not true ? throw new ValidationException(validationResult.Message!) : validationResult.Value;
 
     public static TItem CheckValidation<TItem>([DisallowNull] this IValidatable<TItem> item) =>
         item.Validate().Handle();
+    public static async Task<TItem> CheckValidationAsync<TItem>([DisallowNull] this IAsyncValidatable<TItem> model) =>
+        await model.ValidateAsync().HandleAsync();
+    public static async Task<TItem> CheckValidatorAsync<TItem>([DisallowNull] this IAsyncValidator<TItem> service, TItem item)
+    {
+        var result = await service.ValidateAsync(item);
+        return result.IsSucceed is true ? result.Value : throw new ValidationException(result.Message!);
+    }
 
     public static Result<TItem> Validate<TItem>(Func<TItem> action)
     {
@@ -41,5 +42,12 @@ public static class ValidationHelper
         {
             return Result<TItem>.CreateFail(ex.Message, item);
         }
+    }
+
+    public static async Task<TValue> HandleAsync<TValue>(this Task<Result<TValue>> validationResultAsync)
+    {
+        var result = await validationResultAsync;
+        Handle(result);
+        return result.Value;
     }
 }

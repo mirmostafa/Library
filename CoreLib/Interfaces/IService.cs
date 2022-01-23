@@ -1,6 +1,4 @@
-﻿using Library.Validations;
-
-namespace Library.Interfaces;
+﻿namespace Library.Interfaces;
 public interface IService
 {
 }
@@ -68,11 +66,13 @@ public interface IWriteAsyncService<in TViewModel, TId> : IService
 public interface IWriteAsyncService<in TViewModel> : IWriteAsyncService<TViewModel, long> { }
 
 public interface IAsyncViewModelCrudService<TViewModel, TId>
-    : IService, IReadAsyncService<TViewModel, TId>, IWriteAsyncService<TViewModel, TId>//// , IAsyncValidatable<TViewModel>
+    : IService, IReadAsyncService<TViewModel, TId>, IWriteAsyncService<TViewModel, TId>
 {
 }
 
-public interface IAsyncViewModelCrudService<TViewModel> : IAsyncViewModelCrudService<TViewModel, long> { }
+public interface IAsyncViewModelCrudService<TViewModel> : IAsyncViewModelCrudService<TViewModel, long>
+    , IService, IReadAsyncService<TViewModel>, IWriteAsyncService<TViewModel>
+{ }
 
 public interface ILazySaveService : IService
 {

@@ -1,6 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Library.Data.Markers;
+using Library.Results;
 using Library.Validations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -202,7 +202,7 @@ public static class DbContextHelper
         this DbContext dbContext,
         TModel model,
         Func<TModel, TEntity?> convert,
-        Func<TModel, Task>? validatorAsync = null,
+        Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<long> =>
@@ -211,7 +211,7 @@ public static class DbContextHelper
         this DbContext dbContext,
         TModel model,
         Func<TModel, TEntity?> convert,
-        Func<TModel, Task>? validatorAsync = null,
+        Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<TId>
@@ -222,7 +222,7 @@ public static class DbContextHelper
         this DbContext dbContext,
         TModel model,
         Func<TModel, TEntity?> convert,
-        Func<TModel, Task>? validatorAsync = null,
+        Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<long> =>
@@ -231,7 +231,7 @@ public static class DbContextHelper
         this DbContext dbContext,
         TModel model,
         Func<TModel, TEntity?> convert,
-        Func<TModel, Task>? validatorAsync = null,
+        Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<TId>
@@ -259,7 +259,7 @@ public static class DbContextHelper
         }
         if (validatorAsync is not null)
         {
-            await validatorAsync(model);
+            await validatorAsync(model).HandleAsync();
         }
 
         var entity = convertToEntity(model);
@@ -296,7 +296,7 @@ public static class DbContextHelper
     }
     public static (TDbContext DbContext, EntityEntry<TEntity> Entry) ReAttach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
     where TDbContext : notnull, DbContext
-    where TEntity : class, IIdenticalEntity<long> => 
+    where TEntity : class, IIdenticalEntity<long> =>
         (dbContext, dbContext.Detach(entity).Attach(entity));
 }
 
@@ -305,7 +305,7 @@ internal record struct InnerManipulateArg<TModel, TEntity, TId>(
         in TModel Model,
         in Func<TEntity, EntityEntry<TEntity>> Manipulate,
         in Func<TModel, TEntity?> ConvertToEntity,
-        in Func<TModel, Task>? ValidatorAsync,
+        in Func<TModel, Task<Result<TModel>>>? ValidatorAsync,
         in Func<EntityEntry<TEntity>, TEntity>? FinalizeEntity,
         in bool Persist,
         in (bool UseTransaction, IDbContextTransaction? transaction)? TransactionInfo = null)
@@ -317,7 +317,7 @@ internal record struct InnerManipulateArg<TModel, TEntity, TId>(
         TModel Model,
         Func<TEntity, EntityEntry<TEntity>> Manipulate,
         Func<TModel, TEntity?> ConvertToEntity,
-        Func<TModel, Task>? ValidatorAsync,
+        Func<TModel, Task<Result<TModel>>>? ValidatorAsync,
         Func<EntityEntry<TEntity>, TEntity>? FinalizeEntity,
         bool Persist,
         (bool UseTransaction, IDbContextTransaction? transaction)? TransactionInfo) arg) =>

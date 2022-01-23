@@ -123,6 +123,7 @@ public static class Check
             Throw(getExceptionIfNot);
         }
     }
+
     //ExceptionDispatchInfo
 
     public static void MustBe<TValidationException>([DoesNotReturnIf(false)] bool ok)
