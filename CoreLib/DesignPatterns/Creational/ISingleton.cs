@@ -7,5 +7,6 @@ namespace Library.DesignPatterns.Creational
     public interface ISingleton<TSingleton>
         where TSingleton : class, ISingleton<TSingleton>
     {
+        public static abstract TSingleton Instance { get; }
     }
 }

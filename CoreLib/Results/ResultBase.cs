@@ -3,10 +3,11 @@
 public abstract class ResultBase : IEquatable<ResultBase?>
 {
     private bool? _isSucceed;
+    private string? _message;
 
     public int? StatusCode { get; }
-    public string? Message { get; set; }
-    public virtual bool IsSucceed { get => this._isSucceed ?? (this.StatusCode?.ToInt() is 0 or 200) && (!this.Errors.Any()); init => this._isSucceed = value; }
+    public string? Message { get => this._message ?? string.Join(Environment.NewLine, this.Errors.Select(x => x.Message)); set => this._message = value; }
+    public virtual bool IsSucceed { get => this._isSucceed ?? (this.StatusCode?.ToInt() is null or 0 or 200) && (!this.Errors.Any()); init => this._isSucceed = value; }
     public bool IsFailure => !this.IsSucceed;
     public Dictionary<string, object> Extra { get; } = new();
     public List<(object? Id, object Message)> Errors { get; } = new();
