@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
@@ -464,9 +463,6 @@ public static class ObjectHelper
     public static bool IsNull([NotNullWhen(false)] in object? value)
         => value is null;
 
-    public static bool IsNullOrEmpty([NotNullWhen(false)] in object? o)
-        => o?.ToString().IsNullOrEmpty() is not false;
-
     /// <summary>
     ///     Determines whether [is null or empty string] [the specified value].
     /// </summary>
@@ -597,4 +593,7 @@ public static class ObjectHelper
         }
         return hashCode.ToHashCode();
     }
+
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid? guid)
+        => guid is null || guid == Guid.Empty;
 }
