@@ -200,7 +200,7 @@ public static class DbContextHelper
 
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> InsertAsync<TModel, TEntity>(
         this DbContext dbContext,
-        TModel model,
+        [NotNull] TModel model,
         Func<TModel, TEntity?> convert,
         Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
@@ -209,7 +209,7 @@ public static class DbContextHelper
         await InnerManipulate<TModel, TEntity, long>((dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist, (true, null)));
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> InsertAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
-        TModel model,
+        [NotNull] TModel model,
         Func<TModel, TEntity?> convert,
         Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
@@ -220,7 +220,7 @@ public static class DbContextHelper
 
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> UpdateAsync<TModel, TEntity>(
         this DbContext dbContext,
-        TModel model,
+        [NotNull] TModel model,
         Func<TModel, TEntity?> convert,
         Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
@@ -229,7 +229,7 @@ public static class DbContextHelper
         await InnerManipulate<TModel, TEntity, long>((dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist, (true, null)));
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> UpdateAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
-        TModel model,
+        [NotNull] TModel model,
         Func<TModel, TEntity?> convert,
         Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
         Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
