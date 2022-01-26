@@ -6,8 +6,21 @@ namespace Library.Helpers;
 
 public static class ValidationHelper
 {
-    public static TValue Handle<TValue>([DisallowNull] this Result<TValue> validationResult) =>
-        validationResult.IsSucceed is not true ? throw new ValidationException(validationResult.Message!) : validationResult.Value;
+    public static TValue Handle<TValue>([DisallowNull] this Result<TValue> validationResult)
+    {
+        if (validationResult.IsSucceed)
+        {
+            return validationResult.Value;
+        }
+        var exception = validationResult.StatusCode switch
+        {
+            ValidationExceptionBase ex => ex,
+            _ => new ValidationException(validationResult.Message!)
+        };
+        Throw(exception);
+        return validationResult.Value;
+    }
+
 
     public static TItem CheckValidation<TItem>([DisallowNull] this IValidatable<TItem> item) =>
         item.Validate().Handle();

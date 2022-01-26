@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using Library.Exceptions.Validations;
+using Library.Results;
 
 namespace Library.Validations;
 
@@ -115,6 +115,18 @@ public static class Check
 
     public static T? NotValid<T>(this T? obj, [DisallowNull] in Func<T?, bool> validate, [DisallowNull] in Func<Exception> getException) =>
         !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
+        
+    public static Result<T> NotValid<T>(this T obj, [DisallowNull] in Func<T, (bool IsOk, object? Message)?> validate, Result<T>? result = null)
+    {
+        var buffer = result ?? Result<T>.New(obj);
+        var varRes = validate(obj);
+        if (varRes is { } err and { IsOk: false })
+        {
+            buffer.Errors.Add((-1, err.Message ?? string.Empty));
+        }
+
+        return buffer;
+    }
 
     public static void MustBe([DoesNotReturnIf(false)] bool ok, in Func<Exception> getExceptionIfNot)
     {
