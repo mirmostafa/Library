@@ -1,8 +1,12 @@
-﻿namespace Library.Exceptions.Validations
+﻿using System.Net;
+
+namespace Library.Exceptions.Validations
 {
     [Serializable]
-    public abstract class ValidationExceptionBase : LibraryExceptionBase
+    public abstract class ValidationExceptionBase : LibraryExceptionBase, IValidationException
     {
+        public static int ErrorCode { get; } = HttpStatusCode.BadRequest.ToInt() * -1;
+
         protected ValidationExceptionBase()
         {
         }

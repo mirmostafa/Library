@@ -1,8 +1,12 @@
-﻿namespace Library.Exceptions.Validations
+﻿using System.Net;
+
+namespace Library.Exceptions.Validations
 {
     [System.Serializable]
     public sealed class NotFoundValidationException : ValidationExceptionBase
     {
+        public static new int ErrorCode { get; } = HttpStatusCode.NotFound.ToInt() * -1;
+
         public NotFoundValidationException(string message)
             : base(message)
         {

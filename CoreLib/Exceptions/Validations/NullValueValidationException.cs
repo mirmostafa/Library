@@ -5,6 +5,7 @@ namespace Library.Exceptions.Validations;
 [Serializable]
 public sealed class NullValueValidationException : ValidationExceptionBase
 {
+    public static new int ErrorCode { get; } = 620 * -1;
     public NullValueValidationException(string valueName)
         : base($"{valueName} cannot be null", $"{valueName} is null.")
     {
