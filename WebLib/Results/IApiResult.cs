@@ -4,7 +4,7 @@ public interface IApiResult
 {
     bool IsFailure { get; }
     string? Message { get; }
-    int? StatusCode { get; }
+    object? StatusCode { get; }
     bool IsSucceed { get; }
 }
 

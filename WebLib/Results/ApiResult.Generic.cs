@@ -12,7 +12,7 @@ public class ApiResult<T> : ApiResult, IApiResult<T>
     public ApiResult(HttpStatusCode? httpStatusCode = null, string? message = null, T? value = default)
         : base(httpStatusCode, message) => this.Value = value;
 
-    public void Deconstruct(out int? statusCode, out string? message, out T? value)
+    public void Deconstruct(out object? statusCode, out string? message, out T? value)
         => (statusCode, message, value) = (this.StatusCode, this.Message, this.Value);
 
     private T? _value;
