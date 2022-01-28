@@ -1,13 +1,23 @@
-﻿namespace Library.Results;
+﻿using System.Diagnostics;
 
+namespace Library.Results;
+
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public abstract class ResultBase : IEquatable<ResultBase?>
 {
     private bool? _isSucceed;
-    private string? _message;
 
-    public object? StatusCode { get; protected set; }
-    public string? Message { get => this._message ?? string.Join(Environment.NewLine, this.Errors.Select(x => x.Message)); set => this._message = value; }
-    public virtual bool IsSucceed { get => this._isSucceed ?? (this.StatusCode?.ToInt() is null or 0 or 200) && (!this.Errors.Any()); init => this._isSucceed = value; }
+    public object? StatusCode
+    {
+        get;
+        protected set;
+    }
+    public string? Message { get; set; }
+    public virtual bool IsSucceed
+    {
+        get => this._isSucceed ?? (this.StatusCode?.ToInt() is null or 0 or 200) && (!this.Errors.Any());
+        init => this._isSucceed = value;
+    }
     public bool IsFailure => !this.IsSucceed;
     public Dictionary<string, object> Extra { get; } = new();
     public List<(object? Id, object Message)> Errors { get; } = new();
@@ -26,4 +36,21 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         => EqualityComparer<ResultBase>.Default.Equals(left, right);
     public static bool operator !=(ResultBase? left, ResultBase? right)
         => !(left == right);
+
+    private string GetDebuggerDisplay() =>
+        this.ToString();
+    public override string ToString()
+    {
+        StringBuilder result = new();
+        if (!this.Message.IsNullOrEmpty())
+        {
+            result.AppendLine(this.Message);
+        }
+        //string.Join(Environment.NewLine, this.Errors.Select(x => x.Message))
+        foreach (var errorMessage in this.Errors.Select(x => x.Message?.ToString()).Compact())
+        {
+            result.AppendLine(errorMessage);
+        }
+        return result.ToString();
+    }
 }

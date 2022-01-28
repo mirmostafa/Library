@@ -13,6 +13,10 @@ public static class DbContextHelper
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long> =>
         dbContext.SetStateOf(entity, EntityState.Detached);
+    public static TDbContext DetachGuid<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<Guid> =>
+        dbContext.SetStateGuidOf(entity, EntityState.Detached);
     public static TDbContext Detach<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<TId>
@@ -51,6 +55,19 @@ public static class DbContextHelper
         }
         return dbContext;
     }
+    public static TDbContext SetStateGuidOf<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity, [DisallowNull] in EntityState state)
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<Guid>
+    {
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
+
+        if (GetLocalGuidEntry(dbContext, entity) is { } entry && entry.State != state)
+        {
+            entry.State = state;
+        }
+        return dbContext;
+    }
     public static TDbContext SetStateOf<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity, [DisallowNull] in EntityState state)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<TId>
@@ -79,6 +96,20 @@ public static class DbContextHelper
     public static EntityEntry<TEntity>? GetLocalEntry<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
+    {
+        var id = entity.ArgumentNotNull().Id;
+        var ntt = dbContext.ArgumentNotNull().Set<TEntity>()?.Local?.FirstOrDefault(x => x.Id.Equals(id));
+        if (ntt is null)
+        {
+            return null;
+        }
+
+        var entry = dbContext.Entry(ntt);
+        return entry;
+    }
+    public static EntityEntry<TEntity>? GetLocalGuidEntry<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<Guid>
     {
         var id = entity.ArgumentNotNull().Id;
         var ntt = dbContext.ArgumentNotNull().Set<TEntity>()?.Local?.FirstOrDefault(x => x.Id.Equals(id));
