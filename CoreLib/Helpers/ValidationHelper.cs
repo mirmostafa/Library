@@ -15,7 +15,7 @@ public static class ValidationHelper
         var exception = validationResult.StatusCode switch
         {
             ValidationExceptionBase ex => ex,
-            _ => new ValidationException(validationResult.Message!)
+            _ => new ValidationException(validationResult.ToString())
         };
         Throw(exception);
         return validationResult.Value;
@@ -26,11 +26,8 @@ public static class ValidationHelper
         item.Validate().Handle();
     public static async Task<TItem> CheckValidationAsync<TItem>([DisallowNull] this IAsyncValidatable<TItem> model) =>
         await model.ValidateAsync().HandleAsync();
-    public static async Task<TItem> CheckValidatorAsync<TItem>([DisallowNull] this IAsyncValidator<TItem> service, TItem item)
-    {
-        var result = await service.ValidateAsync(item);
-        return result.IsSucceed is true ? result.Value : throw new ValidationException(result.Message!);
-    }
+    public static async Task<TItem> CheckValidatorAsync<TItem>([DisallowNull] this IAsyncValidator<TItem> service, TItem item) => 
+        await service.ValidateAsync(item).HandleAsync();
 
     public static Result<TItem> Validate<TItem>(Func<TItem> action)
     {
