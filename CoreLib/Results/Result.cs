@@ -5,18 +5,18 @@ namespace Library.Results;
 
 public class Result : ResultBase
 {
-    public Result(object? statusCode = null, string? message = null)
+    public Result(in object? statusCode = null, in string? message = null)
         : base(statusCode, message) { }
     public static Result New() =>
         new();
     public static Result Success => CreateSuccess();
     public static Result Fail => CreateFail();
 
-    public static Result CreateFail(string? message = null, object? erroCode = null) =>
+    public static Result CreateFail(in string? message = null, in object? erroCode = null) =>
         new(erroCode ?? -1, message) { IsSucceed = false };
-    public static Result CreateSuccess(string? message = null, object? statusCode = null) =>
+    public static Result CreateSuccess(in string? message = null, in object? statusCode = null) =>
         new(statusCode, message) { IsSucceed = true };
-    public Result With(ResultBase other)
+    public Result With(in ResultBase other)
     {
         if (other == null)
         {
@@ -24,9 +24,16 @@ public class Result : ResultBase
         }
         if (!other.Message.IsNullOrEmpty())
         {
-            this.Message = other.Message;
+            //if (!other.IsSucceed)
+            //{
+            //    this.Message = other.Message;
+            //}
+            //else
+            {
+                this.Errors.Add((-1, other.Message));
+            }
         }
-        if (other.StatusCode is not null and not 0)
+        if (this.StatusCode != other.StatusCode)
         {
             this.StatusCode = other.StatusCode;
         }
@@ -64,30 +71,36 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue>, Result>
         (StatusCode, Message, Value) = (this.StatusCode, this.Message, this.Value);
     public void Deconstruct(out bool isSucceed, out TValue Value) =>
         (isSucceed, Value) = (this.IsSucceed, this.Value);
-    public Result Convert() =>
+    public Result ConvertTo() =>
         this.IsSucceed ? Result.CreateSuccess(this.Message, this.StatusCode) : Result.CreateFail(this.Message, this.StatusCode);
-    public static Result<TValue> Convert([DisallowNull] Result other) =>
-        Convert(other, default);
+    public static Result<TValue> ConvertFrom([DisallowNull] Result other) =>
+        ConvertFrom(other, default);
 
-    public static Result<TValue> Convert([DisallowNull] Result other, TValue value) =>
-        other.IsSucceed ? CreateSuccess(value, other.Message, other.StatusCode) : CreateFail(other.Message, errorCode: other.StatusCode);
-    public Result<TValue1> With<TValue1>(TValue1 value1)
+    public static Result<TValue> ConvertFrom([DisallowNull] in Result other, in TValue value)
     {
-        var result = new Result<TValue1>(value1, this.StatusCode, this.Message)
+        var result = new Result<TValue>(value)
         {
-            IsSucceed = this.IsSucceed
+            StatusCode = other.StatusCode,
+            Message = other.Message,
         };
-        if (this.Errors.Any())
-        {
-            result.Errors.AddRange(this.Errors);
-        }
-        if (this.Extra.Any())
-        {
-            result.Extra.AddRange(this.Extra);
-        }
-
+        result.Errors.AddRange(other.Errors);
+        result.Extra.AddRange(other.Extra);
         return result;
     }
+    public static Result<TValue1> ConvertFrom<TValue1>([DisallowNull] in ResultBase other, in TValue1 value)
+    {
+        var result = new Result<TValue1>(value)
+        {
+            StatusCode = other.StatusCode,
+            Message = other.Message,
+        };
+        result.Errors.AddRange(other.Errors);
+        result.Extra.AddRange(other.Extra);
+        return result;
+    }
+
+    public Result<TValue1> With<TValue1>(in TValue1 value1) =>
+        ConvertFrom(this, value1);
 
     public static implicit operator TValue(in Result<TValue> result) =>
         result.Value;
@@ -111,11 +124,11 @@ public static class ResultHelper
 
         return result;
     }
-    public static TResult HaveValue<TResult>(this TResult result, object? obj, in object errorMessage, object? errorId = null)
+    public static TResult HasValue<TResult>(this TResult result, object? obj, in object errorMessage, object? errorId = null)
         where TResult : ResultBase =>
         MustBe(result, obj is not null, errorMessage, errorId ?? NullValueValidationException.ErrorCode);
 
-    public static TResult HaveValue<TResult>(this TResult result, string? obj, in object errorMessage, object? errorId = null)
+    public static TResult HasValue<TResult>(this TResult result, string? obj, in object errorMessage, object? errorId = null)
         where TResult : ResultBase =>
         MustBe(result, !obj.IsNullOrEmpty(), errorMessage, errorId ?? NullValueValidationException.ErrorCode);
 }

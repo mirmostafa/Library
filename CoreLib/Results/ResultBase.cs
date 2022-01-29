@@ -46,11 +46,16 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         {
             result.AppendLine(this.Message);
         }
-        //string.Join(Environment.NewLine, this.Errors.Select(x => x.Message))
+
         foreach (var errorMessage in this.Errors.Select(x => x.Message?.ToString()).Compact())
         {
             result.AppendLine(errorMessage);
         }
         return result.ToString();
     }
+    //public FullMessage GetFullMessage()
+    //{
+    //    var message = this.Message ?? (IsSucceed ? string.Empty : "Some error(s) found.");
+    //    var inst = 
+    //}
 }
