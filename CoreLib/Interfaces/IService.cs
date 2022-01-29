@@ -74,16 +74,21 @@ public interface IAsyncViewModelCrudService<TViewModel> : IAsyncViewModelCrudSer
     , IService, IReadAsyncService<TViewModel>, IWriteAsyncService<TViewModel>
 { }
 
-public interface ILazySaveService : IService
+public interface IResetChanges
+{
+    void ResetChanges();
+}
+
+public interface ILazySaveService : IService, IResetChanges
 {
     /// <summary>
     /// Saves the data asynchronously.
     /// </summary>
     /// <returns></returns>
-    Task SaveAsync();
+    Task SaveChangesAsync();
 }
 
-public interface ILazySaveService<in TParam> : IService
+public interface ILazySaveService<in TParam> : IService, IResetChanges
 {
     /// <summary>
     /// Saves  the enity asynchronously.

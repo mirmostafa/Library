@@ -735,11 +735,11 @@ public readonly struct PersianDateTime :
     public string ToString(string? format, IFormatProvider? formatProvider)
         => throw new NotImplementedException();
 
-    public DateTime Convert() => this;
-    public static PersianDateTime Convert([DisallowNull] DateTime other) => other;
+    public DateTime ConvertTo() => this;
+    public static PersianDateTime ConvertFrom([DisallowNull] DateTime other) => other;
 
-    string IConvertible<PersianDateTime, string>.Convert() => this;
-    public static PersianDateTime Convert([DisallowNull] string other) => other;
+    string IConvertible<PersianDateTime, string>.ConvertTo() => this;
+    public static PersianDateTime ConvertFrom([DisallowNull] string other) => other;
 
     /// <summary>
     ///     Performs an implicit conversion from <see cref="PersianDateTime" /> to <see cref="DateTime" />.
