@@ -28,9 +28,12 @@ public abstract class ResultBase : IEquatable<ResultBase?>
     public void Deconstruct(out object? statusCode, out string? message)
         => (statusCode, message) = (this.StatusCode, this.Message);
 
-    public override bool Equals(object? obj) => this.Equals(obj as ResultBase);
-    public bool Equals(ResultBase? other) => other is not null && this.StatusCode == other.StatusCode;
-    public override int GetHashCode() => HashCode.Combine(this.StatusCode);
+    public override bool Equals(object? obj) =>
+        this.Equals(obj as ResultBase);
+    public bool Equals(ResultBase? other) =>
+        other is not null && this.StatusCode == other.StatusCode;
+    public override int GetHashCode() =>
+        HashCode.Combine(this.StatusCode, this.Message, this.Errors);
 
     public static bool operator ==(ResultBase? left, ResultBase? right)
         => EqualityComparer<ResultBase>.Default.Equals(left, right);
@@ -49,13 +52,8 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
         foreach (var errorMessage in this.Errors.Select(x => x.Message?.ToString()).Compact())
         {
-            result.AppendLine(errorMessage);
+            result.AppendLine($"- {errorMessage}");
         }
         return result.ToString();
     }
-    //public FullMessage GetFullMessage()
-    //{
-    //    var message = this.Message ?? (IsSucceed ? string.Empty : "Some error(s) found.");
-    //    var inst = 
-    //}
 }

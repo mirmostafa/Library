@@ -3,7 +3,7 @@ public interface IService
 {
 }
 
-public interface IReadAsyncService<TViewModel, in TId> : IService
+public interface IAsyncReadService<TViewModel, in TId> : IService
 {
     /// <summary>
     /// Gets all db entities asynchronously.
@@ -19,9 +19,9 @@ public interface IReadAsyncService<TViewModel, in TId> : IService
     Task<TViewModel?> GetByIdAsync(TId id);
 }
 
-public interface IReadAsyncService<TViewModel> : IReadAsyncService<TViewModel, long> { }
+public interface IAsyncReadService<TViewModel> : IAsyncReadService<TViewModel, long> { }
 
-public interface IReadAsyncPagingService<TViewModel, in TId> : IService
+public interface IAsyncReadPagingService<TViewModel, in TId> : IService
 {
     /// <summary>
     /// Gets all db entities asynchronously.
@@ -36,9 +36,10 @@ public interface IReadAsyncPagingService<TViewModel, in TId> : IService
     /// <returns></returns>
     Task<TViewModel?> GetByIdAsync(TId id);
 }
-public interface IReadAsyncPagingService<TViewModel> : IReadAsyncPagingService<TViewModel, long> { }
 
-public interface IWriteAsyncService<in TViewModel, TId> : IService
+public interface IAsyncReadPagingService<TViewModel> : IAsyncReadPagingService<TViewModel, long> { }
+
+public interface IAsyncWriteService<in TViewModel, TId> : IService
 {
     /// <summary>
     /// Deletes an entity asynchronously.
@@ -63,15 +64,15 @@ public interface IWriteAsyncService<in TViewModel, TId> : IService
     Task<TId> UpdateAsync(TId id, TViewModel model, bool persist = true);
 }
 
-public interface IWriteAsyncService<in TViewModel> : IWriteAsyncService<TViewModel, long> { }
+public interface IAsyncWriteService<in TViewModel> : IAsyncWriteService<TViewModel, long> { }
 
 public interface IAsyncViewModelCrudService<TViewModel, TId>
-    : IService, IReadAsyncService<TViewModel, TId>, IWriteAsyncService<TViewModel, TId>
+    : IService, IAsyncReadService<TViewModel, TId>, IAsyncWriteService<TViewModel, TId>
 {
 }
 
-public interface IAsyncViewModelCrudService<TViewModel> : IAsyncViewModelCrudService<TViewModel, long>
-    , IService, IReadAsyncService<TViewModel>, IWriteAsyncService<TViewModel>
+public interface IAsyncCrudService<TViewModel> : IAsyncViewModelCrudService<TViewModel, long>
+    , IService, IAsyncReadService<TViewModel>, IAsyncWriteService<TViewModel>
 { }
 
 public interface IResetChanges
@@ -79,7 +80,7 @@ public interface IResetChanges
     void ResetChanges();
 }
 
-public interface ILazySaveService : IService, IResetChanges
+public interface IAsyncSaveService : IService, IResetChanges
 {
     /// <summary>
     /// Saves the data asynchronously.
@@ -88,7 +89,7 @@ public interface ILazySaveService : IService, IResetChanges
     Task SaveChangesAsync();
 }
 
-public interface ILazySaveService<in TParam> : IService, IResetChanges
+public interface IAsyncSaveService<in TParam> : IService, IResetChanges
 {
     /// <summary>
     /// Saves  the enity asynchronously.
