@@ -3,13 +3,13 @@ using Library.Collections;
 
 namespace Library.Coding;
 
-public sealed class FinalActions : IDisposable, IEnumerable<Action>
+public sealed class Final : IDisposable, IEnumerable<Action>
 {
     private readonly ActionList _actionList;
 
-    public FinalActions(ActionList actionList) =>
+    public Final(ActionList actionList) =>
         this._actionList = actionList;
-    public FinalActions(Action action)
+    public Final(Action action)
         : this(new ActionList(new[] { action })) { }
 
     public void Dispose() =>
@@ -24,7 +24,10 @@ public sealed class FinalActions : IDisposable, IEnumerable<Action>
         (this._actionList as IEnumerable).GetEnumerator();
     public static void TryFinall(Action finall, Action action)
     {
-        using var fin = new FinalActions(finall);
+        using var fin = new Final(finall);
         action?.Invoke();
     }
+
+    public static Final Block(Action finall) =>
+        new(finall);
 }

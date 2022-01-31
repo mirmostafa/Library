@@ -24,11 +24,11 @@ public class Result : ResultBase
         }
         if (!other.Message.IsNullOrEmpty())
         {
-            //if (!other.IsSucceed)
-            //{
-            //    this.Message = other.Message;
-            //}
-            //else
+            if (other.IsSucceed && this.Message.IsNullOrEmpty())
+            {
+                this.Message = other.Message;
+            }
+            else
             {
                 this.Errors.Add((-1, other.Message));
             }
