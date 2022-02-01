@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Library.Collections;
 using Library.Results;
@@ -247,18 +246,10 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
-        where TSource : class
-    {
-        var buffer = DefaultIfEmpty(items);
-
-        foreach (var item in buffer)
-        {
-            if (item is not null)
-            {
-                yield return item;
-            }
-        }
-    }
+        where TSource : class =>
+        items is null
+                ? Enumerable.Empty<TSource>()
+                : items.Where(x => x is not null).Select(x => x!);
 
     public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items)
         => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text.RegularExpressions;
 using Library.Globalization;
 using Library.Globalization.Pluralization;
@@ -281,7 +280,7 @@ public static class StringHelper
         => string.IsNullOrEmpty(str);
 
     public static bool IsNumber(this string text)
-        => float.TryParse(text, out _);
+        => double.TryParse(text, out _);
 
     public static bool IsPersian(this char c)
         => IsCommon(c) || PersianTools.Chars.Any(pc => pc == c) || PersianTools.SpecialChars.Any(pc => pc == c);
@@ -290,24 +289,13 @@ public static class StringHelper
         => CheckAllValidations(text, IsPersian);
 
     public static bool IsPersianDigit(this char c)
-        => PersianTools.Digits.Any(pd => c == pd.Persian);
+        => PersianTools.PersianDigits.Any(x => c == x);
 
     public static bool IsPersianOrNumber(this string text, bool canAcceptMinusKey)
         => CheckAllValidations(text, c => IsDigit(c, canAcceptMinusKey) || IsPersian(c));
 
-    public static bool IsUnicode(this string str)
-    {
-        var unicodeBytes = Encoding.Unicode.GetBytes(str);
-        for (var i = 1; i < unicodeBytes.Length; i += 2)
-        {
-            if (unicodeBytes[i] != 0)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    public static bool IsUnicode(this string str) =>
+        str.Any(c => c > 255);
 
     public static int CountOf(this string str, in char c, int index)
     {
@@ -319,7 +307,6 @@ public static class StringHelper
         var foundCount = 0;
         index++;
         var i = 0;
-        //While(() => foundCount < index, (str[i] == c).IfTrue(() => foundCount++));
         while (foundCount < index)
         {
             if (str[i] == c)
@@ -345,19 +332,11 @@ public static class StringHelper
         string.Join(separator, array.ToArray());
     public static string Merge(this IEnumerable<string> array, in char separator) =>
         string.Join(separator, array.ToArray());
-    public static string Merge(this IEnumerable<string> array, string quat, string separator)
-        => array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator} ").Trim()[..^1];
+    public static string Merge(this IEnumerable<string> array, string quat, string separator) =>
+        array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator} ").Trim()[..^1];
 
-    public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";")
-    {
-        var result = new StringBuilder();
-        foreach (var pair in splitPair)
-        {
-            _ = result.Append(string.Concat(pair.Item1, keyValueSeparator, pair.Item2, statementSeparator));
-        }
-
-        return result.ToString();
-    }
+    public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";") =>
+        string.Join(statementSeparator, splitPair.Select(pair => $"{pair.Item1}{keyValueSeparator}{pair.Item2}"));
 
     public static string PatternPolicy(in string text)
     {
@@ -408,13 +387,7 @@ public static class StringHelper
     public static string Repeat(this string text, in int count)
     {
         Check.IfArgumentBiggerThan(count, 0);
-        var result = new StringBuilder(string.Empty);
-        for (var counter = 0; counter < count; counter++)
-        {
-            _ = result.Append(text);
-        }
-
-        return result.ToString();
+        return string.Concat(Enumerable.Repeat(text, count));
     }
 
     public static string Replace2(this string s, char old, in char replacement, in int count = 1)
@@ -440,24 +413,23 @@ public static class StringHelper
 
     public static string SeparateCamelCase(this string? str)
     {
-        if (str.IsNullOrEmpty())
+        if (str == null)
         {
             return string.Empty;
         }
 
-        var i = 1;
-        while (i < str.Length)
+        var sb = new StringBuilder();
+        for (var i = 0; i < str.Length; i++)
         {
-            if (char.IsUpper(str[i]) && (!char.IsUpper(str[i - 1]) || i < str.Length - 1 && !char.IsUpper(str[i + 1])))
+            if (char.IsUpper(str[i]) && i > 0)
             {
-                str = str.Insert(i, " ");
-                i += 1;
+                sb.Append(' ');
             }
 
-            i += 1;
+            sb.Append(str[i]);
         }
 
-        return str;
+        return sb.ToString();
     }
 
     public static string? SetPhrase(this string str, int index, string newStr, char start, char end = default)
@@ -482,8 +454,8 @@ public static class StringHelper
     public static string? Singularize(string? text)
         => text.IsNullOrEmpty() ? null : Pluralizer.Singularize(text);
 
-    public static string Space(in int count)
-        => "".Add(count)!;
+    public static string Space(in int count) =>
+        new(' ', count);
 
     public static IEnumerable<string> Split(this string value, int groupSize)
     {
@@ -497,27 +469,28 @@ public static class StringHelper
 
     public static IEnumerable<string> SplitCamelCase(this string? value)
     {
-        if (value is null)
+        if (value == null)
         {
             yield break;
         }
 
-        var lastWord = 0;
-
-        for (var x = lastWord + 1; x < value.Length; x++)
+        var sb = new StringBuilder();
+        foreach (var c in value)
         {
-            if (!char.IsUpper(value, x))
+            if (char.IsUpper(c))
             {
-                continue;
+                if (sb.Length > 0)
+                {
+                    yield return sb.ToString();
+                }
+
+                sb.Clear();
             }
-
-            yield return value[lastWord..x];
-            lastWord = x;
+            sb.Append(c);
         }
-
-        if (lastWord <= value.Length)
+        if (sb.Length > 0)
         {
-            yield return value[lastWord..];
+            yield return sb.ToString();
         }
     }
 
@@ -534,9 +507,9 @@ public static class StringHelper
 
     public static IEnumerable<(string Key, string Value)> SplitPair([DisallowNull] string str, [DisallowNull] string keyValueSeparator = "=", [DisallowNull] string statementSeparator = ";")
     {
-        Check.IfArgumentNotNull(str, nameof(str));
-        Check.IfArgumentNotNull(keyValueSeparator, nameof(keyValueSeparator));
-        Check.IfArgumentNotNull(statementSeparator, nameof(statementSeparator));
+        Check.IfArgumentNotNull(str);
+        Check.IfArgumentNotNull(keyValueSeparator);
+        Check.IfArgumentNotNull(statementSeparator);
 
         var keyValuePirs = str.Split(statementSeparator).Trim();
         foreach (var keyValuePair in keyValuePirs)
@@ -555,17 +528,10 @@ public static class StringHelper
     public static bool StartsWithAny(this string str, params string[] values)
         => values.Any(str.StartsWith);
 
-    public static byte[] ToBytes(this string value, in Encoding encoding)
+    public static byte[] ToBytes([DisallowNull] this string value, [DisallowNull] in Encoding encoding)
     {
-        if (value == null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
-
-        if (encoding == null)
-        {
-            throw new ArgumentNullException(nameof(encoding));
-        }
+        Check.ArgumentNotNull(value);
+        Check.ArgumentNotNull(encoding);
 
         return encoding.GetBytes(value);
     }
@@ -624,7 +590,7 @@ public static class StringHelper
         => values.Select(t => t.Trim(trimChars));
 
     public static string? Truncate(this string? value, in int length)
-        => value?[..^length];
+        => length > value?.Length ? value : value?[..^length];
 
     public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
     {
@@ -639,24 +605,6 @@ public static class StringHelper
         var slice = length is { } l ? span.Slice(start, l) : span[start..];
         return new(slice);
     }
-
-    //! [Obsolete("Failed in performance test. Use Slice instead.")]
-    ////public static string SliceRange(this string s, in int start, in int? length = null)
-    ////{
-    ////    //Check.IfArgumentNotNull(s, nameof(s));
-    ////    ReadOnlySpan<char> span = s;
-    ////    var slice = length is { } l ? span[start..l] : span[start..];
-    ////    return new(slice);
-    ////}
-
-    //! [Obsolete("Failed in performance test. Use Slice instead.")]
-    ////public static string Range(this string s, in int start, in int? length = null)
-    ////{
-    ////    //Check.IfArgumentNotNull(s, nameof(s));
-    ////    var slice = length is { } l ? s[start..l] : s[start..];
-    ////    return new(slice);
-    ////}
-
     public static bool IsValidIranianNationalCode(string input)
     {
         if (!Regex.IsMatch(input, @"^\d{10}$"))

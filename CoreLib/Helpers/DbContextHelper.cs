@@ -234,47 +234,47 @@ public static class DbContextHelper
         [NotNull] TModel model,
         Func<TModel, TEntity?> convert,
         Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
-        Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
+        Func<TEntity, TEntity>? onCommitting = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<long> =>
-        await InnerManipulate<TModel, TEntity, long>((dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist, (true, null)));
+        await InnerManipulate<TModel, TEntity, long>((dbContext, model, dbContext.Add, convert, validatorAsync, onCommitting, persist, (true, null)));
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> InsertAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
         [NotNull] TModel model,
         Func<TModel, TEntity?> convert,
         Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
-        Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
+        Func<TEntity, TEntity>? onCommitting = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull =>
-        await InnerManipulate<TModel, TEntity, TId>((dbContext, model, dbContext.Add, convert, validatorAsync, finalizeEntity, persist, (true, null)));
+        await InnerManipulate<TModel, TEntity, TId>((dbContext, model, dbContext.Add, convert, validatorAsync, onCommitting, persist, (true, null)));
 
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> UpdateAsync<TModel, TEntity>(
         this DbContext dbContext,
         [NotNull] TModel model,
         Func<TModel, TEntity?> convert,
         Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
-        Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
+        Func<TEntity, TEntity>? onCommitting = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<long> =>
-        await InnerManipulate<TModel, TEntity, long>((dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist, (true, null)));
+        await InnerManipulate<TModel, TEntity, long>((dbContext, model, dbContext.Attach, convert, validatorAsync, onCommitting, persist, (true, null)));
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> UpdateAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
         [NotNull] TModel model,
         Func<TModel, TEntity?> convert,
         Func<TModel, Task<Result<TModel>>>? validatorAsync = null,
-        Func<EntityEntry<TEntity>, TEntity>? finalizeEntity = null,
+        Func<TEntity, TEntity>? onCommitting = null,
         bool persist = true)
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull =>
-        await InnerManipulate<TModel, TEntity, TId>((dbContext, model, dbContext.Attach, convert, validatorAsync, finalizeEntity, persist, (true, null)));
+        await InnerManipulate<TModel, TEntity, TId>((dbContext, model, dbContext.Attach, convert, validatorAsync, onCommitting, persist, (true, null)));
 
     private static async Task<InnerManipulateRet<TModel, TEntity, TId>> InnerManipulate<TModel, TEntity, TId>(InnerManipulateArg<TModel, TEntity, TId> args)
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull
     {
         Check.IfArgumentNotNull(args);
-        var (dbContext, model, manipulate, convertToEntity, validatorAsync, finalizeEntity, persist, trans) = args;
+        var (dbContext, model, manipulate, convertToEntity, validatorAsync, onCommitting, persist, trans) = args;
 
         Check.IfArgumentNotNull(model);
         Check.IfArgumentNotNull(manipulate);
@@ -299,11 +299,11 @@ public static class DbContextHelper
             return default;
         }
 
-        var entry = manipulate(entity);
-        if (finalizeEntity is not null)
+        if (onCommitting is not null)
         {
-            entity = finalizeEntity(entry);
+            entity = onCommitting(entity);
         }
+        var entry = manipulate(entity);
 
         if (persist)
         {
@@ -337,7 +337,7 @@ internal record struct InnerManipulateArg<TModel, TEntity, TId>(
         in Func<TEntity, EntityEntry<TEntity>> Manipulate,
         in Func<TModel, TEntity?> ConvertToEntity,
         in Func<TModel, Task<Result<TModel>>>? ValidatorAsync,
-        in Func<EntityEntry<TEntity>, TEntity>? FinalizeEntity,
+        in Func<TEntity, TEntity>? OnCommitting,
         in bool Persist,
         in (bool UseTransaction, IDbContextTransaction? transaction)? TransactionInfo = null)
         where TEntity : class, IIdenticalEntity<TId>
@@ -349,10 +349,10 @@ internal record struct InnerManipulateArg<TModel, TEntity, TId>(
         Func<TEntity, EntityEntry<TEntity>> Manipulate,
         Func<TModel, TEntity?> ConvertToEntity,
         Func<TModel, Task<Result<TModel>>>? ValidatorAsync,
-        Func<EntityEntry<TEntity>, TEntity>? FinalizeEntity,
+        Func<TEntity, TEntity>? OnCommitting,
         bool Persist,
         (bool UseTransaction, IDbContextTransaction? transaction)? TransactionInfo) arg) =>
-    new(arg.DbContext, arg.Model, arg.Manipulate, arg.ConvertToEntity, arg.ValidatorAsync, arg.FinalizeEntity, arg.Persist, arg.TransactionInfo);
+    new(arg.DbContext, arg.Model, arg.Manipulate, arg.ConvertToEntity, arg.ValidatorAsync, arg.OnCommitting, arg.Persist, arg.TransactionInfo);
 }
 
 internal record struct InnerManipulateRet<TModel, TEntity, TId>(in EntityEntry<TEntity>? Entry, in TEntity? Entity, in int WrittenCount)
