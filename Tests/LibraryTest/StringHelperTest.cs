@@ -1,5 +1,4 @@
-﻿using System.Threading;
-
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace LibraryTest;
 
 //[MemoryDiagnoser]
@@ -171,5 +170,23 @@ public class StringHelperTest
         var indexes = test.AllIndexesOf("m");
         Assert.AreEqual(2, indexes.Count());
         Assert.AreEqual(5, indexes.ElementAt(1));
+    }
+
+    [TestMethod]
+    public void SplitMergeTest()
+    {
+        var test = "Hello, my name is Mohammad. How are you? Just fine. @mohammad.";
+        var actual = test.SplitCamelCase();
+        var expected = new[] { "Hello, my name is ", "Mohammad. ", "How are you? ", "Just fine. @mohammad." };
+        Assert.That.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    public void SeparateCamelCaseTest()
+    {
+        var factor = "Hello, My Name Is Mohammad. How Are You? Just Fine.";
+        var merged = factor.Remove(" ");
+        var actual = merged.SeparateCamelCase();
+        Assert.AreEqual(actual, factor);
     }
 }

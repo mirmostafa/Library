@@ -164,4 +164,4 @@ public interface IHierarchicalViewModelService<TViewModel> : IService
 }
 
 public record PagingParams(in int PageIndex = 0, in int? PageSize = null);
-public record PagingResult<T>(IReadOnlyList<T> Result, in PagingParams? Paging, in long TotalCount);
+public record PagingResult<T>(IReadOnlyList<T> Result, in long TotalCount);
