@@ -50,6 +50,8 @@ public static class PersianTools
         }
     }
 
+    public static IEnumerable<char> PersianDigits => Digits.Select(x => x.Persian);
+
     public static int GetDayCount(this PersianMonth persianMonth, in int? year = null) => persianMonth switch
     {
         PersianMonth.Farvardin => 31,
@@ -164,7 +166,7 @@ public static class PersianTools
                 s = s.Trim();
                 if (s.Contains(' '))
                 {
-                    s = s.Substring(0, s.IndexOf(" ", StringComparison.Ordinal));
+                    s = s[..s.IndexOf(" ", StringComparison.Ordinal)];
                 }
 
                 return Convert.ToInt32(s);
