@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Library.Globalization;
 using Library.Globalization.Pluralization;
@@ -12,9 +13,11 @@ namespace Library.Helpers;
 /// </summary>
 public static class StringHelper
 {
+    [Pure]
     public static string? Add(this string? s, in int count, char add = ' ', bool before = false) =>
         count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 
+    [Pure]
     public static string Add(this string s, in string s1) =>
         string.Concat(s, s1);
 
@@ -33,12 +36,15 @@ public static class StringHelper
         }
     }
 
+    [Pure]
     public static bool AnyCharInString(this string str, in string range)
         => range.Any(c => str.Contains(c.ToString()));
 
+    [Pure]
     public static string ArabicCharsToPersian(this string value)
         => value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
 
+    [Pure]
     public static bool CheckAllValidations(in string text, in Func<char, bool> regularValidate)
         => text.All(regularValidate);
 
@@ -46,32 +52,42 @@ public static class StringHelper
         => text.Any(regularValidate);
 
     [return: NotNull]
+    [Pure]
     public static string[] Compact(params string[] strings) => strings.Where(item
          => !item.IsNullOrEmpty()).ToArray();
 
     [return: NotNull]
+    [Pure]
     public static IEnumerable<string> Compact(this IEnumerable<string?>? strings)
         => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
+    [Pure]
     public static int CompareTo(this string str1, in string str, bool ignoreCase = false)
         => string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
+    [Pure]
     public static string ConcatStrings(this IEnumerable<string> values) =>
         string.Concat(values.ToArray());
 
+    [Pure]
     public static bool Contains(string str, in string value, bool ignoreCase = true)
         => ignoreCase
             ? str.ArgumentNotNull(nameof(str)).ToLowerInvariant().Contains(value.ArgumentNotNull(nameof(value)).ToLowerInvariant())
             : str.ArgumentNotNull(nameof(str)).Contains(value);
 
+    [Pure]
     public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase)
         => array.Any(s => s.CompareTo(str, ignoreCase) == 0);
+
+    [Pure]
     public static bool ContainsAny(this string str, in IEnumerable<string?> array)
         => array.Any(item => str.Contains(item));
 
+    [Pure]
     public static bool ContainsAny(this string str, params object[] array)
         => str.ContainsAny(array.Select(x => x?.ToString()).AsEnumerable());
 
+    [Pure]
     public static bool ContainsOf(this string str, in string target)
         => str.ToLower().Contains(target.ToLower());
 
@@ -87,30 +103,39 @@ public static class StringHelper
         return Encoding.UTF8.GetString(Encoding.Unicode.GetBytes(text));
     }
 
+    [Pure]
     public static bool EndsWithAny(this string str, in IEnumerable<object> array)
         => array.Any(item => item is { } s && str.EndsWith(s.ToString() ?? string.Empty));
 
+    [Pure]
     public static bool EndsWithAny(this string str, in IEnumerable<string> values)
         => values.Any(str.EndsWith);
 
+    [Pure]
     public static bool EndsWithAny(this string str, params object[] array)
         => str.EndsWithAny(array.AsEnumerable());
 
+    [Pure]
     public static bool EqualsTo(this string str1, in string str, bool ignoreCase = true)
         => str1.CompareTo(str, ignoreCase) == 0;
 
+    [Pure]
     public static bool EqualsToAny(this string str1, bool ignoreCase, params string[] array)
         => array.Any(s => str1.EqualsTo(s, ignoreCase));
 
+    [Pure]
     public static bool EqualsToAny(this string str1, params string[] array)
         => array.Any(s => str1.EqualsTo(s));
 
+    [Pure]
     public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';')
         => keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
 
+    [Pure]
     public static string? GetLongest(this string[] strings)
         => strings?.Max();
 
+    [Pure]
     public static string? GetPhrase(this string str, in int index, in char start, char end = default)
     {
         if (end == default(char))
@@ -162,6 +187,7 @@ public static class StringHelper
         }
     }
 
+    [Pure]
     public static IEnumerable<string> GroupBy(this IEnumerable<char> chars, char separator)
     {
         var buffer = new StringBuilder();
@@ -179,6 +205,7 @@ public static class StringHelper
         }
     }
 
+    [Pure]
     public static IEnumerable<string> GroupBy(this string str, char separator)
     {
         var buffer = new StringBuilder();
@@ -196,12 +223,15 @@ public static class StringHelper
         }
     }
 
+    [Pure]
     public static bool HasPersian(this string text)
         => CheckAnyValidations(text, IsPersian);
 
+    [Pure]
     public static string? IfNull(this string? s, in string? value)
         => s is null ? value : s;
 
+    [Pure]
     public static string IfNullOrEmpty(this string? str, string defaultValue)
         => str.IsNullOrEmpty() ? defaultValue : str;
 
@@ -231,18 +261,23 @@ public static class StringHelper
             string.Compare(current, item, ignoreCase) == 0;
     }
 
+    [Pure]
     public static bool IsCommon(this char c) =>
         c == ' ';
 
+    [Pure]
     public static bool IsDigit(this char c, in bool canAcceptMinusKey = false) =>
         (canAcceptMinusKey && c == '-') || char.IsDigit(c);
 
+    [Pure]
     public static bool IsDigitOrControl(this char key) =>
         char.IsDigit(key) || char.IsControl(key);
 
+    [Pure]
     public static bool IsEmpty([NotNullWhen(false)] in string? s) =>
         s?.Length is 0;
 
+    [Pure]
     public static bool IsEnglish(this char c)
         => IsCommon(c) || (c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z'));
 
@@ -276,8 +311,9 @@ public static class StringHelper
     public static bool IsLetterText(this string text)
         => CheckAllValidations(text, c => IsEnglish(c) || IsPersian(c));
 
+    [Pure]
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
-        => string.IsNullOrEmpty(str);
+        => str?.Length is null or 0;
 
     public static bool IsNumber(this string text)
         => double.TryParse(text, out _);

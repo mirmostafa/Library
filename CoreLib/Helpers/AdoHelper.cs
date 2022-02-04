@@ -52,7 +52,8 @@ public static partial class AdoHelper
 
     [Obsolete("Please use Sql, instead.", true)]
     public static IEnumerable<T> SelectTable<T>(SqlConnection connection, string tableName)
-        where T : new() => connection.Execute(cmd => cmd.ExecuteReader(CommandBehavior.CloseConnection).Select<T>(), $"SELECT * FROM [{tableName}]");
+        where T : new() => 
+        connection.Execute(cmd => cmd.ExecuteReader(CommandBehavior.CloseConnection).Select<T>(), $"SELECT * FROM [{tableName}]");
 
     [Obsolete("Please use Sql, instead.", true)]
     public static IEnumerable<T> ExecuteReader<T>(SqlConnection connection, string query, Action<SqlParameterCollection>? fillParams = null)
@@ -63,7 +64,8 @@ public static partial class AdoHelper
         return command.ExecuteReader(CommandBehavior.CloseConnection).Select<T>();
     }
 
-    public static bool CanConnect(this SqlConnection conn) => conn.TryConnectAsync() == null;
+    public static bool CanConnect(this SqlConnection conn) => 
+        conn.TryConnectAsync() == null;
 
     public static async Task<Exception?> CheckConnectionStringAsync(string connectionString)
     {
@@ -71,8 +73,8 @@ public static partial class AdoHelper
         return await conn.TryConnectAsync();
     }
 
-    public static T CheckDbNull<T>(this SqlDataReader reader, string columnName, T defaultValue, Func<object, T> converter)
-        => reader is null || reader.IsClosed
+    public static T CheckDbNull<T>(this SqlDataReader reader, string columnName, T defaultValue, Func<object, T> converter) => 
+        reader is null || reader.IsClosed
             ? throw new ArgumentNullException(nameof(reader))
             : ObjectHelper.CheckDbNull(reader[columnName], defaultValue, converter);
 
@@ -88,24 +90,24 @@ public static partial class AdoHelper
         return result;
     }
 
-    public static void EnsureClosed(this SqlConnection connection, Action<SqlConnection> action, bool openConnection = false)
-        => connection.EnsureClosed(c =>
+    public static void EnsureClosed(this SqlConnection connection, Action<SqlConnection> action, bool openConnection = false) =>
+        connection.EnsureClosed(c =>
         {
             action(c);
             return true;
         },
         openConnection);
 
-    public static void EnsureClosed(this SqlConnection connection, Action action, bool openConnection = false)
-        => connection.EnsureClosed(c =>
+    public static void EnsureClosed(this SqlConnection connection, Action action, bool openConnection = false) => 
+        connection.EnsureClosed(c =>
         {
             action();
             return true;
         },
         openConnection);
 
-    public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<TResult> action, bool openConnection = false)
-        => connection.EnsureClosed(c => action(), openConnection);
+    public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<TResult> action, bool openConnection = false) => 
+        connection.EnsureClosed(c => action(), openConnection);
 
     public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<SqlConnection, TResult> action, bool openConnection = false)
     {
