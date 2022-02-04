@@ -39,7 +39,7 @@ public interface IAsyncReadPagingService<TViewModel, in TId> : IService
 
 public interface IAsyncReadPagingService<TViewModel> : IAsyncReadPagingService<TViewModel, long> { }
 
-public interface IAsyncWriteService<in TViewModel, TId> : IService
+public interface IAsyncWriteService<TViewModel, TId> : IService
 {
     /// <summary>
     /// Deletes an entity asynchronously.
@@ -53,7 +53,7 @@ public interface IAsyncWriteService<in TViewModel, TId> : IService
     /// </summary>
     /// <param name="model">The model.</param>
     /// <returns></returns>
-    Task<TId> InsertAsync(TViewModel model, bool persist = true);
+    Task<TViewModel> InsertAsync(TViewModel model, bool persist = true);
 
     /// <summary>
     /// Updates an entity asynchronously.
@@ -61,10 +61,10 @@ public interface IAsyncWriteService<in TViewModel, TId> : IService
     /// <param name="id">The identifier.</param>
     /// <param name="model">The model.</param>
     /// <returns></returns>
-    Task<TId> UpdateAsync(TId id, TViewModel model, bool persist = true);
+    Task<TViewModel> UpdateAsync(TId id, TViewModel model, bool persist = true);
 }
 
-public interface IAsyncWriteService<in TViewModel> : IAsyncWriteService<TViewModel, long> { }
+public interface IAsyncWriteService<TViewModel> : IAsyncWriteService<TViewModel, long> { }
 
 public interface IAsyncViewModelCrudService<TViewModel, TId>
     : IService, IAsyncReadService<TViewModel, TId>, IAsyncWriteService<TViewModel, TId>
