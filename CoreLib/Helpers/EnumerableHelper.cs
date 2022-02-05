@@ -34,18 +34,6 @@ public static class EnumerableHelper
         yield return item;
     }
 
-    //public static void AddRange<T>([DisallowNull] this ICollection<T> collection, params T[] newItems)
-    //{
-    //    Check.IfArgumentNotNull(collection);
-    //    if (newItems?.Any() is true)
-    //    {
-    //        foreach (var item in newItems)
-    //        {
-    //            collection.Add(item);
-    //        }
-    //    }
-    //}
-
     public static IList<T> AddRange<T>([DisallowNull] this IList<T> list, in IEnumerable<T> items)
     {
         Check.IfArgumentNotNull(list);
@@ -82,20 +70,6 @@ public static class EnumerableHelper
             }
         }
     }
-
-    //public static IList AddRange<TItem>([DisallowNull] this IList list, in IEnumerable<TItem> items)
-    //{
-    //    Check.IfArgumentNotNull(list);
-    //    if (items?.Any() is true)
-    //    {
-    //        foreach (var item in items)
-    //        {
-    //            list.Add(item);
-    //        }
-    //    }
-
-    //    return list!;
-    //}
 
     public static IEnumerable<T> AddRangeImmuted<T>(this IEnumerable<T>? source, IEnumerable<T>? items)
     {
@@ -419,10 +393,6 @@ public static class EnumerableHelper
         where TKey : notnull
         => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-    //public static TList AddFluent<TList, TItem>(this TList list, TItem item)
-    //    where TList : ICollection<TItem>
-    //    => list.ArgumentNotNull(nameof(list)).Fluent(() => list.Add(item));
-
     public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         Check.IfArgumentNotNull(asyncItems);
@@ -451,6 +421,8 @@ public static class EnumerableHelper
     public static async Task<ICollection<TItem>> AddRangeAsync<TItem>([DisallowNull] this ICollection<TItem> list, IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
         Check.IfArgumentNotNull(list);
+        Check.IfArgumentNotNull(asyncItems);
+
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             list.Add(item);
@@ -484,7 +456,15 @@ public static class EnumerableHelper
 
 
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
-        => source?.Select(x => x) ?? Enumerable.Empty<T>();
+    {
+        if (source is not null)
+        {
+            foreach (var item in source)
+            {
+                yield return item;
+            }
+        }
+    }
 
     [Obsolete("Use .Net 6.0 Check, instead.")]
     public static IEnumerable<IEnumerable<T>> ChunkBy<T>(this IEnumerable<T> source, int chunkSize)

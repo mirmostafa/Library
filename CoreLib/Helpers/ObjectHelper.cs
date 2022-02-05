@@ -209,9 +209,10 @@ public static class ObjectHelper
     /// <returns> </returns>
     /// <exception cref="ArgumentNullException"> property </exception>
     public static TAttribute? GetAttribute<TAttribute>(in PropertyInfo property)
-        where TAttribute : Attribute => property is null
-        ? throw new ArgumentNullException(nameof(property))
-        : property.GetCustomAttributes(typeof(TAttribute), true).FirstOrDefault().As<TAttribute>();
+        where TAttribute : Attribute =>
+        property is null
+                ? throw new ArgumentNullException(nameof(property))
+                : property.GetCustomAttributes(typeof(TAttribute), true).FirstOrDefault().As<TAttribute>();
 
     /// <summary>
     ///     Gets the attribute.
@@ -584,15 +585,8 @@ public static class ObjectHelper
         where TStruct : struct
         => @struct.Equals(default(TStruct));
 
-    public static int GetHashCode(this object o, params object[] properties)
-    {
-        var hashCode = new HashCode();
-        foreach (var prop in properties)
-        {
-            hashCode.Add(prop);
-        }
-        return hashCode.ToHashCode();
-    }
+    public static int GetHashCode(this object o, params object[] properties) => 
+        properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid? guid)
         => guid is null || guid == Guid.Empty;

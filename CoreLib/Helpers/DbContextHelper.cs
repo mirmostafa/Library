@@ -167,21 +167,26 @@ public static class DbContextHelper
         }
         return dbContext;
     }
-    public static DbContext RemoveById<TEntity, TId>([DisallowNull] DbContext dbContext, in IEnumerable<TId> ids, bool detach = false)
+    public static DbContext RemoveById<TEntity, TId>([DisallowNull] DbContext dbContext, IEnumerable<TId> ids, bool detach = false)
         where TEntity : class, IIdenticalEntity<TId>, new()
         where TId : notnull
     {
         Check.IfArgumentNotNull(dbContext);
         Check.IfArgumentNotNull(ids);
 
-        Action<TEntity> det = detach ? entity => Catch(() => Detach<DbContext, TEntity, TId>(dbContext, entity)) : _ => { };
+        ////Action<TEntity> det = detach ? entity => Catch(() => Detach<DbContext, TEntity, TId>(dbContext, entity)) : _ => { };
 
-        foreach (var id in ids)
-        {
-            var entity = new TEntity { Id = id };
-            det(entity);
-            _ = dbContext.Remove(entity);
-        }
+        ////foreach (var id in ids)
+        ////{
+        ////    var entity = new TEntity { Id = id };
+        ////    det(entity);
+        ////    _ = dbContext.Remove(entity);
+        ////}
+        ////return dbContext;
+        var entities = dbContext.Set<TEntity>().Where(e => ids.Contains(e.Id));
+        if (detach)
+            entities.ForEach(e => dbContext.Entry(e).State = EntityState.Detached);
+        dbContext.Set<TEntity>().RemoveRange(entities);
         return dbContext;
     }
     public static DbContext RemoveById<TEntity>([DisallowNull] this DbContext dbContext, long id, bool detach = false)

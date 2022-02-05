@@ -4,20 +4,16 @@ namespace Library.Helpers
 {
     public static class ExceptionHelper
     {
-        public static string GetFullMessage(this Exception? exception, Func<Exception, string> format, string? separator)
+        public static string? GetFullMessage(this Exception? exception, Func<Exception, string> format, string? separator)
         {
-            var result = new StringBuilder();
-            var ex = exception;
-            while (ex is not null)
+            if (exception == null)
             {
-                result.AppendLine(format(ex));
-                if (!separator.IsNullOrEmpty())
-                {
-                    result.AppendLine(separator);
-                }
-                ex = ex.InnerException;
+                return null;
             }
-            return result.ToString();
+
+            var message = format(exception);
+            var inner = GetFullMessage(exception.InnerException, format, separator);
+            return inner == null ? message : $"{message}{separator}{inner}";
         }
 
         public static string GetFullMessage(this Exception? exception, bool inculdeStackTrace = false)
