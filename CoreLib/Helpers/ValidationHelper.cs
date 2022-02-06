@@ -26,7 +26,7 @@ public static class ValidationHelper
         item.Validate().Handle();
     public static async Task<TItem> CheckValidationAsync<TItem>([DisallowNull] this IAsyncValidatable<TItem> model) =>
         await model.ValidateAsync().HandleAsync();
-    public static async Task<TItem> CheckValidatorAsync<TItem>([DisallowNull] this IAsyncValidator<TItem> service, TItem item) => 
+    public static async Task<TItem> CheckValidatorAsync<TItem>([DisallowNull] this IAsyncValidator<TItem> service, TItem item) =>
         await service.ValidateAsync(item).HandleAsync();
 
     public static Result<TItem> Validate<TItem>(Func<TItem> action)
