@@ -363,11 +363,13 @@ public static class ControlHelper
     public static void Rebind(this TextBox target)
         => Rebind(target, TextBox.TextProperty);
 
-    public static void RebindDataContext(this FrameworkElement element)
+    public static void RebindDataContext([DisallowNull] this FrameworkElement element) => 
+        RebindDataContext(element, element?.DataContext);
+
+    public static void RebindDataContext([DisallowNull] this FrameworkElement element, object? dataContext)
     {
         Check.IfArgumentNotNull(element, nameof(element));
 
-        var dataContext = element.DataContext;
         element.DataContext = null;
         element.DataContext = dataContext;
     }

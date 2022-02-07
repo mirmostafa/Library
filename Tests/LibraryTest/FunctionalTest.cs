@@ -63,7 +63,7 @@ public class FunctionalTest
     public void ForEachTest() => Enumerable.Range(1, 1).ForEach(_emptyIntAction);
 
     [TestMethod]
-    public void LockTest() => this.Lock(Methods.Empty);
+    public void LockTest() => Lock(this, Methods.Empty);
 
     [TestMethod]
     public void NewTest() => New<EmptyRecord>();
