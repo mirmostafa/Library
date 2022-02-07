@@ -33,7 +33,7 @@ public class Database : SqlObject<Database, Server>
         {
             name = new SqlConnectionStringBuilder(connectionString).InitialCatalog;
         }
-        Check.NotNull(name, () => new ObjectNotFoundException("Cannot detect database name"));
+        Check.IfNotNull(name, () => new ObjectNotFoundException("Cannot detect database name"));
 
         return GetDatabasesCore(connectionString).FirstOrDefault(db => db.Name == name);
     }

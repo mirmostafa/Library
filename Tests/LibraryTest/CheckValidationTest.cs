@@ -78,7 +78,7 @@ public class CheckValidationTest
     public void NotNullTest1()
     {
         var lname = "Mirmostafa";
-        Check.NotNull(lname, () => new NullValueValidationException());
+        Check.IfNotNull(lname, () => new NullValueValidationException());
     }
 
     [TestMethod]
@@ -86,6 +86,6 @@ public class CheckValidationTest
     public void NotNullTest2()
     {
         string? lname = null;
-        Check.NotNull(lname, () => new NullValueValidationException());
+        Check.IfNotNull(lname, () => new NullValueValidationException());
     }
 }

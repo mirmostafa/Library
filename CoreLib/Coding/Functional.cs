@@ -178,13 +178,13 @@ public static class Functional
             }
         }
     }
-    public static void Lock(this object? lockObject, Action action) =>
-        _ = lockObject.Lock(() =>
+    public static void Lock(object? lockObject, Action action) =>
+        _ = Lock(lockObject, () =>
         {
             action.ArgumentNotNull(nameof(action))(); return true;
         });
 
-    public static TResult Lock<TResult>(this object? lockObject, in Func<TResult> action)
+    public static TResult Lock<TResult>(object? lockObject, in Func<TResult> action)
     {
         lock (lockObject ?? GetCallerMethod()!.DeclaringType!)
         {

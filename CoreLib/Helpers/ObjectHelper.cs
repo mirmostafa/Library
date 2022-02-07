@@ -585,7 +585,7 @@ public static class ObjectHelper
         where TStruct : struct
         => @struct.Equals(default(TStruct));
 
-    public static int GetHashCode(this object o, params object[] properties) => 
+    public static int GetHashCode(object o, params object[] properties) => 
         properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid? guid)

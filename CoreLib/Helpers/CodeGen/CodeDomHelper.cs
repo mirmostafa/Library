@@ -54,7 +54,7 @@ public static class CodeDomHelper
     /// <returns></returns>
     public static CodeNamespace AddNewNameSpace(this CodeCompileUnit unit, in string? nameSpace = null)
     {
-        Check.ArgumentNotNull(unit);
+        Check.IfArgumentNotNull(unit);
 
         CodeNamespace? result = nameSpace is null ? new() : new(nameSpace);
         _ = unit.Namespaces.Add(result);
