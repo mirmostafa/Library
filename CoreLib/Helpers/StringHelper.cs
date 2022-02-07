@@ -237,7 +237,7 @@ public static class StringHelper
 
     public static int? IndexOf([DisallowNull] this IEnumerable<string?> items, in string? item, bool trimmed = false, bool ignoreCase = true)
     {
-        Check.ArgumentNotNull(items, nameof(items));
+        Check.IfArgumentNotNull(items, nameof(items));
 
         var itm = get(item, trimmed);
         var index = 0;
@@ -566,8 +566,8 @@ public static class StringHelper
 
     public static byte[] ToBytes([DisallowNull] this string value, [DisallowNull] in Encoding encoding)
     {
-        Check.ArgumentNotNull(value);
-        Check.ArgumentNotNull(encoding);
+        Check.IfArgumentNotNull(value);
+        Check.IfArgumentNotNull(encoding);
 
         return encoding.GetBytes(value);
     }

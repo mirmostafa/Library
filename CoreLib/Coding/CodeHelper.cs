@@ -323,7 +323,7 @@ public static class CodeHelper
 
     public static Result CatchResult([DisallowNull] in Action action)
     {
-        Check.ArgumentNotNull(action);
+        Check.IfArgumentNotNull(action);
         try
         {
             action();

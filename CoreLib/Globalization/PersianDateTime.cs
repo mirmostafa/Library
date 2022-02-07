@@ -624,7 +624,7 @@ public readonly struct PersianDateTime :
             return this.ToString();
         }
 
-        _ = Check.ArgumentNotNull(buffer, "format");
+        Check.IfArgumentNotNull(buffer, "format");
         var isPm = this.Hour > 12;
         var tmpHrs = isPm ? this.Hour - 12 : this.Hour;
         buffer = buffer.Trim().Replace("yyyy", this.Year.ToString("0000", CultureInfo.CurrentCulture));
