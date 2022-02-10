@@ -111,7 +111,9 @@ public class Check
         return @this;
     }
 
-
+    [return: NotNull]
+    public static async Task<T> IfNotNullAsync<T>([DisallowNull] Func<Task<T>> get, [CallerArgumentExpression("get")] string message = null) =>
+        (await get()).NotNull(() => new NullValueValidationException(message, null));
 }
 
 public static class LibCheckHelper
@@ -155,12 +157,26 @@ public static class LibCheckHelper
     public static T NotNull<T>([NotNull] this T obj, [CallerArgumentExpression("obj")] string argName = null) =>
         obj.NotValid(x => x is null, () => new NullValueValidationException(argName!))!;
 
+    [return: NotNull]
     public static T NotNull<T>([NotNull] this T @this, [DisallowNull] object obj, [CallerArgumentExpression("obj")] string argName = null) =>
         @this.NotValid(_ => obj is null, () => new NullValueValidationException(argName!))!;
 
+    [return: NotNull]
     public static T NotNull<T>([NotNull] this T @this, string obj, [CallerArgumentExpression("obj")] string argName = null) =>
         @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
     public static T NotValid<T>(this T obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException) =>
-            !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
+        !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
+
+    public static void OnFalse(this bool ok, Func<Exception> getException)
+        => Check.MustBe(ok, getException);
+
+    [return: NotNull]
+    public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T> task, [CallerArgumentExpression("task")] string message = null) =>
+        (await task).NotNull(() => new NullValueValidationException(message, null));
+
+    [return: NotNull]
+    public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T?> task, [DisallowNull] Func<Exception> getException) =>
+        (await task).NotNull(getException);
+
 }

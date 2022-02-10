@@ -2,7 +2,7 @@
 
 namespace Library.Collections;
 
-internal class EmptyAsyncEnumerable<T> : IAsyncEnumerable<T>, ISupportEmpty<IAsyncEnumerable<T>>
+internal class EmptyAsyncEnumerable<T> : IAsyncEnumerable<T>, IEmpty<IAsyncEnumerable<T>>
 {
     private static IAsyncEnumerable<T> _empty;
     public static IAsyncEnumerable<T> Empty => _empty ??= NewEmpty();
