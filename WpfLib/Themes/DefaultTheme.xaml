@@ -166,6 +166,7 @@
         BasedOn="{StaticResource NormalTextBlock}"
         TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource DefaultHeadingFontName}" />
+        <Setter Property="FontSize" Value="{StaticResource DefaultHeadingFontSize}" />
         <Setter Property="Foreground" Value="{StaticResource HeadingTextBlockFoegound}" />
     </Style>
     <Style
@@ -420,6 +421,8 @@
         <Setter Property="Margin" Value="{StaticResource DefaultMargin}" />
         <Setter Property="Background" Value="{StaticResource SkinBackground}" />
         <Setter Property="Foreground" Value="{StaticResource SkinForeground}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
     </Style>
 
 

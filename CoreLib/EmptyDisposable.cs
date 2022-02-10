@@ -1,7 +1,7 @@
 ﻿using Library.Interfaces;
 
 namespace Library;
-public class EmptyDisposable : IDisposable, ISupportEmpty<EmptyDisposable>
+public class EmptyDisposable : IDisposable, IEmpty<EmptyDisposable>
 {
     private bool _disposedValue;
     private static EmptyDisposable _empty;
