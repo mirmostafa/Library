@@ -223,6 +223,25 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     public static bool operator ==(Id left, Id right) =>
         left.Equals(right);
     /// <summary>
+    /// Performs an implicit conversion from <see cref="Id"/> to <see cref="Guid"/>.
+    /// </summary>
+    /// <param name="id">The identifier.</param>
+    /// <returns>
+    /// The result of the conversion.
+    /// </returns>
+    public static implicit operator Guid(Id id) =>
+        id.Value;
+    /// <summary>
+    /// Performs an implicit conversion from <see cref="Guid"/> to <see cref="Id"/>.
+    /// </summary>
+    /// <param name="guid">The unique identifier.</param>
+    /// <returns>
+    /// The result of the conversion.
+    /// </returns>
+    public static implicit operator Id(Guid guid) =>
+        new(guid);
+
+    /// <summary>
     /// Implements the operator !=.
     /// </summary>
     /// <param name="left">The left.</param>
