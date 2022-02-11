@@ -223,6 +223,36 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     public static bool operator ==(Id left, Id right) =>
         left.Equals(right);
     /// <summary>
+    /// Implements the operator !=.
+    /// </summary>
+    /// <param name="left">The left.</param>
+    /// <param name="right">The right.</param>
+    /// <returns>
+    /// The result of the operator.
+    /// </returns>
+    public static bool operator !=(Id left, Id right) =>
+        !(left == right);
+    /// <summary>
+    /// Implements the operator ==.
+    /// </summary>
+    /// <param name="left">The left.</param>
+    /// <param name="right">The right.</param>
+    /// <returns>
+    /// The result of the operator.
+    /// </returns>
+    public static bool operator ==(Id left, Guid right) =>
+        left.Equals(right);
+    /// <summary>
+    /// Implements the operator !=.
+    /// </summary>
+    /// <param name="left">The left.</param>
+    /// <param name="right">The right.</param>
+    /// <returns>
+    /// The result of the operator.
+    /// </returns>
+    public static bool operator !=(Id left, Guid right) =>
+        !(left == right);
+    /// <summary>
     /// Performs an implicit conversion from <see cref="Id"/> to <see cref="Guid"/>.
     /// </summary>
     /// <param name="id">The identifier.</param>
@@ -239,24 +269,12 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// The result of the conversion.
     /// </returns>
     public static implicit operator Id(Guid guid) =>
-        new(guid);
-
-    /// <summary>
-    /// Implements the operator !=.
-    /// </summary>
-    /// <param name="left">The left.</param>
-    /// <param name="right">The right.</param>
-    /// <returns>
-    /// The result of the operator.
-    /// </returns>
-    public static bool operator !=(Id left, Id right) =>
-        !(left == right);
-    /// <summary>
-    /// Converts to string.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="string" /> that represents this instance.
-    /// </returns>
+        new(guid);    /// <summary>
+                      /// Converts to string.
+                      /// </summary>
+                      /// <returns>
+                      /// A <see cref="string" /> that represents this instance.
+                      /// </returns>
     public override string ToString() =>
         this.Value.ToString();
 }
