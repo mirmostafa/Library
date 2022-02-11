@@ -2,7 +2,7 @@
 using Library.Interfaces;
 
 namespace Library.Types;
-public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, IComparable<Guid>, IConvertible<Guid>, ISpanFormattable, IFormattable, ISerializable, ICloneable, IEmpty<Id>
+public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, IComparable<Guid>, IConvertible<Guid>, ISpanFormattable, IFormattable, ISerializable, ICloneable, IEmpty<Id>, INew<Id>
 {
     public Id(Guid value) =>
         this.Value = value;
@@ -173,7 +173,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
     /// <exception cref="System.NotImplementedException"></exception>
-    public override bool Equals(object? obj) => 
+    public override bool Equals(object? obj) =>
         obj is Id id && this.Equals(id);
 
     /// <summary>
