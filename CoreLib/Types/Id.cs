@@ -2,7 +2,7 @@
 using Library.Interfaces;
 
 namespace Library.Types;
-public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, IComparable<Guid>, IConvertible<Guid>, ISpanFormattable, IFormattable, ISerializable, ICloneable, IEmpty<Id>
+public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, IComparable<Guid>, IConvertible<Guid>, ISpanFormattable, IFormattable, ISerializable, ICloneable, IEmpty<Id>, INew<Id>
 {
     public Id(Guid value) =>
         this.Value = value;
@@ -173,7 +173,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
     /// <exception cref="System.NotImplementedException"></exception>
-    public override bool Equals(object? obj) => 
+    public override bool Equals(object? obj) =>
         obj is Id id && this.Equals(id);
 
     /// <summary>
@@ -222,6 +222,25 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// </returns>
     public static bool operator ==(Id left, Id right) =>
         left.Equals(right);
+    /// <summary>
+    /// Performs an implicit conversion from <see cref="Id"/> to <see cref="Guid"/>.
+    /// </summary>
+    /// <param name="id">The identifier.</param>
+    /// <returns>
+    /// The result of the conversion.
+    /// </returns>
+    public static implicit operator Guid(Id id) =>
+        id.Value;
+    /// <summary>
+    /// Performs an implicit conversion from <see cref="Guid"/> to <see cref="Id"/>.
+    /// </summary>
+    /// <param name="guid">The unique identifier.</param>
+    /// <returns>
+    /// The result of the conversion.
+    /// </returns>
+    public static implicit operator Id(Guid guid) =>
+        new(guid);
+
     /// <summary>
     /// Implements the operator !=.
     /// </summary>
