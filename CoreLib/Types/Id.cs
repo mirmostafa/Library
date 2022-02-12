@@ -1,10 +1,12 @@
 ﻿using System.Runtime.Serialization;
 using Library.Interfaces;
+using IdType = System.Guid;
+//using IdType = System.Int64;
 
 namespace Library.Types;
-public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, IComparable<Guid>, IConvertible<Guid>, ISpanFormattable, IFormattable, ISerializable, ICloneable, IEmpty<Id>, INew<Id>
+public readonly struct Id : IEquatable<IdType>, IComparable, IComparable<Id>, IComparable<IdType>, IConvertible<IdType>, ISpanFormattable, IFormattable, ISerializable, ICloneable, IEmpty<Id>, INew<Id>
 {
-    public Id(Guid value) =>
+    public Id(IdType value) =>
         this.Value = value;
 
     /// <summary>
@@ -13,14 +15,14 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <value>
     /// The unique identifier.
     /// </value>
-    public Guid Value { get; }
+    public IdType Value { get; }
     /// <summary>
     /// Gets an empty instance of currebt class.
     /// </summary>
     /// <value>
     /// An empty instance.
     /// </value>
-    public static Id Empty { get; } = new(Guid.Empty);
+    public static Id Empty { get; } = new(GetDefaultValue());
     /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
     /// </summary>
@@ -49,7 +51,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// A value that indicates the relative order of the objects being compared. The return value has these meanings:
     /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="other" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="other" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="other" /> in the sort order.</description></item></list>
     /// </returns>
-    public int CompareTo(Guid other) =>
+    public int CompareTo(IdType other) =>
         this.Value.CompareTo(other);
     /// <summary>
     /// Indicates whether the current object is equal to another object of the same type.
@@ -58,7 +60,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     ///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
     /// </returns>
-    public bool Equals(Guid other) =>
+    public bool Equals(IdType other) =>
         this.Value.Equals(other);
     /// <summary>
     /// Converts to string.
@@ -103,7 +105,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     /// The result of the operator.
     /// </returns>
-    public static bool operator <(Id left, Guid right) =>
+    public static bool operator <(Id left, IdType right) =>
         left.CompareTo(right) < 0;
     /// <summary>
     /// Implements the operator &gt;.
@@ -123,7 +125,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     /// The result of the operator.
     /// </returns>
-    public static bool operator >(Id left, Guid right) =>
+    public static bool operator >(Id left, IdType right) =>
         left.CompareTo(right) > 0;
     /// <summary>
     /// Implements the operator &lt;=.
@@ -143,7 +145,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     /// The result of the operator.
     /// </returns>
-    public static bool operator <=(Id left, Guid right) =>
+    public static bool operator <=(Id left, IdType right) =>
         left.CompareTo(right) <= 0;
     /// <summary>
     /// Implements the operator &gt;=.
@@ -163,7 +165,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     /// The result of the operator.
     /// </returns>
-    public static bool operator >=(Id left, Guid right)
+    public static bool operator >=(Id left, IdType right)
         => left.CompareTo(right) >= 0;
     /// <summary>
     /// Determines whether the specified <see cref="object" />, is equal to this instance.
@@ -172,7 +174,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     ///   <c>true</c> if the specified <see cref="object" /> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
     public override bool Equals(object? obj) =>
         obj is Id id && this.Equals(id);
 
@@ -182,7 +184,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
     /// </returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
     public override int GetHashCode()
         => this.Value.GetHashCode();
 
@@ -191,7 +193,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// </summary>
     /// <param name="info">The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data.</param>
     /// <param name="context">The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for this serialization.</param>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
     public void GetObjectData(SerializationInfo info, StreamingContext context)
         => throw new NotImplementedException();
     /// <summary>
@@ -200,7 +202,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     /// A new object that is a copy of this instance.
     /// </returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
     public object Clone()
         => new Id(this.Value);
     /// <summary>
@@ -209,9 +211,9 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     /// An empty instance of currebt class.
     /// </returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
     public static Id NewEmpty() =>
-        new(Guid.Empty);
+        new(GetDefaultValue());
     /// <summary>
     /// Implements the operator ==.
     /// </summary>
@@ -240,7 +242,7 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     /// The result of the operator.
     /// </returns>
-    public static bool operator ==(Id left, Guid right) =>
+    public static bool operator ==(Id left, IdType right) =>
         left.Equals(right);
     /// <summary>
     /// Implements the operator !=.
@@ -250,25 +252,25 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
     /// <returns>
     /// The result of the operator.
     /// </returns>
-    public static bool operator !=(Id left, Guid right) =>
+    public static bool operator !=(Id left, IdType right) =>
         !(left == right);
     /// <summary>
-    /// Performs an implicit conversion from <see cref="Id"/> to <see cref="Guid"/>.
+    /// Performs an implicit conversion from <see cref="Id"/> to <see cref="IdType"/>.
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns>
     /// The result of the conversion.
     /// </returns>
-    public static implicit operator Guid(Id id) =>
+    public static implicit operator IdType(Id id) =>
         id.Value;
     /// <summary>
-    /// Performs an implicit conversion from <see cref="Guid"/> to <see cref="Id"/>.
+    /// Performs an implicit conversion from <see cref="IdType"/> to <see cref="Id"/>.
     /// </summary>
     /// <param name="guid">The unique identifier.</param>
     /// <returns>
     /// The result of the conversion.
     /// </returns>
-    public static implicit operator Id(Guid guid) =>
+    public static implicit operator Id(IdType guid) =>
         new(guid);    /// <summary>
                       /// Converts to string.
                       /// </summary>
@@ -277,4 +279,21 @@ public readonly struct Id : IEquatable<Guid>, IComparable, IComparable<Id>, ICom
                       /// </returns>
     public override string ToString() =>
         this.Value.ToString();
+    private static Id GetDefaultValue()
+    {
+        if (typeof(IdType) == typeof(Guid))
+        {
+            return Guid.Empty.To<Id>();
+        }
+        else if (typeof(IdType) == typeof(long))
+        {
+            return 0.To<Id>();
+        }
+        else
+        {
+            return default;
+        }
+    }
+
+
 }
