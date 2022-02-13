@@ -8,5 +8,6 @@
     <Brush x:Key="SkinBackground">White</Brush>
     <Brush x:Key="SkinForeground">Black</Brush>
     <Brush x:Key="AlternatingTableRowColor">LightBlue</Brush>
+    <SolidColorBrush x:Key="CodingTextColor" Color="Blue" />
 
 </ResourceDictionary>
