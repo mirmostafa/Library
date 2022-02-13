@@ -59,13 +59,13 @@ public class ConnectionStringBuilder
     public ConnectionStringBuilder IsReadOnly(bool value)
         => this.Fluent(() => this._builder.ApplicationIntent = value ? ApplicationIntent.ReadOnly : ApplicationIntent.ReadWrite);
 
-    public string Build()
-        => this._builder.ConnectionString;
-
     public void Validate() { }
 
     public static void Validate(string connectionString)
         => Create(connectionString).Validate();
+
+    public string Build()
+        => this._builder.ConnectionString;
 
     public static string Build(string server,
         string? userName = null,

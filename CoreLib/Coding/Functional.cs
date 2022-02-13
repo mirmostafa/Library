@@ -34,11 +34,8 @@ public static class Functional
     }
     public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Func<TInstance, TInstance> ifTrue)
         => b is true ? ifTrue(@this) : @this;
-
-    //public static T? IfTrue<T>(this bool b, in Func<T> ifTrue, in T? defaultValue = default)
     public static T IfTrue<T>(bool b, in Func<T> ifTrue, in T defaultValue = default)
         => b is true ? ifTrue.Invoke() : defaultValue;
-
     public static bool IfFalse(this bool b, in Action ifFalse)
     {
         if (b is false)
@@ -47,7 +44,6 @@ public static class Functional
         }
         return b;
     }
-
     public static T? IfFalse<T>(this bool b, in Func<T> ifFalse, in T? defaultValue = default)
         => b is false ? ifFalse.Invoke() : defaultValue;
 
@@ -64,7 +60,6 @@ public static class Functional
 
         return @this;
     }
-
     public static TInstance If<TInstance>(this TInstance @this, Func<bool> b, in Action ifTrue, in Action ifFalse)
     {
         if (b() is true)
@@ -78,7 +73,6 @@ public static class Functional
 
         return @this;
     }
-
     public static TInstance If<TInstance>(this TInstance @this, bool b, in Func<TInstance> ifTrue, in Func<TInstance> ifFalse)
         => b is true ? ifTrue() : ifFalse();
 
@@ -87,39 +81,32 @@ public static class Functional
         action?.Invoke();
         return instance;
     }
-
     public static TInstance Fluent<TInstance>(this TInstance instance, in object? obj) =>
         instance;
-
     public static TInstance Fluent<TInstance>(in TInstance instance, in Action<TInstance> action)
     {
         action(instance);
         return instance;
     }
-
     public static TInstance Fluent<TInstance>(in TInstance instance, in Action? action = null)
     {
         action?.Invoke();
         return instance;
     }
-
     public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance> func) =>
         func.Invoke();
-
     public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance, TInstance> func) =>
         func.Invoke(instance);
-
-    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TResult> func) =>
-        (instance, func.Invoke());
-
-    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TInstance, TResult> action)
-        => (instance, action.Invoke(instance));
-
     public static async Task<TInstance> FluentAsync<TInstance>(this TInstance instance, Func<Task> action)
     {
         await action.Invoke();
         return instance;
     }
+
+    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TResult> func) =>
+        (instance, func.Invoke());
+    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TInstance, TResult> action)
+        => (instance, action.Invoke(instance));
 
     public static TInstance ForEach<TInstance, Item>(in TInstance @this, IEnumerable<Item>? items, in Action<Item> action)
     {
@@ -178,12 +165,12 @@ public static class Functional
             }
         }
     }
+
     public static void Lock(object? lockObject, Action action) =>
         _ = Lock(lockObject, () =>
         {
             action.ArgumentNotNull(nameof(action))(); return true;
         });
-
     public static TResult Lock<TResult>(object? lockObject, in Func<TResult> action)
     {
         lock (lockObject ?? GetCallerMethod()!.DeclaringType!)
@@ -200,10 +187,8 @@ public static class Functional
     public static T New<T>()
         where T : class, new() =>
         new();
-
     public static T New<T>(params object[] args) =>
         Activator.CreateInstance(typeof(T), args).NotNull().To<T>();
-
     /// <summary>
     ///     Creates a new instance in object o.
     /// </summary>
@@ -213,7 +198,6 @@ public static class Functional
     public static T? New<T>(in Type type)
         where T : class
         => (T?)type.GetConstructor(EnumerableHelper.EmptyArray<Type>())?.Invoke(null);
-
     /// <summary>
     ///     Creates an new instance of TType.
     /// </summary>
@@ -240,7 +224,6 @@ public static class Functional
 
         onIterationDone?.Invoke();
     }
-
     public static void While(in Func<bool> predicate, in Action? action = null)
     {
         predicate.ArgumentNotNull(nameof(predicate));
@@ -250,11 +233,27 @@ public static class Functional
             action?.Invoke();
         }
     }
+    
     public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] Action<TInstance> action)
     {
         action.ArgumentNotNull(nameof(action))(instance);
         return instance;
     }
+    
     public static TInstance Return<TInstance>(this object _, TInstance instance) =>
         instance;
+
+    public static Func<TResult> Compose<TResult>([DisallowNull] this Func<TResult> create!!, [DisallowNull] params Func<TResult, TResult>[] funcs!!)
+    {
+        var result = () =>
+        {
+            var value = create();
+            foreach (var func in funcs)
+            {
+                value = func(value);
+            }
+            return value;
+        };
+        return result;
+    }
 }

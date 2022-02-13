@@ -10,7 +10,7 @@ public static partial class SqlStatementBuilder
 {
     public static ISelectStatement Select<TEntity>()
     {
-        var table = EntityModelConverter.GetTableInfo<TEntity>();
+        var table = EntityModelConverterHelper.GetTableInfo<TEntity>();
         var result = Select()
                         .Columns(table.Columns.OrderBy(c => c.Order).Select(c => c.Name))
                         .From(table.Name);
