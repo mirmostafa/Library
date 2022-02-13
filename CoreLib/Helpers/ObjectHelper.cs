@@ -3,6 +3,7 @@ using System.Reflection;
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
+using Library.Types;
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -592,4 +593,6 @@ public static class ObjectHelper
         => guid is null || guid == Guid.Empty;
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid guid)
         => guid == Guid.Empty;
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
+        => id == Guid.Empty;
 }
