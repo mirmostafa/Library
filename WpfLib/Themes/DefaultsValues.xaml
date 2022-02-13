@@ -12,7 +12,6 @@
     <System:Double x:Key="DefaultLargeHeadingFontSize">52</System:Double>
     <System:Double x:Key="DefaultVeryLargeHeadingFontSize">68</System:Double>
     <System:Double x:Key="CodingFontSize">12</System:Double>
-    <SolidColorBrush x:Key="CodingTextColor" Color="Blue" />
     <Thickness x:Key="DefaultMargin">2</Thickness>
     <!--
         <FontFamily x:Key="DefaultBodyFontName">Segoe UI</FontFamily>
