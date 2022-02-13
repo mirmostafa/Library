@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using Library.Collections;
 using Library.Results;
@@ -514,4 +515,6 @@ public static class EnumerableHelper
             }
         }
     }
+    public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
+        => new(source);
 }

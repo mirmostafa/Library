@@ -11,7 +11,7 @@ public class EntityModelConverterTest
     [TestMethod]
     public void SqlTypeToNetType()
     {
-        var columns = EntityModelConverter.GetColumns<PersonEntity>().OrderBy(c => c.Order).ToList();
+        var columns = EntityModelConverterHelper.GetColumns<PersonEntity>().OrderBy(c => c.Order).ToList();
         Assert.AreEqual(5, columns.Count);
         Assert.AreEqual("LName", columns[2].Name);
     }
@@ -19,7 +19,7 @@ public class EntityModelConverterTest
     [TestMethod]
     public void SqlStamentBuildByEntityModelTest()
     {
-        var columns = EntityModelConverter.GetColumns<PersonEntity>();
+        var columns = EntityModelConverterHelper.GetColumns<PersonEntity>();
         var builder = SqlStatementBuilder
                              .Select()
                              .Columns(columns.OrderBy(c => c.Order).Select(c => c.Name))
