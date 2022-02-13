@@ -421,6 +421,17 @@ public static class EnumerableHelper
         return result;
     }
 
+    public static async Task<IEnumerable<TItem>> ToEnumerableAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(asyncItems);
+        var result = New<List<TItem>>();
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            result.Add(item);
+        }
+        return result;
+    }
+
     [return: NotNull]
     public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default) =>
         asyncItems is null
