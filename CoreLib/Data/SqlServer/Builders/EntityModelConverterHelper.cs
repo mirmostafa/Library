@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Library.Data.SqlServer.Builders;
 
-public static class EntityModelConverter
+public static class EntityModelConverterHelper
 {
     public static IEnumerable<ColumnInfo> GetColumns<TEntityType>() => GetColumns(typeof(TEntityType));
     public static IEnumerable<ColumnInfo> GetColumns(Type entityType)

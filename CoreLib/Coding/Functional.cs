@@ -233,18 +233,20 @@ public static class Functional
             action?.Invoke();
         }
     }
-    
+
     public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] Action<TInstance> action)
     {
         action.ArgumentNotNull(nameof(action))(instance);
         return instance;
     }
-    
+
     public static TInstance Return<TInstance>(this object _, TInstance instance) =>
         instance;
 
-    public static Func<TResult> Compose<TResult>([DisallowNull] this Func<TResult> create!!, [DisallowNull] params Func<TResult, TResult>[] funcs!!)
+    public static Func<TResult> Compose<TResult>([DisallowNull] this Func<TResult> create, [DisallowNull] params Func<TResult, TResult>[] funcs)
     {
+        Check.IfArgumentNotNull(create);
+        Check.IfArgumentNotNull(funcs);
         var result = () =>
         {
             var value = create();

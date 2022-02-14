@@ -446,7 +446,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Style.Triggers>
             <Trigger Property="IsReadOnly" Value="True">
-                <Setter Property="Background" Value="{Binding Background, ElementName=grid}" />
+                <Setter Property="Background" Value="{StaticResource SkinBackground}" />
                 <Setter Property="BorderThickness" Value="0" />
             </Trigger>
         </Style.Triggers>
