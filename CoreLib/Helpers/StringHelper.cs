@@ -13,10 +13,24 @@ namespace Library.Helpers;
 /// </summary>
 public static class StringHelper
 {
+    /// <summary>
+    /// Adds the specified char to the string.
+    /// </summary>
+    /// <param name="s">The s.</param>
+    /// <param name="count">The count.</param>
+    /// <param name="add">The add.</param>
+    /// <param name="before">if set to <c>true</c> [before].</param>
+    /// <returns></returns>
     [Pure]
     public static string? Add(this string? s, in int count, char add = ' ', bool before = false) =>
         count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 
+    /// <summary>
+    /// Adds the specified string.
+    /// </summary>
+    /// <param name="s">The s.</param>
+    /// <param name="s1">The s1.</param>
+    /// <returns></returns>
     [Pure]
     public static string Add(this string s, in string s1) =>
         string.Concat(s, s1);
@@ -53,8 +67,8 @@ public static class StringHelper
 
     [return: NotNull]
     [Pure]
-    public static string[] Compact(params string[] strings) => strings.Where(item
-         => !item.IsNullOrEmpty()).ToArray();
+    public static string[] Compact(params string[] strings) =>
+        strings.Where(item => !item.IsNullOrEmpty()).ToArray();
 
     [return: NotNull]
     [Pure]

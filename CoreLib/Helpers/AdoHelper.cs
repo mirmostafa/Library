@@ -27,6 +27,12 @@ public static partial class AdoHelper
         return table.Select().Where(row => predicate?.Invoke(row) is not false).Select(row => convertor(row[columnTitle]));
     }
 
+    /// <summary>
+    /// Selects the specified table.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="table">The table.</param>
+    /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
     public static IEnumerable<T> Select<T>(this DataTable table)
         where T : new()
@@ -50,11 +56,26 @@ public static partial class AdoHelper
         }
     }
 
+    /// <summary>
+    /// Selects the table.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="connection">The connection.</param>
+    /// <param name="tableName">Name of the table.</param>
+    /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
     public static IEnumerable<T> SelectTable<T>(SqlConnection connection, string tableName)
-        where T : new() => 
+        where T : new() =>
         connection.Execute(cmd => cmd.ExecuteReader(CommandBehavior.CloseConnection).Select<T>(), $"SELECT * FROM [{tableName}]");
 
+    /// <summary>
+    /// Executes the reader.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="connection">The connection.</param>
+    /// <param name="query">The query.</param>
+    /// <param name="fillParams">The fill parameters.</param>
+    /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
     public static IEnumerable<T> ExecuteReader<T>(SqlConnection connection, string query, Action<SqlParameterCollection>? fillParams = null)
         where T : new()
@@ -64,16 +85,13 @@ public static partial class AdoHelper
         return command.ExecuteReader(CommandBehavior.CloseConnection).Select<T>();
     }
 
-    public static bool CanConnect(this SqlConnection conn) => 
+    public static bool CanConnect(this SqlConnection conn) =>
         conn.TryConnectAsync() == null;
 
-    public static async Task<Exception?> CheckConnectionStringAsync(string connectionString)
-    {
-        using var conn = new SqlConnection(connectionString);
-        return await conn.TryConnectAsync();
-    }
+    public static async Task<Exception?> CheckConnectionStringAsync(string connectionString) =>
+        await Using(() => new SqlConnection(connectionString), x => x.TryConnectAsync());
 
-    public static T CheckDbNull<T>(this SqlDataReader reader, string columnName, T defaultValue, Func<object, T> converter) => 
+    public static T CheckDbNull<T>(this SqlDataReader reader, string columnName, T defaultValue, Func<object, T> converter) =>
         reader is null || reader.IsClosed
             ? throw new ArgumentNullException(nameof(reader))
             : ObjectHelper.CheckDbNull(reader[columnName], defaultValue, converter);
@@ -98,7 +116,7 @@ public static partial class AdoHelper
         },
         openConnection);
 
-    public static void EnsureClosed(this SqlConnection connection, Action action, bool openConnection = false) => 
+    public static void EnsureClosed(this SqlConnection connection, Action action, bool openConnection = false) =>
         connection.EnsureClosed(c =>
         {
             action();
@@ -106,7 +124,7 @@ public static partial class AdoHelper
         },
         openConnection);
 
-    public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<TResult> action, bool openConnection = false) => 
+    public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<TResult> action, bool openConnection = false) =>
         connection.EnsureClosed(c => action(), openConnection);
 
     public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<SqlConnection, TResult> action, bool openConnection = false)
