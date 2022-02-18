@@ -258,4 +258,18 @@ public static class Functional
         };
         return result;
     }
+
+    public static void Using<TDisposable>(Func<TDisposable> getItem, Action<TDisposable> action)
+        where TDisposable : IDisposable
+    {
+        using var item = getItem();
+        action(item);
+    }
+
+    public static TResult Using<TDisposable, TResult>(Func<TDisposable> getItem, Func<TDisposable, TResult> action)
+        where TDisposable : IDisposable
+    {
+        using var item = getItem();
+        return action(item);
+    }
 }

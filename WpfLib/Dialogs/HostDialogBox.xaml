@@ -1,7 +1,8 @@
-﻿<Window
-    x:Class="Library.Wpf.Dialogs.UserControlDialogBox"
+﻿<bases:WindowBase
+    x:Class="Library.Wpf.Dialogs.HostDialogBox"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:bases="clr-namespace:Library.Wpf.Bases"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Library.Wpf.Dialogs"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -21,19 +22,20 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" ToolTip="Prompt" />
             <RowDefinition Height="Auto" ToolTip="Separator" />
-            <RowDefinition Height="*" ToolTip="User Control" />
+            <RowDefinition Height="*" ToolTip="Page" />
             <RowDefinition Height="Auto" ToolTip="Separator" />
             <RowDefinition Height="Auto" ToolTip="ValidationErrors" />
             <RowDefinition Height="Auto" ToolTip="Command Bar" />
         </Grid.RowDefinitions>
         <TextBlock
             Grid.Row="0"
-            d:Text="Adds a key/value to the activation arguments that will be returned when the toast notification or its buttons are clicked."
+            d:Text="Prompt."
             Style="{StaticResource PageDescriptionBlock}"
             Text="{Binding ElementName=Me, Path=Prompt}"
             TextWrapping="WrapWithOverflow" />
         <Separator Grid.Row="1" Margin="10" />
-        <ContentPresenter Grid.Row="2" Content="{Binding ElementName=Me, Path=UserControl}" />
+        <!--<ContentPresenter Grid.Row="2" Content="{Binding ElementName=Me, Path=ClientUi}" />-->
+        <Frame Grid.Row="2" Source="{Binding ElementName=Me, Path=ClientUi}" />
         <Separator Grid.Row="3" />
         <TextBlock
             Grid.Row="4"
@@ -54,4 +56,4 @@
                 IsEnabled="{Binding ElementName=Me, Path=IsCancelEnabled}" />
         </StackPanel>
     </Grid>
-</Window>
+</bases:WindowBase>

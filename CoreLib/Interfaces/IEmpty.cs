@@ -15,9 +15,3 @@ public interface IEmpty<out TClass>
     /// <returns>An empty instance of currebt class.</returns>
     static abstract TClass NewEmpty();
 }
-
-public interface INew<out TClass>
-    where TClass : new()
-{
-    static TClass New() => new();
-}

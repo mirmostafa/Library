@@ -1,10 +1,11 @@
 ﻿using System.Windows.Controls;
+using Library.Wpf.Bases;
 using Library.Wpf.Markers;
 using Library.Wpf.Windows.Input.Commands;
 
 namespace Library.Wpf.Windows.Controls;
 
-public class LibPage : Page, ISupportAsyncDataBinding
+public class LibPage : PageBase, ISupportAsyncDataBinding
 {
     private CommandController _commandManager;
 

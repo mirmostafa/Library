@@ -7,7 +7,7 @@
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <Nullable>enable</Nullable>
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-        <Configurations>Debug;Release;Release Infra</Configurations>
+        <Configurations>Debug;Release;</Configurations>
         <EnablePreviewFeatures>true</EnablePreviewFeatures>
     </PropertyGroup>
     <PropertyGroup>
