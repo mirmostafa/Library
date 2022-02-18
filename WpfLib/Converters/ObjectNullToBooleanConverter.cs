@@ -10,7 +10,7 @@ public class ObjectNullToBooleanConverter : IValueConverter
         //! parameter says that value has the direct result, or must be reversed.
         => parameter switch
         {
-            false => value switch
+            false or "false" => value switch
             {
                 bool v => !v,
                 not null => false,
