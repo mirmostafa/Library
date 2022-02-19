@@ -145,24 +145,9 @@ public interface IAsyncSaveService : IService, IResetChanges
     /// Saves the data asynchronously.
     /// </summary>
     /// <returns></returns>
-    Task SaveChangesAsync();
+    Task<int> SaveChangesAsync();
 }
 
-/// <summary>
-/// A service which supports lazy-loadind and clean tracked entities.
-/// </summary>
-/// <typeparam name="TParam">The type of the parameter.</typeparam>
-/// <seealso cref="Library.Interfaces.IService" />
-/// <seealso cref="Library.Interfaces.IResetChanges" />
-public interface IAsyncSaveService<in TParam> : IService, IResetChanges
-{
-    /// <summary>
-    /// Saves  the enity asynchronously.
-    /// </summary>
-    /// <param name="entity">The model.</param>
-    /// <returns></returns>
-    Task SaveAsync(TParam entity);
-}
 
 /// <summary>
 /// Database entity to view model converter

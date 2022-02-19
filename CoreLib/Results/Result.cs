@@ -1,4 +1,5 @@
-﻿using Library.Exceptions.Validations;
+﻿using System.Runtime.CompilerServices;
+using Library.Exceptions.Validations;
 using Library.Interfaces;
 
 namespace Library.Results;
@@ -129,11 +130,15 @@ public static class ResultHelper
     public static TResult MustBe<TResult>(this TResult result, in (bool condition, object? errorMessage) situation)
         where TResult : ResultBase => MustBe(result, situation.condition, situation.errorMessage, null);
 
-    public static TResult HasValue<TResult>(this TResult result, object? obj, in object errorMessage, object? errorId = null)
+    public static TResult HasValue<TResult>(this TResult result, object? obj, in object? errorMessage, object? errorId = null)
     where TResult : ResultBase =>
     MustBe(result, obj is not null, errorMessage, errorId ?? NullValueValidationException.ErrorCode);
 
     public static TResult HasValue<TResult>(this TResult result, string? obj, in object errorMessage, object? errorId = null)
         where TResult : ResultBase =>
         MustBe(result, !obj.IsNullOrEmpty(), errorMessage, errorId ?? NullValueValidationException.ErrorCode);
+
+    public static TResult MustHaveValue<TResult>(this TResult result, string? obj, [CallerArgumentExpression("obj")] in string? argName = null)
+        where TResult : ResultBase =>
+        MustBe(result, !obj.IsNullOrEmpty(), $"{argName} cannot be empty.", NullValueValidationException.ErrorCode);
 }

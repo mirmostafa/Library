@@ -139,7 +139,7 @@
     </DataTemplate>
 
     <Style TargetType="Expander">
-        <Setter Property="HeaderTemplate" Value="{StaticResource TitleText}" />
+        <!--<Setter Property="HeaderTemplate" Value="{StaticResource TitleText}" />-->
         <Setter Property="Background" Value="{StaticResource SkinBackground}" />
         <Setter Property="Foreground" Value="{StaticResource SkinForeground}" />
     </Style>
@@ -639,6 +639,13 @@
         BasedOn="{StaticResource {x:Type ToggleButton}}"
         TargetType="ToggleButton">
         <Setter Property="Width" Value="{StaticResource ControlWidth}" />
+    </Style>
+
+    <Style
+        x:Key="HeaderToggleButton"
+        BasedOn="{StaticResource {x:Type ToggleButton}}"
+        TargetType="ToggleButton">
+        <Setter Property="Foreground" Value="{StaticResource HeadingTextBlockFoegound}" />
     </Style>
 
     <Style
