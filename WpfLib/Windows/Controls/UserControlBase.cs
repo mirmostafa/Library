@@ -1,5 +1,4 @@
-﻿using System.Windows.Controls;
-using Library.Wpf.Markers;
+﻿using Library.Wpf.Markers;
 
 namespace Library.Wpf.Windows.Controls;
 
@@ -46,10 +45,6 @@ public abstract class AsyncDataBindUserControl : UserControlBase, ISupportAsyncD
     }
 
     protected abstract Task OnBindDataAsync();
-
-    public void RebindData() =>
-        this.OnRebindData();
-    protected abstract void OnRebindData();
 
     /// <summary>
     /// Gets a value indicating whether this <see cref="LibPage"/> is initializing.
@@ -103,4 +98,7 @@ public abstract class AsyncDataBindUserControl : UserControlBase, ISupportAsyncD
             await this.BindDataAsync();
         }
     }
+
+    public Task RebindDataAsync() =>
+        this.BindDataAsync();
 }
