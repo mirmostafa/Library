@@ -24,4 +24,8 @@ public sealed class NoItemValidationException : ValidationExceptionBase
     public NoItemValidationException(string message, string? instruction = null, string? title = null, string? details = null, Exception? inner = null, object? owner = null) : base(message, instruction, title, details, inner, owner)
     {
     }
+
+    [DoesNotReturn]
+    public static void Throw(string message) =>
+        throw new NoItemValidationException(message);
 }

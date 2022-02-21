@@ -1,5 +1,4 @@
-﻿using System.Windows.Controls;
-using Library.Wpf.Bases;
+﻿using Library.Wpf.Bases;
 using Library.Wpf.Markers;
 using Library.Wpf.Windows.Input.Commands;
 
@@ -9,10 +8,7 @@ public class LibPage : PageBase, ISupportAsyncDataBinding
 {
     private CommandController _commandManager;
 
-    public LibPage()
-    {
-        this.Loaded += this.LibPage_LoadedAsync;
-    }
+    public LibPage() => this.Loaded += this.LibPage_LoadedAsync;
 
     private async void LibPage_LoadedAsync(object sender, RoutedEventArgs e) =>
         await this.BindDataAsync();
@@ -60,12 +56,6 @@ public class LibPage : PageBase, ISupportAsyncDataBinding
         => base.OnInitialized(e);
 
     /// <summary>
-    /// Rebinds the data.
-    /// </summary>
-    public void RebindData()
-        => this.RebindDataContext();
-
-    /// <summary>
     /// Called when [bind data asynchronous].
     /// </summary>
     protected virtual async Task OnBindDataAsync()
@@ -96,4 +86,6 @@ public class LibPage : PageBase, ISupportAsyncDataBinding
             this.EndInit();
         }
     }
+
+    public Task RebindDataAsync() => this.BindDataAsync();
 }

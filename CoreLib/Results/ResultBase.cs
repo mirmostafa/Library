@@ -49,11 +49,18 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         {
             result.AppendLine(this.Message);
         }
-
-        foreach (var errorMessage in this.Errors.Select(x => x.Message?.ToString()).Compact())
+        if (this.Message.IsNullOrEmpty() && this.Errors.Count == 1)
         {
-            result.AppendLine($"- {errorMessage}");
+            result.AppendLine(this.Errors[0].Message?.ToString() ?? "An error occurred.");
         }
+        else
+        {
+            foreach (var errorMessage in this.Errors.Select(x => x.Message?.ToString()).Compact())
+            {
+                result.AppendLine($"- {errorMessage}");
+            }
+        }
+
         return result.ToString();
     }
 }

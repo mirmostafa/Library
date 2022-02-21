@@ -11,7 +11,7 @@ namespace Library.Types;
 public readonly struct Id :
     ISpanFormattable, IFormattable, ISerializable, ICloneable, IComparable,
     IEquatable<IdType>, IComparable<Id>, IComparable<IdType>,
-    IConvertible<IdType>, IEmpty<Id>, INew<Id>
+    IConvertible<IdType>, IEmpty<Id>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Id"/> struct.

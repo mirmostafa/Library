@@ -32,8 +32,27 @@ public static class ServiceHelper
     {
         Check.IfArgumentNotNull(service);
         Check.IfArgumentNotNull(model);
-        return !model.Id.IsNullOrEmpty()
+        var result = !model.Id.IsNullOrEmpty()
             ? await service.UpdateAsync(model.Id, model, persist)
             : await service.InsertAsync(model, persist);
+        return result;
     }
+
+    public static async Task<int> SaveChangesAsync<TService>(this TService service, bool persist)
+        where TService : IAsyncSaveService, IResetChanges
+    {
+        int result;
+        if (persist)
+        {
+            result = await service.SaveChangesAsync();
+            service.ResetChanges();
+        }
+        else
+        {
+            result = -1;
+        }
+
+        return result;
+    }
+
 }
