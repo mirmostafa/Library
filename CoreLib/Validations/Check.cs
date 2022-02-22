@@ -87,36 +87,24 @@ public class Check
             Throw(getExceptionIfNot);
         }
     }
-
     public static void MustBe<TValidationException>([DoesNotReturnIf(false)] bool ok)
         where TValidationException : Exception, new() =>
         MustBe(ok, () => new TValidationException());
-
-    public static void Require([DoesNotReturnIf(false)] bool required) =>
+    public static void MustBe([DoesNotReturnIf(false)] bool required) =>
         MustBe<RequiredValidationException>(required);
-
-    public static void Require([DoesNotReturnIf(false)] bool required, string message, string instruction = null, string title = null) =>
-        MustBe(required, () => new RequiredValidationException(message, instruction, title));
-
+    public static void MustBe([DoesNotReturnIf(false)] bool required, Func<string> getMessage!!) =>
+        MustBe(required, () => new ValidationException(getMessage()));
     public static void MustBeNotNull([DoesNotReturnIf(false)] bool isNotNull, string argName) =>
         MustBe(isNotNull, () => new NullValueValidationException(argName));
-
     public static void MustBeArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName) =>
         MustBe(isNotNull, () => new ArgumentNullException(argName));
-
-    public static T ThrowIfDisposed<T>(T @this, [DoesNotReturnIf(true)] bool disposed)
-        where T : IDisposable
-    {
-        MustBe(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
-        return @this;
-    }
 
     [return: NotNull]
     public static async Task<T> IfNotNullAsync<T>([DisallowNull] Func<Task<T>> get, [CallerArgumentExpression("get")] string message = null) =>
         (await get()).NotNull(() => new NullValueValidationException(message, null));
 }
 
-public static class LibCheckHelper
+public static class CheckHelpers
 {
 
     [return: NotNull]
@@ -168,7 +156,7 @@ public static class LibCheckHelper
     public static T NotValid<T>(this T obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException) =>
         !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
 
-    public static void OnFalse(this bool ok, Func<Exception> getException)
+    public static void OnFalse([DoesNotReturnIf(true)] this bool ok, Func<Exception> getException)
         => Check.MustBe(ok, getException);
 
     [return: NotNull]
@@ -179,4 +167,10 @@ public static class LibCheckHelper
     public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T?> task, [DisallowNull] Func<Exception> getException) =>
         (await task).NotNull(getException);
 
+    public static T ThrowIfDisposed<T>(this T @this, [DoesNotReturnIf(true)] bool disposed)
+        where T : IDisposable
+    {
+        Check.MustBe(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
+        return @this;
+    }
 }

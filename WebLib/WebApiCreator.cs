@@ -1,5 +1,6 @@
 ﻿using Library.Coding;
 using Library.Helpers;
+using Library.Validations;
 
 namespace Library.Web;
 public class WebApiCreator
@@ -24,8 +25,11 @@ public class WebApiCreator
     private static WebApplication GetApp(WebApplication? app) =>
         app ?? WebApplication.CreateBuilder().Build();
 
-    public WebApiCreator Create(in HttpMethod method, in string route!!, in Delegate body!!)
+    public WebApiCreator Create(in HttpMethod method, in string route, in Delegate body)
     {
+        Check.IfArgumentNotNull(route);
+        Check.IfArgumentNotNull(body);
+
         _ = method switch
         {
             HttpMethod.None => null,
