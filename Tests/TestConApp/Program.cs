@@ -1,56 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Library.Coding;
+﻿using Library.Coding;
+using Library.Helpers;
 using Library.MultiOperation;
+using Library.Web;
 
 namespace TestConApp;
 
 internal partial class Program
 {
-    private static void Main(params string[] args)
+    private static async Task Main(params string[] args)
     {
-        //var func1 = (int x) => x - 1;
-        //var starter = () => 5;
-        //var compose = starter.Compose(func1).Compose(func1).Compose(func1);
-        //var result = compose();
-
-        var starter = () => "This is a long long sentence.";
-        var compose = starter.Compose(s => $"{s} Let's add")
-                             .Compose(s => $"{s} some other")
-                             .Compose(s => $"{s} statement")
-                             .Compose(s => $"{s} to make sure")
-                             .Compose(s => $"{s} the compose method")
-                             .Compose(s => $"{s} is working")
-                             .Compose(s => $"{s} like a charm.");
-        var result = compose();
-        Console.WriteLine(result);
-        //OperationsTest();
-        //HigherOrder();
-    }
-
-    private static void HigherOrder()
-    {
-        var sum = ((int? LastResult, int Current) row) => row.Current + row.LastResult ?? 0;
-        var powerOf = (int x) => (int a) => a ^ x;
-        var multiply = (int x) => (int a) => a * x;
-        var transform = (IEnumerable<int> source, Func<int, int> transformer) => source.Select(transformer);
-        var aggregate = (IEnumerable<int> source, Func<(int? LastResult, int Current), int> aggregator) =>
-        {
-            int? last = null;
-            foreach (var item in source)
-            {
-                last = aggregator((last, item));
-            }
-            return last;
-        };
-
-        var data = Enumerable.Range(0, 1001);
-
-        var powerOfThrees = transform(data, powerOf(3));
-        var multiple5s = transform(data, multiply(5));
-        var total = aggregate(data, sum); //! Not higher-ordered
+        _logger.Debug("Starting");
+        await WebApiCreator.New("http://localhost:1234")
+                           .MapGet("/", () => "Hi")
+                           .MapGet("/bye", () => "BYE")
+                           .MapGet("/about", () => WebApiHelper.ToHtml("<center>Written by <h1>Mohammad Mirmostafa</h1></center>"))
+                           .RunAsync();
     }
 
     private static void OperationsTest()
@@ -74,9 +38,4 @@ internal partial class Program
                           .Run();
         r.Wait();
     }
-}
-
-public static class TestExtensions
-{
-
 }
