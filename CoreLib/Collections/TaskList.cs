@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Library.Validations;
+﻿using Library.Validations;
 
 namespace Library.Collections;
 public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnumerable<Task>
@@ -25,7 +24,7 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
     private CancellationTokenSource CancellationTokenSource => this.This()._cancellationTokenSource;
 
     private TaskList This() =>
-        Check.ThrowIfDisposed(this, this._disposedValue);
+        this.ThrowIfDisposed(this._disposedValue);
 
     public TaskList WaitAll(TimeSpan timeout)
     {

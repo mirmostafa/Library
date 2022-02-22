@@ -22,15 +22,15 @@ public static class Operations
 
     public static OperationList<TState> Build<TState>(this OperationList<TState> operations)
     {
-        operations.ArgumentNotNull();
+        Check.IfArgumentNotNull(operations);
         operations.IsBuilt = true;
         return operations;
     }
 
     public static TState Run<TState>(this OperationList<TState> operations)
     {
-        operations.ArgumentNotNull();
-        Check.Require(operations.IsBuilt, $"Please call .{nameof(Build)}() method in {operations}", $"{operations} is not built yet.");
+        Check.IfArgumentNotNull(operations);
+        Check.MustBe(operations.IsBuilt, () => $"Please call {nameof(Build)}() method in {operations}");//!, $"{operations} is not built yet.");
 
         operations.State = operations.DefaultState;
         var index = 0;
