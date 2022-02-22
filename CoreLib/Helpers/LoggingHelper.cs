@@ -1,8 +1,7 @@
 ﻿using Library.Globalization.Helpers;
 using Library.Logging;
-using MsLogLevel = Microsoft.Extensions.Logging.LogLevel;
-namespace Library.Helpers;
 
+namespace Library.Helpers;
 public static class LoggingHelper
 {
     public static bool MeetsLevel(this LogLevel level, LogLevel minLevel)

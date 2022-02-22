@@ -1,19 +1,20 @@
 ﻿using System.Runtime.CompilerServices;
 using Library;
+using Library.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace TestConApp;
 
 internal partial class Program
 {
-    private static ILogger _logger = null!;
+    private static Microsoft.Extensions.Logging.ILogger _logger = null!;
 
     [ModuleInitializer]
     public static void Startup()
     {
         setupLogger();
         LibLogger.AddLogger(_logger);
-        _logger.LogInformation("System initialized.");
+        _logger.Info("System initialized.");
 
         static void setupLogger()
         {
@@ -21,8 +22,9 @@ internal partial class Program
             {
                 builder.AddSimpleConsole(options =>
                 {
-                    options.IncludeScopes = true;
-                    options.TimestampFormat = "HH:mm:ss";
+                    //! Not fancy
+                    //x options.IncludeScopes = true;
+                    //x options.TimestampFormat = "HH:mm:ss";
                     options.UseUtcTimestamp = false;
                 });
             });
