@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
-	<PropertyGroup>
+    <PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -8,10 +8,6 @@
 		<Product>Library</Product>
 		<AssemblyName>Library.Web</AssemblyName>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\CoreLib\CoreLib.csproj" />
