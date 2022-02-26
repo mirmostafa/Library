@@ -1,35 +1,36 @@
 ﻿using System.Runtime.CompilerServices;
 using Library;
 using Library.Logging;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
 
 namespace TestConApp;
 
-internal partial class Program
+internal class ProgramBase
 {
-    private static Microsoft.Extensions.Logging.ILogger _logger = null!;
+    protected static WebApplication WebApp { get; private set; }
+    protected static IMsLoggerMessageWapper Logger { get; private set; } = null!;
 
     [ModuleInitializer]
     public static void Startup()
     {
-        setupLogger();
-        LibLogger.AddLogger(_logger);
-        _logger.Info("System initialized.");
+        var builder = WebApplication.CreateBuilder();
+        setupLogger(builder);
+        WebApp = builder.Build();
+        Logger.Info("System initialized.");
 
-        static void setupLogger()
+        static void setupLogger(WebApplicationBuilder builder)
         {
-            using var loggerFactory = LoggerFactory.Create(builder =>
+            builder.Logging.AddSimpleConsole(options =>
             {
-                builder.AddSimpleConsole(options =>
-                {
-                    //! Not fancy
-                    //x options.IncludeScopes = true;
-                    //x options.TimestampFormat = "HH:mm:ss";
-                    options.UseUtcTimestamp = false;
-                });
+                options.UseUtcTimestamp = false;
             });
-            var logger = loggerFactory.CreateLogger<Program>();
-            _logger = logger;
+            Logger = new MsLoggerMessageWapper(WebApp.Logger).Configure(options => { });
+            LibLogger.AddLogger(WebApp.Logger);
         }
     }
+}
+
+internal partial class Program : ProgramBase
+{
 }
