@@ -1,4 +1,6 @@
-﻿namespace Library.Logging;
+﻿using System.Reflection;
+
+namespace Library.Logging;
 
 public interface IMsLoggerMessageWapper
 {
@@ -7,11 +9,10 @@ public interface IMsLoggerMessageWapper
     void Info(string log);
     void Warn(string log);
 }
-
-public class MsLoggerMessageWapper : MsLoggerMessageWapperBase, IMsLoggerMessageWapper
+public class MsLoggerMessageWapper : MsLoggerMessageWapperBase<MsLoggerMessageWapper>, IMsLoggerMessageWapper
 {
-    public MsLoggerMessageWapper(Microsoft.Extensions.Logging.ILogger logger, string name, int eventId)
-        : base(logger, name, eventId)
+    public MsLoggerMessageWapper(Microsoft.Extensions.Logging.ILogger logger, string? name = null, int? eventId = null)
+        : base(logger, name ?? GetCallerMethodName() ?? Assembly.GetExecutingAssembly().GetName().Name ?? string.Empty, eventId ?? 0)
     {
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using Library.Coding;
 
 namespace Library.Logging;
@@ -9,7 +8,7 @@ public interface ILogger<TLogMessage>
     /// <summary>
     /// The empty logger
     /// </summary>
-    static readonly ILogger<TLogMessage> Empty = new EmptyLogger<TLogMessage>();
+    static new readonly ILogger<TLogMessage> Empty = new EmptyLogger<TLogMessage>();
 
     /// <summary>
     /// Gets or sets a value indicating whether this instance is enabled.
@@ -44,7 +43,9 @@ public interface ILogger<TLogMessage>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     void Info([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-        => this.Log(message, LogLevel.Info, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    {
+        this.Log(message, LogLevel.Info, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    }
 
     /// <summary>
     /// logs the specified message with LogLevel.Warning.
@@ -53,7 +54,9 @@ public interface ILogger<TLogMessage>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     void Warn([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-        => this.Log(message, LogLevel.Warning, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    {
+        this.Log(message, LogLevel.Warning, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    }
 
     /// <summary>
     /// Logs the specified message with LogLevel.Error.
@@ -62,7 +65,9 @@ public interface ILogger<TLogMessage>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     void Error([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-        => this.Log(message, LogLevel.Error, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    {
+        this.Log(message, LogLevel.Error, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    }
 
     /// <summary>
     /// Logs the specified message with LogLevel.Fatal.
@@ -71,7 +76,9 @@ public interface ILogger<TLogMessage>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     void Fatal([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-        => this.Log(message, LogLevel.Fatal, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    {
+        this.Log(message, LogLevel.Fatal, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    }
 
     /// <summary>
     /// Logs the specified message with LogLevel.Debug.
@@ -80,7 +87,9 @@ public interface ILogger<TLogMessage>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     void Debug([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-        => this.Log(message, LogLevel.Debug, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    {
+        this.Log(message, LogLevel.Debug, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now);
+    }
 
     /// <summary>
     /// Logs the specified message with LogLevel.Trace.
@@ -90,5 +99,7 @@ public interface ILogger<TLogMessage>
     /// <param name="time">The time.</param>
     /// <param name="stackTrace">The stack trace.</param>
     void Trace([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null, string? stackTrace = null)
-        => this.Log(message, LogLevel.Trace, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now, stackTrace);
+    {
+        this.Log(message, LogLevel.Trace, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now, stackTrace);
+    }
 }

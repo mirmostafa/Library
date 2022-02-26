@@ -1,4 +1,6 @@
-﻿namespace Library.Logging;
+﻿using Library.Interfaces;
+
+namespace Library.Logging;
 
 public interface ILogger : ILogger<object>
 {
