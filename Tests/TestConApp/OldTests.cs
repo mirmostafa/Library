@@ -6,22 +6,6 @@ namespace TestConApp;
 
 internal partial class Program
 {
-    private static void TestImmutality()
-    {
-        var ali = new Person("Ali", 5);
-        var reza = ali with { Name = "Reza" };
-
-        var ppl = new List<Person>() { ali };
-
-        //var people = ppl.AsReadOnly();
-        var people = ppl.ToReadOnlyList();
-        Display(people);
-        Console.WriteLine("===");
-
-        ppl.Add(reza);
-        Display(people);
-    }
-
     private static void Display(IEnumerable<Person> people)
     {
         foreach (var person in people)
