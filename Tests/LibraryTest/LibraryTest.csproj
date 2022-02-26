@@ -5,8 +5,9 @@
 		<Configurations>Debug;Release</Configurations>
 		<TargetFramework>net6.0</TargetFramework>
 		<AnalysisLevel>latest</AnalysisLevel>
-        <LangVersion>Preview</LangVersion>
-        <EnablePreviewFeatures>true</EnablePreviewFeatures>
+		<LangVersion>preview</LangVersion>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+		<GenerateRequiresPreviewFeaturesAttribute>true</GenerateRequiresPreviewFeaturesAttribute>
         <IsPublishable>False</IsPublishable>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
