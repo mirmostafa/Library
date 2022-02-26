@@ -1,10 +1,10 @@
-﻿using System.ComponentModel;
-using System.Reflection;
-using Library.DesignPatterns.Creational;
+﻿using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
 using Library.Types;
 using Library.Validations;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace Library.Helpers;
 
@@ -143,8 +143,7 @@ public static class ObjectHelper
     ///     required to construct an instance of TSingleton./&gt; After generating instance,
     ///     searches for a method named: "InitializeComponents". If found will be called.
     /// </remarks>
-    public static TSingleton? GenerateSingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null,
-        Action<TSingleton>? initializeInstance = null)
+    public static TSingleton? GenerateSingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null, Action<TSingleton>? initializeInstance = null)
         where TSingleton : class, ISingleton<TSingleton>
     {
         //! If (T) has implemented CreateInstance as a static method, use it to create an instance
@@ -586,7 +585,7 @@ public static class ObjectHelper
         where TStruct : struct
         => @struct.Equals(default(TStruct));
 
-    public static int GetHashCode(object o, params object[] properties) => 
+    public static int GetHashCode(object o, params object[] properties) =>
         properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid? guid)
