@@ -8,6 +8,7 @@ using IdType = System.Int64;
 #else
 using IdType = System.Guid;
 #endif
+//using IdType = System.Int64;
 
 namespace Library.Types;
 [Immutable]
@@ -167,7 +168,7 @@ public readonly struct Id :
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    public static Id CreateByGuid(Guid id) =>
+    public static Id CreateByGuid(IdType id) =>
         new(id);
 
     /// <summary>

@@ -1,4 +1,5 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Skin_Default.xaml" />
@@ -258,7 +259,6 @@
                     <GradientStop Offset="0.7" Color="RoyalBlue" />
                     <GradientStop Offset="1.0" Color="SkyBlue" />
                 </LinearGradientBrush>
-
             </Setter.Value>
         </Setter>
     </Style>
@@ -308,7 +308,6 @@
         TargetType="StackPanel">
         <Setter Property="DockPanel.Dock" Value="Left" />
     </Style>
-
 
     <Style x:Key="CommandButton" TargetType="Button">
         <Setter Property="Width" Value="75" />
@@ -384,7 +383,6 @@
 
     <Style x:Key="LayoutRoot" TargetType="Grid" />
 
-
     <Style x:Key="LayoutRootSingle" TargetType="Grid">
         <Setter Property="Background" Value="{StaticResource SkinBackground}" />
         <Setter Property="Margin" Value="0,0,0,2" />
@@ -424,7 +422,6 @@
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
     </Style>
-
 
     <Style TargetType="TabControl">
         <Setter Property="Margin" Value="{StaticResource DefaultMargin}" />
@@ -722,4 +719,14 @@
             <TextBlock FontSize="20" Foreground="Red">!</TextBlock>
         </DockPanel>
     </ControlTemplate>
+
+    <Style x:Key="VerticalSeparatorStyle" TargetType="Separator">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Border Background="{TemplateBinding Panel.Background}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
