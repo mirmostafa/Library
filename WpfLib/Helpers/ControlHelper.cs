@@ -1,10 +1,14 @@
-﻿using System.Collections;
+﻿using Library.Coding;
+using Library.Data.Models;
+using Library.Logging;
+using Library.Validations;
+using Library.Wpf.Media;
+using System.Collections;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -12,10 +16,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Library.Coding;
-using Library.Data.Models;
-using Library.Validations;
-using Library.Wpf.Media;
 using static Library.Coding.CodeHelper;
 
 namespace Library.Wpf.Helpers;
@@ -359,13 +359,11 @@ public static class ControlHelper
 
     public static void Rebind(this DependencyObject target, in DependencyProperty dependencyProperty)
         => BindingOperations.GetBindingExpressionBase(target, dependencyProperty)?.UpdateTarget();
-
     public static void Rebind(this TextBox target)
         => Rebind(target, TextBox.TextProperty);
 
-    public static void RebindDataContext([DisallowNull] this FrameworkElement element) => 
+    public static void RebindDataContext([DisallowNull] this FrameworkElement element) =>
         RebindDataContext(element, element?.DataContext);
-
     public static void RebindDataContext([DisallowNull] this FrameworkElement element, object? dataContext)
     {
         Check.IfArgumentNotNull(element, nameof(element));
@@ -373,7 +371,6 @@ public static class ControlHelper
         element.DataContext = null;
         element.DataContext = dataContext;
     }
-
     public static void RebindItemsSource(this ItemsControl control)
     {
         Check.IfArgumentNotNull(control, nameof(control));
@@ -383,7 +380,6 @@ public static class ControlHelper
         control.ItemsSource = null;
         control.ItemsSource = itemsSource;
     }
-
     public static void RebindItemsSource(this TreeView control)
     {
         Check.IfArgumentNotNull(control, nameof(control));
@@ -405,7 +401,6 @@ public static class ControlHelper
 
     public static IEnumerable<dynamic>? RetieveCheckedItems(this MultiSelector dg)
         => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.As<dynamic>()).Compact();
-
     public static IEnumerable<TItem>? RetieveCheckedItems<TItem>(this MultiSelector dg)
         => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.To<TItem>());
 
@@ -427,7 +422,6 @@ public static class ControlHelper
         }
         return false;
     }
-
     public static TViewModel SetProperty<TViewModel, TValue>(
         this TViewModel item,
         ref TValue field,
@@ -454,14 +448,12 @@ public static class ControlHelper
     public static bool? ShowDialog<TWindow>(this Window owner)
         where TWindow : Window, new()
         => owner.ShowDialog(() => new TWindow(), out var window);
-
     public static (bool? Result, TWindow Window) ShowDialog<TWindow>(this Window owner, Func<TWindow> creator)
         where TWindow : Window
     {
         var result = owner.ShowDialog(creator, out var window);
         return (result, window);
     }
-
     public static bool? ShowDialog<TWindow>(this Window owner, Func<TWindow> creator, out TWindow window)
         where TWindow : Window
     {
@@ -471,7 +463,6 @@ public static class ControlHelper
         window.Owner = owner;
         return window.ShowDialog();
     }
-
     public static bool? ShowDialog<TWindow>(this Window owner, out TWindow window)
         where TWindow : Window, new()
         => owner.ShowDialog(() => new TWindow(), out window);
@@ -497,4 +488,53 @@ public static class ControlHelper
         dataColumns.ToDataGridColumn().ForEach(dataGrid.Columns.Add).Build();
         return dataGrid;
     }
+
+    public static TResult RunCodeBlock<TResult>(this FrameworkElement element, [DisallowNull] in Func<TResult> action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true)
+    {
+        Check.IfArgumentNotNull(action);
+        Check.IfArgumentNotNull(element);
+        Check.IfArgumentNotNull(logger);
+        Check.IfArgumentNotNull(action);
+
+        var cursor = element.Cursor;
+        try
+        {
+            if (!start.IsNullOrEmpty())
+            {
+                logger.Debug(start);
+            }
+            if (changeMousePointer)
+            {
+                element.Cursor = Cursors.Wait;
+            }
+
+            var result = action();
+            if (!end.IsNullOrEmpty())
+            {
+                logger.Info(end);
+            }
+            return result;
+        }
+        catch
+        {
+            if (!error.IsNullOrEmpty())
+            {
+                logger.Error(error);
+            }
+
+            throw;
+        }
+        finally
+        {
+            element.Cursor = cursor;
+        }
+    }
+    public static FrameworkElement RunCodeBlock(this FrameworkElement element, [DisallowNull] Action action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true) =>
+        RunCodeBlock(element, () =>
+        {
+            action();
+            return element;
+        }, logger, start, end, error, changeMousePointer);
+    public static async Task<TResult> RunCodeBlockAsync<TResult>(this FrameworkElement element, [DisallowNull] Func<Task<TResult>> action, [DisallowNull] ILogger logger, string? start, string? end = null, string? error = null, bool changeMousePointer = true) =>
+        await RunCodeBlock(element, action, logger, start, end, error, changeMousePointer);
 }

@@ -1,5 +1,6 @@
-﻿using System.ComponentModel;
+﻿using Library.Results;
 using Library.Validations;
+using System.ComponentModel;
 //using ClientType = System.Windows.Controls.UserControl;
 using ClientType = Library.Wpf.Bases.PageBase;
 
@@ -10,6 +11,7 @@ namespace Library.Wpf.Dialogs;
 /// </summary>
 internal partial class HostDialogBox
 {
+    public Func<ClientType, Result>? OnValidate { get; set; }
     public string? DialogTitle
     {
         get => (string?)this.GetValue(DialogTitleProperty);
@@ -17,18 +19,26 @@ internal partial class HostDialogBox
     }
     public static readonly DependencyProperty DialogTitleProperty = ControlHelper.GetDependencyProperty<string?, HostDialogBox>(nameof(DialogTitle));
 
+    public FlowDirection? Direction
+    {
+        get => (FlowDirection?)this.GetValue(DirectionProperty);
+        set => this.SetValue(DirectionProperty, value);
+    }
+    public static readonly DependencyProperty DirectionProperty = ControlHelper.GetDependencyProperty<FlowDirection?, HostDialogBox>(nameof(Direction));
+
     public ClientType? ClientUi
     {
         get => (ClientType)this.GetValue(ClientUiProperty);
         set => this.SetValue(ClientUiProperty, value);
     }
     public static readonly DependencyProperty ClientUiProperty = ControlHelper.GetDependencyProperty<ClientType?, HostDialogBox>(nameof(ClientUi), onPropertyChanged: (s, _) =>
- {
-     if (s.ClientUi is INotifyPropertyChanged x)
-     {
-         x.PropertyChanged += (_, _) => s.ValidationErrorText = null;
-     }
- });
+    {
+
+        if (s.ClientUi is INotifyPropertyChanged x)
+        {
+            x.PropertyChanged += (_, _) => s.ValidationErrorText = null;
+        }
+    });
 
     public bool IsOkEnabled
     {
@@ -63,20 +73,22 @@ internal partial class HostDialogBox
 
     private async void OkButton_Click(object sender, RoutedEventArgs e)
     {
-        var validationResult = this.ClientUi switch
+        var validation = this.OnValidate is not null
+            ? this.OnValidate(this.ClientUi!)
+            : this.ClientUi switch
+            {
+                IValidatable validatable => validatable.Validate(),
+                IAsyncValidatable asyncValidatable => await asyncValidatable.ValidateAsync(),
+                _ => Result.Empty,
+            };
+        if (!validation.IsSucceed)
         {
-            IValidatable validatable => validatable.Validate(),
-            IAsyncValidatable asyncValidatable => await asyncValidatable.ValidateAsync(),
-            _ => null,
-        };
-        if (validationResult?.IsSucceed ?? true)
-        {
-            this.DialogResult = true;
-            this.Close();
+            this.ValidationErrorText = validation.Message;
         }
         else
         {
-            this.ValidationErrorText = validationResult?.Message;
+            this.DialogResult = true;
+            this.Close();
         }
     }
 }
