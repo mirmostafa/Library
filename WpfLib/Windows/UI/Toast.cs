@@ -1,55 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Library.Validations;
+﻿using Library.Validations;
+using System.Diagnostics.CodeAnalysis;
 using Windows.UI.Notifications;
 
 namespace Library.Wpf.Windows.UI;
 
 public class Toast
 {
-    //public static void CreateToast(string filePath)
-    //{
-    //    var type = ToastTemplateType.ToastImageAndText02;
-    //    var title = "Title";
-    //    var content = "Message";
-
-    //    var toastXml = ToastNotificationManager.GetTemplateContent(type);
-
-    //    // Fill in the text elements
-    //    var stringElements = toastXml.GetElementsByTagName((string?)"text");
-    //    stringElements[0].AppendChild(toastXml.CreateTextNode(title));
-    //    stringElements[1].AppendChild(toastXml.CreateTextNode(content));
-
-    //    // Specify the absolute path to an image
-    //    var imageElements = toastXml.GetElementsByTagName((string?)"image");
-    //    imageElements[0].Attributes.GetNamedItem("src").NodeValue = filePath;
-
-    //    // Change default audio if desired - ref - https://docs.microsoft.com/en-us/uwp/schemas/tiles/toastschema/element-audio
-    //    var audio = toastXml.CreateElement("audio");
-    //    //audio.SetAttribute("src", "ms-winsoundevent:Notification.Reminder");
-    //    //audio.SetAttribute("src", "ms-winsoundevent:Notification.IM");
-    //    //audio.SetAttribute("src", "ms-winsoundevent:Notification.Mail"); // sounds like default
-    //    //audio.SetAttribute("src", "ms-winsoundevent:Notification.Looping.Call7");  
-    //    audio.SetAttribute("src", "ms-winsoundevent:Notification.Looping.Call2");
-    //    //audio.SetAttribute("loop", "false");
-    //    // Add the audio element
-    //    toastXml.DocumentElement.AppendChild(audio);
-
-    //    var actions = toastXml.CreateElement("actions");
-    //    toastXml.DocumentElement.AppendChild(actions);
-
-    //    //// Create a simple button to display on the toast
-    //    //var action = toastXml.CreateElement("action");
-    //    //actions.AppendChild(action);
-    //    //action.SetAttribute("content", "Show details");
-    //    //action.SetAttribute("arguments", "viewdetails");
-
-    //    // Create the toast 
-    //    var toast = new ToastNotification(toastXml);
-
-    //    // Show the toast. Be sure to specify the AppUserModelId
-    //    // on your application's shortcut!
-    //    ToastNotificationManager.CreateToastNotifier(APP_ID).Show(toast);
-    //}
     private ToastNotification? _toast;
     private ToastNotifier _toastNotifier;
     private readonly string _appTitle;

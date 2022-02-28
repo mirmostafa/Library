@@ -1,10 +1,10 @@
-﻿using System.Runtime.CompilerServices;
-using Library.Exceptions.Validations;
+﻿using Library.Exceptions.Validations;
 using Library.Interfaces;
+using System.Runtime.CompilerServices;
 
 namespace Library.Results;
 
-public class Result : ResultBase
+public class Result : ResultBase, IEmpty<Result>
 {
     public Result(in object? statusCode = null, in string? message = null)
         : base(statusCode, message) { }
@@ -12,6 +12,9 @@ public class Result : ResultBase
         new();
     public static Result Success => CreateSuccess();
     public static Result Fail => CreateFail();
+
+    private static Result _empty;
+    public static Result Empty { get; } = _empty ??= NewEmpty();
 
     public static Result CreateFail(in string? message = null, in object? erroCode = null) =>
         new(erroCode ?? -1, message) { IsSucceed = false };
@@ -42,6 +45,8 @@ public class Result : ResultBase
 
         return this;
     }
+
+    public static Result NewEmpty() => New();
 }
 
 public class Result<TValue> : ResultBase, IConvertible<Result<TValue>, Result>
@@ -132,7 +137,7 @@ public static class ResultHelper
 
     public static TResult HasValue<TResult>(this TResult result, object? obj, in object? errorMessage, object? errorId = null)
     where TResult : ResultBase =>
-    MustBe(result, obj is not null, errorMessage, errorId ?? NullValueValidationException.ErrorCode);
+        MustBe(result, obj is not null, errorMessage, errorId ?? NullValueValidationException.ErrorCode);
 
     public static TResult HasValue<TResult>(this TResult result, string? obj, in object errorMessage, object? errorId = null)
         where TResult : ResultBase =>

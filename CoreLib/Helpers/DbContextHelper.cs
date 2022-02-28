@@ -270,7 +270,7 @@ public static class DbContextHelper
         Func<Task<int>>? saveChanges = null)
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull =>
-        await InnerManipulate<TModel, TEntity, TId>(dbContext, model!, dbContext.Attach, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges);
+        await InnerManipulate<TModel, TEntity, TId>(dbContext, model!, dbContext.Update, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges);
 
     private static async Task<InnerManipulateRet<TModel, TEntity, TId>> InnerManipulate<TModel, TEntity, TId>(DbContext dbContext,
         [NotNull] TModel model,

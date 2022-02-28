@@ -25,8 +25,8 @@ public abstract class ResultBase : IEquatable<ResultBase?>
     protected ResultBase(object? statusCode = null, string? message = null)
         => (this.StatusCode, this.Message) = (statusCode, message);
 
-    public void Deconstruct(out object? statusCode, out string? message)
-        => (statusCode, message) = (this.StatusCode, this.Message);
+    public void Deconstruct(out bool isSucceed, out string? message)
+        => (isSucceed, message) = (this.IsSucceed, this.Message);
 
     public override bool Equals(object? obj) =>
         this.Equals(obj as ResultBase);
