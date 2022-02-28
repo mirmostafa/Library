@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<MinimumPlatformVersion>7.0</MinimumPlatformVersion>
+		<TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWPF>true</UseWPF>
+		<RootNamespace>Mohammad.Library.Test</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Product>Mohammad Library</Product>
+		<Company>Mirmostafa</Company>
+		<Authors>Mohammad Mirmostafa</Authors>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<AnalysisLevel>6.0-all</AnalysisLevel>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\WpfLib\WpfLib.csproj" />
+	</ItemGroup>
+
+</Project>

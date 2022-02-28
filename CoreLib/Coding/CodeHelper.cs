@@ -1,12 +1,12 @@
-﻿using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
+﻿using Library.DesignPatterns.ExceptionHandlingPattern;
+using Library.Exceptions;
+using Library.Logging;
+using Library.Results;
+using Library.Validations;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
-using Library.DesignPatterns.ExceptionHandlingPattern;
-using Library.Exceptions;
-using Library.Results;
-using Library.Validations;
 
 namespace Library.Coding;
 
