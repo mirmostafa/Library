@@ -8,7 +8,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="Me"
     Title="{Binding ElementName=Me, Path=DialogTitle}"
-    MaxWidth="600"
     d:Height="450"
     d:Width="400"
     x:ClassModifier="internal"
@@ -18,7 +17,7 @@
     WindowStartupLocation="CenterOwner"
     WindowStyle="SingleBorderWindow"
     mc:Ignorable="d">
-    <Grid>
+    <Grid FlowDirection="{Binding ElementName=Me, Path=Direction}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" ToolTip="Prompt" />
             <RowDefinition Height="Auto" ToolTip="Separator" />
@@ -35,7 +34,11 @@
             TextWrapping="WrapWithOverflow" />
         <Separator Grid.Row="1" Margin="10" />
         <!--<ContentPresenter Grid.Row="2" Content="{Binding ElementName=Me, Path=ClientUi}" />-->
-        <Frame Grid.Row="2" Source="{Binding ElementName=Me, Path=ClientUi}" />
+        <Frame
+            Grid.Row="2"
+            Width="{Binding ElementName=Me, Path=ClientUi.Width}"
+            Height="{Binding ElementName=Me, Path=ClientUi.Height}"
+            Source="{Binding ElementName=Me, Path=ClientUi}" />
         <Separator Grid.Row="3" />
         <TextBlock
             Grid.Row="4"

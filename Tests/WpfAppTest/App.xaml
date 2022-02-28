@@ -1,0 +1,9 @@
+﻿<bases:ApplicationBase
+    x:Class="WpfApp1.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:bases="clr-namespace:Library.Wpf.Bases;assembly=Library.Wpf"
+    xmlns:local="clr-namespace:WpfApp1"
+    StartupUri="MainWindow.xaml">
+    <Application.Resources />
+</bases:ApplicationBase>
