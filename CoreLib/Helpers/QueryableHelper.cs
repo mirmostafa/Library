@@ -1,8 +1,8 @@
-﻿using System.Runtime.CompilerServices;
-using Library.Interfaces;
+﻿using Library.Interfaces;
 using Library.Threading;
 using Library.Validations;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
 
 namespace Library.Helpers;
 public static class QueryableHelper

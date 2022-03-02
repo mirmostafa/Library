@@ -1,6 +1,5 @@
 ﻿using Library.Validations;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -78,7 +77,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     protected virtual void FillByProperties(SerializationInfo info, StreamingContext context)
     {
-        if (info is not null && Properties.Any())
+        if (info is not null && this.Properties.Any())
         {
             foreach (var (key, value) in this.Properties)
             {

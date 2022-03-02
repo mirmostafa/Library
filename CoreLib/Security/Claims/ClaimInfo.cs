@@ -1,12 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Library.Validations;
 using System.Security.Claims;
-using Library.Validations;
 
 namespace Library.Security.Claims;
 
 public readonly record struct ClaimInfo([DisallowNull] in string Type, in string? Value) : IEquatable<ClaimInfo>, IEquatable<Claim>
 {
-    public void Deconstruct(out string type, out string? value) => 
+    public void Deconstruct(out string type, out string? value) =>
         (type, value) = (this.Type, this.Value);
     public static implicit operator (string Type, string? Value)(ClaimInfo claim) =>
         (claim.Type, claim.Value);

@@ -1,7 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Library.Validations;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
-using Library.Validations;
 
 namespace Library.Wpf.Helpers;
 
@@ -39,7 +39,7 @@ public static class WindowHelper
 
         Marshal.FreeHGlobal(accentPtr);
     }
-    
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct AccentPolicy
     {

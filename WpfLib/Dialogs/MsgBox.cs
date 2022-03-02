@@ -1,8 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-
-namespace Library.Wpf.Dialogs
+﻿namespace Library.Wpf.Dialogs
 {
     public static class MsgBox
     {

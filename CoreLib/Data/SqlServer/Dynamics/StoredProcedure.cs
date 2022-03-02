@@ -1,6 +1,6 @@
-﻿using System.Data;
+﻿using Library.Data.SqlServer.Dynamics.Collections;
+using System.Data;
 using System.Data.SqlClient;
-using Library.Data.SqlServer.Dynamics.Collections;
 
 namespace Library.Data.SqlServer.Dynamics
 {

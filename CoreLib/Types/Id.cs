@@ -248,14 +248,11 @@ public readonly struct Id :
     /// Gets the default value of IdType.
     /// </summary>
     /// <returns>The default value of IdType</returns>
-    private static Id GetDefaultValue()
-    {
-        return typeof(IdType) == typeof(Guid)
+    private static Id GetDefaultValue() => typeof(IdType) == typeof(Guid)
             ? Guid.Empty.To<Id>()
             : typeof(IdType) == typeof(long)
                 ? 0.To<Id>()
                 : default;
-    }
 
     /// <summary>
     /// Gets the debugger display.

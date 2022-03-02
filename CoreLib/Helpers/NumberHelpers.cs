@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using Library.Globalization;
+﻿using Library.Globalization;
+using System.Collections.Immutable;
 
 namespace Library.Helpers
 {

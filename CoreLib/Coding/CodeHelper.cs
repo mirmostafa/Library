@@ -1,6 +1,5 @@
 ﻿using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
-using Library.Logging;
 using Library.Results;
 using Library.Validations;
 using System.Diagnostics;

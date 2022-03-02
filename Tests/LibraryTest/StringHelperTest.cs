@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-namespace LibraryTest;
+﻿namespace LibraryTest;
 
 //[MemoryDiagnoser]
 [TestClass]

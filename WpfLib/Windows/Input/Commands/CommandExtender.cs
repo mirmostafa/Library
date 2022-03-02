@@ -1,6 +1,6 @@
-﻿using System.Windows.Input;
-using Library.Exceptions.Validations;
+﻿using Library.Exceptions.Validations;
 using Library.Validations;
+using System.Windows.Input;
 
 namespace Library.Wpf.Windows.Input.Commands
 {

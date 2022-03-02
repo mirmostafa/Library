@@ -1,6 +1,6 @@
+using Library.Dynamic;
 using System.Data;
 using System.Data.SqlClient;
-using Library.Dynamic;
 
 namespace Library.Data.SqlServer;
 public sealed class Sql

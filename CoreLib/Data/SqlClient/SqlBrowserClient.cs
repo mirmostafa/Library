@@ -1,7 +1,7 @@
-﻿using System.Net;
+﻿using Library.Validations;
+using System.Net;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
-using Library.Validations;
 
 namespace Library.Data.SqlClient;
 

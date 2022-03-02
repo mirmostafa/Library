@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Library.Validations;
 using System.Windows.Input;
-using Library.Validations;
 
 namespace Library.Wpf.Commands
 {
@@ -11,8 +10,8 @@ namespace Library.Wpf.Commands
 
         public event EventHandler? CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)

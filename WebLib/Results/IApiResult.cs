@@ -10,5 +10,5 @@ public interface IApiResult
 
 public interface IApiResult<T> : IApiResult
 {
-    T? Value {  get; }
+    T? Value { get; }
 }

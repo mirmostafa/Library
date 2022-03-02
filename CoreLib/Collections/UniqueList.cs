@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using Library.Exceptions.Validations;
+﻿using Library.Exceptions.Validations;
+using System.Collections;
 
 namespace Library.Collections;
 public class UniqueList<T> : IList<T>

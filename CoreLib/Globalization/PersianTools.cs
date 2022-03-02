@@ -1,6 +1,6 @@
-﻿using System.Globalization;
-using Library.Globalization.DataTypes;
+﻿using Library.Globalization.DataTypes;
 using Library.Validations;
+using System.Globalization;
 using static Library.Globalization.CultureConstants;
 
 namespace Library.Globalization;

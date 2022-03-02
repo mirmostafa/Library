@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Library.Wpf.Helpers
+﻿namespace Library.Wpf.Helpers
 {
     public record SetSelectedInfo<T>
     {

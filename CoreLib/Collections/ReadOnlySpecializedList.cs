@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using Library.DesignPatterns.Markers;
+﻿using Library.DesignPatterns.Markers;
 using Library.Validations;
+using System.Collections;
 
 namespace Library.Collections;
 [Fluent]

@@ -1,13 +1,7 @@
-﻿using System;
+﻿using Library.Wpf.Internals;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Library.Helpers;
-using Library.Wpf.Helpers;
-using Library.Wpf.Internals;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using static Library.Coding.CodeHelper;
 
 namespace Library.Wpf.Dialogs

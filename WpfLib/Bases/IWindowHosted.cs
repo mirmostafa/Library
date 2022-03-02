@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace Library.Wpf.Bases
+﻿namespace Library.Wpf.Bases
 {
     public interface IWindowHosted
     {

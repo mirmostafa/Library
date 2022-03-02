@@ -1,8 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
-using Library.Logging;
+﻿using Library.Logging;
 using Library.Validations;
-using Microsoft.Toolkit.Uwp.Notifications;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Library.Wpf;
 

@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-namespace Library.Wpf.Windows.Dialogs
+﻿namespace Library.Wpf.Windows.Dialogs
 {
     public class LibWindow : Window
     {

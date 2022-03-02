@@ -1,8 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Windows.Controls;
-using Library.Data.Models;
+﻿using Library.Data.Models;
 using Library.EventsArgs;
 using Library.Validations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Library.Wpf.Controls;
 /// <summary>

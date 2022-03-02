@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using Library.Globalization.Attributes;
+﻿using Library.Globalization.Attributes;
 using Library.Validations;
+using System.Collections;
+using System.ComponentModel;
 
 namespace Library.Helpers;
 
@@ -136,7 +135,7 @@ public static class EnumHelper
         return pairs?.ToDictionary(t => t.Value, t => t.Text);
     }
 
-    public static bool IsIn(this Enum value, params Enum[] range) 
+    public static bool IsIn(this Enum value, params Enum[] range)
         => range.Contains(value);
 
     /// <summary>
@@ -229,6 +228,6 @@ public static class EnumHelper
         : value;
 
     public static IEnumerable<TEnum> GetItems<TEnum>()
-        where TEnum : Enum => 
+        where TEnum : Enum =>
         Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
 }

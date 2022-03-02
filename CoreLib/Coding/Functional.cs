@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
-using Library.DesignPatterns.Markers;
+﻿using Library.DesignPatterns.Markers;
 using Library.Validations;
+using System.Diagnostics;
 
 namespace Library.Coding;
 

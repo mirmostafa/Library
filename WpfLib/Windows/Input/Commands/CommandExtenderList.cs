@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Library.Collections;
 using System.Windows.Input;
-using Library.Collections;
 
 namespace Library.Wpf.Windows.Input.Commands
 {

@@ -1,7 +1,7 @@
-﻿using System.Reflection;
-using Library.Ioc;
+﻿using Library.Ioc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Library.Helpers;
 

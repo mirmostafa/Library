@@ -7,7 +7,7 @@ internal sealed class CommandProcessor : ICommandProcessor
 {
     private readonly ILifetimeScope _container;
 
-    public CommandProcessor(ILifetimeScope container) => 
+    public CommandProcessor(ILifetimeScope container) =>
         this._container = container;
 
 #if !DEBUG

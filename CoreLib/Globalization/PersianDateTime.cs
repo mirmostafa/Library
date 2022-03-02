@@ -1,11 +1,10 @@
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Runtime.Serialization;
 using Library.Globalization.DataTypes;
 using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
+using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace Library.Globalization;
 

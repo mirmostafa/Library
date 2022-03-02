@@ -1,7 +1,7 @@
-﻿using System.Reflection;
-using Library.Validations;
+﻿using Library.Validations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using System.Reflection;
 
 namespace Library.Web;
 

@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using Library.Data.Models;
+﻿using Library.Data.Models;
 using Library.Wpf.Bases;
 using Library.Wpf.Markers;
+using System.Collections;
 
 namespace Library.Wpf.Controls.ViewModels;
 

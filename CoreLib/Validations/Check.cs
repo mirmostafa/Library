@@ -1,10 +1,10 @@
 ﻿#nullable disable
 
+using Library.Exceptions.Validations;
 using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using Library.Exceptions.Validations;
 
 namespace Library.Validations;
 

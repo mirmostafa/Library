@@ -1,9 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Library.Exceptions;
+﻿using Library.Exceptions;
 using Library.Logging;
 using Library.Mapping;
 using Library.Wpf.Dialogs;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Library.Wpf.Windows;
 

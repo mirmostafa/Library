@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Library.Validations;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Library.Validations;
 
 namespace Library.Globalization.Pluralization;
 
@@ -81,7 +80,7 @@ public static class Pluralizer
         in IEnumerable<(string Key, string Value)> replacables,
         in IEnumerable<(string Key, string Value)> keepables,
         in IEnumerable<(Regex Key, string Value)> rules)
-{
+    {
         var token = word.ArgumentNotNull(nameof(word)).ToLower(CultureInfo.InvariantCulture);
         return keepables.ContainsKey(token)
             ? RestoreCase(word, token)

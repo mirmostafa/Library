@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using Library.DesignPatterns.Markers;
+﻿using Library.DesignPatterns.Markers;
+using System.Collections;
 
 namespace Library.Collections;
 

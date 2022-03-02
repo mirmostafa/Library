@@ -1,7 +1,6 @@
 ﻿using Library.EventsArgs;
 using Library.Interfaces;
 using Library.Validations;
-using System;
 
 namespace Library.DesignPatterns.Behavioral.Observation
 {

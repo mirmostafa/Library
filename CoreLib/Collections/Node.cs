@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Library.DesignPatterns.Markers;
+﻿using Library.DesignPatterns.Markers;
 using Library.Validations;
 
 namespace Library.Collections;

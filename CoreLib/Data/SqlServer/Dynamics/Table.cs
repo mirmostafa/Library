@@ -1,9 +1,8 @@
 ﻿#nullable enable
+using Library.Data.SqlServer.Dynamics.Collections;
 using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
-using Library.Data.SqlServer.Dynamics.Collections;
 using static Library.Data.SqlServer.SqlStatementBuilder;
 
 namespace Library.Data.SqlServer.Dynamics;

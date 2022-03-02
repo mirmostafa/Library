@@ -1,10 +1,6 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows;
 using System.Windows.Threading;
-using Library.Helpers;
 
 namespace Library.Wpf.Helpers
 {

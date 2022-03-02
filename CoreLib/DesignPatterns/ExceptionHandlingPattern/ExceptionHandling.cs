@@ -1,5 +1,5 @@
-using System.Diagnostics;
 using Library.EventsArgs;
+using System.Diagnostics;
 
 namespace Library.DesignPatterns.ExceptionHandlingPattern
 {

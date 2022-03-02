@@ -1,5 +1,5 @@
-using System.Dynamic;
 using Library.Exceptions;
+using System.Dynamic;
 
 namespace Library.Data.SqlServer.Dynamics;
 

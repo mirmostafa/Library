@@ -1,5 +1,5 @@
-﻿using System.Data.SqlClient;
-using Library.DesignPatterns.Markers;
+﻿using Library.DesignPatterns.Markers;
+using System.Data.SqlClient;
 
 namespace Library.Data.SqlServer.Builders;
 

@@ -3,6 +3,6 @@ public class WindowBase : Window
 {
     public WindowBase()
     {
-        
+
     }
 }

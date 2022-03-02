@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Diagnostics;
-using Library.Coding;
+﻿using Library.Coding;
 using Library.DesignPatterns.Markers;
+using System.Collections;
+using System.Diagnostics;
 
 namespace Library.Collections;
 
@@ -26,7 +26,7 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
 
     public TItem this[int index]
     {
-        get => this._list[index]; 
+        get => this._list[index];
         set
         {
             this.CheckReadOnly();

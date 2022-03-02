@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Library.Helpers;
 
 namespace Library.Wpf.Windows.Input.Commands
 {

@@ -1,10 +1,10 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using System.Dynamic;
-using Library.Data.SqlServer.Builders;
+﻿using Library.Data.SqlServer.Builders;
 using Library.Data.SqlServer.Dynamics.Collections;
 using Library.Exceptions;
 using Library.Validations;
+using System.Data;
+using System.Data.SqlClient;
+using System.Dynamic;
 
 namespace Library.Data.SqlServer.Dynamics;
 

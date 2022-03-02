@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows;
-using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace Library.Wpf.Helpers
 {

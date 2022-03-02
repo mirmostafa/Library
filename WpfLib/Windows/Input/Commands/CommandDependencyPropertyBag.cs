@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Data;
-using Library.Validations;
+﻿using Library.Validations;
 using Library.Wpf.Commands;
+using System.Windows.Data;
 
 namespace Library.Wpf.Windows.Input.Commands
 {
