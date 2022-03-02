@@ -6,9 +6,11 @@ namespace Library.Web;
 public abstract class MiddlewareBase
 {
     private readonly RequestDelegate _next;
+
     protected MiddlewareBase(RequestDelegate next) =>
             this._next = next;
     protected ClaimsPrincipal? User { get; private set; }
+
 
     [System.Diagnostics.DebuggerStepThrough]
     public async Task Invoke(HttpContext httpContext)
@@ -23,7 +25,7 @@ public abstract class MiddlewareBase
         await handleExecuting(httpContext);
         await handleExecuted(httpContext);
 
-        async Task handleExecuting(HttpContext? httpContext)
+        async Task handleExecuting(HttpContext httpContext)
         {
             var onExecutingEventArgs = new ItemActingEventArgs<HttpContext?>(httpContext);
             await this.OnExecutingAsync(onExecutingEventArgs);
@@ -33,7 +35,7 @@ public abstract class MiddlewareBase
             }
         }
 
-        async Task handleExecuted(HttpContext? httpContext)
+        async Task handleExecuted(HttpContext httpContext)
         {
             var onExecutedEventArgs = new ItemActedEventArgs<HttpContext?>(httpContext);
             await this.OnExecutedAsync(onExecutedEventArgs);
