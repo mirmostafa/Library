@@ -1,8 +1,8 @@
-﻿using System.Net;
-using Library.Cqrs;
+﻿using Library.Cqrs;
 using Library.Validations;
 using Library.Web.Results;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Library.Helpers;
 
