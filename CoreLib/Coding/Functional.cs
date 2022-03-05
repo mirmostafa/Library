@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
-using Library.DesignPatterns.Markers;
+﻿using Library.DesignPatterns.Markers;
 using Library.Validations;
+using System.Diagnostics;
 
 namespace Library.Coding;
 
@@ -44,6 +44,7 @@ public static class Functional
         }
         return b;
     }
+
     public static T? IfFalse<T>(this bool b, in Func<T> ifFalse, in T? defaultValue = default)
         => b is false ? ifFalse.Invoke() : defaultValue;
 
@@ -83,6 +84,7 @@ public static class Functional
     }
     public static TInstance Fluent<TInstance>(this TInstance instance, in object? obj) =>
         instance;
+
     public static TInstance Fluent<TInstance>(in TInstance instance, in Action<TInstance> action)
     {
         action(instance);
