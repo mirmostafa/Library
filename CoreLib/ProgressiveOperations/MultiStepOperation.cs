@@ -1,8 +1,7 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Library.Coding;
-using Library.DesignPatterns.ExceptionHandlingPattern;
+﻿using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Library.ProgressiveOperations;
 
@@ -387,16 +386,9 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
         }
 
         this.CurrentOperationIncreasing(desc);
-        Exception? ex = null;
-        if (timeout == default)
-        {
-            ex = CodeHelper.Catch(op);
-        }
-        else
-        {
-            ex = Task.Factory.StartNew(() => CodeHelper.Catch(op), this._cancellationTokenSource.Token).Result;
-        }
-
+        var ex = timeout == default
+            ? Functional.Catch(op)
+            : Task.Factory.StartNew(() => Functional.Catch(op), this._cancellationTokenSource.Token).Result;
         if (ex != null)
         {
             this.ExceptionHandling.HandleException(this, ex);

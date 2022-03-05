@@ -28,7 +28,7 @@ public static class LibLogger
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     internal static void Info(object message, object? sender = null, DateTime? time = null) =>
-        Log(message, LogLevel.Info, sender: sender ?? GetCallerMethod(), time ?? DateTime.Now);
+        Log(message, LogLevel.Info, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// logs the specified message with LogLevel.Warning.
@@ -37,7 +37,7 @@ public static class LibLogger
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     internal static void Warn(object message, object? sender = null, DateTime? time = null) =>
-        Log(message, LogLevel.Warning, sender: sender ?? GetCallerMethod(), time ?? DateTime.Now);
+        Log(message, LogLevel.Warning, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// Logs the specified message with LogLevel.Error.
@@ -46,7 +46,7 @@ public static class LibLogger
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     internal static void Error(object message, object? sender = null, DateTime? time = null) =>
-        Log(message, LogLevel.Error, sender: sender ?? GetCallerMethod(), time ?? DateTime.Now);
+        Log(message, LogLevel.Error, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// Logs the specified message with LogLevel.Fatal.
@@ -55,7 +55,7 @@ public static class LibLogger
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     internal static void Fatal(object message, object? sender = null, DateTime? time = null) =>
-        Log(message, LogLevel.Fatal, sender: sender ?? GetCallerMethod(), time ?? DateTime.Now);
+        Log(message, LogLevel.Fatal, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// Logs the specified message with LogLevel.Debug.
@@ -64,7 +64,7 @@ public static class LibLogger
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     internal static void Debug(object message, object? sender = null, DateTime? time = null) =>
-        Log(message, LogLevel.Debug, sender: sender ?? GetCallerMethod(), time ?? DateTime.Now);
+        Log(message, LogLevel.Debug, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// Logs the specified message with LogLevel.Trace.
@@ -74,14 +74,14 @@ public static class LibLogger
     /// <param name="time">The time.</param>
     /// <param name="stackTrace">The stack trace.</param>
     internal static void Trace(object message, object? sender = null, DateTime? time = null, string? stackTrace = null) =>
-        Log(message, LogLevel.Trace, sender: sender ?? GetCallerMethod(), time ?? DateTime.Now, stackTrace);
+        Log(message, LogLevel.Trace, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now, stackTrace);
 
     private static void OnLogging(LogRecord<object> logRecord) =>
         Logged?.Invoke(null, new(logRecord));
 
     internal static void DebugStartingAction() =>
-        Debug(GetCallerMethodName() ?? $"({nameof(DebugStartingAction)} calling)", sender: GetCallerMethod()?.DeclaringType?.Name);
+        Debug(CodeHelpers.GetCallerMethodName() ?? $"({nameof(DebugStartingAction)} calling)", sender: CodeHelpers.GetCallerMethod()?.DeclaringType?.Name);
 
     internal static void DebugEndedAction() =>
-        Debug(GetCallerMethodName() ?? $"({nameof(DebugEndedAction)} called)", sender: GetCallerMethod()?.DeclaringType?.Name);
+        Debug(CodeHelpers.GetCallerMethodName() ?? $"({nameof(DebugEndedAction)} called)", sender: CodeHelpers.GetCallerMethod()?.DeclaringType?.Name);
 }

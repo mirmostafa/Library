@@ -43,9 +43,9 @@ public abstract class SqlObject<TSqlObject, TOwner> : DynamicObject, ISqlObject
         new(connectionString);
 
     private static IEnumerable<DataRow> GetRows(DataSet ds) => 
-        ds.Dispose(ds.GetTables().FirstOrDefault()?.Dispose(t => t?.Select())) ?? Enumerable.Empty<DataRow>();
+        ds.Dispose(ds.GetTables().FirstOrDefault()?.Dispose(t => (t?.Select()))) ?? Enumerable.Empty<DataRow>();
 
-    public override string ToString() => 
+    public override string ToString() =>
         this.Schema.IsNullOrEmpty() ? this.Name : $"{this.Schema}.{this.Name}";
 
     protected IEnumerable<DataRow> GetDataRows(string query) => GetDataRows(this.ConnectionString, query);

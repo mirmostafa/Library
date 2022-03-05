@@ -4,7 +4,6 @@ using Library.Exceptions;
 using Library.Validations;
 using Library.Wpf.Media;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using static Library.Coding.CodeHelper;
 
 namespace Library.Wpf.Dialogs;
 

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Library.Data.SqlServer;
+﻿using Library.Data.SqlServer;
 using Library.Data.SqlServer.Builders;
 
 namespace LibraryTest;
@@ -20,11 +18,11 @@ public class EntityModelConverterTest
     public void SqlStamentBuildByEntityModelTest()
     {
         var columns = EntityModelConverterHelper.GetColumns<PersonEntity>();
-        var builder = SqlStatementBuilder
-                             .Select()
-                             .Columns(columns.OrderBy(c => c.Order).Select(c => c.Name))
-                             .From(nameof(PersonEntity));
-        var actual = builder.Build();
+        var actual = SqlStatementBuilder
+                        .Select()
+                        .Columns(columns.OrderBy(c => c.Order).Select(c => c.Name))
+                        .From(nameof(PersonEntity))
+                        .Build();
         var expected = @"SELECT [Id], [Name], [LName], [AddressId], [Address]
     FROM [PersonEntity]";
         Assert.AreEqual(expected, actual);

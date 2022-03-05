@@ -16,7 +16,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using static Library.Coding.CodeHelper;
+using static Library.Coding.CodeHelpers;
 
 namespace Library.Wpf.Helpers;
 

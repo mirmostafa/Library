@@ -8,7 +8,7 @@ using Library.Helpers;
 using Library.Wpf.Helpers;
 using Library.Wpf.Internals;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using static Library.Coding.CodeHelper;
+using static Library.Coding.CodeHelpers;
 
 namespace Library.Wpf.Dialogs
 {

@@ -12,7 +12,7 @@ public interface IMsLoggerMessageWapper
 public class MsLoggerMessageWapper : MsLoggerMessageWapperBase<MsLoggerMessageWapper>, IMsLoggerMessageWapper
 {
     public MsLoggerMessageWapper(Microsoft.Extensions.Logging.ILogger logger, string? name = null, int? eventId = null)
-        : base(logger, name ?? GetCallerMethodName() ?? Assembly.GetExecutingAssembly().GetName().Name ?? string.Empty, eventId ?? 0)
+        : base(logger, name ?? CodeHelpers.GetCallerMethodName() ?? Assembly.GetExecutingAssembly().GetName().Name ?? string.Empty, eventId ?? 0)
     {
     }
 }

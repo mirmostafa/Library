@@ -1,12 +1,13 @@
+using Library.Dynamic;
 using System.Data;
 using System.Data.SqlClient;
-using Library.Dynamic;
 
 namespace Library.Data.SqlServer;
 public sealed class Sql
 {
 
-    public Sql(string connectionString) => this.ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+    public Sql(string connectionString) =>
+        this.ConnectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
 
     public string ConnectionString { get; }
 
@@ -19,9 +20,11 @@ public sealed class Sql
         return result;
     }
 
-    public SqlDataReader ExecuteReader(string query) => new SqlConnection(this.ConnectionString).ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
+    public SqlDataReader ExecuteReader(string query) =>
+        new SqlConnection(this.ConnectionString).ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
 
-    public object? ExecuteScalar(string sql) => this.ExecuteScalar(sql, null);
+    public object? ExecuteScalar(string sql) =>
+        this.ExecuteScalar(sql, null);
 
     public object? ExecuteScalar(string sql, Action<SqlParameterCollection>? fillParams)
     {
@@ -47,11 +50,14 @@ public sealed class Sql
         return func(conn);
     }
 
-    public object? ExecuteStoredProcedure(string spName, Action<SqlParameterCollection>? fillParams = null) => Execute(this.ConnectionString, conn => conn.ExecuteStoredProcedure(spName, fillParams));
+    public object? ExecuteStoredProcedure(string spName, Action<SqlParameterCollection>? fillParams = null) =>
+        Execute(this.ConnectionString, conn => conn.ExecuteStoredProcedure(spName, fillParams));
 
-    public DataSet FillDataSet(string query) => Execute(this.ConnectionString, conn => conn.FillDataSet(query));
+    public DataSet FillDataSet(string query) =>
+        Execute(this.ConnectionString, conn => conn.FillDataSet(query));
 
-    public DataTable FillDataTable(string query) => Execute(this.ConnectionString, conn => conn.FillDataTable(query));
+    public DataTable FillDataTable(string query) =>
+        Execute(this.ConnectionString, conn => conn.FillDataTable(query));
 
     public DataTable FillDataTable(string query, Action<SqlParameterCollection>? fillParams = null)
     {

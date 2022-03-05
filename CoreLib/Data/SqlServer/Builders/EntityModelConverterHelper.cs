@@ -5,7 +5,8 @@ namespace Library.Data.SqlServer.Builders;
 
 public static class EntityModelConverterHelper
 {
-    public static IEnumerable<ColumnInfo> GetColumns<TEntityType>() => GetColumns(typeof(TEntityType));
+    public static IEnumerable<ColumnInfo> GetColumns<TEntityType>() =>
+        GetColumns(typeof(TEntityType));
     public static IEnumerable<ColumnInfo> GetColumns(Type entityType)
     {
         var props = entityType.GetProperties();
@@ -28,15 +29,12 @@ public static class EntityModelConverterHelper
             yield return new ColumnInfo(name, type, isKey, isFk, fkName, order);
         }
     }
-    public static TableInfo GetTableInfo<TEntity>()
-        => GetTableInfo(typeof(TEntity));
-    public static TableInfo GetTableInfo(Type tableType)
-        => new(GetTableName(tableType), GetColumns(tableType));
-    public static string GetTableName<Entity>()
-    {
-        var tableType = typeof(Entity);
-        return GetTableName(tableType);
-    }
+    public static TableInfo GetTableInfo<TEntity>() => 
+        GetTableInfo(typeof(TEntity));
+    public static TableInfo GetTableInfo(Type tableType) =>
+        new(GetTableName(tableType), GetColumns(tableType));
+    public static string GetTableName<Entity>() =>
+        GetTableName(typeof(Entity));
 
     private static string GetTableName(Type tableType)
     {
