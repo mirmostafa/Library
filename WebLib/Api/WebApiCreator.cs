@@ -2,7 +2,7 @@
 using Library.Helpers;
 using Library.Validations;
 
-namespace Library.Web;
+namespace Library.Web.Api;
 public class WebApiCreator
 {
     public WebApiCreator(WebApplication? app = null, IEnumerable<string>? args = null) =>

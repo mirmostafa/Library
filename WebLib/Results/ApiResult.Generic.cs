@@ -1,6 +1,6 @@
-﻿using System.Net;
-using Library.Helpers;
+﻿using Library.Helpers;
 using Library.Validations;
+using System.Net;
 
 namespace Library.Web.Results;
 
@@ -8,7 +8,7 @@ public class ApiResult<T> : ApiResult, IApiResult<T>
 {
     public ApiResult(int? httpStatusCode = null, string? message = null, T? value = default)
         : base(httpStatusCode, message) => this.Value = value;
-    
+
     public ApiResult(HttpStatusCode? httpStatusCode = null, string? message = null, T? value = default)
         : base(httpStatusCode, message) => this.Value = value;
 
