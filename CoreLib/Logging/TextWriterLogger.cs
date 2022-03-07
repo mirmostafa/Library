@@ -32,7 +32,7 @@ namespace Library.Logging
             var message = logRecord.Reformat();
             foreach (var writer in this.Writers.Compact())
             {
-                _ = CodeHelper.Catch(() => writer(message));
+                _ = Catch(() => writer(message));
             }
         }
 

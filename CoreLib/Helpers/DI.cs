@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Library.Exceptions;
+using Library.Validations;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Helpers;
 
@@ -9,6 +11,12 @@ public static class DI
     public static void Initialize(in IServiceProvider serviceProvider)
         => _serviceProvider = serviceProvider;
 
-    public static T? GetService<T>()
-        => _serviceProvider is not null ? _serviceProvider.GetService<T>() : default;
+    public static T GetService<T>()
+    {
+        Check.MustBe(_serviceProvider is not null, () => new LibraryException($"{nameof(DI)} not initiated."));
+
+        var result = _serviceProvider.GetService<T>().NotNull(() => new ObjectNotFoundException($"A service named {typeof(T)} not found."));
+        LibLogger.Debug($"Requested service: {typeof(T)}", typeof(DI));
+        return result;
+    }
 }

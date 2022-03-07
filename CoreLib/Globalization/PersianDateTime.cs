@@ -1,11 +1,10 @@
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Runtime.Serialization;
 using Library.Globalization.DataTypes;
 using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
+using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace Library.Globalization;
 
@@ -364,17 +363,17 @@ public readonly struct PersianDateTime :
             var timeParts = timePart.Split(TimeSeparator);
             if (timeParts.Length > 0)
             {
-                hour = ThrowOnError(() => int.Parse(timeParts[0]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+                hour = CodeHelpers.ThrowOnError(() => int.Parse(timeParts[0]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
 
             if (timePart.Length > 1)
             {
-                min = ThrowOnError(() => int.Parse(timeParts[1]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+                min = CodeHelpers.ThrowOnError(() => int.Parse(timeParts[1]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
 
             if (timeParts.Length > 2)
             {
-                sec = ThrowOnError(() => int.Parse(timeParts[2]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+                sec = CodeHelpers.ThrowOnError(() => int.Parse(timeParts[2]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
         }
 
@@ -572,7 +571,7 @@ public readonly struct PersianDateTime :
     ///     Returns a <see cref="string" /> that represents this instance.
     /// </summary>
     /// <returns> A <see cref="string" /> that represents this instance. </returns>
-    public override string? ToString() =>
+    public override string ToString() =>
         this.ToString(ToStringFormat);
 
     /// <summary>
@@ -616,7 +615,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="format"> The format. </param>
     /// <returns> A <see cref="string" /> that represents this instance. </returns>
-    public string? ToString(in string format)
+    public string ToString(in string format)
     {
         var buffer = format;
         if (this.IsInitiated is false)
@@ -665,7 +664,7 @@ public readonly struct PersianDateTime :
     [DoesNotReturn]
     private static InvalidCastException RaiseInvalidTypeCastException()
     {
-        var targetType = GetCallerMethodName()![2..];
+        var targetType = CodeHelpers.GetCallerMethodName()![2..];
         throw new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
     }
 

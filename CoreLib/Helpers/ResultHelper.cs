@@ -28,6 +28,13 @@ public static class ResultHelper
     public static Result<XmlWriter> ToXmlWriter(this Result<Stream> result, bool indent = true) =>
         new(XmlWriter.Create(result.ToStreamWriter(), new XmlWriterSettings { Indent = indent }));
 
+    /// <summary>
+    /// Serializes <code>result.Value</code> to XML file.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="result">The result.</param>
+    /// <param name="filePath">The file path.</param>
+    /// <returns></returns>
     public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath!!) =>
         result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
 }

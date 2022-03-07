@@ -17,7 +17,7 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
 
     protected FastLoggerBase()
     {
-        this._logAction = e => this.Log(e);
+        this._logAction = this.Log;
         this.IsEnabled = true;
         this.LogLevel = LogLevel.Normal;
     }
@@ -45,8 +45,8 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
         => (sender, level) switch
         {
             (not null, _) => sender,
-            (_, LogLevel.Debug or LogLevel.Trace) => GetCallerMethod(3)?.Name,
-            (_, _) => GetCallerMethod(3)?.DeclaringType?.Name,
+            (_, LogLevel.Debug or LogLevel.Trace) => CodeHelpers.GetCallerMethod(3)?.Name,
+            (_, _) => CodeHelpers.GetCallerMethod(3)?.DeclaringType?.Name,
         };
 
     public void Info(TLogMessage message, object? sender = null, DateTime? time = null)
