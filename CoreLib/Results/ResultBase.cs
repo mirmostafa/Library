@@ -7,26 +7,36 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 {
     private bool? _isSucceed;
 
-    public object? StatusCode
-    {
-        get;
-        protected set;
-    }
-    public string? Message { get; set; }
+    protected ResultBase(object? statusCode = null, string? message = null)
+        => (this.StatusCode, this.Message) = (statusCode, message);
+
+    public List<(object? Id, object Message)> Errors { get; } = new();
+
+    public Dictionary<string, object> Extra { get; } = new();
+
+    public bool IsFailure => !this.IsSucceed;
+
     public virtual bool IsSucceed
     {
         get => this._isSucceed ?? (this.StatusCode?.ToInt() is null or 0 or 200) && (!this.Errors.Any());
         init => this._isSucceed = value;
     }
-    public bool IsFailure => !this.IsSucceed;
-    public Dictionary<string, object> Extra { get; } = new();
-    public List<(object? Id, object Message)> Errors { get; } = new();
 
-    protected ResultBase(object? statusCode = null, string? message = null)
-        => (this.StatusCode, this.Message) = (statusCode, message);
+    public string? Message { get; set; }
+
+    public object? StatusCode
+    {
+        get;
+        protected set;
+    }
+    public static bool operator !=(ResultBase? left, ResultBase? right)
+        => !(left == right);
+
+    public static bool operator ==(ResultBase? left, ResultBase? right)
+        => EqualityComparer<ResultBase>.Default.Equals(left, right);
 
     public void Deconstruct(out bool isSucceed, out string? message)
-        => (isSucceed, message) = (this.IsSucceed, this.Message);
+                => (isSucceed, message) = (this.IsSucceed, this.Message);
 
     public override bool Equals(object? obj) =>
         this.Equals(obj as ResultBase);
@@ -34,14 +44,6 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         other is not null && this.StatusCode == other.StatusCode;
     public override int GetHashCode() =>
         HashCode.Combine(this.StatusCode, this.Message, this.Errors);
-
-    public static bool operator ==(ResultBase? left, ResultBase? right)
-        => EqualityComparer<ResultBase>.Default.Equals(left, right);
-    public static bool operator !=(ResultBase? left, ResultBase? right)
-        => !(left == right);
-
-    private string GetDebuggerDisplay() =>
-        this.ToString();
     public override string ToString()
     {
         StringBuilder result = new();
@@ -63,4 +65,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
         return result.ToString();
     }
+
+    private string GetDebuggerDisplay() =>
+            this.ToString();
 }
