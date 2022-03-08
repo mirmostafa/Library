@@ -1,7 +1,6 @@
 ﻿using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
-using Library.Results;
 using Library.Types;
 using Library.Validations;
 using System.ComponentModel;
@@ -513,7 +512,4 @@ public static class ObjectHelper
         => guid == Guid.Empty;
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
         => id == Guid.Empty;
-
-    public static Result<T> AsResult<T>(this T t) =>
-        new(t);
 }

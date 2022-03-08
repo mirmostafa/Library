@@ -68,7 +68,7 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     public TList CopyTo(TItem[] array, int arrayIndex) =>
         this.This.Fluent(() => this._list.CopyTo(array, arrayIndex));
     public (TList List, bool Result) Remove(TItem item) =>
-        this.Fluent(this.CheckReadOnly).This.FluentByResult(() => this._list.Remove(item));
+        this.Fluent(this.CheckReadOnly).This.Fluent().Result(() => this._list.Remove(item));
 
     public IEnumerator<TItem> GetEnumerator() =>
         this._list.GetEnumerator();

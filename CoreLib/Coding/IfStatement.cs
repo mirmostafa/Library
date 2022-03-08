@@ -4,19 +4,19 @@ namespace Library.Coding;
 
 public struct IfStatememt
 {
-    public IfStatememt(Func<bool> @if)
+    public IfStatememt(Func<bool> condition)
         : this()
-        => this.If = @if ?? throw new ArgumentNullException(nameof(@if));
+        => this.Condition = condition ?? throw new ArgumentNullException(nameof(condition));
 
-    public Func<bool> If { get; set; }
+    public Func<bool> Condition { get; set; }
     public Action ThenAction { get; set; }
     public Action ElseAction { get; set; }
 }
 public struct IfStatememt<TResult>
 {
-    public IfStatememt(Func<bool> @if)
+    public IfStatememt(Func<bool> condition)
         : this()
-        => this.If = @if ?? throw new ArgumentNullException(nameof(@if));
+        => this.If = condition ?? throw new ArgumentNullException(nameof(condition));
 
     public Func<bool> If { get; set; }
     public Func<TResult> Then { get; set; }
@@ -37,7 +37,7 @@ public static class IfStatementExtensions
         => ifStatememt.Fluent(ifStatememt.ElseAction = @else);
 
     public static void Build(this IfStatememt ifStatememt)
-        => 0.If(ifStatememt.If, ifStatememt.ThenAction, ifStatememt.ElseAction);
+        => ifStatememt.Condition.If(ifStatememt.ThenAction, ifStatememt.ElseAction);
 
 
     public static IfStatememt<TResult> If<TResult>(this Func<bool> @condition)

@@ -4,12 +4,12 @@ namespace Library.Mapping;
 public static class MapperExtensions
 {
     public static TEntity ForMember<TEntity>(this TEntity entity, in Action<TEntity> action)
-        => Fluent(entity, action);
-    public static TEntity ForMemberIfNotNull<TEntity>(this TEntity entity, Action<TEntity> action)
-        => IfTrue(entity is not null && action is not null, () => Fluent(entity!, action));
+        => entity.Fluent( action);
+    public static TEntity? ForMemberIfNotNull<TEntity>(this TEntity? entity, Action<TEntity> action)
+        => IfTrue(entity is not null && action is not null, () => entity.Fluent(action));
 
     public static TEntity ForMember<TEntity>(in TEntity entity, in Action<TEntity> action)
-        => Fluent(entity, action);
+        => entity.Fluent(action);
 
     internal static void Copy<TSource, TDestination>(TSource source, TDestination destination, PropertyInfo dstProp)
         where TDestination : class
