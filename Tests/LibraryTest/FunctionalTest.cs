@@ -33,14 +33,14 @@ public class FunctionalTest
     public void FluentTest()
     {
         this.Fluent(Methods.Empty);
-        var two = Fluent<int>(2, _ => { });
+        var two = 2.Fluent<int>(() => { });
         Assert.AreEqual(2, two);
     }
 
     [TestMethod]
     public void FluentByResultTest()
     {
-        var actualTwo = 2.FluentByResult(_returnsTwo);
+        var actualTwo = 2.Fluent().Result(_returnsTwo);
         Assert.AreEqual((2, 2), actualTwo);
     }
 
@@ -48,7 +48,7 @@ public class FunctionalTest
     public void FluentByResultTest2()
     {
 
-        var actualThree = 3.FluentByResult(_returnsTwo);
+        var actualThree = 3.Fluent().Result(_returnsTwo);
         Assert.AreEqual((3, 2), actualThree);
     }
 

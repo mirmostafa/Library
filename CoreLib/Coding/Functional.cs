@@ -23,24 +23,15 @@ public static class Functional
         }
         return b;
     }
-    public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Action ifTrue)
-    {
-        if (b is true)
-        {
-            ifTrue?.Invoke();
-        }
-        return @this;
-    }
-    public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Action<TInstance> ifTrue)
-    {
-        if (b is true)
-        {
-            ifTrue?.Invoke(@this);
-        }
-        return @this;
-    }
-    public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Func<TInstance, TInstance> ifTrue)
-        => b is true ? ifTrue(@this) : @this;
+    //public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Action ifTrue)
+    //{
+    //    if (b is true)
+    //    {
+    //        ifTrue?.Invoke();
+    //    }
+    //    return @this;
+    //}
+
     public static T IfTrue<T>(bool b, in Func<T> ifTrue!!, in T defaultValue = default!)
         => b is true ? ifTrue.Invoke() : defaultValue;
     public static bool IfFalse(this bool b, in Action ifFalse)
@@ -51,22 +42,10 @@ public static class Functional
         }
         return b;
     }
-    public static T? IfFalse<T>(this bool b, in Func<T> ifFalse, in T? defaultValue = default)
+    public static T IfFalse<T>(this bool b, in Func<T> ifFalse, in T defaultValue = default)
         => b is false ? ifFalse.Invoke() : defaultValue;
-    public static TInstance If<TInstance>(this TInstance @this, bool b, in Action ifTrue, in Action ifFalse)
-    {
-        if (b is true)
-        {
-            ifTrue?.Invoke();
-        }
-        else
-        {
-            ifFalse?.Invoke();
-        }
 
-        return @this;
-    }
-    public static TInstance If<TInstance>(this TInstance @this, Func<bool> b, in Action ifTrue, in Action ifFalse)
+    public static void If(this Func<bool> b, in Action ifTrue, in Action ifFalse)
     {
         if (b() is true)
         {
@@ -76,42 +55,7 @@ public static class Functional
         {
             ifFalse?.Invoke();
         }
-
-        return @this;
     }
-    public static TInstance If<TInstance>(this TInstance @this, bool b, in Func<TInstance> ifTrue, in Func<TInstance> ifFalse)
-        => b is true ? ifTrue() : ifFalse();
-
-    public static TInstance Fluent<TInstance>(this TInstance instance, in Action action)
-    {
-        action?.Invoke();
-        return instance;
-    }
-    public static TInstance Fluent<TInstance>(this TInstance instance, in object? obj) =>
-        instance;
-    public static TInstance Fluent<TInstance>(in TInstance instance, in Action<TInstance> action)
-    {
-        action(instance);
-        return instance;
-    }
-    public static TInstance Fluent<TInstance>(in TInstance instance, in Action? action = null)
-    {
-        action?.Invoke();
-        return instance;
-    }
-    public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance> func) =>
-        func.Invoke();
-    public static TInstance Fluent<TInstance>(this TInstance instance, in Func<TInstance, TInstance> func) =>
-        func.Invoke(instance);
-    public static async Task<TInstance> FluentAsync<TInstance>(this TInstance instance, Func<Task> action)
-    {
-        await action.Invoke();
-        return instance;
-    }
-    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TResult> func) =>
-        (instance, func.Invoke());
-    public static (TInstance Instance, TResult Result) FluentByResult<TInstance, TResult>(this TInstance instance, in Func<TInstance, TResult> action)
-        => (instance, action.Invoke(instance));
 
     public static TInstance ForEach<TInstance, Item>(in TInstance @this, IEnumerable<Item>? items, in Action<Item> action)
     {
@@ -194,7 +138,7 @@ public static class Functional
         new();
     public static T New<T>(params object[] args) =>
         Activator.CreateInstance(typeof(T), args).NotNull().To<T>();
-    
+
     public static IEnumerable<TResult> While<TResult>(Func<bool> predicate, Func<TResult> action, Action? onIterationDone = null)
     {
         predicate.ArgumentNotNull(nameof(predicate));
@@ -216,7 +160,7 @@ public static class Functional
             action?.Invoke();
         }
     }
-        
+
     public static void Using<TDisposable>(Func<TDisposable> getItem, Action<TDisposable> action)
         where TDisposable : IDisposable
     {
@@ -229,7 +173,7 @@ public static class Functional
         using var item = getItem();
         return action(item);
     }
-    
+
     public static async Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default) =>
         await Task.Run(action, cancellationToken);
     public static async Task<TResult> Async<TResult>(TResult result) =>
@@ -377,7 +321,7 @@ public static class Functional
     [DoesNotReturn]
     public static void Break() =>
         Throw<BreakException>();
-    
+
     [DoesNotReturn]
     public static void Throw<TException>() where TException : Exception, new() =>
         ExceptionDispatchInfo.Throw(new TException());

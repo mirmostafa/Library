@@ -221,12 +221,9 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
-        where TSource : class
-    {
-        return items is null
+        where TSource : class => items is null
             ? Enumerable.Empty<TSource>()
             : items.Where(x => x is not null).Select(x => x!);
-    }
 
     public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items) =>
         items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
@@ -388,8 +385,21 @@ public static class EnumerableHelper
         return list;
     }
     public static Dictionary<TKey, TValue> SetByKey<TKey, TValue>([DisallowNull] this Dictionary<TKey, TValue> dic, TKey key, TValue value)
-        where TKey : notnull =>
-        dic.If(dic.ContainsKey(key), () => dic[key] = value, () => dic.Add(key, value));
+        where TKey : notnull
+    {
+        //! Still in Alpha test. Not operational.
+        //x dic.ContainsKey(key).If().Then(() => dic[key] = value).Else(() => dic.Add(key, value)).Build();
+        if (dic.ContainsKey(key))
+        {
+            dic[key] = value;
+        }
+        else
+        {
+            dic.Add(key, value);
+        }
+
+        return dic;
+    }
 
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
         where TKey : notnull =>
@@ -436,12 +446,9 @@ public static class EnumerableHelper
     }
 
     [return: NotNull]
-    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default)
-    {
-        return asyncItems is null
+    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default) => asyncItems is null
             ? await ToListAsync(EmptyAsyncEnumerable<TItem>.Empty, cancellationToken: cancellationToken)
             : await WhereAsync(asyncItems, x => x is not null, cancellationToken).ToListAsync(cancellationToken: cancellationToken);
-    }
 
     public static async Task<ICollection<TItem>> AddRangeAsync<TItem>([DisallowNull] this ICollection<TItem> list, [DisallowNull] IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {

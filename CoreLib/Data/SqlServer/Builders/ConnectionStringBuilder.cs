@@ -1,10 +1,12 @@
-﻿using System.Data.SqlClient;
-using Library.DesignPatterns.Markers;
+﻿using Library.DesignPatterns.Markers;
+using Library.Results;
+using Library.Validations;
+using System.Data.SqlClient;
 
 namespace Library.Data.SqlServer.Builders;
 
 [Fluent]
-public class ConnectionStringBuilder
+public class ConnectionStringBuilder : IValidatable<ConnectionStringBuilder>
 {
     private readonly SqlConnectionStringBuilder _builder;
 
@@ -59,10 +61,12 @@ public class ConnectionStringBuilder
     public ConnectionStringBuilder IsReadOnly(bool value)
         => this.Fluent(() => this._builder.ApplicationIntent = value ? ApplicationIntent.ReadOnly : ApplicationIntent.ReadWrite);
 
-    public void Validate() { }
-
     public static void Validate(string connectionString)
         => Create(connectionString).Validate();
+
+    public Result<ConnectionStringBuilder> Validate() 
+        => Result<ConnectionStringBuilder>.New(this);
+
 
     public string Build()
         => this._builder.ConnectionString;
@@ -79,9 +83,9 @@ public class ConnectionStringBuilder
         bool? hasMultipleActiveResultSets = null,
         bool? isEncrypt = null,
         bool? isUserInstance = null,
-        bool? isReadOnly = null)
-        => Create()
-            .ForServer(server)
+        bool? isReadOnly = null) =>
+        Create()
+            .ForServer(server).Fluent()
             .IfTrue(!userName.IsNullOrEmpty(), builder => builder.AsUserName(userName!))
             .IfTrue(!password.IsNullOrEmpty(), builder => builder.WithPassword(password!))
             .IfTrue(!database.IsNullOrEmpty(), builder => builder.WithDataBase(database!))
@@ -93,6 +97,6 @@ public class ConnectionStringBuilder
             .IfTrue(hasMultipleActiveResultSets.HasValue, builder => builder.HasMultipleActiveResultSets(hasMultipleActiveResultSets!.Value))
             .IfTrue(isEncrypt.HasValue, builder => builder.IsEncrypted(isEncrypt!.Value))
             .IfTrue(isUserInstance.HasValue, builder => builder.IsUserInstance(isUserInstance!.Value))
-            .IfTrue(isReadOnly.HasValue, builder => builder.IsReadOnly(isReadOnly!.Value))
+            .IfTrue(isReadOnly.HasValue, builder => builder.IsReadOnly(isReadOnly!.Value)).Value
             .Build();
 }
