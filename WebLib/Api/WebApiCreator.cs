@@ -58,7 +58,7 @@ public class WebApiCreator
     public WebApiCreator AddUrl(params string[] url) =>
         this.Fluent(() => this.Urls.AddRange(url));
     public Task<WebApiCreator> RunAsync() =>
-        this.FluentAsync(() => this.App.RunAsync());
+        this.Fluent().Async(async () => await this.App.RunAsync());
 }
 
 public enum HttpMethod
