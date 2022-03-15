@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using Library.Globalization;
+﻿using Library.Globalization;
+using System.Collections.Immutable;
 
 namespace Library.Helpers
 {
@@ -22,5 +22,8 @@ namespace Library.Helpers
 
         public static bool IsPrime(int number) =>
             Enumerable.Range(2, Math.Sqrt(number).ToInt() - 1).All(d => number % d != 0);
+
+        public static bool IsBetween(this int num, in int min, in int max) =>
+            num > min && num <= max;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Library.Results;
+﻿using Library.Coding;
+using Library.Results;
 using Library.Wpf.Bases;
 
 namespace Library.Wpf.Dialogs;
@@ -7,13 +8,13 @@ public class HostDialog
 {
     private readonly HostDialogBox _dialogBox;
 
-    private HostDialog(in PageBase source) =>
+    private HostDialog(in LibPageBase source) =>
         this._dialogBox = new() { ClientUi = source, DialogTitle = source?.Title };
 
-    public static HostDialog Create(in PageBase source) =>
+    public static HostDialog Create(in LibPageBase source) =>
         new(source);
     public static HostDialog Create<TPage>()
-        where TPage : PageBase, new() =>
+        where TPage : LibPageBase, new() =>
         new(new TPage());
 
     public HostDialog SetTile(in string title) =>
@@ -35,7 +36,7 @@ public class HostDialog
     /// Otherwise no validation will be applied.
     /// </summary>
     /// <param name="onValidation">The OnValidation function.</param>
-    public HostDialog SetValidation(Func<PageBase, Result> onValidation) =>
+    public HostDialog SetValidation(Func<LibPageBase, Result> onValidation) =>
         this.Fluent(this._dialogBox.OnValidate = onValidation);
     public bool? Show() =>
         this._dialogBox.ShowDialog();
