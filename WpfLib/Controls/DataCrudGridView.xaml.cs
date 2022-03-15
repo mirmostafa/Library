@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows.Controls;
+using Library.Coding;
 using Library.Data.Models;
 using Library.EventsArgs;
 using Library.Validations;
@@ -25,7 +26,7 @@ public partial class DataCrudGridView : UserControl
         this.InitializeComponent();
 
     private void DataCrudGridView_Loaded(object sender, RoutedEventArgs e) =>
-        this.IfTrue(!ControlHelper.IsDesignTime(), () => this.BindData());
+        this.Fluent().IfTrue(!ControlHelper.IsDesignTime(), () => this.BindData());
 
     [MemberNotNullWhen(true, nameof(ViewModel))]
     private bool BindData()

@@ -23,14 +23,6 @@ public static class Functional
         }
         return b;
     }
-    //public static TInstance IfTrue<TInstance>(this TInstance @this, bool b, in Action ifTrue)
-    //{
-    //    if (b is true)
-    //    {
-    //        ifTrue?.Invoke();
-    //    }
-    //    return @this;
-    //}
 
     public static T IfTrue<T>(bool b, in Func<T> ifTrue!!, in T defaultValue = default!)
         => b is true ? ifTrue.Invoke() : defaultValue;
@@ -337,4 +329,12 @@ public static class Functional
     [DoesNotReturn]
     public static void Throw(in Func<Exception> getException) =>
         ExceptionDispatchInfo.Throw(getException());
+
+    public static Func<TResult> GetFunc<TArg, TResult>(Func<TArg, TResult> func, TArg arg) =>
+        () => func(arg);
+    public static Func<TResult> GetFunc<TArg1, TArg2, TResult>(Func<TArg1, TArg2, TResult> func, TArg1 arg1, TArg2 arg2) =>
+        () => func(arg1, arg2);
+    public static Func<TResult> GetFunc<TArg1, TArg2, TArg3, TResult>(Func<TArg1, TArg2, TArg3, TResult> func, TArg1 arg1, TArg2 arg2, TArg3 arg3) =>
+        () => func(arg1, arg2, arg3);
+
 }
