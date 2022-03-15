@@ -1,14 +1,11 @@
-﻿using System;
-
-internal readonly record struct Person(string Name, int Age);
+﻿internal readonly record struct Person(string Name, int Age);
 
 internal abstract class Shape
 {
     public abstract double Area { get; }
 
     public string Name { get; set; }
-}
-
+} 
 internal sealed class Circle : Shape
 {
     public double Diameter { get; set; }

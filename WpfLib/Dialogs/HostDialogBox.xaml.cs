@@ -2,7 +2,7 @@
 using Library.Validations;
 using System.ComponentModel;
 //using ClientType = System.Windows.Controls.UserControl;
-using ClientType = Library.Wpf.Bases.PageBase;
+using ClientType = Library.Wpf.Bases.LibPageBase;
 
 namespace Library.Wpf.Dialogs;
 
