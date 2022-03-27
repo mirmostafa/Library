@@ -24,7 +24,7 @@ public static class Functional
         return b;
     }
 
-    public static T IfTrue<T>(bool b, in Func<T> ifTrue!!, in T defaultValue = default!)
+    public static T IfTrue<T>(bool b, in Func<T> ifTrue, in T defaultValue = default!)
         => b is true ? ifTrue.Invoke() : defaultValue;
     public static bool IfFalse(this bool b, in Action ifFalse)
     {
