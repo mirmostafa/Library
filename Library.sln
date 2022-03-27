@@ -20,13 +20,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLib", "CoreLib\CoreLib.csproj", "{28AC04BB-51BD-4C5D-83A9-688D87917276}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C3AC6F73-3D60-4E97-BA63-598C15E41B1E}"
-	ProjectSection(SolutionItems) = preProject
-		Directory.Packages.props = Directory.Packages.props
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAppTest", "Tests\WpfAppTest\WpfAppTest.csproj", "{FC4A0DCB-C90D-4351-9F4A-079B76C52B2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RpcLib", "RpcLib\RpcLib.csproj", "{1BEA9E5F-1273-43EB-86AC-DB76F1ABC516}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RpcLib", "RpcLib\RpcLib.csproj", "{1BEA9E5F-1273-43EB-86AC-DB76F1ABC516}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
