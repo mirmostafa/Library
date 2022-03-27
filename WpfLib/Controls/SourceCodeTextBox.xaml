@@ -1,0 +1,21 @@
+﻿<UserControl
+    x:Class="Library.Wpf.Controls.SourceCodeTextBox"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:bases="clr-namespace:Library.Wpf.Bases"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Library.Wpf.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Me"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <RichTextBox
+        x:Name="CodeStatementRichTextBox"
+        Grid.Row="2"
+        Block.LineHeight="2"
+        FontFamily="Cascadia Code"
+        IsReadOnly="True"
+        IsReadOnlyCaretVisible="True">
+    </RichTextBox>
+</UserControl>

@@ -1,0 +1,251 @@
+﻿using System.Data;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
+using System.Windows.Documents;
+using System.Windows.Media;
+using Library.CodeGeneration.Models;
+
+namespace Library.Wpf.Helpers;
+public static class RichTextBoxHelper
+{
+    public static IEnumerable<Paragraph> TextToParagraphs(string text,
+        Func<(string CurrentLine, string? PrevLine), (bool Found, IEnumerable<Inline>? Inline)?> lineProcessor,
+        Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor)
+    {
+        var lines = text.Separate("\r\n");
+        string? prevLine = null;
+        foreach (var line in lines)
+        {
+            var paragraph = new Paragraph();
+            if (line is "" or " " or { Length: 0 })
+            {
+                paragraph.Inlines.Add(new Run(line));
+                continue;
+            }
+            var lineProcessResult = lineProcessor((line, prevLine));
+            prevLine = line;
+            if (lineProcessResult?.Found ?? false)
+            {
+                paragraph.Inlines.AddRange(lineProcessResult.Value.Inline);
+            }
+            else
+            {
+                var words = line.Split(" ").Select(x => string.Concat(x, " "));
+                string? prevWord = null;
+                foreach (var word in words)
+                {
+                    if (word is not null and not "" and not " " and not "\r\n")
+                    {
+                        prevWord = processWord(wordProcessor, paragraph, prevWord, word);
+                    }
+                    else
+                    {
+                        paragraph.Inlines.Add(new Run(word));
+                    }
+                }
+            }
+            yield return paragraph;
+        }
+
+        static string? processWord(Func<(string currentWork, string PrevWord), (bool Found, IEnumerable<Inline> Inline)?> wordProcessor, Paragraph paragraph, string? prevWord, string? word)
+        {
+            var wordProcessResult = wordProcessor((word, prevWord));
+            prevWord = word;
+            if (wordProcessResult?.Found ?? false)
+            {
+                paragraph.Inlines.AddRange(wordProcessResult.Value.Inline);
+            }
+            else
+            {
+                paragraph.Inlines.Add(new Run(word));
+            }
+            return prevWord;
+        }
+    }
+
+    public static RichTextBox InsertToDocument(this RichTextBox @this, Code code)
+    {
+        var detectedTypes = new List<string>();
+        var keyWordRules = new (string[] Keys, Brush Brush)[]
+        {
+            (new[] { "using", "short", "int", "get", "set", "string", "public", "sealed", "partial", "class", "namespace", "async", "throw", "new", "this" }, Brushes.Blue),
+            (new[] { "Guid", "Int16","Int32", "Int64", "String", "DateTime","IEnumerable", "Task" }, Brushes.Green),
+        };
+        var genericRegExes = new[]
+        {
+            @"IEnumerable<\w+>", @"Task<\w+>"
+        };
+        var document = new FlowDocument();
+        var paragraphs = TextToParagraphs(code.Statement, lineProcess, wordProcess);
+
+        document.Blocks.AddRange(paragraphs);
+        @this.Document = document;
+        return @this;
+
+        (bool Found, IEnumerable<Inline>? Inline)? lineProcess((string CurrentLine, string? PrevLine) line)
+        {
+            var preprocessors = new[] { @"#region", @"#endregion" };
+            if (line.CurrentLine.Trim().StartsWith("///"))
+            {
+                return (true, EnumerableHelper.AsEnumerableItem(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DarkGreen }));
+            }
+            else if (line.CurrentLine.Trim().StartsWith("//"))
+            {
+                return (true, EnumerableHelper.AsEnumerableItem(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DimGray }));
+            }
+            else if (line.CurrentLine.Trim().StartsWithAny(preprocessors))
+            {
+                return (true, EnumerableHelper.AsEnumerableItem(new Run(line.CurrentLine) { Foreground = Brushes.Gray }));
+            }
+            else
+            {
+                return null;
+            }
+        }
+        (bool Found, IEnumerable<Inline>? Inline)? wordProcess((string CurrentWord, string? PrevWord) word)
+        {
+            //! Recursive
+            return formatWord(word.CurrentWord, word.PrevWord);
+
+            (bool Found, IEnumerable<Inline>? Inlines)? formatWord(in string current, in string? previous)
+            {
+                var curr = current.Trim().Remove("?").Remove(";");
+                var prev = previous?.Trim().Remove("?").Remove(";");
+                var inlines = new List<Inline>();
+                var done = false;
+
+                if (curr.Contains('.'))
+                {
+                    var members = curr.Split('.');
+
+                    for (var index = 0; index < members.Length; index++)
+                    {
+                        var member = members[index];
+                        (bool Found, IEnumerable<Inline>? Inlines)? memberProcessResult = formatWord(member, prev);
+                        inlines.AddRange(memberProcessResult!.Value!.Inlines);
+                        if (index < members.Length - 1)
+                        {
+                            inlines.Add(new Run("."));
+                        }
+
+                        prev = member;
+                    }
+                    done = true;
+                }
+                if (!done)
+                {
+                    done = processKeywordRules(keyWordRules, curr, inlines);
+                }
+                if (!done)
+                {
+                    done = processTypeMemorization(detectedTypes, curr, inlines);
+                }
+                if (!done)
+                {
+                    done = processRegExRules(detectedTypes, keyWordRules, genericRegExes, curr, inlines);
+                }
+                if (!done)
+                {
+                    done = processTypeDetection(detectedTypes, curr, prev, inlines);
+                }
+                if (!done)
+                {
+                    inlines.Add(new Run(curr));
+                }
+
+                if (current.Trim().EndsWith("?"))
+                {
+                    inlines.Add(new Run("?"));
+                }
+                if (current.Trim().EndsWith(";"))
+                {
+                    inlines.Add(new Run(";"));
+                }
+                if (current.EndsWith(" "))
+                {
+                    inlines.Add(new Run(" "));
+                }
+
+                return (inlines.Any(), inlines);
+
+                static bool processKeywordRules((string[] Keys, Brush Brush)[] keyWordRules, string curr, List<Inline> inlines)
+                {
+                    foreach (var rule in keyWordRules)
+                    {
+                        if (rule.Keys.Contains(curr))
+                        {
+                            inlines.Add(new Run(curr) { Foreground = rule.Brush });
+                            return true;
+                        }
+                    }
+
+                    return false;
+                }
+
+                static bool processTypeMemorization(List<string> detectedTypes, string curr, List<Inline> inlines)
+                {
+                    if (detectedTypes.Contains(curr))
+                    {
+                        inlines.Add(new Run(curr) { Foreground = Brushes.Green });
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                bool processRegExRules(List<string> detectedTypes, (string[] Keys, Brush Brush)[] keyWordRules, string[] genericRegExes, string curr, List<Inline> inlines)
+                {
+                    if (matchAny(curr, genericRegExes, out var pattern))
+                    {
+                        var genParam = StringHelper.GetPhrase(curr, 0, '<', '>')!;
+                        var genClass = curr[..curr.IndexOf('<')];
+
+                        var genParamFormatResult = formatWord(genParam, null);
+                        var genClassFormatResult = formatWord(genClass, null);
+
+                        var genParamInlines = (genParamFormatResult?.Found ?? false)
+                            ? genParamFormatResult?.Inlines
+                            : EnumerableHelper.AsEnumerableItem(new Run(genParam));
+                        var genClassInlines = (genClassFormatResult?.Found ?? false)
+                            ? genClassFormatResult?.Inlines
+                            : EnumerableHelper.AsEnumerableItem(new Run(genClass));
+
+                        var open = EnumerableHelper.AsEnumerableItem(new Run("<"));
+                        var close = EnumerableHelper.AsEnumerableItem(new Run(">"));
+
+                        var result = (new[] { genClassInlines!, open, genParamInlines!, close }).SelectAll();
+                        inlines.AddRange(result);
+                        return true;
+                    }
+
+                    return false;
+                }
+
+                static bool processTypeDetection(List<string> detectedTypes, string curr, string? prev, List<Inline> inlines)
+                {
+                    if (prev is "class" or "interface" or ":")
+                    {
+                        detectedTypes.Add(curr);
+                        inlines.Add(new Run(curr) { Foreground = Brushes.Green });
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+            static bool matchAny(in string word, in IEnumerable<string> regexPatterns, [NotNullWhen(true)] out string? matchedPattern)
+            {
+                foreach (var pattern in regexPatterns)
+                {
+                    if (Regex.Match(word, pattern).Success)
+                    {
+                        matchedPattern = pattern;
+                        return true;
+                    }
+                }
+                matchedPattern = null;
+                return false;
+            }
+        }
+    }
+}

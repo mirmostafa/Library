@@ -1,0 +1,57 @@
+﻿using System.Globalization;
+using System.Windows.Data;
+using Library.CodeGeneration.Models;
+using Library.Wpf.Bases;
+
+namespace Library.Wpf.Controls;
+/// <summary>
+/// Interaction logic for SourceCodeTextBox.xaml
+/// </summary>
+public partial class SourceCodeTextBox : UserControl
+{
+    public string? CodeInRtf
+    {
+        get => (string?)GetValue(CodeInRtfProperty);
+        set => SetValue(CodeInRtfProperty, value);
+    }
+
+    public static readonly DependencyProperty CodeInRtfProperty = ControlHelper.GetDependencyProperty<string?, SourceCodeTextBox>(nameof(CodeInRtf));
+
+    public SourceCodeTextBox()
+    {
+        InitializeComponent();
+        DataContextChanged += SourceCodeTextBox_DataContextChanged;
+    }
+
+    private void SourceCodeTextBox_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is SourceCodeTextBoxViewModel viewModel)
+        {
+            _ = this.CodeStatementRichTextBox.InsertToDocument(viewModel.Code);
+        }
+    }
+}
+public sealed record SourceCodeTextBoxViewModel(Code Code) : IViewModel;
+
+public sealed class CodeToSourceCodeTextBoxViewModelConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return value switch
+        {
+            Code code => new SourceCodeTextBoxViewModel(code),
+            SourceCodeTextBoxViewModel viewModel => viewModel,
+            _ => throw new NotSupportedException()
+        };
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return value switch
+        {
+            SourceCodeTextBoxViewModel viewModel => viewModel.Code,
+            Code code => code,
+            _ => throw new NotSupportedException()
+        };
+    }
+}
