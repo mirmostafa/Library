@@ -22,6 +22,7 @@
 
     <Style TargetType="StatusBar">
         <Setter Property="Background" Value="RoyalBlue" />
+        <Setter Property="Foreground" Value="White" />
         <Setter Property="Margin" Value="0" />
     </Style>
 

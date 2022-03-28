@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace Library.Coding;
 
 /// <summary>
-/// 🤏 Little code snippet to do little works.
+/// 🤏 Little code snippets to do little works.
 /// </summary>
 [DebuggerStepThrough]
 [StackTraceHidden]

@@ -4,7 +4,10 @@ namespace Library.Mapping;
 public static class MapperExtensions
 {
     public static TEntity ForMember<TEntity>(this TEntity entity, in Action<TEntity> action)
-        => entity.Fluent( action);
+    {
+        action(entity);
+        return entity;
+    }
     public static TEntity? ForMemberIfNotNull<TEntity>(this TEntity? entity, Action<TEntity> action)
         => IfTrue(entity is not null && action is not null, () => entity.Fluent(action));
 
