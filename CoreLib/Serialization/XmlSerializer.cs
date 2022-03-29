@@ -1,7 +1,7 @@
 ﻿namespace Library.Serialization;
 public static class XmlSerializer
 {
-    public static void Serialize<T>(T? o, string path!!, bool indent = true)
+    public static void SerializeFile<T>(T? o, [DisallowNull]string path!!, bool indent = true)
     {
         var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
         using var writer = new StreamWriter(path);
@@ -9,7 +9,7 @@ public static class XmlSerializer
         serializer.Serialize(xmlWriter, o);
     }
 
-    public static T? Desrialize<T>(string path!!)
+    public static T? DesrializeFile<T>([DisallowNull] string path!!)
     {
         using var file = new FileStream(path, FileMode.Open);
         var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
