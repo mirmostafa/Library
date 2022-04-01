@@ -8,16 +8,16 @@ using Library.CodeGeneration.Models;
 namespace Library.Wpf.Helpers;
 public static class RichTextBoxHelper
 {
-    public static IEnumerable<Paragraph> TextToParagraphs(string text,
-        Func<(string CurrentLine, string? PrevLine), (bool Found, IEnumerable<Inline>? Inline)?> lineProcessor,
-        Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor)
+    public static IEnumerable<Paragraph> TextToParagraphs(string text!!,
+        Func<(string CurrentLine, string? PrevLine), (bool Found, IEnumerable<Inline>? Inline)?> lineProcessor!!,
+        Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor!!)
     {
         var lines = text.Separate("\r\n");
         string? prevLine = null;
         foreach (var line in lines)
         {
             var paragraph = new Paragraph();
-            if (line is "" or " " or { Length: 0 })
+            if (line?.Trim().IsNullOrEmpty() ?? true)
             {
                 paragraph.Inlines.Add(new Run(line));
                 continue;
@@ -47,7 +47,7 @@ public static class RichTextBoxHelper
             yield return paragraph;
         }
 
-        static string? processWord(Func<(string currentWork, string PrevWord), (bool Found, IEnumerable<Inline> Inline)?> wordProcessor, Paragraph paragraph, string? prevWord, string? word)
+        static string? processWord(Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor, Paragraph paragraph, string? prevWord, string word)
         {
             var wordProcessResult = wordProcessor((word, prevWord));
             prevWord = word;
@@ -63,8 +63,13 @@ public static class RichTextBoxHelper
         }
     }
 
-    public static RichTextBox InsertToDocument(this RichTextBox @this, Code code)
+    public static RichTextBox InsertCSharpCodeToDocument(this RichTextBox @this, Code code)
     {
+        if (code.Language != Languages.CSharp)
+        {
+            Throw<NotSupportedException>();
+        }
+
         var detectedTypes = new List<string>();
         var keyWordRules = new (string[] Keys, Brush Brush)[]
         {
@@ -107,31 +112,14 @@ public static class RichTextBoxHelper
             //! Recursive
             return formatWord(word.CurrentWord, word.PrevWord);
 
-            (bool Found, IEnumerable<Inline>? Inlines)? formatWord(in string current, in string? previous)
+            (bool Found, IEnumerable<Inline>? Inlines) formatWord(in string current, in string? previous)
             {
                 var curr = current.Trim().Remove("?").Remove(";");
                 var prev = previous?.Trim().Remove("?").Remove(";");
                 var inlines = new List<Inline>();
-                var done = false;
+                bool done;
 
-                if (curr.Contains('.'))
-                {
-                    var members = curr.Split('.');
-
-                    for (var index = 0; index < members.Length; index++)
-                    {
-                        var member = members[index];
-                        (bool Found, IEnumerable<Inline>? Inlines)? memberProcessResult = formatWord(member, prev);
-                        inlines.AddRange(memberProcessResult!.Value!.Inlines);
-                        if (index < members.Length - 1)
-                        {
-                            inlines.Add(new Run("."));
-                        }
-
-                        prev = member;
-                    }
-                    done = true;
-                }
+                done = processMembers(curr, ref prev, inlines);
                 if (!done)
                 {
                     done = processKeywordRules(keyWordRules, curr, inlines);
@@ -142,7 +130,7 @@ public static class RichTextBoxHelper
                 }
                 if (!done)
                 {
-                    done = processRegExRules(detectedTypes, keyWordRules, genericRegExes, curr, inlines);
+                    done = processRegExRules(curr, inlines);
                 }
                 if (!done)
                 {
@@ -181,7 +169,6 @@ public static class RichTextBoxHelper
 
                     return false;
                 }
-
                 static bool processTypeMemorization(List<string> detectedTypes, string curr, List<Inline> inlines)
                 {
                     if (detectedTypes.Contains(curr))
@@ -192,8 +179,7 @@ public static class RichTextBoxHelper
 
                     return false;
                 }
-
-                bool processRegExRules(List<string> detectedTypes, (string[] Keys, Brush Brush)[] keyWordRules, string[] genericRegExes, string curr, List<Inline> inlines)
+                bool processRegExRules(string curr, List<Inline> inlines)
                 {
                     if (matchAny(curr, genericRegExes, out var pattern))
                     {
@@ -203,11 +189,11 @@ public static class RichTextBoxHelper
                         var genParamFormatResult = formatWord(genParam, null);
                         var genClassFormatResult = formatWord(genClass, null);
 
-                        var genParamInlines = (genParamFormatResult?.Found ?? false)
-                            ? genParamFormatResult?.Inlines
+                        var genParamInlines = (genParamFormatResult.Found)
+                            ? genParamFormatResult.Inlines
                             : EnumerableHelper.AsEnumerableItem(new Run(genParam));
-                        var genClassInlines = (genClassFormatResult?.Found ?? false)
-                            ? genClassFormatResult?.Inlines
+                        var genClassInlines = (genClassFormatResult.Found)
+                            ? genClassFormatResult.Inlines
                             : EnumerableHelper.AsEnumerableItem(new Run(genClass));
 
                         var open = EnumerableHelper.AsEnumerableItem(new Run("<"));
@@ -220,7 +206,6 @@ public static class RichTextBoxHelper
 
                     return false;
                 }
-
                 static bool processTypeDetection(List<string> detectedTypes, string curr, string? prev, List<Inline> inlines)
                 {
                     if (prev is "class" or "interface" or ":")
@@ -232,19 +217,41 @@ public static class RichTextBoxHelper
 
                     return false;
                 }
-            }
-            static bool matchAny(in string word, in IEnumerable<string> regexPatterns, [NotNullWhen(true)] out string? matchedPattern)
-            {
-                foreach (var pattern in regexPatterns)
+                bool processMembers(string curr, ref string? prev, List<Inline> inlines)
                 {
-                    if (Regex.Match(word, pattern).Success)
+                    if (curr.Contains('.'))
                     {
-                        matchedPattern = pattern;
+                        var members = curr.Split('.');
+
+                        for (var index = 0; index < members.Length; index++)
+                        {
+                            var member = members[index];
+                            (bool Found, IEnumerable<Inline>? Inlines) memberProcessResult = formatWord(member, prev);
+                            inlines.AddRange(memberProcessResult.Inlines!);
+                            if (index < members.Length - 1)
+                            {
+                                inlines.Add(new Run("."));
+                            }
+
+                            prev = member;
+                        }
                         return true;
                     }
+                    return false;
                 }
-                matchedPattern = null;
-                return false;
+                static bool matchAny(in string word, in IEnumerable<string> regexPatterns, [NotNullWhen(true)] out string? matchedPattern)
+                {
+                    foreach (var pattern in regexPatterns)
+                    {
+                        if (Regex.Match(word, pattern).Success)
+                        {
+                            matchedPattern = pattern;
+                            return true;
+                        }
+                    }
+                    matchedPattern = null;
+                    return false;
+                }
             }
         }
     }
