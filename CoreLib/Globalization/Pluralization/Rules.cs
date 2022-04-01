@@ -144,11 +144,11 @@ internal static class Rules
     public static IEnumerable<(string Key, string Value)> GetIrregularPlurals()
     {
         var result = new Dictionary<string, string>();
-        foreach (var item in Irregulars.Reverse())
+        foreach (var (Key, Value) in Irregulars.Reverse())
         {
-            if (!result.ContainsKey(item.Value))
+            if (!result.ContainsKey(Value))
             {
-                result.Add(item.Value, item.Key);
+                result.Add(Value, Key);
             }
         }
         return result.Select(kv => (kv.Key, kv.Value));

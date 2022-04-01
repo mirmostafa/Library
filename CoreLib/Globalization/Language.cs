@@ -1,9 +1,8 @@
-﻿namespace Library.Globalization
+﻿namespace Library.Globalization;
+
+public enum Language
 {
-    public enum Language
-    {
-        None = 0,
-        Persian = 1,
-        English = 2
-    }
+    None = 0,
+    Persian = 1,
+    English = 2
 }

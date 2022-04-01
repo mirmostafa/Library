@@ -148,7 +148,6 @@ public interface IAsyncSaveService : IService, IResetChanges
     Task<int> SaveChangesAsync();
 }
 
-
 /// <summary>
 /// Database entity to view model converter
 /// </summary>

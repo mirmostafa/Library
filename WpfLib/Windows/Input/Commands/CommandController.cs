@@ -1,7 +1,6 @@
 ﻿using System.Windows.Input;
 using Library.Collections;
 using Library.Exceptions.Validations;
-using Library.Validations;
 
 namespace Library.Wpf.Windows.Input.Commands;
 
@@ -16,7 +15,7 @@ public sealed class CommandController : IIndexable<CommandExtender, string>, IIn
     public CommandController(UIElement owner)
     {
         this._owner = owner;
-        this._commandExtenders.AddRange(this._owner.CommandBindings.Cast<CommandBinding>().Compact()
+        _ = this._commandExtenders.AddRange(this._owner.CommandBindings.Cast<CommandBinding>().Compact()
                                                                    .Select(x => new CommandExtender(x)))
                               .Build();
     }

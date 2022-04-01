@@ -1,10 +1,10 @@
-﻿using Library.Cqrs;
+﻿using System.Net;
+using Library.Cqrs.Models.Commands;
 using Library.Validations;
 using Library.Web.Results;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
-namespace Library.Helpers;
+namespace Library.Web.Helpers;
 
 public static class WebApiHelper
 {

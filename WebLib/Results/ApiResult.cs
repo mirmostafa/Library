@@ -1,13 +1,13 @@
-﻿using Library.Helpers;
+﻿using System.Net;
+using Library.Helpers;
 using Library.Results;
 using Library.Web.Helpers;
-using System.Net;
 
 namespace Library.Web.Results;
 
 public class ApiResult : ResultBase, IApiResult
 {
-    public override bool IsSucceed => this.StatusCode?.ToInt() is null or >= 200 and < 300;
+    public override bool IsSucceed => this.StatusCode?.ToInt() is null or (>= 200 and < 300);
 
     public HttpStatusCode? HttpStatusCode => HttpStatusCodeHelper.ToHttpStatusCode(this.StatusCode?.ToInt());
 

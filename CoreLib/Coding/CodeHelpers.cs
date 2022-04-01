@@ -1,9 +1,9 @@
-﻿using Library.Exceptions;
-using Library.Results;
-using Library.Validations;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Library.Exceptions;
+using Library.Results;
+using Library.Validations;
 
 namespace Library.Coding;
 
@@ -132,7 +132,6 @@ public static class CodeHelpers
         where TDisposable : IDisposable
         => Dispose(disposable, result);
 
-
     /// <summary>
     ///     Disposes the specified disposable object.
     /// </summary>
@@ -223,7 +222,6 @@ public static class CodeHelpers
             disposable?.Dispose();
         }
     }
-
 
     public static Result CatchResult([DisallowNull] in Action action)
     {

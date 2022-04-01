@@ -28,7 +28,7 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
 
     public TaskList WaitAll(TimeSpan timeout)
     {
-        Task.WaitAll(this.This().ToArray(), timeout);
+        _ = Task.WaitAll(this.This().ToArray(), timeout);
         return this;
     }
 

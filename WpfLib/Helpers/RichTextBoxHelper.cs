@@ -186,13 +186,13 @@ public static class RichTextBoxHelper
                         var genParam = StringHelper.GetPhrase(curr, 0, '<', '>')!;
                         var genClass = curr[..curr.IndexOf('<')];
 
-                        var genParamFormatResult = formatWord(genParam, null);
+                        var (Found, Inlines) = formatWord(genParam, null);
                         var genClassFormatResult = formatWord(genClass, null);
 
-                        var genParamInlines = (genParamFormatResult.Found)
-                            ? genParamFormatResult.Inlines
+                        var genParamInlines = Found
+                            ? Inlines
                             : EnumerableHelper.AsEnumerableItem(new Run(genParam));
-                        var genClassInlines = (genClassFormatResult.Found)
+                        var genClassInlines = genClassFormatResult.Found
                             ? genClassFormatResult.Inlines
                             : EnumerableHelper.AsEnumerableItem(new Run(genClass));
 
@@ -226,8 +226,8 @@ public static class RichTextBoxHelper
                         for (var index = 0; index < members.Length; index++)
                         {
                             var member = members[index];
-                            (bool Found, IEnumerable<Inline>? Inlines) memberProcessResult = formatWord(member, prev);
-                            inlines.AddRange(memberProcessResult.Inlines!);
+                            var (Found, Inlines) = formatWord(member, prev);
+                            inlines.AddRange(Inlines!);
                             if (index < members.Length - 1)
                             {
                                 inlines.Add(new Run("."));

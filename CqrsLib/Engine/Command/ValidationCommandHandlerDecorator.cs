@@ -1,4 +1,6 @@
-﻿namespace Library.Cqrs.Engine.Command;
+﻿using Library.Cqrs.Models.Commands;
+
+namespace Library.Cqrs.Engine.Command;
 
 public class ValidationCommandHandlerDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand

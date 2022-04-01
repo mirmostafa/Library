@@ -6,7 +6,7 @@ public class Nic
     private long _bytesReceivedLast;
     private long _bytesSentLast;
 
-    public Nic(NetworkInterface networkInterface) => 
+    public Nic(NetworkInterface networkInterface) =>
         this.NetworkInterface = networkInterface;
 
     public int GetBytesSent()
@@ -27,6 +27,6 @@ public class Nic
 
     public NetworkInterface NetworkInterface { get; private set; }
 
-    public static IEnumerable<NetworkInterface> GetAllNetworkInterfaceCards() => 
+    public static IEnumerable<NetworkInterface> GetAllNetworkInterfaceCards() =>
         NetworkInterface.GetAllNetworkInterfaces();
 }

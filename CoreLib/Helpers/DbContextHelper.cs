@@ -1,10 +1,10 @@
-﻿using Library.Data.Markers;
+﻿using System.Linq.Expressions;
+using Library.Data.Markers;
 using Library.Results;
 using Library.Validations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Linq.Expressions;
 
 namespace Library.Helpers;
 public static class DbContextHelper
@@ -26,7 +26,7 @@ public static class DbContextHelper
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
-        Detach(dbContext, entity);
+        _ = Detach(dbContext, entity);
         return entity;
     }
 
@@ -177,7 +177,7 @@ public static class DbContextHelper
         var entities = dbContext.Set<TEntity>().Where(e => ids.Contains(e.Id));
         if (detach)
         {
-            entities.ForEach(e => dbContext.Entry(e).State = EntityState.Detached);
+            _ = entities.ForEach(e => dbContext.Entry(e).State = EntityState.Detached);
         }
 
         dbContext.Set<TEntity>().RemoveRange(entities);
@@ -196,10 +196,10 @@ public static class DbContextHelper
     {
         var entity = new TEntity();
         setEntityId(entity);
-        dbContext.Remove(entity);
+        _ = dbContext.Remove(entity);
         if (persist)
         {
-            await dbContext.SaveChangesAsync();
+            _ = await dbContext.SaveChangesAsync();
         }
         if (detach)
         {
@@ -298,7 +298,7 @@ public static class DbContextHelper
         }
         if (validatorAsync is not null)
         {
-            await validatorAsync(model).HandleAsync();
+            _ = await validatorAsync(model).HandleAsync();
         }
 
         var entity = convertToEntity(model);

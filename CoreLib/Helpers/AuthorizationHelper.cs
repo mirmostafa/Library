@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Library.Security.Claims;
+﻿using Library.Security.Claims;
 using Library.Security.Defaults;
 using Library.Validations;
 using Microsoft.AspNetCore.Authorization;

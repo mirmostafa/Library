@@ -1,4 +1,4 @@
-﻿namespace Library.Cqrs;
+﻿namespace Library.Cqrs.Models.Commands;
 
 public class CommandResult
 {

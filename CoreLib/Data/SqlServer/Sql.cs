@@ -1,6 +1,6 @@
-using Library.Dynamic;
 using System.Data;
 using System.Data.SqlClient;
+using Library.Dynamic;
 
 namespace Library.Data.SqlServer;
 public sealed class Sql
@@ -157,13 +157,8 @@ public sealed class Sql
         return conn.Select(query, rowFiller).ToList();
     }
 
-    public void TransactionalCommand(string cmdText, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null)
+    public void TransactionalCommand(string cmdText!!, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null)
     {
-        if (cmdText == null)
-        {
-            throw new ArgumentNullException(nameof(cmdText));
-        }
-
         using var connection = new SqlConnection(this.ConnectionString);
         connection.Open();
         var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);

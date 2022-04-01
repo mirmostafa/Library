@@ -1,10 +1,10 @@
-﻿using Library.DesignPatterns.Creational;
+﻿using System.ComponentModel;
+using System.Reflection;
+using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
 using Library.Types;
 using Library.Validations;
-using System.ComponentModel;
-using System.Reflection;
 
 namespace Library.Helpers;
 
@@ -261,7 +261,7 @@ public static class ObjectHelper
     /// <returns> </returns>
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, string propName, in int eventNoDefault)
     {
-        obj.ArgumentNotNull(nameof(obj));
+        _ = obj.ArgumentNotNull(nameof(obj));
 
         if (eventNoDefault != 0)
         {
@@ -392,15 +392,7 @@ public static class ObjectHelper
     public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
         => string.IsNullOrEmpty(ToString(value));
 
-    public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
-    {
-        if (obj is null)
-        {
-            throw new ArgumentNullException(nameof(obj));
-        }
-
-        obj.GetType().GetField(fieldName)?.SetValue(obj, value);
-    }
+    public static void SetField([DisallowNull] in object obj!!, in string fieldName, in object value) => obj.GetType().GetField(fieldName)?.SetValue(obj, value);
 
     public static void SetProperty([DisallowNull] in object obj, in string propertyName, in object value)
     {

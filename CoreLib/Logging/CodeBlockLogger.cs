@@ -1,6 +1,4 @@
-﻿using Library.Coding;
-
-namespace Library.Logging;
+﻿namespace Library.Logging;
 public sealed class CodeBlockLogger : IDisposable
 {
     private readonly ILogger _logger;

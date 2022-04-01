@@ -33,23 +33,11 @@ public abstract class MsLoggerMessageWapperBase<TMsLoggerMessageWapper> : IConfi
         return this.As<TMsLoggerMessageWapper>()!;
     }
 
-    public virtual void Debug(string log)
-    {
-        this._debug(this._logger, log, null);
-    }
+    public virtual void Debug(string log) => this._debug(this._logger, log, null);
 
-    public virtual void Error(string log, Exception? exception = null)
-    {
-        this._error(this._logger, log, exception);
-    }
+    public virtual void Error(string log, Exception? exception = null) => this._error(this._logger, log, exception);
 
-    public virtual void Info(string log)
-    {
-        this._info(this._logger, log, null);
-    }
+    public virtual void Info(string log) => this._info(this._logger, log, null);
 
-    public virtual void Warn(string log)
-    {
-        this._warning(this._logger, log, null);
-    }
+    public virtual void Warn(string log) => this._warning(this._logger, log, null);
 }

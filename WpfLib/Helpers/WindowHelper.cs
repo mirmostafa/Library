@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Windows.Interop;
-using Library.Validations;
 
 namespace Library.Wpf.Helpers;
 
@@ -35,11 +34,11 @@ public static class WindowHelper
             Data = accentPtr
         };
 
-        SetWindowCompositionAttribute(windowHelper.Handle, ref data);
+        _ = SetWindowCompositionAttribute(windowHelper.Handle, ref data);
 
         Marshal.FreeHGlobal(accentPtr);
     }
-    
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct AccentPolicy
     {

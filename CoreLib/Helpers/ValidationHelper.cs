@@ -21,7 +21,6 @@ public static class ValidationHelper
         return validationResult.Value;
     }
 
-
     public static TItem CheckValidation<TItem>([DisallowNull] this IValidatable<TItem> item) =>
         item.Validate().Handle();
     public static async Task<TItem> CheckValidationAsync<TItem>([DisallowNull] this IAsyncValidatable<TItem> model) =>
@@ -57,7 +56,7 @@ public static class ValidationHelper
     public static async Task<TValue> HandleAsync<TValue>(this Task<Result<TValue>> validationResultAsync)
     {
         var result = await validationResultAsync;
-        Handle(result);
+        _ = Handle(result);
         return result.Value;
     }
 }

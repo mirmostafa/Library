@@ -1,7 +1,7 @@
 ﻿namespace Library.Wpf.Bases;
 public class ApplicationBase : Application
 {
-    public ApplicationBase() => 
+    public ApplicationBase() =>
         this.OnApplyingTheme();
 
     protected virtual void OnApplyingTheme() => Current.Resources.MergedDictionaries.Add(new ResourceDictionary

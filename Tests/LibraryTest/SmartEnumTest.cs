@@ -1,4 +1,4 @@
-﻿using Library;
+﻿using Library.Types;
 
 namespace LibraryTest;
 

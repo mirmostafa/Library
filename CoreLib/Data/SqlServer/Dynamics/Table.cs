@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using Library.Data.SqlServer.Dynamics.Collections;
 using static Library.Data.SqlServer.SqlStatementBuilder;
 
@@ -178,7 +177,7 @@ public class Table : SqlObject<Table, Database>, IEnumerable
     public DataTable ToDataTableWhere([DisallowNull] string condition, params string[] columns) =>
         this.GetSql().FillDataTable($"{CreateSelect(this.Name, columns)} WHERE {condition}");
 
-    public DataReader ToReader(params string[] columns) => new DataReader(
+    public DataReader ToReader(params string[] columns) => new(
         this.GetSql().ExecuteReader(CreateSelect(this.Name, columns)),
         this.Owner,
         this.Name,
@@ -216,13 +215,13 @@ public class Table : SqlObject<Table, Database>, IEnumerable
                 });
             }
 
-            reader.NextResult();
+            _ = reader.NextResult();
             while (reader.Read())
             {
                 columns.First(c => c.Name == reader.Field("column_name", Convert.ToString)).IsIdentity = true;
             }
 
-            reader.NextResult();
+            _ = reader.NextResult();
             while (reader.Read())
             {
                 var column = columns.First(c => c.Name == reader.Field("ParentColumn", Convert.ToString));

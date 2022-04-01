@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Library;
+namespace Library.Types;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public abstract class SmartEnum<TSmartEnum, TId> : IEquatable<TSmartEnum>

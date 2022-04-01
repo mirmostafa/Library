@@ -20,7 +20,6 @@ public sealed class OperationList<TState> : FluentListBase<Operation<TState>, Op
     public OperationList(TState state, string? name) =>
         (this.DefaultState, this.Name) = (state, name);
 
-
     public OperationList<TState> Add(Action action, int? sequence = null, string? description = null) =>
         this.Add(new Operation<TState>(x =>
         {

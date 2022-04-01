@@ -1,11 +1,12 @@
 ﻿#define USE_ASPNETCORE
-using Library.Cqrs;
-using Library.Helpers;
-using Library.Web.Results;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Diagnostics;
 using System.Net;
+using Library.Cqrs.Models.Commands;
+using Library.Cqrs.Models.Queries;
+using Library.Helpers;
+using Library.Web.Results;
+using Microsoft.AspNetCore.Mvc;
 
 #if !USE_ASPNETCORE
 using System;

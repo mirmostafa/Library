@@ -11,16 +11,16 @@ public partial class SourceCodeTextBox : UserControl
 {
     public string? CodeInRtf
     {
-        get => (string?)GetValue(CodeInRtfProperty);
-        set => SetValue(CodeInRtfProperty, value);
+        get => (string?)this.GetValue(CodeInRtfProperty);
+        set => this.SetValue(CodeInRtfProperty, value);
     }
 
     public static readonly DependencyProperty CodeInRtfProperty = ControlHelper.GetDependencyProperty<string?, SourceCodeTextBox>(nameof(CodeInRtf));
 
     public SourceCodeTextBox()
     {
-        InitializeComponent();
-        DataContextChanged += SourceCodeTextBox_DataContextChanged;
+        this.InitializeComponent();
+        DataContextChanged += this.SourceCodeTextBox_DataContextChanged;
     }
 
     private void SourceCodeTextBox_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)

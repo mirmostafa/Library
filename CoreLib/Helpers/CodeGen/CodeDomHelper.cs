@@ -41,7 +41,7 @@ public static class CodeDomHelper
     {
         foreach (var nameSpace in nameSpaces.ArgumentNotNull())
         {
-            ns.UseNameSpace(nameSpace);
+            _ = ns.UseNameSpace(nameSpace);
         }
         return ns;
     }
@@ -82,7 +82,7 @@ public static class CodeDomHelper
         var bts = baseTypes?.ToList();
         if (bts?.Any() == true)
         {
-            bts.ForEach(bt => result.BaseTypes.Add(bt));
+            bts.ForEach(result.BaseTypes.Add);
         }
 
         _ = ns.Types.Add(result);
@@ -397,18 +397,13 @@ public static class CodeDomHelper
     /// <param name="arguments">The arguments.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">nameof(c)</exception>
-    public static CodeTypeDeclaration AddMethod(this CodeTypeDeclaration c,
+    public static CodeTypeDeclaration AddMethod(this CodeTypeDeclaration c!!,
         in string name,
         in string? body = null,
         in string? returnType = null,
         in MemberAttributes? accessModifiers = null,
         bool isPartial = false, params MethodArgument[] arguments)
     {
-        if (c is null)
-        {
-            throw new ArgumentNullException(nameof(c));
-        }
-
         _ = c.Members.Add(NewMethod(name, body, returnType, accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final, isPartial, arguments));
         return c;
     }
@@ -463,13 +458,8 @@ public static class CodeDomHelper
     /// <param name="returnType">Type of the return.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">nameof(c)</exception>
-    public static CodeTypeDeclaration AddPartialMethod(this CodeTypeDeclaration c, in string name, in Type? returnType = null)
+    public static CodeTypeDeclaration AddPartialMethod(this CodeTypeDeclaration c!!, in string name, in Type? returnType = null)
     {
-        if (c is null)
-        {
-            throw new ArgumentNullException(nameof(c));
-        }
-
         var method = NewPartialMethodAsField(name, returnType);
         _ = c.Members.Add(method);
         return c;
@@ -552,22 +542,12 @@ public static class CodeDomHelper
     /// or
     /// nameof(c)
     /// </exception>
-    public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c,
-        in IEnumerable<(string Type, string Name, string DataMemberName)> arguments,
+    public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c!!,
+        in IEnumerable<(string Type, string Name, string DataMemberName)> arguments!!,
         in string? body = null,
         in MemberAttributes? accessModifiers = null,
         in string? comment = null)
     {
-        if (c is null)
-        {
-            throw new ArgumentNullException(nameof(c));
-        }
-
-        if (arguments is null)
-        {
-            throw new ArgumentNullException(nameof(arguments));
-        }
-
         var constructor = new CodeConstructor
         {
             Attributes = accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final
@@ -607,22 +587,12 @@ public static class CodeDomHelper
     /// or
     /// nameof(c)
     /// </exception>
-    public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c,
-        in IEnumerable<(string Type, string Name, string DataMemberName, bool IsPropery)> arguments,
+    public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c!!,
+        in IEnumerable<(string Type, string Name, string DataMemberName, bool IsPropery)> arguments!!,
         in string? body = null,
         in MemberAttributes? accessModifiers = null,
         in string? comment = null)
     {
-        if (c is null)
-        {
-            throw new ArgumentNullException(nameof(c));
-        }
-
-        if (arguments is null)
-        {
-            throw new ArgumentNullException(nameof(arguments));
-        }
-
         var constructor = new CodeConstructor
         {
             Attributes = accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final
@@ -675,13 +645,8 @@ public static class CodeDomHelper
     /// <param name="statement">The statement.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">nameof(unit)</exception>
-    public static CodeCompileUnit AddRegion(this CodeCompileUnit unit, string statement)
+    public static CodeCompileUnit AddRegion(this CodeCompileUnit unit!!, string statement)
     {
-        if (unit is null)
-        {
-            throw new ArgumentNullException(nameof(unit));
-        }
-
         _ = unit.StartDirectives.Add(new CodeRegionDirective(CodeRegionMode.Start, statement));
         _ = unit.EndDirectives.Add(new CodeRegionDirective(CodeRegionMode.End, string.Empty));
         return unit;

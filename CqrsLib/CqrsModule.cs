@@ -1,7 +1,9 @@
-﻿using Autofac;
+﻿using System.Reflection;
+using Autofac;
 using Library.Cqrs.Engine.Command;
 using Library.Cqrs.Engine.Query;
-using System.Reflection;
+using Library.Cqrs.Models.Commands;
+using Library.Cqrs.Models.Queries;
 
 namespace Library.Cqrs;
 

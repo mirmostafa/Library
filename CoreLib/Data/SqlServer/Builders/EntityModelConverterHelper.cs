@@ -29,7 +29,7 @@ public static class EntityModelConverterHelper
             yield return new ColumnInfo(name, type, isKey, isFk, fkName, order);
         }
     }
-    public static TableInfo GetTableInfo<TEntity>() => 
+    public static TableInfo GetTableInfo<TEntity>() =>
         GetTableInfo(typeof(TEntity));
     public static TableInfo GetTableInfo(Type tableType) =>
         new(GetTableName(tableType), GetColumns(tableType));

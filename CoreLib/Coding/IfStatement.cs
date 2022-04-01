@@ -39,7 +39,6 @@ public static class IfStatementExtensions
     public static void Build(this IfStatememt ifStatememt)
         => ifStatememt.Condition.If(ifStatememt.ThenAction, ifStatememt.ElseAction);
 
-
     public static IfStatememt<TResult> If<TResult>(this Func<bool> @condition)
         => new(condition);
 

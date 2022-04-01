@@ -1,10 +1,9 @@
-﻿namespace Library.Data.SqlServer.Dynamics.Collections
+﻿namespace Library.Data.SqlServer.Dynamics.Collections;
+
+public class StoredProcedureParams : SqlObjects<StoredProcedureParam>
 {
-    public class StoredProcedureParams : SqlObjects<StoredProcedureParam>
+    internal StoredProcedureParams(IEnumerable<StoredProcedureParam> items)
+        : base(items)
     {
-        internal StoredProcedureParams(IEnumerable<StoredProcedureParam> items)
-            : base(items)
-        {
-        }
     }
 }

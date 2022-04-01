@@ -45,7 +45,7 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
     public new void Add(T item)
     {
         this.OnCountPropertyChanging();
-        base.Add(item);
+        _ = base.Add(item);
         this.OnCollectionChanged(NotifyCollectionChangedAction.Add, item);
         this.OnCountPropertyChanged();
     }
@@ -56,7 +56,7 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
         {
             this.OnCountPropertyChanging();
             var oldItems = this.ToList();
-            base.Clear();
+            _ = base.Clear();
             this.OnCollectionChanged(ObservableHashSetSingletons._noItems, oldItems);
             this.OnCountPropertyChanged();
         }
@@ -69,7 +69,7 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
     public new void Insert(int index, T item)
     {
         this.OnCountPropertyChanging();
-        base.Insert(index, item);
+        _ = base.Insert(index, item);
         this.OnCollectionChanged(NotifyCollectionChangedAction.Add, item);
         this.OnCountPropertyChanged();
     }
@@ -81,7 +81,7 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
         }
 
         this.OnCountPropertyChanging();
-        base.Remove(item);
+        _ = base.Remove(item);
         this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, item);
         this.OnCountPropertyChanged();
         return true;
@@ -90,7 +90,7 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
     public new void RemoveAt(int index)
     {
         this.OnCountPropertyChanging();
-        base.RemoveAt(index);
+        _ = base.RemoveAt(index);
         this.OnCollectionChanged(NotifyCollectionChangedAction.Remove, index);
         this.OnCountPropertyChanged();
     }

@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Library.Coding;
-using Library.Data.SqlServer.Builders;
+﻿using Library.Data.SqlServer.Builders;
 using Library.Data.SqlServer.Builders.Bases;
 using Library.Validations;
 
@@ -29,7 +27,7 @@ public static partial class SqlStatementBuilder
     public static ISelectStatement AllColumns([DisallowNull] this ISelectStatement statement)
         => statement.Star();
     public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.Columns.Clear());
+        => statement.ArgumentNotNull(nameof(statement)).Fluent(statement.Columns.Clear);
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, params string[] columns)
         => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.Columns.ClearAndAddRange(columns.Compact()));
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)

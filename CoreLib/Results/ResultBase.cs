@@ -18,7 +18,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     public virtual bool IsSucceed
     {
-        get => this._isSucceed ?? (this.StatusCode?.ToInt() is null or 0 or 200) && (!this.Errors.Any());
+        get => this._isSucceed ?? ((this.StatusCode?.ToInt() is null or 0 or 200) && (!this.Errors.Any()));
         init => this._isSucceed = value;
     }
 
@@ -49,17 +49,17 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         StringBuilder result = new();
         if (!this.Message.IsNullOrEmpty())
         {
-            result.AppendLine(this.Message);
+            _ = result.AppendLine(this.Message);
         }
         if (this.Message.IsNullOrEmpty() && this.Errors.Count == 1)
         {
-            result.AppendLine(this.Errors[0].Message?.ToString() ?? "An error occurred.");
+            _ = result.AppendLine(this.Errors[0].Message?.ToString() ?? "An error occurred.");
         }
         else
         {
             foreach (var errorMessage in this.Errors.Select(x => x.Message?.ToString()).Compact())
             {
-                result.AppendLine($"- {errorMessage}");
+                _ = result.AppendLine($"- {errorMessage}");
             }
         }
 

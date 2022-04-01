@@ -1,6 +1,6 @@
 ﻿using Library.Interfaces;
 
-namespace Library;
+namespace Library.Types;
 public class EmptyDisposable : IDisposable, IEmpty<EmptyDisposable>
 {
     private bool _disposedValue;

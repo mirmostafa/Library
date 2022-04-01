@@ -1,7 +1,6 @@
-﻿using Library.DesignPatterns.Markers;
+﻿using System.Net.NetworkInformation;
+using Library.DesignPatterns.Markers;
 using Library.Validations;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
 
 namespace Library.Net;
 

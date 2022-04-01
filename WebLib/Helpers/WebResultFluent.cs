@@ -2,7 +2,7 @@
 using Library.Validations;
 using Library.Web.Results;
 
-namespace Library.Helpers;
+namespace Library.Web.Helpers;
 
 public static class WebResultFluent
 {

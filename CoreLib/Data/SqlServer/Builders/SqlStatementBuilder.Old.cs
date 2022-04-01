@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace Library.Data.SqlServer;
 
 public partial class SqlStatementBuilder

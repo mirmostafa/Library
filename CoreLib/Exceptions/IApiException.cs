@@ -1,7 +1,6 @@
-﻿namespace Library.Exceptions
+﻿namespace Library.Exceptions;
+
+public interface IApiException : IException
 {
-    public interface IApiException : IException
-    {
-        int? StatusCode { get; }
-    }
+    int? StatusCode { get; }
 }

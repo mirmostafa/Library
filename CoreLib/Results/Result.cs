@@ -1,6 +1,6 @@
-﻿using Library.Exceptions.Validations;
+﻿using System.Runtime.CompilerServices;
+using Library.Exceptions.Validations;
 using Library.Interfaces;
-using System.Runtime.CompilerServices;
 
 namespace Library.Results;
 
@@ -90,7 +90,7 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue>, Result>
             Message = other.Message,
         };
         result.Errors.AddRange(other.Errors);
-        result.Extra.AddRange(other.Extra);
+        _ = result.Extra.AddRange(other.Extra);
         return result;
     }
     public static Result<TValue1> ConvertFrom<TValue1>([DisallowNull] in ResultBase other, in TValue1 value)
@@ -101,7 +101,7 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue>, Result>
             Message = other.Message,
         };
         result.Errors.AddRange(other.Errors);
-        result.Extra.AddRange(other.Extra);
+        _ = result.Extra.AddRange(other.Extra);
         return result;
     }
 

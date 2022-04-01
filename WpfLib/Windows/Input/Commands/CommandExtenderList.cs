@@ -1,40 +1,38 @@
-﻿using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Library.Collections;
 
-namespace Library.Wpf.Windows.Input.Commands
+namespace Library.Wpf.Windows.Input.Commands;
+
+internal sealed class CommandExtenderList : UniqueList<CommandExtender>,
+    IIndexable<CommandExtender?, RoutedUICommand>,
+    IIndexable<CommandExtender?, CommandBinding>,
+    IIndexable<CommandExtender?, string>
 {
-    internal sealed class CommandExtenderList : UniqueList<CommandExtender>,
-        IIndexable<CommandExtender?, RoutedUICommand>,
-        IIndexable<CommandExtender?, CommandBinding>,
-        IIndexable<CommandExtender?, string>
+    public CommandExtender? this[RoutedUICommand index] => this.FirstOrDefault(item => item.Command == index);
+    public CommandExtender? this[string commandName] => this.FirstOrDefault(item => item.Command?.Name == commandName);
+    public CommandExtender? this[CommandBinding commandBinding] => this.FirstOrDefault(item => item.CommandBinding == commandBinding);
+
+    public CommandExtender? FirstOrDefault(in Predicate<CommandExtender> predicate)
     {
-        public CommandExtender? this[RoutedUICommand index] => this.FirstOrDefault(item => item.Command == index);
-        public CommandExtender? this[string commandName] => this.FirstOrDefault(item => item.Command?.Name == commandName);
-        public CommandExtender? this[CommandBinding commandBinding] => this.FirstOrDefault(item => item.CommandBinding == commandBinding);
-
-        public CommandExtender? FirstOrDefault(in Predicate<CommandExtender> predicate)
+        foreach (var item in this)
         {
-            foreach (var item in this)
+            if (predicate(item))
             {
-                if (predicate(item))
-                {
-                    return item;
-                }
+                return item;
             }
-            return null;
         }
+        return null;
+    }
 
-        public CommandExtender? FirstOrDefault(in Predicate<RoutedUICommand> predicate)
+    public CommandExtender? FirstOrDefault(in Predicate<RoutedUICommand> predicate)
+    {
+        foreach (var item in this)
         {
-            foreach (var item in this)
+            if (predicate(item.Command))
             {
-                if (predicate(item.Command))
-                {
-                    return item;
-                }
+                return item;
             }
-            return null;
         }
+        return null;
     }
 }

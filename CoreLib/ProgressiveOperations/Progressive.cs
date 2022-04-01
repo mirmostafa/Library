@@ -24,7 +24,7 @@ public abstract class Progressive<T> : IProgressiveOperation<T>
             var index1 = index;
             _ = Catch(() => this.OnProgressChanged(new ProgressiveOperationEventArgs<T>(index1, this.Steps.Length, this.Data)));
         }
-        this.Steps.ForEach(step => { });
+        _ = this.Steps.ForEach(step => { });
     }
 
     public async Task StartAsync() => await Task.Run(this.Start);
