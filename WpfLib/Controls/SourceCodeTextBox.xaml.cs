@@ -27,7 +27,10 @@ public partial class SourceCodeTextBox : UserControl
     {
         if (e.NewValue is SourceCodeTextBoxViewModel viewModel)
         {
-            _ = this.CodeStatementRichTextBox.InsertToDocument(viewModel.Code);
+            if (viewModel.Code.Language == Languages.CSharp)
+            {
+                _ = this.CodeStatementRichTextBox.InsertCSharpCodeToDocument(viewModel.Code);
+            }
         }
     }
 }

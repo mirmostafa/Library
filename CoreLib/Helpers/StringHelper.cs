@@ -43,7 +43,7 @@ public static class StringHelper
     {
         string buffer = ignoreCase ? str.ArgumentNotNull(nameof(str)).ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull(nameof(str));
         string stat = ignoreCase ? value.ArgumentNotNull(nameof(value)).ToLower(CultureInfo.CurrentCulture) : value.ArgumentNotNull(nameof(value));
-        int result = 0;
+        var result = 0;
         int currentIndex;
         while ((currentIndex = buffer.IndexOf(stat, StringComparison.Ordinal)) != -1)
         {
@@ -196,19 +196,19 @@ public static class StringHelper
     }
 
     [Pure]
-    public static string? GetPhrase(this string str, in int index, in char start, char end = default)
+    public static string? GetPhrase(this string str!!, in int index, in char start, char end = default)
     {
         if (end == default(char))
         {
             end = start;
         }
 
-        string buffer = str;
+        var buffer = str;
         int startIndex;
         int endIndex;
         int len;
-        (bool succeed1, int lenOfStart) = str.TryCountOf(start, index * 2);
-        if (!succeed1)
+        (bool succeed, int lenOfStart) = str.TryCountOf(start, index * 2);
+        if (!succeed)
         {
             return null;
         }
@@ -232,18 +232,18 @@ public static class StringHelper
             len = endIndex - startIndex;
         }
 
-        string result = buffer.Slice(startIndex, len);
+        var result = buffer.Slice(startIndex, len);
         return result;
     }
 
     public static IEnumerable<string?> GetPhrases(this string str, char start, char end = default)
     {
-        int index = 0;
-        string result = GetPhrase(str, index, start, end);
+        var index = 0;
+        var result = str.GetPhrase(index, start, end);
         while (!result.IsNullOrEmpty())
         {
             yield return result;
-            result = GetPhrase(str, ++index, start, end);
+            result = str.GetPhrase(++index, start, end);
         }
     }
 
@@ -251,7 +251,7 @@ public static class StringHelper
     public static IEnumerable<string> GroupBy(this IEnumerable<char> chars, char separator)
     {
         StringBuilder buffer = new();
-        foreach (char c in chars)
+        foreach (var c in chars)
         {
             if (c == separator)
             {
@@ -269,7 +269,7 @@ public static class StringHelper
     public static IEnumerable<string> GroupBy(this string str, char separator)
     {
         StringBuilder buffer = new();
-        foreach (char c in str)
+        foreach (var c in str)
         {
             if (c == separator)
             {
@@ -305,9 +305,9 @@ public static class StringHelper
     {
         Check.IfArgumentNotNull(items, nameof(items));
 
-        string itm = get(item, trimmed);
-        int index = 0;
-        IEnumerator<string> enumerator = items.GetEnumerator();
+        var itm = get(item, trimmed);
+        var index = 0;
+        var enumerator = items.GetEnumerator();
 
         while (enumerator.MoveNext())
         {
@@ -359,7 +359,7 @@ public static class StringHelper
     [Pure]
     public static bool IsEnglish(this char c)
     {
-        return IsCommon(c) || (c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z'));
+        return c.IsCommon() || c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z');
     }
 
     public static bool IsEnglish(this string text)
@@ -369,12 +369,12 @@ public static class StringHelper
 
     public static bool IsEnglishOrNumber(this string text, bool canAcceptMinusKey = false)
     {
-        return CheckAllValidations(text, c => IsDigit(c, canAcceptMinusKey) || IsEnglish(c));
+        return CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || c.IsEnglish());
     }
 
     public static bool IsInRange(this string? text, bool ignoreCase, params string[] range)
     {
-        return IsInRange(text, false, ignoreCase, range);
+        return text.IsInRange(false, ignoreCase, range);
     }
 
     public static bool IsInRange(this string? text, bool trimmed, bool ignoreCase, IEnumerable<string> range)
@@ -389,7 +389,7 @@ public static class StringHelper
 
     public static bool IsInRange(this string? text, params string[] range)
     {
-        return IsInRange(text, true, range);
+        return text.IsInRange(true, range);
     }
 
     public static bool IsInString(this char c, in string text)
@@ -404,12 +404,12 @@ public static class StringHelper
 
     public static bool IsLetter(this char c)
     {
-        return IsEnglish(c) || IsPersian(c);
+        return c.IsEnglish() || c.IsPersian();
     }
 
     public static bool IsLetterText(this string text)
     {
-        return CheckAllValidations(text, c => IsEnglish(c) || IsPersian(c));
+        return CheckAllValidations(text, c => c.IsEnglish() || c.IsPersian());
     }
 
     [Pure]
@@ -425,7 +425,7 @@ public static class StringHelper
 
     public static bool IsPersian(this char c)
     {
-        return IsCommon(c) || PersianTools.Chars.Any(pc => pc == c) || PersianTools.SpecialChars.Any(pc => pc == c);
+        return c.IsCommon() || PersianTools.Chars.Any(pc => pc == c) || PersianTools.SpecialChars.Any(pc => pc == c);
     }
 
     public static bool IsPersian(this string text)
@@ -440,7 +440,7 @@ public static class StringHelper
 
     public static bool IsPersianOrNumber(this string text, bool canAcceptMinusKey)
     {
-        return CheckAllValidations(text, c => IsDigit(c, canAcceptMinusKey) || IsPersian(c));
+        return CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || c.IsPersian());
     }
 
     public static bool IsUnicode(this string str)
@@ -455,9 +455,9 @@ public static class StringHelper
             return str.IndexOf(c);
         }
 
-        int foundCount = 0;
+        var foundCount = 0;
         index++;
-        int i = 0;
+        var i = 0;
         while (foundCount < index)
         {
             if (str[i] == c)
@@ -473,7 +473,7 @@ public static class StringHelper
 
     public static string Merge(string quatStart, string quatEnd, string separator, params object[] array)
     {
-        string result = array.Aggregate(string.Empty, (current, str) => current + quatStart + str + quatEnd + separator + " ").Trim();
+        var result = array.Aggregate(string.Empty, (current, str) => current + quatStart + str + quatEnd + separator + " ").Trim();
         return result[..^1];
     }
 
@@ -504,15 +504,15 @@ public static class StringHelper
 
     public static string PatternPolicy(in string text)
     {
-        string result = string.Empty;
-        string t = CorrectUnicodeProblem(text);
+        var result = string.Empty;
+        var t = CorrectUnicodeProblem(text);
 
         char[] outChar =
         {
                 '~', '`', '!', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '{', '[', '}', ']', ':', ';', '\'', '"', '<', ',', '>', '?', '|', '\\'
         };
 
-        string[] arrayString = t.Split(outChar);
+        var arrayString = t.Split(outChar);
 
         return arrayString.Aggregate(result, (current, s) => current + s);
     }
@@ -530,7 +530,7 @@ public static class StringHelper
     [return: NotNullIfNotNull("str")]
     public static string? Remove(this string? str, in string? value)
     {
-        return str is null ? null : (value is null ? str : str.Replace(value, ""));
+        return str is null ? null : value is null ? str : str.Replace(value, "");
     }
 
     public static string RemoveFromEnd(this string str, in int count)
@@ -563,7 +563,7 @@ public static class StringHelper
 
     public static string Replace2(this string s, char old, in char replacement, in int count = 1)
     {
-        return Replace2(s, old.ToString(), replacement.ToString(), count);
+        return s.Replace2(old.ToString(), replacement.ToString(), count);
     }
 
     public static string Replace2(this string s, in string old, in string replacement, in int count = 1)
@@ -604,7 +604,7 @@ public static class StringHelper
         }
 
         StringBuilder sb = new();
-        for (int i = 0; i < str.Length; i++)
+        for (var i = 0; i < str.Length; i++)
         {
             if (char.IsUpper(str[i]) && i > 0)
             {
@@ -619,15 +619,15 @@ public static class StringHelper
 
     public static string? SetPhrase(this string str, int index, string newStr, char start, char end = default)
     {
-        string startStr = str.Slice(0, index + 1);
-        string phrase = GetPhrase(str, index, start, end);
+        var startStr = str.Slice(0, index + 1);
+        var phrase = str.GetPhrase(index, start, end);
         if (phrase is null)
         {
             return null;
         }
 
-        string endEnd = str.Slice(index + phrase.Length);
-        string result = string.Concat(startStr, newStr, endEnd);
+        var endEnd = str.Slice(index + phrase.Length);
+        var result = string.Concat(startStr, newStr, endEnd);
         return result;
     }
 
@@ -650,7 +650,7 @@ public static class StringHelper
     {
         Check.IfArgumentNotNull(value, nameof(value));
 
-        for (int x = 0; x < value.Length; x += groupSize)
+        for (var x = 0; x < value.Length; x += groupSize)
         {
             yield return value.Slice(x, Math.Min(groupSize, value.Length - x));
         }
@@ -664,7 +664,7 @@ public static class StringHelper
         }
 
         StringBuilder sb = new();
-        foreach (char c in value)
+        foreach (var c in value)
         {
             if (char.IsUpper(c))
             {
@@ -686,7 +686,7 @@ public static class StringHelper
     public static string SplitMerge(this string str, char splitter, in string startSeparator, in string endSeparator)
     {
         StringBuilder result = new();
-        foreach (string part in str.Split(splitter))
+        foreach (var part in str.Split(splitter))
         {
             _ = result.Append($"{startSeparator}{part}{endSeparator}");
         }
@@ -700,10 +700,10 @@ public static class StringHelper
         Check.IfArgumentNotNull(keyValueSeparator);
         Check.IfArgumentNotNull(statementSeparator);
 
-        IEnumerable<string> keyValuePirs = str.Split(statementSeparator).Trim();
-        foreach (string keyValuePair in keyValuePirs)
+        var keyValuePirs = str.Split(statementSeparator).Trim();
+        foreach (var keyValuePair in keyValuePirs)
         {
-            string[] keyValue = keyValuePair.Split(keyValueSeparator);
+            var keyValue = keyValuePair.Split(keyValueSeparator);
             yield return (keyValue[0], keyValue[1]);
         }
     }
@@ -742,7 +742,7 @@ public static class StringHelper
 
         if (correctPersianChars)
         {
-            value = ArabicCharsToPersian(value);
+            value = value.ArabicCharsToPersian();
         }
 
         return value;
@@ -761,8 +761,8 @@ public static class StringHelper
     public static string ToHex(in string str)
     {
         StringBuilder sb = new();
-        byte[] bytes = IsUnicode(str) ? Encoding.Unicode.GetBytes(str) : Encoding.ASCII.GetBytes(str);
-        foreach (byte b in bytes)
+        var bytes = str.IsUnicode() ? Encoding.Unicode.GetBytes(str) : Encoding.ASCII.GetBytes(str);
+        foreach (var b in bytes)
         {
             _ = sb.Append(b.ToString("X"));
         }
@@ -787,7 +787,7 @@ public static class StringHelper
 
     public static IEnumerable<string> Trim(this IEnumerable<string> strings)
     {
-        return strings.Where(item => !IsNullOrEmpty(item));
+        return strings.Where(item => !item.IsNullOrEmpty());
     }
 
     public static IEnumerable<string> TrimAll(this IEnumerable<string> values)
@@ -807,7 +807,7 @@ public static class StringHelper
 
     public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
     {
-        (int Result, Exception Exception) result = CatchFunc(() => CountOf(str, c, index));
+        (int Result, Exception Exception) result = CatchFunc(() => str.CountOf(c, index));
         return new(result.Exception is null, result.Result);
     }
 
@@ -815,7 +815,7 @@ public static class StringHelper
     {
         //Check.IfArgumentNotNull(s, nameof(s));
         ReadOnlySpan<char> span = s;
-        ReadOnlySpan<char> slice = length is { } l ? span.Slice(start, l) : span[start..];
+        var slice = length is { } l ? span.Slice(start, l) : span[start..];
         return new(slice);
     }
     public static bool IsValidIranianNationalCode(string input)
@@ -825,8 +825,8 @@ public static class StringHelper
             return false;
         }
 
-        int check = Convert.ToInt32(input.Slice(9, 1));
-        int sum = Enumerable.Range(0, 9)
+        var check = Convert.ToInt32(input.Slice(9, 1));
+        var sum = Enumerable.Range(0, 9)
             .Select(x => Convert.ToInt32(input.Slice(x, 1)) * (10 - x))
             .Sum() % 11;
 

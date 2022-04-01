@@ -24,9 +24,15 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
         this._isBounded = true;
     }
 
-    private async void LibPageBase_Initialized(object? sender, EventArgs e) => await this.FirstBind();
+    private async void LibPageBase_Initialized(object? sender, EventArgs e)
+    {
+        await this.FirstBind();
+    }
 
-    private async void LibPage_LoadedAsync(object sender, RoutedEventArgs e) => await this.FirstBind();
+    private async void LibPage_LoadedAsync(object sender, RoutedEventArgs e)
+    {
+        await this.FirstBind();
+    }
 
     /// <summary>
     /// Gets the command manager.
@@ -54,6 +60,11 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
     /// </summary>
     public override void BeginInit()
     {
+        if (Initializing)
+        {
+            return;
+        }
+
         this.Initializing = true;
         base.BeginInit();
     }
@@ -63,18 +74,27 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
     /// </summary>
     public override void EndInit()
     {
+        if (!Initializing)
+        {
+            return;
+        }
+
         this.Initializing = false;
         base.EndInit();
     }
 
     protected override void OnInitialized(EventArgs e)
-        => base.OnInitialized(e);
+    {
+        base.OnInitialized(e);
+    }
 
     /// <summary>
     /// Called when [bind data asynchronous].
     /// </summary>
     protected virtual async Task OnBindDataAsync()
-        => await Task.CompletedTask;
+    {
+        await Task.CompletedTask;
+    }
 
     /// <summary>
     /// Binds the data asynchronously.
@@ -102,6 +122,9 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
         }
     }
 
-    public Task RebindDataAsync() => this.BindDataAsync();
+    public Task RebindDataAsync()
+    {
+        return this.BindDataAsync();
+    }
 }
 

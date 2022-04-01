@@ -35,10 +35,10 @@
         <Separator Grid.Row="1" Margin="10" />
         <!--<ContentPresenter Grid.Row="2" Content="{Binding ElementName=Me, Path=ClientUi}" />-->
         <Frame
+            x:Name="HostFrame"
             Grid.Row="2"
             Width="{Binding ElementName=Me, Path=ClientUi.Width}"
-            Height="{Binding ElementName=Me, Path=ClientUi.Height}"
-            Source="{Binding ElementName=Me, Path=ClientUi}" />
+            Height="{Binding ElementName=Me, Path=ClientUi.Height}" />
         <Separator Grid.Row="3" />
         <TextBlock
             Grid.Row="4"
