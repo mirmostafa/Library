@@ -1,5 +1,4 @@
 ﻿using Library.DesignPatterns.Markers;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Library.Threading;
 

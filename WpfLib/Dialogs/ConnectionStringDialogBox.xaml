@@ -2,7 +2,6 @@
     x:Class="Library.Wpf.Internals.Dialogs.ConnectionStringDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:behaviors="clr-namespace:Library.Wpf.Windows.Behaviors"
     xmlns:libConverters="clr-namespace:Library.Wpf.Converters"
     x:Name="Me"
     Title="Connection Settings"
@@ -153,8 +152,7 @@
                         <TextBox
                             Name="TimeoutTextBox"
                             Grid.Row="2"
-                            Grid.Column="2"
-                            behaviors:TextBoxMaskBehavior.Mask="Integer" />
+                            Grid.Column="2" />
                     </Grid>
                 </DockPanel>
             </GroupBox>

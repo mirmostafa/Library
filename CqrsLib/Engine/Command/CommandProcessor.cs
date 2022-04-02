@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Library.Cqrs.Models.Commands;
 using Library.Validations;
 
 namespace Library.Cqrs.Engine.Command;
@@ -7,7 +8,7 @@ internal sealed class CommandProcessor : ICommandProcessor
 {
     private readonly ILifetimeScope _container;
 
-    public CommandProcessor(ILifetimeScope container) => 
+    public CommandProcessor(ILifetimeScope container) =>
         this._container = container;
 
 #if !DEBUG

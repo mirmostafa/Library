@@ -1,9 +1,6 @@
-﻿using System.Windows;
+﻿namespace Library.Wpf.Bases;
 
-namespace Library.Wpf.Bases
+public interface IWindowHosted
 {
-    public interface IWindowHosted
-    {
-        Window Window { get; set; }
-    }
+    Window Window { get; set; }
 }

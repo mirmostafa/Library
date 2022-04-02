@@ -34,7 +34,7 @@ public static class IocHelper
                                                                      params Assembly[] assemblies)
         where TInstaller : ILibServiceInstaller
     {
-        assemblies.ForEachItem(assembly => assembly.DefinedTypes
+        _ = assemblies.ForEachItem(assembly => assembly.DefinedTypes
                                                .Where(x => typeof(TInstaller).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
                                                .Select(Activator.CreateInstance)
                                                .Cast<TInstaller>()

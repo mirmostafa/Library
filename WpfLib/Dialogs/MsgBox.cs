@@ -1,8 +1,4 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-
-namespace Library.Wpf.Dialogs
+﻿namespace Library.Wpf.Dialogs
 {
     public static class MsgBox
     {
@@ -27,13 +23,8 @@ namespace Library.Wpf.Dialogs
         public static void Error(string text, string? caption = null, Window? owner = null)
             => Show(text, caption, MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, owner);
 
-        public static void Error(Exception exception, string? text = null, string? caption = null, Window? owner = null)
+        public static void Error(Exception exception!!, string? text = null, string? caption = null, Window? owner = null)
         {
-            if (exception is null)
-            {
-                throw new ArgumentNullException(nameof(exception));
-            }
-
             _ = Show(
                 $"{text}{Environment.NewLine}{exception.GetBaseException().Message}",
                 caption,

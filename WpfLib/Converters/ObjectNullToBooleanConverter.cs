@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Windows.Data;
 
 namespace Library.Wpf.Converters;
@@ -20,10 +19,9 @@ public class ObjectNullToBooleanConverter : IValueConverter
             {
                 bool v => v,
                 not null => true,
-                _ => default(bool)
+                _ => default
             },
         };
-
 
     public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         => value is bool b ? b ? parameter : null : null;

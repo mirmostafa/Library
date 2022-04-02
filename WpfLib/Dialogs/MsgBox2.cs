@@ -1,8 +1,7 @@
 ﻿using Library.Collections;
 using Library.EventsArgs;
 using Library.Exceptions;
-using Library.Validations;
-using Library.Wpf.Media;
+using Library.Wpf.Internals;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace Library.Wpf.Dialogs;
@@ -87,7 +86,7 @@ public sealed class MsgBox2 : InternalMessageBox2
             controls.Add(cancellationRequestedTaskDialogButton);
         }
 
-        if (showOkButton || !isCancallable && !supportsBackgroundWorking)
+        if (showOkButton || (!isCancallable && !supportsBackgroundWorking))
         {
             okButton = new TaskDialogButton("fakeButton", "OK");
             okButton.Click += (s, __) => s.As<TaskDialogButton>()!.HostingDialog.As<TaskDialog>()!.Close(TaskDialogResult.Ok);
@@ -632,7 +631,7 @@ public sealed class MsgBox2 : InternalMessageBox2
         Window? window = null,
         params TaskDialogControl[] controls)
     {
-        ex.ArgumentNotNull(nameof(ex));
+        _ = ex.ArgumentNotNull(nameof(ex));
         var message = ex.Message;
         var innerMessage = ex.GetBaseException().Message;
         return Error(instructionText,
@@ -683,7 +682,7 @@ public sealed class MsgBox2 : InternalMessageBox2
         Window? window = null,
         params TaskDialogControl[] controls)
     {
-        ex.ArgumentNotNull();
+        _ = ex.ArgumentNotNull();
         var message = ex.Message;
         var innerMessage = ex.GetBaseException()?.Message;
         return Error(ex.Instruction,
@@ -895,7 +894,13 @@ public sealed class MsgBox2 : InternalMessageBox2
                         break;
                     }
 
-                    _ = tasks.Run(() => { if (!dlg.IsCancelled(isCancelled)) { onIterating(dlg, item); } });
+                    _ = tasks.Run(() =>
+                    {
+                        if (!dlg.IsCancelled(isCancelled))
+                        {
+                            onIterating(dlg, item);
+                        }
+                    });
                     _ = Catch(() => dlg.Set(prograssValue: ++index));
                     onEachIterated?.Invoke(index);
                     if (cancelled(dlg, isCancelled))
@@ -973,7 +978,7 @@ public sealed class MsgBox2 : InternalMessageBox2
             {
                 var tasks = TaskList.New();
 
-                static bool cancelled(TaskDialog dialog, Func<bool> isCancelledFunc, TaskList? tasks) => tasks?.IsCancellationRequested ?? false || dialog.IsCancelled(isCancelledFunc);
+                static bool cancelled(TaskDialog dialog, Func<bool> isCancelledFunc, TaskList? tasks) => tasks?.IsCancellationRequested ?? (false || dialog.IsCancelled(isCancelledFunc));
                 var index = 0;
                 foreach (var item in items)
                 {

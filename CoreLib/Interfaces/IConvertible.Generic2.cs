@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.Versioning;
+﻿using System.Runtime.Versioning;
 
 namespace Library.Interfaces;
 

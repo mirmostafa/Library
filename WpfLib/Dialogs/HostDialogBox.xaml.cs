@@ -1,7 +1,5 @@
-﻿using Library.Results;
-using Library.Validations;
-using System.ComponentModel;
-using Windows.Networking;
+﻿using System.ComponentModel;
+using Library.Results;
 //using ClientType = System.Windows.Controls.UserControl;
 using ClientType = Library.Wpf.Bases.LibPageBase;
 
@@ -34,7 +32,7 @@ internal partial class HostDialogBox
     }
     public static readonly DependencyProperty ClientUiProperty = ControlHelper.GetDependencyProperty<ClientType?, HostDialogBox>(nameof(ClientUi), onPropertyChanged: (s, _) =>
     {
-        if(s.ClientUi is not null)
+        if (s.ClientUi is not null)
         {
             s.HostFrame.Navigate(s.ClientUi);
         }

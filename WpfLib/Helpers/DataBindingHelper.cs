@@ -1,7 +1,5 @@
-﻿using System.Windows.Controls;
-using System.Windows.Data;
+﻿using System.Windows.Data;
 using Library.Data.Models;
-using Library.Validations;
 
 namespace Library.Wpf.Helpers;
 

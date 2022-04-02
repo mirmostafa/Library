@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Windows.Controls;
-using Library.Coding;
 using Library.Data.Models;
 using Library.EventsArgs;
-using Library.Validations;
 
 namespace Library.Wpf.Controls;
 /// <summary>
@@ -45,7 +42,7 @@ public partial class DataCrudGridView : UserControl
             {
                 return false;
             }
-            this.DataGrid.AddColumns(columnBindArgs.Item);
+            _ = this.DataGrid.AddColumns(columnBindArgs.Item);
             return true;
         }
         bool bindData()
@@ -57,7 +54,7 @@ public partial class DataCrudGridView : UserControl
                 return false;
             }
             this.ViewModel = dataBindArgs.Item.NotNull();
-            this.BindDataGrid();
+            _ = this.BindDataGrid();
             return true;
         }
     }
@@ -79,7 +76,7 @@ public partial class DataCrudGridView : UserControl
             return;
         }
         this.ViewModel.Add(itemAddEventArg.Item);
-        this.BindDataGrid();
+        _ = this.BindDataGrid();
     }
 
     private void DeleteItemsButton_Click(object sender, RoutedEventArgs e)
@@ -100,6 +97,6 @@ public partial class DataCrudGridView : UserControl
             return;
         }
 
-        this.BindDataGrid();
+        _ = this.BindDataGrid();
     }
 }

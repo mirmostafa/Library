@@ -1,8 +1,7 @@
-﻿namespace Library.Threading
+﻿namespace Library.Threading;
+
+public interface IAsyncLock
 {
-    public interface IAsyncLock
-    {
-        Task LockAsync(Func<Task> action);
-        Task<TResult> LockAsync<TResult>(Func<Task<TResult>> action);
-    }
+    Task LockAsync(Func<Task> action);
+    Task<TResult> LockAsync<TResult>(Func<Task<TResult>> action);
 }

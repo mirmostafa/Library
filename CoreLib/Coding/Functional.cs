@@ -1,9 +1,9 @@
-﻿using Library.DesignPatterns.ExceptionHandlingPattern;
+﻿using System.Diagnostics;
+using System.Runtime.ExceptionServices;
+using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.DesignPatterns.Markers;
 using Library.Exceptions;
 using Library.Validations;
-using System.Diagnostics;
-using System.Runtime.ExceptionServices;
 
 namespace Library.Coding;
 
@@ -110,7 +110,8 @@ public static class Functional
     public static void Lock(object? lockObject, Action action) =>
         _ = Lock(lockObject, () =>
         {
-            action.ArgumentNotNull(nameof(action))(); return true;
+            action.ArgumentNotNull(nameof(action))();
+            return true;
         });
     public static TResult Lock<TResult>(object? lockObject, in Func<TResult> action)
     {
@@ -133,8 +134,8 @@ public static class Functional
 
     public static IEnumerable<TResult> While<TResult>(Func<bool> predicate, Func<TResult> action, Action? onIterationDone = null)
     {
-        predicate.ArgumentNotNull(nameof(predicate));
-        action.ArgumentNotNull(nameof(action));
+        _ = predicate.ArgumentNotNull(nameof(predicate));
+        _ = action.ArgumentNotNull(nameof(action));
 
         while (predicate())
         {
@@ -145,7 +146,7 @@ public static class Functional
     }
     public static void While(in Func<bool> predicate, in Action? action = null)
     {
-        predicate.ArgumentNotNull(nameof(predicate));
+        _ = predicate.ArgumentNotNull(nameof(predicate));
 
         while (predicate())
         {
@@ -180,7 +181,7 @@ public static class Functional
         in ExceptionHandling? handling = null,
         in bool throwException = false)
     {
-        tryMethod.ArgumentNotNull(nameof(tryMethod));
+        _ = tryMethod.ArgumentNotNull(nameof(tryMethod));
 
         handling?.Reset();
         try

@@ -1,27 +1,26 @@
 ﻿using System.ComponentModel;
 
-namespace Library.Data.SqlServer.ObjectModel
+namespace Library.Data.SqlServer.ObjectModel;
+
+[EditorBrowsable(EditorBrowsableState.Never)]
+public abstract class SqlObjectAttribute : Attribute
 {
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public abstract class SqlObjectAttribute : Attribute
-    {
-        public string Name { get; set; }
-    }
+    public string Name { get; set; }
+}
 
-    public sealed class SqlTableAttribute : SqlObjectAttribute
-    {
-    }
+public sealed class SqlTableAttribute : SqlObjectAttribute
+{
+}
 
-    public sealed class SqlFieldAttribute : SqlObjectAttribute
-    {
-        public bool IsIdentity { get; set; }
-    }
+public sealed class SqlFieldAttribute : SqlObjectAttribute
+{
+    public bool IsIdentity { get; set; }
+}
 
-    public sealed class SqlIgnoreAttribute : Attribute
-    {
-    }
+public sealed class SqlIgnoreAttribute : Attribute
+{
+}
 
-    public sealed class SqlAutoIcreamentalAttribute : Attribute
-    {
-    }
+public sealed class SqlAutoIcreamentalAttribute : Attribute
+{
 }

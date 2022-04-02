@@ -1,4 +1,4 @@
-﻿namespace Library.Types;
+﻿namespace Library.Interfaces;
 
 internal interface IConvertible<T>
 {

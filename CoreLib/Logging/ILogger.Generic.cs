@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using Library.Coding;
 
 namespace Library.Logging;
 
@@ -42,10 +41,7 @@ public interface ILogger<TLogMessage>
     /// <param name="message">The message.</param>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
-    void Info([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-    {
-        this.Log(message, LogLevel.Info, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
-    }
+    void Info([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null) => this.Log(message, LogLevel.Info, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// logs the specified message with LogLevel.Warning.
@@ -53,10 +49,7 @@ public interface ILogger<TLogMessage>
     /// <param name="message">The message.</param>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
-    void Warn([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-    {
-        this.Log(message, LogLevel.Warning, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
-    }
+    void Warn([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null) => this.Log(message, LogLevel.Warning, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// Logs the specified message with LogLevel.Error.
@@ -64,10 +57,7 @@ public interface ILogger<TLogMessage>
     /// <param name="message">The message.</param>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
-    void Error([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-    {
-        this.Log(message, LogLevel.Error, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
-    }
+    void Error([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null) => this.Log(message, LogLevel.Error, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// Logs the specified message with LogLevel.Fatal.
@@ -75,10 +65,7 @@ public interface ILogger<TLogMessage>
     /// <param name="message">The message.</param>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
-    void Fatal([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-    {
-        this.Log(message, LogLevel.Fatal, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
-    }
+    void Fatal([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null) => this.Log(message, LogLevel.Fatal, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// Logs the specified message with LogLevel.Debug.
@@ -86,10 +73,7 @@ public interface ILogger<TLogMessage>
     /// <param name="message">The message.</param>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
-    void Debug([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null)
-    {
-        this.Log(message, LogLevel.Debug, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
-    }
+    void Debug([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null) => this.Log(message, LogLevel.Debug, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now);
 
     /// <summary>
     /// Logs the specified message with LogLevel.Trace.
@@ -98,8 +82,5 @@ public interface ILogger<TLogMessage>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
     /// <param name="stackTrace">The stack trace.</param>
-    void Trace([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null, string? stackTrace = null)
-    {
-        this.Log(message, LogLevel.Trace, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now, stackTrace);
-    }
+    void Trace([DisallowNull] TLogMessage message, [CallerMemberName] object? sender = null, DateTime? time = null, string? stackTrace = null) => this.Log(message, LogLevel.Trace, sender: sender ?? CodeHelpers.GetCallerMethod(), time ?? DateTime.Now, stackTrace);
 }

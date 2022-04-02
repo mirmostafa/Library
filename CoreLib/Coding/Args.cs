@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-
 using System.Collections;
 
 namespace Library.Coding;

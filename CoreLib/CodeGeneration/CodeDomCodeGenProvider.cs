@@ -1,7 +1,7 @@
-﻿using Library.CodeGeneration.Models;
+﻿using System.CodeDom;
+using Library.CodeGeneration.Models;
 using Library.Helpers.CodeGen;
 using Library.Validations;
-using System.CodeDom;
 
 namespace Library.CodeGeneration;
 
@@ -25,7 +25,7 @@ public sealed class CodeDomCodeGenProvider : ICodeGenProvider
                     case FieldInfo field:
                         codeType = codeType.AddField(field.Type, field.Type, field.Comment, field.AccessModifier);
                         break;
-                    case PropertyInfo property when (property.HasBackingField):
+                    case PropertyInfo property when property.HasBackingField:
                         codeType = addProperty(codeType, property);
                         break;
                     case PropertyInfo property:

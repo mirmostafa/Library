@@ -1,8 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using Library.Logging;
-using Library.Validations;
-using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace Library.Wpf;
 

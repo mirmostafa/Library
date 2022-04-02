@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using Library.Globalization.Attributes;
 using Library.Validations;
 
@@ -84,15 +83,10 @@ public static class EnumHelper
         return attributes?.Length > 0 ? attributes.AsEnumerable() : Enumerable.Empty<TAttribute>();
     }
 
-    public static string? GetItemDescription(Enum? value,
+    public static string? GetItemDescription(Enum? value!!,
         bool localized = true,
         string cultureName = "en-US")
     {
-        if (value is null)
-        {
-            throw new ArgumentNullException(nameof(value));
-        }
-
         if (string.IsNullOrEmpty(cultureName))
         {
             throw new ArgumentException($"'{nameof(cultureName)}' cannot be null or empty", nameof(cultureName));
@@ -136,7 +130,7 @@ public static class EnumHelper
         return pairs?.ToDictionary(t => t.Value, t => t.Text);
     }
 
-    public static bool IsIn(this Enum value, params Enum[] range) 
+    public static bool IsIn(this Enum value, params Enum[] range)
         => range.Contains(value);
 
     /// <summary>
@@ -224,11 +218,11 @@ public static class EnumHelper
 
     private static object Parse(object value) => value is string
         ? value.ToString()!.Contains('.')
-            ? value.ToString()!.Substring(value.ToString()!.LastIndexOf(".") + 1)
+            ? value.ToString()![(value.ToString()!.LastIndexOf(".") + 1)..]
             : value
         : value;
 
     public static IEnumerable<TEnum> GetItems<TEnum>()
-        where TEnum : Enum => 
+        where TEnum : Enum =>
         Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
 }

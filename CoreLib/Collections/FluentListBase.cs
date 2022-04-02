@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Diagnostics;
-using Library.Coding;
 using Library.DesignPatterns.Markers;
 
 namespace Library.Collections;
@@ -26,10 +25,10 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
 
     public TItem this[int index]
     {
-        get => this._list[index]; 
+        get => this._list[index];
         set
         {
-            this.CheckReadOnly();
+            _ = this.CheckReadOnly();
             this._list[index] = value;
         }
     }
@@ -62,7 +61,7 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     public TList Add(TItem item) =>
         this.Fluent(this.CheckReadOnly).This.Fluent(() => this._list.Add(item));
     public TList Clear() =>
-        this.Fluent(this.CheckReadOnly).This.Fluent(() => this._list.Clear());
+        this.Fluent(this.CheckReadOnly).This.Fluent(this._list.Clear);
     public (TList List, bool Result) Contains(TItem item) =>
         (this.This, this._list.Contains(item));
     public TList CopyTo(TItem[] array, int arrayIndex) =>

@@ -1,10 +1,9 @@
-﻿namespace Library.Data.SqlServer.Dynamics.Collections
+﻿namespace Library.Data.SqlServer.Dynamics.Collections;
+
+public class Columns : SqlObjects<Column>
 {
-    public class Columns : SqlObjects<Column>
+    internal Columns(IEnumerable<Column> items)
+        : base(items)
     {
-        internal Columns(IEnumerable<Column> items)
-            : base(items)
-        {
-        }
     }
 }

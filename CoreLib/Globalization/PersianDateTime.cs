@@ -1,10 +1,10 @@
+using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.Serialization;
 using Library.Globalization.DataTypes;
 using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
-using System.Diagnostics;
-using System.Globalization;
-using System.Runtime.Serialization;
 
 namespace Library.Globalization;
 
@@ -426,7 +426,6 @@ public readonly struct PersianDateTime :
     public static TryMethodResult<PersianDateTime> TryParse(in string str) =>
         new(TryParse(str, out var result), result);
 
-
     /// <summary>
     ///     Adds the specified persian date time1.
     /// </summary>
@@ -469,7 +468,6 @@ public readonly struct PersianDateTime :
     /// <returns> </returns>
     public static PersianDateTime Subtract(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
         => persianDateTime1 - persianDateTime2;
-
 
     /// <summary>
     ///     Creates a new object that is a copy of the current instance.

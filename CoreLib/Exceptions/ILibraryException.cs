@@ -1,6 +1,5 @@
-﻿namespace Library.Exceptions
+﻿namespace Library.Exceptions;
+
+public interface ILibraryException : IException
 {
-    public interface ILibraryException : IException
-    {
-    }
 }

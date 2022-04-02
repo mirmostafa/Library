@@ -1,9 +1,9 @@
-﻿using Library.Validations;
+﻿using System.Reflection;
+using Library.Validations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using System.Reflection;
 
-namespace Library.Web;
+namespace Library.Web.Api;
 
 public record struct ApiInfo(in string? AreaName, in string? ControllerName, in string? ActionName)
 {

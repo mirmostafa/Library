@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using Library.Validations;
 using static Library.Mapping.MapperExtensions;
 
 namespace Library.Mapping;
@@ -34,16 +35,11 @@ public sealed class Mapper : IMapper
     public TDestination? MapExcept<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> except)
         where TDestination : class
     {
-        if (destination == null)
-        {
-            throw new ArgumentNullException(nameof(destination));
-        }
-
         if (source is null)
         {
             return null;
         }
-
+        Check.IfArgumentNotNull(source);
         var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
         var props = typeof(TDestination).GetProperties();
         var result = destination;
@@ -61,11 +57,7 @@ public sealed class Mapper : IMapper
     public TDestination? MapExcept<TSource, TDestination>(in TSource source, in Func<TDestination, object> except)
         where TDestination : class, new()
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
+        Check.IfArgumentNotNull(source);
         var destination = new TDestination();
 
         var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
@@ -85,15 +77,11 @@ public sealed class Mapper : IMapper
     public TDestination? MapOnly<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> onlyProps)
         where TDestination : class
     {
-        if (destination == null)
-        {
-            throw new ArgumentNullException(nameof(destination));
-        }
-
         if (source is null)
         {
             return null;
         }
+        Check.IfArgumentNotNull(destination);
 
         var justProps = onlyProps(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
         var dstProps = typeof(TDestination).GetProperties();
@@ -167,14 +155,9 @@ public sealed class Mapper : IMapper
         }
     }
 
-    public IEnumerable<TDestination?> Map<TSource, TDestination>(IEnumerable<TSource> sources, Action<TSource, TDestination> finalize)
+    public IEnumerable<TDestination?> Map<TSource, TDestination>(IEnumerable<TSource> sources!!, Action<TSource, TDestination> finalize)
         where TDestination : class, new()
     {
-        if (sources == null)
-        {
-            throw new ArgumentNullException(nameof(sources));
-        }
-
         var dstProps = typeof(TDestination).GetProperties();
         foreach (var source in sources)
         {
@@ -194,19 +177,10 @@ public sealed class Mapper : IMapper
         }
     }
 
-    public TDestination Map<TDestination>(in object source, Func<TDestination> instantiator)
+    public TDestination Map<TDestination>(in object source, Func<TDestination> instantiator!!)
         where TDestination : class
     {
-        if (source == null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
-
-        if (instantiator is null)
-        {
-            throw new ArgumentNullException(nameof(instantiator));
-        }
-
+        Check.IfArgumentNotNull(source);
         var result = instantiator();
         var dstProps = typeof(TDestination).GetProperties();
         foreach (var prop in dstProps)

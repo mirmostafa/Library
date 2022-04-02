@@ -1,7 +1,7 @@
-﻿using Library.DesignPatterns.Markers;
+﻿using System.Data.SqlClient;
+using Library.DesignPatterns.Markers;
 using Library.Results;
 using Library.Validations;
-using System.Data.SqlClient;
 
 namespace Library.Data.SqlServer.Builders;
 
@@ -64,9 +64,8 @@ public class ConnectionStringBuilder : IValidatable<ConnectionStringBuilder>
     public static void Validate(string connectionString)
         => Create(connectionString).Validate();
 
-    public Result<ConnectionStringBuilder> Validate() 
+    public Result<ConnectionStringBuilder> Validate()
         => Result<ConnectionStringBuilder>.New(this);
-
 
     public string Build()
         => this._builder.ConnectionString;

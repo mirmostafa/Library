@@ -1,10 +1,9 @@
-﻿namespace Library.Data.SqlServer.Dynamics.Collections
+﻿namespace Library.Data.SqlServer.Dynamics.Collections;
+
+public class StoredProcedures : SqlObjects<StoredProcedure>
 {
-    public class StoredProcedures : SqlObjects<StoredProcedure>
+    internal StoredProcedures(IEnumerable<StoredProcedure> items)
+        : base(items)
     {
-        internal StoredProcedures(IEnumerable<StoredProcedure> items)
-            : base(items)
-        {
-        }
     }
 }

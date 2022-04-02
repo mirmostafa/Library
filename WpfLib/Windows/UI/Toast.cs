@@ -1,6 +1,4 @@
-﻿using Library.Coding;
-using Library.Validations;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Windows.UI.Notifications;
 
 namespace Library.Wpf.Windows.UI;
@@ -63,7 +61,7 @@ public class Toast
     {
         if (this._toastNotifier is null)
         {
-            this.Build();
+            _ = this.Build();
         }
         this._toastNotifier.Show(this._toast);
     }
@@ -81,7 +79,7 @@ public class Toast
             var children = stringElementChildren.ToArray();
             for (var index = 0; index < children.Length; index++)
             {
-                stringElements[index].AppendChild(toastXml.CreateTextNode(children[index]));
+                _ = stringElements[index].AppendChild(toastXml.CreateTextNode(children[index]));
             }
         }
 
@@ -95,7 +93,7 @@ public class Toast
             var audio = toastXml.CreateElement("audio");
             audio.SetAttribute("src", audioSource);
             audio.SetAttribute("loop", "false");
-            toastXml.DocumentElement.AppendChild(audio);
+            _ = toastXml.DocumentElement.AppendChild(audio);
 
         }
 

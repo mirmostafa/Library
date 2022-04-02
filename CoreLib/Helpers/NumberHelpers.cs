@@ -4,20 +4,11 @@ using Library.Globalization;
 namespace Library.Helpers;
 public static class NumberHelper
 {
-    public static int Add(in int x, in int y)
-    {
-        return x + y;
-    }
+    public static int Add(in int x, in int y) => x + y;
 
-    public static bool IsBetween(this int num, in int min, in int max)
-    {
-        return num > min && num <= max;
-    }
+    public static bool IsBetween(this int num, in int min, in int max) => num > min && num <= max;
 
-    public static bool IsPrime(int number)
-    {
-        return Enumerable.Range(2, Math.Sqrt(number).ToInt() - 1).All(d => number % d != 0);
-    }
+    public static bool IsPrime(int number) => Enumerable.Range(2, Math.Sqrt(number).ToInt() - 1).All(d => number % d != 0);
 
     public static string ToPersian(this int number)
     {
@@ -31,8 +22,5 @@ public static class NumberHelper
         return result;
     }
 
-    public static string ToString(this int? number, string format = "0", int defaultValue = 0)
-    {
-        return (number ?? defaultValue).ToString(format);
-    }
+    public static string ToString(this int? number, string format = "0", int defaultValue = 0) => (number ?? defaultValue).ToString(format);
 }

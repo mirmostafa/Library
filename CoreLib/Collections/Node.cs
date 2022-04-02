@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Library.DesignPatterns.Markers;
+﻿using Library.DesignPatterns.Markers;
 using Library.Validations;
 
 namespace Library.Collections;
@@ -9,8 +8,6 @@ namespace Library.Collections;
 public class Node<T>
 {
     public static readonly Node<T?> Empty = new(default, null);
-
-    private Node<T>? _parent;
 
     public Node() { }
 
@@ -23,7 +20,7 @@ public class Node<T>
 
     public T Value { get; init; }
     public string? Display { get; init; }
-    public Node<T>? Parent { get => this._parent; init => this._parent = value; }
+    public Node<T>? Parent { get; private set; }
     protected FluentList<Node<T>> Childs { get; } = new();
     public IEnumerable<T> ChildValues => this.Children.Select(x => x.To<T>());
     public IEnumerable<Node<T>> Children => this.Childs.ToEnumerable();
@@ -34,8 +31,8 @@ public class Node<T>
     public Node<T> AddChild([DisallowNull] Node<T> node)
     {
         Check.IfArgumentNotNull(node, nameof(node));
-        node._parent = this;
-        this.Childs.Add(node);
+        node.Parent = this;
+        _ = this.Childs.Add(node);
         return this;
     }
 
@@ -45,7 +42,7 @@ public class Node<T>
 
         foreach (var value in values)
         {
-            this.AddChild(value, this.Display);
+            _ = this.AddChild(value, this.Display);
         }
         return this;
     }

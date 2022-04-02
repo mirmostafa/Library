@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Library.Coding;
-using Library.Data.SqlServer.Builders.Bases;
+﻿using Library.Data.SqlServer.Builders.Bases;
 using Library.Validations;
 
 namespace Library.Data.SqlServer;
@@ -19,14 +17,14 @@ public static partial class SqlStatementBuilder
     }
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, params (string Column, object Value)[] columnsValue)
     {
-        nameof(statement).ArgumentNotNull(nameof(statement));
-        columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value)).Build();
+        _ = nameof(statement).ArgumentNotNull(nameof(statement));
+        _ = columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value)).Build();
         return statement;
     }
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, IEnumerable<(string Column, object Value)> columnsValue)
     {
-        nameof(statement).ArgumentNotNull(nameof(statement));
-        columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value));
+        _ = nameof(statement).ArgumentNotNull(nameof(statement));
+        _ = columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value));
         return statement;
     }
 
@@ -35,14 +33,14 @@ public static partial class SqlStatementBuilder
 
     public static string Build([DisallowNull] this IUpdateStatement statement, string indent = "    ")
     {
-        statement.TableName.NotNull(nameof(statement.TableName));
+        _ = statement.TableName.NotNull(nameof(statement.TableName));
         Check.IfAny(statement.ColumnsValue, nameof(statement.ColumnsValue));
         var result = new StringBuilder($"Update {AddBrackets(statement.TableName)}");
-        AddClause($"SET ({statement.ColumnsValue.Select(cv => AddBrackets(cv.Key)).Merge(", ")})", indent, result);
-        AddClause($"VALUES ({statement.ColumnsValue.Select(cv => FormatValue(cv.Value)).Merge(", ")})", indent, result);
+        _ = AddClause($"SET ({statement.ColumnsValue.Select(cv => AddBrackets(cv.Key)).Merge(", ")})", indent, result);
+        _ = AddClause($"VALUES ({statement.ColumnsValue.Select(cv => FormatValue(cv.Value)).Merge(", ")})", indent, result);
         if (!statement.WhereClause.IsNullOrEmpty())
         {
-            AddClause($"WHERE {statement.WhereClause}", indent, result);
+            _ = AddClause($"WHERE {statement.WhereClause}", indent, result);
         }
 
         return result.ToString();

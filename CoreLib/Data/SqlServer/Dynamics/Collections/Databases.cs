@@ -1,15 +1,14 @@
-﻿namespace Library.Data.SqlServer.Dynamics.Collections
-{
-    public class Databases : SqlObjects<Database>
-    {
-        public Databases(Func<IEnumerable<Database>> itemsCreator)
-            : base(itemsCreator)
-        {
-        }
+﻿namespace Library.Data.SqlServer.Dynamics.Collections;
 
-        internal Databases(IEnumerable<Database> items)
-            : base(items)
-        {
-        }
+public class Databases : SqlObjects<Database>
+{
+    public Databases(Func<IEnumerable<Database>> itemsCreator)
+        : base(itemsCreator)
+    {
+    }
+
+    internal Databases(IEnumerable<Database> items)
+        : base(items)
+    {
     }
 }

@@ -1,8 +1,7 @@
-namespace Library.Globalization
+namespace Library.Globalization;
+
+public interface ILocalizer
 {
-    public interface ILocalizer
-    {
-        string ToString(in DateTime dateTime);
-        string Translate(in string statement, in string? culture = null);
-    }
+    string ToString(in DateTime dateTime);
+    string Translate(in string statement, in string? culture = null);
 }

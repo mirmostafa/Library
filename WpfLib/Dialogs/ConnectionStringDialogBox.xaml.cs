@@ -1,15 +1,7 @@
-﻿using System;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Data.SqlClient;
 using Library.Data.SqlServer.Dynamics;
 using Library.Exceptions.Validations;
-using Library.Helpers;
-using Library.Validations;
 using Library.Wpf.Dialogs;
-using Library.Wpf.Helpers;
 
 namespace Library.Wpf.Internals.Dialogs;
 /// <summary>
@@ -87,7 +79,7 @@ public partial class ConnectionStringDialog
 
     private async Task DoValidationAsync(bool full)
     {
-        this.ConnectionString.NotNull(() => new ValidationException("Please fill the form"));
+        _ = this.ConnectionString.NotNull(() => new ValidationException("Please fill the form"));
         //if (this.ValidateResult)
         {
             var ex = await AdoHelper.CheckConnectionStringAsync(this.ConnectionString);
@@ -158,7 +150,7 @@ public partial class ConnectionStringDialog
         }
         catch (Exception ex)
         {
-            MsgBox2.Exception(ex, window: this);
+            _ = MsgBox2.Exception(ex, window: this);
         }
         finally
         {

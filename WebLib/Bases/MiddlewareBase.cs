@@ -1,7 +1,7 @@
-﻿using Library.EventsArgs;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+using Library.EventsArgs;
 
-namespace Library.Web;
+namespace Library.Web.Bases;
 
 public abstract class MiddlewareBase
 {
@@ -10,7 +10,6 @@ public abstract class MiddlewareBase
     protected MiddlewareBase(RequestDelegate next) =>
             this._next = next;
     protected ClaimsPrincipal? User { get; private set; }
-
 
     [System.Diagnostics.DebuggerStepThrough]
     public async Task Invoke(HttpContext httpContext)
