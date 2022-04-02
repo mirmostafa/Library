@@ -34,7 +34,7 @@ internal partial class HostDialogBox
     {
         if (s.ClientUi is not null)
         {
-            _ = s.HostFrame.Navigate(s.ClientUi);
+            s.HostFrame.Navigate(s.ClientUi);
         }
         if (s.ClientUi is INotifyPropertyChanged x)
         {

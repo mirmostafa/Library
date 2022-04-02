@@ -392,7 +392,11 @@ public static class ObjectHelper
     public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
         => string.IsNullOrEmpty(ToString(value));
 
-    public static void SetField([DisallowNull] in object obj!!, in string fieldName, in object value) => obj.GetType().GetField(fieldName)?.SetValue(obj, value);
+    public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
+    {
+        Check.IfArgumentNotNull(obj);
+        obj.GetType().GetField(fieldName)?.SetValue(obj, value);
+    }
 
     public static void SetProperty([DisallowNull] in object obj, in string propertyName, in object value)
     {

@@ -543,11 +543,12 @@ public static class CodeDomHelper
     /// nameof(c)
     /// </exception>
     public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c!!,
-        in IEnumerable<(string Type, string Name, string DataMemberName)> arguments!!,
+        in IEnumerable<(string Type, string Name, string DataMemberName)> arguments,
         in string? body = null,
         in MemberAttributes? accessModifiers = null,
         in string? comment = null)
     {
+        Check.IfArgumentNotNull(arguments);
         var constructor = new CodeConstructor
         {
             Attributes = accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final
@@ -588,11 +589,12 @@ public static class CodeDomHelper
     /// nameof(c)
     /// </exception>
     public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c!!,
-        in IEnumerable<(string Type, string Name, string DataMemberName, bool IsPropery)> arguments!!,
+        in IEnumerable<(string Type, string Name, string DataMemberName, bool IsPropery)> arguments,
         in string? body = null,
         in MemberAttributes? accessModifiers = null,
         in string? comment = null)
     {
+        Check.IfArgumentNotNull(arguments);
         var constructor = new CodeConstructor
         {
             Attributes = accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final

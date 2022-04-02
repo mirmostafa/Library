@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using Library.Validations;
 using static Library.Mapping.MapperExtensions;
 
 namespace Library.Mapping;
@@ -31,14 +32,14 @@ public sealed class Mapper : IMapper
         return result;
     }
 
-    public TDestination? MapExcept<TSource, TDestination>(in TSource source, in TDestination destination!!, in Func<TDestination, object> except)
+    public TDestination? MapExcept<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> except)
         where TDestination : class
     {
         if (source is null)
         {
             return null;
         }
-
+        Check.IfArgumentNotNull(source);
         var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
         var props = typeof(TDestination).GetProperties();
         var result = destination;
@@ -53,9 +54,10 @@ public sealed class Mapper : IMapper
         return result;
     }
 
-    public TDestination? MapExcept<TSource, TDestination>(in TSource source!!, in Func<TDestination, object> except)
+    public TDestination? MapExcept<TSource, TDestination>(in TSource source, in Func<TDestination, object> except)
         where TDestination : class, new()
     {
+        Check.IfArgumentNotNull(source);
         var destination = new TDestination();
 
         var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
@@ -72,13 +74,14 @@ public sealed class Mapper : IMapper
         return result;
     }
 
-    public TDestination? MapOnly<TSource, TDestination>(in TSource source, in TDestination destination!!, in Func<TDestination, object> onlyProps)
+    public TDestination? MapOnly<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> onlyProps)
         where TDestination : class
     {
         if (source is null)
         {
             return null;
         }
+        Check.IfArgumentNotNull(destination);
 
         var justProps = onlyProps(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
         var dstProps = typeof(TDestination).GetProperties();
@@ -174,9 +177,10 @@ public sealed class Mapper : IMapper
         }
     }
 
-    public TDestination Map<TDestination>(in object source!!, Func<TDestination> instantiator!!)
+    public TDestination Map<TDestination>(in object source, Func<TDestination> instantiator!!)
         where TDestination : class
     {
+        Check.IfArgumentNotNull(source);
         var result = instantiator();
         var dstProps = typeof(TDestination).GetProperties();
         foreach (var prop in dstProps)
