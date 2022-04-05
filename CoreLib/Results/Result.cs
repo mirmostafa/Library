@@ -146,4 +146,10 @@ public static class ResultHelper
     public static TResult MustHaveValue<TResult>(this TResult result, string? obj, [CallerArgumentExpression("obj")] in string? argName = null)
         where TResult : ResultBase =>
         MustBe(result, !obj.IsNullOrEmpty(), $"{argName} cannot be empty.", NullValueValidationException.ErrorCode);
+
+    public static bool IsValid<TValue>([NotNullWhen(true)] this Result<TValue> result) =>
+        result is not null and { IsSucceed: true } and { Value: not null };
+
+    public static ivalidationResult Validate<TValue>(this Result<TValue> result) =>
+        IsValid(result) ? valid.Result : invalid.Result;
 }

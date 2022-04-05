@@ -4,7 +4,7 @@ using Library.Wpf.Windows.Input.Commands;
 namespace Library.Wpf.Bases;
 public class LibPageBase : Page, ISupportAsyncDataBinding
 {
-    private CommandController _commandManager;
+    private CommandController? _commandManager;
 
     public LibPageBase()
     {

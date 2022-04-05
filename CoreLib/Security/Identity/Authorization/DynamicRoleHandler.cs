@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Library.Security.Defaults;
-
-public class DynamicRoleRequirement : IAuthorizationRequirement
-{
-}
+namespace Library.Security.Authorization;
 
 public class DynamicRoleHandler : AuthorizationHandler<DynamicRoleRequirement>
 {

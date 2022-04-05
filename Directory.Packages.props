@@ -13,9 +13,6 @@
 		<EnableNETAnalyzers>true</EnableNETAnalyzers>
 		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
 		<CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
-		<!-- <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild> -->
-		<!--<WarningsAsErrors>nullable</WarningsAsErrors>-->
-		<!-- <WarningsAsErrors></WarningsAsErrors> -->
 		<TreatWarningsAsErrors>false</TreatWarningsAsErrors>
 		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
 	</PropertyGroup>
