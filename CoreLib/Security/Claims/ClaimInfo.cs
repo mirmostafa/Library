@@ -3,7 +3,13 @@ using Library.Validations;
 
 namespace Library.Security.Claims;
 
-public readonly record struct ClaimInfo([DisallowNull] in string Type, in string? Value) : IEquatable<ClaimInfo>, IEquatable<Claim>
+public interface IClaim
+{
+    string Type { get; }
+    string? Value { get; }
+}
+
+public readonly record struct ClaimInfo([DisallowNull] in string Type!!, in string? Value) : IClaim, IEquatable<ClaimInfo>, IEquatable<Claim>
 {
     public void Deconstruct(out string type, out string? value) =>
         (type, value) = (this.Type, this.Value);

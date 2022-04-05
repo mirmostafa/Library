@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace Library.Security.Claims;
-
+﻿namespace Library.Security.Claims;
 public static class LibCrudClaims
 {
     public const string READ_CLAIM_TYPE = "ReadClaim";
@@ -9,10 +6,10 @@ public static class LibCrudClaims
     public const string UPDATE_CLAIM_TYPE = "UpdateClaim";
     public const string DELETE_CLAIM_TYPE = "DeleteClaim";
 
-    public static readonly Claim Read = new(READ_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
-    public static readonly Claim Create = new(CREATE_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
-    public static readonly Claim Update = new(UPDATE_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
-    public static readonly Claim Delete = new(DELETE_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
+    public static readonly ClaimInfo Read = new(READ_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
+    public static readonly ClaimInfo Create = new(CREATE_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
+    public static readonly ClaimInfo Update = new(UPDATE_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
+    public static readonly ClaimInfo Delete = new(DELETE_CLAIM_TYPE, LibClaimDefaultValues.VALID_CLAIM_VALUE);
 
     public static IEnumerable<string> GetClaimTypes()
     {
@@ -22,7 +19,7 @@ public static class LibCrudClaims
         yield return DELETE_CLAIM_TYPE;
     }
 
-    public static IEnumerable<Claim> GetClaims()
+    public static IEnumerable<ClaimInfo> GetClaims()
     {
         yield return Read;
         yield return Create;

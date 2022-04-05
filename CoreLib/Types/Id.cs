@@ -16,7 +16,7 @@ namespace Library.Types;
 public readonly struct Id :
     ISpanFormattable, IFormattable, ISerializable, ICloneable, IComparable,
     IEquatable<IdType>, IComparable<Id>, IComparable<IdType>,
-    IConvertible<IdType>, IEmpty<Id>
+    IConvertible<IdType>, IEmpty<Id>, IEquatable<Id>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Id"/> struct.
@@ -164,11 +164,11 @@ public readonly struct Id :
         new(GetDefaultValue());
 
     /// <summary>
-    /// Creates a new Id the by unique identifier.
+    /// Creates a new Id the by the specific identifier.
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    public static Id CreateByGuid(IdType id) =>
+    public static Id Create(IdType id) =>
         new(id);
 
     /// <summary>
@@ -263,6 +263,8 @@ public readonly struct Id :
     /// <returns></returns>
     private string GetDebuggerDisplay() =>
         this.ToString();
+    public bool Equals(Id other) =>
+        this.Value.Equals(other.Value);
 
     /// <summary>
     /// Implements the operator &lt;.

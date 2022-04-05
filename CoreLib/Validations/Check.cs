@@ -10,8 +10,10 @@ namespace Library.Validations;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
-public class Check
+public sealed class Check
 {
+    private Check() { }
+
     private static Check _that;
     /// <summary>
     /// To support extension methods.
@@ -104,6 +106,8 @@ public class Check
         (await get()).NotNull(() => new NullValueValidationException(message, null));
 }
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class CheckHelpers
 {
 

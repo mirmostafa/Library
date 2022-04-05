@@ -20,6 +20,9 @@ public record struct Fluency<T>(T Value) : IEquatable<T>, IConvertible<Fluency<T
         this.Value;
     public static Fluency<T> ConvertFrom(T other) =>
         new(other);
+
+    public static Fluency<T> From(T other) =>
+        new(other);
 }
 
 public static class FluencyHelper
@@ -76,4 +79,11 @@ public static class FluencyHelper
 
     public static (TInstance Instance, TResult Result) Result<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TResult> func) =>
         (instance.Value, func.Invoke());
+
+    public static async Task<Fluency<TResult>> FluentAsync<TFuncResult, TResult>(this object @this, Func<Task<TFuncResult>> funcAsync, Func<TFuncResult, TResult> action) =>
+        action(await funcAsync());
 }
+
+public interface ivalidationResult { static valid Valid { get; } = new(); static invalid Invalid { get; } = new(); }
+public record struct valid : ivalidationResult { public static readonly valid Result = ivalidationResult.Valid; }
+public record struct invalid : ivalidationResult { public static readonly invalid Result = ivalidationResult.Invalid; }
