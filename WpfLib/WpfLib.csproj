@@ -1,14 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<!--<PropertyGroup>
-		<LangVersion>preview</LangVersion>
-		<EnablePreviewFeatures>true</EnablePreviewFeatures>
-		<GenerateRequiresPreviewFeaturesAttribute>true</GenerateRequiresPreviewFeaturesAttribute>
-		<Nullable>enable</Nullable>
-		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>-->
 	<PropertyGroup>
 		<UseWPF>true</UseWPF>
-		<Configurations>Debug;Release;Release Infra</Configurations>
+		<Configurations>Debug;Release</Configurations>
 		<RootNamespace>Library.Wpf</RootNamespace>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 		<Product>Library</Product>
@@ -30,9 +23,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft-Windows10-APICodePack-Core" Version="1.1.5" />
-		<PackageReference Include="Microsoft-WindowsAPICodePack-ExtendedLinguisticServices" Version="1.1.4" />
-		<PackageReference Include="Microsoft-WindowsAPICodePack-Shell" Version="1.1.4" />
-		<PackageReference Include="Microsoft-WindowsAPICodePack-ShellExtensions" Version="1.1.4" />
 		<PackageReference Include="Microsoft.DependencyValidation.Analyzers" Version="0.11.0" />
 		<PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.2" />
 	</ItemGroup>

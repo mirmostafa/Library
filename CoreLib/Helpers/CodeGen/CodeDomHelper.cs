@@ -628,7 +628,7 @@ public static class CodeDomHelper
     /// <returns></returns>
     public static string GenerateCode(this CodeCompileUnit unit, params string[] directives)
     {
-        var options = new CodeGeneratorOptions { BracingStyle = "C", BlankLinesBetweenMembers = true, VerbatimOrder = true, };
+        var options = new CodeGeneratorOptions { BracingStyle = "C", BlankLinesBetweenMembers = true, VerbatimOrder = true, ElseOnClosing = false, IndentString = "    " };
         using var result = new StringWriter();
         using var provider = new CSharpCodeProvider();
         foreach (var directive in directives)
