@@ -2,6 +2,7 @@
 using Library.Interfaces;
 using Library.Types;
 using Library.Validations;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Library.Helpers;
 public static class ServiceHelper
@@ -17,11 +18,12 @@ public static class ServiceHelper
             : await service.InsertAsync(model, persist);
     }
 
-    public static async Task<TViewModel> SubmitChangesAsync<TViewModel>(this IAsyncWriteService<TViewModel, Guid> service, TViewModel? model, bool persist = true)
+    public static async Task<TViewModel> SumbitChangesAsync<TViewModel>(this IAsyncWriteService<TViewModel, Guid> service, TViewModel model, bool persist = true)
         where TViewModel : ICanSetKey<Guid>
     {
         Check.IfArgumentNotNull(service);
         Check.IfArgumentNotNull(model);
+
         return !model.Id.IsNullOrEmpty()
             ? await service.UpdateAsync(model.Id, model, persist)
             : await service.InsertAsync(model, persist);
@@ -32,18 +34,25 @@ public static class ServiceHelper
     {
         Check.IfArgumentNotNull(service);
         Check.IfArgumentNotNull(model);
-        var result = !model.Id.IsNullOrEmpty()
+
+        return !model.Id.IsNullOrEmpty()
             ? await service.UpdateAsync(model.Id, model, persist)
             : await service.InsertAsync(model, persist);
-        return result;
     }
 
-    public static async Task<int> SaveChangesAsync<TService>(this TService service, bool persist)
+    public static async Task<int> CommitChangesAsync<TService>(this TService service, bool persist = true, IDbContextTransaction? transaction = null)
         where TService : IAsyncSaveService, IResetChanges
     {
+        Check.IfArgumentNotNull(service);
+
         int result;
         if (persist)
         {
+            if (transaction is not null)
+            {
+                await transaction.CommitAsync();
+            }
+
             result = await service.SaveChangesAsync();
             service.ResetChanges();
         }
