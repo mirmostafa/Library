@@ -141,7 +141,8 @@ public static class StringHelper
         array.Any(s => str1.EqualsTo(s));
 
     [Pure]
-    public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';') => keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
+    public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';') => 
+        keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
 
     [Pure]
     public static string? GetLongest(this string[] strings) => strings?.Max();
