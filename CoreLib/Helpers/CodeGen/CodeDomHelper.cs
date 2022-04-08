@@ -272,7 +272,8 @@ public static class CodeDomHelper
         };
         if (propertyInfo.Comment is not null)
         {
-            _ = prop.Comments.Add(new CodeCommentStatement(propertyInfo.Comment));
+            //_ = prop.Comments.Add(new CodeCommentStatement(propertyInfo.Comment));
+            prop.AddSummary(propertyInfo.Comment);
         }
         _ = c.Members.Add(prop);
         return c;
