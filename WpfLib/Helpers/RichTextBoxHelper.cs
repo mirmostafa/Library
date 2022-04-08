@@ -74,7 +74,8 @@ public static class RichTextBoxHelper
         var keyWordRules = new (string[] Keys, Brush Brush)[]
         {
             (new[] { "using", "short", "int", "get", "set", "string", "public", "sealed", "partial", "class", "namespace", "async", "throw", "new", "this" }, Brushes.Blue),
-            (new[] { "Guid", "Int16","Int32", "Int64", "String", "DateTime","IEnumerable", "Task" }, Brushes.Green),
+            (new[] { "Guid", "Byte", "Int16","Int32", "Int64", "Single", "String", "DateTime","IEnumerable", "Task" }, Brushes.DarkGreen),
+            (new[]{"ICommandProcessor", "IEnumerable", "IQueryProcessor"}, Brushes.Green)
         };
         var genericRegExes = new[]
         {
