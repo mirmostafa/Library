@@ -19,7 +19,7 @@ public static class TypeMemberNameHelper
             ? $"{classFullData.Name}<{genericParamsFullData.Select(gpf => gpf.IsNullable ? $"{gpf.Name}?" : gpf.Name).Merge(", ")}"
             : classFullData.Name;
 #warning موقت
-        if (result.Count(c => c == '<') > 1)
+        if (result.Count(c => c == '<') > 0)
         {
             result = $"{result}>";
         }
