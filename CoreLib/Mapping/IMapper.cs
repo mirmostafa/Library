@@ -10,7 +10,7 @@ public interface IMapper
     IEnumerable<TDestination?> Map<TSource, TDestination>(IEnumerable<TSource> sources, Action<TSource, TDestination> finalize) where TDestination : class, new();
     TDestination? Map<TSource, TDestination>(in TSource source, in TDestination destination) where TDestination : class?;
     ////TDestination MapExcept<TDestination>(in object source, in Func<TDestination, object> except) where TDestination : class, new();
-    TDestination? MapExcept<TSource, TDestination>(in TSource source, in Func<TDestination, object> except) where TDestination : class, new();
+    TDestination MapExcept<TSource, TDestination>(in TSource source, in Func<TDestination, object> except) where TDestination : class, new();
     TDestination? MapExcept<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> except) where TDestination : class;
     TDestination? MapOnly<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> onlyProps) where TDestination : class;
 }

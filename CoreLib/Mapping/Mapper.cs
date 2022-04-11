@@ -54,7 +54,7 @@ public sealed class Mapper : IMapper
         return result;
     }
 
-    public TDestination? MapExcept<TSource, TDestination>(in TSource source, in Func<TDestination, object> except)
+    public TDestination MapExcept<TSource, TDestination>(in TSource source, in Func<TDestination, object> except)
         where TDestination : class, new()
     {
         Check.IfArgumentNotNull(source);
