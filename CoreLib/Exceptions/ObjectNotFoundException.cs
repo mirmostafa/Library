@@ -4,7 +4,7 @@ namespace Library.Exceptions;
 public class ObjectNotFoundException : LibraryExceptionBase
 {
     public ObjectNotFoundException()
-        : this("Object not found")
+        : this("Object not found.")
     {
     }
 
