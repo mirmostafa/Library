@@ -32,7 +32,7 @@ public abstract class LibApp : Application
 
     public static string? ApplicationTitle => ApplicationHelper.ApplicationTitle ?? Current?.MainWindow?.Title;
 
-    public static FastLogger AppLogger => Current.As<LibApp>()!.Logger;
+    public static FastLogger AppLogger => Current.To<LibApp>().Logger;
 
     public FastLogger Logger { get; private set; }
 

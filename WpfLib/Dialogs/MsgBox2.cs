@@ -18,8 +18,8 @@ public sealed class MsgBox2 : InternalMessageBox2
     /// </param>
     /// <param name="maximum"></param>
     /// <param name="caption"></param>
-    /// <param name="instructionText"></param>
-    /// <param name="initializingText"></param>
+    /// <param name="instruction"></param>
+    /// <param name="text"></param>
     /// <param name="detailsExpandedText"></param>
     /// <param name="isCancallable"></param>
     /// <param name="supportsBackgroundWorking"></param>
@@ -34,8 +34,8 @@ public sealed class MsgBox2 : InternalMessageBox2
     public static TaskDialog GetTaskDialog(Action<TaskDialog, Func<bool>, Func<bool>> action!!,
         int maximum = 100,
         string? caption = null,
-        string? instructionText = null,
-        string? initializingText = null,
+        string? instruction = null,
+        string? text = null,
         string? detailsExpandedText = null,
         bool isCancallable = false,
         bool supportsBackgroundWorking = false,
@@ -69,7 +69,7 @@ public sealed class MsgBox2 : InternalMessageBox2
 
         if (isCancallable)
         {
-            cancellationRequestedTaskDialogButton = new TaskDialogButton("cancellationRequested", cancelButtonText);
+            cancellationRequestedTaskDialogButton = new TaskDialogButton("cancellationRequested", cancelButtonText) { Enabled = true };
             cancellationRequestedTaskDialogButton.Click += (s, __) =>
             {
                 isCancellationRequested = true;
@@ -86,15 +86,15 @@ public sealed class MsgBox2 : InternalMessageBox2
             controls.Add(cancellationRequestedTaskDialogButton);
         }
 
-        if (showOkButton || (!isCancallable && !supportsBackgroundWorking))
+        if (showOkButton && isCancallable && supportsBackgroundWorking)
         {
             okButton = new TaskDialogButton("fakeButton", "OK");
             okButton.Click += (s, __) => s.As<TaskDialogButton>()!.HostingDialog.As<TaskDialog>()!.Close(TaskDialogResult.Ok);
             controls.Add(okButton);
         }
 
-        return GetTaskDialog(instructionText,
-            initializingText,
+        return GetTaskDialog(instruction,
+            text,
             caption ?? ApplicationHelper.ApplicationTitle,
             progressbarMaxValue: maximum,
             controls: controls.ToArray(),
@@ -157,7 +157,7 @@ public sealed class MsgBox2 : InternalMessageBox2
             });
     }
 
-    public static TaskDialog GetTaskDialog(string? instructionText = null,
+    public static TaskDialog GetTaskDialog(string? instruction = null,
         string? text = null,
         string? caption = null,
         TaskDialogStandardIcon icon = TaskDialogStandardIcon.None,
@@ -204,7 +204,7 @@ public sealed class MsgBox2 : InternalMessageBox2
             hWnd = window.GetHandle();
         }
 
-        return GetTaskDialog(instructionText,
+        return GetTaskDialog(instruction,
             text,
             caption,
             icon,
@@ -811,8 +811,8 @@ public sealed class MsgBox2 : InternalMessageBox2
     /// </param>
     /// <param name="maximum"></param>
     /// <param name="caption"></param>
-    /// <param name="instructionText"></param>
-    /// <param name="initializingText"></param>
+    /// <param name="instruction"></param>
+    /// <param name="text"></param>
     /// <param name="detailsExpandedText"></param>
     /// <param name="isCancallable"></param>
     /// <param name="supportsBackgroundWorking"></param>
@@ -824,28 +824,28 @@ public sealed class MsgBox2 : InternalMessageBox2
     /// <param name="runInTask"></param>
     /// <param name="showOkButton"></param>
     /// <param name="enableOkButtonOnDone"></param>
-    public static TaskDialogResult ShowProgress(Action<TaskDialog, Func<bool>, Func<bool>> action,
-        int maximum = 100,
-        string? caption = null,
-        string? instructionText = null,
-        string? initializingText = null,
-        string? detailsExpandedText = null,
-        bool isCancallable = false,
-        bool supportsBackgroundWorking = false,
-        TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
-        string? footerText = null,
-        string? cancelButtonText = "Cancel",
-        string? backgroundButtonText = "Background",
-        string? cancellingPromptText = "Cancelling...",
-        bool runInTask = false,
-        bool showOkButton = false,
-        bool enableOkButtonOnDone = true)
+    public static TaskDialogResult ShowProgress(in Action<TaskDialog, Func<bool>, Func<bool>> action,
+        in int maximum = 100,
+        in string? caption = null,
+        in string? instruction = null,
+        in string? text = null,
+        in string? detailsExpandedText = null,
+        in bool isCancallable = false,
+        in bool supportsBackgroundWorking = false,
+        in TaskDialogStandardIcon footerIcon = TaskDialogStandardIcon.None,
+        in string? footerText = null,
+        in string? cancelButtonText = "Cancel",
+        in string? backgroundButtonText = "Background",
+        in string? cancellingPromptText = "Cancelling...",
+        in bool runInTask = false,
+        in bool showOkButton = false,
+        in bool enableOkButtonOnDone = true)
     {
         using var dlg = GetTaskDialog(action,
                 maximum,
                 caption,
-                instructionText,
-                initializingText,
+                instruction,
+                text,
                 detailsExpandedText,
                 isCancallable,
                 supportsBackgroundWorking,
@@ -1046,6 +1046,39 @@ public sealed class MsgBox2 : InternalMessageBox2
             showOkButton,
             enableOkButtonOnDone);
     }
+    public static TaskDialogResult ShowProgress(
+        IEnumerable<(Func<Task> Operation, string Description)> operations,
+        in string caption,
+        in string instruction,
+        in string footerText,
+        bool isCancallable = false,
+        bool runInTask = false,
+        Action? onEachIterating = null)
+        => ShowProgress(async (dlg, isCancelled, _) =>
+           {
+               dlg.ProgressBar.State = TaskDialogProgressBarState.Marquee;
+               for (var index = 0; index < operations.Count(); index++)
+               {
+                   if (isCancelled())
+                   {
+                       break;
+                   }
+                   var (operation, description) = operations.ElementAt(index);
+                   dlg.ProgressBar.Value = index + 1;
+                   dlg.Text = description;
+                   onEachIterating?.Invoke();
+                   await operation().WaitAsync(TimeSpan.FromSeconds(60));
+               }
+               dlg.Close();
+           },
+           caption: caption,
+           instruction: instruction,
+           footerText: footerText,
+           footerIcon: TaskDialogStandardIcon.Information,
+           showOkButton: false,
+           isCancallable: isCancallable,
+           maximum: operations.Count(),
+           runInTask: runInTask);
 
     public static IEnumerable<TaskDialogControl> ToButtons(params ButtonInfo[] buttons)
     {
