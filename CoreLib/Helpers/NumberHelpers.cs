@@ -2,6 +2,7 @@
 using Library.Globalization;
 
 namespace Library.Helpers;
+
 public static class NumberHelper
 {
     public static int Add(in int x, in int y) => x + y;

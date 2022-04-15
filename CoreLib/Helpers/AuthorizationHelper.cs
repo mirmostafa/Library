@@ -1,8 +1,7 @@
 ﻿using Library.Security.Claims;
-using Library.Security.Authorization;
+using Library.Security.Identity.Authorization;
 using Library.Validations;
 using Microsoft.AspNetCore.Authorization;
-using Library.Security.Identity.Authorization;
 
 namespace Library.Helpers;
 

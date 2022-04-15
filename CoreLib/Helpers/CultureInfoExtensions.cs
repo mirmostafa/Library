@@ -13,10 +13,12 @@ public static class CultureInfoExtensions
         /// A work day.
         /// </summary>
         Workday,
+
         /// <summary>
         /// A weekend.
         /// </summary>
         Weekend,
+
         /// <summary>
         /// Morning is a workday, afternoon is the start of the weekend.
         /// </summary>
@@ -50,7 +52,7 @@ public static class CultureInfoExtensions
 
     /// <summary>
     /// Return if the passed in day of the week is a weekend.
-    /// 
+    ///
     /// note: state pulled from http://en.wikipedia.org/wiki/Workweek_and_weekend
     /// </summary>
     /// <param name="ci">The CultureInfo this object.</param>

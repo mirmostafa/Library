@@ -3,6 +3,7 @@ using System.Xml.Serialization;
 using Library.Results;
 
 namespace Library.Helpers;
+
 public static class ResultHelper
 {
     public static Result<Stream> ToFile(this Result<Stream> result, string filePath!!, FileMode fileMode = FileMode.Create)

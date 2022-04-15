@@ -504,8 +504,10 @@ public static class ObjectHelper
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid? guid)
         => guid is null || guid == Guid.Empty;
+
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid guid)
         => guid == Guid.Empty;
+
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
         => id == Guid.Empty;
 }

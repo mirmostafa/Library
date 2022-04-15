@@ -7,6 +7,7 @@ using Library.Results;
 using Library.Validations;
 
 namespace Library.Helpers;
+
 //{
 /// <summary>
 ///     A utility to do some common tasks about strings
@@ -141,7 +142,7 @@ public static class StringHelper
         array.Any(s => str1.EqualsTo(s));
 
     [Pure]
-    public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';') => 
+    public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';') =>
         keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
 
     [Pure]
@@ -394,6 +395,7 @@ public static class StringHelper
                 ? str.Slice(0, str.Length - oldValue.Length)
                 : str;
     }
+
     public static string RemoveFromStart(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
     {
         _ = str.ArgumentNotNull(nameof(str));
@@ -602,6 +604,7 @@ public static class StringHelper
         var slice = length is { } l ? span.Slice(start, l) : span[start..];
         return new(slice);
     }
+
     public static bool IsValidIranianNationalCode(string input)
     {
         if (!Regex.IsMatch(input, @"^\d{10}$"))

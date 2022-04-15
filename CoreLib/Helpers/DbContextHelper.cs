@@ -7,21 +7,25 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Library.Helpers;
+
 public static class DbContextHelper
 {
     public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long> =>
         dbContext.SetStateOf(entity, EntityState.Detached);
+
     public static TDbContext DetachGuid<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<Guid> =>
         dbContext.SetStateGuidOf(entity, EntityState.Detached);
+
     public static TDbContext Detach<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull =>
         SetStateOf<TDbContext, TEntity, TId>(dbContext, entity, EntityState.Detached);
+
     public static TEntity Detach<TDbContext, TEntity>([DisallowNull] this TEntity entity, [DisallowNull] in TDbContext dbContext)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
@@ -55,6 +59,7 @@ public static class DbContextHelper
         }
         return dbContext;
     }
+
     public static TDbContext SetStateGuidOf<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity, [DisallowNull] in EntityState state)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<Guid>
@@ -68,6 +73,7 @@ public static class DbContextHelper
         }
         return dbContext;
     }
+
     public static TDbContext SetStateOf<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity, [DisallowNull] in EntityState state)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<TId>
@@ -107,6 +113,7 @@ public static class DbContextHelper
         var entry = dbContext.Entry(ntt);
         return entry;
     }
+
     public static EntityEntry<TEntity>? GetLocalGuidEntry<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<Guid>
@@ -121,6 +128,7 @@ public static class DbContextHelper
         var entry = dbContext.Entry(ntt);
         return entry;
     }
+
     public static EntityEntry<TEntity>? GetLocalEntry<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<TId>
@@ -136,6 +144,7 @@ public static class DbContextHelper
         var entry = dbContext.Entry(ntt);
         return entry;
     }
+
     public static EntityEntry<TEntity>? GetEntry<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
@@ -167,6 +176,7 @@ public static class DbContextHelper
         }
         return dbContext;
     }
+
     public static DbContext RemoveById<TEntity, TId>([DisallowNull] DbContext dbContext, IEnumerable<TId> ids, bool detach = false)
         where TEntity : class, IIdenticalEntity<TId>, new()
         where TId : notnull
@@ -183,13 +193,16 @@ public static class DbContextHelper
         dbContext.Set<TEntity>().RemoveRange(entities);
         return dbContext;
     }
+
     public static DbContext RemoveById<TEntity>([DisallowNull] this DbContext dbContext, long id, bool detach = false)
         where TEntity : class, IIdenticalEntity<long>, new() =>
         RemoveById<TEntity>(dbContext, new[] { id }, detach);
+
     public static DbContext RemoveById<TDbContext, TEntity, TId>([DisallowNull] DbContext dbContext, TId id, bool detach = false)
         where TEntity : class, IIdenticalEntity<TId>, new()
         where TId : notnull =>
         RemoveById<TEntity, TId>(dbContext, new[] { id }, detach);
+
     public static async Task<TDbContext> RemoveByEntityAsync<TDbContext, TEntity>([DisallowNull] TDbContext dbContext, [DisallowNull] Action<TEntity> setEntityId, bool persist = true, bool detach = false)
         where TDbContext : DbContext
         where TEntity : class, new()
@@ -211,6 +224,7 @@ public static class DbContextHelper
 
     public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         => await entityEntry?.Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)!;
+
     public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, CancellationToken cancellationToken = default)
         => await entityEntry?.Context.SaveChangesAsync(cancellationToken)!;
 
@@ -238,6 +252,7 @@ public static class DbContextHelper
         Func<Task<int>>? saveChanges = null)
         where TEntity : class, IIdenticalEntity<long> =>
         await InnerManipulate<TModel, TEntity, long>(dbContext, model, dbContext.Add, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges);
+
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> InsertAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
         [NotNull] TModel model,
@@ -260,6 +275,7 @@ public static class DbContextHelper
         Func<Task<int>>? saveChanges = null)
         where TEntity : class, IIdenticalEntity<long> =>
         await InnerManipulate<TModel, TEntity, long>(dbContext, model, dbContext.Attach, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges);
+
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> UpdateAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
         [NotNull] TModel model,
@@ -333,6 +349,7 @@ public static class DbContextHelper
 
         return new(entry, entity, default);
     }
+
     public static (TDbContext DbContext, EntityEntry<TEntity> Entry) ReAttach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
     where TDbContext : notnull, DbContext
     where TEntity : class, IIdenticalEntity<long> =>
