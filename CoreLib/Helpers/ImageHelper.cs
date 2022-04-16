@@ -1,5 +1,4 @@
-﻿
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
@@ -114,7 +113,6 @@ public static class ImageHelper
                 target.Save(memoryStream, ImageFormat.Jpeg);
                 thumbValue = memoryStream.ToArray();
             }
-
         }
         return thumbValue;
     }
@@ -194,10 +192,8 @@ public static class ImageHelper
         }
         catch (Exception)
         {
-
             var dimension = new FrameDimension(image.FrameDimensionsList[0]);
             frameCount = image.GetFrameCount(dimension);
-
         }
         if (frameCount > 1)
         {
@@ -214,7 +210,7 @@ public static class ImageHelper
             var myEncoderParameters = new EncoderParameters(1);
             var jpgEncoder = GetEncoder(ImageFormat.Jpeg);
 
-            // Create an Encoder object based on the GUID 
+            // Create an Encoder object based on the GUID
             // for the Quality parameter category.
             var myEncoder = System.Drawing.Imaging.Encoder.Quality;
             var myEncoderParameter = new EncoderParameter(myEncoder, quality.Value);
@@ -233,7 +229,6 @@ public static class ImageHelper
 
         var array = ms.ToArray();
         return array;
-
     }
 
     public static ImageCodecInfo? GetEncoder(ImageFormat format)
@@ -311,13 +306,13 @@ public static class ImageUtilities
         return result;
     }
 
-    /// <summary> 
-    /// Saves an image as a jpeg image, with the given quality 
-    /// </summary> 
+    /// <summary>
+    /// Saves an image as a jpeg image, with the given quality
+    /// </summary>
     /// <param name="path">Path to which the image would be saved.</param>
     /// <param name="image"></param>
-    /// <param name="quality">An integer from 0 to 100, with 100 being the 
-    /// highest quality</param> 
+    /// <param name="quality">An integer from 0 to 100, with 100 being the
+    /// highest quality</param>
     /// <exception cref="ArgumentOutOfRangeException">
     /// An invalid value was entered for image quality.
     /// </exception>
@@ -345,9 +340,9 @@ public static class ImageUtilities
         image.Save(path, jpegCodec, encoderParams);
     }
 
-    /// <summary> 
-    /// Returns the image codec with the given mime type 
-    /// </summary> 
+    /// <summary>
+    /// Returns the image codec with the given mime type
+    /// </summary>
     public static ImageCodecInfo? GetEncoderInfo(string mimeType)
     {
         //do a case insensitive search for the mime type

@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using Library.Collections;
@@ -6,6 +7,7 @@ using Library.Results;
 using Library.Validations;
 
 namespace Library.Helpers;
+
 public static class EnumerableHelper
 {
     public static IList<KeyValuePair<TKey, TValue>>? Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
@@ -47,6 +49,7 @@ public static class EnumerableHelper
         }
         return list;
     }
+
     public static ICollection<T> AddRange<T>([DisallowNull] this ICollection<T> list, in IEnumerable<T> items)
     {
         Check.IfArgumentNotNull(list);
@@ -59,6 +62,7 @@ public static class EnumerableHelper
         }
         return list;
     }
+
     public static void AddRange<TFluentList, TItem>([DisallowNull] this IFluentList<TFluentList, TItem> list, IEnumerable<TItem>? items)
         where TFluentList : IFluentList<TFluentList, TItem>
     {
@@ -70,6 +74,18 @@ public static class EnumerableHelper
                 _ = list.Add(item);
             }
         }
+    }
+
+    public static async Task<ICollection<TItem>> AddRangeAsync<TItem>([DisallowNull] this ICollection<TItem> list, [DisallowNull] IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(list);
+        Check.IfArgumentNotNull(asyncItems);
+
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            list.Add(item);
+        }
+        return list;
     }
 
     public static IEnumerable<T> AddRangeImmuted<T>(this IEnumerable<T>? source, IEnumerable<T>? items)
@@ -116,6 +132,11 @@ public static class EnumerableHelper
         return false;
     }
 
+    public static IEnumerable<T> AsEnumerableItem<T>(T item)
+    {
+        yield return item;
+    }
+
     public static IReadOnlyList<T> Build<T>([DisallowNull] this IEnumerable<T> items)
     {
         Check.IfArgumentNotNull(items);
@@ -127,13 +148,6 @@ public static class EnumerableHelper
         }
         return result.AsReadOnly();
     }
-
-    public static IEnumerable<T> AsEnumerableItem<T>(T item)
-    {
-        yield return item;
-    }
-
-    public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items) => new List<T>(items).AsReadOnly();
 
     /// <summary>
     ///     Builds a tree.
@@ -199,6 +213,11 @@ public static class EnumerableHelper
         }
     }
 
+    [Obsolete("Use .Net 6.0 Chunk, instead.")]
+    public static IEnumerable<IEnumerable<T>> ChunkBy<T>([DisallowNull] this IEnumerable<T> source, int chunkSize) => source.Select((x, i) => new { Index = i, Value = x })
+                        .GroupBy(x => x.Index / chunkSize)
+                        .Select(x => x.Select(v => v.Value));
+
     public static T ClearAndAdd<T>([DisallowNull] this T collection, in object? item)
         where T : notnull, IList
     {
@@ -220,25 +239,31 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
-        where TSource : class
-    {
-        return items is null
+        where TSource : class => items is null
             ? Enumerable.Empty<TSource>()
             : items.Where(x => x is not null).Select(x => x!);
+
+    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key) => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
+
+    public static int CountNotEnumerated<T>(this IEnumerable<T> source)
+    {
+        (var succeed, var count) = TryCountNotEnumerated(source);
+        return succeed ? count : throw new Exceptions.Validations.InvalidOperationValidationException();
     }
+
+    [return: NotNull]
+    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items) => items is null ? Enumerable.Empty<T>() : items;
+
+    /// <summary>
+    ///     Creates an empty array.
+    /// </summary>
+    /// <typeparam name="T"> </typeparam>
+    /// <returns> </returns>
+    public static T[] EmptyArray<T>() => Array.Empty<T>();
+
+    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude) => source.Where(x => !exclude(x));
 
     public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items) => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
-
-    public static IEnumerable<TResult> ForEachItem<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
-    {
-        Check.IfArgumentNotNull(items);
-        Check.IfArgumentNotNull(action);
-
-        foreach (var item in items)
-        {
-            yield return action(item);
-        }
-    }
 
     public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
@@ -252,6 +277,25 @@ public static class EnumerableHelper
         }
     }
 
+    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(asyncItems);
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            yield return action(item);
+        }
+    }
+
+    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(asyncItems);
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            action(item);
+            yield return item;
+        }
+    }
+
     public static IReadOnlyList<T> ForEachEager<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
         Check.IfArgumentNotNull(items);
@@ -260,6 +304,17 @@ public static class EnumerableHelper
             action?.Invoke(item);
         }
         return items.Build();
+    }
+
+    public static IEnumerable<TResult> ForEachItem<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
+    {
+        Check.IfArgumentNotNull(items);
+        Check.IfArgumentNotNull(action);
+
+        foreach (var item in items)
+        {
+            yield return action(item);
+        }
     }
 
     public static void ForEachTreeNode<T>(T root, Func<T, IEnumerable<T>>? getChildren, Action<T>? rootAction, Action<T, T>? childAction)
@@ -308,6 +363,8 @@ public static class EnumerableHelper
         }
     }
 
+    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key) => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
+
     public static KeyValuePair<TKey, TValue> GetItemByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, in TKey key)
     {
         foreach (var item in source.ArgumentNotNull(nameof(source)))
@@ -320,12 +377,12 @@ public static class EnumerableHelper
         throw new KeyNotFoundException(nameof(key));
     }
 
-    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key) => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
-
-    [return: NotNull]
-    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items) => items is null ? Enumerable.Empty<T>() : items;
-
-    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key) => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
+    public static TryMethodResult<TResult?> GetValue<TResult>([DisallowNull] this HashSet<TResult> resultSet, TResult equalValue)
+        where TResult : new()
+    {
+        var tryResult = resultSet.TryGetValue(equalValue, out var actualValue);
+        return new(tryResult, actualValue);
+    }
 
     public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items) => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
 
@@ -344,6 +401,18 @@ public static class EnumerableHelper
     }
 
     public static string MergeToString<T>(this IEnumerable<T> source) => source.Aggregate(new StringBuilder(), (current, item) => current.Append(item)).ToString();
+
+    public static async IAsyncEnumerable<int> RangeAsync(int start, int count)
+    {
+        await Task.Yield();
+        foreach (var num in Enumerable.Range(start, count))
+        {
+            for (var i = 0; i < count; i++)
+            {
+                yield return start + i;
+            }
+        }
+    }
 
     public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
     {
@@ -371,6 +440,38 @@ public static class EnumerableHelper
     public static IEnumerable<TSource> RemoveNulls<TSource>(this IEnumerable<TSource> source)
         where TSource : class => RemoveDefaults(source);
 
+    public static void RunAllWhile(this IEnumerable<Action> actions, Func<bool> predicate)
+    {
+        foreach (var action in actions)
+        {
+            if (!predicate())
+            {
+                break;
+            }
+
+            action();
+        }
+    }
+
+    public static IEnumerable<T> SelectAll<T>(this IEnumerable<IEnumerable<T>> values)
+    {
+        foreach (var value in values)
+        {
+            foreach (var item in value)
+            {
+                yield return item;
+            }
+        }
+    }
+
+    public static async IAsyncEnumerable<TResult> SelectAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> selectorAsync)
+    {
+        foreach (var item in source)
+        {
+            yield return await selectorAsync(item);
+        }
+    }
+
     public static IList<KeyValuePair<TKey, TValue>> SetByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
     {
         Check.IfArgumentNotNull(list);
@@ -378,6 +479,7 @@ public static class EnumerableHelper
         list.Add(new(key, value));
         return list;
     }
+
     public static Dictionary<TKey, TValue> SetByKey<TKey, TValue>([DisallowNull] this Dictionary<TKey, TValue> dic, TKey key, TValue value)
         where TKey : notnull
     {
@@ -398,33 +500,15 @@ public static class EnumerableHelper
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
         where TKey : notnull => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
     {
-        Check.IfArgumentNotNull(asyncItems);
-        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        if (source is not null)
         {
-            yield return action(item);
+            foreach (var item in source)
+            {
+                yield return item;
+            }
         }
-    }
-    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        Check.IfArgumentNotNull(asyncItems);
-        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
-        {
-            action(item);
-            yield return item;
-        }
-    }
-
-    public static async Task<List<TItem>> ToListAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
-    {
-        Check.IfArgumentNotNull(asyncItems);
-        var result = New<List<TItem>>();
-        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
-        {
-            result.Add(item);
-        }
-        return result;
     }
 
     public static async Task<IEnumerable<TItem>> ToEnumerableAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
@@ -438,119 +522,37 @@ public static class EnumerableHelper
         return result;
     }
 
-    [return: NotNull]
-    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default)
+    public static async Task<List<TItem>> ToListAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
-        return asyncItems is null
-            ? await ToListAsync(EmptyAsyncEnumerable<TItem>.Empty, cancellationToken: cancellationToken)
-            : await WhereAsync(asyncItems, x => x is not null, cancellationToken).ToListAsync(cancellationToken: cancellationToken);
-    }
-
-    public static async Task<ICollection<TItem>> AddRangeAsync<TItem>([DisallowNull] this ICollection<TItem> list, [DisallowNull] IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
-    {
-        Check.IfArgumentNotNull(list);
         Check.IfArgumentNotNull(asyncItems);
-
+        var result = New<List<TItem>>();
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
-            list.Add(item);
+            result.Add(item);
         }
-        return list;
+        return result;
     }
 
-    /// <summary>
-    ///     Creates an empty array.
-    /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <returns> </returns>
-    public static T[] EmptyArray<T>() => Array.Empty<T>();
+    [return: NotNull]
+    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default) => asyncItems is null
+            ? await ToListAsync(EmptyAsyncEnumerable<TItem>.Empty, cancellationToken: cancellationToken)
+            : await WhereAsync(asyncItems, x => x is not null, cancellationToken).ToListAsync(cancellationToken: cancellationToken);
 
-    public static void RunAllWhile(this IEnumerable<Action> actions, Func<bool> predicate)
-    {
-        foreach (var action in actions)
-        {
-            if (!predicate())
-            {
-                break;
-            }
+    public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source) => new(source);
 
-            action();
-        }
-    }
+    public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items)
+        => new List<T>(items).AsReadOnly();
 
-    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude) => source.Where(x => !exclude(x));
-
-    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
-    {
-        if (source is not null)
-        {
-            foreach (var item in source)
-            {
-                yield return item;
-            }
-        }
-    }
-
-    [Obsolete("Use .Net 6.0 Chunk, instead.")]
-    public static IEnumerable<IEnumerable<T>> ChunkBy<T>([DisallowNull] this IEnumerable<T> source, int chunkSize)
-    {
-        return source.Select((x, i) => new { Index = i, Value = x })
-                        .GroupBy(x => x.Index / chunkSize)
-                        .Select(x => x.Select(v => v.Value));
-    }
+    public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items)
+        => ImmutableList.CreateRange(items).ToHashSet();
 
     public static TryMethodResult<int> TryCountNotEnumerated<T>([DisallowNull] this IEnumerable<T> source) => new(source.TryGetNonEnumeratedCount(out var count), count);
-
-    public static int CountNotEnumerated<T>(this IEnumerable<T> source)
-    {
-        (var succeed, int count) = TryCountNotEnumerated(source);
-        return succeed ? count : throw new Exceptions.Validations.InvalidOperationValidationException();
-    }
-
-    public static TryMethodResult<TResult?> GetValue<TResult>([DisallowNull] this HashSet<TResult> resultSet, TResult equalValue)
-        where TResult : new()
-    {
-        var tryResult = resultSet.TryGetValue(equalValue, out var actualValue);
-        return new(tryResult, actualValue);
-    }
-
-    public static async IAsyncEnumerable<TResult> SelectAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> selectorAsync)
-    {
-        foreach (var item in source)
-        {
-            yield return await selectorAsync(item);
-        }
-    }
 
     public static async IAsyncEnumerable<TItem> WhereAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, bool>? func, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             if (func is not null && func(item))
-            {
-                yield return item;
-            }
-        }
-    }
-    public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source) => new(source);
-
-    public static async IAsyncEnumerable<int> RangeAsync(int start, int count)
-    {
-        await Task.Yield();
-        foreach (var num in Enumerable.Range(start, count))
-        {
-            for (var i = 0; i < count; i++)
-            {
-                yield return start + i;
-            }
-        }
-    }
-
-    public static IEnumerable<T> SelectAll<T>(this IEnumerable<IEnumerable<T>> values)
-    {
-        foreach (var value in values)
-        {
-            foreach (var item in value)
             {
                 yield return item;
             }

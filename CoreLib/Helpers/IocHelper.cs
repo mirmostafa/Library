@@ -9,6 +9,7 @@ public static class IocHelper
 {
     public static IServiceCollection AddServices<TService>(this IServiceCollection services, Func<IServiceCollection, Type, IServiceCollection>? install)
         => AddServicesByAssembly<TService>(services, install, Assembly.GetExecutingAssembly());
+
     public static IServiceCollection AddServices<TMarker, TService>(this IServiceCollection services, Func<IServiceCollection, Type, IServiceCollection>? install)
         => AddServicesByAssembly<TService>(services, install, typeof(TMarker).Assembly);
 

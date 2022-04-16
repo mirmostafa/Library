@@ -92,7 +92,7 @@ public interface IAsyncWriteService<TViewModel, TId> : IService
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    Task<bool> DeleteAsync(TViewModel viewModel, bool persist = true);
+    Task<bool> DeleteAsync(TViewModel model, bool persist = true);
 }
 
 /// <summary>

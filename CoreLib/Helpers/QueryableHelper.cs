@@ -5,6 +5,7 @@ using Library.Validations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.Helpers;
+
 public static class QueryableHelper
 {
     public static async Task<TResult?> FirstOrDefaultLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock)
@@ -41,6 +42,7 @@ public static class QueryableHelper
             yield return item;
         }
     }
+
     public static IEnumerable<T> ToEnumerable<T>(this IQueryable<T> query)
     {
         if (query is null)
@@ -53,5 +55,4 @@ public static class QueryableHelper
             yield return item;
         }
     }
-
 }

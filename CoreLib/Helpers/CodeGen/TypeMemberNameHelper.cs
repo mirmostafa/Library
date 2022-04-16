@@ -30,6 +30,7 @@ public static class TypeMemberNameHelper
         //result = result.Remove("?");
         return result!;
     }
+
     public static IEnumerable<string> GetNameSpaces(string fullName)
     {
         var (classFullData, genericParamsFullData) = GetFullData(fullName);
@@ -37,7 +38,6 @@ public static class TypeMemberNameHelper
             .AsEnumerableItem(classFullData.NameSpace)
             .AddRangeImmuted(genericParamsFullData.Select(gpf => gpf.NameSpace)).Compact();
         return result;
-
     }
 
     private static (MemberNameInfo ClassFullData, IEnumerable<MemberNameInfo> GenericParamsFullData) GetFullData(in string fullName)
@@ -118,6 +118,7 @@ public static class TypeMemberNameHelper
         }
         return result.IsValid ? memberName! : throw new ValidationException(result.ErrorContent!);
     }
+
     public static string FixVariableName(in string? memberName, bool checkNullability = true)
     {
         if (memberName is null)
@@ -128,6 +129,7 @@ public static class TypeMemberNameHelper
         var illegarChars = new[] { "$", "!", "#", "@", "%", "^", "&", "*", "(", ")", "-", "+", "/", "\\", " " };
         return result.ReplaceAll(illegarChars, "_");
     }
+
     public static string CombineWithDot(params string?[] parts)
     {
         var names = parts.Select(part => FixVariableName(part, false)).Compact();
@@ -144,6 +146,7 @@ public static class TypeMemberNameHelper
 
         return result ?? string.Empty;
     }
+
     public static string GetFullName(string? nameSpace, string? name)
         => CombineWithDot(nameSpace, name);
 }

@@ -2,6 +2,7 @@
 using Library.Logging;
 
 namespace Library.Helpers;
+
 public static class LoggingHelper
 {
     public static bool MeetsLevel(this LogLevel level, LogLevel minLevel)
@@ -19,6 +20,7 @@ public static class LoggingHelper
             MsLogLevel.None => LogLevel.None,
             _ => throw new NotImplementedException()
         };
+
     public static MsLogLevel ToMsLogLevel(this LogLevel logLevel)
         => logLevel switch
         {
@@ -31,6 +33,7 @@ public static class LoggingHelper
             LogLevel.Trace => MsLogLevel.Trace,
             _ => throw new NotImplementedException(),
         };
+
     public static string Reformat<TMessage>(this LogRecord<TMessage> logRecord, string? format = LogFormat.DEFAULT_FORMAT)
     {
         if (logRecord is null)

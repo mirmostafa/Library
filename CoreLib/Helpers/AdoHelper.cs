@@ -168,6 +168,7 @@ public static partial class AdoHelper
             connection.Close();
         }
     }
+
     public static async Task EnsureClosedAsync(this SqlConnection connection,
         Func<SqlConnection, Task> actionAsync,
         bool openConnection = false)

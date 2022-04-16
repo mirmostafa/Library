@@ -8,7 +8,8 @@ public static class UnitTestHelper
     public static void IsFamiliarException(this Assert assert, Exception exception)
         => Assert.IsInstanceOfType(exception, typeof(ExceptionBase));
 
-    public static void ItsOk(this Assert assert) { }
+    public static void ItsOk(this Assert assert)
+    { }
 
     public static EqualityAssertion Equal(this Assert assert, object actual)
         => new(actual);
@@ -46,6 +47,7 @@ public class EqualityAssertion
     private readonly object actual;
 
     public EqualityAssertion(object actual) => this.actual = actual;
+
     public void To(object expected)
         => Assert.AreEqual(expected, this.actual);
 }
