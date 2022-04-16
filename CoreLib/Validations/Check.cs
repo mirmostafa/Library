@@ -178,7 +178,7 @@ public static class CheckHelpers
 
     [StackTraceHidden]
     [return: NotNull]
-    public static T NotNull<T>([NotNull] this T @this, [DisallowNull] object obj, [CallerArgumentExpression("obj")] string argName = null) =>
+    public static T NotNull<T>([NotNull] this T @this, [NotNull] object obj, [CallerArgumentExpression("obj")] string argName = null) =>
         @this.NotValid(_ => obj is null, () => new NullValueValidationException(argName!))!;
 
     [StackTraceHidden]

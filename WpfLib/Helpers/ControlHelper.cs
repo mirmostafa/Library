@@ -43,8 +43,19 @@ public static class ControlHelper
         }
         return itemsControl;
     }
-
-    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath = null, int? selectedIndex = null)
+    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items)
+        where TSelector : Selector
+    {
+        BindItemsSourceInner(selector, items, null);
+        return selector;
+    }
+    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath)
+        where TSelector : Selector
+    {
+        BindItemsSourceInner(selector, items, displayMemebrPath);
+        return selector;
+    }
+    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath, int? selectedIndex)
         where TSelector : Selector
     {
         BindItemsSourceInner(selector, items, displayMemebrPath);
@@ -55,19 +66,14 @@ public static class ControlHelper
         }
         return selector;
     }
-
-    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath, object? selectedItem)
+    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath, object? selectedValue)
         where TSelector : Selector
     {
         BindItemsSourceInner(selector, items, displayMemebrPath);
 
-        if (selectedItem is not null)
+        if (selectedValue is not null)
         {
-            selector.SelectedValue = selectedItem;
-        }
-        else if (items.As<IEnumerator>()?.Current is { } current)
-        {
-            selector.SelectedValue = current;
+            selector.SelectedValue = selectedValue;
         }
         return selector;
     }
@@ -504,14 +510,11 @@ public static class ControlHelper
             element.Cursor = cursor;
         }
     }
-    public static FrameworkElement RunCodeBlock(this FrameworkElement element, [DisallowNull] Action action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true)
-    {
-        return RunCodeBlock(element, () =>
-        {
-            action();
-            return element;
-        }, logger, start, end, error, changeMousePointer);
-    }
+    public static FrameworkElement RunCodeBlock(this FrameworkElement element, [DisallowNull] Action action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true) => RunCodeBlock(element, () =>
+                                                                                                                                                                                                                                                         {
+                                                                                                                                                                                                                                                             action();
+                                                                                                                                                                                                                                                             return element;
+                                                                                                                                                                                                                                                         }, logger, start, end, error, changeMousePointer);
 
     public static async Task<TResult> RunCodeBlockAsync<TResult>(this FrameworkElement element, [DisallowNull] Func<Task<TResult>> action, [DisallowNull] ILogger logger, string? start, string? end = null, string? error = null, bool changeMousePointer = true) => await RunCodeBlock(element, action, logger, start, end, error, changeMousePointer);
 

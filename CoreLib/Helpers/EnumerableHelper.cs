@@ -541,7 +541,7 @@ public static class EnumerableHelper
     public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source) => new(source);
 
     public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items)
-                                                                                                                                                                            => new List<T>(items).AsReadOnly();
+        => new List<T>(items).AsReadOnly();
 
     public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items)
         => ImmutableList.CreateRange(items).ToHashSet();
