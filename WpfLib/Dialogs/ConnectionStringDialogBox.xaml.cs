@@ -21,7 +21,8 @@ public partial class ConnectionStringDialog
     public static (bool? IsOk, string? ConnectionString) ShowDlg(string? connectionString = null, Window? owner = null)
     {
         var dlg = new ConnectionStringDialog { ConnectionString = connectionString, Owner = owner };
-        return (dlg.ShowDialog(), dlg.ShowDialog() is true ? dlg.ConnectionString : connectionString);
+        var result = dlg.ShowDialog();
+        return (result, result is true ? dlg.ConnectionString : connectionString);
     }
 
     public string? ConnectionString

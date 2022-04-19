@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
+using System.Windows.Documents;
 using Library.CodeGeneration.Models;
 using Library.Wpf.Bases;
 
@@ -31,6 +32,12 @@ public partial class SourceCodeTextBox : UserControl
             {
                 _ = this.CodeStatementRichTextBox.InsertCSharpCodeToDocument(viewModel.Code);
             }
+            else
+            {
+                var para = new Paragraph();
+                para.Inlines.Add(new Run(viewModel.Code.Statement));
+                this.CodeStatementRichTextBox.Document.Blocks.Add(para);
+            }
         }
     }
 }
@@ -38,23 +45,17 @@ public sealed record SourceCodeTextBoxViewModel(Code Code) : IViewModel;
 
 public sealed class CodeToSourceCodeTextBoxViewModelConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value switch
     {
-        return value switch
-        {
-            Code code => new SourceCodeTextBoxViewModel(code),
-            SourceCodeTextBoxViewModel viewModel => viewModel,
-            _ => throw new NotSupportedException()
-        };
-    }
+        Code code => new SourceCodeTextBoxViewModel(code),
+        SourceCodeTextBoxViewModel viewModel => viewModel,
+        _ => throw new NotSupportedException()
+    };
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => value switch
     {
-        return value switch
-        {
-            SourceCodeTextBoxViewModel viewModel => viewModel.Code,
-            Code code => code,
-            _ => throw new NotSupportedException()
-        };
-    }
+        SourceCodeTextBoxViewModel viewModel => viewModel.Code,
+        Code code => code,
+        _ => throw new NotSupportedException()
+    };
 }
