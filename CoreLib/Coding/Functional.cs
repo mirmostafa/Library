@@ -10,7 +10,6 @@ namespace Library.Coding;
 /// <summary>
 /// C# statements in functional way. (nothing more)
 /// </summary>
-[Fluent]
 [DebuggerStepThrough]
 
 public static class Functional

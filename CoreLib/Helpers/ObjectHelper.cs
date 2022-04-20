@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
@@ -16,6 +17,7 @@ public static class ObjectHelper
     /// <typeparam name="T"> </typeparam>
     /// <param name="obj"> The object. </param>
     /// <returns> </returns>
+    [DebuggerStepThrough]
     public static T? As<T>(this object? obj)
         where T : class => obj as T;
 
@@ -213,6 +215,9 @@ public static class ObjectHelper
         };
     }
 
+    public static int GetHashCode(object o, params object[] properties) =>
+            properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
+
     /// <summary>
     ///     Gets the method.
     /// </summary>
@@ -382,6 +387,19 @@ public static class ObjectHelper
     public static bool IsNull([NotNullWhen(false)] in object? value)
         => value is null;
 
+    public static bool IsNull<TStruct>(this TStruct @struct)
+            where TStruct : struct
+            => @struct.Equals(default(TStruct));
+
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid? guid)
+            => guid is null || guid == Guid.Empty;
+
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid guid)
+            => guid == Guid.Empty;
+
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
+            => id == Guid.Empty;
+
     /// <summary>
     ///     Determines whether [is null or empty string] [the specified value].
     /// </summary>
@@ -418,29 +436,12 @@ public static class ObjectHelper
         => convert.ArgumentNotNull().Invoke(obj);
 
     /// <summary>
-    /// Converts to nullable.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="obj">The object.</param>
-    /// <returns></returns>
-    public static T? ToNullable<T>(this object? obj) =>
-        obj is T t ? t : default;
-
-    /// <summary>
     ///     Converts the string representation of a number to an integer.
     /// </summary>
     /// <param name="obj"> The object. </param>
     /// <returns> </returns>
     public static int ToInt(this object obj)
         => Convert.ToInt32(obj);
-
-    /// <summary>
-    ///     Converts the string representation of a number to an Int16.
-    /// </summary>
-    /// <param name="obj"> The object. </param>
-    /// <returns> </returns>
-    public static short ToShort(object obj)
-        => Convert.ToInt16(obj);
 
     /// <summary>
     ///     Converts the string representation of a number to an integer.
@@ -489,25 +490,26 @@ public static class ObjectHelper
         => long.TryParse(str, out var result) ? result : default(long?);
 
     public static T ToNotNull<T>(this T? t, in T defaultValue = default)
-        where T : struct
-        => t ?? defaultValue;
+            where T : struct
+            => t ?? defaultValue;
+
+    /// <summary>
+    /// Converts to nullable.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="obj">The object.</param>
+    /// <returns></returns>
+    public static T? ToNullable<T>(this object? obj) =>
+        obj is T t ? t : default;
+
+    /// <summary>
+    ///     Converts the string representation of a number to an Int16.
+    /// </summary>
+    /// <param name="obj"> The object. </param>
+    /// <returns> </returns>
+    public static short ToShort(object obj)
+        => Convert.ToInt16(obj);
 
     public static string? ToString(in object? value, in string defaultValue = "")
         => (value ?? defaultValue)?.ToString();
-
-    public static bool IsNull<TStruct>(this TStruct @struct)
-        where TStruct : struct
-        => @struct.Equals(default(TStruct));
-
-    public static int GetHashCode(object o, params object[] properties) =>
-        properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
-
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid? guid)
-        => guid is null || guid == Guid.Empty;
-
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid guid)
-        => guid == Guid.Empty;
-
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
-        => id == Guid.Empty;
 }

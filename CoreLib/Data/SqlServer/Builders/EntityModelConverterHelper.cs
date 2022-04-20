@@ -5,10 +5,9 @@ namespace Library.Data.SqlServer.Builders;
 
 public static class EntityModelConverterHelper
 {
-    public static IEnumerable<ColumnInfo> GetColumns<TEntityType>() =>
-        GetColumns(typeof(TEntityType));
-    public static IEnumerable<ColumnInfo> GetColumns(Type entityType)
+    public static IEnumerable<ColumnInfo> GetColumns<TEntityType>()
     {
+        var entityType = typeof(TEntityType);
         var props = entityType.GetProperties();
         foreach (var prop in props)
         {
@@ -30,9 +29,7 @@ public static class EntityModelConverterHelper
         }
     }
     public static TableInfo GetTableInfo<TEntity>() =>
-        GetTableInfo(typeof(TEntity));
-    public static TableInfo GetTableInfo(Type tableType) =>
-        new(GetTableName(tableType), GetColumns(tableType));
+        new(GetTableName<TEntity>(), GetColumns<TEntity>());
     public static string GetTableName<Entity>() =>
         GetTableName(typeof(Entity));
 
