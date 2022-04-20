@@ -1067,7 +1067,7 @@ public sealed class MsgBox2 : InternalMessageBox2
                    dlg.ProgressBar.Value = index + 1;
                    dlg.Text = description;
                    onEachIterating?.Invoke();
-                   await operation().WaitAsync(TimeSpan.FromSeconds(60));
+                   await operation();//.WaitAsync(TimeSpan.FromSeconds(60));
                }
                dlg.Close();
            },
