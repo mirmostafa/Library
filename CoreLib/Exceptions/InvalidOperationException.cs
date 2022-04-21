@@ -1,5 +1,6 @@
 ﻿namespace Library.Exceptions;
 
+[Serializable]
 public sealed class InvalidOperationException : LibraryExceptionBase
 {
     public InvalidOperationException()
