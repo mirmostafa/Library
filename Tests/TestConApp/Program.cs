@@ -1,25 +1,22 @@
-﻿namespace TestConApp;
+﻿using Library.Io;
+
+namespace TestConApp;
 
 internal partial class Program
 {
     private static void Main(params string[] args)
     {
-        var guid = Guid.NewGuid();
-        var readFromDb = guid.ToString();
-        Console.WriteLine(readFromDb);
-        var g = ToGuidFromString(readFromDb);
-        Console.WriteLine(g);
-    }
-
-    public static Guid ToGuidFromString(in ReadOnlySpan<char> str)
-    {
-        Span<char> buffer = stackalloc char[24];
-        for (var i = 0; i < 24; i++)
+        var c = new Drive('C');
+        Console.WriteLine(c.Root());
+        using (Library.Io.FileSystemWatcher.Start(@"C:\", includeSubdirectories: true,
+            onChanged: e => Console.WriteLine($"{e.Item.FullName} changed."),
+            onCreated: e => Console.WriteLine($"{e.Item.FullName} created."),
+            onDeleted: e => Console.WriteLine($"{e.Item.FullName} deleted."),
+            onRenamed: e => Console.WriteLine($"in {e.Item.FullPath} : {e.Item.OldName} renamed to {e.Item.NewName}.")
+            ))
         {
-            buffer[i] = str[i];
+            Console.WriteLine("Ready.");
+            _ = Console.ReadKey();
         }
-        Span<byte> result = stackalloc byte[16];
-        _ = Convert.TryFromBase64Chars(buffer, result, out _);
-        return new(result);
     }
 }
