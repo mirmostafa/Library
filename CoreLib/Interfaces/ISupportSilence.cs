@@ -1,4 +1,4 @@
-﻿namespace Library.Io;
+﻿namespace Library.Interfaces;
 
 public interface ISupportSilence
 {
