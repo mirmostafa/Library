@@ -50,6 +50,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
     public event EventHandler<RenamedEventArgs>? Renamed;
 
     public bool IsEnabledRaisingEvents { get => this._innerWatcher.EnableRaisingEvents; set => this._innerWatcher.EnableRaisingEvents = value; }
+    public string Path => _innerWatcher.Path;
 
     public static FileSystemWatcher Start(
         in string path, in string? wildcard = null, in bool includeSubdirectories = false,
@@ -93,13 +94,13 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
     }
 
     public FileSystemWatcher Start()
-                => this.Restart();
+        => this.Restart();
 
     protected virtual void Dispose(bool disposing)
     {
         if (!this._disposedValue)
         {
-            if (disposing)
+            if (disposing && this._innerWatcher is not null)
             {
                 this._innerWatcher.Dispose();
             }
@@ -129,7 +130,13 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
         => this.OnEventRaised(() => this.Renamed?.Invoke(this, new RenamedEventArgs(new(e.FullPath, e.OldName ?? e.OldFullPath, e.Name ?? e.FullPath))));
 
     private void OnEventRaised(Action action)
-        => this.Fluent(action).Restart();
+    {
+        action();
+        if (this._disposedValue)
+        {
+            _ = this.Restart();
+        }
+    }
 
     private FileSystemWatcher Restart()
         => this.Fluent(() =>
