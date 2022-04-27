@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using Library.DesignPatterns.Markers;
 using Library.EventsArgs;
+using Library.Interfaces;
 
 namespace Library.Io;
 
@@ -83,8 +84,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
         {
             result.Error += (s, e) => onError(e);
         }
-        _ = result.Start();
-        return result;
+        return result.Start();
     }
 
     public void Dispose()
@@ -141,7 +141,6 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
     private FileSystemWatcher Restart()
         => this.Fluent(() =>
         {
-            //Thread.Sleep(1);
             this._thread = new Thread(() => this._innerWatcher.WaitForChanged(WatcherChangeTypes.All));
             this._thread.Start();
         });
