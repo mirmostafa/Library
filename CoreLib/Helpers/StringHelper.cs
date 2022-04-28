@@ -38,8 +38,8 @@ public static class StringHelper
 
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
-        var buffer = ignoreCase ? str.ArgumentNotNull(nameof(str)).ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull(nameof(str));
-        var stat = ignoreCase ? value.ArgumentNotNull(nameof(value)).ToLower(CultureInfo.CurrentCulture) : value.ArgumentNotNull(nameof(value));
+        var buffer = ignoreCase ? str.ArgumentNotNull().ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull();
+        var stat = ignoreCase ? value.ArgumentNotNull().ToLower(CultureInfo.CurrentCulture) : value.ArgumentNotNull();
         var result = 0;
         int currentIndex;
         while ((currentIndex = buffer.IndexOf(stat, StringComparison.Ordinal)) != -1)
@@ -106,15 +106,34 @@ public static class StringHelper
     public static bool ContainsOf(this string str, in string target) =>
         str.ToLower().Contains(target.ToLower());
 
-    public static string CorrectUnicodeProblem(in string text)
-    {
-        if (string.IsNullOrEmpty(text))
-        {
-            return text;
-        }
-        return Encoding.UTF8.GetString(Encoding.Unicode.GetBytes(text
+    public static string CorrectUnicodeProblem(in string text) =>
+        string.IsNullOrEmpty(text)
+            ? text
+            : Encoding.UTF8.GetString(Encoding.Unicode.GetBytes(text
                     .Replace((char)1740, (char)1610)
                     .Replace((char)1705, (char)1603)));
+
+    public static int CountOf(this string str, in char c, int index)
+    {
+        if (index == 0)
+        {
+            return str.IndexOf(c);
+        }
+
+        var foundCount = 0;
+        index++;
+        var i = 0;
+        while (foundCount < index)
+        {
+            if (str[i] == c)
+            {
+                foundCount++;
+            }
+
+            i++;
+        }
+
+        return i - 1;
     }
 
     [Pure]
@@ -160,7 +179,7 @@ public static class StringHelper
         int startIndex;
         int endIndex;
         int len;
-        (var succeed, int lenOfStart) = str.TryCountOf(start, index * 2);
+        (var succeed, var lenOfStart) = str.TryCountOf(start, index * 2);
         if (!succeed)
         {
             return null;
@@ -175,7 +194,7 @@ public static class StringHelper
         else
         {
             startIndex = index != 0 ? lenOfStart + 1 : str.IndexOf(start, 0) + 1;
-            (var succeed2, int lenOfEnd) = str.TryCountOf(end, index * 2);
+            (var succeed2, var lenOfEnd) = str.TryCountOf(end, index * 2);
             if (!succeed2)
             {
                 return null;
@@ -320,27 +339,19 @@ public static class StringHelper
 
     public static bool IsUnicode(this string str) => str.Any(c => c > 255);
 
-    public static int CountOf(this string str, in char c, int index)
+    public static bool IsValidIranianNationalCode(string input)
     {
-        if (index == 0)
+        if (!Regex.IsMatch(input, @"^\d{10}$"))
         {
-            return str.IndexOf(c);
+            return false;
         }
 
-        var foundCount = 0;
-        index++;
-        var i = 0;
-        while (foundCount < index)
-        {
-            if (str[i] == c)
-            {
-                foundCount++;
-            }
+        var check = Convert.ToInt32(input.Slice(9, 1));
+        var sum = Enumerable.Range(0, 9)
+            .Select(x => Convert.ToInt32(input.Slice(x, 1)) * (10 - x))
+            .Sum() % 11;
 
-            i++;
-        }
-
-        return i - 1;
+        return sum < 2 ? check == sum : check + sum == 11;
     }
 
     public static string Merge(string quatStart, string quatEnd, string separator, params object[] array)
@@ -424,6 +435,19 @@ public static class StringHelper
 
     public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items) => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
+    public static IEnumerable<string> Separate(this string @this, string separator)
+    {
+        var checkpoint = 0;
+        var indexOfSeparator = @this.IndexOf(separator);
+        while (indexOfSeparator >= 0)
+        {
+            var result = @this[checkpoint..indexOfSeparator];
+            yield return result;
+            checkpoint = indexOfSeparator + separator.Length;
+            indexOfSeparator = @this.IndexOf(separator, checkpoint);
+        }
+    }
+
     public static string SeparateCamelCase(this string? str)
     {
         if (str == null)
@@ -465,6 +489,14 @@ public static class StringHelper
     /// <param name="text">The text.</param>
     /// <returns></returns>
     public static string? Singularize(string? text) => text.IsNullOrEmpty() ? null : Pluralizer.Singularize(text);
+
+    public static string Slice(this string s, in int start, in int? length = null)
+    {
+        //Check.IfArgumentNotNull(s, nameof(s));
+        ReadOnlySpan<char> span = s;
+        var slice = length is { } l ? span.Slice(start, l) : span[start..];
+        return new(slice);
+    }
 
     public static string Space(in int count) => new(' ', count);
 
@@ -561,8 +593,6 @@ public static class StringHelper
         return value;
     }
 
-    public static string ToPersianDigits(this string value) => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
-
     public static string ToEnglishDigits(this string value) => value.ReplaceAll(PersianTools.Digits.Select(n => (n.Persian, n.English)));
 
     public static string ToHex(in string str)
@@ -581,6 +611,8 @@ public static class StringHelper
 
     public static IEnumerable<string> ToLower(this IEnumerable<string> strings) => strings.Select(str => str.ToLower());
 
+    public static string ToPersianDigits(this string value) => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
+
     public static string ToUnicode(this string str) => Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
 
     public static IEnumerable<string> Trim(this IEnumerable<string> strings) => strings.Where(item => !item.IsNullOrEmpty());
@@ -595,41 +627,5 @@ public static class StringHelper
     {
         var result = CatchFunc(() => str.CountOf(c, index));
         return new(result.Exception is null, result.Result);
-    }
-
-    public static string Slice(this string s, in int start, in int? length = null)
-    {
-        //Check.IfArgumentNotNull(s, nameof(s));
-        ReadOnlySpan<char> span = s;
-        var slice = length is { } l ? span.Slice(start, l) : span[start..];
-        return new(slice);
-    }
-
-    public static bool IsValidIranianNationalCode(string input)
-    {
-        if (!Regex.IsMatch(input, @"^\d{10}$"))
-        {
-            return false;
-        }
-
-        var check = Convert.ToInt32(input.Slice(9, 1));
-        var sum = Enumerable.Range(0, 9)
-            .Select(x => Convert.ToInt32(input.Slice(x, 1)) * (10 - x))
-            .Sum() % 11;
-
-        return sum < 2 ? check == sum : check + sum == 11;
-    }
-
-    public static IEnumerable<string> Separate(this string @this, string separator)
-    {
-        var checkpoint = 0;
-        var indexOfSeparator = @this.IndexOf(separator);
-        while (indexOfSeparator >= 0)
-        {
-            var result = @this[checkpoint..indexOfSeparator];
-            yield return result;
-            checkpoint = indexOfSeparator + separator.Length;
-            indexOfSeparator = @this.IndexOf(separator, checkpoint);
-        }
     }
 }
