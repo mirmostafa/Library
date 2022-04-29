@@ -5,34 +5,86 @@ namespace Library.Helpers;
 
 public static class LoggingHelper
 {
+    public static TLogger LogBlock<TLogger>([DisallowNull] this TLogger logger!!, [DisallowNull] in Action action!!, in (object Message, LogLevel Level)? finallMessage = null)
+        where TLogger : ILogger
+    {
+        action();
+        if (finallMessage is { } message)
+        {
+            logger.Log(message.Message, message.Level);
+        }
+        else
+        {
+            logger.Debug("Ready");
+        }
+        return logger;
+    }
+    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger!!, [DisallowNull] Func<Task> action!!)
+        where TLogger : ILogger
+    {
+        await action();
+        logger.Debug("Ready");
+        return logger;
+    }
+    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger!!, [DisallowNull] Func<Task<object?>> action!!)
+        where TLogger : ILogger
+    {
+        var finallMessage = await action();
+        if (finallMessage is not null)
+        {
+            logger.Info(finallMessage);
+        }
+        else
+        {
+            logger.Debug("Ready");
+        }
+        return logger;
+    }
+    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger!!, [DisallowNull] Func<Task> action!!, object? finallMessage)
+        where TLogger : ILogger
+    {
+        await action();
+        if (finallMessage is not null)
+        {
+            logger.Info(finallMessage);
+        }
+        else
+        {
+            logger.Debug("Ready");
+        }
+        return logger;
+    }
+    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger!!, [DisallowNull] Func<Task<(object Message, LogLevel Level)?>> action!!)
+        where TLogger : ILogger
+    {
+        var finallMessage = await action();
+        if (finallMessage is { } message)
+        {
+            logger.Log(message.Message, message.Level);
+        }
+        else
+        {
+            logger.Debug("Ready");
+        }
+        return logger;
+    }
+    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger!!, [DisallowNull] Func<Task> action!!, (object Message, LogLevel Level)? finallMessage)
+        where TLogger : ILogger
+    {
+        await action();
+        if (finallMessage is { } message)
+        {
+            logger.Log(message.Message, message.Level);
+        }
+        else
+        {
+            logger.Debug("Ready");
+        }
+        return logger;
+    }
+
     public static bool MeetsLevel(this LogLevel level, LogLevel minLevel)
-        => (minLevel & level) != 0;
-
-    public static LogLevel ToLibLogLevel(this MsLogLevel logLevel)
-        => logLevel switch
-        {
-            MsLogLevel.Trace => LogLevel.Trace,
-            MsLogLevel.Debug => LogLevel.Debug,
-            MsLogLevel.Information => LogLevel.Info,
-            MsLogLevel.Warning => LogLevel.Warning,
-            MsLogLevel.Error => LogLevel.Error,
-            MsLogLevel.Critical => LogLevel.Fatal,
-            MsLogLevel.None => LogLevel.None,
-            _ => throw new NotImplementedException()
-        };
-
-    public static MsLogLevel ToMsLogLevel(this LogLevel logLevel)
-        => logLevel switch
-        {
-            LogLevel.None => MsLogLevel.None,
-            LogLevel.Info => MsLogLevel.Information,
-            LogLevel.Warning => MsLogLevel.Warning,
-            LogLevel.Error => MsLogLevel.Error,
-            LogLevel.Fatal => MsLogLevel.Critical,
-            LogLevel.Debug => MsLogLevel.Debug,
-            LogLevel.Trace => MsLogLevel.Trace,
-            _ => throw new NotImplementedException(),
-        };
+                => (minLevel & level) != 0;
 
     public static string Reformat<TMessage>(this LogRecord<TMessage> logRecord, string? format = LogFormat.DEFAULT_FORMAT)
     {
@@ -64,6 +116,32 @@ public static class LoggingHelper
 
     public static string Reformat(object logObject, string? format = LogFormat.DEFAULT_FORMAT)
         => InnerPatternMatching(logObject, format);
+
+    public static LogLevel ToLibLogLevel(this MsLogLevel logLevel)
+                        => logLevel switch
+                        {
+                            MsLogLevel.Trace => LogLevel.Trace,
+                            MsLogLevel.Debug => LogLevel.Debug,
+                            MsLogLevel.Information => LogLevel.Info,
+                            MsLogLevel.Warning => LogLevel.Warning,
+                            MsLogLevel.Error => LogLevel.Error,
+                            MsLogLevel.Critical => LogLevel.Fatal,
+                            MsLogLevel.None => LogLevel.None,
+                            _ => throw new NotImplementedException()
+                        };
+
+    public static MsLogLevel ToMsLogLevel(this LogLevel logLevel)
+        => logLevel switch
+        {
+            LogLevel.None => MsLogLevel.None,
+            LogLevel.Info => MsLogLevel.Information,
+            LogLevel.Warning => MsLogLevel.Warning,
+            LogLevel.Error => MsLogLevel.Error,
+            LogLevel.Fatal => MsLogLevel.Critical,
+            LogLevel.Debug => MsLogLevel.Debug,
+            LogLevel.Trace => MsLogLevel.Trace,
+            _ => throw new NotImplementedException(),
+        };
 
     private static string InnerPatternMatching(object logObject, string? format)
         => logObject switch
