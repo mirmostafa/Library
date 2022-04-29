@@ -107,7 +107,7 @@ public class Table : SqlObject<Table, Database>, IEnumerable
             if (column.Length < lengths[column])
             {
                 var colLen = lengths[column] - column.Length;
-                var col = column.Add(colLen / 2, before: true)!.Add(colLen / 2)!.Add(" ");
+                var col = column.Add(colLen / 2, before: true)!.Add(colLen / 2)!.AddEnd(" ");
                 yield return col;
             }
             else
