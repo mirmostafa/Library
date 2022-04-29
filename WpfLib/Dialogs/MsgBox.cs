@@ -36,26 +36,6 @@
     }
 }
 
-namespace Mohammad.EventsArgs
-{
-}
-
-namespace Library.Wpf.Helpers
-{
-}
-
-namespace Library.Wpf.Windows.Media
-{
-}
-
-namespace Mohammad.Collections.Specialized
-{
-}
-
-namespace Library.Wpf.Helpers
-{
-}
-
 namespace Library.Wpf.Helpers
 {
 

@@ -26,15 +26,13 @@ public static class StringHelper
     public static string? Add(this string? s, in int count, char add = ' ', bool before = false) =>
         count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 
-    /// <summary>
-    /// Adds the specified string.
-    /// </summary>
-    /// <param name="s">The s.</param>
-    /// <param name="s1">The s1.</param>
-    /// <returns></returns>
     [Pure]
-    public static string Add(this string s, in string s1) =>
+    public static string AddEnd(this string s, in string s1) =>
         string.Concat(s, s1);
+
+    [Pure]
+    public static string AddStart(this string s, in string s1) =>
+        string.Concat(s1, s);
 
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
@@ -395,9 +393,9 @@ public static class StringHelper
     [return: NotNullIfNotNull("str")]
     public static string? Remove(this string? str, in string? value) => str is null ? null : value is null ? str : str.Replace(value, "");
 
-    public static string RemoveFromEnd(this string str, in int count) => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
+    public static string RemoveEnd(this string str, in int count) => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
 
-    public static string RemoveFromEnd(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
+    public static string RemoveEnd(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
     {
         _ = str.ArgumentNotNull(nameof(str));
         return oldValue.IsNullOrEmpty()
@@ -407,7 +405,7 @@ public static class StringHelper
                 : str;
     }
 
-    public static string RemoveFromStart(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
+    public static string RemoveStart(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
     {
         _ = str.ArgumentNotNull(nameof(str));
         return oldValue.IsNullOrEmpty()

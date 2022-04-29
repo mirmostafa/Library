@@ -157,7 +157,7 @@ public class StringHelperTest
     [TestMethod]
     public void AddTest()
     {
-        var actual = "Mohammad ".Add("reza");
+        var actual = "Mohammad ".AddEnd("reza");
         var expected = "Mohammad reza";
         Assert.AreEqual(expected, actual);
     }
