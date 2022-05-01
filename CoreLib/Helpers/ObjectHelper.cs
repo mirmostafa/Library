@@ -356,7 +356,12 @@ public static class ObjectHelper
     ///     <c> true </c> if [is database null] [the specified o]; otherwise, <c> false </c>.
     /// </returns>
     public static bool IsDbNull(in object? o)
-        => o is null || DBNull.Value.Equals(o);
+        => o switch
+        {
+            null => true,
+            DBNull => true,
+            _ => false
+        };
 
     /// <summary>
     ///     Determines whether the specified value is default (null or zero or ...).
