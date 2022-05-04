@@ -10,7 +10,7 @@ public static class IdentityHelper
     {
         if (identityResult.ArgumentNotNull().Succeeded)
         {
-            return Result.CreateSuccess(message: successMessage);
+            return Result.CreateSuccess(fullMessage: successMessage);
         }
         var result = Result.CreateFail(message: errorMessage);
         foreach (var error in identityResult.Errors)

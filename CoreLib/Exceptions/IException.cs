@@ -47,4 +47,7 @@ public interface IException
     /// </summary>
     /// <returns></returns>
     Exception? GetBaseException();
+
+    Results.FullMessage ToFullMessage()
+        => new(this.Message, this.Instruction, this.Title, this.Details);
 }
