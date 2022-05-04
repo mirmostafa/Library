@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Library.Exceptions;
 
 namespace Library.Results;
 
@@ -8,11 +9,18 @@ public abstract class ResultBase : IEquatable<ResultBase?>
     private bool? _isSucceed;
 
     protected ResultBase(object? statusCode = null, string? message = null)
-        => (this.StatusCode, this.Message) = (statusCode, message);
+        => (this.StatusCode, this.FullMessage) = (statusCode, message);
+
+    protected ResultBase(object? statusCode, FullMessage? fullMessage)
+        => (this.StatusCode, this.FullMessage) = (statusCode, fullMessage);
+    protected ResultBase(object? statusCode, [DisallowNull] IException exception!!)
+        => (this.StatusCode, this.FullMessage) = (statusCode, exception.ToFullMessage());
 
     public List<(object? Id, object Message)> Errors { get; } = new();
 
     public Dictionary<string, object> Extra { get; } = new();
+
+    public FullMessage? FullMessage { get; init; }
 
     public bool IsFailure => !this.IsSucceed;
 
@@ -22,13 +30,14 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         init => this._isSucceed = value;
     }
 
-    public string? Message { get; set; }
+    public string? Message => this.FullMessage?.Messege;
 
     public object? StatusCode
     {
         get;
         protected set;
     }
+
     public static bool operator !=(ResultBase? left, ResultBase? right)
         => !(left == right);
 
@@ -40,10 +49,13 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     public override bool Equals(object? obj) =>
         this.Equals(obj as ResultBase);
+
     public bool Equals(ResultBase? other) =>
         other is not null && this.StatusCode == other.StatusCode;
+
     public override int GetHashCode() =>
         HashCode.Combine(this.StatusCode, this.Message, this.Errors);
+
     public override string ToString()
     {
         StringBuilder result = new();
