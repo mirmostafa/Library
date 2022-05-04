@@ -486,7 +486,8 @@ public static class StringHelper
     /// </summary>
     /// <param name="text">The text.</param>
     /// <returns></returns>
-    public static string? Singularize(string? text) => text.IsNullOrEmpty() ? null : Pluralizer.Singularize(text);
+    public static string? Singularize(string? text) 
+        => text.IsNullOrEmpty() ? null : Pluralizer.Singularize(text);
 
     public static string Slice(this string s, in int start, in int? length = null)
     {
@@ -496,7 +497,8 @@ public static class StringHelper
         return new(slice);
     }
 
-    public static string Space(in int count) => new(' ', count);
+    public static string Space(in int count) 
+        => new(' ', count);
 
     public static IEnumerable<string> Split(this string value, int groupSize)
     {
