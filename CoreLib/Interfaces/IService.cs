@@ -1,4 +1,6 @@
-﻿namespace Library.Interfaces;
+﻿using Library.Results;
+
+namespace Library.Interfaces;
 /// <summary>
 /// A base infatce for all services declared in the application
 /// </summary>
@@ -92,7 +94,7 @@ public interface IAsyncWriteService<TViewModel, TId> : IService
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    Task<bool> DeleteAsync(TViewModel model, bool persist = true);
+    Task<Result> DeleteAsync(TViewModel model, bool persist = true);
 }
 
 /// <summary>
