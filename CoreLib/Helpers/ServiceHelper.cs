@@ -32,22 +32,17 @@ public static class ServiceHelper
     {
         Check.IfArgumentNotNull(service);
 
-        int result;
-        if (persist)
+        if (!persist)
         {
-            if (transaction is not null)
-            {
-                await transaction.CommitAsync();
-            }
-
-            result = await service.SaveChangesAsync();
-            service.ResetChanges();
+            return -1;
         }
-        else
+        if (transaction is not null)
         {
-            result = -1;
+            await transaction.CommitAsync();
         }
 
+        var result = await service.SaveChangesAsync();
+        service.ResetChanges();
         return result;
     }
 

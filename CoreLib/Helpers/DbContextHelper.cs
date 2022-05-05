@@ -314,7 +314,7 @@ public static class DbContextHelper
         }
         if (validatorAsync is not null)
         {
-            _ = await validatorAsync(model).HandleAsync();
+            _ = await validatorAsync(model).HandleResultAsync();
         }
 
         var entity = convertToEntity(model);
