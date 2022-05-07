@@ -1,4 +1,6 @@
-﻿namespace Library.Exceptions;
+﻿using Library.Windows;
+
+namespace Library.Exceptions;
 
 public interface IException
 {
@@ -48,6 +50,6 @@ public interface IException
     /// <returns></returns>
     Exception? GetBaseException();
 
-    Results.FullMessage ToFullMessage()
+    NotificationMessage ToFullMessage()
         => new(this.Message, this.Instruction, this.Title, this.Details);
 }

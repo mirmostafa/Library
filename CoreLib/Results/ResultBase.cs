@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Library.Exceptions;
+using Library.Windows;
 
 namespace Library.Results;
 
@@ -11,7 +12,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
     protected ResultBase(object? statusCode = null, string? message = null)
         => (this.StatusCode, this.FullMessage) = (statusCode, message);
 
-    protected ResultBase(object? statusCode, FullMessage? fullMessage)
+    protected ResultBase(object? statusCode, NotificationMessage? fullMessage)
         => (this.StatusCode, this.FullMessage) = (statusCode, fullMessage);
     protected ResultBase(object? statusCode, [DisallowNull] IException exception!!)
         => (this.StatusCode, this.FullMessage) = (statusCode, exception.ToFullMessage());
@@ -20,7 +21,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     public Dictionary<string, object> Extra { get; } = new();
 
-    public FullMessage? FullMessage { get; init; }
+    public NotificationMessage? FullMessage { get; init; }
 
     public bool IsFailure => !this.IsSucceed;
 
@@ -30,7 +31,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         init => this._isSucceed = value;
     }
 
-    public string? Message => this.FullMessage?.Messege;
+    public string? Message => this.FullMessage?.Text;
 
     public object? StatusCode
     {
