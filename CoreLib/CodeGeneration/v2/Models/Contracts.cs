@@ -7,7 +7,17 @@ public interface INamespace
     IEnumerable<INamespace> Namespaces { get; }
 }
 
-public interface IType
+public interface IAttribute
+{
+    string Name { get; }
+}
+
+public interface IHasAttribute
+{
+    IEnumerable<IAttribute> Attributes { get; }
+}
+
+public interface IType : IHasAttribute
 {
     string Name { get; }
     IEnumerable<IMember> Members { get; }
@@ -25,7 +35,7 @@ public interface IStruct : IType
 {
 }
 
-public interface IMember
+public interface IMember : IHasAttribute
 {
     string Name { get; }
     AcceessModifier AcceessModifier { get; }
