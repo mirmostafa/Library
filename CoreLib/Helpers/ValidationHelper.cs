@@ -64,7 +64,7 @@ public static class ValidationHelper
         }
         catch (ValidationException ex)
         {
-            return Result<TItem>.CreateFail(ex.Message);
+            return Result<TItem>.CreateFail(message: ex.Message);
         }
     }
 
@@ -77,7 +77,7 @@ public static class ValidationHelper
         }
         catch (ValidationException ex)
         {
-            return Result<TItem>.CreateFail(ex.Message, item);
+            return Result<TItem>.CreateFail(ex.Message, value: item);
         }
     }
 }
