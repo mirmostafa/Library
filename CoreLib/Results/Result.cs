@@ -3,6 +3,7 @@ using Library.Dynamic;
 using Library.Exceptions;
 using Library.Exceptions.Validations;
 using Library.Interfaces;
+using Library.Windows;
 
 namespace Library.Results;
 
@@ -10,7 +11,7 @@ public class Result : ResultBase, IEmpty<Result>
 {
     private static readonly dynamic _staticFields = new Expando();
 
-    public Result(in object? statusCode = null, in FullMessage? fullMessage = null)
+    public Result(in object? statusCode = null, in NotificationMessage? fullMessage = null)
         : base(statusCode, fullMessage) { }
 
     public static Result Empty { get; } = _staticFields.Empty ??= NewEmpty();
@@ -20,13 +21,13 @@ public class Result : ResultBase, IEmpty<Result>
     public static Result CreateFail(in string? message = null, in object? erroCode = null)
         => new(erroCode ?? -1, message) { IsSucceed = false };
 
-    public static Result CreateFail(in FullMessage? message, in object? erroCode = null)
+    public static Result CreateFail(in NotificationMessage? message, in object? erroCode = null)
         => new(erroCode ?? -1, message) { IsSucceed = false };
 
     public static Result CreateFail(string message, string instruction, string tiltle, string details, in object? statusCode = null) =>
-        new(statusCode, new FullMessage(message, instruction, tiltle, details));
+        new(statusCode, new NotificationMessage(message, instruction, tiltle, details));
 
-    public static Result CreateSuccess(in FullMessage? fullMessage = null, in object? statusCode = null)
+    public static Result CreateSuccess(in NotificationMessage? fullMessage = null, in object? statusCode = null)
             => new(statusCode, fullMessage) { IsSucceed = true };
 
     public static implicit operator bool(Result result!!) => result.IsSucceed;
@@ -46,7 +47,7 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
         : base(statusCode, message)
         => this.Value = value;
 
-    public Result(in TValue value, object? statusCode, FullMessage? fullMessage)
+    public Result(in TValue value, object? statusCode, NotificationMessage? fullMessage)
         : base(statusCode, fullMessage)
         => this.Value = value;
 
@@ -106,7 +107,7 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     public Result ConvertTo()
         => this.IsSucceed ? Result.CreateSuccess(this.FullMessage, this.StatusCode) : Result.CreateFail(this.FullMessage, this.StatusCode);
 
-    public void Deconstruct(out object? StatusCode, out FullMessage? Message, out TValue Value)
+    public void Deconstruct(out object? StatusCode, out NotificationMessage? Message, out TValue Value)
         => (StatusCode, Message, Value) = (this.StatusCode, this.FullMessage, this.Value);
 
     public void Deconstruct(out bool isSucceed, out TValue Value)
