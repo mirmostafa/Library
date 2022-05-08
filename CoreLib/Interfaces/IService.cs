@@ -87,7 +87,7 @@ public interface IAsyncWriteService<TViewModel, TId> : IService
     /// <param name="id">The identifier.</param>
     /// <param name="model">The model.</param>
     /// <returns></returns>
-    Task<TViewModel> UpdateAsync(TId id, TViewModel model, bool persist = true);
+    Task<Result<TViewModel>> UpdateAsync(TId id, TViewModel model, bool persist = true);
 
     /// <summary>
     /// Deletes an entity asynchronously.
