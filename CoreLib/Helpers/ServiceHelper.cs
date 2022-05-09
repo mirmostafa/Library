@@ -27,7 +27,7 @@ public static class ServiceHelper
             ? await service.UpdateAsync(model.Id, model, persist)
             : await service.InsertAsync(model, persist);
 
-    public static async Task<int> SubmitChangesAsync<TService>(this TService service, bool persist = true, IDbContextTransaction? transaction = null)
+    public static async Task<int> SubmitChangesAsync<TService>(this TService service, IDbContextTransaction? transaction = null, bool persist = true)
         where TService : IAsyncSaveService, IResetChanges
     {
         Check.IfArgumentNotNull(service);

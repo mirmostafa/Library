@@ -24,18 +24,20 @@ public class Result : ResultBase, IEmpty<Result>
     public static Result CreateFail(in NotificationMessage? message, in object? erroCode = null)
         => new(erroCode ?? -1, message) { IsSucceed = false };
 
-    public static Result CreateFail(string message, string instruction, string tiltle, string details, in object? statusCode = null) =>
-        new(statusCode, new NotificationMessage(message, instruction, tiltle, details));
+    public static Result CreateFail(in string message, in string instruction, in string tiltle, in string details, in object? statusCode = null)
+        => new(statusCode, new NotificationMessage(message, instruction, tiltle, details));
 
     public static Result CreateSuccess(in NotificationMessage? fullMessage = null, in object? statusCode = null)
-            => new(statusCode, fullMessage) { IsSucceed = true };
+        => new(statusCode, fullMessage) { IsSucceed = true };
 
-    public static implicit operator bool(Result result!!) => result.IsSucceed;
+    public static explicit operator Result(bool b)
+        => b ? Success : Fail;
 
-    public static explicit operator Result(bool b) => b ? Success : Fail;
+    public static implicit operator bool(Result result!!)
+        => result.IsSucceed;
 
     public static Result New()
-            => new();
+        => new();
 
     public static Result NewEmpty()
         => New();
@@ -92,7 +94,7 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
         => new(value, errorCode ?? -1, message);
 
     [return: NotNull]
-    public static Result<TValue?> CreateSuccess(in TValue value, in string? message = null, in object? statusCode = null)
+    public static Result<TValue> CreateSuccess(in TValue value, in string? message = null, in object? statusCode = null)
         => new(value, statusCode, message);
 
     public static implicit operator bool(in Result<TValue?> result)

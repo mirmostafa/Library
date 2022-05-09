@@ -79,7 +79,7 @@ public interface IAsyncWriteService<TViewModel, TId> : IService
     /// </summary>
     /// <param name="model">The model.</param>
     /// <returns></returns>
-    Task<TViewModel> InsertAsync(TViewModel model, bool persist = true);
+    Task<Result<TViewModel>> InsertAsync(TViewModel model, bool persist = true);
 
     /// <summary>
     /// Updates an entity asynchronously.
@@ -141,7 +141,7 @@ public interface IResetChanges
 /// </summary>
 /// <seealso cref="Library.Interfaces.IService" />
 /// <seealso cref="Library.Interfaces.IResetChanges" />
-public interface IAsyncSaveService : IService, IResetChanges
+public interface IAsyncSaveService : IService//x , IResetChanges
 {
     /// <summary>
     /// Saves the data asynchronously.
