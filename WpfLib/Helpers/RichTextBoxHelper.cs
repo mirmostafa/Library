@@ -73,7 +73,7 @@ public static class RichTextBoxHelper
         var detectedTypes = new List<string>();
         var keyWordRules = new (string[] Keys, Brush Brush)[]
         {
-            (new[] { "using", "short", "int", "get", "set", "string", "public", "sealed", "partial", "class", "namespace", "async", "throw", "new", "this" }, Brushes.Blue),
+            (new[] { "using", "short", "int", "get", "set", "string", "public","protected","private", "sealed", "partial", "class", "namespace", "async", "throw", "new", "this" }, Brushes.Blue),
             (new[] { "Guid", "Byte", "Int16","Int32", "Int64", "Single", "String", "DateTime","IEnumerable", "Task" }, Brushes.DarkGreen),
             (new[]{"ICommandProcessor", "IEnumerable", "IQueryProcessor"}, Brushes.Green)
         };
@@ -99,13 +99,11 @@ public static class RichTextBoxHelper
             {
                 return (true, EnumerableHelper.AsEnumerableItem(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DimGray }));
             }
-            else if (line.CurrentLine.Trim().StartsWithAny(preprocessors))
-            {
-                return (true, EnumerableHelper.AsEnumerableItem(new Run(line.CurrentLine) { Foreground = Brushes.Gray }));
-            }
             else
             {
-                return null;
+                return line.CurrentLine.Trim().StartsWithAny(preprocessors)
+                    ? (true, EnumerableHelper.AsEnumerableItem(new Run(line.CurrentLine) { Foreground = Brushes.Gray }))
+                    : null;
             }
         }
         (bool Found, IEnumerable<Inline>? Inline)? wordProcess((string CurrentWord, string? PrevWord) word)

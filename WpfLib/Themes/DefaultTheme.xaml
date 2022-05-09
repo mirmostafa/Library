@@ -444,7 +444,7 @@
         <Style.Triggers>
             <Trigger Property="IsReadOnly" Value="True">
                 <Setter Property="Background" Value="{StaticResource SkinBackground}" />
-                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="BorderThickness" Value="1" />
             </Trigger>
         </Style.Triggers>
     </Style>
