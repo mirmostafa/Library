@@ -4,6 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:bases="clr-namespace:Library.Wpf.Bases;assembly=Library.Wpf"
     xmlns:local="clr-namespace:WpfApp1"
-    StartupUri="MainWindow.xaml">
-    <Application.Resources />
+   xmlns:windows="clr-namespace:Library.Wpf.Windows;assembly=Library.Wpf"
+     StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PresentationFramework.Aero;component/themes/Aero.NormalColor.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Library.Wpf;component/Themes/DefaultTheme.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </bases:ApplicationBase>

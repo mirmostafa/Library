@@ -12,10 +12,10 @@ public class Toast
     private Toast(string appTitle) =>
         this._appTitle = appTitle.ArgumentNotNull();
 
-    public static Toast CreateLongContent(string title, string appTitle) =>
+    public static Toast CreateLongContent(string content, string appTitle) =>
         new(appTitle)
         {
-            _toast = InnerCreateToast(ToastTemplateType.ToastText01, new[] { title })
+            _toast = InnerCreateToast(ToastTemplateType.ToastText01, new[] { content })
         };
     public static Toast CreateLongContent(string content, string title, string appTitle) =>
         new(appTitle)

@@ -11,7 +11,7 @@ namespace Library.Validations;
 [StackTraceHidden]
 public sealed class Check
 {
-    private static Check _that;
+    private static Check? _that;
 
     private Check()
     { }
@@ -24,9 +24,11 @@ public sealed class Check
     /// </value>
     public static Check That => _that ??= new();
 
+    [return: NotNull]
     public static void IfAny([NotNull][AllowNull] IEnumerable? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         IfNotValid(obj, _ => !obj?.Any() ?? false, () => new NoItemValidationException(argName!));
 
+    [return: NotNull]
     public static void IfArgumentBiggerThan(in int arg, in int min, [CallerArgumentExpression("arg")] in string? argName = null)
     {
         if (arg <= min)
@@ -39,6 +41,7 @@ public sealed class Check
     public static void IfArgumentNotNull([NotNull][AllowNull] in string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         MustBeArgumentNotNull(!obj.IsNullOrEmpty(), argName!);
 
+    [return: NotNull]
     public static void IfArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         MustBeArgumentNotNull(obj is not null, argName!);
 
@@ -145,7 +148,7 @@ public static class CheckHelpers
         obj.NotValid(x => x is null, () => new NullValueValidationException(argName!))!;
 
     [return: NotNull]
-    public static T NotNull<T>([NotNull] this T @this, [NotNull] object obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+    public static T NotNull<T>([NotNull] this T @this, [NotNull] object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
         @this.NotValid(_ => obj is null, () => new NullValueValidationException(argName!))!;
 
     [return: NotNull]
