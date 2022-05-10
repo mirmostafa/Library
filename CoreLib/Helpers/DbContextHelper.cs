@@ -12,14 +12,14 @@ public static class DbContextHelper
 {
     public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity<long> =>
-        dbContext.SetStateOf(entity, EntityState.Detached);
+        where TEntity : class, IIdenticalEntity<long>
+        => dbContext.SetStateOf(entity, EntityState.Detached);
 
     public static TDbContext Detach<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<TId>
-        where TId : notnull =>
-        SetStateOf<TDbContext, TEntity, TId>(dbContext, entity, EntityState.Detached);
+        where TId : notnull
+        => SetStateOf<TDbContext, TEntity, TId>(dbContext, entity, EntityState.Detached);
 
     public static TEntity Detach<TDbContext, TEntity>([DisallowNull] this TEntity entity, [DisallowNull] in TDbContext dbContext)
         where TDbContext : notnull, DbContext
@@ -31,8 +31,8 @@ public static class DbContextHelper
 
     public static TDbContext DetachGuid<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity<Guid> =>
-        dbContext.SetStateGuidOf(entity, EntityState.Detached);
+        where TEntity : class, IIdenticalEntity<Guid> 
+        => dbContext.SetStateGuidOf(entity, EntityState.Detached);
 
     public static EntityEntry<TEntity> EnsureAttached<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
