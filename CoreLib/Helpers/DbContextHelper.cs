@@ -12,14 +12,14 @@ public static class DbContextHelper
 {
     public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity<long> =>
-        dbContext.SetStateOf(entity, EntityState.Detached);
+        where TEntity : class, IIdenticalEntity<long>
+        => dbContext.SetStateOf(entity, EntityState.Detached);
 
     public static TDbContext Detach<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<TId>
-        where TId : notnull =>
-        SetStateOf<TDbContext, TEntity, TId>(dbContext, entity, EntityState.Detached);
+        where TId : notnull
+        => SetStateOf<TDbContext, TEntity, TId>(dbContext, entity, EntityState.Detached);
 
     public static TEntity Detach<TDbContext, TEntity>([DisallowNull] this TEntity entity, [DisallowNull] in TDbContext dbContext)
         where TDbContext : notnull, DbContext
@@ -30,9 +30,9 @@ public static class DbContextHelper
     }
 
     public static TDbContext DetachGuid<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
-                where TDbContext : notnull, DbContext
-        where TEntity : class, IIdenticalEntity<Guid> =>
-        dbContext.SetStateGuidOf(entity, EntityState.Detached);
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<Guid> 
+        => dbContext.SetStateGuidOf(entity, EntityState.Detached);
 
     public static EntityEntry<TEntity> EnsureAttached<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
@@ -125,8 +125,8 @@ public static class DbContextHelper
         Func<TEntity, TEntity>? onCommitting = null,
         bool persist = true,
         Func<Task<int>>? saveChanges = null)
-        where TEntity : class, IIdenticalEntity<long> =>
-        await InnerManipulate<TModel, TEntity, long>(dbContext, model, dbContext.Add, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges);
+        where TEntity : class, IIdenticalEntity<long>
+        => await InnerManipulate<TModel, TEntity, long>(dbContext, model, dbContext.Add, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges);
 
     public static async Task<(EntityEntry<TEntity>? Entry, TEntity? Entity, int WrittenCount)> InsertAsync<TModel, TEntity, TId>(
         this DbContext dbContext,
