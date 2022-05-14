@@ -3,9 +3,8 @@ using Library.DesignPatterns.Markers;
 using Library.EventsArgs;
 using Library.Interfaces;
 
-namespace Library.Io;
+namespace Library.IO;
 
-[Immutable]
 public class FileSystemWatcher : IDisposable, ISupportSilence
 {
     private readonly System.IO.FileSystemWatcher _innerWatcher;
@@ -23,14 +22,14 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
         };
         this._innerWatcher.BeginInit();
         this._innerWatcher.NotifyFilter =
-            System.IO.NotifyFilters.Attributes |
-            System.IO.NotifyFilters.CreationTime |
-            System.IO.NotifyFilters.DirectoryName |
-            System.IO.NotifyFilters.FileName |
-            System.IO.NotifyFilters.LastAccess |
-            System.IO.NotifyFilters.LastWrite |
-            System.IO.NotifyFilters.Security |
-            System.IO.NotifyFilters.Size;
+                           System.IO.NotifyFilters.Attributes |
+                           System.IO.NotifyFilters.CreationTime |
+                           System.IO.NotifyFilters.DirectoryName |
+                           System.IO.NotifyFilters.FileName |
+                           System.IO.NotifyFilters.LastAccess |
+                           System.IO.NotifyFilters.LastWrite |
+                           System.IO.NotifyFilters.Security |
+                           System.IO.NotifyFilters.Size;
         this._innerWatcher.Changed += this._innerWatcher_Changed;
         this._innerWatcher.Created += this._innerWatcher_Created;
         this._innerWatcher.Deleted += this._innerWatcher_Deleted;
@@ -51,7 +50,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
     public event EventHandler<RenamedEventArgs>? Renamed;
 
     public bool IsEnabledRaisingEvents { get => this._innerWatcher.EnableRaisingEvents; set => this._innerWatcher.EnableRaisingEvents = value; }
-    public string Path => _innerWatcher.Path;
+    public string Path => this._innerWatcher.Path;
 
     public static FileSystemWatcher Start(
         in string path, in string? wildcard = null, in bool includeSubdirectories = false,
@@ -145,7 +144,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
             this._thread.Start();
         });
 
-    #region Nested
+    #region EventArgs
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
     public class ChangedEventArgs : FileSystemWatchEventArgs<EventArgsItem>
@@ -200,7 +199,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
         public record struct RenamedItem(string FullPath, string OldName, string NewName);
     }
 
-    #endregion Nested
+    #endregion EventArgs
 }
 
 public enum NotifyFilters
