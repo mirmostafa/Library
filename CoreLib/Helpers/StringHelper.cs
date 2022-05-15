@@ -23,16 +23,16 @@ public static class StringHelper
     /// <param name="before">if set to <c>true</c> [before].</param>
     /// <returns></returns>
     [Pure]
-    public static string? Add(this string? s, in int count, char add = ' ', bool before = false) =>
-        count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
+    public static string? Add(this string? s, in int count, char add = ' ', bool before = false)
+        => count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 
     [Pure]
-    public static string AddEnd(this string s, in string s1) =>
-        string.Concat(s, s1);
+    public static string AddEnd(this string s, in string s1)
+        => string.Concat(s, s1);
 
     [Pure]
-    public static string AddStart(this string s, in string s1) =>
-        string.Concat(s1, s);
+    public static string AddStart(this string s, in string s1)
+        => string.Concat(s1, s);
 
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
@@ -66,8 +66,8 @@ public static class StringHelper
 
     [return: NotNull]
     [Pure]
-    public static string[] Compact(params string[] strings) =>
-        strings.Where(item => !item.IsNullOrEmpty()).ToArray();
+    public static string[] Compact(params string[] strings)
+        => strings.Where(item => !item.IsNullOrEmpty()).ToArray();
 
     [return: NotNull]
     [Pure]
@@ -486,7 +486,7 @@ public static class StringHelper
     /// </summary>
     /// <param name="text">The text.</param>
     /// <returns></returns>
-    public static string? Singularize(string? text) 
+    public static string? Singularize(string? text)
         => text.IsNullOrEmpty() ? null : Pluralizer.Singularize(text);
 
     public static string Slice(this string s, in int start, in int? length = null)
@@ -497,7 +497,7 @@ public static class StringHelper
         return new(slice);
     }
 
-    public static string Space(in int count) 
+    public static string Space(in int count)
         => new(' ', count);
 
     public static IEnumerable<string> Split(this string value, int groupSize)

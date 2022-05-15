@@ -1,14 +1,82 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Library.Helpers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace LibraryTest;
 
 //[MemoryDiagnoser]
 [TestClass]
 public class StringHelperTest
 {
-    private const string text = "There 'a text', inside 'another text'. I want 'to find\" it.";
+    private const string LONG_TEXT = "There 'a text', inside 'another text'. I want 'to find\" it.";
+    private const string SHORT_TEXT = "There 'a text', inside 'another text'.";
+    private const string VERY_SHORT_TEXT = "text";
 
     //[Benchmark]
     public void _WasteTimeToWarmUpBenchmark() => Thread.Sleep(3000);
+
+    [TestMethod]
+    public void AddStartEndTest()
+    {
+        const string MOHAMMAD = "Mohammad ";
+        const string REZA = "reza";
+        const string EXPECTED = "Mohammad reza";
+
+        var actual1 = REZA.AddStart(MOHAMMAD);
+        Assert.AreEqual(EXPECTED, actual1);
+
+        var actual2 = MOHAMMAD.AddEnd(REZA);
+        Assert.AreEqual(EXPECTED, actual2);
+    }
+
+    [TestMethod]
+    public void AddTest()
+    {
+        var addAfter = VERY_SHORT_TEXT.Add(2);
+        Assert.AreEqual(VERY_SHORT_TEXT + "  ", addAfter);
+
+        var addBefore = VERY_SHORT_TEXT.Add(2, before: true);
+        Assert.AreEqual("  " + VERY_SHORT_TEXT, addBefore);
+    }
+
+    [TestMethod]
+    public void AllIndexesOfTest()
+    {
+        var test = "Mohammad";
+        var indexes = test.AllIndexesOf("m");
+        Assert.AreEqual(2, indexes.Count());
+        Assert.AreEqual(5, indexes.ElementAt(1));
+    }
+
+    [TestMethod]
+    public void CompactTest()
+    {
+        var arr = new[] { "Hello", "", "I ", "am", "", "Mohammad", ".", "", "I'm", "", "a ", "", "C# ", "", "Developer." };
+        var actual = arr.Compact().ToArray();
+        var expected = new[] { "Hello", "I ", "am", "Mohammad", ".", "I'm", "a ", "C# ", "Developer." };
+        Assert.That.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    public void GetPhraseTest()
+    {
+        var result1 = LONG_TEXT.GetPhrase(0, '\'', '\'');
+        Assert.AreEqual("a text", result1);
+
+        result1 = LONG_TEXT.GetPhrase(0, '\'');
+        Assert.AreEqual("a text", result1);
+
+        var result2 = LONG_TEXT.GetPhrase(1, '\'', '\'');
+        Assert.AreEqual("another text", result2);
+
+        var result3 = LONG_TEXT.GetPhrase(1, 'q');
+        Assert.AreEqual(null, result3);
+    }
+
+    [TestMethod]
+    public void GetPhraseTest2()
+    {
+        var result4 = LONG_TEXT.GetPhrase(0, '\'', '\"');
+        Assert.AreEqual("a text', inside 'another text'. I want 'to find", result4);
+    }
 
     [TestMethod]
     public void IsNullOrEmptyTest()
@@ -37,15 +105,49 @@ public class StringHelperTest
     }
 
     [TestMethod]
-    public void SliceTest()
+    public void NationalCodeTest()
     {
-        var sliceStr = "Mohammad Mirmostafa is a C# Developer.";
+        var nc1 = "0062614614";
+        var isValid1 = StringHelper.IsValidIranianNationalCode(nc1);
 
-        var mohammad = sliceStr.Slice(0, 8);
-        Assert.AreEqual(mohammad, "Mohammad");
+        Assert.IsTrue(isValid1);
+    }
 
-        var cShartDeveloper = sliceStr.Slice(25);
-        Assert.AreEqual(cShartDeveloper, "C# Developer.");
+    [TestMethod]
+    public void NationalCodeTest2()
+    {
+        var nc2 = "0062614615";
+        var isValid2 = StringHelper.IsValidIranianNationalCode(nc2);
+
+        Assert.IsFalse(isValid2);
+    }
+
+    [TestMethod]
+    public void NationalCodeTest3()
+    {
+        var nc3 = "006261461";
+        var isValid3 = StringHelper.IsValidIranianNationalCode(nc3);
+
+        Assert.IsFalse(isValid3);
+    }
+
+    [TestMethod]
+    public void PluralizeTest()
+    {
+        Assert.AreEqual("numbers", StringHelper.Pluralize("number"));
+        Assert.AreEqual("cases", StringHelper.Pluralize("case"));
+        Assert.AreEqual("handies", StringHelper.Pluralize("handy"));
+        Assert.AreEqual("people", StringHelper.Pluralize("person"));
+        Assert.AreEqual("children", StringHelper.Pluralize("child"));
+    }
+
+    [TestMethod]
+    public void SeparateCamelCaseTest()
+    {
+        var factor = "Hello, My Name Is Mohammad. How Are You? Just Fine.";
+        var merged = factor.Remove(" ");
+        var actual = merged.SeparateCamelCase();
+        Assert.AreEqual(actual, factor);
     }
 
     [TestMethod]
@@ -58,119 +160,26 @@ public class StringHelperTest
         Assert.AreEqual("child", StringHelper.Singularize("children"));
     }
 
-
     [TestMethod]
-    public void PluralizeTest()
+    public void SliceTest()
     {
-        Assert.AreEqual("numbers", StringHelper.Pluralize("number"));
-        Assert.AreEqual("cases", StringHelper.Pluralize("case"));
-        Assert.AreEqual("handies", StringHelper.Pluralize("handy"));
-        Assert.AreEqual("people", StringHelper.Pluralize("person"));
-        Assert.AreEqual("children", StringHelper.Pluralize("child"));
+        var sliceStr = "Mohammad Mirmostafa is a C# Developer.";
+
+        var mohammad = sliceStr.Slice(0, 8);
+        Assert.AreEqual(mohammad, "Mohammad");
+
+        var cShartDeveloper = sliceStr.Slice(25);
+        Assert.AreEqual(cShartDeveloper, "C# Developer.");
     }
-
-
-    [TestMethod]
-    public void SpaceTest()
-        => Assert.AreEqual("     ", StringHelper.Space(5));
-
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentOutOfRangeException))]
     public void SpaceExceptionTest()
         => Assert.AreEqual("     ", StringHelper.Space(-5));
 
-
     [TestMethod]
-    public void GetPhraseTest()
-    {
-        var result1 = text.GetPhrase(0, '\'', '\'');
-        Assert.AreEqual("a text", result1);
-
-        result1 = text.GetPhrase(0, '\'');
-        Assert.AreEqual("a text", result1);
-
-        var result2 = text.GetPhrase(1, '\'', '\'');
-        Assert.AreEqual("another text", result2);
-
-        var result3 = text.GetPhrase(1, 'q');
-        Assert.AreEqual(null, result3);
-    }
-
-
-    [TestMethod]
-    public void GetPhraseTest2()
-    {
-        var result4 = text.GetPhrase(0, '\'', '\"');
-        Assert.AreEqual("a text', inside 'another text'. I want 'to find\"", result4);
-    }
-
-
-    [TestMethod]
-    public void NationalCodeTest()
-    {
-        var nc1 = "0062614614";
-        var isValid1 = StringHelper.IsValidIranianNationalCode(nc1);
-
-        Assert.IsTrue(isValid1);
-    }
-
-
-    [TestMethod]
-    public void NationalCodeTest2()
-    {
-        var nc2 = "0062614615";
-        var isValid2 = StringHelper.IsValidIranianNationalCode(nc2);
-
-        Assert.IsFalse(isValid2);
-    }
-
-
-    [TestMethod]
-    public void NationalCodeTest3()
-    {
-        var nc3 = "006261461";
-        var isValid3 = StringHelper.IsValidIranianNationalCode(nc3);
-
-        Assert.IsFalse(isValid3);
-    }
-
-
-    [TestMethod]
-    public void TruncateTest()
-    {
-        var result = text.Truncate(text.Length - 5);
-        Assert.AreEqual("There", result);
-    }
-
-
-    [TestMethod]
-    public void SplitPairTest()
-    {
-        var cs = @"Server=myServerAddress;Database=myDatabase;Trusted_Connection=True;";
-        var pairs = StringHelper.SplitPair(cs);
-        (_, var value) = pairs.Where(kv => kv.Key == "Database").Single();
-        Assert.AreEqual("myDatabase", value);
-    }
-
-
-    [TestMethod]
-    public void AddTest()
-    {
-        var actual = "Mohammad ".AddEnd("reza");
-        var expected = "Mohammad reza";
-        Assert.AreEqual(expected, actual);
-    }
-
-
-    [TestMethod]
-    public void AllIndexesOfTest()
-    {
-        var test = "Mohammad";
-        var indexes = test.AllIndexesOf("m");
-        Assert.AreEqual(2, indexes.Count());
-        Assert.AreEqual(5, indexes.ElementAt(1));
-    }
+    public void SpaceTest()
+        => Assert.AreEqual("     ", StringHelper.Space(5));
 
     [TestMethod]
     public void SplitMergeTest()
@@ -182,11 +191,18 @@ public class StringHelperTest
     }
 
     [TestMethod]
-    public void SeparateCamelCaseTest()
+    public void SplitPairTest()
     {
-        var factor = "Hello, My Name Is Mohammad. How Are You? Just Fine.";
-        var merged = factor.Remove(" ");
-        var actual = merged.SeparateCamelCase();
-        Assert.AreEqual(actual, factor);
+        var cs = @"Server=myServerAddress;Database=myDatabase;Trusted_Connection=True;";
+        var pairs = StringHelper.SplitPair(cs);
+        (_, var value) = pairs.Where(kv => kv.Key == "Database").Single();
+        Assert.AreEqual("myDatabase", value);
+    }
+
+    [TestMethod]
+    public void TruncateTest()
+    {
+        var result = LONG_TEXT.Truncate(LONG_TEXT.Length - 5);
+        Assert.AreEqual("There", result);
     }
 }
