@@ -93,6 +93,10 @@ public static class DateTimeHelper
     public static bool IsValid(in string dateTime)
         => DateTime.TryParse(dateTime, out _);
 
+    public static bool IsWeekend([DisallowNull] this DateTime dateTime, CultureInfo? culture = null)
+            => (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(dateTime.ArgumentNotNull(nameof(dateTime)).DayOfWeek)
+                is CultureInfoExtensions.WeekdayState.Weekend or CultureInfoExtensions.WeekdayState.WorkdayMorning;
+
     /// <summary>
     ///     Converts to datetime.
     /// </summary>
@@ -116,8 +120,4 @@ public static class DateTimeHelper
     /// <returns></returns>
     public static TimeSpan ToTimeSpan(this DateTime source)
         => new(source.Ticks);
-
-    public static bool IsWeekend([DisallowNull] this DateTime dateTime, CultureInfo? culture = null)
-        => (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(dateTime.ArgumentNotNull(nameof(dateTime)).DayOfWeek)
-            is CultureInfoExtensions.WeekdayState.Weekend or CultureInfoExtensions.WeekdayState.WorkdayMorning;
 }

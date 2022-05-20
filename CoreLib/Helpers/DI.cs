@@ -8,9 +8,6 @@ public static class DI
 {
     private static IServiceProvider? _serviceProvider = null;
 
-    public static void Initialize(in IServiceProvider serviceProvider)
-        => _serviceProvider = serviceProvider;
-
     public static T GetService<T>()
     {
         Check.MustBe(_serviceProvider is not null, () => new LibraryException($"{nameof(DI)} not initiated."));
@@ -19,4 +16,7 @@ public static class DI
         LibLogger.Debug($"Requested service: {typeof(T)}", typeof(DI));
         return result;
     }
+
+    public static void Initialize(in IServiceProvider serviceProvider)
+        => _serviceProvider = serviceProvider;
 }

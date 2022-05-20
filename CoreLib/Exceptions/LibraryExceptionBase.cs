@@ -1,3 +1,5 @@
+using Library.Windows;
+
 namespace Library.Exceptions;
 
 /// <summary>
@@ -10,6 +12,11 @@ public abstract class LibraryExceptionBase : ExceptionBase, ILibraryException
     }
 
     protected LibraryExceptionBase(string message) : base(message)
+    {
+    }
+
+    protected LibraryExceptionBase(NotificationMessage notificationMessage)
+        : base(notificationMessage)
     {
     }
 

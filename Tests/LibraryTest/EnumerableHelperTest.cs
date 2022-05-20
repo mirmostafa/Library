@@ -1,10 +1,10 @@
-﻿namespace LibraryTest;
+﻿namespace UnitTest;
 
 [TestClass]
 public class EnumerableHelperTest
 {
-    private readonly string[] names = new[] { "Nick", "Mike", "John", "Leyla", "David", "Damian" };
-    private readonly int[] age = new[] { 10, 20, 30, 40, 50, 60 };
+    private readonly string[] _names = new[] { "Nick", "Mike", "John", "Leyla", "David", "Damian" };
+    private readonly int[] _age = new[] { 10, 20, 30, 40, 50, 60 };
 
     //[TestMethod]
     public void AddRangeAsyncTest()
@@ -17,9 +17,10 @@ public class EnumerableHelperTest
     }
 
     [TestMethod]
+    [Obsolete("Not required in .Net 6.0")]
     public void ChunkByTest()
     {
-        var chunks = this.names.ChunkBy(3);
+        var chunks = this._names.ChunkBy(3);
         Assert.IsNotNull(chunks);
         Assert.AreEqual(2, chunks.Count());
         Assert.AreEqual(3, chunks.ElementAt(0).Count());
@@ -29,5 +30,16 @@ public class EnumerableHelperTest
 
     [TestMethod]
     public void CountNotEnumeratedTest()
-        => Assert.AreEqual(6, this.names.CountNotEnumerated());
+        => Assert.AreEqual(6, this._names.CountNotEnumerated());
+
+    [TestMethod]
+    public void AggregateTest()
+    {
+        var first = new[] { 1, 2, 3 };
+        var second = new[] { 4, 5, 6 };
+        var merged = new[] { first, second };
+        var actual = EnumerableHelper.Aggregate(merged);
+        var expected = new[] { 1, 2, 3, 4, 5, 6 };
+        Assert.IsTrue(expected.SequenceEqual(actual));
+    }
 }

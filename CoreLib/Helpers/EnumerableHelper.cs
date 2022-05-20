@@ -10,7 +10,7 @@ namespace Library.Helpers;
 
 public static class EnumerableHelper
 {
-    public static IList<KeyValuePair<TKey, TValue>>? Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
+    public static IList<KeyValuePair<TKey, TValue>> Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
     {
         Check.IfArgumentNotNull(list);
         list.Add(new(key, value));
@@ -39,7 +39,6 @@ public static class EnumerableHelper
 
     public static IList<T> AddRange<T>([DisallowNull] this IList<T> list, in IEnumerable<T> items)
     {
-        Check.IfArgumentNotNull(list);
         if (items?.Any() is true)
         {
             foreach (var item in items)
@@ -52,7 +51,6 @@ public static class EnumerableHelper
 
     public static ICollection<T> AddRange<T>([DisallowNull] this ICollection<T> list, in IEnumerable<T> items)
     {
-        Check.IfArgumentNotNull(list);
         if (items?.Any() is true)
         {
             foreach (var item in items)
@@ -63,10 +61,9 @@ public static class EnumerableHelper
         return list;
     }
 
-    public static void AddRange<TFluentList, TItem>([DisallowNull] this IFluentList<TFluentList, TItem> list, IEnumerable<TItem>? items)
+    public static IFluentList<TFluentList, TItem> AddRange<TFluentList, TItem>([DisallowNull] this IFluentList<TFluentList, TItem> list, IEnumerable<TItem>? items)
         where TFluentList : IFluentList<TFluentList, TItem>
     {
-        Check.IfArgumentNotNull(list);
         if (items?.Any() is true)
         {
             foreach (var item in items)
@@ -74,6 +71,7 @@ public static class EnumerableHelper
                 _ = list.Add(item);
             }
         }
+        return list;
     }
 
     public static async Task<ICollection<TItem>> AddRangeAsync<TItem>([DisallowNull] this ICollection<TItem> list, [DisallowNull] IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
@@ -92,7 +90,7 @@ public static class EnumerableHelper
     {
         if (source is not null)
         {
-            foreach (var i in source.ArgumentNotNull(nameof(source)))
+            foreach (var i in source)
             {
                 yield return i;
             }
@@ -100,7 +98,7 @@ public static class EnumerableHelper
 
         if (items is not null)
         {
-            foreach (var item in items.ArgumentNotNull(nameof(items)))
+            foreach (var item in items)
             {
                 yield return item;
             }
@@ -109,9 +107,9 @@ public static class EnumerableHelper
 
     public static IEnumerable<T> Aggregate<T>(this IEnumerable<IEnumerable<T>> sources)
     {
-        foreach (var items in sources.ArgumentNotNull(nameof(sources)))
+        if (sources is not null)
         {
-            foreach (var item in items)
+            foreach (var item in sources.Where(items => items is not null).SelectMany(items => items))
             {
                 yield return item;
             }
