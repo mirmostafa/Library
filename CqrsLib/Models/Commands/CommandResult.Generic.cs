@@ -8,10 +8,6 @@ public class CommandResult<T> : CommandResult
 
     public T Result { get; }
 
-    public static Task<CommandResult<T>> SuccessTask(T item) => Task.FromResult(Success(item));
-
-    public static CommandResult<T> Success(T item) => new(true, item);
-
     public static new CommandResult<T> Empty() => new(true, default);
 
     public static async Task<CommandResult<int>> FromDb(Task<int> saveResult)
@@ -19,4 +15,10 @@ public class CommandResult<T> : CommandResult
         var result = await saveResult;
         return new(result > 0, result);
     }
+
+    public static CommandResult<T> Success(T item)
+        => new(true, item);
+
+    public static Task<CommandResult<T>> SuccessTask(T item)
+        => Task.FromResult(Success(item));
 }

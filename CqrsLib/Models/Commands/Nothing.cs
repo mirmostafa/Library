@@ -2,9 +2,11 @@
 
 public class Nothing
 {
-    private Nothing() { }
+    private Nothing()
+    { }
 
     public static Nothing Instance { get; } = new();
 
-    public string ToCode() => string.Empty;
+    public string ToCode() 
+        => string.Empty;
 }
