@@ -14,9 +14,6 @@ public static class UnitTestHelper
     public static EqualityAssertion Equal(this Assert assert, object actual)
         => new(actual);
 
-    //internal static void HandleFail(string assertionName, string message)
-    //    => throw new AssertFailedException($"Assertion {assertionName} failed with message: {message}");
-
     public static void AreEqual<T>(this Assert assert, IEnumerable<T> items1, IEnumerable<T> items2)
     {
         if (items1 == null && items2 == null)
