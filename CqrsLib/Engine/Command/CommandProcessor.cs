@@ -14,18 +14,6 @@ internal sealed class CommandProcessor : ICommandProcessor
 #if !DEBUG
         [System.Diagnostics.DebuggerStepThrough]
 #endif
-    //public Task<CommandResult<TCommandResult>> ExecuteAsync<Parameters, TCommandResult>(Parameters parameters)
-    //{
-    //    if (parameters is null)
-    //    {
-    //        throw new NullReferenceException(nameof(parameters));
-    //    }
-
-    //    var handlerType = typeof(ICommandHandler<,>).MakeGenericType(parameters.GetType(), typeof(TCommandResult));
-    //    dynamic handler = this._container.ResolveKeyed("2", handlerType);
-    //    return handler.HandleAsync((dynamic)parameters);
-    //}
-
     public Task<TCommandResult> ExecuteAsync<Parameters, TCommandResult>(Parameters parameters)
     {
         Check.IfArgumentNotNull(parameters);
