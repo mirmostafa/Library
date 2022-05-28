@@ -6,20 +6,35 @@ namespace Library.Wpf.Windows.Input.Commands;
 
 public class LibCommandBinding : CommandBinding
 {
-    #region Fields
+    public LibCommandBinding()
+    {
+        Initialize();
+    }
 
-    private string _CommandText;
+    private void Initialize()
+    {
+        CanExecute += this.LibCommandBinding_CanExecute;
+    }
 
-    #endregion
+    private void LibCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+        e.Handled = this.Command is ILibCommand command && !command.IsEnabled;
+        if (e.Handled)
+        {
+            
+        }
+    }
+
+    private string? _commandText;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    public string CommandText
+    public string? CommandText
     {
-        get => this._CommandText;
+        get => this._commandText;
         set
         {
-            this._CommandText = value;
+            this._commandText = value;
             this.OnPropertyChanged();
             this.OnCaptionChanged();
         }
