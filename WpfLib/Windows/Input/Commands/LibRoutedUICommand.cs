@@ -96,7 +96,7 @@ public class NavigationUICommand : LibRoutedUICommand
     private void InitializeComponents()
     {
         this.IsEnabled = true;
-        this.CanExecuteChanged
+        //this.CanExecuteChanged
     }
 
     public record NavigatingEventArgs(Frame? Frame, Uri? Source);
