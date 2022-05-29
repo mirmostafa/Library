@@ -1,5 +1,5 @@
-﻿using Library.Logging;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
+using Library.Logging;
 
 namespace ConAppTest;
 
@@ -9,10 +9,9 @@ public static class ConsoleAppStartupModule
 
     [ModuleInitializer]
     public static void Startup()
-    {
-        Loggers loggers = new();
-        loggers.Add(new VsOutputLogger());
-        loggers.Add(new TextWriterLogger(Console.Out));
-        Logger = loggers;
-    }
+        => Logger = new Loggers()
+        {
+            new VsOutputLogger(),
+            new TextWriterLogger(Console.Out)
+        };
 }

@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:bases="clr-namespace:Library.Wpf.Bases;assembly=Library.Wpf"
     xmlns:local="clr-namespace:WpfApp1"
-   xmlns:windows="clr-namespace:Library.Wpf.Windows;assembly=Library.Wpf"
-     StartupUri="MainWindow.xaml">
+    xmlns:windows="clr-namespace:Library.Wpf.Windows;assembly=Library.Wpf"
+    StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
