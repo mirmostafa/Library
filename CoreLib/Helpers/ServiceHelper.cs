@@ -9,6 +9,44 @@ namespace Library.Helpers;
 
 public static class ServiceHelper
 {
+    public static async Task<IReadOnlySet<TEntity>> GetAllEntities<TEntity>(IQueryable<TEntity> entities)
+    {
+        var query = from entity in entities
+                    select entity;
+        var dbResult = await query.ToListAsync();
+        return dbResult.ToReadOnlySet();
+    }
+
+    public static Task<IReadOnlySet<TEntity>> GetAllEntities<TEntity>(Func<IQueryable<TEntity>> getEntities)
+        => GetAllEntities(getEntities());
+
+    public static async Task<IReadOnlyList<TViewModel>> GetAllViewModel<TEntity, TViewModel>(IQueryable<TEntity> entities, Func<TEntity, TViewModel> convert)
+    {
+        var dbEntities = await GetAllEntities(entities);
+        var result = dbEntities.Select(convert);
+        return result.ToReadOnlyList();
+    }
+
+    public static async Task<IReadOnlyList<TViewModel>> GetAllViewModel<TEntity, TViewModel>(Func<IQueryable<TEntity>> getEntities, Func<TEntity, TViewModel> convert)
+        => await GetAllViewModel(getEntities(), convert);
+
+    public static async Task<TEntity?> GetEntityById<TId, TEntity>(TId id, IQueryable<TEntity> entities)
+        where TEntity : IHasKey<TId>
+    {
+        var query = from entity in entities
+                    where entity.Id!.Equals(id)
+                    select entity;
+        var result = await query.FirstOrDefaultAsync();
+        return result;
+    }
+
+    public static async Task<TViewModel?> GetViewModelById<TId, TEntity, TViewModel>(TId id, IQueryable<TEntity> entities, Func<TEntity?, TViewModel?> convert)
+        where TEntity : IHasKey<TId>
+    {
+        var entity = await GetEntityById(id, entities);
+        return convert(entity);
+    }
+
     public static async Task<TViewModel> SaveViewModelAsync<TViewModel>(this IAsyncWriteService<TViewModel> service!!, TViewModel model, bool persist = true)
         where TViewModel : ICanSetKey<long?>
         => model.ArgumentNotNull().Id is { } id and > 0
@@ -43,52 +81,6 @@ public static class ServiceHelper
 
         var result = await service.SaveChangesAsync();
         service.ResetChanges();
-        return result;
-    }
-
-    public static async Task<IReadOnlySet<TEntity>> GetAllEntities<TEntity>(IQueryable<TEntity> entities)
-    {
-        var query = from entity in entities
-                    select entity;
-        var dbResult = await query.ToListAsync();
-        return dbResult.ToReadOnlySet();
-    }
-
-    public static async Task<IReadOnlyList<TEntity>> GetAllEntities<TEntity>(Func<IQueryable<TEntity>> getEntities)
-    {
-        var query = from entity in getEntities()
-                    select entity;
-        var dbResult = await query.ToListAsync();
-        return dbResult.ToReadOnlyList();
-    }
-
-    public static async Task<IReadOnlyList<TViewModel>> GetAllViewModel<TEntity, TViewModel>(IQueryable<TEntity> entities, Func<TEntity, TViewModel> convert)
-    {
-        var dbEntities = await GetAllEntities(entities);
-        var result = dbEntities.Select(convert);
-        return result.ToReadOnlyList();
-    }
-
-    public static async Task<IReadOnlyList<TViewModel>> GetAllViewModel<TEntity, TViewModel>(Func<IQueryable<TEntity>> getEntities, Func<TEntity, TViewModel> convert)
-        => await GetAllViewModel(getEntities(), convert);
-
-    public static async Task<TEntity?> GetEntityById<TId, TEntity>(TId id, IQueryable<TEntity> entities)
-        where TEntity : IHasKey<TId>
-    {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        var query = from entity in entities
-                    where entity.Id.Equals(id)
-                    select entity;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-        var result = await query.FirstOrDefaultAsync();
-        return result;
-    }
-
-    public static async Task<TViewModel?> GetViewModelById<TId, TEntity, TViewModel>(TId id, IQueryable<TEntity> entities, Func<TEntity?, TViewModel?> convert)
-        where TEntity : IHasKey<TId>
-    {
-        var entity = await GetEntityById(id, entities);
-        var result = convert(entity);
         return result;
     }
 }
