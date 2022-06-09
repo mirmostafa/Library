@@ -1,12 +1,20 @@
 ﻿using Library.Interfaces;
 
 namespace Library.Types;
+
 public class EmptyDisposable : IDisposable, IEmpty<EmptyDisposable>
 {
+    private static EmptyDisposable? _empty;
     private bool _disposedValue;
-    private static EmptyDisposable _empty;
-
     public static EmptyDisposable Empty => _empty ??= NewEmpty();
+
+    public static EmptyDisposable NewEmpty() => new();
+
+    public void Dispose()
+    {
+        this.Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 
     protected virtual void Dispose(bool disposing)
     {
@@ -18,12 +26,4 @@ public class EmptyDisposable : IDisposable, IEmpty<EmptyDisposable>
             this._disposedValue = true;
         }
     }
-
-    public void Dispose()
-    {
-        this.Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
-
-    public static EmptyDisposable NewEmpty() => new();
 }
