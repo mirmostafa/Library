@@ -141,7 +141,7 @@ public interface IResetChanges
 /// </summary>
 /// <seealso cref="Library.Interfaces.IService" />
 /// <seealso cref="Library.Interfaces.IResetChanges" />
-public interface IAsyncSaveService : IService//x , IResetChanges
+public interface IAsyncSaveService : IService
 {
     /// <summary>
     /// Saves the data asynchronously.
