@@ -19,5 +19,5 @@ public abstract class NotifyPropertyChanged : INotifyPropertyChanged
 
         backingField = value;
         this.OnPropertyChanged(propertyName);
-    }
+    }    
 }
