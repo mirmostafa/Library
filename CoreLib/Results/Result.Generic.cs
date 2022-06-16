@@ -64,6 +64,9 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     public static implicit operator TValue(in Result<TValue> result)
         => result.Value;
 
+    public static implicit operator Result(in Result<TValue> result) 
+        => result.ConvertTo();
+
     public static Result<TValue> New(TValue item)
         => new(item);
 
