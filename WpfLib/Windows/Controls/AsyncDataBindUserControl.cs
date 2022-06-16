@@ -90,6 +90,6 @@ public abstract class AsyncDataBindUserControl : UserControlBase, ISupportAsyncD
         }
     }
 
-    public Task RebindDataAsync() =>
-        this.BindDataAsync();
+    public Task RebindDataAsync()
+        => this.BindDataAsync();
 }

@@ -26,13 +26,14 @@ public static class CodeDomHelper
     /// or
     /// nameof(c)
     /// </exception>
-    public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c!!,
+    public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c,
         in IEnumerable<(string Type, string Name, string DataMemberName)> arguments,
         in string? body = null,
         in MemberAttributes? accessModifiers = null,
         in string? comment = null)
     {
         Check.IfArgumentNotNull(arguments);
+        Check.IfArgumentNotNull(c);
         var constructor = new CodeConstructor
         {
             Attributes = accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final
@@ -72,12 +73,13 @@ public static class CodeDomHelper
     /// or
     /// nameof(c)
     /// </exception>
-    public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c!!,
+    public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c,
         in IEnumerable<(string Type, string Name, string DataMemberName, bool IsPropery)> arguments,
         in string? body = null,
         in MemberAttributes? accessModifiers = null,
         in string? comment = null)
     {
+        Check.IfArgumentNotNull(c);
         Check.IfArgumentNotNull(arguments);
         var constructor = new CodeConstructor
         {
@@ -149,13 +151,14 @@ public static class CodeDomHelper
     /// <param name="arguments">The arguments.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">nameof(c)</exception>
-    public static CodeTypeDeclaration AddMethod(this CodeTypeDeclaration c!!,
+    public static CodeTypeDeclaration AddMethod(this CodeTypeDeclaration c,
         in string name,
         in string? body = null,
         in string? returnType = null,
         in MemberAttributes? accessModifiers = null,
         bool isPartial = false, params MethodArgument[] arguments)
     {
+        Check.IfArgumentNotNull(c);
         _ = c.Members.Add(NewMethod(name, body, returnType, accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final, isPartial, arguments));
         return c;
     }
@@ -211,8 +214,9 @@ public static class CodeDomHelper
     /// <param name="returnType">Type of the return.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">nameof(c)</exception>
-    public static CodeTypeDeclaration AddPartialMethod(this CodeTypeDeclaration c!!, in string name, in Type? returnType = null)
+    public static CodeTypeDeclaration AddPartialMethod(this CodeTypeDeclaration c, in string name, in Type? returnType = null)
     {
+        Check.IfArgumentNotNull(c);
         var method = NewPartialMethodAsField(name, returnType);
         _ = c.Members.Add(method);
         return c;
@@ -453,9 +457,9 @@ public static class CodeDomHelper
     /// <param name="statement">The statement.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">nameof(unit)</exception>
-    public static CodeCompileUnit AddRegion(this CodeCompileUnit unit!!, string statement)
+    public static CodeCompileUnit AddRegion(this CodeCompileUnit unit, string statement)
     {
-        _ = unit.StartDirectives.Add(new CodeRegionDirective(CodeRegionMode.Start, statement));
+        _ = unit.NotNull().StartDirectives.Add(new CodeRegionDirective(CodeRegionMode.Start, statement));
         _ = unit.EndDirectives.Add(new CodeRegionDirective(CodeRegionMode.End, string.Empty));
         return unit;
     }
@@ -527,13 +531,14 @@ public static class CodeDomHelper
     /// <param name="arguments">The arguments.</param>
     /// <returns></returns>
     public static CodeMemberMethod NewMethod(
-        in string name!!,
+        in string name,
         in string? body = null,
         in string? returnType = null,
         in MemberAttributes? accessModifiers = null,
         in bool isPartial = false,
         params MethodArgument[] arguments)
     {
+        Check.IfArgumentNotNull(name);
         var method = new CodeMemberMethod
         {
             Attributes = isPartial ? MemberAttributes.ScopeMask : (accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final),

@@ -1,13 +1,15 @@
 ﻿using System.Xml;
 using System.Xml.Serialization;
 using Library.Results;
+using Library.Validations;
 
 namespace Library.Helpers;
 
 public static class ResultHelper
 {
-    public static Result<Stream> ToFile(this Result<Stream> result, string filePath!!, FileMode fileMode = FileMode.Create)
+    public static Result<Stream> ToFile(this Result<Stream> result, string filePath, FileMode fileMode = FileMode.Create)
     {
+        Check.IfArgumentNotNull(filePath);
         var stream = result.Value;
         using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
         stream.CopyTo(fileStream);
@@ -35,6 +37,9 @@ public static class ResultHelper
     /// <param name="result">The result.</param>
     /// <param name="filePath">The file path.</param>
     /// <returns></returns>
-    public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath!!) =>
-        result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
+    public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath)
+    {
+        Check.IfArgumentNotNull(filePath);
+        return result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
+    }
 }

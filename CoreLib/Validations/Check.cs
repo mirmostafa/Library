@@ -96,8 +96,8 @@ public sealed class Check
     public static void MustBe([DoesNotReturnIf(false)] bool required) =>
         MustBe<RequiredValidationException>(required);
 
-    public static void MustBe([DoesNotReturnIf(false)] bool required, Func<string> getMessage!!) =>
-        MustBe(required, () => new ValidationException(getMessage()));
+    public static void MustBe([DoesNotReturnIf(false)] bool required, Func<string> getMessage) =>
+        MustBe(required, () => new ValidationException(getMessage.NotNull()()));
 
     public static void MustBeArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName) =>
         MustBe(isNotNull, () => new ArgumentNullException(argName));

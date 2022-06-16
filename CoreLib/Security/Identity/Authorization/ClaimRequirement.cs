@@ -10,8 +10,8 @@ public sealed class ClaimRequirement : IAuthorizationRequirement
         : this(claim.ToClaim()) { }
     public ClaimRequirement([DisallowNull] in Claim claim)
         => this.Claim = claim.ArgumentNotNull();
-    public ClaimRequirement([DisallowNull] in string claimType!!, in string claimValue = LibClaimDefaultValues.VALID_CLAIM_VALUE)
-        : this(new Claim(claimType, claimValue)) { }
+    public ClaimRequirement([DisallowNull] in string claimType, in string claimValue = LibClaimDefaultValues.VALID_CLAIM_VALUE)
+        : this(new Claim(claimType.NotNull(), claimValue)) { }
 
     public Claim Claim { get; }
 }

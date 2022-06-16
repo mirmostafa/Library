@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using Library.Exceptions;
+using Library.Validations;
 using Library.Windows;
 
 namespace Library.Results;
@@ -14,8 +15,8 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     protected ResultBase(object? statusCode, NotificationMessage? fullMessage)
         => (this.StatusCode, this.FullMessage) = (statusCode, fullMessage);
-    protected ResultBase(object? statusCode, [DisallowNull] IException exception!!)
-        => (this.StatusCode, this.FullMessage) = (statusCode, exception.ToFullMessage());
+    protected ResultBase(object? statusCode, [DisallowNull] IException exception)
+        => (this.StatusCode, this.FullMessage) = (statusCode, exception.NotNull().ToFullMessage());
 
     public List<(object? Id, object Message)> Errors { get; } = new();
 

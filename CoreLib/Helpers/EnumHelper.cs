@@ -83,14 +83,12 @@ public static class EnumHelper
         return attributes?.Length > 0 ? attributes.AsEnumerable() : Enumerable.Empty<TAttribute>();
     }
 
-    public static string? GetItemDescription(Enum? value!!,
+    public static string? GetItemDescription(Enum? value,
         bool localized = true,
         string cultureName = "en-US")
     {
-        if (string.IsNullOrEmpty(cultureName))
-        {
-            throw new ArgumentException($"'{nameof(cultureName)}' cannot be null or empty", nameof(cultureName));
-        }
+        Check.IfArgumentNotNull(value);
+        Check.MustBe(!string.IsNullOrEmpty(cultureName), () => new ArgumentException($"'{nameof(cultureName)}' cannot be null or empty", nameof(cultureName)));
 
         if (localized)
         {

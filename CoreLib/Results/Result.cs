@@ -1,5 +1,6 @@
 ﻿using Library.Dynamic;
 using Library.Interfaces;
+using Library.Validations;
 using Library.Windows;
 
 namespace Library.Results;
@@ -30,8 +31,8 @@ public class Result : ResultBase, IEmpty<Result>
     public static explicit operator Result(bool b)
         => b ? Success : Fail;
 
-    public static implicit operator bool(Result result!!)
-        => result.IsSucceed;
+    public static implicit operator bool(Result result)
+        => result.NotNull().IsSucceed;
 
     public static Result New()
         => new();

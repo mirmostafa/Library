@@ -6,63 +6,9 @@ using System.Windows.Media;
 using Library.CodeGeneration.Models;
 
 namespace Library.Wpf.Helpers;
+
 public static class RichTextBoxHelper
 {
-    public static IEnumerable<Paragraph> TextToParagraphs(string text!!,
-        Func<(string CurrentLine, string? PrevLine), (bool Found, IEnumerable<Inline>? Inline)?> lineProcessor!!,
-        Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor!!)
-    {
-        var lines = text.Separate("\r\n");
-        string? prevLine = null;
-        foreach (var line in lines)
-        {
-            var paragraph = new Paragraph();
-            if (line?.Trim().IsNullOrEmpty() ?? true)
-            {
-                paragraph.Inlines.Add(new Run(line));
-                continue;
-            }
-            var lineProcessResult = lineProcessor((line, prevLine));
-            prevLine = line;
-            if (lineProcessResult?.Found ?? false)
-            {
-                paragraph.Inlines.AddRange(lineProcessResult.Value.Inline);
-            }
-            else
-            {
-                var words = line.Split(" ").Select(x => string.Concat(x, " "));
-                string? prevWord = null;
-                foreach (var word in words)
-                {
-                    if (word is not null and not "" and not " " and not "\r\n")
-                    {
-                        prevWord = processWord(wordProcessor, paragraph, prevWord, word);
-                    }
-                    else
-                    {
-                        paragraph.Inlines.Add(new Run(word));
-                    }
-                }
-            }
-            yield return paragraph;
-        }
-
-        static string? processWord(Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor, Paragraph paragraph, string? prevWord, string word)
-        {
-            var wordProcessResult = wordProcessor((word, prevWord));
-            prevWord = word;
-            if (wordProcessResult?.Found ?? false)
-            {
-                paragraph.Inlines.AddRange(wordProcessResult.Value.Inline);
-            }
-            else
-            {
-                paragraph.Inlines.Add(new Run(word));
-            }
-            return prevWord;
-        }
-    }
-
     public static RichTextBox InsertCSharpCodeToDocument(this RichTextBox @this, Code code)
     {
         if (code.Language != Languages.CSharp)
@@ -99,11 +45,13 @@ public static class RichTextBoxHelper
             {
                 return (true, EnumerableHelper.AsEnumerableItem(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DimGray }));
             }
+            else if (line.CurrentLine.Trim().StartsWithAny(preprocessors))
+            {
+                return (true, EnumerableHelper.AsEnumerableItem(new Run(line.CurrentLine) { Foreground = Brushes.Gray }));
+            }
             else
             {
-                return line.CurrentLine.Trim().StartsWithAny(preprocessors)
-                    ? (true, EnumerableHelper.AsEnumerableItem(new Run(line.CurrentLine) { Foreground = Brushes.Gray }))
-                    : null;
+                return null;
             }
         }
         (bool Found, IEnumerable<Inline>? Inline)? wordProcess((string CurrentWord, string? PrevWord) word)
@@ -252,6 +200,61 @@ public static class RichTextBoxHelper
                     return false;
                 }
             }
+        }
+    }
+
+    public static IEnumerable<Paragraph> TextToParagraphs(string text!!,
+            Func<(string CurrentLine, string? PrevLine), (bool Found, IEnumerable<Inline>? Inline)?> lineProcessor!!,
+        Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor!!)
+    {
+        var lines = text.Separate("\r\n");
+        string? prevLine = null;
+        foreach (var line in lines)
+        {
+            var paragraph = new Paragraph();
+            if (line?.Trim().IsNullOrEmpty() ?? true)
+            {
+                paragraph.Inlines.Add(new Run(line));
+                continue;
+            }
+            var lineProcessResult = lineProcessor((line, prevLine));
+            prevLine = line;
+            if (lineProcessResult?.Found ?? false)
+            {
+                paragraph.Inlines.AddRange(lineProcessResult.Value.Inline);
+            }
+            else
+            {
+                var words = line.Split(" ").Select(x => string.Concat(x, " "));
+                string? prevWord = null;
+                foreach (var word in words)
+                {
+                    if (word is not null and not "" and not " " and not "\r\n")
+                    {
+                        prevWord = processWord(wordProcessor, paragraph, prevWord, word);
+                    }
+                    else
+                    {
+                        paragraph.Inlines.Add(new Run(word));
+                    }
+                }
+            }
+            yield return paragraph;
+        }
+
+        static string? processWord(Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor, Paragraph paragraph, string? prevWord, string word)
+        {
+            var wordProcessResult = wordProcessor((word, prevWord));
+            prevWord = word;
+            if (wordProcessResult?.Found ?? false)
+            {
+                paragraph.Inlines.AddRange(wordProcessResult.Value.Inline);
+            }
+            else
+            {
+                paragraph.Inlines.Add(new Run(word));
+            }
+            return prevWord;
         }
     }
 }

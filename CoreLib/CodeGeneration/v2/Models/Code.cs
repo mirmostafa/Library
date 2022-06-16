@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Library.CodeGeneration.v2.Models;
 using Library.DesignPatterns.Markers;
+using Library.Validations;
 
 namespace Library.CodeGeneration.v2;
 
@@ -10,10 +11,10 @@ public readonly record struct Code : IEquatable<Code>
 {
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
 
-    public Code(in string name!!, in Language language, in string statement!!, in bool isPartial = false)
+    public Code(in string name, in Language language, in string statement, in bool isPartial = false)
     {
-        this.Name = name;
-        this.Statement = statement;
+        this.Name = name.NotNull();
+        this.Statement = statement.NotNull();
         this.Language = language;
         this.IsPartial = isPartial;
         this._fileName = null;

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Text.RegularExpressions;
+
 using Library.Globalization;
 using Library.Globalization.Pluralization;
 using Library.Results;
@@ -166,7 +167,7 @@ public static class StringHelper
     public static string? GetLongest(this string[] strings) => strings?.Max();
 
     [Pure]
-    public static string? GetPhrase(this string str!!, in int index, in char start, char end = default)
+    public static string? GetPhrase(this string str, in int index, in char start, char end = default)
     {
         if (end == default(char))
         {
@@ -254,13 +255,16 @@ public static class StringHelper
     }
 
     [Pure]
-    public static bool HasPersian(this string text) => CheckAnyValidations(text, IsPersian);
+    public static bool HasPersian(this string text)
+        => CheckAnyValidations(text, IsPersian);
 
     [Pure]
-    public static string? IfNull(this string? s, in string? value) => s is null ? value : s;
+    public static string? IfNull(this string? s, in string? value)
+        => s is null ? value : s;
 
     [Pure]
-    public static string IfNullOrEmpty(this string? str, string defaultValue) => str.IsNullOrEmpty() ? defaultValue : str;
+    public static string IfNullOrEmpty(this string? str, string defaultValue)
+        => str.IsNullOrEmpty() ? defaultValue : str;
 
     public static int? IndexOf([DisallowNull] this IEnumerable<string?> items, in string? item, bool trimmed = false, bool ignoreCase = true)
     {
@@ -282,39 +286,53 @@ public static class StringHelper
 
         return null;
 
-        static string? get(string? current, bool trimmed) => trimmed ? current?.Trim() : current;
+        static string? get(string? current, bool trimmed)
+            => trimmed ? current?.Trim() : current;
 
-        static bool equals(string? current, string? item, bool ignoreCase) => string.Compare(current, item, ignoreCase) == 0;
+        static bool equals(string? current, string? item, bool ignoreCase)
+            => string.Compare(current, item, ignoreCase) == 0;
     }
 
     [Pure]
-    public static bool IsCommon(this char c) => c == ' ';
+    public static bool IsCommon(this char c)
+        => c == ' ';
 
     [Pure]
-    public static bool IsDigit(this char c, in bool canAcceptMinusKey = false) => (canAcceptMinusKey && c == '-') || char.IsDigit(c);
+    public static bool IsDigit(this char c, in bool canAcceptMinusKey = false)
+        => (canAcceptMinusKey && c == '-') || char.IsDigit(c);
 
     [Pure]
-    public static bool IsDigitOrControl(this char key) => char.IsDigit(key) || char.IsControl(key);
+    public static bool IsDigitOrControl(this char key)
+        => char.IsDigit(key) || char.IsControl(key);
 
     [Pure]
-    public static bool IsEmpty([NotNullWhen(false)] in string? s) => s?.Length is 0;
+    public static bool IsEmpty([NotNullWhen(false)] in string? s)
+        => s?.Length is 0;
 
     [Pure]
-    public static bool IsEnglish(this char c) => c.IsCommon() || c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z');
+    public static bool IsEnglish(this char c)
+        => c.IsCommon() || c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z');
 
-    public static bool IsEnglish(this string text) => CheckAllValidations(text, IsEnglish);
+    public static bool IsEnglish(this string text)
+        => CheckAllValidations(text, IsEnglish);
 
-    public static bool IsEnglishOrNumber(this string text, bool canAcceptMinusKey = false) => CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || c.IsEnglish());
+    public static bool IsEnglishOrNumber(this string text, bool canAcceptMinusKey = false)
+        => CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || c.IsEnglish());
 
-    public static bool IsInRange(this string? text, bool ignoreCase, params string[] range) => text.IsInRange(false, ignoreCase, range);
+    public static bool IsInRange(this string? text, bool ignoreCase, params string[] range)
+        => text.IsInRange(false, ignoreCase, range);
 
-    public static bool IsInRange(this string? text, bool trimmed, bool ignoreCase, IEnumerable<string> range) => range.IndexOf(text, trimmed, ignoreCase) >= 0;
+    public static bool IsInRange(this string? text, bool trimmed, bool ignoreCase, IEnumerable<string> range)
+        => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
-    public static bool IsInRange(this string? text, bool trimmed, bool ignoreCase, params string[] range) => range.IndexOf(text, trimmed, ignoreCase) >= 0;
+    public static bool IsInRange(this string? text, bool trimmed, bool ignoreCase, params string[] range)
+        => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
-    public static bool IsInRange(this string? text, params string[] range) => text.IsInRange(true, range);
+    public static bool IsInRange(this string? text, params string[] range)
+        => text.IsInRange(true, range);
 
-    public static bool IsInString(this char c, in string text) => text?.Contains(c.ToString()) ?? false;
+    public static bool IsInString(this char c, in string text)
+        => text?.Contains(c.ToString()) ?? false;
 
     public static bool IsInteger(this string text) => int.TryParse(text, out _);
 

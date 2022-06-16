@@ -1,4 +1,6 @@
-﻿using Library.Collections;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Library.Collections;
 using Library.EventsArgs;
 using Library.Exceptions;
 using Library.Windows;
@@ -340,7 +342,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
     /// <param name="runInTask"></param>
     /// <param name="showOkButton"></param>
     /// <param name="enableOkButtonOnDone"></param>
-    public static TaskDialog GetTaskDialog(Action<TaskDialog, Func<bool>, Func<bool>> action!!,
+    public static TaskDialog GetTaskDialog([DisallowNull]Action<TaskDialog, Func<bool>, Func<bool>> action,
         int maximum = 100,
         string? caption = null,
         string? instruction = null,
@@ -357,6 +359,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         bool showOkButton = true,
         bool enableOkButtonOnDone = true)
     {
+        Check.IfArgumentNotNull(action);
         var isCancellationRequested = false;
         var isBackgroundWorking = false;
 
@@ -833,8 +836,8 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         return dlg.Show();
     }
 
-    public static TaskDialogResult ShowProgress<TItem>(IEnumerable<TItem> items!!,
-        Action<TaskDialog, TItem> onIterating!!,
+    public static TaskDialogResult ShowProgress<TItem>([DisallowNull]IEnumerable<TItem> items,
+        Action<TaskDialog, TItem> onIterating,
         Action<int>? onEachIterated = null,
         Action<TaskDialog>? onIterationEnded = null,
         int? maximum = null,
@@ -854,6 +857,8 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         bool enableOkButtonOnDone = true,
         bool runIterationAsParallel = false)
     {
+        Check.IfArgumentNotNull(items);
+        Check.IfArgumentNotNull(onIterating);
         Action<TaskDialog, Func<bool>, Func<bool>> action = runIterationAsParallel
             ? ((dlg, isCancelled, isInBackground) =>
             {
@@ -925,8 +930,8 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
             enableOkButtonOnDone);
     }
 
-    public static TaskDialogResult ShowProgress<TItem>(IEnumerable<TItem> items!!,
-        Action<TaskDialog, Func<bool>, Func<bool>, TItem> onIterating!!,
+    public static TaskDialogResult ShowProgress<TItem>(IEnumerable<TItem> items,
+        Action<TaskDialog, Func<bool>, Func<bool>, TItem> onIterating,
         Action<int>? onEachIterated = null,
         Action<TaskDialog>? onIterationEnded = null,
         int? maximum = null,
@@ -946,6 +951,8 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         bool enableOkButtonOnDone = true,
         bool runIterationAsParallel = false)
     {
+        Check.IfArgumentNotNull(items);
+        Check.IfArgumentNotNull(onIterating);
         Action<TaskDialog, Func<bool>, Func<bool>> action = runIterationAsParallel
             ? ((dlg, isCancelled, isInBackground) =>
             {

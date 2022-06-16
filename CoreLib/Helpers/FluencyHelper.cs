@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 
+using Library.Validations;
+
 namespace Library.Helpers;
 
 [DebuggerStepThrough]
@@ -60,8 +62,8 @@ public static class FluencyHelper
         return @this;
     }
 
-    public static Fluency<TInstance> IfTrue<TInstance>([NotNull] this Fluency<TInstance> @this, bool b, in Func<TInstance, TInstance> ifTrue!!) =>
-        b is true ? new(ifTrue(@this.Value)) : @this;
+    public static Fluency<TInstance> IfTrue<TInstance>([NotNull] this Fluency<TInstance> @this, bool b, in Func<TInstance, TInstance> ifTrue) =>
+        b is true ? new(ifTrue.NotNull()(@this.Value)) : @this;
 
     public static Fluency<TInstance> IfTrue<TInstance>(this Fluency<TInstance> @this, bool b, in Action<TInstance> ifTrue)
     {

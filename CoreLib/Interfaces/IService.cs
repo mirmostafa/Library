@@ -147,7 +147,7 @@ public interface IAsyncSaveService : IService
     /// Saves the data asynchronously.
     /// </summary>
     /// <returns></returns>
-    Task<int> SaveChangesAsync();
+    Task<Result<int>> SaveChangesAsync();
 }
 
 /// <summary>

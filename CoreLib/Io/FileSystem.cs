@@ -1,4 +1,6 @@
 ﻿using Library.DesignPatterns.Markers;
+using Library.Validations;
+
 using SysDriveInfo = System.IO.DriveInfo;
 using SysFileInfo = System.IO.FileInfo;
 using SysFolderInfo = System.IO.DirectoryInfo;
@@ -12,8 +14,8 @@ public abstract record FileSystem
     /// Initializes a new instance of the <see cref="FileSystem"/> class.
     /// </summary>
     /// <param name="fullPath">The full path.</param>
-    protected FileSystem([DisallowNull] string fullPath!!)
-        => this.FullPath = fullPath;
+    protected FileSystem([DisallowNull] string fullPath)
+        => this.FullPath = fullPath.NotNull();
 
     /// <summary>
     /// Gets the full path.
@@ -45,8 +47,8 @@ public abstract record FileSystem
     /// <returns>
     /// The result of the conversion.
     /// </returns>
-    public static implicit operator string([DisallowNull] in FileSystem fileSystem!!)
-        => fileSystem.FullPath;
+    public static implicit operator string([DisallowNull] in FileSystem fileSystem)
+        => fileSystem.NotNull().FullPath;
 }
 
 [Immutable]
@@ -63,7 +65,7 @@ public sealed record Drive : FileSystem
         => this._sysDriveInfo = driveInfo;
 
     /// <summary>
-    /// Performs an explicit conversion from <see cref="System.IO.DriveInfo?"/> to <see cref="Library.IO.Drive?"/>.
+    /// Performs an explicit conversion from <see cref="SysDriveInfo?"/> to <see cref="Drive?"/>.
     /// </summary>
     /// <param name="driveInfo">The drive information.</param>
     /// <returns>
@@ -72,7 +74,7 @@ public sealed record Drive : FileSystem
     public static explicit operator Drive?(in SysDriveInfo? driveInfo)
         => driveInfo is null ? null : new(driveInfo);
     /// <summary>
-    /// Performs an explicit conversion from <see cref="Library.IO.Drive?"/> to <see cref="System.IO.DriveInfo?"/>.
+    /// Performs an explicit conversion from <see cref="Drive?"/> to <see cref="SysDriveInfo?"/>.
     /// </summary>
     /// <param name="drive">The drive.</param>
     /// <returns>
@@ -135,8 +137,8 @@ public sealed record Folder : FileSystem
     /// Initializes a new instance of the <see cref="Folder"/> class.
     /// </summary>
     /// <param name="directory">The directory.</param>
-    public Folder([DisallowNull] SysFolderInfo directory!!)
-        : base(directory.FullName) => this._sysFolder = directory;
+    public Folder([DisallowNull] SysFolderInfo directory)
+        : base(directory.NotNull().FullName) => this._sysFolder = directory;
 
     /// <summary>
     /// Gets the folders.
@@ -155,8 +157,8 @@ public sealed record Folder : FileSystem
     public IEnumerable<Folder> GetFolders()
         => this._sysFolder.GetDirectories().Select(FromSystemIoDirectoryInfo);
 
-    public static Folder FromSystemIoDirectoryInfo([NotNull] SysFolderInfo directory!!)
-        => new(directory);
+    public static Folder FromSystemIoDirectoryInfo([NotNull] SysFolderInfo directory)
+        => new(directory.NotNull());
 
     /// <summary>
     /// Gets the files.

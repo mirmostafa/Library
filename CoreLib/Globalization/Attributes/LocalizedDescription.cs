@@ -1,3 +1,5 @@
+using Library.Validations;
+
 namespace Library.Globalization.Attributes;
 
 /// <summary>
@@ -18,9 +20,9 @@ internal sealed class LocalizedDescriptionAttribute : Attribute
     /// <param name="cultureName">Name of the culture.</param>
     /// <param name="description">The description.</param>
     /// <exception cref="ArgumentNullException">cultureName</exception>
-    public LocalizedDescriptionAttribute(string cultureName!!, string? description)
+    public LocalizedDescriptionAttribute(string cultureName, string? description)
     {
-        this.CultureName = cultureName;
+        this.CultureName = cultureName.NotNull();
         this.Description = description;
     }
 

@@ -1,6 +1,8 @@
 ﻿using System.Data.SqlClient;
 using System.Dynamic;
 
+using Library.Validations;
+
 namespace Library.Data.SqlServer.Dynamics;
 
 public class DataReader : SqlObject<DataReader, Database>, IDisposable
@@ -24,9 +26,9 @@ public class DataReader : SqlObject<DataReader, Database>, IDisposable
     public IEnumerable<T> Select<T>()
         where T : new() => this.SqlDataReader.Select<T>();
 
-    public override bool TryGetMember(GetMemberBinder binder!!, out object result)
+    public override bool TryGetMember(GetMemberBinder binder, out object result)
     {
-        result = this.SqlDataReader[binder.Name];
+        result = this.SqlDataReader[binder.NotNull().Name];
         return true;
     }
 }

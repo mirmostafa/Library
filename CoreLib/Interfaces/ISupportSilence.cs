@@ -1,4 +1,6 @@
-﻿namespace Library.Interfaces;
+﻿using Library.Validations;
+
+namespace Library.Interfaces;
 
 public interface ISupportSilence
 {
@@ -7,6 +9,6 @@ public interface ISupportSilence
 
 public static class SupportSilenceHelper
 {
-    public static Fluency<TSupportSilence> SetEnableRaisingEvents<TSupportSilence>(this TSupportSilence obj!!, bool value)
-        where TSupportSilence : ISupportSilence => obj.Fluent(() => obj.IsEnabledRaisingEvents = value);
+    public static Fluency<TSupportSilence> SetEnableRaisingEvents<TSupportSilence>(this TSupportSilence obj, bool value)
+        where TSupportSilence : ISupportSilence => obj.NotNull().Fluent(() => obj.IsEnabledRaisingEvents = value);
 }

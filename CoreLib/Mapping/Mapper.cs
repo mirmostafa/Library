@@ -155,9 +155,10 @@ public sealed class Mapper : IMapper
         }
     }
 
-    public IEnumerable<TDestination?> Map<TSource, TDestination>(IEnumerable<TSource> sources!!, Action<TSource, TDestination> finalize)
+    public IEnumerable<TDestination?> Map<TSource, TDestination>(IEnumerable<TSource> sources, Action<TSource, TDestination> finalize)
         where TDestination : class, new()
     {
+        Check.IfArgumentNotNull(sources);
         var dstProps = typeof(TDestination).GetProperties();
         foreach (var source in sources)
         {
@@ -177,10 +178,11 @@ public sealed class Mapper : IMapper
         }
     }
 
-    public TDestination Map<TDestination>(in object source, Func<TDestination> instantiator!!)
+    public TDestination Map<TDestination>(in object source, Func<TDestination> instantiator)
         where TDestination : class
     {
         Check.IfArgumentNotNull(source);
+        Check.IfArgumentNotNull(instantiator);
         var result = instantiator();
         var dstProps = typeof(TDestination).GetProperties();
         foreach (var prop in dstProps)

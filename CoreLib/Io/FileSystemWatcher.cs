@@ -2,6 +2,7 @@
 using Library.DesignPatterns.Markers;
 using Library.EventsArgs;
 using Library.Interfaces;
+using Library.Validations;
 
 namespace Library.IO;
 
@@ -11,9 +12,9 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
     private bool _disposedValue;
     private Thread? _thread;
 
-    public FileSystemWatcher(in string path!!, in string? wildcard = null, in bool includeSubdirectories = false)
+    public FileSystemWatcher(in string path, in string? wildcard = null, in bool includeSubdirectories = false)
     {
-        this._innerWatcher = (path, wildcard) switch
+        this._innerWatcher = (path.NotNull(), wildcard) switch
         {
             (null, null) => new System.IO.FileSystemWatcher() { IncludeSubdirectories = includeSubdirectories },
             (not null, null) => new System.IO.FileSystemWatcher(path) { IncludeSubdirectories = includeSubdirectories },
