@@ -3,6 +3,7 @@ using System.Net;
 using Library.Cqrs.Models.Commands;
 using Library.Cqrs.Models.Queries;
 using Library.Helpers;
+using Library.Validations;
 using Library.Web.Results;
 using Microsoft.AspNetCore.Mvc;
 using StandardResult = Library.Results.Result;
@@ -26,8 +27,8 @@ public abstract class ApiControllerBase : ControllerBase
     protected virtual IApiResult<TResponseDto?> Succees<TResponseDto>(TResponseDto? result)
         => ApiResult<TResponseDto?>.Ok(result);
 
-    protected virtual IApiResult<TResult?> Succees<TResult>(CommandResult<TResult> commandResult!!)
-        => ApiResult<TResult?>.Ok(commandResult.Result);
+    protected virtual IApiResult<TResult?> Succees<TResult>(CommandResult<TResult> commandResult)
+        => ApiResult<TResult?>.Ok(commandResult.NotNull().Result);
 
     protected virtual IApiResult<TResult?> NoCotent<TResult>(TResult? result)
         => this.Fail<TResult>(HttpStatusCode.NoContent.ToInt(), "آیتمی یافت نشد.");
