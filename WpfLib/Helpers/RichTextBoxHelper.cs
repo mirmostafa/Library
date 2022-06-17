@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using System.Windows.Documents;
 using System.Windows.Media;
+
 using Library.CodeGeneration.Models;
 
 namespace Library.Wpf.Helpers;
@@ -203,10 +204,14 @@ public static class RichTextBoxHelper
         }
     }
 
-    public static IEnumerable<Paragraph> TextToParagraphs(string text!!,
-            Func<(string CurrentLine, string? PrevLine), (bool Found, IEnumerable<Inline>? Inline)?> lineProcessor!!,
-        Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor!!)
+    public static IEnumerable<Paragraph> TextToParagraphs(string text,
+            Func<(string CurrentLine, string? PrevLine), (bool Found, IEnumerable<Inline>? Inline)?> lineProcessor,
+        Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor)
     {
+        Check.IfArgumentNotNull(text);
+        Check.IfArgumentNotNull(lineProcessor);
+        Check.IfArgumentNotNull(wordProcessor);
+
         var lines = text.Separate("\r\n");
         string? prevLine = null;
         foreach (var line in lines)

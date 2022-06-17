@@ -3,6 +3,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+
 using Library.Exceptions.Validations;
 
 namespace Library.Validations;
@@ -99,11 +100,11 @@ public sealed class Check
     public static void MustBe([DoesNotReturnIf(false)] bool required, Func<string> getMessage) =>
         MustBe(required, () => new ValidationException(getMessage.NotNull()()));
 
-    public static void MustBeArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName) =>
-        MustBe(isNotNull, () => new ArgumentNullException(argName));
+    public static void MustBeArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName)
+        => MustBe(isNotNull, () => new ArgumentNullException(argName));
 
-    public static void MustBeNotNull([DoesNotReturnIf(false)] bool isNotNull, string argName) =>
-            MustBe(isNotNull, () => new NullValueValidationException(argName));
+    public static void MustBeNotNull([DoesNotReturnIf(false)] bool isNotNull, string argName)
+        => MustBe(isNotNull, () => new NullValueValidationException(argName));
 }
 
 [DebuggerStepThrough]

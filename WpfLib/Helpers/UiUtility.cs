@@ -10,8 +10,11 @@ public static class UiUtility
     /// <typeparam name="T">The type of the items present in the control and in the options</typeparam>
     /// <param name="control">The ItemsControl to select an item in</param>
     /// <param name="info">The options used for the selection process</param>
-    public static void SetSelectedItem<T>(ItemsControl control!!, SetSelectedInfo<T> info!!)
+    public static void SetSelectedItem<T>(ItemsControl control, SetSelectedInfo<T> info)
     {
+        Check.IfArgumentNotNull(control);
+        Check.IfArgumentNotNull(info?.Items);
+        
         var currentItem = info.Items.First();
 
         if (control.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)

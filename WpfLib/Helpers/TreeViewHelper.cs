@@ -45,7 +45,8 @@ public static class TreeViewHelper
     /// <param name="path">The path to the selected item</param>
     /// <param name="convertMethod">A custom method that converts items in the control to their respective path component</param>
     /// <param name="separatorChar">The character that separates path components</param>
-    public static void SetSelectedItem(this TreeView treeView, string path!!, Func<object, string> convertMethod, char separatorChar) => treeView.SetSelectedItem(path.Split(new[] { separatorChar }, StringSplitOptions.RemoveEmptyEntries), (x, y) => x == y, convertMethod);
+    public static void SetSelectedItem(this TreeView treeView, string path, Func<object, string> convertMethod, char separatorChar) 
+        => treeView.SetSelectedItem(path.ArgumentNotNull().Split(new[] { separatorChar }, StringSplitOptions.RemoveEmptyEntries), (x, y) => x == y, convertMethod);
 
     /// <summary>
     ///     Selects an item in a TreeView using a custom item chain
