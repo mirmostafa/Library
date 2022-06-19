@@ -150,6 +150,15 @@ public interface IAsyncSaveService : IService
     Task<Result<int>> SaveChangesAsync();
 }
 
+public interface IAsyncSaveService<TViewModel> : IService
+{
+    /// <summary>
+    /// Saves the data asynchronously.
+    /// </summary>
+    /// <returns></returns>
+    Task<Result<TViewModel>> SaveChangesAsync(TViewModel viewModel);
+}
+
 /// <summary>
 /// Database entity to view model converter
 /// </summary>

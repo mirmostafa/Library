@@ -1,7 +1,9 @@
 ﻿using System.Linq.Expressions;
+
 using Library.Data.Markers;
 using Library.Results;
 using Library.Validations;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -227,8 +229,15 @@ public static class DbContextHelper
     public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, CancellationToken cancellationToken = default)
         => await entityEntry?.Context.SaveChangesAsync(cancellationToken)!;
 
+    public static async Task<Result<int>> SaveChangesResultAsync<TDbContext>(this TDbContext dbContext)
+        where TDbContext : DbContext
+    {
+        var result = Result<int>.CreateSuccess(await dbContext.SaveChangesAsync());
+        return result;
+    }
+
     public static EntityEntry<TEntity> SetModified<TEntity, TProperty>(
-        this EntityEntry<TEntity> entityEntry,
+            this EntityEntry<TEntity> entityEntry,
         in Expression<Func<TEntity, TProperty>> propertyExpression,
         bool isModified = true)
         where TEntity : class
@@ -333,7 +342,7 @@ public static class DbContextHelper
         }
         if (validatorAsync is not null)
         {
-            _ = await validatorAsync(model).HandleResultAsync();
+            _ = await validatorAsync(model).ThrowOnFailAsync();
         }
 
         var entity = convertToEntity(model);
