@@ -2,12 +2,7 @@
 
 namespace Library.Interfaces;
 
-public interface IHasChild
+public interface IHasChild<TChild>
 {
-    IEnumerable Children { get; }
-}
-
-public interface IHasChild<TChild> : IHasChild
-{
-    new IEnumerable<TChild> Children { get; }
+    IEnumerable<TChild> Children { get; }
 }
