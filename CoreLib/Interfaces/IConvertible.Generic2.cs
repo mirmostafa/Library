@@ -2,7 +2,6 @@
 
 namespace Library.Interfaces;
 
-[RequiresPreviewFeatures]
 public interface IConvertible<TThis, TOther>
 {
     TOther ConvertTo();
