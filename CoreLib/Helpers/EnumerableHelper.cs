@@ -2,7 +2,9 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+
 using Library.Collections;
+using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
 
@@ -236,8 +238,26 @@ public static class EnumerableHelper
         return list;
     }
 
+    public static IEnumerable<TItem> Collect<TItem>(IEnumerable<TItem> items)
+        where TItem : IHasChild<TItem>
+    {
+        foreach (var item in items)
+        {
+            yield return item;
+
+            foreach (var child in Collect(item.Children))
+            {
+                yield return child;
+            }
+        }
+    }
+
+    public static IEnumerable<TItem> Collect<TItem>(this TItem root)
+        where TItem : IHasChild<TItem> 
+        => Collect(AsEnumerableItem(root));
+
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
-        where TSource : class => items is null
+                where TSource : class => items is null
             ? Enumerable.Empty<TSource>()
             : items.Where(x => x is not null).Select(x => x!);
 
