@@ -114,7 +114,7 @@ public static class Functional
         });
     public static TResult Lock<TResult>(object? lockObject, in Func<TResult> action)
     {
-        lock (lockObject ?? CodeHelpers.GetCallerMethod()!.DeclaringType!)
+        lock (lockObject ?? CodeHelper.GetCallerMethod()!.DeclaringType!)
         {
             return action.ArgumentNotNull(nameof(action))();
         }
@@ -168,12 +168,6 @@ public static class Functional
 
     public static Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default) =>
         Task.Run(action, cancellationToken);
-    public static Task Async(Action action, CancellationToken cancellationToken = default) =>
-        Task.Run(action, cancellationToken);
-    public static Task<TResult> Async<TResult>(TResult result) =>
-        Task.FromResult(result);
-    public static Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default) =>
-        Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
 
     public static Exception? Catch(
         in Action tryMethod,
@@ -309,13 +303,6 @@ public static class Functional
         }
     }
 
-    /// <summary>
-    ///     Breaks code execution.
-    /// </summary>
-    [DoesNotReturn]
-    public static void Break() =>
-        Throw<BreakException>();
-
     [DoesNotReturn]
     public static void Throw<TException>() where TException : Exception, new() =>
         ExceptionDispatchInfo.Throw(new TException());
@@ -331,12 +318,4 @@ public static class Functional
     [DoesNotReturn]
     public static void Throw(in Func<Exception> getException) =>
         ExceptionDispatchInfo.Throw(getException());
-
-    public static Func<TResult> GetFunc<TArg, TResult>(Func<TArg, TResult> func, TArg arg) =>
-        () => func(arg);
-    public static Func<TResult> GetFunc<TArg1, TArg2, TResult>(Func<TArg1, TArg2, TResult> func, TArg1 arg1, TArg2 arg2) =>
-        () => func(arg1, arg2);
-    public static Func<TResult> GetFunc<TArg1, TArg2, TArg3, TResult>(Func<TArg1, TArg2, TArg3, TResult> func, TArg1 arg1, TArg2 arg2, TArg3 arg3) =>
-        () => func(arg1, arg2, arg3);
-
 }

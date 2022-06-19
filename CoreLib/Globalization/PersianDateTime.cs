@@ -504,17 +504,17 @@ public readonly struct PersianDateTime :
             var timeParts = timePart.Split(TimeSeparator);
             if (timeParts.Length > 0)
             {
-                hour = CodeHelpers.ThrowOnError(() => int.Parse(timeParts[0]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+                hour = CodeHelper.ThrowOnError(() => int.Parse(timeParts[0]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
 
             if (timePart.Length > 1)
             {
-                min = CodeHelpers.ThrowOnError(() => int.Parse(timeParts[1]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+                min = CodeHelper.ThrowOnError(() => int.Parse(timeParts[1]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
 
             if (timeParts.Length > 2)
             {
-                sec = CodeHelpers.ThrowOnError(() => int.Parse(timeParts[2]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
+                sec = CodeHelper.ThrowOnError(() => int.Parse(timeParts[2]), _ => new ArgumentException("invalid time format", nameof(dateTimeString)));
             }
         }
 
@@ -872,7 +872,7 @@ public readonly struct PersianDateTime :
     [DoesNotReturn]
     private static InvalidCastException RaiseInvalidTypeCastException()
     {
-        var targetType = CodeHelpers.GetCallerMethodName()![2..];
+        var targetType = CodeHelper.GetCallerMethodName()![2..];
         throw new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
     }
 
