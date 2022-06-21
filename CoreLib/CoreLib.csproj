@@ -3,7 +3,8 @@
 		<AssemblyName>Library.Core</AssemblyName>
 		<RootNamespace>Library</RootNamespace>
 		<Configurations>Debug;Release;</Configurations>
-	</PropertyGroup>
+        <EnablePreviewFeatures>true</EnablePreviewFeatures>
+    </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DefineConstants>DEBUG;TRACE</DefineConstants>

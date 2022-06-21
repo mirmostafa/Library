@@ -1,23 +1,22 @@
 ﻿using Library.DesignPatterns.Markers;
+using Library.Logging;
 
 namespace Library.Threading;
 
 [Immutable]
 [Fluent]
-public class BackgroundTimer : Logging.StringLogger
+public class BackgroundTimer : ILoggerContainer
 {
     private readonly CancellationTokenSource _cancellationSource;
+    private readonly ILogger _Logger;
     private readonly bool _shouldDisposeCancellationTokenSource;
-    private Task _timerTask;
     private bool _isDone;
-    private Action<Exception> _onError;
+    private Action<Exception>? _onError;
+    private Task? _timerTask;
 
-    public Action Action { get; }
-    public TimeSpan Interval { get; }
-    public string? Name { get; }
-
-    public BackgroundTimer([DisallowNull] in Action action, [DisallowNull] in TimeSpan interval, string? name = null, CancellationTokenSource? cancellationSource = null)
+    public BackgroundTimer([DisallowNull] in Action action, [DisallowNull] in TimeSpan interval, string? name = null, CancellationTokenSource? cancellationSource = null, ILogger? logger = null)
     {
+        this._Logger = logger ?? EmptyLogger.Empty;
         this.Action = action;
         this.Interval = interval;
         this.Name = name;
@@ -31,6 +30,26 @@ public class BackgroundTimer : Logging.StringLogger
             this._cancellationSource = new();
         }
     }
+
+    public Action Action { get; }
+    public TimeSpan Interval { get; }
+    ILogger ILoggerContainer.Logger => _Logger;
+    public string? Name { get; }
+
+    public static BackgroundTimer New([DisallowNull] in Action action, [DisallowNull] in TimeSpan interval, string? name = null, CancellationTokenSource? cancellationSource = null)
+        => new(action, interval, name, cancellationSource);
+
+    public static BackgroundTimer New([DisallowNull] in Action action, [DisallowNull] in long intervalInMilliseconds, string? name = null, CancellationTokenSource? cancellationSource = null)
+        => new(action, TimeSpan.FromMilliseconds(intervalInMilliseconds), name, cancellationSource);
+
+    public static BackgroundTimer Start([DisallowNull] in Action action, [DisallowNull] in TimeSpan interval, string? name = null, CancellationTokenSource? cancellationSource = null)
+        => new BackgroundTimer(action, interval, name, cancellationSource).Start();
+
+    public static BackgroundTimer Start([DisallowNull] in Action action, [DisallowNull] in long intervalInMilliseconds, string? name = null, CancellationTokenSource? cancellationSource = null)
+        => new BackgroundTimer(action, TimeSpan.FromMilliseconds(intervalInMilliseconds), name, cancellationSource).Start();
+
+    public BackgroundTimer OnError(Action<Exception> onError)
+        => this.Fluent(this._onError = onError);
 
     public BackgroundTimer Start()
     {
@@ -73,7 +92,6 @@ public class BackgroundTimer : Logging.StringLogger
             }
             catch (OperationCanceledException)
             {
-
             }
             finally
             {
@@ -94,7 +112,11 @@ public class BackgroundTimer : Logging.StringLogger
 
         LibLogger.Info($"Stopping…", sender: this);
         this._cancellationSource.Cancel();
-        await this._timerTask;
+        if (this._timerTask is not null)
+        {
+            await this._timerTask;
+        }
+
         if (this._shouldDisposeCancellationTokenSource)
         {
             this._cancellationSource.Dispose();
@@ -104,23 +126,8 @@ public class BackgroundTimer : Logging.StringLogger
         return this;
     }
 
-    public static BackgroundTimer New([DisallowNull] in Action action, [DisallowNull] in TimeSpan interval, string? name = null, CancellationTokenSource? cancellationSource = null)
-        => new(action, interval, name, cancellationSource);
-
-    public static BackgroundTimer Start([DisallowNull] in Action action, [DisallowNull] in TimeSpan interval, string? name = null, CancellationTokenSource? cancellationSource = null)
-        => new BackgroundTimer(action, interval, name, cancellationSource).Start();
-
-    public static BackgroundTimer New([DisallowNull] in Action action, [DisallowNull] in long intervalInMilliseconds, string? name = null, CancellationTokenSource? cancellationSource = null)
-        => new(action, TimeSpan.FromMilliseconds(intervalInMilliseconds), name, cancellationSource);
-
-    public static BackgroundTimer Start([DisallowNull] in Action action, [DisallowNull] in long intervalInMilliseconds, string? name = null, CancellationTokenSource? cancellationSource = null)
-        => new BackgroundTimer(action, TimeSpan.FromMilliseconds(intervalInMilliseconds), name, cancellationSource).Start();
-
     public override string ToString()
         => $"{nameof(BackgroundTimer)}[{this.Name}]";
-
-    public BackgroundTimer OnError(Action<Exception> onError)
-        => this.Fluent(this._onError = onError);
 }
 
 public static class BackgroundTimerExtensions
@@ -130,5 +137,4 @@ public static class BackgroundTimerExtensions
         Thread.Sleep(wait);
         return instance;
     }
-
 }

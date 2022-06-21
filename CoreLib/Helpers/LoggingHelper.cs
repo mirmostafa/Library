@@ -1,4 +1,6 @@
-﻿using Library.Globalization.Helpers;
+﻿using System.Runtime.CompilerServices;
+
+using Library.Globalization.Helpers;
 using Library.Logging;
 using Library.Validations;
 
@@ -6,8 +8,17 @@ namespace Library.Helpers;
 
 public static class LoggingHelper
 {
+    public static void Debug(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
+        => container?.Logger?.Debug(message, sender, time);
+
+    public static void Error(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
+        => container?.Logger?.Debug(message, sender, time);
+    
+    public static void Info(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
+        => container?.Logger?.Info(message, sender, time);
+
     public static TLogger LogBlock<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] in Action action, in (object Message, LogLevel Level)? finallMessage = null)
-        where TLogger : ILogger
+            where TLogger : ILogger
     {
         Check.IfArgumentNotNull(action);
         action();
@@ -21,6 +32,7 @@ public static class LoggingHelper
         }
         return logger;
     }
+
     public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, string starting, [DisallowNull] Func<Task> action, string done = "Ready")
         where TLogger : ILogger
     {
@@ -39,6 +51,7 @@ public static class LoggingHelper
         logger.Debug("Ready");
         return logger;
     }
+
     public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task<object?>> action)
         where TLogger : ILogger
     {
@@ -104,7 +117,7 @@ public static class LoggingHelper
     }
 
     public static bool MeetsLevel(this LogLevel level, LogLevel minLevel)
-                => (minLevel & level) != 0;
+        => (minLevel & level) != 0;
 
     public static string Reformat<TMessage>(this LogRecord<TMessage> logRecord, string? format = LogFormat.DEFAULT_FORMAT)
     {
@@ -138,17 +151,17 @@ public static class LoggingHelper
         => InnerPatternMatching(logObject, format);
 
     public static LogLevel ToLibLogLevel(this MsLogLevel logLevel)
-                        => logLevel switch
-                        {
-                            MsLogLevel.Trace => LogLevel.Trace,
-                            MsLogLevel.Debug => LogLevel.Debug,
-                            MsLogLevel.Information => LogLevel.Info,
-                            MsLogLevel.Warning => LogLevel.Warning,
-                            MsLogLevel.Error => LogLevel.Error,
-                            MsLogLevel.Critical => LogLevel.Fatal,
-                            MsLogLevel.None => LogLevel.None,
-                            _ => throw new NotImplementedException()
-                        };
+        => logLevel switch
+        {
+            MsLogLevel.Trace => LogLevel.Trace,
+            MsLogLevel.Debug => LogLevel.Debug,
+            MsLogLevel.Information => LogLevel.Info,
+            MsLogLevel.Warning => LogLevel.Warning,
+            MsLogLevel.Error => LogLevel.Error,
+            MsLogLevel.Critical => LogLevel.Fatal,
+            MsLogLevel.None => LogLevel.None,
+            _ => throw new NotImplementedException()
+        };
 
     public static MsLogLevel ToMsLogLevel(this LogLevel logLevel)
         => logLevel switch

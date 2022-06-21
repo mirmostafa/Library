@@ -5,12 +5,12 @@ namespace Library.Exceptions;
 public interface IException
 {
     /// <summary>
-    /// Gets the title.
+    /// Gets or sets the details.
     /// </summary>
     /// <value>
-    /// The title.
+    /// The details.
     /// </value>
-    string? Title { get; }
+    public string? Details { get; }
 
     /// <summary>
     ///     Gets the instruction.
@@ -19,14 +19,6 @@ public interface IException
     ///     The instruction.
     /// </value>
     string? Instruction { get; }
-
-    /// <summary>
-    /// Gets or sets the details.
-    /// </summary>
-    /// <value>
-    /// The details.
-    /// </value>
-    public string? Details { get; }
 
     /// <summary>
     ///     Gets the message.
@@ -43,6 +35,14 @@ public interface IException
     ///     The owner.
     /// </value>
     object? Owner { get; }
+
+    /// <summary>
+    /// Gets the title.
+    /// </summary>
+    /// <value>
+    /// The title.
+    /// </value>
+    string? Title { get; }
 
     /// <summary>
     ///     Gets the base exception.

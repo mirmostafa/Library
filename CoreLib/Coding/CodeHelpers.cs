@@ -15,21 +15,21 @@ namespace Library.Coding;
 [StackTraceHidden]
 public static class CodeHelper
 {
-    public static Task Async(Action action, CancellationToken cancellationToken = default) =>
-            Task.Run(action, cancellationToken);
+    public static Task Async(Action action, CancellationToken cancellationToken = default)
+        => Task.Run(action, cancellationToken);
 
     public static Task<TResult> Async<TResult>(TResult result)
         => Task.FromResult(result);
 
-    public static Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default) =>
-            Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
+    public static Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default)
+        => Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
 
     /// <summary>
     ///     Breaks code execution.
     /// </summary>
     [DoesNotReturn]
     public static void Break()
-        => Throw<BreakException>();
+        => BreakException.Throw();
 
     public static Result CatchResult([DisallowNull] in Action action)
     {
@@ -194,8 +194,8 @@ public static class CodeHelper
     /// </summary>
     /// <param name="index"> The index. </param>
     /// <returns> </returns>
-    public static MethodBase? GetCallerMethod(in int index = 2) =>
-        new StackTrace(true).GetFrame(index)?.GetMethod();
+    public static MethodBase? GetCallerMethod(in int index = 2)
+        => new StackTrace(true).GetFrame(index)?.GetMethod();
 
     /// <summary>
     ///     Gets the caller method.
@@ -224,15 +224,15 @@ public static class CodeHelper
     /// </summary>
     /// <param name="index"> The index. </param>
     /// <returns> </returns>
-    public static string? GetCallerMethodName(in int index = 2) =>
-        GetCallerMethod(index)?.Name;
+    public static string? GetCallerMethodName(in int index = 2)
+        => GetCallerMethod(index)?.Name;
 
     /// <summary>
     ///     Gets the current method.
     /// </summary>
     /// <returns> </returns>
-    public static MethodBase? GetCurrentMethod() =>
-        GetCallerMethod();
+    public static MethodBase? GetCurrentMethod()
+        => GetCallerMethod();
 
     /// <summary>
     ///     Gets the delegate.
@@ -246,7 +246,7 @@ public static class CodeHelper
         => (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate), typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new Exceptions.InvalidOperationException()));
 
     public static Func<TResult> GetFunc<TArg, TResult>(Func<TArg, TResult> func, TArg arg)
-            => () => func(arg);
+        => () => func(arg);
 
     public static Func<TResult> GetFunc<TArg1, TArg2, TResult>(Func<TArg1, TArg2, TResult> func, TArg1 arg1, TArg2 arg2)
         => () => func(arg1, arg2);
@@ -261,8 +261,8 @@ public static class CodeHelper
     /// <returns>
     ///     <c> true </c> if the specified tryFunc has exception; otherwise, <c> false </c>.
     /// </returns>
-    public static bool HasException(in Action tryFunc) =>
-        Catch(tryFunc) is not null;
+    public static bool HasException(in Action tryFunc)
+        => Catch(tryFunc) is not null;
 
     public static TResult ThrowOnError<TResult>(in Func<TResult> action, Func<Exception, Exception>? getException = null)
     {
