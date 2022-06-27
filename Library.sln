@@ -5,26 +5,26 @@ VisualStudioVersion = 17.0.31606.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A54916A1-AF48-44CE-B567-E0DA62359D69}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConAppTest", "Tests\TestConApp\ConAppTest.csproj", "{6AFD469D-676C-4FDE-9EB1-7D5735066903}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConAppTest", "src\Tests\TestConApp\ConAppTest.csproj", "{6AFD469D-676C-4FDE-9EB1-7D5735066903}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator", "SourceGenerator\SourceGenerator.csproj", "{BED49594-032C-4F17-9633-DE5A19826558}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator", "src\SourceGenerator\SourceGenerator.csproj", "{BED49594-032C-4F17-9633-DE5A19826558}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebLib", "WebLib\WebLib.csproj", "{9D27B192-A3DB-4FA2-AFB1-942E0E2A8E7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebLib", "src\WebLib\WebLib.csproj", "{9D27B192-A3DB-4FA2-AFB1-942E0E2A8E7A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CqrsLib", "CqrsLib\CqrsLib.csproj", "{606B37DF-8ECC-405F-BA44-8B02707E1FE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CqrsLib", "src\CqrsLib\CqrsLib.csproj", "{606B37DF-8ECC-405F-BA44-8B02707E1FE7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfLib", "WpfLib\WpfLib.csproj", "{DF2FA5D7-31A9-4296-9703-9AF6398ACEA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfLib", "src\WpfLib\WpfLib.csproj", "{DF2FA5D7-31A9-4296-9703-9AF6398ACEA5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLib", "CoreLib\CoreLib.csproj", "{28AC04BB-51BD-4C5D-83A9-688D87917276}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLib", "src\CoreLib\CoreLib.csproj", "{28AC04BB-51BD-4C5D-83A9-688D87917276}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C3AC6F73-3D60-4E97-BA63-598C15E41B1E}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAppTest", "Tests\WpfAppTest\WpfAppTest.csproj", "{FC4A0DCB-C90D-4351-9F4A-079B76C52B2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfAppTest", "src\Tests\WpfAppTest\WpfAppTest.csproj", "{FC4A0DCB-C90D-4351-9F4A-079B76C52B2D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "Tests\LibraryTest\UnitTest.csproj", "{581ED745-0ADF-4ADC-93F8-2E14EB0CBE8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "src\Tests\LibraryTest\UnitTest.csproj", "{581ED745-0ADF-4ADC-93F8-2E14EB0CBE8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
