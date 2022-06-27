@@ -118,6 +118,11 @@ public static class EnumerableHelper
         }
     }
 
+    /// <summary>Determines whether any element of a sequence exists or satisfies a condition.</summary>
+    /// <param name="source">The source.</param>
+    /// <returns>
+    ///   <br />
+    /// </returns>
     public static bool Any([NotNullWhen(true)] this IEnumerable source)
     {
         if (source is null)
@@ -253,7 +258,7 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TItem> Collect<TItem>(this TItem root)
-        where TItem : IHasChild<TItem> 
+        where TItem : IHasChild<TItem>
         => Collect(AsEnumerableItem(root));
 
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
@@ -286,11 +291,12 @@ public static class EnumerableHelper
     public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
         Check.IfArgumentNotNull(items);
+        Check.IfArgumentNotNull(action);
         var buffer = items;
 
         foreach (var item in buffer)
         {
-            action?.Invoke(item);
+            action.Invoke(item);
             yield return item;
         }
     }
@@ -516,7 +522,8 @@ public static class EnumerableHelper
     }
 
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
-        where TKey : notnull => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
+        where TKey : notnull 
+        => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
     {
@@ -552,7 +559,8 @@ public static class EnumerableHelper
     }
 
     [return: NotNull]
-    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default) => asyncItems is null
+    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default)
+        => asyncItems is null
             ? await ToListAsync(EmptyAsyncEnumerable<TItem>.Empty, cancellationToken: cancellationToken)
             : await WhereAsync(asyncItems, x => x is not null, cancellationToken).ToListAsync(cancellationToken: cancellationToken);
 

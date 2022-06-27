@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using Library.DesignPatterns.Markers;
+
 using Library.EventsArgs;
 using Library.Interfaces;
 using Library.Validations;
@@ -14,7 +14,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
 
     public FileSystemWatcher(in string path, in string? wildcard = null, in bool includeSubdirectories = false)
     {
-        this._innerWatcher = (path.NotNull(), wildcard) switch
+        this._innerWatcher = (path.ArgumentNotNull(), wildcard) switch
         {
             (null, null) => new System.IO.FileSystemWatcher() { IncludeSubdirectories = includeSubdirectories },
             (not null, null) => new System.IO.FileSystemWatcher(path) { IncludeSubdirectories = includeSubdirectories },

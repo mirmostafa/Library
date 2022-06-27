@@ -1,10 +1,13 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Reflection;
+
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
+
 using Microsoft.CSharp;
+
 using static Library.Helpers.CodeGen.TypeMemberNameHelper;
 
 namespace Library.Helpers.CodeGen;
@@ -373,7 +376,7 @@ public static class CodeDomHelper
         if (propertyInfo.Comment is not null)
         {
             //_ = prop.Comments.Add(new CodeCommentStatement(propertyInfo.Comment));
-            prop.AddSummary(propertyInfo.Comment);
+            _ = prop.AddSummary(propertyInfo.Comment);
         }
         _ = c.Members.Add(prop);
         return c;
@@ -401,8 +404,9 @@ public static class CodeDomHelper
         in PropertyAccessor? setter = null,
         in string? initCode = null,
         bool isNullable = false,
-        in IEnumerable<string>? attrinutes = null)
-        => AddProperty(c, new()
+        in IEnumerable<string>? attributes = null)
+    {
+        CodeGeneration.Models.PropertyInfo propertyInfo = new()
         {
             Type = type,
             Name = name,
@@ -411,9 +415,15 @@ public static class CodeDomHelper
             Getter = getter,
             Setter = setter,
             InitCode = initCode,
-            IsNullable = isNullable,
-            Attributes = attrinutes?.ToList()
-        });
+            IsNullable = isNullable
+        };
+        if (attributes?.Any() is true)
+        {
+            propertyInfo.Attributes.AddRange(attributes);
+        }
+
+        return AddProperty(c, propertyInfo);
+    }
 
     /// <summary>
     /// Adds the property with field.

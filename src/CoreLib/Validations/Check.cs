@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -164,8 +163,8 @@ public static class CheckHelpers
     public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T?> task, [DisallowNull] Func<Exception> getException) =>
         (await task).NotNull(getException);
 
-    public static T NotValid<T>([AllowNull] this T? obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException) =>
-                !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
+    public static T NotValid<T>([AllowNull] this T? obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException)
+        => !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
 
     public static void OnFalse([DoesNotReturnIf(true)] this bool ok, Func<Exception> getException)
         => Check.MustBe(ok, getException);

@@ -23,7 +23,7 @@ public class Result : ResultBase, IEmpty<Result>
         => new(erroCode ?? -1, message) { IsSucceed = false };
 
     public static Result CreateFail(in string message, in string instruction, in string tiltle, in string details, in object? statusCode = null)
-        => new(statusCode, new NotificationMessage(message, instruction, tiltle, details));
+        => new(statusCode ?? -1, new NotificationMessage(message, instruction, tiltle, details)) { IsSucceed = false };
 
     public static Result CreateSuccess(in NotificationMessage? fullMessage = null, in object? statusCode = null)
         => new(statusCode, fullMessage) { IsSucceed = true };

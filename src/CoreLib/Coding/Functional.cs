@@ -287,29 +287,34 @@ public static class Functional
     /// <typeparam name="T"> The type of the type. </typeparam>
     /// <returns> </returns>
     public static T New<T>()
-        where T : class, new() =>
-        new();
+        where T : class, new()
+        => new();
 
     public static T New<T>(params object[] args) =>
         Activator.CreateInstance(typeof(T), args).NotNull().To<T>();
 
     [DoesNotReturn]
-    public static void Throw<TException>() where TException : Exception, new() =>
-        ExceptionDispatchInfo.Throw(new TException());
+    [StackTraceHidden]
+    public static void Throw<TException>() where TException : Exception, new()
+        => ExceptionDispatchInfo.Throw(new TException());
 
     [DoesNotReturn]
-    public static T Throw<T>(in Exception exception) =>
-        throw exception;
+    [StackTraceHidden]
+    public static T Throw<T>(in Exception exception)
+        => throw exception;
 
     [DoesNotReturn]
-    public static void Throw(in Exception exception) =>
-        ExceptionDispatchInfo.Throw(exception);
+    [StackTraceHidden]
+    public static void Throw(in Exception exception)
+        => ExceptionDispatchInfo.Throw(exception);
 
     [DoesNotReturn]
-    public static T Throw<T>(in Func<Exception> getException) =>
-        throw getException();
+    [StackTraceHidden]
+    public static T Throw<T>(in Func<Exception> getException)
+        => throw getException();
 
     [DoesNotReturn]
+    [StackTraceHidden]
     public static void Throw(in Func<Exception> getException) =>
         ExceptionDispatchInfo.Throw(getException());
 
