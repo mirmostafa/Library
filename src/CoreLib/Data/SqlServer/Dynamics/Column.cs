@@ -11,7 +11,7 @@ public class Column : SqlObject<Column, Table>, IEquatable<Column>
     public string DataType { get; set; }
     public ForeignKeyInfo ForeignKeyInfo { get; set; }
     public bool IsForeignKey { get; set; }
-    public long Id { get; set; }
+    public long UniqueId { get; set; }
     public bool IsIdentity { get; set; }
     public bool IsNullable { get; set; }
     public int MaxLength { get; set; }

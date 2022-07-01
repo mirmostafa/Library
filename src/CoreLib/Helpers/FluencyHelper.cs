@@ -14,7 +14,7 @@ public static class FluencyHelper
     }
 
     [DebuggerStepThrough]
-    public static Fluency<T?> Fluent<T>(this T? o) =>
+    public static Fluency<TInstance?> Fluent<TInstance>(this TInstance? o) =>
             new(o);
 
     [DebuggerStepThrough]
@@ -62,7 +62,7 @@ public static class FluencyHelper
         return @this;
     }
 
-    public static Fluency<TInstance> IfTrue<TInstance>([NotNull] this Fluency<TInstance> @this, bool b, in Func<TInstance, TInstance> ifTrue) =>
+    public static Fluency<TInstance> IfTrue<TInstance>([DisallowNull] this Fluency<TInstance> @this, bool b, in Func<TInstance, TInstance> ifTrue) =>
         b is true ? new(ifTrue.NotNull()(@this.Value)) : @this;
 
     public static Fluency<TInstance> IfTrue<TInstance>(this Fluency<TInstance> @this, bool b, in Action<TInstance> ifTrue)

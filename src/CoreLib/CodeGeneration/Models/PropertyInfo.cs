@@ -23,7 +23,6 @@ public struct PropertyInfo : IMemberInfo, IEquatable<PropertyInfo>
         this.IsNullable = false;
         this.BackingFieldName = null;
         this.ShouldCreateBackingField = null;
-        this.Attributes = Enumerable.Empty<string>();
     }
 
     public MemberAttributes? AccessModifier { get; init; }
@@ -32,7 +31,7 @@ public struct PropertyInfo : IMemberInfo, IEquatable<PropertyInfo>
     public string Name { get; init; }
     public object? Value { get; set; }
 
-    public IEnumerable<string>? Attributes { get; init; }
+    public List<string> Attributes { get; } = new List<string>();
     public PropertyAccessor? Setter { get; init; }
     public PropertyAccessor? Getter { get; init; }
     public string? InitCode { get; init; }

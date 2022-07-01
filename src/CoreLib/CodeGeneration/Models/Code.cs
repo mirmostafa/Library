@@ -1,12 +1,31 @@
 ﻿using System.Diagnostics;
+
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 
 namespace Library.CodeGeneration.Models;
 
+public interface ICode<TCode> : IEquatable<TCode>
+    where TCode : ICode<TCode>
+{
+    string FileName { get; }
+    string Name { get; init; }
+    string Statement { get; init; }
+
+    void Deconstruct(out string name, out string statement);
+
+    void Deconstruct(out string name, out string statement, out bool isPartial);
+    void Deconstruct(out string name, out Language language, out string statement, out bool isPartial);
+    void Deconstruct(out string name, out string statement);
+    void Deconstruct(out string name, out Language language, out string statement);
+    void Deconstruct(out string name, out string statement, out bool isPartial);
+    void Deconstruct(out string name, out Language language, out string statement, out bool isPartial);
+    string ToString();
+}
+
 [Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public readonly record struct Code : IEquatable<Code>
+public readonly record struct Code : IEquatable<Code>, ICode<Code>
 {
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
 
@@ -81,4 +100,16 @@ public static class CodeStatementHelpers
 {
     public static Codes ToCodes(this IEnumerable<Code> codes)
         => new(codes);
+}
+
+public readonly record struct BlazorCode : ICode<BlazorCode>
+{
+    public string FileName { get; }
+    public string Name { get; init; }
+    public string Statement { get; init; }
+
+    public void Deconstruct(out string name, out string statement) => throw new NotImplementedException();
+    public void Deconstruct(out string name, out string statement, out bool isPartial) => throw new NotImplementedException();
+    public void Deconstruct(out string name, out Language language, out string statement, out bool isPartial) => throw new NotImplementedException();
+    public void Deconstruct(out string name, out Language language, out string statement) => throw new NotImplementedException();
 }

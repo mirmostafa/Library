@@ -69,4 +69,18 @@ public static partial class ApplicationHelper
 
     public static void RunInUiThread(this Application app, Action action)
         => app?.Dispatcher.Invoke(DispatcherPriority.Render, action);
+
+    public static Application DoEvents(this Application app)
+    {
+        var frame = new DispatcherFrame();
+        Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
+            new DispatcherOperationCallback(
+                delegate (object f)
+                {
+                    ((DispatcherFrame)f).Continue = false;
+                    return null;
+                }), frame);
+        Dispatcher.PushFrame(frame);
+        return app;
+    }
 }

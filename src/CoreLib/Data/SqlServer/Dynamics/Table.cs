@@ -1,8 +1,11 @@
 ﻿#nullable enable
+
 using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
+
 using Library.Data.SqlServer.Dynamics.Collections;
+
 using static Library.Data.SqlServer.SqlStatementBuilder;
 
 namespace Library.Data.SqlServer.Dynamics;
@@ -16,10 +19,7 @@ public class Table : SqlObject<Table, Database>, IEnumerable
     {
     }
 
-    public Row this[int index] => this.Rows.ElementAt(index);
-
     public Columns Columns => this._columns ??= this.GetColumns();
-
     public DateTime CreateDate { get; set; }
     public long Id { get; set; }
     public DateTime ModifyDate { get; set; }
@@ -33,17 +33,18 @@ public class Table : SqlObject<Table, Database>, IEnumerable
             {
                 yield return new Row(this, this.Columns.Select(c => new KeyValuePair<string, object?>(c.Name, reader[c.Name])).ToDictionary());
             }
-
         }
     }
+
+    public Row this[int index] => this.Rows.ElementAt(index);
+
+    public static Tables? GetByConnectionString(string connectionstring) => Database.GetDatabase(connectionstring)?.Tables;
 
     public IEnumerator GetEnumerator()
     {
         using var dataTable = this.ToDataTable(this.Columns.Select(col => col.Name).ToArray());
         return dataTable.Rows.GetEnumerator();
     }
-
-    public static Tables? GetByConnectionString(string connectionstring) => Database.GetDatabase(connectionstring)?.Tables;
 
     public IEnumerable<string> PrintFormatted(CancellationTokenSource? cancellation = null,
         string columnsSeparator = "\t",
@@ -211,7 +212,7 @@ public class Table : SqlObject<Table, Database>, IEnumerable
                     Precision = reader.Field("precision", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
                     Position = reader.Field("column_id", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
                     DataType = reader.Field("system_type", Convert.ToString),
-                    Id = reader.Field("object_id", Convert.ToInt64),
+                    UniqueId = string.Concat(reader["object_id"].ToLong().ToString("000000000000"), reader["column_id"].ToInt().ToString("000")).ToLong(),
                 });
             }
 
