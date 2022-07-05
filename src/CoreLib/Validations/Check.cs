@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -91,14 +90,14 @@ public sealed class Check
     }
 
     public static void MustBe<TValidationException>([DoesNotReturnIf(false)] bool ok)
-        where TValidationException : Exception, new() =>
-        MustBe(ok, () => new TValidationException());
+        where TValidationException : Exception, new()
+        => MustBe(ok, () => new TValidationException());
 
-    public static void MustBe([DoesNotReturnIf(false)] bool required) =>
-        MustBe<RequiredValidationException>(required);
+    public static void MustBe([DoesNotReturnIf(false)] bool required)
+        => MustBe<RequiredValidationException>(required);
 
-    public static void MustBe([DoesNotReturnIf(false)] bool required, Func<string> getMessage) =>
-        MustBe(required, () => new ValidationException(getMessage.NotNull()()));
+    public static void MustBe([DoesNotReturnIf(false)] bool required, Func<string> getMessage)
+        => MustBe(required, () => new ValidationException(getMessage.NotNull()()));
 
     public static void MustBeArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName)
         => MustBe(isNotNull, () => new ArgumentNullException(argName));

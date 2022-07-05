@@ -1,33 +1,18 @@
 ﻿using System.Diagnostics;
 
 using Library.DesignPatterns.Markers;
+using Library.Dynamic;
 using Library.Validations;
 
 namespace Library.CodeGeneration.Models;
 
-public interface ICode<TCode> : IEquatable<TCode>
-    where TCode : ICode<TCode>
-{
-    string FileName { get; }
-    string Name { get; init; }
-    string Statement { get; init; }
-
-    void Deconstruct(out string name, out string statement);
-
-    void Deconstruct(out string name, out string statement, out bool isPartial);
-    void Deconstruct(out string name, out Language language, out string statement, out bool isPartial);
-    void Deconstruct(out string name, out string statement);
-    void Deconstruct(out string name, out Language language, out string statement);
-    void Deconstruct(out string name, out string statement, out bool isPartial);
-    void Deconstruct(out string name, out Language language, out string statement, out bool isPartial);
-    string ToString();
-}
-
+[Fluent]
 [Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public readonly record struct Code : IEquatable<Code>, ICode<Code>
+public record class Code : IEquatable<Code>
 {
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
+    protected readonly dynamic ExtraProperties = new Expando();
 
     public Code(in string name, in Language language, in string statement, in bool isPartial = false)
     {
@@ -65,8 +50,8 @@ public readonly record struct Code : IEquatable<Code>, ICode<Code>
 
     public override int GetHashCode()
         => HashCode.Combine(this.Name);
-    public bool Equals(Code other)
-        => this.Name == other.Name;
+    public virtual bool Equals(Code? other)
+        => this.Name == other?.Name;
     public bool Equals(string name)
         => this.Name == name;
 
@@ -98,18 +83,9 @@ public readonly record struct Code : IEquatable<Code>, ICode<Code>
 
 public static class CodeStatementHelpers
 {
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this Code? code)
+        => code is null || code.Equals(Code.Empty);
+
     public static Codes ToCodes(this IEnumerable<Code> codes)
         => new(codes);
-}
-
-public readonly record struct BlazorCode : ICode<BlazorCode>
-{
-    public string FileName { get; }
-    public string Name { get; init; }
-    public string Statement { get; init; }
-
-    public void Deconstruct(out string name, out string statement) => throw new NotImplementedException();
-    public void Deconstruct(out string name, out string statement, out bool isPartial) => throw new NotImplementedException();
-    public void Deconstruct(out string name, out Language language, out string statement, out bool isPartial) => throw new NotImplementedException();
-    public void Deconstruct(out string name, out Language language, out string statement) => throw new NotImplementedException();
 }

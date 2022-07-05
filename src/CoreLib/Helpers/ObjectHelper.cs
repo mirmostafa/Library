@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
+
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
+using Library.Interfaces;
 using Library.Types;
 using Library.Validations;
 
@@ -31,6 +33,23 @@ public static class ObjectHelper
     /// <returns> </returns>
     public static T CheckDbNull<T>(in object o, in T defaultValue, in Func<object, T> converter)
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
+
+    /// <summary>
+    /// Composes the specified objects.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="values">The values.</param>
+    /// <returns></returns>
+    public static T ComposeByType<T>(this IEnumerable<T> values)
+            where T : IMergable<T>, IEmpty<T>
+    {
+        var result = T.Empty;
+        foreach (var value in values)
+        {
+            result = value.Merge(result);
+        }
+        return result;
+    }
 
     /// <summary>
     ///     Generates the lazy singleton instance.
