@@ -26,7 +26,14 @@ public static class MapperExtensions
             var (match, ex) = CatchFunc(() => srcProp.GetValue(source) == dstProp.GetValue(destination), false);
             if (!match)
             {
-                _ = Catch(() => dstProp.SetValue(destination, srcProp.GetValue(source)));
+                try
+                {
+                    dstProp.SetValue(destination, srcProp.GetValue(source));
+                }
+                catch 
+                {
+
+                }
             }
         }
     }

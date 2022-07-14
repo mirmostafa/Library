@@ -1,4 +1,7 @@
-﻿using Library.DesignPatterns.StateMachine;
+﻿using ConAppTest;
+
+using Library.CodeGeneration.HtmlGeneration;
+using Library.DesignPatterns.StateMachine;
 using Library.Helpers;
 using Library.IO;
 
@@ -6,14 +9,24 @@ namespace TestConApp;
 
 internal partial class Program
 {
-    private static async Task Main()
+    private static Task Main()
+    {
+        var div = new DivElement()
+            .AddAttribute("row")
+            .AddChild(new InputElement("text"))
+            .AddChild(new DivElement().AddAttribute("class","col").AddChild(new DivElement().AddChild(new InputElement("text").AddAttribute("class","text-box"))));
+        WriteLine(div.ToHtml());
+        return Task.CompletedTask;
+    }
+
+    private static async Task StateMachineTest()
     {
         _ = await StateMachineManager.Dispatch(
-                () => Task.FromResult((0, MoveDirection.Foreword)),
-                flow => Task.FromResult(move(flow)),
-                flow => Task.FromResult(move(flow)),
-                display,
-                display);
+                        () => Task.FromResult((0, MoveDirection.Foreword)),
+                        flow => Task.FromResult(move(flow)),
+                        flow => Task.FromResult(move(flow)),
+                        display,
+                        display);
         WriteLine("End.");
 
         static (int Current, MoveDirection Direction) move((int Current, IEnumerable<(int State, MoveDirection Direction)>) flow)

@@ -156,15 +156,15 @@ public static class CheckHelpers
         @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
 
     [return: NotNull]
-    public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T> task, [CallerArgumentExpression("task")] string message = null) =>
-        (await task).NotNull(() => new NullValueValidationException(message, null));
+    public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T> task, [CallerArgumentExpression("task")] string? message = null)
+        => (await task).NotNull(() => new NullValueValidationException(message, null));
 
     [return: NotNull]
-    public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T?> task, [DisallowNull] Func<Exception> getException) =>
-        (await task).NotNull(getException);
+    public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T?> task, [DisallowNull] Func<Exception> getException)
+        => (await task).NotNull(getException);
 
-    public static T NotValid<T>([AllowNull] this T? obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException) =>
-                !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
+    public static T? NotValid<T>([AllowNull] this T? obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException)
+        => !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
 
     public static void OnFalse([DoesNotReturnIf(true)] this bool ok, Func<Exception> getException)
         => Check.MustBe(ok, getException);

@@ -253,7 +253,7 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TItem> Collect<TItem>(this TItem root)
-        where TItem : IHasChild<TItem> 
+        where TItem : IHasChild<TItem>
         => Collect(AsEnumerableItem(root));
 
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
@@ -525,6 +525,18 @@ public static class EnumerableHelper
             foreach (var item in source)
             {
                 yield return item;
+            }
+        }
+    }
+
+    public static IEnumerable<(TKey, TValue)> ToEnumerable<TKey, TValue>(this Dictionary<TKey, TValue> source)
+        where TKey : notnull
+    {
+        if (source is not null)
+        {
+            foreach (var item in source)
+            {
+                yield return (item.Key, item.Value);
             }
         }
     }

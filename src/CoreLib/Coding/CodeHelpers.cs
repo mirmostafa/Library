@@ -282,9 +282,6 @@ public static class CodeHelper
         }
     }
 
-    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] Action<TInstance> action)
-    {
-        action.ArgumentNotNull(nameof(action))(instance);
-        return instance;
-    }
+    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] Action<TInstance> action) 
+        => instance.Fluent(action);
 }
