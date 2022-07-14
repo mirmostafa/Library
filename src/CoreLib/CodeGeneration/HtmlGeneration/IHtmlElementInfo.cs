@@ -2,7 +2,7 @@
 
 namespace Library.CodeGeneration.HtmlGeneration;
 
-public interface IHtmlElementInfo
+public interface IHtmlElementInfo : IParentHtmlElement
 {
     IEnumerable<(string Key, string? Value)> Attributes { get; }
     string Name { get; }

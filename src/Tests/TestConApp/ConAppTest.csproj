@@ -12,6 +12,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Program.Obsoletes.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Program.Obsoletes.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
 	</ItemGroup>
 
