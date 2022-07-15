@@ -1,5 +1,8 @@
-﻿namespace Library.CodeGeneration.HtmlGeneration;
+﻿using System.ComponentModel;
 
+namespace Library.CodeGeneration.HtmlGeneration;
+
+[EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract class HtmlElement<TSelf> : IHtmlElementInfo
 {
     protected Dictionary<string, string?> AttributeList = new();
@@ -10,6 +13,7 @@ public abstract class HtmlElement<TSelf> : IHtmlElementInfo
 
     public IEnumerable<(string Key, string? Value)> Attributes => this.AttributeList.ToEnumerable();
     public IEnumerable<IHtmlElementInfo> Children => this.ChildList; public string Name { get; }
+    public virtual ClosingTagType ClosingTagType { get; set; } = ClosingTagType.Full;
 
     public TSelf AddAttribute(string key, string? value = null)
     {
@@ -37,4 +41,11 @@ public abstract class HtmlElement<TSelf> : IHtmlElementInfo
 
     protected virtual TSelf This()
         => this.To<TSelf>();
+}
+
+public sealed class HtmlElement : HtmlElement<HtmlElement>
+{
+    public HtmlElement(string name) : base(name)
+    {
+    }
 }

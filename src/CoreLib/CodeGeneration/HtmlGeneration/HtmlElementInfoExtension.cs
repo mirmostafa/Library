@@ -16,15 +16,32 @@ public static class HtmlElementInfoExtension
             _ = codeStatement.Append(value is not null ? $" {key}=\"{value}\"" : $" \"{key}\"");
         }
         _ = codeStatement.Append('>');
-        if (element is IHasChild<IHtmlElementInfo> parent)
+
+        if (element is IHasChild<IHtmlElementInfo> parent && parent.Children.Any())
         {
             foreach (var child in parent.Children)
             {
                 _ = codeStatement.AppendLine().Append(child.ToHtml(indent + indent));
             }
+            _ = codeStatement.AppendLine().Append(indent).Append($"</{element.Name}>");
         }
+        else
+        {
+            switch (element.ClosingTagType)
+            {
+                case ClosingTagType.None:
+                    _ = codeStatement.AppendLine().Append(indent).Append('>');
+                    break;
 
-        _ = codeStatement.AppendLine().Append(indent).Append($"</{element.Name}>");
+                case ClosingTagType.Slash:
+                    _ = codeStatement.AppendLine().Append(indent).Append("/>");
+                    break;
+
+                case ClosingTagType.Full:
+                    _ = codeStatement.AppendLine().Append(indent).Append($"</{element.Name}>");
+                    break;
+            }
+        }
         return codeStatement.ToString();
     }
 }
