@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+
 using Library.Exceptions.Validations;
 using Library.Validations;
 
@@ -6,7 +7,7 @@ namespace Library.Helpers.CodeGen;
 
 public static class TypeMemberNameHelper
 {
-    public static string CombineWithDot(params string?[] parts)
+    private static string CombineWithDot(params string?[] parts)
     {
         var names = parts.Select(part => FixVariableName(part, false)).Compact();
         var builder = new StringBuilder();
@@ -113,17 +114,13 @@ public static class TypeMemberNameHelper
         {
             result = new(false, "Illegal character.");
         }
-        else if (memberName.Contains(' '))
-        {
-            result = new(false, "Illegal character.");
-        }
-        else if (memberName.StartsWithAny("$", "!", "#", "@", "%", "^", "&", "*", "(", ")", "-", "+", "/", "\\"))
-        {
-            result = new(false, "Illegal character.");
-        }
         else
         {
-            result = (true, null);
+            result = memberName.Contains(' ')
+                ? (new(false, "Illegal character."))
+                : memberName.StartsWithAny("$", "!", "#", "@", "%", "^", "&", "*", "(", ")", "-", "+", "/", "\\")
+                            ? (new(false, "Illegal character."))
+                            : ((bool IsValid, string? ErrorContent))(true, null);
         }
         return result.IsValid ? memberName! : throw new ValidationException(result.ErrorContent!);
     }

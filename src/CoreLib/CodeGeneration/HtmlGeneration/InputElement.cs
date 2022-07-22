@@ -2,7 +2,6 @@
 
 public class InputElement : HtmlElement<InputElement>
 {
-    public InputElement(string type)
-        : base("input")
+    public InputElement(string type) : base("input")
         => this.AttributeList.Add("type", type);
 }

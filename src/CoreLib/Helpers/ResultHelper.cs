@@ -55,13 +55,41 @@ public static class ResultHelper
         where TResult : ResultBase
         => MustBe(result, !obj.IsNullOrEmpty(), $"{argName} cannot be empty.", NullValueValidationException.ErrorCode);
 
+    public static Result Process([DisallowNull] this Result result)
+    {
+        if (result.IsSucceed)
+        {
+            return result;
+        }
+        var exception = result.StatusCode switch
+        {
+            ValidationExceptionBase ex => ex,
+            _ => new ValidationException(result.ToString())
+        };
+        Throw(exception);
+        return result;
+    }
+
+    public static async Task<Result<TValue>> ProcessAsync<TValue>(this Task<Result<TValue>> resultAsync)
+    {
+        var result = await resultAsync;
+        _ = Process(result);
+        return result;
+    }
+
+    public static async Task<Result> ProcessResultAsync(this Task<Result> resultAsync)
+    {
+        var result = await resultAsync;
+        return Process(result);
+    }
+
     public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath)
     {
         Check.IfArgumentNotNull(filePath);
         return result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
     }
 
-    public static Result<TValue> ThrowOnFail<TValue>([DisallowNull] this Result<TValue> result)
+    public static Result<TValue> Process<TValue>([DisallowNull] this Result<TValue> result)
     {
         if (result.IsSucceed)
         {
@@ -74,34 +102,6 @@ public static class ResultHelper
         };
         Throw(exception);
         return result;
-    }
-
-    public static Result ThrowOnFail([DisallowNull] this Result result)
-    {
-        if (result.IsSucceed)
-        {
-            return result;
-        }
-        var exception = result.StatusCode switch
-        {
-            ValidationExceptionBase ex => ex,
-            _ => new ValidationException(result.ToString())
-        };
-        Throw(exception);
-        return result;
-    }
-
-    public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync)
-    {
-        var result = await resultAsync;
-        _ = ThrowOnFail(result);
-        return result;
-    }
-
-    public static async Task<Result> ThrowOnFailAsync(this Task<Result> resultAsync)
-    {
-        var result = await resultAsync;
-        return ThrowOnFail(result);
     }
 
     public static Result<Stream> ToFile(this Result<Stream> result, string filePath, FileMode fileMode = FileMode.Create)
@@ -114,8 +114,8 @@ public static class ResultHelper
         return result;
     }
 
-    public static Result<StreamWriter> ToStreamWriter(this Result<Stream> result) =>
-        new(new(result.Value));
+    public static Result<StreamWriter> ToStreamWriter(this Result<Stream> result)
+        => new(new(result.Value));
 
     public static Result<string> ToText(this Result<Stream> result)
     {
@@ -124,9 +124,9 @@ public static class ResultHelper
         return new(reader.ReadToEnd());
     }
 
-    public static Result<XmlWriter> ToXmlWriter(this Result<Stream> result, bool indent = true) =>
-        new(XmlWriter.Create(result.ToStreamWriter(), new XmlWriterSettings { Indent = indent }));
+    public static Result<XmlWriter> ToXmlWriter(this Result<Stream> result, bool indent = true) 
+        =>        new(XmlWriter.Create(result.ToStreamWriter(), new XmlWriterSettings { Indent = indent }));
 
     public static ivalidationResult Validate<TValue>(this Result<TValue> result)
-                            => IsValid(result) ? valid.Result : invalid.Result;
+        => IsValid(result) ? valid.Result : invalid.Result;
 }

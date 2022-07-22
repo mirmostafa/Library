@@ -381,7 +381,8 @@ public static class EnumerableHelper
         }
     }
 
-    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key) => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
+    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key) 
+        => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
 
     public static KeyValuePair<TKey, TValue> GetItemByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, in TKey key)
     {
@@ -402,7 +403,8 @@ public static class EnumerableHelper
         return new(tryResult, actualValue);
     }
 
-    public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items) => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
+    public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items) 
+        => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
 
     public static IEnumerable<T> InsertImmuted<T>(this IEnumerable<T> source, int index, T item)
     {
@@ -418,19 +420,8 @@ public static class EnumerableHelper
         }
     }
 
-    public static string MergeToString<T>(this IEnumerable<T> source) => source.Aggregate(new StringBuilder(), (current, item) => current.Append(item)).ToString();
-
-    public static async IAsyncEnumerable<int> RangeAsync(int start, int count)
-    {
-        await Task.Yield();
-        foreach (var num in Enumerable.Range(start, count))
-        {
-            for (var i = 0; i < count; i++)
-            {
-                yield return start + i;
-            }
-        }
-    }
+    public static string MergeToString<T>(this IEnumerable<T> source) 
+        => source.Aggregate(new StringBuilder(), (current, item) => current.Append(item)).ToString();
 
     public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
     {
@@ -439,7 +430,8 @@ public static class EnumerableHelper
         return list;
     }
 
-    public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default) => defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (item?.Equals(defaultValue)) ?? true);
+    public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default) 
+        => defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (item?.Equals(defaultValue)) ?? true);
 
     public static IEnumerable<T> RemoveImmuted<T>(this IEnumerable<T>? source, T item)
     {
@@ -501,8 +493,8 @@ public static class EnumerableHelper
     public static Dictionary<TKey, TValue> SetByKey<TKey, TValue>([DisallowNull] this Dictionary<TKey, TValue> dic, TKey key, TValue value)
         where TKey : notnull
     {
-        //! Still in Alpha test. Not operational.
-        //x dic.ContainsKey(key).If().Then(() => dic[key] = value).Else(() => dic.Add(key, value)).Build();
+        Check.IfArgumentNotNull(dic);
+        
         if (dic.ContainsKey(key))
         {
             dic[key] = value;
@@ -516,7 +508,8 @@ public static class EnumerableHelper
     }
 
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
-        where TKey : notnull => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
+        where TKey : notnull 
+        => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
     {
@@ -564,7 +557,8 @@ public static class EnumerableHelper
     }
 
     [return: NotNull]
-    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default) => asyncItems is null
+    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default) 
+        => asyncItems is null
             ? await ToListAsync(EmptyAsyncEnumerable<TItem>.Empty, cancellationToken: cancellationToken)
             : await WhereAsync(asyncItems, x => x is not null, cancellationToken).ToListAsync(cancellationToken: cancellationToken);
 

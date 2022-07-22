@@ -9,7 +9,7 @@ namespace Library.CodeGeneration.Models;
 [Fluent]
 [Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public record class Code : IEquatable<Code>
+public record Code : IEquatable<Code>
 {
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
     protected readonly dynamic ExtraProperties = new Expando();

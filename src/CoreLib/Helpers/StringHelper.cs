@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -341,6 +342,7 @@ public static class StringHelper
     public static bool IsLetterText(this string text) => CheckAllValidations(text, c => c.IsEnglish() || c.IsPersian());
 
     [Pure]
+    [DebuggerStepThrough]
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str) => str?.Length is null or 0;
 
     public static bool IsNumber(this string text) => double.TryParse(text, out _);

@@ -17,6 +17,17 @@ public static class DbContextHelper
         where TEntity : class, IIdenticalEntity<long>
         => dbContext.SetStateOf(entity, EntityState.Detached);
 
+    public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, in IEnumerable<TEntity> entities)
+            where TDbContext : notnull, DbContext
+            where TEntity : class, IIdenticalEntity<long>
+    {
+        foreach (var entity in entities)
+        {
+            _ = dbContext.Detach(entity);
+        }
+        return dbContext;
+    }
+
     public static TDbContext Detach<TDbContext, TEntity, TId>([DisallowNull] TDbContext dbContext, [DisallowNull] in TEntity entity)
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<TId>
@@ -342,7 +353,7 @@ public static class DbContextHelper
         }
         if (validatorAsync is not null)
         {
-            _ = await validatorAsync(model).ThrowOnFailAsync();
+            _ = await validatorAsync(model).ProcessAsync();
         }
 
         var entity = convertToEntity(model);

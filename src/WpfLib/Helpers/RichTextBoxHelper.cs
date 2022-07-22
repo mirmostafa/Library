@@ -20,7 +20,7 @@ public static class RichTextBoxHelper
         var detectedTypes = new List<string>();
         var keyWordRules = new (string[] Keys, Brush Brush)[]
         {
-            (new[] { "using", "short", "int", "get", "set", "string", "public","protected","private", "sealed", "partial", "class", "namespace", "async", "throw", "new", "this" }, Brushes.Blue),
+            (new[] { "void","using", "short", "int", "get", "set", "string", "public","protected","private", "sealed", "partial", "class", "namespace", "async", "await", "throw", "new", "this","override","var" }, Brushes.Blue),
             (new[] { "Guid", "Byte", "Int16","Int32", "Int64", "Single", "String", "DateTime","IEnumerable", "Task" }, Brushes.DarkGreen),
             (new[]{"ICommandProcessor", "IEnumerable", "IQueryProcessor"}, Brushes.Green)
         };

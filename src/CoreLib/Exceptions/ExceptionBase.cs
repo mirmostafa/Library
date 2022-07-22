@@ -9,7 +9,7 @@ namespace Library.Exceptions;
 /// <seealso cref="Exception" />
 /// <seealso cref="HanyCo.Mes20.Infra.Exceptions.IException" />
 [Serializable]
-public abstract class ExceptionBase : Exception, IException, IToNotificationMessage<LibraryExceptionBase>
+public abstract class ExceptionBase : Exception, IException, IToNotificationMessage<ExceptionBase>
 {
     protected ExceptionBase()
     {

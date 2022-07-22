@@ -1,19 +1,18 @@
 ﻿using Library.Collections;
 using Library.DesignPatterns.Markers;
-using Library.Interfaces;
 
 namespace Library.CodeGeneration.Models;
 
 [Fluent]
 [Immutable]
-public sealed class Codes : SpecializedListBase<Code, Codes>, IIndexable<Code?, string>, IIndexable<Codes, Language>, IIndexable<Codes, bool>, IEnumerable<Code>
+public sealed class Codes : SpecializedListBase<Code?, Codes>, IIndexable<Code?, string>, IIndexable<Codes, Language>, IIndexable<Codes, bool>, IEnumerable<Code?>
 {
-    public Codes(IEnumerable<Code> items)
+    public Codes(IEnumerable<Code?> items)
         : base(items)
     {
     }
 
-    public Codes(params Code[] items)
+    public Codes(params Code?[] items)
         : base(items)
     {
     }
@@ -32,6 +31,6 @@ public sealed class Codes : SpecializedListBase<Code, Codes>, IIndexable<Code?, 
         return result;
     }
 
-    protected override Codes OnGetNew(IEnumerable<Code> items)
+    protected override Codes OnGetNew(IEnumerable<Code?> items)
             => new(items);
 }

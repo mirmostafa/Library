@@ -8,14 +8,14 @@ public static class HtmlElementInfoExtension
     {
         if (element is IAutoCoder auto)
         {
-            return auto.GenerateCode();
+            return auto.GenerateCodeStatement();
         }
+        
         var codeStatement = new StringBuilder(indent).Append($"<{element.Name}");
         foreach (var (key, value) in element.Attributes)
         {
             _ = codeStatement.Append(value is not null ? $" {key}=\"{value}\"" : $" \"{key}\"");
         }
-        _ = codeStatement.Append('>');
 
         if (element is IHasChild<IHtmlElementInfo> parent && parent.Children.Any())
         {
@@ -30,11 +30,11 @@ public static class HtmlElementInfoExtension
             switch (element.ClosingTagType)
             {
                 case ClosingTagType.None:
-                    _ = codeStatement.AppendLine().Append(indent).Append('>');
+                    _ = codeStatement.Append('>');
                     break;
 
                 case ClosingTagType.Slash:
-                    _ = codeStatement.AppendLine().Append(indent).Append("/>");
+                    _ = codeStatement.Append("/>");
                     break;
 
                 case ClosingTagType.Full:
