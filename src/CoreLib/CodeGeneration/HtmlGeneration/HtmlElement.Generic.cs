@@ -13,6 +13,7 @@ public abstract class HtmlElement<TSelf> : IParentHtmlElement
 
     public IEnumerable<(string Key, string? Value)> Attributes => this.AttributeList.ToEnumerable();
     public IEnumerable<IHtmlElementInfo> Children => this.ChildList; public virtual ClosingTagType ClosingTagType { get; set; } = ClosingTagType.Full;
+    public string? InnerHtml { get; set; }
     public string Name { get; }
 
     public TSelf AddAttribute(string key, string? value = null)
@@ -36,6 +37,12 @@ public abstract class HtmlElement<TSelf> : IParentHtmlElement
     public TSelf RemoveChild(IHtmlElementInfo child)
     {
         _ = this.ChildList.Remove(child);
+        return this.This();
+    }
+
+    public TSelf SetInnerHtml(string? value)
+    {
+        this.InnerHtml = value;
         return this.This();
     }
 

@@ -5,5 +5,5 @@ public interface ILogger : ILogger<object>
     /// <summary>
     /// The empty Logger
     /// </summary>
-    static new readonly ILogger Empty = new EmptyLogger();
+    public static new readonly ILogger Empty = new EmptyLogger();
 }

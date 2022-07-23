@@ -7,7 +7,7 @@ public interface ILogger<TLogMessage>
     /// <summary>
     /// The empty logger
     /// </summary>
-    static new readonly ILogger<TLogMessage> Empty = new EmptyLogger<TLogMessage>();
+    public static readonly ILogger<TLogMessage> Empty = new EmptyLogger<TLogMessage>();
 
     /// <summary>
     /// Gets or sets a value indicating whether this instance is enabled.

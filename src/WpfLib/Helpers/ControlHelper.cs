@@ -11,14 +11,31 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+
 using Library.Data.Models;
 
 namespace Library.Wpf.Helpers;
 
 public static class ControlHelper
 {
+    public static DataGrid AddColumns(this DataGrid dataGrid, IEnumerable<IDataColumnBindingInfo> dataColumns)
+    {
+        Check.IfArgumentNotNull(dataGrid);
+        _ = dataColumns.ToDataGridColumn().ForEach(dataGrid.Columns.Add).Build();
+        return dataGrid;
+    }
+
+    public static void ApplyFilter(this ItemCollection items, Predicate<object> predicate)
+    {
+        foreach (var item in items.Cast<TreeViewItem>())
+        {
+            ApplyFilter(item.Items, predicate);
+        }
+        items.Filter = predicate;
+    }
+
     public static THeaderedItemsControl BindDataContext<THeaderedItemsControl>(this THeaderedItemsControl itemsControl, object datacontext, string? header = null)
-        where THeaderedItemsControl : HeaderedItemsControl
+                where THeaderedItemsControl : HeaderedItemsControl
     {
         Check.IfArgumentNotNull(itemsControl, nameof(itemsControl));
 
@@ -43,18 +60,21 @@ public static class ControlHelper
         }
         return itemsControl;
     }
+
     public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items)
         where TSelector : Selector
     {
         BindItemsSourceInner(selector, items, null);
         return selector;
     }
+
     public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath)
         where TSelector : Selector
     {
         BindItemsSourceInner(selector, items, displayMemebrPath);
         return selector;
     }
+
     public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath, int? selectedIndex)
         where TSelector : Selector
     {
@@ -66,6 +86,7 @@ public static class ControlHelper
         }
         return selector;
     }
+
     public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath, object? selectedValue)
         where TSelector : Selector
     {
@@ -163,17 +184,13 @@ public static class ControlHelper
                 {
                     return Enumerable.Empty<Visual>();
                 }
-                else if (c is not TabItem tabItem)
-                {
-                    return Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i));
-                }
-                else if (tabItem.Content is Visual)
-                {
-                    return new[] { tabItem.Content.As<Visual>()!, tabItem.Header.As<Visual>()! };
-                }
                 else
                 {
-                    return Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i));
+                    return c is not TabItem tabItem
+                        ? Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i))
+                        : tabItem.Content is Visual
+                                            ? (IEnumerable<Visual>)(new[] { tabItem.Content.As<Visual>()!, tabItem.Header.As<Visual>()! })
+                                            : Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i));
                 }
             },
             result.Add,
@@ -188,7 +205,6 @@ public static class ControlHelper
         CoerceValueCallback? coerceValueCallback = null,
         TType? defaultValue = default) where TOwnerType : class
     {
-
         return coerceValueCallback is null
             ? DependencyProperty.Register(
                 propertyName,
@@ -274,9 +290,9 @@ public static class ControlHelper
     [Obsolete("Use listView.GetSelection, instead.")]
     public static T? GetSelection<T>(this SelectionChangedEventArgs e) => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().ToNullable<T>();
 
-    public static IEnumerable<T?> GetSelections<T>(this ListView listView) => listView.ArgumentNotNull(nameof(listView)).SelectedItems.Cast<object?>().Select(x => x.ToNullable<T>());
-
     public static T? GetSelection<T>(this ListView listView, SelectionChangedEventArgs e) => e?.AddedItems.Any() is true ? e.AddedItems[0].ToNullable<T>() : GetSelections<T>(listView).FirstOrDefault();
+
+    public static IEnumerable<T?> GetSelections<T>(this ListView listView) => listView.ArgumentNotNull(nameof(listView)).SelectedItems.Cast<object?>().Select(x => x.ToNullable<T>());
 
     public static string GetText(this RichTextBox rtb)
     {
@@ -313,12 +329,15 @@ public static class ControlHelper
             case Key.Home when Keyboard.Modifiers == ModifierKeys.Control:
                 multiSelector.SelectedIndex = 0;
                 break;
+
             case Key.End when Keyboard.Modifiers == ModifierKeys.Control:
                 multiSelector.SelectedIndex = multiSelector.Items.Count;
                 break;
+
             case Key.A when Keyboard.Modifiers == ModifierKeys.Control:
                 multiSelector.SelectAll();
                 break;
+
             case Key.Space:
                 {
                     var items = multiSelector.SelectedItems.Cast<dynamic>().ToArray();
@@ -342,11 +361,14 @@ public static class ControlHelper
         invokeProv?.Invoke();
     }
 
-    public static void Rebind(this DependencyObject target, in DependencyProperty dependencyProperty) => BindingOperations.GetBindingExpressionBase(target, dependencyProperty)?.UpdateTarget();
+    public static void Rebind(this DependencyObject target, in DependencyProperty dependencyProperty)
+        => BindingOperations.GetBindingExpressionBase(target, dependencyProperty)?.UpdateTarget();
 
-    public static void Rebind(this TextBox target) => Rebind(target, TextBox.TextProperty);
+    public static void Rebind(this TextBox target)
+        => Rebind(target, TextBox.TextProperty);
 
-    public static void RebindDataContext([DisallowNull] this FrameworkElement element) => RebindDataContext(element, element?.DataContext);
+    public static void RebindDataContext([DisallowNull] this FrameworkElement element)
+        => RebindDataContext(element, element?.DataContext);
 
     public static void RebindDataContext([DisallowNull] this FrameworkElement element, object? dataContext)
     {
@@ -355,6 +377,7 @@ public static class ControlHelper
         element.DataContext = null;
         element.DataContext = dataContext;
     }
+
     public static void RebindItemsSource(this ItemsControl control)
     {
         Check.IfArgumentNotNull(control, nameof(control));
@@ -364,6 +387,7 @@ public static class ControlHelper
         control.ItemsSource = null;
         control.ItemsSource = itemsSource;
     }
+
     public static void RebindItemsSource(this TreeView control)
     {
         Check.IfArgumentNotNull(control, nameof(control));
@@ -386,89 +410,6 @@ public static class ControlHelper
     public static IEnumerable<dynamic>? RetieveCheckedItems(this MultiSelector dg) => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.As<dynamic>()).Compact();
 
     public static IEnumerable<TItem>? RetieveCheckedItems<TItem>(this MultiSelector dg) => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.To<TItem>());
-
-    public static void RunInControlThread(this DispatcherObject control, in Action action) => control?.Dispatcher.Invoke(action);
-
-    public static bool SetProperty<TValue>(
-        this INotifyPropertyChanged item,
-        ref TValue field,
-        in TValue newValue,
-        in Action<PropertyChangedEventArgs> invokePropertyChanged,
-        [CallerMemberName] in string? propertyName = null)
-    {
-        if (!Equals(field, newValue))
-        {
-            field = newValue;
-            invokePropertyChanged?.Invoke(new(propertyName));
-            return true;
-        }
-        return false;
-    }
-    public static TViewModel SetProperty<TViewModel, TValue>(
-        this TViewModel item,
-        ref TValue field,
-        in TValue newValue,
-        in Action<string?> invokePropertyChanged,
-        [CallerMemberName] in string? propertyName = null)
-        where TViewModel : INotifyPropertyChanged
-    {
-        //if (!Equals(field, newValue))
-        {
-            field = newValue;
-            invokePropertyChanged?.Invoke(propertyName);
-        }
-        return item;
-    }
-
-    public static void SetValue(this RangeBase pb, double step)
-    {
-        Check.IfArgumentNotNull(pb, nameof(pb));
-
-        Animations.AnimateDouble(pb, RangeBase.ValueProperty, pb.Value, step, 100);
-    }
-
-    public static bool? ShowDialog<TWindow>(this Window owner)
-        where TWindow : Window, new() => owner.ShowDialog(() => new TWindow(), out var window);
-
-    public static (bool? Result, TWindow Window) ShowDialog<TWindow>(this Window owner, Func<TWindow> creator)
-        where TWindow : Window
-    {
-        var result = owner.ShowDialog(creator, out var window);
-        return (result, window);
-    }
-    public static bool? ShowDialog<TWindow>(this Window owner, Func<TWindow> creator, out TWindow window)
-        where TWindow : Window
-    {
-        Check.IfArgumentNotNull(creator, nameof(creator));
-
-        window = creator();
-        window.Owner = owner;
-        return window.ShowDialog();
-    }
-    public static bool? ShowDialog<TWindow>(this Window owner, out TWindow window)
-        where TWindow : Window, new() => owner.ShowDialog(() => new TWindow(), out window);
-
-    private static void BindItemsSourceInner<TSelector>(TSelector selector, IEnumerable? items, string? displayMemebrPath)
-        where TSelector : Selector
-    {
-        Check.IfArgumentNotNull(selector, nameof(selector));
-
-        selector.ItemsSource = null;
-        selector.ItemsSource = items;
-        if (displayMemebrPath is not null)
-        {
-            selector.DisplayMemberPath = displayMemebrPath;
-        }
-        //var binding = new Binding { Mode = model, Source = items, Path = new PropertyPath(displayMemebrPath ?? ".") };
-        //BindingOperations.SetBinding(selector, ItemsControl.ItemsSourceProperty, binding);
-    }
-
-    public static DataGrid AddColumns(this DataGrid dataGrid, IEnumerable<IDataColumnBindingInfo> dataColumns)
-    {
-        Check.IfArgumentNotNull(dataGrid);
-        _ = dataColumns.ToDataGridColumn().ForEach(dataGrid.Columns.Add).Build();
-        return dataGrid;
-    }
 
     public static TResult RunCodeBlock<TResult>(this FrameworkElement element, [DisallowNull] in Func<TResult> action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true)
     {
@@ -510,6 +451,7 @@ public static class ControlHelper
             element.Cursor = cursor;
         }
     }
+
     public static FrameworkElement RunCodeBlock(this FrameworkElement element, [DisallowNull] Action action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true) => RunCodeBlock(element, () =>
                                                                                                                                                                                                                                                          {
                                                                                                                                                                                                                                                              action();
@@ -518,12 +460,82 @@ public static class ControlHelper
 
     public static async Task<TResult> RunCodeBlockAsync<TResult>(this FrameworkElement element, [DisallowNull] Func<Task<TResult>> action, [DisallowNull] ILogger logger, string? start, string? end = null, string? error = null, bool changeMousePointer = true) => await RunCodeBlock(element, action, logger, start, end, error, changeMousePointer);
 
-    public static void ApplyFilter(this ItemCollection items, Predicate<object> predicate)
+    public static void RunInControlThread(this DispatcherObject control, in Action action) => control?.Dispatcher.Invoke(action);
+
+    public static bool SetProperty<TValue>(
+        this INotifyPropertyChanged item,
+        ref TValue field,
+        in TValue newValue,
+        in Action<PropertyChangedEventArgs> invokePropertyChanged,
+        [CallerMemberName] in string? propertyName = null)
     {
-        foreach (var item in items.Cast<TreeViewItem>())
+        if (!Equals(field, newValue))
         {
-            ApplyFilter(item.Items, predicate);
+            field = newValue;
+            invokePropertyChanged?.Invoke(new(propertyName));
+            return true;
         }
-        items.Filter = predicate;
+        return false;
+    }
+
+    public static TViewModel SetProperty<TViewModel, TValue>(
+        this TViewModel item,
+        ref TValue field,
+        in TValue newValue,
+        in Action<string?> invokePropertyChanged,
+        [CallerMemberName] in string? propertyName = null)
+        where TViewModel : INotifyPropertyChanged
+    {
+        //if (!Equals(field, newValue))
+        {
+            field = newValue;
+            invokePropertyChanged?.Invoke(propertyName);
+        }
+        return item;
+    }
+
+    public static void SetValue(this RangeBase pb, double step)
+    {
+        Check.IfArgumentNotNull(pb, nameof(pb));
+
+        Animations.AnimateDouble(pb, RangeBase.ValueProperty, pb.Value, step, 100);
+    }
+
+    public static bool? ShowDialog<TWindow>(this Window owner)
+        where TWindow : Window, new() => owner.ShowDialog(() => new TWindow(), out var window);
+
+    public static (bool? Result, TWindow Window) ShowDialog<TWindow>(this Window owner, Func<TWindow> creator)
+        where TWindow : Window
+    {
+        var result = owner.ShowDialog(creator, out var window);
+        return (result, window);
+    }
+
+    public static bool? ShowDialog<TWindow>(this Window owner, Func<TWindow> creator, out TWindow window)
+        where TWindow : Window
+    {
+        Check.IfArgumentNotNull(creator, nameof(creator));
+
+        window = creator();
+        window.Owner = owner;
+        return window.ShowDialog();
+    }
+
+    public static bool? ShowDialog<TWindow>(this Window owner, out TWindow window)
+        where TWindow : Window, new() => owner.ShowDialog(() => new TWindow(), out window);
+
+    private static void BindItemsSourceInner<TSelector>(TSelector selector, IEnumerable? items, string? displayMemebrPath)
+        where TSelector : Selector
+    {
+        Check.IfArgumentNotNull(selector, nameof(selector));
+
+        selector.ItemsSource = null;
+        selector.ItemsSource = items;
+        if (displayMemebrPath is not null)
+        {
+            selector.DisplayMemberPath = displayMemebrPath;
+        }
+        //var binding = new Binding { Mode = model, Source = items, Path = new PropertyPath(displayMemebrPath ?? ".") };
+        //BindingOperations.SetBinding(selector, ItemsControl.ItemsSourceProperty, binding);
     }
 }

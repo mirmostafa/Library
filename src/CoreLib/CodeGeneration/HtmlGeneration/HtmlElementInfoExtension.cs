@@ -10,15 +10,21 @@ public static class HtmlElementInfoExtension
         {
             return auto.GenerateCodeStatement();
         }
-        
+
         var codeStatement = new StringBuilder(indent).Append($"<{element.Name}");
         foreach (var (key, value) in element.Attributes)
         {
             _ = codeStatement.Append(value is not null ? $" {key}=\"{value}\"" : $" \"{key}\"");
         }
 
-        if (element is IHasChild<IHtmlElementInfo> parent && parent.Children.Any())
+        if (element.InnerHtml is not null)
         {
+            _ = codeStatement.Append('>');
+            _ = codeStatement.AppendLine().Append(indent).Append(element.InnerHtml);
+        }
+        else if (element is IHasChild<IHtmlElementInfo> parent && parent.Children.Any())
+        {
+            _ = codeStatement.Append('>');
             foreach (var child in parent.Children)
             {
                 _ = codeStatement.AppendLine().Append(child.ToHtml(indent + indent));
@@ -38,6 +44,7 @@ public static class HtmlElementInfoExtension
                     break;
 
                 case ClosingTagType.Full:
+                    _ = codeStatement.Append(">");
                     _ = codeStatement.AppendLine().Append(indent).Append($"</{element.Name}>");
                     break;
             }

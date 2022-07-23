@@ -7,23 +7,6 @@ namespace Library.Helpers.CodeGen;
 
 public static class TypeMemberNameHelper
 {
-    private static string CombineWithDot(params string?[] parts)
-    {
-        var names = parts.Select(part => FixVariableName(part, false)).Compact();
-        var builder = new StringBuilder();
-        foreach (var name in names)
-        {
-            _ = builder.Append($"{name}.");
-        }
-        var result = builder.ToString();
-        if (result?.Length > 0)
-        {
-            result = result[0..^1];
-        }
-
-        return result ?? string.Empty;
-    }
-
     public static string FixVariableName(in string? memberName, bool checkNullability = true)
     {
         if (memberName is null)
@@ -50,7 +33,7 @@ public static class TypeMemberNameHelper
         var result = genericParamsFullData.Any()
             ? $"{classFullData.Name}<{genericParamsFullData.Select(gpf => gpf.IsNullable ? $"{gpf.Name}?" : gpf.Name).Merge(", ")}"
             : classFullData.Name;
-#warning موقت
+        //TODO موقت
         if (result.Any(c => c == '<'))
         {
             result = $"{result}>";
@@ -72,9 +55,8 @@ public static class TypeMemberNameHelper
     public static IEnumerable<string> GetNameSpaces(in string fullName)
     {
         var (classFullData, genericParamsFullData) = GetFullData(fullName);
-        var result = EnumerableHelper
-            .AsEnumerableItem(classFullData.NameSpace)
-            .AddRangeImmuted(genericParamsFullData.Select(gpf => gpf.NameSpace)).Compact();
+        var result = EnumerableHelper.AsEnumerableItem(classFullData.NameSpace)
+                        .AddRangeImmuted(genericParamsFullData.Select(gpf => gpf.NameSpace)).Compact();
         return result;
     }
 
@@ -110,19 +92,34 @@ public static class TypeMemberNameHelper
                 return string.Empty;
             }
         }
-        else if (memberName.StartsWithAny(Enumerable.Range(0, 9).Select(x => x.ToString(CultureInfo.InvariantCulture))))
-        {
-            result = new(false, "Illegal character.");
-        }
         else
         {
-            result = memberName.Contains(' ')
+            result = memberName.StartsWithAny(Enumerable.Range(0, 9).Select(x => x.ToString(CultureInfo.InvariantCulture)))
                 ? (new(false, "Illegal character."))
-                : memberName.StartsWithAny("$", "!", "#", "@", "%", "^", "&", "*", "(", ")", "-", "+", "/", "\\")
+                : memberName.Contains(' ')
                             ? (new(false, "Illegal character."))
-                            : ((bool IsValid, string? ErrorContent))(true, null);
+                            : memberName.StartsWithAny("$", "!", "#", "@", "%", "^", "&", "*", "(", ")", "-", "+", "/", "\\")
+                                        ? (new(false, "Illegal character."))
+                                        : ((bool IsValid, string? ErrorContent))(true, null);
         }
         return result.IsValid ? memberName! : throw new ValidationException(result.ErrorContent!);
+    }
+
+    private static string CombineWithDot(params string?[] parts)
+    {
+        var names = parts.Select(part => FixVariableName(part, false)).Compact();
+        var builder = new StringBuilder();
+        foreach (var name in names)
+        {
+            _ = builder.Append($"{name}.");
+        }
+        var result = builder.ToString();
+        if (result?.Length > 0)
+        {
+            result = result[0..^1];
+        }
+
+        return result ?? string.Empty;
     }
 
     private static (MemberNameInfo ClassFullData, IEnumerable<MemberNameInfo> GenericParamsFullData) GetFullData(in string fullName)

@@ -20,11 +20,11 @@ public sealed record BlazorCode : Code
     public BlazorCode AddInjection(IEnumerable<TypePath> injects)
         => this.Fluent(() => this.Injects.AddRange(injects));
 
-    public BlazorCode(in (string Name, string Statement, bool IsPartial) data) : base((data.Name, Languages.Blazor, data.Statement, data.IsPartial))
+    public BlazorCode(in (string Name, string Statement, bool IsPartial) data) : base((data.Name, Languages.BlazorCodeBehind, data.Statement, data.IsPartial))
     {
     }
 
-    public BlazorCode(in string name, in string statement, in bool isPartial = false) : base(name, Languages.Blazor, statement, isPartial)
+    public BlazorCode(in string name, in string statement, in bool isPartial = false) : base(name, Languages.BlazorCodeBehind, statement, isPartial)
     {
     }
 
