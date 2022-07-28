@@ -25,9 +25,9 @@ public class TableElement : HtmlElement<TableElement>, IAutoCoder
         var thead = HtmlElement.New("thead");
 
         var tr = HtmlElement.New("tr");
-        foreach (var (_, caption, _) in columns)
+        foreach (var column in columns)
         {
-            var th = HtmlElement.New("th").SetInnerHtml(caption);
+            var th = HtmlElement.New("th").SetInnerHtml(column.Caption);
             _ = tr.AddChild(th);
         }
         _ = thead.AddChild(tr);
@@ -65,10 +65,9 @@ public class TableElement : HtmlElement<TableElement>, IAutoCoder
 
     public static string CreateRazorTable(in IEnumerable<TableHeader> columns
         , in string itemsSourceBindingPath
-        , in int? border = null
-        , in string? width = null
-        , in Func<string>? getIteratorHtml = null
-        , in Func<IHtmlElementInfo, string>? toHtml = null)
+        , in (string Header, IEnumerable<IHtmlElementInfo> Controls)? controlsPerRow = null
+        , in int? border = default
+        , in string? width = null)
     {
         var table = HtmlElement.New("table");
         var thead = HtmlElement.New("thead");
@@ -79,11 +78,15 @@ public class TableElement : HtmlElement<TableElement>, IAutoCoder
             var th = HtmlElement.New("th").SetInnerHtml(caption);
             _ = tr.AddChild(th);
         }
+        if (controlsPerRow is { } ctrl)
+        {
+            var th = HtmlElement.New("th").SetInnerHtml(ctrl.Header);
+            _ = tr.AddChild(th);
+        }
         _ = thead.AddChild(tr);
         _ = table.AddChild(thead);
         var tbody = HtmlElement.New("tbody");
-        var iterator = getIteratorHtml is not null ? getIteratorHtml() : innerGetIteratorHtml(columns, itemsSourceBindingPath);
-        tbody.InnerHtml = iterator;
+        tbody.InnerHtml = innerGetIteratorHtml(columns, itemsSourceBindingPath, controlsPerRow);
         _ = table.AddChild(tbody);
 
         if (border is not null)
@@ -95,9 +98,9 @@ public class TableElement : HtmlElement<TableElement>, IAutoCoder
             _ = table.AddAttribute("width", width);
         }
 
-        return toHtml is null ? table.ToHtml() : toHtml(table);
+        return table.ToHtml();
 
-        static string innerGetIteratorHtml(IEnumerable<TableHeader> columns, string itemsSourceBindingPath)
+        static string innerGetIteratorHtml(in IEnumerable<TableHeader> columns, in string itemsSourceBindingPath, in (string Header, IEnumerable<IHtmlElementInfo> Controls)? controlsPerRow)
         {
             var trs = new StringBuilder();
             foreach (var column in columns)
@@ -107,13 +110,22 @@ public class TableElement : HtmlElement<TableElement>, IAutoCoder
                     _ = trs.AppendLine($"             <td>@item.{column.BindingPath}</td>");
                 }
             }
+            if (controlsPerRow is { } ctrls)
+            {
+                foreach (var ctrl in ctrls.Controls)
+                {
+                    _ = trs.AppendLine($"             <td>{ctrl.ToHtml()}</td>");
+                }
+            }
+
             var iterator =
-                    $@"   @foreach (var item in {itemsSourceBindingPath})
-      {{
-         <tr>
+                    $@"   @if({itemsSourceBindingPath} is not null)
+          foreach (var item in {itemsSourceBindingPath})
+          {{
+                 <tr>
 {trs.ToString().TrimEnd()}
-         </tr>
-      }}";
+             </tr>
+          }}";
             return iterator;
         }
     }

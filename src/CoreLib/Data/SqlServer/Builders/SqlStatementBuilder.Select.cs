@@ -6,56 +6,17 @@ namespace Library.Data.SqlServer;
 
 public static partial class SqlStatementBuilder
 {
-    public static ISelectStatement Select<TEntity>()
-    {
-        var table = EntityModelConverterHelper.GetTableInfo<TEntity>();
-        var result = Select()
-                        .Columns(table.Columns.OrderBy(c => c.Order).Select(c => c.Name))
-                        .From(table.Name);
-        return result;
-    }
-
-    public static ISelectStatement Select([DisallowNull] string tableName)
-        => new SelectStatement { TableName = tableName.ArgumentNotNull(nameof(tableName)) };
-
-    public static ISelectStatement Select()
-        => new SelectStatement();
-
-    public static ISelectStatement From([DisallowNull] this ISelectStatement statement, [DisallowNull] string tableName)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.TableName = tableName.ArgumentNotNull(nameof(tableName)));
-
-    public static ISelectStatement AllColumns([DisallowNull] this ISelectStatement statement)
-        => statement.Star();
-    public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(statement.Columns.Clear);
-    public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, params string[] columns)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.Columns.ClearAndAddRange(columns.Compact()));
-    public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
-    {
-        Check.IfArgumentNotNull(statement, nameof(statement));
-        statement.Columns.Clear();
-        return statement.AddColumns(columns);
-    }
     public static ISelectStatement AddColumn([DisallowNull] this ISelectStatement statement, params string[] columns)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => columns.Compact().ForEach(c => statement.Columns.Add(c)).Build());
+        => statement.ArgumentNotNull().Fluent(() => columns.Compact().ForEach(c => statement.Columns.Add(c)).Build()).GetValue();
+
     public static ISelectStatement AddColumns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
         => statement.AddColumn(columns.ToArray());
 
-    public static ISelectStatement Where([DisallowNull] this ISelectStatement statement, string? whereClause)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.WhereClause = whereClause);
+    public static ISelectStatement AllColumns([DisallowNull] this ISelectStatement statement)
+        => statement.Star();
 
-    public static ISelectStatement OrderBy([DisallowNull] this ISelectStatement statement, string? column)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.OrderByColumn = column);
     public static ISelectStatement Ascending([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.OrderByDirection = OrderByDirection.Ascending);
-    public static ISelectStatement Descending([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() => statement.OrderByDirection = OrderByDirection.Descending);
-    public static ISelectStatement ClearOrdering([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull(nameof(statement)).Fluent(() =>
-        {
-            statement.OrderByColumn = null;
-            statement.OrderByDirection = OrderByDirection.None;
-        });
+        => statement.ArgumentNotNull().Fluent(() => statement.OrderByDirection = OrderByDirection.Ascending).GetValue();
 
     public static string Build([DisallowNull] this ISelectStatement statement, string indent = "    ")
     {
@@ -73,7 +34,7 @@ public static partial class SqlStatementBuilder
         {
             _ = result.Append(" *");
         }
-        _ = AddClause($"FROM { AddBrackets(statement.TableName)}", indent, result);
+        _ = AddClause($"FROM {AddBrackets(statement.TableName)}", indent, result);
         if (!statement.WhereClause.IsNullOrEmpty())
         {
             _ = AddClause($"WHERE {statement.WhereClause}", indent, result);
@@ -91,6 +52,53 @@ public static partial class SqlStatementBuilder
         return result.ToString();
     }
 
+    public static ISelectStatement ClearOrdering([DisallowNull] this ISelectStatement statement)
+        => statement.ArgumentNotNull().Fluent(() =>
+        {
+            statement.OrderByColumn = null;
+            statement.OrderByDirection = OrderByDirection.None;
+        }).GetValue();
+
+    public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, params string[] columns)
+        => statement.ArgumentNotNull().Fluent(() => statement.Columns.ClearAndAddRange(columns.Compact())).GetValue();
+
+    public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
+    {
+        Check.IfArgumentNotNull(statement, nameof(statement));
+        statement.Columns.Clear();
+        return statement.AddColumns(columns);
+    }
+
+    public static ISelectStatement Descending([DisallowNull] this ISelectStatement statement)
+        => statement.ArgumentNotNull().Fluent(() => statement.OrderByDirection = OrderByDirection.Descending).GetValue();
+
+    public static ISelectStatement From([DisallowNull] this ISelectStatement statement, [DisallowNull] string tableName)
+        => statement.ArgumentNotNull().Fluent(() => statement.TableName = tableName.ArgumentNotNull()).GetValue();
+
+    public static ISelectStatement OrderBy([DisallowNull] this ISelectStatement statement, string? column)
+        => statement.ArgumentNotNull().Fluent(() => statement.OrderByColumn = column).GetValue();
+
+    public static ISelectStatement Select<TEntity>()
+    {
+        var table = EntityModelConverterHelper.GetTableInfo<TEntity>();
+        var result = Select()
+                        .Columns(table.Columns.OrderBy(c => c.Order).Select(c => c.Name))
+                        .From(table.Name);
+        return result;
+    }
+
+    public static ISelectStatement Select([DisallowNull] string tableName)
+        => new SelectStatement { TableName = tableName.ArgumentNotNull() };
+
+    public static ISelectStatement Select()
+        => new SelectStatement();
+
+    public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)
+        => statement.ArgumentNotNull().Fluent(statement.Columns.Clear).GetValue();
+
+    public static ISelectStatement Where([DisallowNull] this ISelectStatement statement, string? whereClause)
+        => statement.ArgumentNotNull().Fluent(() => statement.WhereClause = whereClause).GetValue();
+
     private struct SelectStatement : ISelectStatement
     {
         public SelectStatement()
@@ -98,11 +106,12 @@ public static partial class SqlStatementBuilder
             this.TableName = string.Empty;
             this.WhereClause = this.OrderBy = this.OrderByColumn = null;
         }
-        public string TableName { get; set; }
-        public string? WhereClause { get; set; }
-        public string? OrderBy { get; set; }
+
         public List<string> Columns { get; } = new();
+        public string? OrderBy { get; set; }
         public string? OrderByColumn { get; set; }
         public OrderByDirection OrderByDirection { get; set; } = OrderByDirection.None;
+        public string TableName { get; set; }
+        public string? WhereClause { get; set; }
     }
 }

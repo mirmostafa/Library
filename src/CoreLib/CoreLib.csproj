@@ -22,6 +22,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="CodeGeneration\HtmlGeneration\**" />
+	  <EmbeddedResource Remove="CodeGeneration\HtmlGeneration\**" />
+	  <None Remove="CodeGeneration\HtmlGeneration\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove=".gitignore" />
 		<None Remove="README.md" />
 	</ItemGroup>

@@ -1,18 +1,21 @@
 ﻿namespace Library.Data.Models;
 
-public record struct DataColumnBindingInfo(string? Title, string? BindingPath, DataColumnBindingType DataType = DataColumnBindingType.None) : IDataColumnBindingInfo
+public record struct DataColumnBindingInfo(string? Title, object? BindingPathOrElement, DataColumnBindingType DataType = DataColumnBindingType.Default) : IDataColumnBindingInfo
 {
-    public void Deconstruct(out string? title, out string? bindingPath) =>
-        (title, bindingPath) = (this.Title, this.BindingPath);
+    string? IDataColumnBindingInfo.BindingPathOrElement { get; }
 
-    public static implicit operator (string? Title, string? BindingPath)(DataColumnBindingInfo value) =>
-        (value.Title, value.BindingPath);
-    public static implicit operator DataColumnBindingInfo((string? Title, string? BindingPath) value) =>
-        new(value.Title, value.BindingPath);
+    public void Deconstruct(out string? title, out object? bindingPathOrElement) =>
+        (title, bindingPathOrElement) = (this.Title, this.BindingPathOrElement);
+
+    public static implicit operator (string? Title, object? BindingPathOrElement)(DataColumnBindingInfo value)
+        => (value.Title, value.BindingPathOrElement);
+    public static implicit operator DataColumnBindingInfo((string? Title, object? BindingPathOeElement) value)
+        => new(value.Title, value.BindingPathOeElement);
 }
 
 public enum DataColumnBindingType
 {
-    None,
+    Default,
     Text,
+    HtmlElement
 }

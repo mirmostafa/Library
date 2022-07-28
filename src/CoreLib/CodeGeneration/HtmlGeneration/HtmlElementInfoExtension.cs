@@ -21,6 +21,7 @@ public static class HtmlElementInfoExtension
         {
             _ = codeStatement.Append('>');
             _ = codeStatement.AppendLine().Append(indent).Append(element.InnerHtml);
+            _ = codeStatement.AppendLine().Append(indent).Append($"</{element.Name}>");
         }
         else if (element is IHasChild<IHtmlElementInfo> parent && parent.Children.Any())
         {

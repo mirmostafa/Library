@@ -2,10 +2,10 @@
 
 public interface IDataColumnBindingInfo
 {
-    string? BindingPath { get; }
+    string? BindingPathOrElement { get; }
     DataColumnBindingType DataType { get; }
     string? Title { get; }
 
-    static IDataColumnBindingInfo New(string? title, string? bindingPath, DataColumnBindingType dataType = DataColumnBindingType.None) =>
+    static IDataColumnBindingInfo New(string? title, string? bindingPath, DataColumnBindingType dataType = DataColumnBindingType.Default) =>
         new DataColumnBindingInfo(title, bindingPath, dataType);
 }
