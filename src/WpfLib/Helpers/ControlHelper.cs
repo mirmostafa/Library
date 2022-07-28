@@ -180,18 +180,13 @@ public static class ControlHelper
         EnumerableHelper.ForEachTreeNode(visual,
             c =>
             {
-                if (!loopThrouth && !Equals(c, visual))
-                {
-                    return Enumerable.Empty<Visual>();
-                }
-                else
-                {
-                    return c is not TabItem tabItem
+                return !loopThrouth && !Equals(c, visual)
+                    ? Enumerable.Empty<Visual>()
+                    : c is not TabItem tabItem
                         ? Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i))
                         : tabItem.Content is Visual
                                             ? (IEnumerable<Visual>)(new[] { tabItem.Content.As<Visual>()!, tabItem.Header.As<Visual>()! })
                                             : Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i));
-                }
             },
             result.Add,
             null);
@@ -284,17 +279,20 @@ public static class ControlHelper
         return row;
     }
 
-    public static T? GetSelectedValue<T>(this TreeView treeView)
-        where T : class => treeView.ArgumentNotNull(nameof(treeView)).SelectedItem.As<TreeViewItem>()?.DataContext.As<T>();
+    public static T? GetSelectedValue<T>(this TreeView treeView) where T : class
+        => treeView.ArgumentNotNull(nameof(treeView)).SelectedItem.As<TreeViewItem>()?.DataContext.As<T>();
 
     [Obsolete("Use listView.GetSelection, instead.")]
-    public static T? GetSelection<T>(this SelectionChangedEventArgs e) => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().ToNullable<T>();
+    public static T? GetSelection<T>(this SelectionChangedEventArgs e)
+        => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().ToNullable<T>();
 
-    public static T? GetSelection<T>(this ListView listView, SelectionChangedEventArgs e) => e?.AddedItems.Any() is true ? e.AddedItems[0].ToNullable<T>() : GetSelections<T>(listView).FirstOrDefault();
+    public static T? GetSelection<T>([DisallowNull] this ListView listView, SelectionChangedEventArgs e)
+        => e?.AddedItems.Any() is true ? e.AddedItems[0].ToNullable<T>() : GetSelections<T>(listView).FirstOrDefault();
 
-    public static IEnumerable<T?> GetSelections<T>(this ListView listView) => listView.ArgumentNotNull(nameof(listView)).SelectedItems.Cast<object?>().Select(x => x.ToNullable<T>());
+    public static IEnumerable<T?> GetSelections<T>([DisallowNull] this ListView listView)
+        => listView.ArgumentNotNull().SelectedItems.Cast<object?>().Select(x => x.ToNullable<T>());
 
-    public static string GetText(this RichTextBox rtb)
+    public static string GetText([DisallowNull] this RichTextBox rtb)
     {
         Check.IfArgumentNotNull(rtb);
 

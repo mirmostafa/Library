@@ -21,12 +21,12 @@ public sealed class Codes : SpecializedListBase<Code?, Codes>, IIndexable<Code?,
     public Codes this[Language language] => this.InCriteria(x => x?.Language == language);
     public Codes this[bool isPartial] => this.InCriteria(x => x?.IsPartial == isPartial);
 
-    public Code ComposeAll()
+    public Code ComposeAll(string? separator = null)
     {
         var result = Code.Empty;
         foreach (var code in this.Compact())
         {
-            result = new(code.Name, code.Language, string.Concat(result.Statement, code.Statement));
+            result = new(code.Name, code.Language, string.Concat(result.Statement, separator, code.Statement));
         }
         return result;
     }

@@ -513,9 +513,8 @@ public static class ObjectHelper
     public static long? ToLongNullable(this string? str)
         => long.TryParse(str, out var result) ? result : default(long?);
 
-    public static T ToNotNull<T>(this T? t, in T defaultValue = default)
-            where T : struct
-            => t ?? defaultValue;
+    public static T ToNotNull<T>(this T? t, in T defaultValue = default) where T : struct
+        => t ?? defaultValue;
 
     /// <summary>
     /// Converts to nullable.
@@ -523,8 +522,8 @@ public static class ObjectHelper
     /// <typeparam name="T"></typeparam>
     /// <param name="obj">The object.</param>
     /// <returns></returns>
-    public static T? ToNullable<T>(this object? obj) =>
-        obj is T t ? t : default;
+    public static T? ToNullable<T>(this object? obj)
+        => obj is T t ? t : default;
 
     /// <summary>
     ///     Converts the string representation of a number to an Int16.
