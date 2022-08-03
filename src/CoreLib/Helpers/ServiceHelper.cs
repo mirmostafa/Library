@@ -50,7 +50,7 @@ public static class ServiceHelper
     }
 
     public static async Task<Result<TViewModel>> SaveViewModelAsync<TViewModel>(this IAsyncWriteService<TViewModel> service, TViewModel model, bool persist = true)
-        where TViewModel : ICanSetKey<long?>
+            where TViewModel : ICanSetKey<long?>
         => model.ArgumentNotNull().Id is { } id and > 0
             ? await service.UpdateAsync(id, model, persist)
             : await service.InsertAsync(model, persist);

@@ -115,13 +115,5 @@ public class Database : SqlObject<Database, Server>
 
         });
         return new(tables);
-        //var sql = new Sql(this.ConnectionString);
-        //var tables = sql.Select("SELECT name, SCHEMA_NAME(schema_id) AS [schema], create_date, object_id, modify_date FROM sys.tables");
-        //return new Tables(tables.Select(t => new Table(this, t.name, t.schema, this.ConnectionString)
-        //{
-        //    CreateDate = Convert.ToDateTime(t.create_date),
-        //    Id = Convert.ToInt64(t.object_id),
-        //    ModifyDate = Convert.ToDateTime(t.modify_date)
-        //}).ToList());
     }
 }

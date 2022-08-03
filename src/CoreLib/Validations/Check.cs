@@ -152,8 +152,12 @@ public static class CheckHelpers
         @this.NotValid(_ => obj is null, () => new NullValueValidationException(argName!))!;
 
     [return: NotNull]
-    public static T NotNull<T>([NotNull] this T @this, string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
+    public static T NotNull<T>([NotNull] this T @this, string obj, [CallerArgumentExpression("obj")] string? argName = null)
+        => @this.NotValid(_ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!))!;
+
+    [return: NotNull]
+    public static T NotNull<T>([NotNull] this T obj, Func<string> getMessage)
+        => obj.NotValid(x => x is null, () => new NullValueValidationException(getMessage(), null))!;
 
     [return: NotNull]
     public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T> task, [CallerArgumentExpression("task")] string? message = null)
