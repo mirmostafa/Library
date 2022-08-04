@@ -15,6 +15,11 @@ public static class FluencyHelper
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance o)
         => new(o);
+    
+    public static Fluency<TInstance> Fluent<TInstance>(this object obj, Func<TInstance> o)
+        => new(o());
+    public static Fluency<TInstance> Fluent<TInstance>(this Action obj, Func<TInstance> o)
+        => new(o());
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action action)
     {

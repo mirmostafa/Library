@@ -25,6 +25,15 @@ public abstract class ReadOnlySpecializedList<TItem, TEnumerable> : IEnumerable<
     protected TEnumerable This()
         => this.As<TEnumerable>()!;
 
+    protected TEnumerable This(params Delegate[] delegates)
+    {
+        foreach (var item in delegates)
+        {
+            item.Method.Invoke(this, null);
+        }
+        return This();
+    }
+
     public TItem? ByCriteria(Predicate<TItem?> predicate)
         => this.FirstOrDefault(x => predicate.ArgumentNotNull(nameof(predicate)).Invoke(x));
     public bool Contains(TItem? item)

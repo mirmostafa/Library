@@ -63,13 +63,13 @@ public interface IAsyncReadPagingService<TViewModel> : IAsyncReadPagingService<T
 public interface IAsyncReadService<TViewModel, in TId> : IService
 {
     /// <summary>
-    /// Gets all db entities asynchronously.
+    /// Gets all <typeparamref name="TViewModel"/>s asynchronously.
     /// </summary>
     /// <returns></returns>
     Task<IReadOnlyList<TViewModel>> GetAllAsync();
 
     /// <summary>
-    /// Gets an entity by identifier.
+    /// Gets an <typeparamref name="TViewModel"/> by identifier.
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>

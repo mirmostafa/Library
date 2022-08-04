@@ -284,4 +284,17 @@ public static class CodeHelper
 
     public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] Action<TInstance> action) 
         => instance.Fluent(action);
+
+    public static async Task<Result<TResult?>> CatchResult<TResult>(this Func<Task<TResult>> func, TResult? defaultResult = default)
+    {
+        try
+        {
+            var result = await func();
+            return Result<TResult?>.CreateSuccess(result);
+        }
+        catch (Exception ex)
+        {
+            return Result<TResult?>.CreateFail(ex.GetBaseException().Message, defaultResult);
+        }
+    }
 }
