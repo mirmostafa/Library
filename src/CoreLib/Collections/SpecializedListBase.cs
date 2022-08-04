@@ -41,7 +41,10 @@ public abstract class SpecializedListBase<TItem, TEnumerable> : ReadOnlySpeciali
     }
 
     public TEnumerable Remove(TItem? item)
-        => this.AsList().Remove(item).Fluent(this.This);
+    {
+         this.AsList().Remove(item);
+        return this.This();
+    }
 
     public TEnumerable RemoveAt(int index)
     {

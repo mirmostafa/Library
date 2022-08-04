@@ -164,7 +164,8 @@ public static class DbContextHelper
     }
 
     public static DbContext RemoveById<TEntity>([DisallowNull] this DbContext dbContext, in IEnumerable<long> ids, bool detach = false)
-        where TEntity : class, IIdenticalEntity<long>, new() => RemoveById<TEntity, long>(dbContext, ids, detach);
+        where TEntity : class, IIdenticalEntity<long>, new() 
+        => RemoveById<TEntity, long>(dbContext, ids, detach);
 
     public static DbContext RemoveById<TEntity, TId>([DisallowNull] DbContext dbContext, [DisallowNull] IEnumerable<TId> ids, bool detach = false)
         where TEntity : class, IIdenticalEntity<TId>, new()

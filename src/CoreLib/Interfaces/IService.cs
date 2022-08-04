@@ -97,19 +97,6 @@ public interface IAsyncSaveService : IService
     Task<Result<int>> SaveChangesAsync();
 }
 
-/// <summary>
-///   <br />
-/// </summary>
-/// <typeparam name="TViewModel">The type of the view model.</typeparam>
-/// <seealso cref="Library.Interfaces.IService" />
-public interface IAsyncSaveService<TViewModel> : IService
-{
-    /// <summary>
-    /// Saves the data asynchronously.
-    /// </summary>
-    /// <returns></returns>
-    Task<Result<TViewModel>> SaveChangesAsync(TViewModel viewModel);
-}
 
 /// <summary>
 /// A standardizer for sercvies to write data asynchronously.
