@@ -9,6 +9,7 @@ using Library.Validations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Helpers;
 
@@ -94,8 +95,23 @@ public static class ServiceHelper
         where TService : IAsyncValidator<TViewModel>, IAsyncSaveService, ILoggerContainer
         => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Add, convert, service.ValidateAsync, onCommitting, persist, (true, null), service.SaveChangesAsync, service.Logger);
 
+    public static ServiceCollection RegisterServices<TType>(this ServiceCollection services)
+    {
+        // typeof(TType).Assembly.GetTypes()[80].GetInterfaces()[1].GetInterfaces().Contains(typeof(IService))
+        var srvs = typeof(TType).Assembly.GetTypes().Where(t => t.IsClass && t.GetInterfaces().Contains(typeof(IService)));
+        foreach (var srv in srvs)
+        {
+            var infcs = srv.GetInterfaces().Where(t => t.GetInterfaces().Contains(typeof(IService)));
+            foreach (var infc in infcs)
+            {
+                _ = services.AddScoped(infc, srv);
+            }
+        }
+        return services;
+    }
+
     public static Task<Result<TViewModel>> SaveViewModelAsync<TViewModel>(this IAsyncWriteService<TViewModel> service, TViewModel model, bool persist = true)
-        where TViewModel : ICanSetKey<long?>
+            where TViewModel : ICanSetKey<long?>
         => model.ArgumentNotNull().Id is { } id and > 0
             ? service.UpdateAsync(id, model, persist)
             : service.InsertAsync(model, persist);
