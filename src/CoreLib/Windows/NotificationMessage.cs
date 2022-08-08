@@ -1,6 +1,6 @@
 ﻿namespace Library.Windows;
 
-public record struct NotificationMessage(in string Text, in string? Instruction = null, in string? Title = null, in string? Details = null, MessageLevel level = MessageLevel.Info, object? Owner = null)
+public record struct NotificationMessage(in string Text, in string? Instruction = null, in string? Title = null, in string? Details = null, MessageLevel? level = MessageLevel.Info, object? Owner = null)
 {
     public static explicit operator string?(NotificationMessage? fullMessage) => fullMessage?.Text;
     public static implicit operator NotificationMessage?(string? message) => message is null ? null : new(message);

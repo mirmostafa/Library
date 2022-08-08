@@ -1,25 +1,28 @@
-﻿namespace Library.Helpers;
+﻿using Library.Results;
+
+namespace Library.Helpers;
 
 public static class TaskHelper
 {
-    
-    /// <summary>Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/> objects in an array have completed.</summary>
+    /// <summary>
+    /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
+    /// objects in an array have completed.
+    /// </summary>
     /// <remarks>Returns all the excpetions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
-    /// <returns>
-    ///   A task that represents the completion of all of the supplied tasks.
-    /// </returns>
-    public static async Task<IEnumerable<TResult>> WhenAllAsync<TResult>(IEnumerable<Task<TResult>> tasks) 
+    /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
+    public static async Task<IEnumerable<TResult>> WhenAllAsync<TResult>(IEnumerable<Task<TResult>> tasks)
         => await WhenAllAsync(tasks.ToArray());
 
-    /// <summary>Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/> objects in an array have completed.</summary>
+    /// <summary>
+    /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
+    /// objects in an array have completed.
+    /// </summary>
     /// <remarks>Returns all the excpetions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
-    /// <returns>
-    ///   A task that represents the completion of all of the supplied tasks.
-    /// </returns>
+    /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
     public static async Task<IEnumerable<TResult>> WhenAllAsync<TResult>(params Task<TResult>[] tasks)
     {
         var allTasks = Task.WhenAll(tasks);
@@ -34,23 +37,25 @@ public static class TaskHelper
         throw allTasks.Exception ?? throw new Exception("This can't possibly happen");
     }
 
-    /// <summary>Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/> objects in an array have completed.</summary>
+    /// <summary>
+    /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
+    /// objects in an array have completed.
+    /// </summary>
     /// <remarks>Returns all the excpetions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
-    /// <returns>
-    ///   A task that represents the completion of all of the supplied tasks.
-    /// </returns>
+    /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
     public static async Task WhenAllAsync(IEnumerable<Task> tasks)
         => await WhenAllAsync(tasks.ToArray());
 
-    /// <summary>Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/> objects in an array have completed.</summary>
+    /// <summary>
+    /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
+    /// objects in an array have completed.
+    /// </summary>
     /// <remarks>Returns all the excpetions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
-    /// <returns>
-    ///   A task that represents the completion of all of the supplied tasks.
-    /// </returns>
+    /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
     public static async Task WhenAllAsync(params Task[] tasks)
     {
         var allTasks = Task.WhenAll(tasks);
@@ -64,4 +69,17 @@ public static class TaskHelper
         }
         throw allTasks.Exception ?? throw new Exception("This can't possibly happen");
     }
+
+    public static Task<TResult> WaitAsync<TResult>(this Task<TResult> task, TimeSpan timeout, Func<Exception> getExceptionOnTimeout)
+    {
+        try
+        {
+            return task.WaitAsync(timeout);
+        }
+        catch (TimeoutException ex)
+        {
+            var e = getExceptionOnTimeout?.Invoke() ?? ex;
+            throw ex;
+        }
+    }    
 }

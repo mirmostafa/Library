@@ -6,6 +6,7 @@ using Library.Exceptions;
 using Library.Windows;
 using Library.Wpf.Internals;
 using Library.Wpf.Markers;
+
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace Library.Wpf.Dialogs;
@@ -321,28 +322,30 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
             controls);
     }
 
+    public static (TaskDialogButton Button, TaskDialog Parent) GetOnButtonClick(object? sender, EventArgs? e)
+            => (sender.As<TaskDialogButton>()!, sender.As<TaskDialogButton>()!.HostingDialog.As<TaskDialog>()!);
+
     /// <summary>
     /// </summary>
-    /// <param name="action">
-    ///     TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;:
-    ///     isBackgroundWorking
+    /// <param name="action">                   
+    /// TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;: isBackgroundWorking
     /// </param>
-    /// <param name="maximum"></param>
-    /// <param name="caption"></param>
-    /// <param name="instruction"></param>
-    /// <param name="text"></param>
-    /// <param name="detailsExpandedText"></param>
-    /// <param name="isCancallable"></param>
+    /// <param name="maximum">                  </param>
+    /// <param name="caption">                  </param>
+    /// <param name="instruction">              </param>
+    /// <param name="text">                     </param>
+    /// <param name="detailsExpandedText">      </param>
+    /// <param name="isCancallable">            </param>
     /// <param name="supportsBackgroundWorking"></param>
-    /// <param name="footerIcon"></param>
-    /// <param name="footerText"></param>
-    /// <param name="cancelButtonText"></param>
-    /// <param name="backgroundButtonText"></param>
-    /// <param name="cancellingPromptText"></param>
-    /// <param name="runInTask"></param>
-    /// <param name="showOkButton"></param>
-    /// <param name="enableOkButtonOnDone"></param>
-    public static TaskDialog GetTaskDialog([DisallowNull]Action<TaskDialog, Func<bool>, Func<bool>> action,
+    /// <param name="footerIcon">               </param>
+    /// <param name="footerText">               </param>
+    /// <param name="cancelButtonText">         </param>
+    /// <param name="backgroundButtonText">     </param>
+    /// <param name="cancellingPromptText">     </param>
+    /// <param name="runInTask">                </param>
+    /// <param name="showOkButton">             </param>
+    /// <param name="enableOkButtonOnDone">     </param>
+    public static TaskDialog GetTaskDialog([DisallowNull] Action<TaskDialog, Func<bool>, Func<bool>> action,
         int maximum = 100,
         string? caption = null,
         string? instruction = null,
@@ -506,10 +509,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
             }
         }
 
-        if (startupLocation is null)
-        {
-            startupLocation = window.WindowState == WindowState.Minimized ? TaskDialogStartupLocation.CenterScreen : TaskDialogStartupLocation.CenterOwner;
-        }
+        startupLocation ??= window.WindowState == WindowState.Minimized ? TaskDialogStartupLocation.CenterScreen : TaskDialogStartupLocation.CenterOwner;
 
         if (hWnd == IntPtr.Zero)
         {
@@ -688,20 +688,19 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
 
     /// <summary>
     /// </summary>
-    /// <param name="action">
-    ///     TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;:
-    ///     isBackgroundWorking
+    /// <param name="action">              
+    /// TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;: isBackgroundWorking
     /// </param>
-    /// <param name="maximum"></param>
-    /// <param name="caption"></param>
-    /// <param name="instructionText"></param>
-    /// <param name="initializingText"></param>
-    /// <param name="detailsExpandedText"></param>
-    /// <param name="footerIcon"></param>
-    /// <param name="footerText"></param>
-    /// <param name="runInTask"></param>
+    /// <param name="maximum">             </param>
+    /// <param name="caption">             </param>
+    /// <param name="instructionText">     </param>
+    /// <param name="initializingText">    </param>
+    /// <param name="detailsExpandedText"> </param>
+    /// <param name="footerIcon">          </param>
+    /// <param name="footerText">          </param>
+    /// <param name="runInTask">           </param>
     /// <param name="enableOkButtonOnDone"></param>
-    /// <param name="showOkButton"></param>
+    /// <param name="showOkButton">        </param>
     public static TaskDialogResult ShowProgress(Action<TaskDialog> action,
         int maximum = 100,
         string? caption = null,
@@ -730,22 +729,21 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
 
     /// <summary>
     /// </summary>
-    /// <param name="action">
-    ///     TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;:
-    ///     isBackgroundWorking
+    /// <param name="action">              
+    /// TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;: isBackgroundWorking
     /// </param>
-    /// <param name="maximum"></param>
-    /// <param name="caption"></param>
-    /// <param name="instructionText"></param>
-    /// <param name="initializingText"></param>
-    /// <param name="detailsExpandedText"></param>
-    /// <param name="isCancallable"></param>
-    /// <param name="footerIcon"></param>
-    /// <param name="footerText"></param>
-    /// <param name="cancelButtonText"></param>
+    /// <param name="maximum">             </param>
+    /// <param name="caption">             </param>
+    /// <param name="instructionText">     </param>
+    /// <param name="initializingText">    </param>
+    /// <param name="detailsExpandedText"> </param>
+    /// <param name="isCancallable">       </param>
+    /// <param name="footerIcon">          </param>
+    /// <param name="footerText">          </param>
+    /// <param name="cancelButtonText">    </param>
     /// <param name="cancellingPromptText"></param>
-    /// <param name="runInTask"></param>
-    /// <param name="showOkButton"></param>
+    /// <param name="runInTask">           </param>
+    /// <param name="showOkButton">        </param>
     /// <param name="enableOkButtonOnDone"></param>
     public static TaskDialogResult ShowProgress(Action<TaskDialog, Func<bool>> action,
         int maximum = 100,
@@ -781,25 +779,24 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
 
     /// <summary>
     /// </summary>
-    /// <param name="action">
-    ///     TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;:
-    ///     isBackgroundWorking
+    /// <param name="action">                   
+    /// TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;: isBackgroundWorking
     /// </param>
-    /// <param name="maximum"></param>
-    /// <param name="caption"></param>
-    /// <param name="instruction"></param>
-    /// <param name="text"></param>
-    /// <param name="detailsExpandedText"></param>
-    /// <param name="isCancallable"></param>
+    /// <param name="maximum">                  </param>
+    /// <param name="caption">                  </param>
+    /// <param name="instruction">              </param>
+    /// <param name="text">                     </param>
+    /// <param name="detailsExpandedText">      </param>
+    /// <param name="isCancallable">            </param>
     /// <param name="supportsBackgroundWorking"></param>
-    /// <param name="footerIcon"></param>
-    /// <param name="footerText"></param>
-    /// <param name="cancelButtonText"></param>
-    /// <param name="backgroundButtonText"></param>
-    /// <param name="cancellingPromptText"></param>
-    /// <param name="runInTask"></param>
-    /// <param name="showOkButton"></param>
-    /// <param name="enableOkButtonOnDone"></param>
+    /// <param name="footerIcon">               </param>
+    /// <param name="footerText">               </param>
+    /// <param name="cancelButtonText">         </param>
+    /// <param name="backgroundButtonText">     </param>
+    /// <param name="cancellingPromptText">     </param>
+    /// <param name="runInTask">                </param>
+    /// <param name="showOkButton">             </param>
+    /// <param name="enableOkButtonOnDone">     </param>
     public static TaskDialogResult ShowProgress(in Action<TaskDialog, Func<bool>, Func<bool>> action,
         in int maximum = 100,
         in string? caption = null,
@@ -836,7 +833,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         return dlg.Show();
     }
 
-    public static TaskDialogResult ShowProgress<TItem>([DisallowNull]IEnumerable<TItem> items,
+    public static TaskDialogResult ShowProgress<TItem>([DisallowNull] IEnumerable<TItem> items,
         Action<TaskDialog, TItem> onIterating,
         Action<int>? onEachIterated = null,
         Action<TaskDialog>? onIterationEnded = null,
@@ -1061,20 +1058,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
            maximum: operations.Count(),
            runInTask: runInTask);
 
-    public static IEnumerable<TaskDialogControl> ToButtons(params ButtonInfo[] buttons)
-    {
-        foreach (var button in buttons.Compact())
-        {
-            var control = button.Name.IsNullOrEmpty()
-                                        ? new TaskDialogButton() { Text = button.Text }
-                                        : new TaskDialogButton(button.Name, button.Text);
-            control.Click += button.OnClick;
-            yield return control;
-        }
-    }
-
-    public static void Warn(string? instructionText = null,
-                                        string? text = null,
+    public static void Warn(string? instructionText = null, string? text = null,
         string? caption = null,
         string? detailsExpandedLabel = null,
         string? detailsExpandedText = null,
@@ -1123,4 +1107,34 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
             controls);
 }
 
-public record ButtonInfo(string Text, EventHandler OnClick, string? Name = null);
+public record ButtonInfo(string Text, EventHandler OnClick, string? Name = null, bool? UseElevationIcon = null)
+{
+    public TaskDialogButton ToButton()
+    {
+        var control = this.Name.IsNullOrEmpty() ? new TaskDialogButton() { Text = this.Text } : new TaskDialogButton(this.Name, this.Text);
+        if (this.UseElevationIcon is { } ue)
+        {
+            control.UseElevationIcon = ue;
+        }
+
+        control.Click += this.OnClick;
+        return control;
+    }
+
+    public static IEnumerable<TaskDialogButton> ToButtons(params ButtonInfo[] buttons)
+    {
+        foreach (var button in buttons.Compact())
+        {
+            yield return button.ToButton();
+        }
+    }
+
+    public static IEnumerable<TaskDialogButton> ToButtons(IEnumerable<ButtonInfo> buttons)
+        => ToButtons(buttons.ToArray());
+
+    public static ButtonInfo New(string text, EventHandler onClick, string? name = null, bool? useElevationIcon = null)
+        => new(text, onClick, name, useElevationIcon);
+
+    public static implicit operator TaskDialogButton(ButtonInfo buttonInfo)
+        => buttonInfo.ToButton();
+}
