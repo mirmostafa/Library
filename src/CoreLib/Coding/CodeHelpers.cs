@@ -15,22 +15,53 @@ namespace Library.Coding;
 [StackTraceHidden]
 public static class CodeHelper
 {
+    /// <summary>
+    /// Asynchronouses the specified action.
+    /// </summary>
+    /// <param name="action">The action.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns></returns>
     public static Task Async(Action action, CancellationToken cancellationToken = default)
         => Task.Run(action, cancellationToken);
 
+    /// <summary>
+    /// Asynchronouses the specified result.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="result">The result.</param>
+    /// <returns></returns>
     public static Task<TResult> Async<TResult>(TResult result)
         => Task.FromResult(result);
 
+    /// <summary>
+    /// Asynchronouses the specified action.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="action">The action.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns></returns>
     public static Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default)
         => Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
 
     /// <summary>
-    ///     Breaks code execution.
+    /// Breaks code execution.
     /// </summary>
     [DoesNotReturn]
     public static void Break()
         => BreakException.Throw();
 
+    /// <summary>
+    /// Breaks code execution.
+    /// </summary>
+    [DoesNotReturn]
+    public static T Break<T>()
+        => throw new BreakException();
+
+    /// <summary>
+    /// Catches the result.
+    /// </summary>
+    /// <param name="action">The action.</param>
+    /// <returns></returns>
     public static Result CatchResult([DisallowNull] in Action action)
     {
         Check.IfArgumentNotNull(action);
@@ -45,6 +76,13 @@ public static class CodeHelper
         }
     }
 
+    /// <summary>
+    /// Composes the specified funcs.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="create">The create.</param>
+    /// <param name="funcs">The funcs.</param>
+    /// <returns></returns>
     public static Func<TResult> Compose<TResult>([DisallowNull] this Func<TResult> create, [DisallowNull] params Func<TResult, TResult>[] funcs)
     {
         Check.IfArgumentNotNull(create);
@@ -245,12 +283,42 @@ public static class CodeHelper
     public static TDelegate GetDelegate<TType, TDelegate>(in string methodName)
         => (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate), typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new Exceptions.InvalidOperationException()));
 
+    /// <summary>
+    /// Gets the function.
+    /// </summary>
+    /// <typeparam name="TArg">The type of the argument.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="func">The function.</param>
+    /// <param name="arg">The argument.</param>
+    /// <returns></returns>
     public static Func<TResult> GetFunc<TArg, TResult>(Func<TArg, TResult> func, TArg arg)
         => () => func(arg);
 
+    /// <summary>
+    /// Gets the function.
+    /// </summary>
+    /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+    /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="func">The function.</param>
+    /// <param name="arg1">The arg1.</param>
+    /// <param name="arg2">The arg2.</param>
+    /// <returns></returns>
     public static Func<TResult> GetFunc<TArg1, TArg2, TResult>(Func<TArg1, TArg2, TResult> func, TArg1 arg1, TArg2 arg2)
         => () => func(arg1, arg2);
 
+    /// <summary>
+    /// Gets the function.
+    /// </summary>
+    /// <typeparam name="TArg1">The type of the arg1.</typeparam>
+    /// <typeparam name="TArg2">The type of the arg2.</typeparam>
+    /// <typeparam name="TArg3">The type of the arg3.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="func">The function.</param>
+    /// <param name="arg1">The arg1.</param>
+    /// <param name="arg2">The arg2.</param>
+    /// <param name="arg3">The arg3.</param>
+    /// <returns></returns>
     public static Func<TResult> GetFunc<TArg1, TArg2, TArg3, TResult>(Func<TArg1, TArg2, TArg3, TResult> func, TArg1 arg1, TArg2 arg2, TArg3 arg3)
         => () => func(arg1, arg2, arg3);
 
@@ -264,6 +332,13 @@ public static class CodeHelper
     public static bool HasException(in Action tryFunc)
         => Catch(tryFunc) is not null;
 
+    /// <summary>
+    /// Throws the on error.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="action">The action.</param>
+    /// <param name="getException">The get exception.</param>
+    /// <returns></returns>
     public static TResult ThrowOnError<TResult>(in Func<TResult> action, Func<Exception, Exception>? getException = null)
     {
         Check.IfArgumentNotNull(action, nameof(action));
@@ -285,6 +360,13 @@ public static class CodeHelper
     public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] Action<TInstance> action) 
         => instance.Fluent(action);
 
+    /// <summary>
+    /// Catches the result.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="func">The function.</param>
+    /// <param name="defaultResult">The default result.</param>
+    /// <returns></returns>
     public static async Task<Result<TResult?>> CatchResult<TResult>(this Func<Task<TResult>> func, TResult? defaultResult = default)
     {
         try

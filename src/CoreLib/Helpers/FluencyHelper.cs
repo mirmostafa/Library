@@ -15,7 +15,6 @@ public static class FluencyHelper
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance o)
         => new(o);
-
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action action)
     {
         action?.Invoke();
@@ -45,7 +44,7 @@ public static class FluencyHelper
 
     public static async Task<Fluency<TResult>> FluentAsync<TFuncResult, TResult>(this object @this, Func<Task<TFuncResult>> funcAsync, Func<TFuncResult, TResult> action)
         => action(await funcAsync());
-
+        
     public static Fluency<TInstance> If<TInstance>([DisallowNull] this Fluency<TInstance> @this, bool b, in Func<TInstance, TInstance> ifTrue, in Func<TInstance, TInstance> ifFalse)
         => b is true ? new(ifTrue.NotNull()(@this.Value)) : new(ifFalse.NotNull()(@this.Value));
 

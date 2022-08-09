@@ -26,6 +26,6 @@ public sealed class NoItemValidationException : ValidationExceptionBase
     }
 
     [DoesNotReturn]
-    public static void Throw(string message) =>
-        throw new NoItemValidationException(message);
+    public static void Throw(string message)
+        => throw new NoItemValidationException(message);
 }

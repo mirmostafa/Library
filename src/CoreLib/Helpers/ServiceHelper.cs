@@ -118,7 +118,6 @@ public static class ServiceHelper
         }
         var entity = onBeforeManipulation(model, convertToEntity, onCommitting);
         var result = await manipulateAndSave(dbContext, manipulate, persist, transactionInfo, saveChanges, transaction, entity);
-
         return result;
 
         static void validateArguments(TViewModel model, Func<TDbEntity, EntityEntry<TDbEntity>> manipulate, Func<TViewModel, TDbEntity?> convertToEntity)
@@ -165,10 +164,11 @@ public static class ServiceHelper
                     }
                     var writterCount = await (saveChanges is not null ? saveChanges() : CodeHelper.CatchResult(() => dbContext.SaveChangesAsync()));
 
-                    return Result<TDbEntity?>.ConvertFrom(writterCount);
+                    return Result<TDbEntity?>.From(writterCount, entity);
                 }
                 finally
                 {
+                    //! Should be derached bcuz this entity is attached in this method.
                     _ = DbContextHelper.Detach<DbContext, TDbEntity, TId>(dbContext, entity);
                 }
             }

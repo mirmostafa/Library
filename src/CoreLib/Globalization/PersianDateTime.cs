@@ -311,9 +311,9 @@ public readonly struct PersianDateTime :
         return p1.CompareTo(p2);
     }
 
-    public static PersianDateTime ConvertFrom([DisallowNull] DateTime other) => other;
+    public static PersianDateTime From([DisallowNull] DateTime other) => other;
 
-    public static PersianDateTime ConvertFrom([DisallowNull] string other) => other;
+    public static PersianDateTime From([DisallowNull] string other) => other;
 
     /// <summary>
     ///     Performs an implicit conversion from <see cref="PersianDateTime" /> to <see cref="DateTime" />.

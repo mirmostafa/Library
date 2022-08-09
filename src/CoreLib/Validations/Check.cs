@@ -131,7 +131,7 @@ public static class CheckHelpers
                 obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!)).To<T>();
 
     [return: NotNull]
-    public static string NotNull([NotNull] this string obj, [CallerArgumentExpression("obj")] string? argName = null) =>
+    public static string NotNull([AllowNull][NotNull] this string obj,/*[InvokerParameterName]*/ [CallerArgumentExpression("obj")] string? argName = null) =>
             obj ?? throw new NullValueValidationException(argName ?? "obj");
 
     [return: NotNull]

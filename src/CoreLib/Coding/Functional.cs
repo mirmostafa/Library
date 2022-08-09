@@ -12,8 +12,8 @@ namespace Library.Coding;
 [DebuggerStepThrough]
 public static class Functional
 {
-    public static Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default) =>
-        Task.Run(action, cancellationToken);
+    public static Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default)
+        => Task.Run(action, cancellationToken);
 
     public static Exception? Catch(
         in Action tryMethod,
@@ -47,8 +47,8 @@ public static class Functional
         }
     }
 
-    public static void Catch(in Action action, in ExceptionHandling exceptionHandling) =>
-        Catch(action, handling: exceptionHandling);
+    public static void Catch(in Action action, in ExceptionHandling exceptionHandling)
+        => Catch(action, handling: exceptionHandling);
 
     public static TResult? Catch<TResult, TException>(Func<TResult> action)
         where TException : Exception
@@ -77,17 +77,17 @@ public static class Functional
     }
 
     /// <summary>
-    ///     Catches the exceptions in specific function.
+    /// Catches the exceptions in specific function.
     /// </summary>
-    /// <typeparam name="TResult"> The type of the result. </typeparam>
-    /// <param name="tryAction"> The try action. </param>
-    /// <param name="catchAction"> The catch action. </param>
-    /// <param name="exception"> The exception. </param>
-    /// <param name="finallyAction"> The finally action. </param>
-    /// <param name="handling"> The handling. </param>
-    /// <param name="throwException"> if set to <c> true </c> [throw exception]. </param>
-    /// <returns> </returns>
-    /// <exception cref="ArgumentNullException"> tryAction or catchAction </exception>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="tryAction">     The try action.</param>
+    /// <param name="catchAction">   The catch action.</param>
+    /// <param name="exception">     The exception.</param>
+    /// <param name="finallyAction"> The finally action.</param>
+    /// <param name="handling">      The handling.</param>
+    /// <param name="throwException">if set to <c>true</c> [throw exception].</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException">tryAction or catchAction</exception>
     public static (TResult? Result, Exception? Exception) CatchFunc<TResult>(
         in Func<TResult> tryAction,
         in Func<Exception, TResult>? catchAction = null,
@@ -251,7 +251,7 @@ public static class Functional
         return b;
     }
 
-    public static T IfFalse<T>(this bool b, in Func<T> ifFalse, in T defaultValue = default)
+    public static T IfFalse<T>(this bool b, in Func<T> ifFalse, in T defaultValue = default!)
         => b is false ? ifFalse.Invoke() : defaultValue;
 
     public static bool IfTrue(this bool b, in Action ifTrue)
@@ -266,12 +266,13 @@ public static class Functional
     public static T IfTrue<T>(bool b, in Func<T> ifTrue, in T defaultValue = default!)
         => b is true ? ifTrue.Invoke() : defaultValue;
 
-    public static void Lock(object? lockObject, Action action) =>
-        _ = Lock(lockObject, () =>
-        {
-            action.ArgumentNotNull(nameof(action))();
-            return true;
-        });
+    public static void Lock(object? lockObject, Action action)
+        => _ = Lock(lockObject, ()
+            =>
+            {
+                action.ArgumentNotNull(nameof(action))();
+                return true;
+            });
 
     public static TResult Lock<TResult>(object? lockObject, in Func<TResult> action)
     {
@@ -282,36 +283,36 @@ public static class Functional
     }
 
     /// <summary>
-    ///     Creates a new instance of TType.
+    /// Creates a new instance of TType.
     /// </summary>
-    /// <typeparam name="T"> The type of the type. </typeparam>
-    /// <returns> </returns>
+    /// <typeparam name="T">The type of the type.</typeparam>
+    /// <returns></returns>
     public static T New<T>()
-        where T : class, new() =>
-        new();
+        where T : class, new()
+        => new();
 
-    public static T New<T>(params object[] args) =>
-        Activator.CreateInstance(typeof(T), args).NotNull().To<T>();
-
-    [DoesNotReturn]
-    public static void Throw<TException>() where TException : Exception, new() =>
-        ExceptionDispatchInfo.Throw(new TException());
+    public static T New<T>(params object[] args)
+        => Activator.CreateInstance(typeof(T), args).NotNull().To<T>();
 
     [DoesNotReturn]
-    public static T Throw<T>(in Exception exception) =>
-        throw exception;
+    public static void Throw<TException>() where TException : Exception, new()
+        => ExceptionDispatchInfo.Throw(new TException());
 
     [DoesNotReturn]
-    public static void Throw(in Exception exception) =>
-        ExceptionDispatchInfo.Throw(exception);
+    public static T Throw<T>(in Exception exception)
+        => throw exception;
 
     [DoesNotReturn]
-    public static T Throw<T>(in Func<Exception> getException) =>
-        throw getException();
+    public static void Throw(in Exception exception)
+        => ExceptionDispatchInfo.Throw(exception);
 
     [DoesNotReturn]
-    public static void Throw(in Func<Exception> getException) =>
-        ExceptionDispatchInfo.Throw(getException());
+    public static T Throw<T>(in Func<Exception> getException)
+        => throw getException();
+
+    [DoesNotReturn]
+    public static void Throw(in Func<Exception> getException)
+        => ExceptionDispatchInfo.Throw(getException());
 
     public static void Using<TDisposable>(Func<TDisposable> getItem, Action<TDisposable> action)
         where TDisposable : IDisposable
@@ -329,8 +330,8 @@ public static class Functional
 
     public static IEnumerable<TResult> While<TResult>(Func<bool> predicate, Func<TResult> action, Action? onIterationDone = null)
     {
-        _ = predicate.ArgumentNotNull(nameof(predicate));
-        _ = action.ArgumentNotNull(nameof(action));
+        Check.IfArgumentNotNull(predicate);
+        Check.IfArgumentNotNull(action);
 
         while (predicate())
         {
@@ -342,7 +343,7 @@ public static class Functional
 
     public static void While(in Func<bool> predicate, in Action? action = null)
     {
-        _ = predicate.ArgumentNotNull(nameof(predicate));
+        Check.IfArgumentNotNull(predicate);
 
         while (predicate())
         {

@@ -20,16 +20,13 @@ public record struct Fluency<T>(T Value) : IEquatable<T>, IConvertible<Fluency<T
 
     public T ConvertTo()
         => this.Value;
-    public static Fluency<T> ConvertFrom(T other)
-        => new(other);
-
     public static Fluency<T> From(T other)
         => new(other);
 
     Fluency<T> IConvertible<T, Fluency<T>>.ConvertTo()
         => new(this.Value);
 
-    public static T ConvertFrom(Fluency<T> other)
+    public static T From(Fluency<T> other)
         => other.Value;
 
     public T GetValue()

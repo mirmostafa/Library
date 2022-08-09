@@ -23,33 +23,6 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
 
     public TValue Value { get; }
 
-    public static Result<TValue?> ConvertFrom([DisallowNull] Result other)
-        => ConvertFrom(other, default);
-
-    public static Result<TValue?> ConvertFrom([DisallowNull] in Result other, in TValue? value)
-    {
-        var result = new Result<TValue?>(value)
-        {
-            StatusCode = other.StatusCode,
-            FullMessage = other.FullMessage,
-        };
-        result.Errors.AddRange(other.Errors);
-        _ = result.Extra.AddRange(other.Extra);
-        return result;
-    }
-
-    public static Result<TValue1> ConvertFrom<TValue1>([DisallowNull] in ResultBase other, in TValue1 value)
-    {
-        var result = new Result<TValue1>(value)
-        {
-            StatusCode = other.StatusCode,
-            FullMessage = other.FullMessage,
-        };
-        result.Errors.AddRange(other.Errors);
-        _ = result.Extra.AddRange(other.Extra);
-        return result;
-    }
-
     [return: NotNull]
     public static Result<TValue?> CreateFail(in string? message = null, in TValue? value = default, in object? errorCode = null)
         => new(value, errorCode ?? -1, message);
@@ -58,14 +31,50 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     public static Result<TValue> CreateSuccess(in TValue value, in string? message = null, in object? statusCode = null)
         => new(value, statusCode, message);
 
+    //public static Result<TValue1> From<TValue1>([DisallowNull] in ResultBase other, in TValue1 value)
+    //{
+    //    var result = new Result<TValue1>(value)
+    //    {
+    //        StatusCode = other.StatusCode,
+    //        FullMessage = other.FullMessage,
+    //    };
+    //    result.Errors.AddRange(other.Errors);
+    //    _ = result.Extra.AddRange(other.Extra);
+    //    return result;
+    //}
+
+    public static Result<TValue> From<TValue1>([DisallowNull] in Result<TValue1> other, TValue value)
+    {
+        var result = new Result<TValue>(value)
+        {
+            StatusCode = other.StatusCode,
+            FullMessage = other.FullMessage,
+        };
+        result.Errors.AddRange(other.Errors);
+        _ = result.Extra.AddRange(other.Extra);
+        return result;
+    }
+
+    public static Result<TValue> From([DisallowNull] in Result other, in TValue value)
+    {
+        var result = new Result<TValue>(value)
+        {
+            StatusCode = other.StatusCode,
+            FullMessage = other.FullMessage,
+        };
+        result.Errors.AddRange(other.Errors);
+        _ = result.Extra.AddRange(other.Extra);
+        return result;
+    }
+
     public static implicit operator bool(in Result<TValue?> result)
         => result.IsSucceed;
 
+    public static implicit operator Result(in Result<TValue> result)
+        => result.ConvertTo();
+
     public static implicit operator TValue(in Result<TValue> result)
         => result.Value;
-
-    public static implicit operator Result(in Result<TValue> result) 
-        => result.ConvertTo();
 
     public static Result<TValue> New(TValue item)
         => new(item);
@@ -86,5 +95,8 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
         => Task.FromResult(this);
 
     public Result<TValue1> With<TValue1>(in TValue1 value1)
-        => ConvertFrom(this, value1);
+        => Result<TValue1>.From(this, value1);
+
+    static Result<TValue> IConvertible<Result<TValue>, Result>.From(Result other)
+        => From(other, default!);
 }
