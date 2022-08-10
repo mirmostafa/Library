@@ -7,16 +7,16 @@ namespace Library.Helpers;
 public static class ValidationHelper
 {
     public static TItem CheckValidation<TItem>([DisallowNull] this IValidatable<TItem> item)
-        => item.Validate().Process();
+        => item.Validate().ThrowOnFail();
 
     public static async Task<TItem> CheckValidationAsync<TItem>([DisallowNull] this IAsyncValidatable<TItem> model)
-        => await model.ValidateAsync().ProcessAsync();
+        => await model.ValidateAsync().ThrowOnFailAsync();
 
     public static TItem CheckValidator<TItem>([DisallowNull] this IValidator<TItem> validator, TItem item)
-        => validator.Validate(item).Process();
+        => validator.Validate(item).ThrowOnFail();
 
     public static async Task<TItem> CheckValidatorAsync<TItem>([DisallowNull] this IAsyncValidator<TItem> validator, TItem item)
-        => await validator.ValidateAsync(item).ProcessAsync();
+        => await validator.ValidateAsync(item).ThrowOnFailAsync();
 
     public static Result<TItem> Validate<TItem>(Func<TItem> action)
     {

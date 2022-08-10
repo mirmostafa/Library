@@ -11,14 +11,14 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 {
     private bool? _isSucceed;
 
-    protected ResultBase(object? statusCode = null, string? message = null)
-        => (this.StatusCode, this.FullMessage) = (statusCode, message);
+    protected ResultBase(object? status = null, string? message = null)
+        => (this.Status, this.FullMessage) = (status, message);
 
-    protected ResultBase(object? statusCode, NotificationMessage? fullMessage)
-        => (this.StatusCode, this.FullMessage) = (statusCode, fullMessage);
+    protected ResultBase(object? status, NotificationMessage? fullMessage)
+        => (this.Status, this.FullMessage) = (status, fullMessage);
 
-    protected ResultBase(object? statusCode, [DisallowNull] IException exception)
-        => (this.StatusCode, this.FullMessage) = (statusCode, exception.NotNull().ToFullMessage());
+    protected ResultBase(object? status, [DisallowNull] IException exception)
+        => (this.Status, this.FullMessage) = (status, exception.NotNull().ToFullMessage());
 
     public List<(object? Id, object Message)> Errors { get; } = new();
 
@@ -30,13 +30,13 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     public virtual bool IsSucceed
     {
-        get => this._isSucceed ?? ((this.StatusCode?.ToInt() is null or 0 or 200) && (!this.Errors.Any()));
+        get => this._isSucceed ?? ((this.Status is null or 0 or 200) && (!this.Errors.Any()));
         init => this._isSucceed = value;
     }
 
     public string? Message => this.FullMessage?.Text;
 
-    public object? StatusCode
+    public object? Status
     {
         get;
         protected set;
@@ -55,10 +55,10 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         this.Equals(obj as ResultBase);
 
     public bool Equals(ResultBase? other) =>
-        other is not null && this.StatusCode == other.StatusCode;
+        other is not null && this.Status == other.Status;
 
     public override int GetHashCode() =>
-        HashCode.Combine(this.StatusCode, this.Message, this.Errors);
+        HashCode.Combine(this.Status, this.Message, this.Errors);
 
     public override string ToString()
     {

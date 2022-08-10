@@ -9,24 +9,24 @@ public class Result : ResultBase, IEmpty<Result>
 {
     private static readonly dynamic _staticFields = new Expando();
 
-    public Result(in object? statusCode = null, in NotificationMessage? fullMessage = null)
-        : base(statusCode, fullMessage) { }
+    public Result(in object? status = null, in NotificationMessage? fullMessage = null)
+        : base(status, fullMessage) { }
 
     public static Result Empty { get; } = _staticFields.Empty ??= NewEmpty();
     public static Result Fail => _staticFields.Fail ??= CreateFail();
     public static Result Success => _staticFields.Success ??= CreateSuccess();
 
-    public static Result CreateFail(in string? message = null, in object? erroCode = null)
-        => new(erroCode ?? -1, message) { IsSucceed = false };
+    public static Result CreateFail(in string? message = null, in object? error = null)
+        => new(error ?? -1, message) { IsSucceed = false };
 
-    public static Result CreateFail(in NotificationMessage? message, in object? erroCode = null)
-        => new(erroCode ?? -1, message) { IsSucceed = false };
+    public static Result CreateFail(in NotificationMessage? message, in object? error = null)
+        => new(error ?? -1, message) { IsSucceed = false };
 
-    public static Result CreateFail(in string message, in string instruction, in string tiltle, in string details, in object? statusCode = null)
-        => new(statusCode, new NotificationMessage(message, instruction, tiltle, details));
+    public static Result CreateFail(in string message, in string instruction, in string tiltle, in string details, in object? error = null)
+        => new(error, new NotificationMessage(message, instruction, tiltle, details)) { IsSucceed = false };
 
-    public static Result CreateSuccess(in NotificationMessage? fullMessage = null, in object? statusCode = null)
-        => new(statusCode, fullMessage) { IsSucceed = true };
+    public static Result CreateSuccess(in NotificationMessage? fullMessage = null, in object? status = null)
+        => new(status, fullMessage) { IsSucceed = true };
 
     public static explicit operator Result(bool b)
         => b ? Success : Fail;

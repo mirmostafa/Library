@@ -6,30 +6,27 @@ namespace Library.Results;
 
 public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
 {
-    public Result(in TValue value, in object? statusCode = null, in string? message = null)
-        : base(statusCode, message)
+    public Result(in TValue value, in object? status = null, in string? message = null) : base(status, message)
         => this.Value = value;
 
-    public Result(in TValue value, object? statusCode, NotificationMessage? fullMessage)
-        : base(statusCode, fullMessage)
+    public Result(in TValue value, object? status, NotificationMessage? fullMessage) : base(status, fullMessage)
         => this.Value = value;
 
-    public Result(in TValue value, object? statusCode, [DisallowNull] IException exception)
-        : base(statusCode, exception)
+    public Result(in TValue value, object? status, [DisallowNull] IException exception) : base(status, exception)
         => this.Value = value;
 
     public static Result<TValue?> Fail
-        => CreateFail(errorCode: -1);
+        => CreateFail(status: -1);
 
     public TValue Value { get; }
 
     [return: NotNull]
-    public static Result<TValue?> CreateFail(in string? message = null, in TValue? value = default, in object? errorCode = null)
-        => new(value, errorCode ?? -1, message);
+    public static Result<TValue?> CreateFail(in string? message = null, in TValue? value = default, in object? status = null)
+        => new(value, status ?? -1, message);
 
     [return: NotNull]
-    public static Result<TValue> CreateSuccess(in TValue value, in string? message = null, in object? statusCode = null)
-        => new(value, statusCode, message);
+    public static Result<TValue> CreateSuccess(in TValue value, in string? message = null, in object? status = null)
+        => new(value, status, message);
 
     //public static Result<TValue1> From<TValue1>([DisallowNull] in ResultBase other, in TValue1 value)
     //{
@@ -47,7 +44,7 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     {
         var result = new Result<TValue>(value)
         {
-            StatusCode = other.StatusCode,
+            Status = other.Status,
             FullMessage = other.FullMessage,
         };
         result.Errors.AddRange(other.Errors);
@@ -59,7 +56,7 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     {
         var result = new Result<TValue>(value)
         {
-            StatusCode = other.StatusCode,
+            Status = other.Status,
             FullMessage = other.FullMessage,
         };
         result.Errors.AddRange(other.Errors);
@@ -80,16 +77,16 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
         => new(item);
 
     public Result ConvertTo()
-        => this.IsSucceed ? Result.CreateSuccess(this.FullMessage, this.StatusCode) : Result.CreateFail(this.FullMessage, this.StatusCode);
+        => this.IsSucceed ? Result.CreateSuccess(this.FullMessage, this.Status) : Result.CreateFail(this.FullMessage, this.Status);
 
-    public void Deconstruct(out object? StatusCode, out NotificationMessage? Message, out TValue Value)
-        => (StatusCode, Message, Value) = (this.StatusCode, this.FullMessage, this.Value);
+    public void Deconstruct(out object? Status, out NotificationMessage? Message, out TValue Value)
+        => (Status, Message, Value) = (this.Status, this.FullMessage, this.Value);
 
     public void Deconstruct(out bool isSucceed, out TValue Value)
         => (isSucceed, Value) = (this.IsSucceed, this.Value);
 
     public bool Equals(Result<TValue?> other)
-        => other is not null && (other.StatusCode, other.IsSucceed) == (this.StatusCode, this.IsSucceed) && (other.Value?.Equals(this.Value) ?? this.Value is null);
+        => other is not null && (other.Status, other.IsSucceed) == (this.Status, this.IsSucceed) && (other.Value?.Equals(this.Value) ?? this.Value is null);
 
     public Task<Result<TValue>> ToTask()
         => Task.FromResult(this);

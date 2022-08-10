@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+
 using Library.Exceptions;
 using Library.Mapping;
 using Library.Wpf.Dialogs;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Wpf.Windows;
@@ -45,24 +47,30 @@ public abstract class LibApp : Application
         {
             case BreakException:
                 break;
+
             case OperationCancelledException ex:
-                this.Logger.Warn(ex.Instruction ?? ex.Message);
-                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message ?? "Operation cancelled by user.", ex.Owner?.ToString() ?? title());
+                this.Logger.Warn(ex.Instruction ?? ex.Message, sender: owner(ex));
+                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message ?? "Operation cancelled by user.", owner(ex));
                 break;
+
             case IException ex:
-                this.Logger.Warn(ex.Instruction ?? ex.Message);
-                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message, ex.Title ?? ex.Owner?.ToString() ?? title(), detailsExpandedText: ex.Details);
+                this.Logger.Error(ex.Instruction ?? ex.Message, sender: owner(ex));
+                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message, owner(ex), detailsExpandedText: ex.Details);
                 break;
+
             case Exception ex:
-                this.Logger.Log(ex.GetFullMessage(), LogLevel.Fatal, stackTrace: ex.StackTrace);
+                this.Logger.Log(ex.GetFullMessage(), LogLevel.Fatal, stackTrace: ex.StackTrace, sender: ex.Source ?? title());
                 _ = MsgBox2.Exception(ex, caption: title());
                 break;
+
             default:
                 break;
         }
 
         string title()
             => exception.As<IException>()?.Title ?? ApplicationTitle ?? exception.GetType().Name;
+        string owner(IException ex)
+            => ex.Title ?? ex.Owner?.ToString() ?? title();
     }
 
     protected virtual void OnConfigureServices(ServiceCollection services)

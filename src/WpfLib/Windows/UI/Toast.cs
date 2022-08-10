@@ -1,61 +1,83 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+
+using Library.Exceptions.Validations;
+
 using Windows.UI.Notifications;
 
 namespace Library.Wpf.Windows.UI;
 
 public class Toast
 {
-    private ToastNotification? _toast;
-    private ToastNotifier _toastNotifier;
     private readonly string _appTitle;
+    private ToastNotification? _toast;
+    private ToastNotifier? _toastNotifier;
 
-    private Toast(string appTitle) =>
-        this._appTitle = appTitle.ArgumentNotNull();
+    private Toast(string appTitle)
+        => this._appTitle = appTitle.ArgumentNotNull();
 
-    public static Toast CreateLongContent(string content, string appTitle) =>
-        new(appTitle)
+    public static Toast CreateImageLongContent(string imagePath, string title, string content, string appTitle)
+        => new(appTitle)
+        {
+            _toast = InnerCreateToast(ToastTemplateType.ToastImageAndText02, new[] { title, content }, imagePath)
+        };
+
+    public static Toast CreateImageLongTitle(string imagePath, string title, string appTitle)
+        => new(appTitle)
+        {
+            _toast = InnerCreateToast(ToastTemplateType.ToastImageAndText01, new[] { title }, imagePath)
+        };
+
+    public static Toast CreateImageLongTitle(string imagePath, string title, string content, string appTitle)
+        => new(appTitle)
+        {
+            _toast = InnerCreateToast(ToastTemplateType.ToastImageAndText03, new[] { title, content }, imagePath)
+        };
+
+    public static Toast CreateImageMultipleLineContent(string imagePath, string title, string line1, string line2, string appTitle)
+        => new(appTitle)
+        {
+            _toast = InnerCreateToast(ToastTemplateType.ToastImageAndText04, new[] { title, line1, line2 }, imagePath)
+        };
+
+    public static Toast CreateLongContent(string content, string appTitle)
+        => new(appTitle)
         {
             _toast = InnerCreateToast(ToastTemplateType.ToastText01, new[] { content })
         };
-    public static Toast CreateLongContent(string content, string title, string appTitle) =>
-        new(appTitle)
+
+    public static Toast CreateLongContent(string content, string title, string appTitle)
+        => new(appTitle)
         {
             _toast = InnerCreateToast(ToastTemplateType.ToastText02, new[] { title, content })
         };
+
     public static Toast CreateLongTitle(string content, string title, string appTitle) =>
         new(appTitle)
         {
             _toast = InnerCreateToast(ToastTemplateType.ToastText03, new[] { title, content })
         };
-    public static Toast CreateMultipleLineContent(string line1, string line2, string title, string appTitle) =>
-        new(appTitle)
+
+    public static Toast CreateMultipleLineContent(string line1, string line2, string title, string appTitle)
+        => new(appTitle)
         {
             _toast = InnerCreateToast(ToastTemplateType.ToastText04, new[] { title, line1, line2 })
         };
-    public static Toast CreateImageLongTitle(string imagePath, string title, string appTitle) =>
-        new(appTitle)
-        {
-            _toast = InnerCreateToast(ToastTemplateType.ToastImageAndText01, new[] { title }, imagePath)
-        };
-    public static Toast CreateImageLongContent(string imagePath, string title, string content, string appTitle) =>
-        new(appTitle)
-        {
-            _toast = InnerCreateToast(ToastTemplateType.ToastImageAndText02, new[] { title, content }, imagePath)
-        };
-    public static Toast CreateImageLongTitle(string imagePath, string title, string content, string appTitle) =>
-        new(appTitle)
-        {
-            _toast = InnerCreateToast(ToastTemplateType.ToastImageAndText03, new[] { title, content }, imagePath)
-        };
-    public static Toast CreateImageMultipleLineContent(string imagePath, string title, string line1, string line2, string appTitle) =>
-        new(appTitle)
-        {
-            _toast = InnerCreateToast(ToastTemplateType.ToastImageAndText04, new[] { title, line1, line2 }, imagePath)
-        };
 
     [MemberNotNull(nameof(_toastNotifier))]
-    public Toast Build() =>
-        this.Fluent(this._toastNotifier = ToastNotificationManager.CreateToastNotifier(this._appTitle));
+    public Toast Build()
+        => this.Fluent(this._toastNotifier = ToastNotificationManager.CreateToastNotifier(this._appTitle));
+
+    public Toast SetExpirationTime(DateTimeOffset? dateTimeOffset)
+        => this.Do(t => t.ExpirationTime = dateTimeOffset);
+
+    public Toast SetGroup(string group)
+        => this.Do(t => t.Group = group);
+
+    public Toast SetPriority(ToastNotificationPriority priority)
+        => this.Do(t => t.Priority = priority);
+
+    public Toast SetRemoteId(string id)
+        => this.Do(t => t.RemoteId = id);
 
     public void Show()
     {
@@ -94,9 +116,23 @@ public class Toast
             audio.SetAttribute("src", audioSource);
             audio.SetAttribute("loop", "false");
             _ = toastXml.DocumentElement.AppendChild(audio);
-
         }
 
         return new ToastNotification(toastXml);
+    }
+
+    private Toast Do(Action<ToastNotification> action)
+    {
+        this.Validate();
+        action(this._toast!);
+        return this;
+    }
+
+    private void Validate()
+    {
+        if (this._toastNotifier is not null)
+        {
+            Throw(new ValidationException("Cannot be changed."));
+        }
     }
 }

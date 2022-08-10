@@ -117,7 +117,7 @@ public static class LoggingHelper
     }
 
     public static bool MeetsLevel(this LogLevel level, LogLevel minLevel)
-        => (minLevel & level) != 0;
+        => (minLevel & level) == level;
 
     public static string Reformat<TMessage>(this LogRecord<TMessage> logRecord, string? format = LogFormat.DEFAULT_FORMAT)
     {

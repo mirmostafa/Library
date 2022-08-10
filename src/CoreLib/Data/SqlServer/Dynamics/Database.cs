@@ -15,8 +15,8 @@ public class Database : SqlObject<Database, Server>
     private StoredProcedures? _storedProcedures;
     private Tables? _tables;
 
-    internal Database(in Server server, in string name, in string connectionString, in string? collationName = null)
-        : base(server, name, connectionString: connectionString) => this.CollationName = collationName;
+    internal Database(in Server server, in string name, in string connectionString, in string? collationName = null) : base(server, name, connectionString: connectionString)
+        => this.CollationName = collationName;
 
     public string? CollationName { get; internal set; }
     public DateTime CreateDate { get; internal set; }
@@ -24,7 +24,6 @@ public class Database : SqlObject<Database, Server>
     public bool IsBrokerEnabled { get; internal set; }
     public StoredProcedures StoredProcedures => this._storedProcedures ??= this.GetStoredProcedures();
     public Tables Tables => this._tables ??= this.GetTables();
-
     internal IEnumerable<DataRow> AllParams => this._allParams ??= GetQueryItems(this.ConnectionString, QueryBank.DATABASE_EXTENDED_PROPERTIES);
 
     public static Database? GetDatabase(in string connectionString, string? name = null)
@@ -39,25 +38,17 @@ public class Database : SqlObject<Database, Server>
         return GetDatabasesCore(connectionString).FirstOrDefault(db => db.Name == name);
     }
 
-    public static async Task<Database?> GetDatabaseAsync(string connectionString, string? name = null) =>
-        await Task.Run(() => GetDatabase(connectionString, name));
+    public static async Task<Database?> GetDatabaseAsync(string connectionString, string? name = null)
+        => await Task.Run(() => GetDatabase(connectionString, name));
 
-    public static Databases GetDatabases(string connectionString) =>
-        GetDatabasesCore(connectionString);
+    public static Databases GetDatabases(string connectionString)
+        => GetDatabasesCore(connectionString);
 
-    public static Databases GetDatabases(string datasource, string username, string password) =>
-        GetDatabasesCore(ConnectionStringBuilder.Build(datasource, username, password));
+    public static Databases GetDatabases(string datasource, string username, string password)
+        => GetDatabasesCore(ConnectionStringBuilder.Build(datasource, username, password));
 
     public int GetTablesCount()
-    {
-        var cmd = GetSql(ConnectionString).GetCommand("SELECT COUNT(name) FROM sys.tables");
-        cmd.Connection.Open();
-        var count = cmd.ExecuteScalar().ToInt();
-        cmd.Connection.Close();
-        cmd.Connection.Dispose();
-        cmd.Dispose();
-        return count;
-    }
+        => this.GetSql().ExecuteScalarQuery("SELECT COUNT(name) FROM sys.tables")!.ToInt();
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
@@ -71,8 +62,8 @@ public class Database : SqlObject<Database, Server>
         return true;
     }
 
-    protected static Databases GetDatabasesCore(string connectionString, string databases = "sys.databases") =>
-                    new(() => GatherDatabases(connectionString, databases));
+    protected static Databases GetDatabasesCore(string connectionString, string databases = "sys.databases")
+        => new(() => GatherDatabases(connectionString, databases));
 
     private static IEnumerable<Database> GatherDatabases(string connectionString, string databases)
     {

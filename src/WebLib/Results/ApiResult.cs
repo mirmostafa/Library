@@ -7,9 +7,9 @@ namespace Library.Web.Results;
 
 public class ApiResult : ResultBase, IApiResult
 {
-    public override bool IsSucceed => this.StatusCode?.ToInt() is null or (>= 200 and < 300);
+    public override bool IsSucceed => this.Status?.ToInt() is null or (>= 200 and < 300);
 
-    public HttpStatusCode? HttpStatusCode => HttpStatusCodeHelper.ToHttpStatusCode(this.StatusCode?.ToInt());
+    public HttpStatusCode? HttpStatusCode => HttpStatusCodeHelper.ToHttpStatusCode(this.Status?.ToInt());
 
     public ApiResult(int? statusCode = null, string? message = null)
         : base(statusCode, message) { }

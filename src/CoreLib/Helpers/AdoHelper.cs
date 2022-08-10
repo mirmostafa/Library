@@ -1,13 +1,13 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+
 using Library.Validations;
 
 namespace Library.Helpers;
 
 /// <summary>
-///     A utility to do some common tasks about ADO
-///     arguments
+/// A utility to do some common tasks about ADO arguments
 /// </summary>
 public static partial class AdoHelper
 {
@@ -151,7 +151,7 @@ public static partial class AdoHelper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="connection">The connection.</param>
-    /// <param name="query">The query.</param>
+    /// <param name="query">     The query.</param>
     /// <param name="fillParams">The fill parameters.</param>
     /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
@@ -328,85 +328,85 @@ public static partial class AdoHelper
     }
 
     /// <summary>
-    ///     Returns the first row data in specific column of the specified table.
+    /// Returns the first row data in specific column of the specified table.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="table"> The table. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="table">      The table.</param>
+    /// <param name="columnTitle">The column title.</param>
+    /// <returns></returns>
     public static T? FirstCol<T>(this DataTable table, string columnTitle)
         => FirstCol(table, columnTitle, default(T));
 
     /// <summary>
-    ///     Returns the first row data in specific column of the specified table in string format.
+    /// Returns the first row data in specific column of the specified table in string format.
     /// </summary>
-    /// <param name="table"> The table. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <returns> </returns>
+    /// <param name="table">      The table.</param>
+    /// <param name="columnTitle">The column title.</param>
+    /// <returns></returns>
     public static string? FirstCol(this DataTable table, string columnTitle)
         => FirstCol(table, columnTitle, obj => obj.ToString(), string.Empty);
 
     /// <summary>
-    ///     Returns the first row data in specific column of the specified table.
+    /// Returns the first row data in specific column of the specified table.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="table"> The table. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="table">       The table.</param>
+    /// <param name="columnTitle"> The column title.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns></returns>
     public static T FirstCol<T>(this DataTable table, string columnTitle, T defaultValue)
         => table.Select(columnTitle, defaultValue).First();
 
     /// <summary>
-    ///     Returns the first row data in specific column of the specified table.
+    /// Returns the first row data in specific column of the specified table.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="table"> The table. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <param name="convertor"> The converter. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="table">      The table.</param>
+    /// <param name="columnTitle">The column title.</param>
+    /// <param name="convertor">  The converter.</param>
+    /// <returns></returns>
     public static T FirstCol<T>(this DataTable table, string columnTitle, Converter<object, T> convertor)
         => table.Select(columnTitle, convertor).First();
 
     /// <summary>
-    ///     first the specified table according to de given value.
+    /// first the specified table according to de given value.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="table"> The table. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <param name="convertor"> The converter. </param>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="table">       The table.</param>
+    /// <param name="columnTitle"> The column title.</param>
+    /// <param name="convertor">   The converter.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns></returns>
     public static T FirstCol<T>(this DataTable table, string columnTitle, Converter<object, T> convertor, T defaultValue)
         => table.Select(columnTitle, convertor, defaultValue).First();
 
     /// <summary>
-    ///     Gets the column data.
+    /// Gets the column data.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="rows"> The rows. </param>
-    /// <param name="columnName"> Name of the column. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="rows">      The rows.</param>
+    /// <param name="columnName">Name of the column.</param>
+    /// <returns></returns>
     public static IEnumerable<T?> GetColumnData<T>(this DataRowCollection rows, string columnName)
         where T : class
         => rows.Cast<DataRow>().Where(row => row is not null).Select(row => row[columnName] as T);
 
     /// <summary>
-    ///     Gets the column data.
+    /// Gets the column data.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="rows"> The rows. </param>
-    /// <param name="columnIndex"> Index of the column. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="rows">       The rows.</param>
+    /// <param name="columnIndex">Index of the column.</param>
+    /// <returns></returns>
     public static IEnumerable<T?> GetColumnData<T>(this DataRowCollection rows, int columnIndex = 0)
         where T : class
         => rows.Cast<DataRow>().Where(row => row is not null).Select(row => row[columnIndex] as T);
 
     /// <summary>
-    ///     Gets the columns data.
+    /// Gets the columns data.
     /// </summary>
-    /// <param name="row"> The row. </param>
-    /// <returns> </returns>
+    /// <param name="row">The row.</param>
+    /// <returns></returns>
     public static IEnumerable<object> GetColumnsData(this DataRow row)
         => row is null
             ? throw new ArgumentNullException(nameof(row))
@@ -418,25 +418,21 @@ public static partial class AdoHelper
             : ds.Tables.Cast<DataTable>();
 
     /// <summary>
-    ///     Determines whether the specified column in given row is null or empty.
+    /// Determines whether the specified column in given row is null or empty.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="row"> The row. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <returns>
-    ///     <c>true</c> if the column is null or empty; otherwise, <c>false</c> .
-    /// </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="row">        The row.</param>
+    /// <param name="columnTitle">The column title.</param>
+    /// <returns><c>true</c> if the column is null or empty; otherwise, <c>false</c> .</returns>
     public static bool IsNullOrEmpty<T>(this DataRow row, string columnTitle)
         => row.ArgumentNotNull().IsNullOrEmpty(columnTitle) || row[columnTitle].Equals(default(T));
 
     /// <summary>
-    ///     Determines whether the specified column in given row is null or empty.
+    /// Determines whether the specified column in given row is null or empty.
     /// </summary>
-    /// <param name="row"> The row. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <returns>
-    ///     <c>true</c> if the column is null or empty; otherwise, <c>false</c> .
-    /// </returns>
+    /// <param name="row">        The row.</param>
+    /// <param name="columnTitle">The column title.</param>
+    /// <returns><c>true</c> if the column is null or empty; otherwise, <c>false</c> .</returns>
     public static bool IsNullOrEmpty(this DataRow row, string columnTitle)
         => row is null || row[columnTitle] is null || StringHelper.IsEmpty(row[columnTitle].ToString()) || row[columnTitle] == DBNull.Value;
 
@@ -444,14 +440,14 @@ public static partial class AdoHelper
         => CheckConnectionStringAsync(connectionString)?.Result == null;
 
     /// <summary>
-    ///     Selects the specified table.
+    /// Selects the specified table.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="table"> The table. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <param name="convertor"> The converter. </param>
-    /// <param name="predicate"> The predicate. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="table">      The table.</param>
+    /// <param name="columnTitle">The column title.</param>
+    /// <param name="convertor">  The converter.</param>
+    /// <param name="predicate">  The predicate.</param>
+    /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Func<object, T> convertor, Predicate<object> predicate)
         => table.ArgumentNotNull().Select().Where(row => predicate?.Invoke(row) is not false).Select(row => convertor(row[columnTitle]));
@@ -486,13 +482,13 @@ public static partial class AdoHelper
     }
 
     /// <summary>
-    ///     Selects the specified table.
+    /// Selects the specified table.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="table"> The table. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="table">       The table.</param>
+    /// <param name="columnTitle"> The column title.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns></returns>
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, params T[] defaultValue)
     {
         Check.IfArgumentNotNull(table);
@@ -502,27 +498,27 @@ public static partial class AdoHelper
     }
 
     /// <summary>
-    ///     Selects the specified table.
+    /// Selects the specified table.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="table"> The table. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <param name="convertor"> The converter. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="table">      The table.</param>
+    /// <param name="columnTitle">The column title.</param>
+    /// <param name="convertor">  The converter.</param>
+    /// <returns></returns>
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Converter<object, T> convertor)
         => table is null
             ? throw new ArgumentNullException(nameof(table))
             : table.Select().Select(row => row[columnTitle]).Cast(convertor);
 
     /// <summary>
-    ///     Selects the specified table according to de given value .
+    /// Selects the specified table according to de given value .
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="table"> The table. </param>
-    /// <param name="columnTitle"> The column title. </param>
-    /// <param name="convertor"> The converter. </param>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="table">       The table.</param>
+    /// <param name="columnTitle"> The column title.</param>
+    /// <param name="convertor">   The converter.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns></returns>
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Converter<object, T> convertor, params T[] defaultValue)
     {
         Check.IfArgumentNotNull(table);
@@ -533,12 +529,12 @@ public static partial class AdoHelper
     }
 
     /// <summary>
-    ///     Selects the specified reader.
+    /// Selects the specified reader.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="reader"> The data reader. </param>
-    /// <param name="converter"> The converter. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="reader">   The data reader.</param>
+    /// <param name="converter">The converter.</param>
+    /// <returns></returns>
     public static IEnumerable<T> Select<T>(this IDataReader reader, Func<IDataReader, T> converter)
         where T : new()
         => reader is not null
@@ -587,7 +583,7 @@ public static partial class AdoHelper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="connection">The connection.</param>
-    /// <param name="tableName">Name of the table.</param>
+    /// <param name="tableName"> Name of the table.</param>
     /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
     public static IEnumerable<T> SelectTable<T>(SqlConnection connection, string tableName)

@@ -82,7 +82,7 @@ public class Server : DynamicObject, ISqlObject
     {
         var helper = new Sql(this.ConnectionString);
         var items = new List<Database>();
-        using (var set = helper.FillByTableNames("sys.databases"))
+        using (var set = helper.FillDataSetByTableNames("sys.databases"))
         {
             var table = set.GetTables().First();
             Database selector(DataRow row) => new(this, row.Field<string>("name"), this.ConnectionString)

@@ -71,7 +71,7 @@ public class ExceptionHandlerMiddleware : IInfraMiddleware
                     result.Extra.Add("traceId", traceId);
                 }
             }
-            this._Logger.LogError($"Exception Handler Middleware Report: Error Message: '{result.Message}'{Environment.NewLine}Status Code: {result.StatusCode}");
+            this._Logger.LogError($"Exception Handler Middleware Report: Error Message: '{result.Message}'{Environment.NewLine}Status Code: {result.Status}");
         }
         var jsonOptions = new JsonSerializerOptions
         {
@@ -80,7 +80,7 @@ public class ExceptionHandlerMiddleware : IInfraMiddleware
         var json = JsonSerializer.Serialize(result, jsonOptions);
 
         context.Response.ContentType = "application/problem+json";
-        context.Response.StatusCode = result.StatusCode?.ToInt() ?? HttpStatusCode.BadRequest.ToInt();
+        context.Response.StatusCode = result.Status?.ToInt() ?? HttpStatusCode.BadRequest.ToInt();
         await context.Response.WriteAsync(json);
     }
 }

@@ -16,15 +16,7 @@ public readonly struct TypePath : IEquatable<TypePath>
             {
                 return string.Empty;
             }
-            string result;
-            if (this.NameSpace.IsNullOrEmpty())
-            {
-                result = this.Name;
-            }
-            else
-            {
-                result = $"{this.NameSpace}.{this.Name}";
-            }
+            var result = this.NameSpace.IsNullOrEmpty() ? this.Name : $"{this.NameSpace}.{this.Name}";
             if (this.GenericTypes.Any())
             {
                 result = $"{result}<{StringHelper.Merge(this.GenericTypes.Select(x => x.FullPath), ',')}>";
@@ -71,14 +63,7 @@ public readonly struct TypePath : IEquatable<TypePath>
         }
 
         var dotLastIndex = typePath.LastIndexOf('.');
-        if (dotLastIndex == -1)
-        {
-            return (typePath, null);
-        }
-        else
-        {
-            return (typePath[(dotLastIndex + 1)..], typePath[..dotLastIndex]);
-        }
+        return dotLastIndex == -1 ? ((string? Name, string? NameSpace))(typePath, null) : ((string? Name, string? NameSpace))(typePath[(dotLastIndex + 1)..], typePath[..dotLastIndex]);
     }
 
     public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null)
@@ -88,12 +73,7 @@ public readonly struct TypePath : IEquatable<TypePath>
             return SplitTypePath(name);
         }
 
-        if (nameSpace!.EndsWith("."))
-        {
-            return SplitTypePath($"{nameSpace}{name}");
-        }
-
-        return SplitTypePath($"{nameSpace}.{name}");
+        return nameSpace!.EndsWith(".") ? SplitTypePath($"{nameSpace}{name}") : SplitTypePath($"{nameSpace}.{name}");
     }
 
     public TypePath AddGenericType(TypePath typePath)
@@ -121,5 +101,5 @@ public readonly struct TypePath : IEquatable<TypePath>
         => this.FullPath;
 
     private static string? Validate(string? name)
-                                                                                            => name?.Contains('`') is null or false ? name : name[..name.IndexOf('`')];
+        => name?.Contains('`') is null or false ? name : name[..name.IndexOf('`')];
 }

@@ -27,9 +27,12 @@ public abstract class SqlObject<TSqlObject, TOwner> : DynamicObject, ISqlObject
 
     public string? Schema { get; }
 
+    public override string ToString()
+        => this.Schema.IsNullOrEmpty() ? this.Name : $"{this.Schema}.{this.Name}";
+
     protected static IEnumerable<DataRow> GetDataRows(string connectionString, string tableName)
     {
-        using var dataSet = GetSql(connectionString).FillByTableNames(tableName);
+        using var dataSet = GetSql(connectionString).FillDataSetByTableNames(tableName);
         return SqlObject<TSqlObject, TOwner>.GetRows(dataSet);
     }
 
@@ -39,18 +42,18 @@ public abstract class SqlObject<TSqlObject, TOwner> : DynamicObject, ISqlObject
         return GetRows(dataSet);
     }
 
-    protected static Sql GetSql(string connectionString) =>
-        new(connectionString);
+    protected static Sql GetSql(string connectionString)
+        => new(connectionString);
 
-    private static IEnumerable<DataRow> GetRows(DataSet ds) =>
-        ds.Dispose(ds.GetTables().FirstOrDefault()?.Dispose(t => (t?.Select()))) ?? Enumerable.Empty<DataRow>();
+    protected IEnumerable<DataRow> GetDataRows(string query)
+        => GetDataRows(this.ConnectionString, query);
 
-    public override string ToString() =>
-        this.Schema.IsNullOrEmpty() ? this.Name : $"{this.Schema}.{this.Name}";
+    protected IEnumerable<DataRow> GetQueryItems(string query)
+        => GetQueryItems(this.ConnectionString, query);
 
-    protected IEnumerable<DataRow> GetDataRows(string query) => GetDataRows(this.ConnectionString, query);
+    protected Sql GetSql()
+        => GetSql(this.ConnectionString);
 
-    protected IEnumerable<DataRow> GetQueryItems(string query) => GetQueryItems(this.ConnectionString, query);
-
-    protected Sql GetSql() => GetSql(this.ConnectionString);
+    private static IEnumerable<DataRow> GetRows(DataSet ds)
+         => ds.Dispose(ds.GetTables().FirstOrDefault()?.Dispose(t => (t?.Select()))) ?? Enumerable.Empty<DataRow>();
 }

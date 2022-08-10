@@ -44,7 +44,13 @@ public static class FluencyHelper
 
     public static async Task<Fluency<TResult>> FluentAsync<TFuncResult, TResult>(this object @this, Func<Task<TFuncResult>> funcAsync, Func<TFuncResult, TResult> action)
         => action(await funcAsync());
-        
+    public static async Task<Fluency<TResult>> FluentAsync<TResult>(this object @this, Func<Task<TResult>> funcAsync, Action action)
+    {
+        var result =await funcAsync();
+        action();
+        return new(result);
+    }
+
     public static Fluency<TInstance> If<TInstance>([DisallowNull] this Fluency<TInstance> @this, bool b, in Func<TInstance, TInstance> ifTrue, in Func<TInstance, TInstance> ifFalse)
         => b is true ? new(ifTrue.NotNull()(@this.Value)) : new(ifFalse.NotNull()(@this.Value));
 

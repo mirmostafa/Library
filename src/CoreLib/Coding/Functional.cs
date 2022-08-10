@@ -278,7 +278,7 @@ public static class Functional
     {
         lock (lockObject ?? CodeHelper.GetCallerMethod()!.DeclaringType!)
         {
-            return action.ArgumentNotNull(nameof(action))();
+            return action.ArgumentNotNull()();
         }
     }
 

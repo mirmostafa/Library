@@ -209,8 +209,16 @@ public static class DbContextHelper
     public static async Task<Result<int>> SaveChangesResultAsync<TDbContext>(this TDbContext dbContext)
         where TDbContext : DbContext
     {
-        var result = Result<int>.CreateSuccess(await dbContext.SaveChangesAsync());
-        return result;
+        try
+        {
+            var result = Result<int>.CreateSuccess(await dbContext.SaveChangesAsync());
+            return result;
+        }
+        catch (Exception ex)
+        {
+            var result = Result<int>.CreateFail(ex.GetBaseException().Message, -1, ex);
+            return result;
+        }
     }
 
     public static EntityEntry<TEntity> SetModified<TEntity, TProperty>(
