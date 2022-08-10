@@ -10,6 +10,7 @@ namespace Library.Coding;
 /// C# statements in functional way. (nothing more)
 /// </summary>
 [DebuggerStepThrough]
+[StackTraceHidden]
 public static class Functional
 {
     public static Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default)

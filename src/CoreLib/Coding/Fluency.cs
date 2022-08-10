@@ -1,8 +1,12 @@
-﻿using Library.Exceptions.Validations;
+﻿using System.Diagnostics;
+
+using Library.Exceptions.Validations;
 using Library.Interfaces;
 
 namespace Library.Coding;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public record struct Fluency<T>(T Value) : IEquatable<T>, IConvertible<Fluency<T>, T>, IConvertible<T, Fluency<T>>
 {
     public bool Equals(T? other)

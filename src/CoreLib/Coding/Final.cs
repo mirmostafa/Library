@@ -1,8 +1,12 @@
 ﻿using System.Collections;
+using System.Diagnostics;
+
 using Library.Collections;
 
 namespace Library.Coding;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public sealed class Final : IDisposable, IEnumerable<Action>
 {
     private readonly ActionList _actionList;

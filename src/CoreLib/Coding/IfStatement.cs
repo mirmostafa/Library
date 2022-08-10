@@ -1,7 +1,11 @@
-﻿using Library.Validations;
+﻿using System.Diagnostics;
+
+using Library.Validations;
 
 namespace Library.Coding;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public struct IfStatememt
 {
     public IfStatememt(Func<bool> condition)
@@ -12,6 +16,8 @@ public struct IfStatememt
     public Action ThenAction { get; set; }
     public Action ElseAction { get; set; }
 }
+[DebuggerStepThrough]
+[StackTraceHidden]
 public struct IfStatememt<TResult>
 {
     public IfStatememt(Func<bool> condition)
@@ -23,6 +29,8 @@ public struct IfStatememt<TResult>
     public Func<TResult> Else { get; set; }
 }
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class IfStatementExtensions
 {
     public static IfStatememt If(this Func<bool> @condition)

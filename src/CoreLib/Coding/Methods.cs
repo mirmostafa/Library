@@ -1,5 +1,9 @@
-﻿namespace Library.Coding;
+﻿using System.Diagnostics;
 
+namespace Library.Coding;
+
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class Methods
 {
     public static Action<T> EmptyArg<T>() => x => { };
