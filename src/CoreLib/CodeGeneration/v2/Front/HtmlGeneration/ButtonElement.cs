@@ -1,4 +1,4 @@
-﻿namespace Library.CodeGeneration.HtmlGeneration;
+﻿namespace Library.CodeGeneration.V2.HtmlGeneration;
 
 public class ButtonElement : HtmlElement<ButtonElement>
 {

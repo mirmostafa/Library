@@ -1,12 +1,13 @@
-﻿using Library.Interfaces;
+﻿using Library.CodeGeneration.V2.HtmlGeneration;
+using Library.Interfaces;
 
-namespace Library.CodeGeneration.HtmlGeneration;
+namespace Library.CodeGeneration.v2.Front;
 
 public static class HtmlElementInfoExtension
 {
     public static string ToHtml(this IHtmlElementInfo element, string indent = " ")
     {
-        if (element is IAutoCoder auto)
+        if (element is ISelfCoder auto)
         {
             return auto.GenerateCodeStatement();
         }
@@ -28,7 +29,7 @@ public static class HtmlElementInfoExtension
             _ = codeStatement.Append('>');
             foreach (var child in parent.Children)
             {
-                _ = codeStatement.AppendLine().Append(child.ToHtml(indent + indent));
+                _ = codeStatement.AppendLine().Append(child.ToHtml(string.Concat(indent, indent)));
             }
             _ = codeStatement.AppendLine().Append(indent).Append($"</{element.Name}>");
         }
@@ -45,7 +46,7 @@ public static class HtmlElementInfoExtension
                     break;
 
                 case ClosingTagType.Full:
-                    _ = codeStatement.Append(">");
+                    _ = codeStatement.Append('>');
                     _ = codeStatement.AppendLine().Append(indent).Append($"</{element.Name}>");
                     break;
             }

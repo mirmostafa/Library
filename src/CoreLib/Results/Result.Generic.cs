@@ -28,41 +28,11 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     public static Result<TValue> CreateSuccess(in TValue value, in string? message = null, in object? status = null)
         => new(value, status, message);
 
-    //public static Result<TValue1> From<TValue1>([DisallowNull] in ResultBase other, in TValue1 value)
-    //{
-    //    var result = new Result<TValue1>(value)
-    //    {
-    //        StatusCode = other.StatusCode,
-    //        FullMessage = other.FullMessage,
-    //    };
-    //    result.Errors.AddRange(other.Errors);
-    //    _ = result.Extra.AddRange(other.Extra);
-    //    return result;
-    //}
-
     public static Result<TValue> From<TValue1>([DisallowNull] in Result<TValue1> other, TValue value)
-    {
-        var result = new Result<TValue>(value)
-        {
-            Status = other.Status,
-            FullMessage = other.FullMessage,
-        };
-        result.Errors.AddRange(other.Errors);
-        _ = result.Extra.AddRange(other.Extra);
-        return result;
-    }
+        => ResultBase.From(other, new Result<TValue>(value));
 
     public static Result<TValue> From([DisallowNull] in Result other, in TValue value)
-    {
-        var result = new Result<TValue>(value)
-        {
-            Status = other.Status,
-            FullMessage = other.FullMessage,
-        };
-        result.Errors.AddRange(other.Errors);
-        _ = result.Extra.AddRange(other.Extra);
-        return result;
-    }
+        => ResultBase.From(other, new Result<TValue>(value));
 
     public static implicit operator bool(in Result<TValue?> result)
         => result.IsSucceed;
@@ -88,6 +58,7 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     public bool Equals(Result<TValue?> other)
         => other is not null && (other.Status, other.IsSucceed) == (this.Status, this.IsSucceed) && (other.Value?.Equals(this.Value) ?? this.Value is null);
 
+    
     public Task<Result<TValue>> ToTask()
         => Task.FromResult(this);
 
@@ -96,4 +67,10 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
 
     static Result<TValue> IConvertible<Result<TValue>, Result>.From(Result other)
         => From(other, default!);
+
+    public Result<TValue1> ToResult<TValue1>(TValue1 value)
+        => From(this, new Result<TValue1>(value));
+
+    public Result<TValue1> ToResult<TValue1>(Func<Result<TValue>, TValue1> action)
+        => From(this, new Result<TValue1>(action(this)));    
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Library.CodeGeneration.HtmlGeneration;
+namespace Library.CodeGeneration.V2.HtmlGeneration;
 
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract class HtmlElement<TSelf> : IParentHtmlElement

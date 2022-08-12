@@ -31,8 +31,11 @@ public class Result : ResultBase, IEmpty<Result>
     public static explicit operator Result(bool b)
         => b ? Success : Fail;
 
+    public static Result From([DisallowNull] in ResultBase other) 
+        => From(other, new Result());
+
     public static implicit operator bool(Result result)
-        => result.NotNull().IsSucceed;
+            => result.NotNull().IsSucceed;
 
     public static Result New()
         => new();

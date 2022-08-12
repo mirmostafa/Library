@@ -19,7 +19,7 @@ public static class ServiceHelper
 {
     #region CRUD
 
-    public static async Task<Result> DeleteAsync<TViewModel, TDbEntity>([DisallowNull] this IService service, [DisallowNull] DbContext dbContext, TViewModel model, bool persist, bool detach, ILogger? logger = null)
+    public static async Task<Result> DeleteAsync<TViewModel, TDbEntity>([DisallowNull] this IService service, [DisallowNull] DbContext dbContext, TViewModel model, bool persist, bool? detach = null, ILogger? logger = null)
         where TDbEntity : class, IIdenticalEntity<long>, new()
         where TViewModel : IHasKey<long?>
     {
@@ -27,18 +27,18 @@ public static class ServiceHelper
         Check.IfArgumentNotNull(dbContext);
 
         var id = (long)(model?.Id.Value)!;
-        logger?.Debug($"Deleting {nameof(TViewModel)}, id={id}");
+        logger?.Debug($"Deleting {nameof(TDbEntity)}, id={id}");
         _ = dbContext.RemoveById<TDbEntity>(id);
         if (persist)
         {
             _ = await dbContext.SaveChangesAsync();
         }
-        if (detach)
+        if (detach ?? persist)
         {
             var entity = dbContext.Set<TDbEntity>().Where(e => id == e.Id).First();
             _ = DbContextHelper.Detach(dbContext, entity);
         }
-        logger?.Info($"Deleted {nameof(TViewModel)}, id={id}");
+        logger?.Info($"Deleted {nameof(TDbEntity)}, id={id}");
         return Result.Success;
     }
 
@@ -73,110 +73,154 @@ public static class ServiceHelper
         return toViewModel(dbResult);
     }
 
-    public static Task<Result<TDbEntity?>> InsertAsync<TViewModel, TDbEntity>([DisallowNull] this IService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null)
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TViewModel, TDbEntity>(
+        [DisallowNull] this IService service,
+        [DisallowNull] DbContext dbContext,
+        [DisallowNull] TViewModel model,
+        [DisallowNull] Func<TViewModel, TDbEntity?> convert,
+        Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null,
+        bool persist = true,
+        Func<Task<Result<int>>>? saveChanges = null,
+        ILogger? logger = null,
+        Func<TDbEntity, TDbEntity>? onCommitting = null,
+        Action<TViewModel, TDbEntity>? onCommitted = null)
         where TDbEntity : class, IIdenticalEntity<long>
-        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.NotNull().Add, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges, logger: logger);
-
-    public static Task<Result<TDbEntity?>> InsertAsync<TViewModel, TDbEntity, TId>([DisallowNull] this IService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null)
+        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.NotNull().Add, convert, validatorAsync, null, persist, (true, null), saveChanges, logger, onCommitted);
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TViewModel, TDbEntity, TId>(
+        [DisallowNull] this IService service,
+        [DisallowNull] DbContext dbContext,
+        [DisallowNull] TViewModel model,
+        [DisallowNull] Func<TViewModel, TDbEntity?> convert,
+        Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null,
+        bool persist = true,
+        Func<Task<Result<int>>>? saveChanges = null,
+        ILogger? logger = null,
+        Func<TDbEntity, TDbEntity>? onCommitting = null,
+        Action<TViewModel, TDbEntity>? onCommitted = null)
         where TDbEntity : class, IIdenticalEntity<TId>
         where TId : notnull
-        => InnerManipulate<TViewModel, TDbEntity, TId>(dbContext, model, dbContext.Add, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges, logger: logger);
+        => InnerManipulate<TViewModel, TDbEntity, TId>(dbContext, model, dbContext.NotNull().Add, convert, validatorAsync, null, persist, (true, null), saveChanges, logger, onCommitted);
 
-    public static Task<Result<TDbEntity?>> InsertAsync<TService, TViewModel, TDbEntity>([DisallowNull] this TService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null)
-        where TDbEntity : class, IIdenticalEntity<long>
-        where TService : IAsyncValidator<TViewModel>
-        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Add, convert, service.ValidateAsync, onCommitting, persist, (true, null), saveChanges, logger);
-
-    public static Task<Result<TDbEntity?>> InsertAsync<TService, TViewModel, TDbEntity>([DisallowNull] this TService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, ILogger? logger = null)
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TService, TViewModel, TDbEntity>(
+        [DisallowNull] this TService service,
+        [DisallowNull] DbContext dbContext,
+        [DisallowNull] TViewModel model,
+        [DisallowNull] Func<TViewModel, TDbEntity?> convert,
+        bool persist = true,
+        ILogger? logger = null,
+        Func<TDbEntity, TDbEntity>? onCommitting = null,
+        Action<TViewModel, TDbEntity>? onCommitted = null)
         where TDbEntity : class, IIdenticalEntity<long>
         where TService : IAsyncValidator<TViewModel>, IAsyncSaveService
-        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Add, convert, service.ValidateAsync, onCommitting, persist, (true, null), service.SaveChangesAsync, logger);
+        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Add, convert, service.ValidateAsync, onCommitting, persist, (true, null), service.SaveChangesAsync, logger, onCommitted);
 
-    public static Task<Result<TDbEntity?>> InsertAsync<TService, TViewModel, TDbEntity>([DisallowNull] this TService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true)
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TViewModel, TDbEntity>([DisallowNull] this IService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null,
+        Action<TViewModel, TDbEntity>? onCommitted = null)
         where TDbEntity : class, IIdenticalEntity<long>
-        where TService : IAsyncValidator<TViewModel>, IAsyncSaveService, ILoggerContainer
-        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Add, convert, service.ValidateAsync, onCommitting, persist, (true, null), service.SaveChangesAsync, service.Logger);
+        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Attach, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges, logger, onCommitted);
 
-    public static Task<Result<TDbEntity?>> UpdateAsync<TViewModel, TDbEntity>([DisallowNull] this IService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null)
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TService, TViewModel, TDbEntity>([DisallowNull] this TService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, bool persist = true, Func<TDbEntity, TDbEntity>? onCommitting = null, ILogger? logger = null,
+        Action<TViewModel, TDbEntity>? onCommitted = null)
         where TDbEntity : class, IIdenticalEntity<long>
-        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Attach, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges, logger: logger);
+        where TService : IAsyncValidator<TViewModel>, IAsyncSaveService
+        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Attach, convert, service.ValidateAsync, onCommitting, persist, (true, null), service.SaveChangesAsync, logger, onCommitted);
 
-    public static Task<Result<TDbEntity?>> UpdateAsync<TViewModel, TDbEntity, TId>([DisallowNull] this IService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null)
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TViewModel, TDbEntity, TId>([DisallowNull] this IService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null,
+        Action<TViewModel, TDbEntity>? onCommitted = null)
         where TDbEntity : class, IIdenticalEntity<TId>
         where TId : notnull
-        => InnerManipulate<TViewModel, TDbEntity, TId>(dbContext, model!, dbContext.Update, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges, logger: logger);
+        => InnerManipulate<TViewModel, TDbEntity, TId>(dbContext, model!, dbContext.Update, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges, logger, onCommitted);
 
-    private static async Task<Result<TDbEntity?>> InnerManipulate<TViewModel, TDbEntity, TId>([DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TDbEntity, EntityEntry<TDbEntity>> manipulate, [DisallowNull] Func<TViewModel, TDbEntity?> convertToEntity, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync, Func<TDbEntity, TDbEntity>? onCommitting, [DisallowNull] bool persist, (bool UseTransaction, IDbContextTransaction? Transaction)? transactionInfo = null, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null)
+    private static async Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InnerManipulate<TViewModel, TDbEntity, TId>(
+        [DisallowNull] DbContext dbContext,
+        [DisallowNull] TViewModel model,
+        [DisallowNull] Func<TDbEntity, EntityEntry<TDbEntity>> manipulate,
+        [DisallowNull] Func<TViewModel, TDbEntity?> convertToEntity,
+        Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync,
+        Func<TDbEntity, TDbEntity>? onCommitting,
+        bool persist,
+        (bool UseTransaction, IDbContextTransaction? Transaction)? transactionInfo,
+        Func<Task<Result<int>>>? saveChanges,
+        ILogger? logger,
+        Action<TViewModel, TDbEntity>? onCommitted)
         where TDbEntity : class, IIdenticalEntity<TId>
         where TId : notnull
     {
-        validateArguments(model, manipulate, convertToEntity);
-        var transaction = await initTransaction(dbContext, persist, transactionInfo);
-        if ((await validateModel(model, validatorAsync)).IsFailure)
-        {
-            return Result<TDbEntity>.Fail;
-        }
-        var entity = onBeforeManipulation(model, convertToEntity, onCommitting);
-        var result = await manipulateAndSave(dbContext, manipulate, persist, transactionInfo, saveChanges, transaction, entity);
-        return result;
+        //! Argument checks
+        Check.IfArgumentNotNull(model);
+        Check.IfArgumentNotNull(manipulate);
+        Check.IfArgumentNotNull(convertToEntity);
 
-        static void validateArguments(TViewModel model, Func<TDbEntity, EntityEntry<TDbEntity>> manipulate, Func<TViewModel, TDbEntity?> convertToEntity)
+        if (persist)
         {
-            Check.IfArgumentNotNull(model);
-            Check.IfArgumentNotNull(manipulate);
-            Check.IfArgumentNotNull(convertToEntity);
+            logger?.Debug($"Manipulation started. Entity: {nameof(TDbEntity)}, Action:{nameof(manipulate)}");
         }
-        static async Task<IDbContextTransaction?> initTransaction(DbContext dbContext, bool persist, (bool UseTransaction, IDbContextTransaction? Transaction)? transactionInfo)
+        //! Setup transcation
+        IDbContextTransaction? transaction = null;
+        if (persist && transactionInfo is { } t)
         {
-            IDbContextTransaction? transaction = null;
-            if (persist && transactionInfo is { } t)
+            if (t.UseTransaction)
             {
-                if (t.UseTransaction)
+                transaction = t.Transaction ?? (await dbContext.Database.BeginTransactionAsync());
+            }
+        }
+
+        //! Validation checks
+        var validationResult = validatorAsync is not null ? await validatorAsync(model) : Result<TViewModel>.CreateSuccess(model);
+        if (validationResult.IsFailure)
+        {
+            return Result<ManipulationResult<TViewModel, TDbEntity?>>.From(validationResult, (model, null));
+        }
+
+        //! Before committing
+        var entity = convertToEntity(model) // Convert model to entity
+            .NotNull(() => "Entity cannot be null.").Fluent() // Cannot be null
+            .IfTrue(onCommitting is not null, x => onCommitting!(x)).GetValue(); // On Before commit
+
+        //! Manipulation
+        var entry = manipulate(entity);
+
+        //! Persist
+        Result<int> saveResult;
+        if (persist)
+        {
+            try
+            {
+                if (transactionInfo?.UseTransaction is true && transaction is not null)
                 {
-                    transaction = t.Transaction ?? (await dbContext.Database.BeginTransactionAsync());
+                    await transaction.CommitAsync();
+                }
+                saveResult = await (saveChanges is not null ? saveChanges() : CodeHelper.CatchResult(() => dbContext.SaveChangesAsync()));
+                if (saveResult.IsSucceed && onCommitted is not null)
+                {
+                    onCommitted(model, entity);
                 }
             }
-
-            return transaction;
-        }
-        static async Task<Result<TViewModel>> validateModel(TViewModel model, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync)
-            => validatorAsync is not null ? await validatorAsync(model) : Result<TViewModel>.CreateSuccess(model);
-        static TDbEntity onBeforeManipulation(TViewModel model, Func<TViewModel, TDbEntity?> convertToEntity, Func<TDbEntity, TDbEntity>? onCommitting)
-        {
-            var entity = convertToEntity(model).NotNull(() => "Entity cannot be null.");
-            if (onCommitting is not null)
+            finally
             {
-                entity = onCommitting(entity);
+                // Should be derached bcuz this entity is attached in this method.
+                _ = DbContextHelper.Detach<DbContext, TDbEntity, TId>(dbContext, entity);
             }
-
-            return entity;
         }
-        static async Task<Result<TDbEntity?>> manipulateAndSave(DbContext dbContext, Func<TDbEntity, EntityEntry<TDbEntity>> manipulate, bool persist, (bool UseTransaction, IDbContextTransaction? Transaction)? transactionInfo, Func<Task<Result<int>>>? saveChanges, IDbContextTransaction? transaction, TDbEntity entity)
+        else
         {
-            var entry = manipulate(entity);
-            if (persist)
-            {
-                try
-                {
-                    if (transactionInfo?.UseTransaction is true && transaction is not null)
-                    {
-                        await transaction.CommitAsync();
-                    }
-                    var writterCount = await (saveChanges is not null ? saveChanges() : CodeHelper.CatchResult(() => dbContext.SaveChangesAsync()));
+            saveResult = Result<int>.CreateSuccess(-1);
+        }
 
-                    return Result<TDbEntity?>.From(writterCount, entity);
-                }
-                finally
-                {
-                    //! Should be derached bcuz this entity is attached in this method.
-                    _ = DbContextHelper.Detach<DbContext, TDbEntity, TId>(dbContext, entity);
-                }
+        var result = Result<ManipulationResult<TViewModel, TDbEntity?>>.From(saveResult, (model, entity));
+        if (persist && result)
+        {
+            if (result)
+            {
+                logger?.Debug($"Manipulation ended. Entity: {nameof(TDbEntity)}, Action:{nameof(manipulate)}");
             }
             else
             {
-                return Result<TDbEntity?>.CreateSuccess(entity);
+                logger?.Debug($"Manipulation ended with error. Entity: {nameof(TDbEntity)}, Action:{nameof(manipulate)}");
             }
         }
+
+        return result;
     }
 
     #endregion CRUD
@@ -241,4 +285,11 @@ public static class ServiceHelper
     }
 
     #endregion Save & Submit Changes
+}
+
+public record struct ManipulationResult<TViewModel, TDbEntity>(in TViewModel Model, in TDbEntity Entity)
+{
+    public static implicit operator (TViewModel Model, TDbEntity? Entity)(ManipulationResult<TViewModel, TDbEntity> value) => (value.Model, value.Entity);
+    public static implicit operator ManipulationResult<TViewModel, TDbEntity>((TViewModel Model, TDbEntity Entity) value) => new(value.Model, value.Entity);
+    public static implicit operator TViewModel(ManipulationResult<TViewModel, TDbEntity> value) => value.Model;
 }

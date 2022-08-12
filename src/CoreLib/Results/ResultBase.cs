@@ -4,11 +4,14 @@ using Library.Exceptions;
 using Library.Validations;
 using Library.Windows;
 
+using Microsoft.EntityFrameworkCore;
+
 namespace Library.Results;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public abstract class ResultBase : IEquatable<ResultBase?>
 {
+    private NotificationMessage? _fullMessage;
     private bool? _isSucceed;
 
     protected ResultBase(object? status = null, string? message = null)
@@ -24,7 +27,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     public Dictionary<string, object> Extra { get; } = new();
 
-    public NotificationMessage? FullMessage { get; init; }
+    public NotificationMessage? FullMessage { get => this._fullMessage; init => this._fullMessage = value; }
 
     public bool IsFailure => !this.IsSucceed;
 
@@ -82,9 +85,20 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         return result.ToString();
     }
 
-    internal void SetIsSucceed(bool? isSucceed) 
+    internal void SetIsSucceed(bool? isSucceed)
         => this._isSucceed = isSucceed;
 
-    private string GetDebuggerDisplay() =>
-            this.ToString();
+    internal static TResult From<TResult>(in ResultBase source, in TResult dest)
+        where TResult : ResultBase
+    {
+        dest.Status = source.Status;
+        dest._fullMessage = source.FullMessage;
+
+        dest.Errors.AddRange(source.Errors);
+        _ = dest.Extra.AddRange(source.Extra);
+        return dest.As<TResult>()!;
+    }
+
+    private string GetDebuggerDisplay()
+            => this.ToString();
 }

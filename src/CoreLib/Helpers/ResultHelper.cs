@@ -57,8 +57,18 @@ public static class ResultHelper
         return InnerThrowOnFail(result, owner);
     }
 
+    public static Task<TResult> ToAsync<TResult>(this TResult result)
+        where TResult : ResultBase => Task.FromResult(result);
+
+    public static async Task<Result<TValue1>> ToResultAsync<TValue, TValue1>(this Task<Result<TValue>> resultTask, Func<TValue, TValue1> getNewValue)
+    {
+        var result = await resultTask;
+        var value1 = getNewValue(result);
+        return Result<TValue1>.From(result, value1);
+    }
+
     public static ivalidationResult Validate<TValue>(this Result<TValue> result)
-        => IsValid(result) ? valid.Result : invalid.Result;
+      => IsValid(result) ? valid.Result : invalid.Result;
 
     private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId) where TResult : ResultBase
     {

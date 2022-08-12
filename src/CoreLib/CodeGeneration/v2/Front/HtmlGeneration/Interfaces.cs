@@ -1,8 +1,8 @@
 ﻿using Library.Interfaces;
 
-namespace Library.CodeGeneration.HtmlGeneration;
+namespace Library.CodeGeneration.V2.HtmlGeneration;
 
-public interface IAutoCoder
+public interface ISelfCoder
 {
     string GenerateCodeStatement();
 }
@@ -14,14 +14,13 @@ public interface IHtmlElementInfo
     string? InnerHtml { get; set; }
     string Name { get; }
 
-    static IHtmlElementInfo New(string name) 
+    static IHtmlElementInfo New(string name)
         => new HtmlElement(name);
-    
 }
 
 public interface IParentHtmlElement : IHtmlElementInfo, IHasChild<IHtmlElementInfo>
 {
-    static new IParentHtmlElement New(string name) 
+    static new IParentHtmlElement New(string name)
         => new HtmlElement(name);
 }
 

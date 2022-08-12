@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 
+using Library.CodeGeneration.v2.Front;
 using Library.Validations;
 
-namespace Library.CodeGeneration.HtmlGeneration;
+namespace Library.CodeGeneration.V2.HtmlGeneration;
 
-public class TableElement : HtmlElement<TableElement>, IAutoCoder
+public class TableElement : HtmlElement<TableElement>, ISelfCoder
 {
     public TableElement() : base("table")
     {
