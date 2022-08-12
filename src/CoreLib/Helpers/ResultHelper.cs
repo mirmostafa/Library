@@ -1,8 +1,11 @@
-﻿using Library.Exceptions.Validations;
+﻿using System.Diagnostics;
+
+using Library.Exceptions.Validations;
 using Library.Results;
 
 namespace Library.Helpers;
 
+[DebuggerStepThrough]
 public static class ResultHelper
 {
     public static async Task<TResult> BreakOnFail<TResult>(this Task<TResult> task)

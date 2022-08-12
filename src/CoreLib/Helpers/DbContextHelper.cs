@@ -1,9 +1,7 @@
 ﻿using System.Linq.Expressions;
 
 using Library.Data.Markers;
-using Library.Logging;
 using Library.Results;
-using Library.Threading;
 using Library.Validations;
 
 using Microsoft.EntityFrameworkCore;
@@ -14,8 +12,14 @@ namespace Library.Helpers;
 
 public static class DbContextHelper
 {
+    public static IDbContextTransaction BeginTransaction(this DbContext dbContext)
+        => dbContext.Database.BeginTransaction();
+
+    public static Task<IDbContextTransaction> BeginTransactionAsync(this DbContext dbContext, CancellationToken cancellationToken = default)
+        => dbContext.Database.BeginTransactionAsync(cancellationToken);
+
     public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
-            where TDbContext : notnull, DbContext
+                    where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
         => dbContext.SetStateOf(entity, EntityState.Detached);
 
@@ -164,7 +168,7 @@ public static class DbContextHelper
     }
 
     public static DbContext RemoveById<TEntity>([DisallowNull] this DbContext dbContext, in IEnumerable<long> ids, bool detach = false)
-        where TEntity : class, IIdenticalEntity<long>, new() 
+        where TEntity : class, IIdenticalEntity<long>, new()
         => RemoveById<TEntity, long>(dbContext, ids, detach);
 
     public static DbContext RemoveById<TEntity, TId>([DisallowNull] DbContext dbContext, [DisallowNull] IEnumerable<TId> ids, bool detach = false)
@@ -193,11 +197,11 @@ public static class DbContextHelper
         where TId : notnull
         => RemoveById<TEntity, TId>(dbContext, new[] { id }, detach);
 
-    public static TDbContext ResetChanges<TDbContext>(this TDbContext dbContext)
+    public static TDbContext ResetChanges<TDbContext>(this TDbContext dbContext, bool disposeTransaction = true)
         where TDbContext : DbContext
     {
         dbContext.ChangeTracker.Clear();
-        return dbContext;
+        return DisposeCurrentTransaction(dbContext);
     }
 
     public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, [DisallowNull] bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
@@ -278,4 +282,10 @@ public static class DbContextHelper
         return dbContext;
     }
 
+    private static TDbContext DisposeCurrentTransaction<TDbContext>([DisallowNull] this TDbContext dbContext)
+        where TDbContext : DbContext
+    {
+        dbContext.ArgumentNotNull().Database.CurrentTransaction?.Dispose();
+        return dbContext;
+    }
 }
