@@ -72,7 +72,19 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result.CreateFail(ex.GetBaseException().Message);
+            return Result.CreateFail(ex.GetBaseException().Message,ex);
+        }
+    }
+    public static Result<TValue> CatchResult<TValue>([DisallowNull] in Func<TValue> action)
+    {
+        Check.IfArgumentNotNull(action);
+        try
+        {
+            return Result<TValue>.CreateSuccess(action());
+        }
+        catch (Exception ex)
+        {
+            return Result<TValue?>.CreateFail(ex.GetBaseException().Message, default, ex)!;
         }
     }
 

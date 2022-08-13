@@ -4,8 +4,6 @@ using Library.Exceptions;
 using Library.Validations;
 using Library.Windows;
 
-using Microsoft.EntityFrameworkCore;
-
 namespace Library.Results;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
@@ -65,7 +63,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     public override string ToString()
     {
-        StringBuilder result = new();
+        var result = new StringBuilder($"IsSucceed: {this.IsSucceed}").AppendLine();
         if (!this.Message.IsNullOrEmpty())
         {
             _ = result.AppendLine(this.Message);
@@ -85,9 +83,6 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         return result.ToString();
     }
 
-    internal void SetIsSucceed(bool? isSucceed)
-        => this._isSucceed = isSucceed;
-
     internal static TResult From<TResult>(in ResultBase source, in TResult dest)
         where TResult : ResultBase
     {
@@ -98,6 +93,9 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         _ = dest.Extra.AddRange(source.Extra);
         return dest.As<TResult>()!;
     }
+
+    internal void SetIsSucceed(bool? isSucceed)
+            => this._isSucceed = isSucceed;
 
     private string GetDebuggerDisplay()
             => this.ToString();

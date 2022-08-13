@@ -18,14 +18,27 @@ public static class DbContextHelper
     public static Task<IDbContextTransaction> BeginTransactionAsync(this DbContext dbContext, CancellationToken cancellationToken = default)
         => dbContext.Database.BeginTransactionAsync(cancellationToken);
 
+    public static async Task<Result> CommitTransactionAsync(this DbContext dbContext, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await dbContext.Database.CommitTransactionAsync(cancellationToken);
+            return Result.Success;
+        }
+        catch (Exception ex)
+        {
+            return Result.CreateFail(ex.GetBaseException().Message, ex);
+        }
+    }
+
     public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
-                    where TDbContext : notnull, DbContext
+        where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
         => dbContext.SetStateOf(entity, EntityState.Detached);
 
     public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, in IEnumerable<TEntity> entities)
-            where TDbContext : notnull, DbContext
-            where TEntity : class, IIdenticalEntity<long>
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<long>
     {
         foreach (var entity in entities)
         {
@@ -201,14 +214,14 @@ public static class DbContextHelper
         where TDbContext : DbContext
     {
         dbContext.ChangeTracker.Clear();
-        return DisposeCurrentTransaction(dbContext);
+        return disposeTransaction ? DisposeCurrentTransaction(dbContext) : dbContext;
     }
 
-    public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, [DisallowNull] bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-        => await entityEntry?.Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)!;
+    public static Task<int> SaveChangesAsync(this EntityEntry entityEntry, [DisallowNull] bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        => entityEntry?.Context.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken)!;
 
-    public static async Task<int> SaveChangesAsync(this EntityEntry entityEntry, CancellationToken cancellationToken = default)
-        => await entityEntry?.Context.SaveChangesAsync(cancellationToken)!;
+    public static Task<int> SaveChangesAsync(this EntityEntry entityEntry, CancellationToken cancellationToken = default)
+        => entityEntry?.Context.SaveChangesAsync(cancellationToken)!;
 
     public static async Task<Result<int>> SaveChangesResultAsync<TDbContext>(this TDbContext dbContext)
         where TDbContext : DbContext
@@ -226,7 +239,7 @@ public static class DbContextHelper
     }
 
     public static EntityEntry<TEntity> SetModified<TEntity, TProperty>(
-            this EntityEntry<TEntity> entityEntry,
+        this EntityEntry<TEntity> entityEntry,
         in Expression<Func<TEntity, TProperty>> propertyExpression,
         bool isModified = true)
         where TEntity : class
