@@ -179,12 +179,14 @@ public static class ServiceHelper
             : null;
 
         //! Validation checks
-        var validationResult = validatorAsync is not null ? await validatorAsync(model) : Result<TViewModel>.CreateSuccess(model);
-        if (validationResult.IsFailure)
+        if (validatorAsync is not null)
         {
-            return Result<ManipulationResult<TViewModel, TDbEntity?>>.From(validationResult, (model, null));
+            var validationResult = await validatorAsync(model);
+            if (validationResult.IsFailure)
+            {
+                return Result<ManipulationResult<TViewModel, TDbEntity?>>.From(validationResult, (model, null));
+            }
         }
-
         //! Before committing
         var entity = convertToEntity(model) // Convert model to entity
             .NotNull(() => "Entity cannot be null.").Fluent() // Cannot be null
