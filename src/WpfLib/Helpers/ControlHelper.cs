@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -37,7 +38,7 @@ public static class ControlHelper
     public static THeaderedItemsControl BindDataContext<THeaderedItemsControl>(this THeaderedItemsControl itemsControl, object datacontext, string? header = null)
                 where THeaderedItemsControl : HeaderedItemsControl
     {
-        Check.IfArgumentNotNull(itemsControl, nameof(itemsControl));
+        Check.IfArgumentNotNull(itemsControl);
 
         itemsControl.DataContext = datacontext;
         itemsControl.Header = header ?? datacontext?.ToString();
@@ -47,7 +48,7 @@ public static class ControlHelper
     public static TItemsControl BindItems<TItemsControl>(this TItemsControl itemsControl, IEnumerable? items)
         where TItemsControl : ItemsControl
     {
-        Check.IfArgumentNotNull(itemsControl, nameof(itemsControl));
+        Check.IfArgumentNotNull(itemsControl);
 
         itemsControl.ItemsSource = null;
         itemsControl.Items.Clear();
@@ -105,7 +106,7 @@ public static class ControlHelper
 
     public static TreeViewItem BindNewItems(this TreeViewItem parentItem, IEnumerable items)
     {
-        Check.IfArgumentNotNull(parentItem, nameof(parentItem));
+        Check.IfArgumentNotNull(parentItem);
         if (items is not null)
         {
             foreach (var item in items)
@@ -131,7 +132,7 @@ public static class ControlHelper
 
     public static void ExpandAll(this TreeViewItem item, bool isExpanded = true)
     {
-        Check.IfArgumentNotNull(item, nameof(item));
+        Check.IfArgumentNotNull(item);
 
         var parent = item;
         do
@@ -148,7 +149,7 @@ public static class ControlHelper
 
     public static DataGridCell? GetCell(this DataGrid grid, int row, int column)
     {
-        Check.IfArgumentNotNull(grid, nameof(grid));
+        Check.IfArgumentNotNull(grid);
         var rowContainer = grid.GetRow(row);
         if (rowContainer is null)
         {
@@ -265,7 +266,7 @@ public static class ControlHelper
 
     public static DataGridRow GetRow(this DataGrid grid, int index)
     {
-        Check.IfArgumentNotNull(grid, nameof(grid));
+        Check.IfArgumentNotNull(grid);
 
         var row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(index);
         if (row is not null)
@@ -316,11 +317,19 @@ public static class ControlHelper
         return null;
     }
 
+    public static TItemsControl HandleChanges<TItemsControl, TNotifyCollectionChanged>(this TItemsControl control, TNotifyCollectionChanged collection, Action<TItemsControl, TNotifyCollectionChanged, NotifyCollectionChangedEventArgs> handler)
+        where TItemsControl : ItemsControl
+        where TNotifyCollectionChanged : INotifyCollectionChanged
+    {
+        collection.CollectionChanged += (e1, e2) => handler?.Invoke(control, collection, e2);
+        return control;
+    }
+
     public static void HandleKeyDown(this MultiSelector multiSelector, KeyEventArgs e)
     {
-        Check.IfArgumentNotNull(multiSelector, nameof(multiSelector));
+        Check.IfArgumentNotNull(multiSelector);
 
-        Check.IfArgumentNotNull(e, nameof(e));
+        Check.IfArgumentNotNull(e);
 
         switch (e.Key)
         {
@@ -370,25 +379,28 @@ public static class ControlHelper
 
     public static void RebindDataContext([DisallowNull] this FrameworkElement element, object? dataContext)
     {
-        Check.IfArgumentNotNull(element, nameof(element));
+        Check.IfArgumentNotNull(element);
 
         element.DataContext = null;
         element.DataContext = dataContext;
     }
 
-    public static void RebindItemsSource(this ItemsControl control)
+    public static ItemsControl RebindItemsSource(this ItemsControl control)
+        => RebindItemsSource(control, control.ItemsSource);
+
+    public static ItemsControl RebindItemsSource(this ItemsControl control, in IEnumerable items)
     {
-        Check.IfArgumentNotNull(control, nameof(control));
+        Check.IfArgumentNotNull(control);
 
         control.Rebind(ItemsControl.ItemsSourceProperty);
-        var itemsSource = control.ItemsSource;
         control.ItemsSource = null;
-        control.ItemsSource = itemsSource;
+        control.ItemsSource = items;
+        return control;
     }
 
     public static void RebindItemsSource(this TreeView control)
     {
-        Check.IfArgumentNotNull(control, nameof(control));
+        Check.IfArgumentNotNull(control);
 
         control.Rebind(ItemsControl.ItemsSourceProperty);
         var selectedItem = control.SelectedItem;
@@ -400,7 +412,7 @@ public static class ControlHelper
 
     public static void Refresh(this UIElement uiElement)
     {
-        Check.IfArgumentNotNull(uiElement, nameof(uiElement));
+        Check.IfArgumentNotNull(uiElement);
 
         _ = uiElement.Dispatcher.Invoke(DispatcherPriority.Render, Methods.Empty);
     }
@@ -494,7 +506,7 @@ public static class ControlHelper
 
     public static void SetValue(this RangeBase pb, double step)
     {
-        Check.IfArgumentNotNull(pb, nameof(pb));
+        Check.IfArgumentNotNull(pb);
 
         Animations.AnimateDouble(pb, RangeBase.ValueProperty, pb.Value, step, 100);
     }
@@ -512,7 +524,7 @@ public static class ControlHelper
     public static bool? ShowDialog<TWindow>(this Window owner, Func<TWindow> creator, out TWindow window)
         where TWindow : Window
     {
-        Check.IfArgumentNotNull(creator, nameof(creator));
+        Check.IfArgumentNotNull(creator);
 
         window = creator();
         window.Owner = owner;
@@ -525,7 +537,7 @@ public static class ControlHelper
     private static void BindItemsSourceInner<TSelector>(TSelector selector, IEnumerable? items, string? displayMemebrPath)
         where TSelector : Selector
     {
-        Check.IfArgumentNotNull(selector, nameof(selector));
+        Check.IfArgumentNotNull(selector);
 
         selector.ItemsSource = null;
         selector.ItemsSource = items;

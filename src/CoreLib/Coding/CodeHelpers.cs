@@ -87,6 +87,18 @@ public static class CodeHelper
             return Result<TValue?>.CreateFail(ex.GetBaseException().Message, default, ex)!;
         }
     }
+    public static async Task<Result<TValue>> CatchResultAsync<TValue>([DisallowNull] Func<Task<TValue>> action)
+    {
+        Check.IfArgumentNotNull(action);
+        try
+        {
+            return Result<TValue>.CreateSuccess(await action());
+        }
+        catch (Exception ex)
+        {
+            return Result<TValue?>.CreateFail(ex.GetBaseException().Message, default, ex)!;
+        }
+    }
 
     /// <summary>
     /// Composes the specified funcs.

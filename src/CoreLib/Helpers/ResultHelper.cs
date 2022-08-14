@@ -41,23 +41,23 @@ public static class ResultHelper
     public static bool IsValid<TValue>([NotNullWhen(true)] this Result<TValue>? result)
         => result is not null and { IsSucceed: true } and { Value: not null };
 
-    public static Result<TValue> ThrowOnFail<TValue>([DisallowNull] this Result<TValue> result, object? owner = null)
+    public static Result<TValue> ThrowOnFail<TValue>([DisallowNull] this Result<TValue> result, object? owner = null, string? instruction = null)
     {
-        _ = result.As<ResultBase>()!.InnerThrowOnFail(owner);
+        _ = result.As<ResultBase>()!.InnerThrowOnFail(owner, instruction);
         return result;
     }
 
-    public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null)
+    public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null)
     {
         var result = await resultAsync;
-        _ = InnerThrowOnFail(result, owner);
+        _ = InnerThrowOnFail(result, owner, instruction);
         return result;
     }
 
-    public static async Task<Result> ThrowOnFailAsync(this Task<Result> resultAsync, object? owner = null)
+    public static async Task<Result> ThrowOnFailAsync(this Task<Result> resultAsync, object? owner = null, string? instruction = null)
     {
         var result = await resultAsync;
-        return InnerThrowOnFail(result, owner);
+        return InnerThrowOnFail(result, owner, instruction);
     }
 
     public static Task<TResult> ToAsync<TResult>(this TResult result)
@@ -71,9 +71,10 @@ public static class ResultHelper
     }
 
     public static ivalidationResult Validate<TValue>(this Result<TValue> result)
-      => IsValid(result) ? valid.Result : invalid.Result;
+        => IsValid(result) ? valid.Result : invalid.Result;
 
-    private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId) where TResult : ResultBase
+    private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId)
+        where TResult : ResultBase
     {
         if (condition)
         {
@@ -84,7 +85,7 @@ public static class ResultHelper
         return result;
     }
 
-    private static TResult InnerThrowOnFail<TResult>([DisallowNull] this TResult result, object? owner)
+    private static TResult InnerThrowOnFail<TResult>([DisallowNull] this TResult result, object? owner, string? instruction = null)
         where TResult : ResultBase
     {
         if (result.IsSucceed)
@@ -94,7 +95,7 @@ public static class ResultHelper
         var exception = result.Status switch
         {
             Exception ex => ex.With(x => x.Source = owner?.ToString()),
-            _ => new ValidationException(result.ToString(), owner: owner)
+            _ => new ValidationException(result.ToString(), instruction, owner: owner)
         };
         Throw(exception);
         return result;

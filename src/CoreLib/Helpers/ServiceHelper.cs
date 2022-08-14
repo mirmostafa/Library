@@ -86,6 +86,7 @@ public static class ServiceHelper
         Action<TViewModel, TDbEntity>? onCommitted = null)
         where TDbEntity : class, IIdenticalEntity<long>
         => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.NotNull().Add, convert, validatorAsync, null, persist, (true, null), saveChanges, logger, onCommitted);
+
     public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TViewModel, TDbEntity, TId>(
         [DisallowNull] this IService service,
         [DisallowNull] DbContext dbContext,
@@ -114,10 +115,27 @@ public static class ServiceHelper
         where TService : IAsyncValidator<TViewModel>, IAsyncSaveService
         => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Add, convert, service.ValidateAsync, onCommitting, persist, (true, null), service.SaveChangesAsync, logger, onCommitted);
 
-    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TViewModel, TDbEntity>([DisallowNull] this IService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null,
-        Action<TViewModel, TDbEntity>? onCommitted = null)
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TService, TViewModel, TDbEntity>(
+        [DisallowNull] this TService service,
+        [DisallowNull] DbContext dbContext,
+        [DisallowNull] TViewModel model,
+        [DisallowNull] Func<TViewModel, TDbEntity?> convert,
+        bool persist = true)
+        where TViewModel : ICanSetKey<long?>
         where TDbEntity : class, IIdenticalEntity<long>
-        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, dbContext.Attach, convert, validatorAsync, onCommitting, persist, (true, null), saveChanges, logger, onCommitted);
+        where TService : IAsyncValidator<TViewModel>, IAsyncSaveService, ILoggerContainer
+        => InnerManipulate<TViewModel, TDbEntity, long>(
+            dbContext,
+            model,
+            dbContext.Add,
+            convert,
+            service.ValidateAsync,
+            null,
+            persist,
+            (true, null),
+            service.SaveChangesAsync,
+            service.Logger,
+            onCommitted: (m, e) => m.Id = e.Id);
 
     public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TService, TViewModel, TDbEntity>([DisallowNull] this TService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, bool persist = true, Func<TDbEntity, TDbEntity>? onCommitting = null, ILogger? logger = null,
         Action<TViewModel, TDbEntity>? onCommitted = null)
@@ -156,14 +174,9 @@ public static class ServiceHelper
             logger?.Debug($"Manipulation started. Entity: {nameof(TDbEntity)}, Action:{nameof(manipulate)}");
         }
         //! Setup transcation
-        IDbContextTransaction? transaction = null;
-        if (persist && transactionInfo is { } t)
-        {
-            if (t.UseTransaction)
-            {
-                transaction = t.Transaction ?? (await dbContext.Database.BeginTransactionAsync());
-            }
-        }
+        var transaction = persist && transactionInfo is { } t and { UseTransaction: true }
+            ? await dbContext.Database.BeginTransactionAsync()
+            : null;
 
         //! Validation checks
         var validationResult = validatorAsync is not null ? await validatorAsync(model) : Result<TViewModel>.CreateSuccess(model);
@@ -190,7 +203,7 @@ public static class ServiceHelper
                 {
                     await transaction.CommitAsync();
                 }
-                saveResult = await (saveChanges is not null ? saveChanges() : CodeHelper.CatchResult(() => dbContext.SaveChangesAsync()));
+                saveResult = await (saveChanges is not null ? saveChanges() : CodeHelper.CatchResultAsync(() => dbContext.SaveChangesAsync()));
                 if (saveResult.IsSucceed && onCommitted is not null)
                 {
                     onCommitted(model, entity);
@@ -198,7 +211,7 @@ public static class ServiceHelper
             }
             finally
             {
-                // Should be derached bcuz this entity is attached in this method.
+                // Should be detached bcuz this entity is atached in current scope.
                 _ = DbContextHelper.Detach<DbContext, TDbEntity, TId>(dbContext, entity);
             }
         }
@@ -285,6 +298,9 @@ public static class ServiceHelper
     }
 
     #endregion Save & Submit Changes
+
+    public static Task<Result<TViewModel>> ModelResult<TViewModel, TDbEntity>(this Task<Result<ManipulationResult<TViewModel, TDbEntity>>> manipulationResultTask)
+        => manipulationResultTask.ToResultAsync(x => x.Model);
 }
 
 public record struct ManipulationResult<TViewModel, TDbEntity>(in TViewModel Model, in TDbEntity Entity)
