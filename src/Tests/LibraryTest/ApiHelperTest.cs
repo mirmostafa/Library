@@ -9,7 +9,7 @@ public class ApiHelperTest
     public void ResultTest1()
     {
         var result = ApiResult.New(250);
-        Assert.AreEqual(250, result?.StatusCode);
+        Assert.AreEqual(250, result?.Status);
     }
 
     [TestMethod]

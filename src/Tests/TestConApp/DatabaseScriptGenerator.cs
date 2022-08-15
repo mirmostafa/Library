@@ -25,10 +25,10 @@ public class DatabaseScriptGenerator
         progress?.Report("Initializing");
         initializeDatabase();
 
-        progress?.Report("Getting the list of objects from Database.", (0, 1));
+        progress?.Report("Getting the list of objects from Database.", new(0, 1));
         var dbItems = getDatabaseObjects();
 
-        progress?.Report("Generating.", (1, 1));
+        progress?.Report("Generating.", new(1, 1));
         var count = dbItems.Count;
         generate();
 
@@ -52,7 +52,7 @@ public class DatabaseScriptGenerator
                 "NUMERIC_ROUNDABORT OFF",
                 "QUOTED_IDENTIFIER OFF",
                 "RECURSIVE_TRIGGERS OFF",
-                " DISABLE_BROKER",
+                "DISABLE_BROKER",
                 "AUTO_UPDATE_STATISTICS_ASYNC OFF",
                 "DATE_CORRELATION_OPTIMIZATION OFF",
                 "TRUSTWORTHY OFF",
