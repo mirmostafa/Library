@@ -641,7 +641,8 @@ public static class StringHelper
 
     public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars) => values.Select(t => t.Trim(trimChars));
 
-    public static string? Truncate(this string? value, in int length) => length > value?.Length ? value : value?[..^length];
+    public static string? Truncate(this string? value, in int length) 
+        => length > value?.Length ? value : value?[..^length];
 
     public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
     {
