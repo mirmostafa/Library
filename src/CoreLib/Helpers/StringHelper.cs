@@ -12,16 +12,16 @@ namespace Library.Helpers;
 
 //{
 /// <summary>
-///     A utility to do some common tasks about strings
+/// A utility to do some common tasks about strings
 /// </summary>
 public static class StringHelper
 {
     /// <summary>
     /// Adds the specified char to the string.
     /// </summary>
-    /// <param name="s">The s.</param>
-    /// <param name="count">The count.</param>
-    /// <param name="add">The add.</param>
+    /// <param name="s">     The s.</param>
+    /// <param name="count"> The count.</param>
+    /// <param name="add">   The add.</param>
     /// <param name="before">if set to <c>true</c> [before].</param>
     /// <returns></returns>
     [Pure]
@@ -441,17 +441,23 @@ public static class StringHelper
 
     public static string Replace2(this string s, char old, in char replacement, in int count = 1) => s.Replace2(old.ToString(), replacement.ToString(), count);
 
-    public static string Replace2(this string s, in string old, in string replacement, in int count = 1) => new Regex(Regex.Escape(old)).Replace(s, replacement, count);
+    public static string Replace2(this string s, in string old, in string replacement, in int count = 1) 
+        => new Regex(Regex.Escape(old)).Replace(s, replacement, count);
 
-    public static string ReplaceAll(this string value, in IEnumerable<(char OldValue, char NewValue)> items) => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+    public static string ReplaceAll(this string value, in IEnumerable<(char OldValue, char NewValue)> items) 
+        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
-    public static string ReplaceAll(this string value, in IEnumerable<string> oldValues, string newValue) => oldValues.Aggregate(value, (current, oldValue) => current.Replace(oldValue, newValue));
+    public static string ReplaceAll(this string value, in IEnumerable<string> oldValues, string newValue) 
+        => oldValues.Aggregate(value, (current, oldValue) => current.Replace(oldValue, newValue));
 
-    public static string ReplaceAll(this string value, in IEnumerable<(string OldValue, string NewValue)> items) => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+    public static string ReplaceAll(this string value, in IEnumerable<(string OldValue, string NewValue)> items) 
+        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
-    public static string ReplaceAll(this string value, params (char OldValue, char NewValue)[] items) => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+    public static string ReplaceAll(this string value, params (char OldValue, char NewValue)[] items) 
+        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
-    public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items) => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+    public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items) 
+        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     public static IEnumerable<string> Separate(this string @this, string separator)
     {
@@ -511,7 +517,6 @@ public static class StringHelper
 
     public static string Slice(this string s, in int start, in int? length = null)
     {
-        //Check.IfArgumentNotNull(s, nameof(s));
         ReadOnlySpan<char> span = s;
         var slice = length is { } l ? span.Slice(start, l) : span[start..];
         return new(slice);
@@ -522,7 +527,7 @@ public static class StringHelper
 
     public static IEnumerable<string> Split(this string value, int groupSize)
     {
-        Check.IfArgumentNotNull(value, nameof(value));
+        Check.IfArgumentNotNull(value);
 
         for (var x = 0; x < value.Length; x += groupSize)
         {
@@ -582,11 +587,14 @@ public static class StringHelper
         }
     }
 
-    public static string SqlEncodingToUtf(this string obj) => Encoding.UTF8.GetString(Encoding.GetEncoding(1256).GetBytes(obj));
+    public static string SqlEncodingToUtf(this string obj) 
+        => Encoding.UTF8.GetString(Encoding.GetEncoding(1256).GetBytes(obj));
 
-    public static bool StartsWithAny(this string str, in IEnumerable<string> values) => values.Any(str.StartsWith);
+    public static bool StartsWithAny(this string str, in IEnumerable<string> values) 
+        => values.Any(str.StartsWith);
 
-    public static bool StartsWithAny(this string str, params string[] values) => values.Any(str.StartsWith);
+    public static bool StartsWithAny(this string str, params string[] values) 
+        => values.Any(str.StartsWith);
 
     public static byte[] ToBytes([DisallowNull] this string value, [DisallowNull] in Encoding encoding)
     {
@@ -613,7 +621,8 @@ public static class StringHelper
         return value;
     }
 
-    public static string ToEnglishDigits(this string value) => value.ReplaceAll(PersianTools.Digits.Select(n => (n.Persian, n.English)));
+    public static string ToEnglishDigits(this string value)
+        => value.ReplaceAll(PersianTools.Digits.Select(n => (n.Persian, n.English)));
 
     public static string ToHex(in string str)
     {
@@ -627,26 +636,30 @@ public static class StringHelper
         return sb.ToString();
     }
 
-    public static IEnumerable<int> ToInt(this IEnumerable<string> array) => array.Where(str => str.IsNumber()).Select(str => str.ToInt());
+    public static IEnumerable<int> ToInt(this IEnumerable<string> array)
+        => array.Where(str => str.IsNumber()).Select(str => str.ToInt());
 
-    public static IEnumerable<string> ToLower(this IEnumerable<string> strings) => strings.Select(str => str.ToLower());
+    public static IEnumerable<string> ToLower(this IEnumerable<string> strings)
+        => strings.Select(str => str.ToLower());
 
-    public static string ToPersianDigits(this string value) => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
+    public static string ToPersianDigits(this string value)
+        => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
 
-    public static string ToUnicode(this string str) => Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
+    public static string ToUnicode(this string str)
+        => Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
 
-    public static IEnumerable<string> Trim(this IEnumerable<string> strings) => strings.Where(item => !item.IsNullOrEmpty());
+    public static IEnumerable<string> Trim(this IEnumerable<string> strings)
+        => strings.Where(item => !item.IsNullOrEmpty());
 
-    public static IEnumerable<string> TrimAll(this IEnumerable<string> values) => values.Select(t => t.Trim());
+    public static IEnumerable<string> TrimAll(this IEnumerable<string> values)
+        => values.Select(t => t.Trim());
 
-    public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars) => values.Select(t => t.Trim(trimChars));
+    public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars)
+        => values.Select(t => t.Trim(trimChars));
 
-    public static string? Truncate(this string? value, in int length) 
+    public static string? Truncate(this string? value, in int length)
         => length > value?.Length ? value : value?[..^length];
 
     public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
-    {
-        var result = CatchFunc(() => str.CountOf(c, index));
-        return new(result.Exception is null, result.Result);
-    }
+        => CatchFunc(() => str.CountOf(c, index)).Fluent().Then(x => new TryMethodResult<int>(x.Exception is null, x.Result));
 }

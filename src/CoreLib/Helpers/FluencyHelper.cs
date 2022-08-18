@@ -98,7 +98,10 @@ public static class FluencyHelper
         return instance;
     }
 
-    public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Func<TInstance, TInstance> action) 
+    //public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Func<TInstance, TInstance> action) 
+    //    => action(instance);
+    
+    public static Fluency<TResult> Then<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
         => action(instance);
 
     //! Not Object Oriented !
