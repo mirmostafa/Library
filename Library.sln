@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A54916A1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConAppTest", "src\Tests\TestConApp\ConAppTest.csproj", "{6AFD469D-676C-4FDE-9EB1-7D5735066903}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator", "src\SourceGenerator\SourceGenerator.csproj", "{BED49594-032C-4F17-9633-DE5A19826558}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebLib", "src\WebLib\WebLib.csproj", "{9D27B192-A3DB-4FA2-AFB1-942E0E2A8E7A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CqrsLib", "src\CqrsLib\CqrsLib.csproj", "{606B37DF-8ECC-405F-BA44-8B02707E1FE7}"
@@ -36,8 +34,6 @@ Global
 		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AFD469D-676C-4FDE-9EB1-7D5735066903}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BED49594-032C-4F17-9633-DE5A19826558}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BED49594-032C-4F17-9633-DE5A19826558}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D27B192-A3DB-4FA2-AFB1-942E0E2A8E7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9D27B192-A3DB-4FA2-AFB1-942E0E2A8E7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D27B192-A3DB-4FA2-AFB1-942E0E2A8E7A}.Release|Any CPU.ActiveCfg = Release|Any CPU

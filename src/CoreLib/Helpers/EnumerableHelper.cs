@@ -24,7 +24,7 @@ public static class EnumerableHelper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source">The source.</param>
-    /// <param name="item">The item.</param>
+    /// <param name="item">  The item.</param>
     /// <returns></returns>
     public static IEnumerable<T> AddImmuted<T>(this IEnumerable<T>? source, T item)
     {
@@ -107,7 +107,7 @@ public static class EnumerableHelper
         }
     }
 
-    public static IEnumerable<T> Aggregate<T>(this IEnumerable<IEnumerable<T>> sources)
+    public static IEnumerable<T> SelectManyAndCompact<T>(this IEnumerable<IEnumerable<T>> sources)
     {
         if (sources is not null)
         {
@@ -117,6 +117,18 @@ public static class EnumerableHelper
             }
         }
     }
+
+    public static T Aggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
+        => InnerAggregate(items, aggregator, defaultValue);
+
+    public static T Aggregate<T>(this IEnumerable<T> items, Func<T, T?, T> aggregator, T defaultValue = default!)
+        => InnerAggregate(items.ToArray(), aggregator, defaultValue);
+
+    public static T Aggregate<T>(this T[] items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
+        => InnerAggregate(items, (x, y) => x + y, defaultValue);
+
+    public static T Aggregate<T>(this IEnumerable<T> items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
+        => InnerAggregate(items.ToArray(), (x, y) => x + y, defaultValue);
 
     public static bool Any([NotNullWhen(true)] this IEnumerable source)
     {
@@ -150,15 +162,15 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    ///     Builds a tree.
+    /// Builds a tree.
     /// </summary>
-    /// <typeparam name="TSource"> The type of the site map. </typeparam>
-    /// <typeparam name="TItem"> The type of the menu item. </typeparam>
-    /// <param name="rootElements"> The get root elements. </param>
-    /// <param name="getNewItem"> The get new T menu item. </param>
-    /// <param name="getChildren"> The get children. </param>
-    /// <param name="addToRoots"> The add to roots. </param>
-    /// <param name="addChild"> The add to children. </param>
+    /// <typeparam name="TSource">The type of the site map.</typeparam>
+    /// <typeparam name="TItem">The type of the menu item.</typeparam>
+    /// <param name="rootElements">The get root elements.</param>
+    /// <param name="getNewItem">  The get new T menu item.</param>
+    /// <param name="getChildren"> The get children.</param>
+    /// <param name="addToRoots">  The add to roots.</param>
+    /// <param name="addChild">    The add to children.</param>
     /// <exception cref="ArgumentNullException">getChildren</exception>
     public static void BuildTree<TSource, TItem>(
         [DisallowNull] this IEnumerable<TSource> rootElements,
@@ -192,11 +204,11 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    ///     Converts all the values in a collection
+    /// Converts all the values in a collection
     /// </summary>
     /// <typeparam name="TInput">The type of the input.</typeparam>
     /// <typeparam name="TOutput">The type of the output.</typeparam>
-    /// <param name="input">The input collection.</param>
+    /// <param name="input">    The input collection.</param>
     /// <param name="converter">The converter function.</param>
     /// <returns>An enumerable collection of the output type.</returns>
     public static IEnumerable<TOutput> Cast<TInput, TOutput>(this IEnumerable<TInput> input, [DisallowNull] Converter<TInput, TOutput> converter)
@@ -273,10 +285,10 @@ public static class EnumerableHelper
     public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items) => items is null ? Enumerable.Empty<T>() : items;
 
     /// <summary>
-    ///     Creates an empty array.
+    /// Creates an empty array.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
     public static T[] EmptyArray<T>() => Array.Empty<T>();
 
     public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude) => source.Where(x => !exclude(x));
@@ -381,7 +393,7 @@ public static class EnumerableHelper
         }
     }
 
-    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key) 
+    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
         => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
 
     public static KeyValuePair<TKey, TValue> GetItemByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, in TKey key)
@@ -403,7 +415,7 @@ public static class EnumerableHelper
         return new(tryResult, actualValue);
     }
 
-    public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items) 
+    public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
         => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
 
     public static IEnumerable<T> InsertImmuted<T>(this IEnumerable<T> source, int index, T item)
@@ -420,7 +432,7 @@ public static class EnumerableHelper
         }
     }
 
-    public static string MergeToString<T>(this IEnumerable<T> source) 
+    public static string MergeToString<T>(this IEnumerable<T> source)
         => source.Aggregate(new StringBuilder(), (current, item) => current.Append(item)).ToString();
 
     public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
@@ -430,7 +442,7 @@ public static class EnumerableHelper
         return list;
     }
 
-    public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default) 
+    public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default)
         => defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (item?.Equals(defaultValue)) ?? true);
 
     public static IEnumerable<T> RemoveImmuted<T>(this IEnumerable<T>? source, T item)
@@ -494,7 +506,7 @@ public static class EnumerableHelper
         where TKey : notnull
     {
         Check.IfArgumentNotNull(dic);
-        
+
         if (dic.ContainsKey(key))
         {
             dic[key] = value;
@@ -508,7 +520,7 @@ public static class EnumerableHelper
     }
 
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
-        where TKey : notnull 
+        where TKey : notnull
         => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
@@ -557,7 +569,7 @@ public static class EnumerableHelper
     }
 
     [return: NotNull]
-    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default) 
+    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default)
         => asyncItems is null
             ? await ToListAsync(EmptyAsyncEnumerable<TItem>.Empty, cancellationToken: cancellationToken)
             : await WhereAsync(asyncItems, x => x is not null, cancellationToken).ToListAsync(cancellationToken: cancellationToken);
@@ -582,4 +594,12 @@ public static class EnumerableHelper
             }
         }
     }
+
+    private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!) => items switch
+    {
+        [] => defaultValue,
+        [var item] => item,
+        { Length: 2 } => aggregator(items[0], items[1]),
+        [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
+    };
 }

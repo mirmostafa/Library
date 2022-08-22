@@ -38,7 +38,7 @@ public class EnumerableHelperTest
         var first = new[] { 1, 2, 3 };
         var second = new[] { 4, 5, 6 };
         var merged = new[] { first, second };
-        var actual = EnumerableHelper.Aggregate(merged);
+        var actual = EnumerableHelper.SelectManyAndCompact(merged);
         var expected = new[] { 1, 2, 3, 4, 5, 6 };
         Assert.IsTrue(expected.SequenceEqual(actual));
     }

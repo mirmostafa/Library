@@ -1,16 +1,20 @@
-﻿using Library.Data.SqlServer.Dynamics;
+﻿
 using Library.Helpers;
-using Library.Validations;
+using Library.Interfaces;
 
-namespace TestConApp;
-
-internal partial class Program
+class Program
 {
-    private static void Main()
+    static void Main(string[] args)
     {
-        Write("Please paste Connection String: ");
-        var cs = ReadLine();
-        var db = Database.GetDatabase(cs).NotNull();
-        _ = db.Tables.ForEachEager(WriteLine);
+        
+    }
+}
+
+namespace Models
+{
+    internal class Person
+    {
+        public required string? FirstLast { get; init; }
+        public required string? FirstName { get; init; }
     }
 }
