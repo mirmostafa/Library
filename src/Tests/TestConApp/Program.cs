@@ -1,20 +1,8 @@
-﻿
-using Library.Helpers;
-using Library.Interfaces;
-
-class Program
+﻿internal class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
-        
-    }
-}
+        var nums = Enumerable.Range(1, 10);
 
-namespace Models
-{
-    internal class Person
-    {
-        public required string? FirstLast { get; init; }
-        public required string? FirstName { get; init; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Library.Interfaces;
 
-public interface IMath
+public static class Math
 {
-    static int Sum(int x, int y) => x + y;
+    static Func<int, int, int> Sum => (x, y) => x + y;
 }

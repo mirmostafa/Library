@@ -71,8 +71,8 @@ public static class StringHelper
     public static string[] Compact(params string[] strings)
         => strings.Where(item => !item.IsNullOrEmpty()).ToArray();
 
-    [return: NotNull]
     [Pure]
+    [return: NotNull]
     public static IEnumerable<string> Compact(this IEnumerable<string?>? strings) =>
         (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
@@ -81,8 +81,9 @@ public static class StringHelper
         string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
     [Pure]
-    public static string ConcatStrings(this IEnumerable<string> values) =>
-        string.Concat(values.ToArray());
+    [return: NotNull]
+    public static string ConcatStrings(this IEnumerable<string> values)
+        => string.Concat(values.ToArray());
 
     [Pure]
     public static bool Contains(string str, in string value, bool ignoreCase = true) =>
@@ -441,22 +442,22 @@ public static class StringHelper
 
     public static string Replace2(this string s, char old, in char replacement, in int count = 1) => s.Replace2(old.ToString(), replacement.ToString(), count);
 
-    public static string Replace2(this string s, in string old, in string replacement, in int count = 1) 
+    public static string Replace2(this string s, in string old, in string replacement, in int count = 1)
         => new Regex(Regex.Escape(old)).Replace(s, replacement, count);
 
-    public static string ReplaceAll(this string value, in IEnumerable<(char OldValue, char NewValue)> items) 
+    public static string ReplaceAll(this string value, in IEnumerable<(char OldValue, char NewValue)> items)
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
-    public static string ReplaceAll(this string value, in IEnumerable<string> oldValues, string newValue) 
+    public static string ReplaceAll(this string value, in IEnumerable<string> oldValues, string newValue)
         => oldValues.Aggregate(value, (current, oldValue) => current.Replace(oldValue, newValue));
 
-    public static string ReplaceAll(this string value, in IEnumerable<(string OldValue, string NewValue)> items) 
+    public static string ReplaceAll(this string value, in IEnumerable<(string OldValue, string NewValue)> items)
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
-    public static string ReplaceAll(this string value, params (char OldValue, char NewValue)[] items) 
+    public static string ReplaceAll(this string value, params (char OldValue, char NewValue)[] items)
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
-    public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items) 
+    public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items)
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     public static IEnumerable<string> Separate(this string @this, string separator)
@@ -587,13 +588,13 @@ public static class StringHelper
         }
     }
 
-    public static string SqlEncodingToUtf(this string obj) 
+    public static string SqlEncodingToUtf(this string obj)
         => Encoding.UTF8.GetString(Encoding.GetEncoding(1256).GetBytes(obj));
 
-    public static bool StartsWithAny(this string str, in IEnumerable<string> values) 
+    public static bool StartsWithAny(this string str, in IEnumerable<string> values)
         => values.Any(str.StartsWith);
 
-    public static bool StartsWithAny(this string str, params string[] values) 
+    public static bool StartsWithAny(this string str, params string[] values)
         => values.Any(str.StartsWith);
 
     public static byte[] ToBytes([DisallowNull] this string value, [DisallowNull] in Encoding encoding)

@@ -107,17 +107,6 @@ public static class EnumerableHelper
         }
     }
 
-    public static IEnumerable<T> SelectManyAndCompact<T>(this IEnumerable<IEnumerable<T>> sources)
-    {
-        if (sources is not null)
-        {
-            foreach (var item in sources.Where(items => items is not null).SelectMany(items => items))
-            {
-                yield return item;
-            }
-        }
-    }
-
     public static T Aggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
         => InnerAggregate(items, aggregator, defaultValue);
 
@@ -491,6 +480,17 @@ public static class EnumerableHelper
         foreach (var item in source)
         {
             yield return await selectorAsync(item);
+        }
+    }
+
+    public static IEnumerable<T> SelectManyAndCompact<T>(this IEnumerable<IEnumerable<T>> sources)
+    {
+        if (sources is not null)
+        {
+            foreach (var item in sources.Where(items => items is not null).SelectMany(items => items))
+            {
+                yield return item;
+            }
         }
     }
 
