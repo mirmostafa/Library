@@ -14,23 +14,23 @@ namespace Library.Helpers;
 public static class ObjectHelper
 {
     /// <summary>
-    ///     Works just like 'as' C# keyword
+    /// Works just like 'as' C# keyword
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="obj"> The object. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="obj">The object.</param>
+    /// <returns></returns>
     [DebuggerStepThrough]
     public static T? As<T>(this object? obj)
         where T : class => obj as T;
 
     /// <summary>
-    ///     Checks the database null.
+    /// Checks the database null.
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="o"> The o. </param>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <param name="converter"> The converter. </param>
-    /// <returns> </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="o">           The o.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <param name="converter">   The converter.</param>
+    /// <returns></returns>
     public static T CheckDbNull<T>(in object o, in T defaultValue, in Func<object, T> converter)
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
 
@@ -52,12 +52,12 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Generates the lazy singleton instance.
+    /// Generates the lazy singleton instance.
     /// </summary>
-    /// <typeparam name="TSingleton"> The type of the singleton. </typeparam>
-    /// <param name="createInstance"> The create instance. </param>
-    /// <param name="initializeInstance"> The initialize instance. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TSingleton">The type of the singleton.</typeparam>
+    /// <param name="createInstance">    The create instance.</param>
+    /// <param name="initializeInstance">The initialize instance.</param>
+    /// <returns></returns>
     public static Lazy<TSingleton?> GenerateLazySingletonInstance<TSingleton>(
         Func<TSingleton>? createInstance = null,
         Action<TSingleton>? initializeInstance = null)
@@ -65,22 +65,21 @@ public static class ObjectHelper
         => new(() => GenerateSingletonInstance<TSingleton>());
 
     /// <summary>
-    ///     Generates a singleton instance of a class (Must be cached by the owner class).
+    /// Generates a singleton instance of a class (Must be cached by the owner class).
     /// </summary>
-    /// <typeparam name="TSingleton"> The type of class which is being instantiated. </typeparam>
-    /// <param name="createInstance"> A delegate to be used for getting an instance of </param>
-    /// <param name="initializeInstance"> The instance initializer. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TSingleton">The type of class which is being instantiated.</typeparam>
+    /// <param name="createInstance">    A delegate to be used for getting an instance of</param>
+    /// <param name="initializeInstance">The instance initializer.</param>
+    /// <returns></returns>
     /// <exception cref="SingletonException">
-    ///     The class must have a static method: "TSingleton CreateInstance()" or a
-    ///     private/protected constructor.
+    /// The class must have a static method: "TSingleton CreateInstance()" or a private/protected constructor.
     /// </exception>
     /// <remarks>
-    ///     Before generating instance, GenerateSingletonInstance searches for a static method:
-    ///     "TSingleton CreateInstance()". If found, GenerateSingletonInstance calls it and
-    ///     retrieves an instance. Otherwise, a private/protected parameter-less constructor is
-    ///     required to construct an instance of TSingleton./&gt; After generating instance,
-    ///     searches for a method named: "InitializeComponents". If found will be called.
+    /// Before generating instance, GenerateSingletonInstance searches for a static method:
+    /// "TSingleton CreateInstance()". If found, GenerateSingletonInstance calls it and retrieves an
+    /// instance. Otherwise, a private/protected parameter-less constructor is required to construct
+    /// an instance of TSingleton./&gt; After generating instance, searches for a method named:
+    /// "InitializeComponents". If found will be called.
     /// </remarks>
     public static TSingleton? GenerateSingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null, Action<TSingleton>? initializeInstance = null)
         where TSingleton : class, ISingleton<TSingleton>
@@ -124,13 +123,13 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Gets the attribute.
+    /// Gets the attribute.
     /// </summary>
-    /// <typeparam name="TAttribute"> The type of the attribute. </typeparam>
-    /// <param name="value"> The value. </param>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <param name="inherited"> if set to <c> true </c> [inherited]. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
+    /// <param name="value">       The value.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <param name="inherited">   if set to <c>true</c> [inherited].</param>
+    /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(in object value,
         in TAttribute? defaultValue = null,
         bool inherited = true)
@@ -141,12 +140,12 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Gets the attribute.
+    /// Gets the attribute.
     /// </summary>
-    /// <typeparam name="TAttribute"> The type of the attribute. </typeparam>
-    /// <param name="property"> The property. </param>
-    /// <returns> </returns>
-    /// <exception cref="ArgumentNullException"> property </exception>
+    /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
+    /// <param name="property">The property.</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException">property</exception>
     public static TAttribute? GetAttribute<TAttribute>(in PropertyInfo property)
         where TAttribute : Attribute =>
         property is null
@@ -154,13 +153,13 @@ public static class ObjectHelper
                 : property.GetCustomAttributes(typeof(TAttribute), true).FirstOrDefault().As<TAttribute>();
 
     /// <summary>
-    ///     Gets the attribute.
+    /// Gets the attribute.
     /// </summary>
-    /// <typeparam name="TAttribute"> The type of the attribute. </typeparam>
-    /// <param name="type"> The type. </param>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <param name="inherited"> if set to <c> true </c> [inherited]. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
+    /// <param name="type">        The type.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <param name="inherited">   if set to <c>true</c> [inherited].</param>
+    /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(in Type type,
         in TAttribute? defaultValue = null,
         bool inherited = true)
@@ -171,13 +170,13 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Gets the attribute.
+    /// Gets the attribute.
     /// </summary>
-    /// <typeparam name="TType"> The type of the type. </typeparam>
-    /// <typeparam name="TAttribute"> The type of the attribute. </typeparam>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <param name="inherited"> if set to <c> true </c> [inherited]. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TType">The type of the type.</typeparam>
+    /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
+    /// <param name="defaultValue">The default value.</param>
+    /// <param name="inherited">   if set to <c>true</c> [inherited].</param>
+    /// <returns></returns>
     public static TAttribute? GetAttribute<TType, TAttribute>(in TAttribute? defaultValue, in bool inherited)
         where TAttribute : Attribute
     {
@@ -186,11 +185,11 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Gets the attribute.
+    /// Gets the attribute.
     /// </summary>
-    /// <typeparam name="TType"> The type of the type. </typeparam>
-    /// <typeparam name="TAttribute"> The type of the attribute. </typeparam>
-    /// <returns> </returns>
+    /// <typeparam name="TType">The type of the type.</typeparam>
+    /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
+    /// <returns></returns>
     public static TAttribute? GetAttribute<TType, TAttribute>()
         where TAttribute : Attribute
     {
@@ -199,31 +198,31 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Gets the attribute.
+    /// Gets the attribute.
     /// </summary>
-    /// <typeparam name="TAttribute"> The type of the attribute. </typeparam>
-    /// <param name="value"> The value. </param>
-    /// <param name="inherited"> if set to <c> true </c> [inherited]. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
+    /// <param name="value">    The value.</param>
+    /// <param name="inherited">if set to <c>true</c> [inherited].</param>
+    /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(in object value, in bool inherited)
         where TAttribute : Attribute
         => GetAttribute<TAttribute>(value, null, inherited);
 
     /// <summary>
-    ///     Gets the description.
+    /// Gets the description.
     /// </summary>
-    /// <param name="classInstance"> The class instance. </param>
-    /// <returns> </returns>
+    /// <param name="classInstance">The class instance.</param>
+    /// <returns></returns>
     public static string? GetDescription(in object classInstance)
         => GetAttribute<DescriptionAttribute>(classInstance)?.Description;
 
     /// <summary>
-    ///     Gets the field.
+    /// Gets the field.
     /// </summary>
-    /// <typeparam name="TFieldType"> The type of the field type. </typeparam>
-    /// <param name="obj"> The object. </param>
-    /// <param name="fieldName"> Name of the field. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TFieldType">The type of the field type.</typeparam>
+    /// <param name="obj">      The object.</param>
+    /// <param name="fieldName">Name of the field.</param>
+    /// <returns></returns>
     public static TFieldType GetField<TFieldType>(in object? obj, string fieldName)
     {
         var field = obj?.GetType().GetFields().FirstOrDefault(fld => string.Compare(fld.Name, fieldName, StringComparison.Ordinal) == 0);
@@ -238,13 +237,13 @@ public static class ObjectHelper
             properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
 
     /// <summary>
-    ///     Gets the method.
+    /// Gets the method.
     /// </summary>
-    /// <typeparam name="TDelegate"> The type of the delegate. </typeparam>
-    /// <param name="obj"> The object. </param>
-    /// <param name="name"> The name. </param>
-    /// <param name="bindingFlags"> The binding flags. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TDelegate">The type of the delegate.</typeparam>
+    /// <param name="obj">         The object.</param>
+    /// <param name="name">        The name.</param>
+    /// <param name="bindingFlags">The binding flags.</param>
+    /// <returns></returns>
     public static TDelegate? GetMethod<TDelegate>([DisallowNull] in object obj,
         [DisallowNull] in string name,
         BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance)
@@ -257,13 +256,13 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Gets the method.
+    /// Gets the method.
     /// </summary>
-    /// <typeparam name="TDelegate"> The type of the delegate. </typeparam>
-    /// <param name="objType"> Type of the object. </param>
-    /// <param name="name"> The name. </param>
-    /// <param name="bindingFlags"> The binding flags. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TDelegate">The type of the delegate.</typeparam>
+    /// <param name="objType">     Type of the object.</param>
+    /// <param name="name">        The name.</param>
+    /// <param name="bindingFlags">The binding flags.</param>
+    /// <returns></returns>
     public static TDelegate? GetMethod<TDelegate>(in Type objType,
         in string name,
         in BindingFlags bindingFlags = BindingFlags.Public)
@@ -276,13 +275,13 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Gets the property.
+    /// Gets the property.
     /// </summary>
-    /// <typeparam name="TPropertyType"> The type of the property type. </typeparam>
-    /// <param name="obj"> The object. </param>
-    /// <param name="propName"> Name of the property. </param>
-    /// <param name="eventNoDefault"> The event no default. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TPropertyType">The type of the property type.</typeparam>
+    /// <param name="obj">           The object.</param>
+    /// <param name="propName">      Name of the property.</param>
+    /// <param name="eventNoDefault">The event no default.</param>
+    /// <returns></returns>
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, string propName, in int eventNoDefault)
     {
         _ = obj.ArgumentNotNull(nameof(obj));
@@ -299,13 +298,13 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Gets the property.
+    /// Gets the property.
     /// </summary>
-    /// <typeparam name="TPropertyType"> The type of the property type. </typeparam>
-    /// <param name="obj"> The object. </param>
-    /// <param name="propName"> Name of the property. </param>
-    /// <param name="searchPrivates"> if set to <c> true </c> [search privates]. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TPropertyType">The type of the property type.</typeparam>
+    /// <param name="obj">           The object.</param>
+    /// <param name="propName">      Name of the property.</param>
+    /// <param name="searchPrivates">if set to <c>true</c> [search privates].</param>
+    /// <returns></returns>
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, [DisallowNull] string propName, bool searchPrivates = false)
     {
         var type = obj.ArgumentNotNull(nameof(obj)).GetType();
@@ -337,10 +336,10 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Gets the name of the properties.
+    /// Gets the name of the properties.
     /// </summary>
-    /// <typeparam name="TType"> The type of the type. </typeparam>
-    /// <returns> </returns>
+    /// <typeparam name="TType">The type of the type.</typeparam>
+    /// <returns></returns>
     public static IEnumerable<string> GetPropertiesName<TType>()
     {
         var properties = typeof(TType).IsGenericType
@@ -355,12 +354,12 @@ public static class ObjectHelper
             .Any(property => property.PropertyType.FindInterfaces((m, filterCriteria) => m.FullName == type.FullName, null).Any());
 
     /// <summary>
-    ///     Get the index of range.
+    /// Get the index of range.
     /// </summary>
-    /// <typeparam name="TSource"> The type of the source. </typeparam>
-    /// <param name="item"> The item. </param>
-    /// <param name="range"> The range. </param>
-    /// <returns> </returns>
+    /// <typeparam name="TSource">The type of the source.</typeparam>
+    /// <param name="item"> The item.</param>
+    /// <param name="range">The range.</param>
+    /// <returns></returns>
     public static int? IndexOf<TSource>(in TSource item, params TSource[] range)
     {
         var result = Array.IndexOf(range, item);
@@ -368,12 +367,10 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    ///     Determines whether [is database null] [the specified object].
+    /// Determines whether [is database null] [the specified object].
     /// </summary>
-    /// <param name="o"> The o. </param>
-    /// <returns>
-    ///     <c> true </c> if [is database null] [the specified o]; otherwise, <c> false </c>.
-    /// </returns>
+    /// <param name="o">The o.</param>
+    /// <returns><c>true</c> if [is database null] [the specified o]; otherwise, <c>false</c>.</returns>
     public static bool IsDbNull(in object? o)
         => o switch
         {
@@ -383,31 +380,29 @@ public static class ObjectHelper
         };
 
     /// <summary>
-    ///     Determines whether the specified value is default (null or zero or ...).
+    /// Determines whether the specified value is default (null or zero or ...).
     /// </summary>
-    /// <typeparam name="T"> </typeparam>
-    /// <param name="value"> The value. </param>
-    /// <returns>
-    ///     <c> true </c> if the specified value is default; otherwise, <c> false </c>.
-    /// </returns>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="value">The value.</param>
+    /// <returns><c>true</c> if the specified value is default; otherwise, <c>false</c>.</returns>
     public static bool IsDefault<T>(in T value)
         => value?.Equals(default(T)) ?? true;
 
     /// <summary>
-    ///     Determines whether the specified item is in range.
+    /// Determines whether the specified item is in range.
     /// </summary>
-    /// <typeparam name="TSource"> The type of the source. </typeparam>
-    /// <param name="item"> The item. </param>
-    /// <param name="range"> The range. </param>
-    /// <returns> <c> true </c> if the specified item is in; otherwise, <c> false </c>. </returns>
+    /// <typeparam name="TSource">The type of the source.</typeparam>
+    /// <param name="item"> The item.</param>
+    /// <param name="range">The range.</param>
+    /// <returns><c>true</c> if the specified item is in; otherwise, <c>false</c>.</returns>
     public static bool IsIn<TSource>(in TSource item, params TSource[] range)
         => range.Contains(item);
 
     /// <summary>
-    ///     Determines whether the specified value is null.
+    /// Determines whether the specified value is null.
     /// </summary>
-    /// <param name="value"> The value. </param>
-    /// <returns> <c> true </c> if the specified value is null; otherwise, <c> false </c>. </returns>
+    /// <param name="value">The value.</param>
+    /// <returns><c>true</c> if the specified value is null; otherwise, <c>false</c>.</returns>
     public static bool IsNull([NotNullWhen(false)] in object? value)
         => value is null;
 
@@ -425,14 +420,20 @@ public static class ObjectHelper
             => id == Guid.Empty;
 
     /// <summary>
-    ///     Determines whether [is null or empty string] [the specified value].
+    /// Determines whether [is null or empty string] [the specified value].
     /// </summary>
-    /// <param name="value"> The value. </param>
-    /// <returns>
-    ///     <c> true </c> if [is null or empty string] [the specified value]; otherwise, <c> false </c>.
-    /// </returns>
+    /// <param name="value">The value.</param>
+    /// <returns><c>true</c> if [is null or empty string] [the specified value]; otherwise, <c>false</c>.</returns>
     public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
         => string.IsNullOrEmpty(ToString(value));
+
+    public static IEnumerable<T> Repeat<T>(T value, int count)
+    {
+        for (var i = 0; i < count; i++)
+        {
+            yield return value;
+        }
+    }
 
     public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
     {
@@ -443,10 +444,7 @@ public static class ObjectHelper
     public static void SetProperty([DisallowNull] in object obj, in string propertyName, in object value)
     {
         var property = obj?.GetType().GetProperty(propertyName);
-        if (property is not null)
-        {
-            property.SetValue(obj, value, null);
-        }
+        property?.SetValue(obj, value, null);
     }
 
     [return: NotNull]
@@ -460,55 +458,55 @@ public static class ObjectHelper
         => convert.ArgumentNotNull().Invoke(obj);
 
     /// <summary>
-    ///     Converts the string representation of a number to an integer.
+    /// Converts the string representation of a number to an integer.
     /// </summary>
-    /// <param name="obj"> The object. </param>
-    /// <returns> </returns>
+    /// <param name="obj">The object.</param>
+    /// <returns></returns>
     public static int ToInt(this object obj)
         => Convert.ToInt32(obj);
 
     /// <summary>
-    ///     Converts the string representation of a number to an integer.
+    /// Converts the string representation of a number to an integer.
     /// </summary>
-    /// <param name="obj"> The object. </param>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <returns> </returns>
+    /// <param name="obj">         The object.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns></returns>
     [Obsolete("No more is required.")]
     public static int ToInt(this object? obj, in int defaultValue)
         => obj is null ? defaultValue : obj.ToString().ToIntNullable() ?? defaultValue;
 
     /// <summary>
-    ///     Converts to int-nullable.
+    /// Converts to int-nullable.
     /// </summary>
-    /// <param name="str"> The string. </param>
-    /// <returns> </returns>
+    /// <param name="str">The string.</param>
+    /// <returns></returns>
     public static int? ToIntNullable(this string? str)
         => int.TryParse(str, out var result) ? result : default(int?);
 
     /// <summary>
-    ///     Converts to long.
+    /// Converts to long.
     /// </summary>
-    /// <param name="obj"> The object. </param>
-    /// <returns> </returns>
+    /// <param name="obj">The object.</param>
+    /// <returns></returns>
     //[Obsolete("No more is required.")]
     public static long ToLong(this object obj)
         => Convert.ToInt64(obj);
 
     /// <summary>
-    ///     Converts to long.
+    /// Converts to long.
     /// </summary>
-    /// <param name="obj"> The object. </param>
-    /// <param name="defaultValue"> The default value. </param>
-    /// <returns> </returns>
+    /// <param name="obj">         The object.</param>
+    /// <param name="defaultValue">The default value.</param>
+    /// <returns></returns>
     [Obsolete("No more is required.")]
     public static long ToLong(this object? obj, in long defaultValue)
         => obj is null ? defaultValue : obj.ToString().ToLongNullable() ?? defaultValue;
 
     /// <summary>
-    ///     Converts to long-nullable.
+    /// Converts to long-nullable.
     /// </summary>
-    /// <param name="str"> The string. </param>
-    /// <returns> </returns>
+    /// <param name="str">The string.</param>
+    /// <returns></returns>
     [Obsolete("No more is required.")]
     public static long? ToLongNullable(this string? str)
         => long.TryParse(str, out var result) ? result : default(long?);
@@ -526,10 +524,10 @@ public static class ObjectHelper
         => obj is T t ? t : default;
 
     /// <summary>
-    ///     Converts the string representation of a number to an Int16.
+    /// Converts the string representation of a number to an Int16.
     /// </summary>
-    /// <param name="obj"> The object. </param>
-    /// <returns> </returns>
+    /// <param name="obj">The object.</param>
+    /// <returns></returns>
     public static short ToShort(object obj)
         => Convert.ToInt16(obj);
 
