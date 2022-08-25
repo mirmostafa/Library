@@ -29,7 +29,7 @@ public class MultistepProgressManager<TState, TValue>
         var current = 0;
         foreach (var step in this._steps)
         {
-            this._reporter.Report(step.Value, max, ++current);
+            this._reporter.Report(step.Value, max, current += step.ProgressCount);
             this._state = await step.AsyncAction(this._state);
         }
         return this._state;
