@@ -4,7 +4,7 @@ public struct OperationReport
 {
     public OperationReport(int? max, int? last, int? current = null)
         => (this.Last, this.Max, this.Current) = (last, max, current);
-    
+
     public int? Current { get; set; }
     public int? Last { get; }
     public int? Max { get; }
@@ -24,6 +24,10 @@ public interface IMultistepProgress<T>
 {
     static IMultistepProgress<T> GetNew(Action<(T value, OperationReport? operation, OperationReport? subOperation)> onReporting)
         => new MultistepProgress<T>(onReporting);
+
+    void Report(T value, int max, int current) => this.Report(value, new(max, current));
+
+    void Report(T value, (int Max, int Current) main, (int Max, int Current) sub) => this.Report(value, new OperationReport(main.Max, main.Current), new OperationReport(sub.Max, sub.Current));
 
     void Report(T value, OperationReport? operation = null, OperationReport? subOperation = null);
 }
