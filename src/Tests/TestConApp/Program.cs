@@ -1,28 +1,37 @@
-﻿using Library.Collections;
-using Library.Helpers;
+﻿using Library.Helpers;
 using Library.ProgressiveOperations;
 
 internal class Program
 {
     private static async Task Main(string[] args)
     {
-        FluentList<StepInfo<object?, string>> steps = new();
-        StepInfo<object?, string> step = new(
-            state =>
+        List<StepInfo<int>> steps = new();
+        StepInfo<int> step = new(
+            e =>
             {
-                Thread.Sleep(50);
-                return Task.FromResult(state);
+                for (var i = 0; i <= 10; i++)
+                {
+                    Thread.Sleep(100);
+                    e.SubProgress.Report("Sub", 10, e.State++);
+                }
+
+                return Task.FromResult(e.State);
             }, "Working...", 5);
-        _ = steps.AddRange(ObjectHelper.Repeat(step, 100));
-        Write("Hi. ");
-        Library.Helpers.ConsoleHelper.ConsoleProgressBar bar = new(50,true);
-        var manager = new MultistepProgressManager<object?>(null, steps, IMultistepProgress.GetNew(e =>
+        steps.AddRange(ObjectHelper.Repeat(step, 5));
+
+        var mainReport = ((string Description, int Max, int Current) e) =>
         {
-            var o = e.Operation;
-            var description = $"{o.Current} of {o.Max} - {e.Value}";
-            WriteLine(description);
-            bar.Report(o.Current, o.Max);
-        }));
+            WriteLine();
+            displayReport(e);
+        };
+        var subReport = ((string Description, int Max, int Current) e) =>
+        {
+            CursorLeft = 0;
+            displayReport(e);
+        };
+        var manager = new MultistepProgressManager<int>(0, steps, mainReport);//, subReport);
         _ = await manager.StartAsync();
+
+        static void displayReport((string Description, int Max, int Current) e) => WriteLine($"{e.Current:00} of {e.Max:00} - {e.Description}");
     }
 }

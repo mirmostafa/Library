@@ -157,7 +157,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
             this.IsOperating = true;
             this.OnMainOperationStarted(new MultiStepStartedLogEventArgs(this.MainStepsCount));
         },
-            this._cancellationTokenSource.Token);
+        this._cancellationTokenSource.Token);
 
         if (noPriorities.Any())
         {

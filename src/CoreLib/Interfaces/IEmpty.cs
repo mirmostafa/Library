@@ -1,17 +1,17 @@
 ﻿namespace Library.Interfaces;
 
-public interface IEmpty<out TClass>
+public interface IEmpty<out T>
 {
     /// <summary>
-    /// Gets an empty instance of currebt class.
+    /// Gets an empty instance of current class.
     /// </summary>
     /// <value>
     /// An empty instance.
     /// </value>
-    static abstract TClass Empty { get; }
+    static abstract T Empty { get; }
     /// <summary>
-    /// Creates an empty instance of currebt class.
+    /// Creates an empty instance of current class.
     /// </summary>
-    /// <returns>An empty instance of currebt class.</returns>
-    static abstract TClass NewEmpty();
+    /// <returns>An empty instance of current class.</returns>
+    static abstract T NewEmpty();
 }

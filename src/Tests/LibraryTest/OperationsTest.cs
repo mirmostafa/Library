@@ -1,6 +1,6 @@
 ﻿using Library.MultiOperation;
 
-namespace LibraryTest;
+namespace UnitTest;
 
 [TestClass]
 public class OperationsTest
@@ -18,6 +18,7 @@ public class OperationsTest
                                .Watch(display)
                                .Run();
     }
+
     [TestMethod]
     public void MyTestMethod1()
     {

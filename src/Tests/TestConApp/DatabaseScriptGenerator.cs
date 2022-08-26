@@ -15,7 +15,7 @@ public class DatabaseScriptGenerator
     public DatabaseScriptGenerator(string connectionString, string? databaseName = null)
         => this._database = Database.GetDatabase(connectionString, databaseName).NotNull();
 
-    public async Task<string> GenerateDatabaseSchemaAsync(IEnumerable<string>? objects, bool generateCreateScript = true, bool generateDropScript = false, bool useGo = true, IMultistepProgress<string>? progress = null)
+    public async Task<string> GenerateDatabaseSchemaAsync(IEnumerable<string>? objects, bool generateCreateScript = true, bool generateDropScript = false, bool useGo = true, IMultistepProgress? progress = null)
     {
         await Task.CompletedTask;
 
@@ -25,10 +25,10 @@ public class DatabaseScriptGenerator
         progress?.Report("Initializing");
         initializeDatabase();
 
-        progress?.Report("Getting the list of objects from Database.", new(0, 1));
+        progress?.Report("Getting the list of objects from Database.", 1, 0);
         var dbItems = getDatabaseObjects();
 
-        progress?.Report("Generating.", new(1, 1));
+        progress?.Report("Generating.", 1, 1);
         var count = dbItems.Count;
         generate();
 
