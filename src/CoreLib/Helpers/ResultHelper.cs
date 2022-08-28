@@ -95,7 +95,7 @@ public static class ResultHelper
         var exception = result.Status switch
         {
             Exception ex => ex.With(x => x.Source = owner?.ToString()),
-            _ => new ValidationException(result.ToString(), instruction, owner: owner)
+            _ => new ValidationException(result.ToString(), instruction ?? result.FullMessage?.Instruction, owner: owner)
         };
         Throw(exception);
         return result;

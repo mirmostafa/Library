@@ -25,8 +25,17 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     protected FluentListBase()
         => this._list = new List<TItem>();
 
-    public int Count =>
-        this._list.Count;
+    public TItem this[int index]
+    {
+        get => this._list[index];
+        set
+        {
+            _ = this.CheckReadOnly();
+            this._list[index] = value;
+        }
+    }
+
+    public int Count => this._list.Count;
 
     public bool IsReadOnly
     {
@@ -37,16 +46,6 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     bool IFluentCollection<TList, TItem>.IsReadOnly { get; }
 
     private TList This => this.As<TList>()!;
-
-    public TItem this[int index]
-    {
-        get => this._list[index];
-        set
-        {
-            _ = this.CheckReadOnly();
-            this._list[index] = value;
-        }
-    }
 
     public TList Add(TItem item)
         => this.This.Fluent(this.CheckReadOnly).Then(() => this._list.Add(item));
@@ -66,9 +65,6 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     public IEnumerator<TItem> GetEnumerator()
         => this._list.GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-        => ((IEnumerable)this._list).GetEnumerator();
-
     public (TList List, int Result) IndexOf(TItem item)
         => this.OnIndexOf(item);
 
@@ -80,6 +76,9 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
 
     public TList RemoveAt(int index)
         => this.This.Fluent(this.CheckReadOnly).Then(() => this._list.RemoveAt(index));
+
+    IEnumerator IEnumerable.GetEnumerator()
+                        => ((IEnumerable)this._list).GetEnumerator();
 
     [DebuggerStepThrough]
     protected TList CheckReadOnly()

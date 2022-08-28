@@ -1,5 +1,8 @@
 ﻿using Library.Results;
 
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore;
+
 namespace Library.Interfaces;
 
 /// <summary>
@@ -27,7 +30,7 @@ public interface IAsyncCrudService<TViewModel> : IAsyncReadService<TViewModel>, 
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier.</typeparam>
-public interface IAsyncReadPagingService<TViewModel, in TId> 
+public interface IAsyncReadPagingService<TViewModel, in TId>
 {
     /// <summary>
     /// Gets all db entities asynchronously.
@@ -81,7 +84,7 @@ public interface IAsyncReadService<TViewModel> : IAsyncReadService<TViewModel, l
 /// <summary>
 /// <br/>
 /// </summary>
-public interface IAsyncSaveService 
+public interface IAsyncSaveService
 {
     /// <summary>
     /// Saves the data asynchronously.
@@ -90,12 +93,25 @@ public interface IAsyncSaveService
     Task<Result<int>> SaveChangesAsync();
 }
 
+public interface IAsyncTransactionalService
+{
+    Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+
+    Task<Result> CommitTransactionAsync(CancellationToken cancellationToken = default);
+
+    Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
+}
+
+public interface IAsyncTransactionSaveService : IAsyncTransactionalService, IAsyncSaveService, IResetChanges
+{
+}
+
 /// <summary>
 /// A standardizer for sercvies to write data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier.</typeparam>
-public interface IAsyncWriteService<TViewModel, TId> 
+public interface IAsyncWriteService<TViewModel, TId>
 {
     /// <summary>
     /// Deletes an entity asynchronously.
@@ -149,7 +165,7 @@ public interface IDbEntityToViewModelConverter<out TViewModel, in TDbEntity>
     TViewModel? ToViewModel(TDbEntity? entity);
 }
 
-public interface IHierarchicalDbEntityService<TDbEntity> 
+public interface IHierarchicalDbEntityService<TDbEntity>
 {
     /// <summary>
     /// Gets the all child enities of specific entity asynchronously.
@@ -179,7 +195,7 @@ public interface IHierarchicalDbEntityService<TDbEntity>
     Task<IEnumerable<TDbEntity>> GetRootEnitiesAsync();
 }
 
-public interface IHierarchicalViewModelService<TViewModel> 
+public interface IHierarchicalViewModelService<TViewModel>
 {
     /// <summary>
     /// Gets the child models.

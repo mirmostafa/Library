@@ -77,6 +77,31 @@ public static class Functional
         }
     }
 
+    public static async Task<Exception?> CatchAsync(Func<Task> action)
+    {
+        try
+        {
+            await action();
+            return null;
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
+    }
+
+    public static async Task<(TResult? Result, Exception? Exception)> CatchAsync<TResult>(Func<Task<TResult>> action)
+    {
+        try
+        {
+            return (await action(), null);
+        }
+        catch (Exception ex)
+        {
+            return (default, ex);
+        }
+    }
+
     /// <summary>
     /// Catches the exceptions in specific function.
     /// </summary>

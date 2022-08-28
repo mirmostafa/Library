@@ -2,8 +2,8 @@
 
 public record struct StepInfo<TState>(in Func<(TState State, IMultistepProgress SubProgress), Task<TState>> AsyncAction, in string Description, in int ProgressCount)
 {
-    //public static StepInfo<TState> New(in Func<(TState State, IMultistepProgress SubProgress), Task<TState>> AsyncAction, in string Description, in int ProgressCount)
-    //    => new(AsyncAction, Description, ProgressCount);
+    public static StepInfo<TState> New(in Func<(TState State, IMultistepProgress SubProgress), Task<TState>> AsyncAction, in string Description, in int ProgressCount)
+        => new(AsyncAction, Description, ProgressCount);
     public static StepInfo<TState> New(Func<TState, TState> action, in string description, int progressCount = 1)
         => new(e => Task.FromResult(action(e.State)), description, progressCount);
     public static StepInfo<TState> New(Action<TState> action, in string description, int progressCount = 1)
