@@ -16,13 +16,13 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
         => this.Value = value;
 
     public static Result<TValue?> Fail
-        => CreateFail(status: -1);
+        => CreateFail(error: -1);
 
     public TValue Value { get; }
 
     [return: NotNull]
-    public static Result<TValue?> CreateFail(in string? message = null, in TValue? value = default, in object? status = null)
-        => new(value, status ?? -1, message);
+    public static Result<TValue?> CreateFail(in string? message = null, in TValue? value = default, in object? error = null)
+        => new(value, error ?? -1, message);
 
     [return: NotNull]
     public static Result<TValue> CreateSuccess(in TValue value, in string? message = null, in object? status = null)

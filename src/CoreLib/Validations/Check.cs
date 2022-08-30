@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 
 using Library.Exceptions.Validations;
+using Library.Results;
 
 namespace Library.Validations;
 
@@ -104,6 +105,9 @@ public sealed class Check
 
     public static void MustBeNotNull([DoesNotReturnIf(false)] bool isNotNull, string argName)
         => MustBe(isNotNull, () => new NullValueValidationException(argName));
+
+    public static Result ShouldBe([DoesNotReturnIf(false)] bool ok)
+        => ok ? Result.Success : Result.Fail;
 }
 
 [DebuggerStepThrough]

@@ -2,6 +2,7 @@
 using System.Runtime.ExceptionServices;
 
 using Library.DesignPatterns.ExceptionHandlingPattern;
+using Library.Results;
 using Library.Validations;
 
 namespace Library.Coding;
@@ -77,28 +78,28 @@ public static class Functional
         }
     }
 
-    public static async Task<Exception?> CatchAsync(Func<Task> action)
+    public static async Task<Result> CatchAsync(Func<Task> action)
     {
         try
         {
             await action();
-            return null;
+            return Result.CreateSuccess();
         }
         catch (Exception ex)
         {
-            return ex;
+            return Result.CreateFail(error: ex);
         }
     }
 
-    public static async Task<(TResult? Result, Exception? Exception)> CatchAsync<TResult>(Func<Task<TResult>> action)
+    public static async Task<Result<TResult?>> CatchAsync<TResult>(Func<Task<TResult?>> action)
     {
         try
         {
-            return (await action(), null);
+            return Result<TResult?>.CreateSuccess(await action());
         }
         catch (Exception ex)
         {
-            return (default, ex);
+            return Result<TResult?>.CreateFail(error: ex);
         }
     }
 

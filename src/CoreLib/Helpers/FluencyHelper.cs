@@ -15,6 +15,7 @@ public static class FluencyHelper
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance o)
         => new(o);
+
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action action)
     {
         action?.Invoke();
@@ -44,9 +45,10 @@ public static class FluencyHelper
 
     public static async Task<Fluency<TResult>> FluentAsync<TFuncResult, TResult>(this object @this, Func<Task<TFuncResult>> funcAsync, Func<TFuncResult, TResult> action)
         => action(await funcAsync());
+
     public static async Task<Fluency<TResult>> FluentAsync<TResult>(this object @this, Func<Task<TResult>> funcAsync, Action action)
     {
-        var result =await funcAsync();
+        var result = await funcAsync();
         action();
         return new(result);
     }
@@ -85,7 +87,6 @@ public static class FluencyHelper
         return instance;
     }
 
-
     public static Fluency<TResult> Then<TInstance, TResult>(this Fluency<TInstance> instance, in Action action, in TResult result)
     {
         action?.Invoke();
@@ -98,9 +99,9 @@ public static class FluencyHelper
         return instance;
     }
 
-    //public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Func<TInstance, TInstance> action) 
+    //public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Func<TInstance, TInstance> action)
     //    => action(instance);
-    
+
     public static Fluency<TResult> Then<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
         => action(instance);
 
