@@ -447,14 +447,10 @@ public static class ObjectHelper
         property?.SetValue(obj, value, null);
     }
 
-    [return: NotNull]
-    public static T To<T>(this object obj)
+    public static T To<T>(this object? obj)
         => (T)obj;
 
     public static T To<T>(this object obj, [DisallowNull] Func<object, T> convert)
-        => convert.ArgumentNotNull().Invoke(obj);
-
-    public static T To<T, U>(this U obj, [DisallowNull] Func<U, T> convert)
         => convert.ArgumentNotNull().Invoke(obj);
 
     /// <summary>
@@ -464,25 +460,7 @@ public static class ObjectHelper
     /// <returns></returns>
     public static int ToInt(this object obj)
         => Convert.ToInt32(obj);
-
-    /// <summary>
-    /// Converts the string representation of a number to an integer.
-    /// </summary>
-    /// <param name="obj">         The object.</param>
-    /// <param name="defaultValue">The default value.</param>
-    /// <returns></returns>
-    [Obsolete("No more is required.")]
-    public static int ToInt(this object? obj, in int defaultValue)
-        => obj is null ? defaultValue : obj.ToString().ToIntNullable() ?? defaultValue;
-
-    /// <summary>
-    /// Converts to int-nullable.
-    /// </summary>
-    /// <param name="str">The string.</param>
-    /// <returns></returns>
-    public static int? ToIntNullable(this string? str)
-        => int.TryParse(str, out var result) ? result : default(int?);
-
+        
     /// <summary>
     /// Converts to long.
     /// </summary>
@@ -491,46 +469,7 @@ public static class ObjectHelper
     //[Obsolete("No more is required.")]
     public static long ToLong(this object obj)
         => Convert.ToInt64(obj);
-
-    /// <summary>
-    /// Converts to long.
-    /// </summary>
-    /// <param name="obj">         The object.</param>
-    /// <param name="defaultValue">The default value.</param>
-    /// <returns></returns>
-    [Obsolete("No more is required.")]
-    public static long ToLong(this object? obj, in long defaultValue)
-        => obj is null ? defaultValue : obj.ToString().ToLongNullable() ?? defaultValue;
-
-    /// <summary>
-    /// Converts to long-nullable.
-    /// </summary>
-    /// <param name="str">The string.</param>
-    /// <returns></returns>
-    [Obsolete("No more is required.")]
-    public static long? ToLongNullable(this string? str)
-        => long.TryParse(str, out var result) ? result : default(long?);
-
-    public static T ToNotNull<T>(this T? t, in T defaultValue = default) where T : struct
-        => t ?? defaultValue;
-
-    /// <summary>
-    /// Converts to nullable.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="obj">The object.</param>
-    /// <returns></returns>
-    public static T? ToNullable<T>(this object? obj)
-        => obj is T t ? t : default;
-
-    /// <summary>
-    /// Converts the string representation of a number to an Int16.
-    /// </summary>
-    /// <param name="obj">The object.</param>
-    /// <returns></returns>
-    public static short ToShort(object obj)
-        => Convert.ToInt16(obj);
-
+    
     public static string? ToString(in object? value, in string defaultValue = "")
         => (value ?? defaultValue)?.ToString();
 }

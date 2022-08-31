@@ -309,8 +309,8 @@ public readonly struct PersianDateTime :
     /// </exception>
     public static int Compare(in string persianDateTime1, in string persianDateTime2)
     {
-        Check.MustBe(TryParse(persianDateTime1, out var p1), () => new InvalidCastException($"cannot cast {nameof(persianDateTime1)} to PersianDateTime"));
-        Check.MustBe(TryParse(persianDateTime2, out var p2), () => new InvalidCastException($"cannot cast {nameof(persianDateTime2)} to PersianDateTime"));
+        Check.If(TryParse(persianDateTime1, out var p1), () => new InvalidCastException($"cannot cast {nameof(persianDateTime1)} to PersianDateTime"));
+        Check.If(TryParse(persianDateTime2, out var p2), () => new InvalidCastException($"cannot cast {nameof(persianDateTime2)} to PersianDateTime"));
 
         return p1.CompareTo(p2);
     }

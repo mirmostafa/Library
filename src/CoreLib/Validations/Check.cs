@@ -40,11 +40,11 @@ public sealed class Check
 
     [return: NotNull]
     public static void IfArgumentNotNull([NotNull][AllowNull] in string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        MustBeArgumentNotNull(!obj.IsNullOrEmpty(), argName!);
+        IfArgumentNotNull(!obj.IsNullOrEmpty(), argName!);
 
     [return: NotNull]
     public static void IfArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        MustBeArgumentNotNull(obj is not null, argName!);
+        IfArgumentNotNull(obj is not null, argName!);
 
     public static void IfHasAny([NotNull][AllowNull] IEnumerable? obj, [DisallowNull] Func<Exception> getException)
     {
@@ -71,7 +71,7 @@ public sealed class Check
         _ = obj.NotValid(x => x is null, getException);
 
     public static void IfNotNull<T>([NotNull][AllowNull] T? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        MustBeNotNull(obj is not null, argName!);
+        IfNotNull(obj is not null, argName!);
 
     public static void IfNotNull<T>([NotNull][AllowNull] T? obj, Func<string> getMessage) =>
         obj.NotValid(x => x is null, () => new ValidationException(getMessage()));
@@ -82,7 +82,7 @@ public sealed class Check
     public static void IfNotValid<T>([AllowNull] T? obj, [DisallowNull] in Func<T, bool> validate, in Func<Exception> getException) =>
                     obj.NotValid(validate, getException);
 
-    public static void MustBe([DoesNotReturnIf(false)] bool ok, in Func<Exception> getExceptionIfNot)
+    public static void If([DoesNotReturnIf(false)] bool ok, in Func<Exception> getExceptionIfNot)
     {
         if (!ok)
         {
@@ -90,23 +90,23 @@ public sealed class Check
         }
     }
 
-    public static void MustBe<TValidationException>([DoesNotReturnIf(false)] bool ok)
+    public static void If<TValidationException>([DoesNotReturnIf(false)] bool ok)
         where TValidationException : Exception, new()
-        => MustBe(ok, () => new TValidationException());
+        => If(ok, () => new TValidationException());
 
-    public static void MustBe([DoesNotReturnIf(false)] bool required)
-        => MustBe<RequiredValidationException>(required);
+    public static void If([DoesNotReturnIf(false)] bool required)
+        => If<RequiredValidationException>(required);
 
-    public static void MustBe([DoesNotReturnIf(false)] bool required, Func<string> getMessage)
-        => MustBe(required, () => new ValidationException(getMessage.NotNull()()));
+    public static void If([DoesNotReturnIf(false)] bool required, Func<string> getMessage)
+        => If(required, () => new ValidationException(getMessage.NotNull()()));
 
-    public static void MustBeArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName)
-        => MustBe(isNotNull, () => new ArgumentNullException(argName));
+    public static void IfArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName)
+        => If(isNotNull, () => new ArgumentNullException(argName));
 
-    public static void MustBeNotNull([DoesNotReturnIf(false)] bool isNotNull, string argName)
-        => MustBe(isNotNull, () => new NullValueValidationException(argName));
+    public static void IfNotNull([DoesNotReturnIf(false)] bool isNotNull, string argName)
+        => If(isNotNull, () => new NullValueValidationException(argName));
 
-    public static Result ShouldBe([DoesNotReturnIf(false)] bool ok)
+    public static Result MustBe([DoesNotReturnIf(false)] bool ok)
         => ok ? Result.Success : Result.Fail;
 }
 
@@ -130,9 +130,6 @@ public static class CheckHelpers
         }
         return obj;
     }
-
-    public static T Is<T>([NotNull] this object obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-                obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!)).To<T>();
 
     [return: NotNull]
     public static string NotNull([AllowNull][NotNull] this string obj,/*[InvokerParameterName]*/ [CallerArgumentExpression("obj")] string? argName = null) =>
@@ -164,23 +161,16 @@ public static class CheckHelpers
         => obj.NotValid(x => x is null, () => new NullValueValidationException(getMessage(), null))!;
 
     [return: NotNull]
-    public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T> task, [CallerArgumentExpression("task")] string? message = null)
-        => (await task).NotNull(() => new NullValueValidationException(message, null));
-
-    [return: NotNull]
     public static async Task<T> NotNullAsync<T>([DisallowNull] this Task<T?> task, [DisallowNull] Func<Exception> getException)
         => (await task).NotNull(getException);
 
-    public static T? NotValid<T>([AllowNull] this T? obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException)
+    internal static T? NotValid<T>([AllowNull] this T? obj, [DisallowNull] in Func<T, bool> validate, [DisallowNull] in Func<Exception> getException)
         => !(validate?.Invoke(obj) ?? false) ? obj : getException is null ? obj : Throw<T>(getException);
-
-    public static void OnFalse([DoesNotReturnIf(true)] this bool ok, Func<Exception> getException)
-        => Check.MustBe(ok, getException);
 
     public static T ThrowIfDisposed<T>(this T @this, [DoesNotReturnIf(true)] bool disposed)
         where T : IDisposable
     {
-        Check.MustBe(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
+        Check.If(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
         return @this;
     }
 }

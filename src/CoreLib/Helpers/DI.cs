@@ -14,7 +14,7 @@ public static class DI
     [DebuggerStepThrough]
     public static T GetService<T>()
     {
-        Check.MustBe(_serviceProvider is not null, () => new LibraryException($"{nameof(DI)} not initiated."));
+        Check.If(_serviceProvider is not null, () => new LibraryException($"{nameof(DI)} not initiated."));
 
         LibLogger.Debug($"Requested service: {typeof(T)}", typeof(DI));
         var result = _serviceProvider.GetService<T>().NotNull(() => new ObjectNotFoundException($"A service named {typeof(T)} not found."));

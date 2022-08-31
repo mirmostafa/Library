@@ -2,7 +2,6 @@
 
 internal class QueryBank
 {
-    //internal const string COLUMNS_WHERE_TABLE_NAME = @"SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='{0}';";
     internal const string COLUMNS_WHERE_TABLE_NAME =
         @"SELECT *, system_type= (SELECT TOP 1 name FROM sys.types WHERE system_type_id = cols.system_type_id) FROM sys.columns AS cols WHERE OBJECT_ID = (SELECT object_id FROM sys.tables WHERE name = '{0}') AND is_hidden = 0";
 

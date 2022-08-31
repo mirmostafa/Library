@@ -108,26 +108,20 @@ public sealed class Sql
     public DataTable FillDataTable(string query)
         => Execute(this.ConnectionString, conn => conn.FillDataTable(query));
 
-    public DataTable LoadFillDataTable(string query, Action<SqlParameterCollection>? fillParams = null)
+    public IEnumerable<DataTable> FillDataTables(params string[] queries)
     {
-        var result = new DataTable();
-        using var command = this.GetCommand(query);
-        fillParams?.Invoke(command.Parameters);
-        command.Connection.Open();
-        result.Load(command.ExecuteReader());
-        command.Connection.Close();
-
-        return result;
-    }
-
-    public async Task<DataTable> LoadDataTableAsync(string query, Action<SqlParameterCollection>? fillParams = null)
-    {
-        var result = new DataTable();
-        using var command = this.GetCommand(query);
-        fillParams?.Invoke(command.Parameters);
-        await command.Connection.OpenAsync();
-        result.Load(await command.ExecuteReaderAsync());
-        return result;
+        using var connection = new SqlConnection(this.ConnectionString);
+        using var cmd = connection.CreateCommand();
+        using var da = new SqlDataAdapter(cmd);
+        
+        connection.Open();
+        foreach (var query in queries)
+        {
+            cmd.CommandText = query;
+            var dataTable = new DataTable();
+            _ = da.Fill(dataTable);
+            yield return dataTable;
+        }
     }
 
     public SqlCommand GetCommand(string query)
@@ -143,6 +137,28 @@ public sealed class Sql
 
             connection.Dispose();
         };
+        return result;
+    }
+
+    public async Task<DataTable> LoadDataTableAsync(string query, Action<SqlParameterCollection>? fillParams = null)
+    {
+        var result = new DataTable();
+        using var command = this.GetCommand(query);
+        fillParams?.Invoke(command.Parameters);
+        await command.Connection.OpenAsync();
+        result.Load(await command.ExecuteReaderAsync());
+        return result;
+    }
+
+    public DataTable LoadFillDataTable(string query, Action<SqlParameterCollection>? fillParams = null)
+    {
+        var result = new DataTable();
+        using var command = this.GetCommand(query);
+        fillParams?.Invoke(command.Parameters);
+        command.Connection.Open();
+        result.Load(command.ExecuteReader());
+        command.Connection.Close();
+
         return result;
     }
 
@@ -194,7 +210,7 @@ public sealed class Sql
         }
     }
 
-    public IEnumerable<dynamic> Select(string query, Func<SqlDataReader, dynamic> rowFiller) 
+    public IEnumerable<dynamic> Select(string query, Func<SqlDataReader, dynamic> rowFiller)
         => Execute<IEnumerable<dynamic>>(this.ConnectionString, conn => conn.Select(query, rowFiller).ToList());
 
     private static TResult Execute<TResult>(string connectionString, Func<SqlConnection, TResult> func)

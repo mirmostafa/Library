@@ -1,18 +1,23 @@
 ﻿using System.Reflection;
 
+using Library.Data.Markers;
+
 namespace Library.Mapping;
+
 public static class MapperExtensions
 {
     public static TEntity ForMember<TEntity>(this TEntity entity, in Action<TEntity> action)
+        where TEntity : IEntity
     {
         action(entity);
         return entity;
     }
-    public static TEntity? ForMemberIfNotNull<TEntity>(this TEntity? entity, Action<TEntity> action)
-        => IfTrue(entity is not null && action is not null, () => entity.Fluent(action));
 
     public static TEntity ForMember<TEntity>(in TEntity entity, in Action<TEntity> action)
         => entity.Fluent(action);
+
+    public static TEntity? ForMemberIfNotNull<TEntity>(TEntity? entity, Action<TEntity> action)
+            => IfTrue(entity is not null && action is not null, () => entity.Fluent(action));
 
     internal static void Copy<TSource, TDestination>(TSource source, TDestination destination, PropertyInfo dstProp)
         where TDestination : class
@@ -30,9 +35,8 @@ public static class MapperExtensions
                 {
                     dstProp.SetValue(destination, srcProp.GetValue(source));
                 }
-                catch 
+                catch
                 {
-
                 }
             }
         }

@@ -101,5 +101,5 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
     }
 
     private TaskList This() =>
-                                                            this.ThrowIfDisposed(this._disposedValue);
+        this.ThrowIfDisposed(this._disposedValue);
 }

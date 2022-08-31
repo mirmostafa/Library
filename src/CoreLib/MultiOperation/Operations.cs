@@ -30,7 +30,7 @@ public static class Operations
     public static TState Run<TState>(this OperationList<TState> operations)
     {
         Check.IfArgumentNotNull(operations);
-        Check.MustBe(operations.IsBuilt, () => $"Please call {nameof(Build)}() method in {operations}");//!, $"{operations} is not built yet.");
+        Check.If(operations.IsBuilt, () => $"Please call {nameof(Build)}() method in {operations}");//!, $"{operations} is not built yet.");
 
         operations.State = operations.DefaultState;
         var index = 0;

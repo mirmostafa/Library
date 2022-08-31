@@ -83,9 +83,9 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>
         Check.IfArgumentNotNull(ip);
 
         string[] parts;
-        Check.MustBe((parts = ip.Split('.')).Length != 4, () => new InvalidCastException("Paramater cannot be cast to IpAddress"));
-        Check.MustBe(parts.Any(part => !part.IsInteger()), () => new InvalidCastException("Paramater cannot be cast to IpAddress"));
-        Check.MustBe(parts.Any(part => !part.ToInt().IsBetween(0, 255)), () => new InvalidCastException("Paramater cannot be cast to IpAddress"));
+        Check.If((parts = ip.Split('.')).Length != 4, () => new InvalidCastException("Paramater cannot be cast to IpAddress"));
+        Check.If(parts.Any(part => !part.IsInteger()), () => new InvalidCastException("Paramater cannot be cast to IpAddress"));
+        Check.If(parts.Any(part => !part.ToInt().IsBetween(0, 255)), () => new InvalidCastException("Paramater cannot be cast to IpAddress"));
     }
 
     public static bool IsValid(string ip)

@@ -285,13 +285,13 @@ public static class ControlHelper
 
     [Obsolete("Use listView.GetSelection, instead.")]
     public static T? GetSelection<T>(this SelectionChangedEventArgs e)
-        => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().ToNullable<T>();
+        => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().To<T?>();
 
     public static T? GetSelection<T>([DisallowNull] this ListView listView, SelectionChangedEventArgs e)
-        => e?.AddedItems.Any() is true ? e.AddedItems[0].ToNullable<T>() : GetSelections<T>(listView).FirstOrDefault();
+        => e?.AddedItems.Any() is true ? e.AddedItems[0].To<T?>() : GetSelections<T>(listView).FirstOrDefault();
 
     public static IEnumerable<T?> GetSelections<T>([DisallowNull] this ListView listView)
-        => listView.ArgumentNotNull().SelectedItems.Cast<object?>().Select(x => x.ToNullable<T>());
+        => listView.ArgumentNotNull().SelectedItems.Cast<object?>().Select(x => x.To<T?>());
 
     public static string GetText([DisallowNull] this RichTextBox rtb)
     {
