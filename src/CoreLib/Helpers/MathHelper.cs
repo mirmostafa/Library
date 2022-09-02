@@ -12,6 +12,7 @@ public static class MathHelper
         {
             QuadraticEquation result = new QuadraticEquation();
 
+
             return result;
         }
     }
