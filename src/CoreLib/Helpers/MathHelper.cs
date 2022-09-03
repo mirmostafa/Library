@@ -10,8 +10,7 @@ public static class MathHelper
     {
         public static QuadraticEquation Quadratic(int a, int b, int c)
         {
-            QuadraticEquation result = new QuadraticEquation();
-
+            var result = new QuadraticEquation(double.NegativeInfinity, double.NaN, double.PositiveInfinity);
 
             return result;
         }
@@ -19,6 +18,6 @@ public static class MathHelper
 
     public static class Outputs
     {
-        public record struct QuadraticEquation(double x1, double x2, double delta);
+        public record QuadraticEquation(double x1, double x2, double delta);
     }
 }

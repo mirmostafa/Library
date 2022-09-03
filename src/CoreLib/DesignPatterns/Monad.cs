@@ -28,4 +28,17 @@ public class Monad<TValue>
 
         return this;
     }
+
+    public async Task<Monad<TValue?>> NotNullAsync(Func<TValue, Task<TValue>> func) 
+        => this._value is not null ? (new(await func(this._value))) : (new(default));
+
+    public async Task<Monad<TValue?>> NotNullAsync(Func<TValue, Task> func)
+    {
+        if (this._value is not null)
+        {
+            await func(this._value);
+        }
+
+        return this;
+    }
 }
