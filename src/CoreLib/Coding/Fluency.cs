@@ -39,11 +39,11 @@ public record struct Fluency<T>(T Value) : IEquatable<T>, IConvertible<Fluency<T
         => checkNotNull && this.Value is null ? throw new NullValueValidationException() : this.Value;
 }
 
-public interface ivalidationResult
-{
-    static invalid Invalid { get; } = new();
-    static valid Valid { get; } = new();
-}
+//public interface ivalidationResult
+//{
+//    static invalid Invalid { get; } = new();
+//    static valid Valid { get; } = new();
+//}
 
-public record struct valid : ivalidationResult { public static readonly valid Result = ivalidationResult.Valid; }
-public record struct invalid : ivalidationResult { public static readonly invalid Result = ivalidationResult.Invalid; }
+//public record struct valid : ivalidationResult { public static readonly valid Result = ivalidationResult.Valid; }
+//public record struct invalid : ivalidationResult { public static readonly invalid Result = ivalidationResult.Invalid; }
