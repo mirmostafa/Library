@@ -131,6 +131,20 @@ public static class CodeHelper
     }
 
     [DebuggerStepThrough]
+    public static Func<Result<TResult2>> Compose<TResult1, TResult2>([DisallowNull] this Func<Result<TResult1>> create, Func<TResult1, Result<TResult2>> func, Func<Result<TResult1>, Result<TResult2>>? onFail = null)
+    {
+        Check.IfArgumentNotNull(create);
+        Check.IfArgumentNotNull(func);
+        return [DebuggerStepThrough] () =>
+        {
+            var result = create();
+            return result.IsSucceed
+                            ? func(result.Value)
+                            : onFail?.Invoke(result) ?? Result<TResult2>.From(result, default!);
+        };
+    }
+
+    [DebuggerStepThrough]
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TArg, TResult2> func, TArg arg)
     {
         Check.IfArgumentNotNull(create);
@@ -197,6 +211,7 @@ public static class CodeHelper
             return result;
         };
     }
+
     [DebuggerStepThrough]
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TArg, TResult2> func, Func<TResult1, TArg> getArg)
     {
@@ -228,8 +243,7 @@ public static class CodeHelper
     /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
     /// <param name="disposable">The disposable.</param>
     /// <param name="action">    The action.</param>
-    public static void Dispose<TDisposable>(in TDisposable disposable, in Action<TDisposable>? action = null)
-        where TDisposable : IDisposable
+    public static void Dispose<TDisposable>(in TDisposable disposable, in Action<TDisposable>? action = null) where TDisposable : IDisposable
         => Dispose(disposable, action);
 
     /// <summary>
@@ -478,10 +492,10 @@ public static class CodeHelper
         }
     }
 
-    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] in Action<TInstance> action)
+    public static TInstance Then<TInstance>(this TInstance instance, [DisallowNull] in Action<TInstance> action)
         => instance.Fluent(action);
 
-    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] in Action action)
+    public static TInstance Then<TInstance>(this TInstance instance, [DisallowNull] in Action action)
     {
         action?.Invoke();
         return instance;
