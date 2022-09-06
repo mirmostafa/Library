@@ -1,4 +1,6 @@
 ﻿using Library.Exceptions;
+using Library.Helpers.Models;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Library.Helpers;
@@ -37,14 +39,4 @@ public static class UnitTestHelper
         var ok = !items1.Except(items2).Any();
         Assert.IsTrue(ok);
     }
-}
-
-public class EqualityAssertion
-{
-    private readonly object actual;
-
-    public EqualityAssertion(object actual) => this.actual = actual;
-
-    public void To(object expected)
-        => Assert.AreEqual(expected, this.actual);
 }

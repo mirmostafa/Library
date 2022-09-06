@@ -1,4 +1,4 @@
-﻿namespace Library.Helpers.ConsoleHelper;
+﻿namespace Library.Helpers.Models;
 
 /// <summary>
 /// An ASCII progress bar
@@ -127,8 +127,4 @@ public class ConsoleProgressBar : IDisposable, IProgress<double>
 
         this._currentText = text;
     }
-
-    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged
-    // resources ~ProgressBar() { // Do not change this code. Put cleanup code in 'Dispose(bool
-    // disposing)' method Dispose(disposing: false); }
 }

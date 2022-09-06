@@ -73,8 +73,8 @@ public static class StringHelper
 
     [Pure]
     [return: NotNull]
-    public static IEnumerable<string> Compact(this IEnumerable<string?>? strings) =>
-        (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
+    public static IEnumerable<string> Compact(this IEnumerable<string?>? strings)
+        => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     [Pure]
     public static int CompareTo(this string str1, in string str, bool ignoreCase = false) =>
@@ -86,8 +86,8 @@ public static class StringHelper
         => string.Concat(values.ToArray());
 
     [Pure]
-    public static bool Contains(string str, in string value, bool ignoreCase = true) =>
-        ignoreCase
+    public static bool Contains(string str, in string value, bool ignoreCase = true)
+        => ignoreCase
             ? str.ArgumentNotNull(nameof(str)).ToLowerInvariant().Contains(value.ArgumentNotNull(nameof(value)).ToLowerInvariant())
             : str.ArgumentNotNull(nameof(str)).Contains(value);
 

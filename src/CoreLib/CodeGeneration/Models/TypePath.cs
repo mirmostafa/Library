@@ -37,8 +37,18 @@ public readonly struct TypePath : IEquatable<TypePath>
     public static implicit operator TypePath(in string? typeInfo)
         => new(typeInfo);
 
+    public static string Merge(string part1, params string[] parts)
+    {
+        var result = new StringBuilder(part1);
+        foreach (var part in parts)
+        {
+            _ = result.Append(part.EndsWith(".") ? part : string.Concat(part, "."));
+        }
+        return result.ToString();
+    }
+
     public static TypePath New(in string? name, in string? nameSpace = null)
-        => new(name, nameSpace);
+            => new(name, nameSpace);
 
     public static TypePath New((string? Name, string? NameSpace) typePath)
         => new(typePath.Name, typePath.NameSpace);
@@ -66,15 +76,9 @@ public readonly struct TypePath : IEquatable<TypePath>
         return dotLastIndex == -1 ? ((string? Name, string? NameSpace))(typePath, null) : ((string? Name, string? NameSpace))(typePath[(dotLastIndex + 1)..], typePath[..dotLastIndex]);
     }
 
-    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null)
-    {
-        if (string.IsNullOrEmpty(nameSpace))
-        {
-            return SplitTypePath(name);
-        }
-
-        return nameSpace!.EndsWith(".") ? SplitTypePath($"{nameSpace}{name}") : SplitTypePath($"{nameSpace}.{name}");
-    }
+    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null) => string.IsNullOrEmpty(nameSpace)
+            ? SplitTypePath(name)
+            : nameSpace!.EndsWith(".") ? SplitTypePath($"{nameSpace}{name}") : SplitTypePath($"{nameSpace}.{name}");
 
     public TypePath AddGenericType(TypePath typePath)
     {

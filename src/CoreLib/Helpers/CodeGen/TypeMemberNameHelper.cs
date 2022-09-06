@@ -1,4 +1,5 @@
 ﻿using Library.Exceptions.Validations;
+using Library.Helpers.Models;
 using Library.Validations;
 
 namespace Library.Helpers.CodeGen;
@@ -142,5 +143,3 @@ public static class TypeMemberNameHelper
         }
     }
 }
-
-public record MemberNameInfo(string NameSpace, string Name, bool IsNullable);

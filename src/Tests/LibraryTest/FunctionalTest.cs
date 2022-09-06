@@ -34,7 +34,7 @@ public class FunctionalTest
     {
         this.Fluent(Methods.Empty);
         var two = 2.Fluent<int>(() => { });
-        Assert.AreEqual(2, two);
+        Assert.AreEqual(2, two.Value);
     }
 
     [TestMethod]
@@ -73,5 +73,4 @@ public class FunctionalTest
 
     [TestMethod]
     public void WhileFuncTest() => _ = While(() => false, _returnsTwo);
-
 }

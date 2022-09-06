@@ -70,8 +70,8 @@ public static class ResultHelper
         return Result<TValue1>.From(result, value1);
     }
 
-    public static ivalidationResult Validate<TValue>(this Result<TValue> result)
-        => IsValid(result) ? valid.Result : invalid.Result;
+    //public static ivalidationResult Validate<TValue>(this Result<TValue> result)
+    //    => IsValid(result) ? valid.Result : invalid.Result;
 
     private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId)
         where TResult : ResultBase
@@ -94,7 +94,7 @@ public static class ResultHelper
         }
         var exception = result.Status switch
         {
-            Exception ex => ex.With(x => x.Source = owner?.ToString()),
+            Exception ex => ex.Then(x => x.Source = owner?.ToString()),
             _ => new ValidationException(result.ToString(), instruction ?? result.FullMessage?.Instruction, owner: owner)
         };
         Throw(exception);
