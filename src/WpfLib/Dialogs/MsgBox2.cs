@@ -243,7 +243,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
             Window? window = null,
             params TaskDialogControl[] controls)
     {
-        _ = ex.ArgumentNotNull(nameof(ex));
+        _ = ex.ArgumentNotNull();
         var message = ex.Message;
         var innerMessage = ex.GetBaseException().Message;
         return Error(instructionText,

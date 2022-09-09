@@ -1,17 +1,16 @@
-﻿using Library.Helpers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-namespace LibraryTest;
+﻿namespace UnitTest;
 
 //[MemoryDiagnoser]
 [TestClass]
 public class StringHelperTest
 {
     private const string LONG_TEXT = "There 'a text', inside 'another text'. I want 'to find\" it.";
-    private const string SHORT_TEXT = "There 'a text', inside 'another text'.";
+    private const string SSHORT_TEXT = "There 'a text', inside 'another text'.";
     private const string VERY_SHORT_TEXT = "text";
 
     //[Benchmark]
-    public void _WasteTimeToWarmUpBenchmark() => Thread.Sleep(3000);
+    public void _WasteTimeToWarmUpBenchmark() 
+        => Thread.Sleep(3000);
 
     [TestMethod]
     public void AddStartEndTest()
@@ -56,6 +55,18 @@ public class StringHelperTest
     }
 
     [TestMethod]
+    public void HasPersianTest()
+    {
+        var hasPersian = "Hello. My اسم is Mohammad.";
+        var has = StringHelper.HasPersian(hasPersian);
+        Assert.IsTrue(has);
+
+        var hasNotPersian = "Hello. My name is Mohammad";
+        var hasNot = StringHelper.HasPersian(hasNotPersian);
+        Assert.IsTrue(hasNot);
+    }
+
+    [TestMethod]
     public void GetPhraseTest()
     {
         var result1 = LONG_TEXT.GetPhrase(0, '\'', '\'');
@@ -95,10 +106,10 @@ public class StringHelperTest
     public void IsNumberTest()
     {
         var numStr = "123456789";
-        var numStrIsNumbber = numStr.IsNumber();
+        var numStrIsNumbber = StringHelper.IsNumber(numStr);
 
         var invNumStr = "12345678..9";
-        var invNumStrIsNumber = invNumStr.IsNumber();
+        var invNumStrIsNumber = StringHelper.IsNumber(invNumStr);
 
         Assert.IsTrue(numStrIsNumbber);
         Assert.IsFalse(invNumStrIsNumber);

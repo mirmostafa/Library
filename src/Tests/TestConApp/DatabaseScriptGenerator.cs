@@ -85,7 +85,7 @@ public class DatabaseScriptGenerator
             var dbObjects = this._database.Tables.AsEnumerable();
             if (objects is not null)
             {
-                dbObjects = dbObjects.Where(x => x.Name.IsInRange(true, objects.ToArray()));
+                dbObjects = dbObjects.Where(x => StringHelper.IsInRange(x.Name, true, objects.ToArray()));
             }
             var dbItems = dbObjects.ToReadOnlyList();
             return dbItems;

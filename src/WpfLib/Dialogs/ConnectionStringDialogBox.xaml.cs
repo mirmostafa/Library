@@ -1,29 +1,18 @@
 ﻿using System.Data.SqlClient;
+
 using Library.Data.SqlServer.Dynamics;
 using Library.Exceptions.Validations;
-using Library.Wpf.Dialogs;
 
-namespace Library.Wpf.Internals.Dialogs;
+namespace Library.Wpf.Dialogs;
+
 /// <summary>
-///     Interaction logic for ConnectionStringDialog.xaml
+/// Interaction logic for ConnectionStringDialog.xaml
 /// </summary>
 public partial class ConnectionStringDialog
 {
-    private bool IsWorking
-    {
-        get => (bool)this.GetValue(IsWorkingProperty);
-        set => this.SetValue(IsWorkingProperty, value);
-    }
     public static readonly DependencyProperty IsWorkingProperty = ControlHelper.GetDependencyProperty<bool, ConnectionStringDialog>(nameof(IsWorking));
 
     private ConnectionStringDialog() => this.InitializeComponent();
-
-    public static (bool? IsOk, string? ConnectionString) ShowDlg(string? connectionString = null, Window? owner = null)
-    {
-        var dlg = new ConnectionStringDialog { ConnectionString = connectionString, Owner = owner };
-        var result = dlg.ShowDialog();
-        return (result, result is true ? dlg.ConnectionString : connectionString);
-    }
 
     public string? ConnectionString
     {
@@ -45,6 +34,55 @@ public partial class ConnectionStringDialog
     }
 
     public bool ValidateResult { get; init; }
+
+    private bool IsWorking
+    {
+        get => (bool)this.GetValue(IsWorkingProperty);
+        set => this.SetValue(IsWorkingProperty, value);
+    }
+
+    public static (bool? IsOk, string? ConnectionString) ShowDlg(string? connectionString = null, Window? owner = null)
+    {
+        var dlg = new ConnectionStringDialog { ConnectionString = connectionString, Owner = owner };
+        var result = dlg.ShowDialog();
+        return (result, result is true ? dlg.ConnectionString : connectionString);
+    }
+
+    private void AuthUserPassRadioButton_OnChecked(object sender, RoutedEventArgs e) => this.UpdateUi();
+
+    private void AuthWindowsRadioButton_OnChecked(object sender, RoutedEventArgs e) => this.UpdateUi();
+
+    private async void DbsComboBoxDropDown_OnOpened(object sender, EventArgs e)
+    {
+        await this.DoValidationAsync(false);
+        this.DbsComboBox.Items.Clear();
+        var dbs = Database.GetDatabases(this.ParseConnectionString(false).ConnectionString).Select(db => db.Name).OrderBy(_ => _).ToArray();
+        foreach (var db in dbs)
+        {
+            _ = this.DbsComboBox.Items.Add(db);
+        }
+    }
+
+    private async Task DoValidationAsync(bool full)
+    {
+        _ = this.ConnectionString.NotNull(() => new ValidationException("Please fill the form"));
+        //if (this.ValidateResult)
+        {
+            var ex = await AdoHelper.CheckConnectionStringAsync(this.ConnectionString);
+            if (ex is not null)
+            {
+                throw ex;
+            }
+        }
+    }
+
+    private async void OkButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        await this.DoValidationAsync(true);
+
+        this.DialogResult = true;
+        this.Close();
+    }
 
     private SqlConnectionStringBuilder ParseConnectionString(bool full)
     {
@@ -70,7 +108,7 @@ public partial class ConnectionStringDialog
             scsb.InitialCatalog = this.DbsComboBox.Text;
         }
 
-        if (this.TimeoutTextBox.Text.IsNumber())
+        if (StringHelper.IsNumber(this.TimeoutTextBox.Text))
         {
             scsb.ConnectTimeout = this.TimeoutTextBox.Text.ToInt();
         }
@@ -78,26 +116,8 @@ public partial class ConnectionStringDialog
         return scsb;
     }
 
-    private async Task DoValidationAsync(bool full)
-    {
-        _ = this.ConnectionString.NotNull(() => new ValidationException("Please fill the form"));
-        //if (this.ValidateResult)
-        {
-            var ex = await AdoHelper.CheckConnectionStringAsync(this.ConnectionString);
-            if (ex is not null)
-            {
-                throw ex;
-            }
-        }
-    }
-
-    private void ServersComboBox_OnDropDownOpened(object sender, EventArgs e)
-    {
-        if (this.ServersComboBox.Items.Count == 0)
-        {
-            this.RefreshServers();
-        }
-    }
+    private void RefreshButton_OnClick(object sender, RoutedEventArgs e)
+        => this.RefreshServers();
 
     private async void RefreshServers()
     {
@@ -112,32 +132,11 @@ public partial class ConnectionStringDialog
         this.RefreshButton.IsEnabled = true;
     }
 
-    private void RefreshButton_OnClick(object sender, RoutedEventArgs e) => this.RefreshServers();
-    private void AuthWindowsRadioButton_OnChecked(object sender, RoutedEventArgs e) => this.UpdateUi();
-    private void AuthUserPassRadioButton_OnChecked(object sender, RoutedEventArgs e) => this.UpdateUi();
-    private void Window_OnLoaded(object sender, RoutedEventArgs e) => this.UpdateUi();
-
-    private void UpdateUi()
+    private void ServersComboBox_OnDropDownOpened(object sender, EventArgs e)
     {
-        if (this.SelectDbGroupBox == null)
+        if (this.ServersComboBox.Items.Count == 0)
         {
-            return;
-        }
-
-        this.SelectDbGroupBox.IsEnabled = (this.AuthWindowsRadioButton.IsChecked ?? false) || !this.UserNameTextBox.Text.IsNullOrEmpty();
-        this.UserInfoPanel.IsEnabled = this.AuthUserPassRadioButton.IsChecked ?? false;
-    }
-
-    private void UserNameTextBoxText_OnChanged(object sender, TextChangedEventArgs e) => this.UpdateUi();
-
-    private async void DbsComboBoxDropDown_OnOpened(object sender, EventArgs e)
-    {
-        await this.DoValidationAsync(false);
-        this.DbsComboBox.Items.Clear();
-        var dbs = Database.GetDatabases(this.ParseConnectionString(false).ConnectionString).Select(db => db.Name).OrderBy(_ => _).ToArray();
-        foreach (var db in dbs)
-        {
-            _ = this.DbsComboBox.Items.Add(db);
+            this.RefreshServers();
         }
     }
 
@@ -159,11 +158,18 @@ public partial class ConnectionStringDialog
         }
     }
 
-    private async void OkButton_OnClick(object sender, RoutedEventArgs e)
+    private void UpdateUi()
     {
-        await this.DoValidationAsync(true);
+        if (this.SelectDbGroupBox == null)
+        {
+            return;
+        }
 
-        this.DialogResult = true;
-        this.Close();
+        this.SelectDbGroupBox.IsEnabled = (this.AuthWindowsRadioButton.IsChecked ?? false) || !this.UserNameTextBox.Text.IsNullOrEmpty();
+        this.UserInfoPanel.IsEnabled = this.AuthUserPassRadioButton.IsChecked ?? false;
     }
+
+    private void UserNameTextBoxText_OnChanged(object sender, TextChangedEventArgs e) => this.UpdateUi();
+
+    private void Window_OnLoaded(object sender, RoutedEventArgs e) => this.UpdateUi();
 }
