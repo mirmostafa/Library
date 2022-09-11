@@ -5,7 +5,7 @@ using Library.Wpf.Markers;
 
 namespace Library.Wpf.Controls.ViewModels;
 
-[ViewModel]
+[Markers.ViewModel]
 public interface ICrudGridModelBinder : IViewModel
 {
     IEnumerable<DataColumnBindingInfo> GetHeaders();

@@ -15,18 +15,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Dialogs\ConnectionStringDialogBox.xaml.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<None Remove=".gitignore" />
 		<None Remove="LICENSE" />
 		<None Remove="README.md" />
 		<None Remove="Themes\DefaultTheme.xaml.old" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Page Remove="Dialogs\ConnectionStringDialogBox.xaml" />
 	</ItemGroup>
 
 	<ItemGroup>

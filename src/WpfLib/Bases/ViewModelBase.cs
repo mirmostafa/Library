@@ -3,7 +3,7 @@ using Library.Wpf.Markers;
 
 namespace Library.Wpf.Bases;
 
-[ViewModel]
+[Markers.ViewModel]
 public abstract class ViewModelBase : NotifyPropertyChanged, IViewModel
 {
 
