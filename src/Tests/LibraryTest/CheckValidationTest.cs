@@ -1,26 +1,11 @@
 ﻿using Library.Exceptions.Validations;
 using Library.Validations;
 
-namespace LibraryTest;
+namespace UnitTest;
 
 [TestClass]
 public class CheckValidationTest
 {
-    [TestMethod]
-    public void MinMaxTest()
-    {
-        var (min, arg) = (0, 5);
-        Check.IfArgumentBiggerThan(arg, min);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void MinMaxTest1()
-    {
-        var (arg, min) = (0, 5);
-        Check.IfArgumentBiggerThan(arg, min);
-    }
-
     [TestMethod]
     public void ArgumentNullTest()
     {
@@ -45,6 +30,15 @@ public class CheckValidationTest
     }
 
     [TestMethod]
+    public void FluentCheckTest1()
+    {
+        object? o = new();
+        string? s = null;
+        _ = o.MustBe().ArgumentNotNull().ThrowOnFail();
+        _ = s.MustBe().NotNull().ThrowOnFail();
+    }
+
+    [TestMethod]
     public void IfIs1()
     {
         var lname = "Mirmostafa";
@@ -60,18 +54,18 @@ public class CheckValidationTest
     }
 
     [TestMethod]
-    public void NotValidTest1()
+    public void MinMaxTest()
     {
-        var lname = "Mirmostafa";
-        Check.IfNotValid(lname, x => x is null, () => new NullValueValidationException());
+        var (min, arg) = (0, 5);
+        Check.IfArgumentBiggerThan(arg, min);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NullValueValidationException))]
-    public void NotValidTest2()
+    [ExpectedException(typeof(ArgumentException))]
+    public void MinMaxTest1()
     {
-        string? lname = null;
-        Check.IfNotValid(lname, x => x is null, () => new NullValueValidationException());
+        var (arg, min) = (0, 5);
+        Check.IfArgumentBiggerThan(arg, min);
     }
 
     [TestMethod]
@@ -87,5 +81,20 @@ public class CheckValidationTest
     {
         string? lname = null;
         Check.IfNotNull(lname, () => new NullValueValidationException());
+    }
+
+    [TestMethod]
+    public void NotValidTest1()
+    {
+        var lname = "Mirmostafa";
+        Check.IfNotValid(lname, x => x is null, () => new NullValueValidationException());
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(NullValueValidationException))]
+    public void NotValidTest2()
+    {
+        string? lname = null;
+        Check.IfNotValid(lname, x => x is null, () => new NullValueValidationException());
     }
 }

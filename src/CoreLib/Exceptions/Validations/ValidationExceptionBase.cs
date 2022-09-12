@@ -16,7 +16,7 @@ public abstract class ValidationExceptionBase : LibraryExceptionBase, IValidatio
     {
     }
 
-    protected ValidationExceptionBase(string message, Exception innerException)
+    protected ValidationExceptionBase(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

@@ -20,7 +20,7 @@ public abstract class ExceptionBase : Exception, IException, IToNotificationMess
     {
     }
 
-    protected ExceptionBase(string message, Exception innerException)
+    protected ExceptionBase(string? message, Exception? innerException)
             : base(message, innerException)
     {
     }

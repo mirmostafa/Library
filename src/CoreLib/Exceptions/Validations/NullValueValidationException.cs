@@ -15,7 +15,7 @@ public sealed class NullValueValidationException : ValidationExceptionBase
     {
     }
 
-    public NullValueValidationException(string message, Exception innerException)
+    public NullValueValidationException(string? message, Exception? innerException)
         : base(message, innerException)
     {
     }

@@ -20,7 +20,7 @@ public abstract class LibraryExceptionBase : ExceptionBase, ILibraryException
     {
     }
 
-    protected LibraryExceptionBase(string message, Exception innerException) : base(message, innerException)
+    protected LibraryExceptionBase(string? message, Exception? innerException) : base(message, innerException)
     {
     }
 

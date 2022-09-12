@@ -10,7 +10,7 @@ namespace Library.Validations;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
-public sealed partial class Check
+public sealed class Check
 {
     private static Check? _that;
 
@@ -73,11 +73,11 @@ public sealed partial class Check
         }
     }
 
-    public static void IfHasAny<TEnumerable>([NotNull][AllowNull] IEnumerable? obj, [DisallowNull] Func<Exception> getException) =>
-        _ = obj.HasAny(getException);
+    public static void IfHasAny<TEnumerable>([NotNull][AllowNull] IEnumerable? obj, [DisallowNull] Func<Exception> getException)
+        => _ = obj.HasAny(getException);
 
-    public static void IfIs<T>([NotNull][AllowNull] object? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-                        _ = obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!));
+    public static void IfIs<T>([NotNull][AllowNull] object? obj, [CallerArgumentExpression("obj")] string? argName = null)
+        => _ = obj.NotValid(x => x is not T, () => new TypeMismatchValidationException(argName!));
 
     /// <summary>
     /// Makes sure the specified argument is not null.

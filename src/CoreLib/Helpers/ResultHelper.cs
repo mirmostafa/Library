@@ -6,6 +6,7 @@ using Library.Results;
 namespace Library.Helpers;
 
 [DebuggerStepThrough]
+[StackTraceHidden]
 public static class ResultHelper
 {
     public static async Task<TResult> BreakOnFail<TResult>(this Task<TResult> task)
@@ -92,11 +93,14 @@ public static class ResultHelper
         {
             return result;
         }
-        var exception = result.Status switch
-        {
-            Exception ex => ex.Then(x => x.Source = owner?.ToString()),
-            _ => new ValidationException(result.ToString(), instruction ?? result.FullMessage?.Instruction, owner: owner)
-        };
+
+        var exception =
+            result.Errors.Select(x => x.Data).Cast<Exception>().FirstOrDefault()
+            ?? result.Status switch
+            {
+                Exception ex => ex.With(x => x.Source = owner?.ToString()),
+                _ => new ValidationException(result.ToString(), instruction ?? result.FullMessage?.Instruction, owner: owner)
+            };
         Throw(exception);
         return result;
     }

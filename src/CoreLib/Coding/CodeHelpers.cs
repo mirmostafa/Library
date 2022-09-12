@@ -492,10 +492,10 @@ public static class CodeHelper
         }
     }
 
-    public static TInstance Then<TInstance>(this TInstance instance, [DisallowNull] in Action<TInstance> action)
+    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] in Action<TInstance> action)
         => instance.Fluent(action);
 
-    public static TInstance Then<TInstance>(this TInstance instance, [DisallowNull] in Action action)
+    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] in Action action)
     {
         action?.Invoke();
         return instance;

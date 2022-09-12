@@ -10,15 +10,12 @@ namespace Library.Validations;
 public static class CheckHelpers
 {
     [return: NotNull]
-    public static string ArgumentNotNull([NotNull][AllowNull] this string? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        obj.NotValid(x => x.IsNullOrEmpty(), () => new ArgumentNullException(argName));
+    public static string ArgumentNotNull([NotNull][AllowNull] this string? obj, [CallerArgumentExpression("obj")] string? argName = null)
+        => obj.NotValid(x => x.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
     [return: NotNull]
-    public static T ArgumentNotNull<T>([NotNull][AllowNull] this T? obj, [CallerArgumentExpression("obj")] string? argName = null) =>
-        obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
-
-    public static MustBe<T> MuseBe<T>([AllowNull] this T? obj)
-        => new(obj);
+    public static T ArgumentNotNull<T>([NotNull][AllowNull] this T? obj, [CallerArgumentExpression("obj")] string? argName = null)
+        => obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
 
     public static TEnumerable HasAny<TEnumerable>([NotNull] this TEnumerable obj, [DisallowNull] Func<Exception> getException)
             where TEnumerable : IEnumerable
@@ -29,6 +26,9 @@ public static class CheckHelpers
         }
         return obj;
     }
+
+    public static MustBe<T?> MustBe<T>([AllowNull] this T? obj, [CallerArgumentExpression("obj")] string? argName = null) 
+        => new(obj, argName);
 
     [return: NotNull]
     public static string NotNull([AllowNull][NotNull] this string? obj,/*[InvokerParameterName]*/ [CallerArgumentExpression("obj")] string? argName = null) =>
@@ -66,7 +66,7 @@ public static class CheckHelpers
     public static T ThrowIfDisposed<T>(this T @this, [DoesNotReturnIf(true)] bool disposed)
         where T : IDisposable
     {
-        Check.If(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
+        Validations.Check.If(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
         return @this;
     }
 

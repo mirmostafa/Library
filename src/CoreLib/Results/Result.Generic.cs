@@ -62,7 +62,7 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     public Task<Result<TValue>> ToTask()
         => Task.FromResult(this);
 
-    public Result<TValue1> With<TValue1>(in TValue1 value1)
+    public Result<TValue1> Then<TValue1>(in TValue1 value1)
         => Result<TValue1>.From(this, value1);
 
     static Result<TValue> IConvertible<Result<TValue>, Result>.From(Result other)

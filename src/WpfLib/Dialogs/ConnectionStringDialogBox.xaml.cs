@@ -12,5 +12,5 @@ public partial class ConnectionStringDialogBox : Window
         => new();
 
     public ConnectionStringDialogBox SetTitle(string? title)
-        => this.Then(() => this.Title = title ?? "Add Connection");
+        => this.With(() => this.Title = title ?? "Add Connection");
 }

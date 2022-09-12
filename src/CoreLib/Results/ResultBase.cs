@@ -21,7 +21,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
     protected ResultBase(object? status, [DisallowNull] IException exception)
         => (this.Status, this.FullMessage) = (status, exception.NotNull().ToFullMessage());
 
-    public List<(object? Id, object Message)> Errors { get; } = new();
+    public List<(object? Id, object Data)> Errors { get; } = new();
 
     public Dictionary<string, object> Extra { get; } = new();
 
@@ -63,18 +63,18 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     public override string ToString()
     {
-        var result = new StringBuilder($"IsSucceed: {this.IsSucceed}").AppendLine();
+        var result = (this.IsSucceed ? new StringBuilder($"IsSucceed: {this.IsSucceed}") : new StringBuilder()).AppendLine();
         if (!this.Message.IsNullOrEmpty())
         {
             _ = result.AppendLine(this.Message);
         }
         if (this.Message.IsNullOrEmpty() && this.Errors.Count == 1)
         {
-            _ = result.AppendLine(this.Errors[0].Message?.ToString() ?? "An error occurred.");
+            _ = result.AppendLine(this.Errors[0].Data?.ToString() ?? "An error occurred.");
         }
         else
         {
-            foreach (var errorMessage in this.Errors.Select(x => x.Message?.ToString()).Compact())
+            foreach (var errorMessage in this.Errors.Select(x => x.Data?.ToString()).Compact())
             {
                 _ = result.AppendLine($"- {errorMessage}");
             }
