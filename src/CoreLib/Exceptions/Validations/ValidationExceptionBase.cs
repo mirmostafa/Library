@@ -1,5 +1,7 @@
 ﻿using System.Net;
 
+using Library.Helpers;
+
 namespace Library.Exceptions.Validations;
 
 [Serializable]

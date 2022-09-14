@@ -1,5 +1,6 @@
-﻿using Library.Data.Markers;
-using Library.Mapping;
+﻿using Library.Mapping;
+
+using UnitTest.Models;
 
 namespace UnitTest;
 
@@ -40,20 +41,3 @@ public class MapperTest
         Assert.AreEqual(person.Age, student.Age);
     }
 }
-
-internal class PersonClass
-{
-    public int Age { get; set; }
-    public string? Name { get; set; }
-}
-
-internal record PersonRecord(string? Name, int Age);
-
-internal class StudenClass : IEntity
-{
-    public int Age { get; set; }
-    public string? Major { get; set; }
-    public string? Name { get; set; }
-}
-
-internal record StudenRecord(string Name, int Age, string? Major) : IEntity;

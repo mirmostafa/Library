@@ -45,6 +45,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Helpers\ConsoleHelper\" />
+	  <Folder Include="Private\" />
 	</ItemGroup>
 
 </Project>

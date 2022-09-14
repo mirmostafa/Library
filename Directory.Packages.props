@@ -17,8 +17,15 @@
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
   </PropertyGroup>
   <ItemGroup>
+    <PackageVersion Include="BenchmarkDotNet" Version="0.13.2" />
+    <PackageVersion Include="BenchmarkDotNet.Core" Version="0.10.14" />
+    <PackageVersion Include="FSharp.Core" Version="6.0.5" />
+    <PackageVersion Include="Microsoft-Windows10-APICodePack-Core" Version="1.1.8" />
     <PackageVersion Include="Microsoft.AspNet.WebApi.Core">
       <Version>5.2.9</Version>
     </PackageVersion>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Identity.Core" Version="6.0.8" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.3.1" />
   </ItemGroup>
 </Project>

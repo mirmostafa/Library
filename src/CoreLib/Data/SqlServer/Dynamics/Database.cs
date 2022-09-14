@@ -5,6 +5,7 @@ using System.Dynamic;
 using Library.Data.SqlServer.Builders;
 using Library.Data.SqlServer.Dynamics.Collections;
 using Library.Exceptions;
+using Library.Helpers;
 using Library.Validations;
 
 namespace Library.Data.SqlServer.Dynamics;

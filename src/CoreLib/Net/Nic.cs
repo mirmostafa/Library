@@ -1,5 +1,7 @@
 ﻿using System.Net.NetworkInformation;
 
+using Library.Helpers;
+
 namespace Library.Net;
 public class Nic
 {

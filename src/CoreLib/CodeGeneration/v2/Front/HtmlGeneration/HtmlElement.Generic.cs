@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 
+using Library.Helpers;
+
 namespace Library.CodeGeneration.V2.HtmlGeneration;
 
 [EditorBrowsable(EditorBrowsableState.Advanced)]

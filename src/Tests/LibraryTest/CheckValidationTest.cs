@@ -30,15 +30,6 @@ public class CheckValidationTest
     }
 
     [TestMethod]
-    public void FluentCheckTest1()
-    {
-        object? o = new();
-        string? s = null;
-        _ = o.MustBe().ArgumentNotNull().ThrowOnFail();
-        _ = s.MustBe().NotNull().ThrowOnFail();
-    }
-
-    [TestMethod]
     public void IfIs1()
     {
         var lname = "Mirmostafa";

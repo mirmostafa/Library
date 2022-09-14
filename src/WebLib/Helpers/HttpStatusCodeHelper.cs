@@ -1,7 +1,5 @@
 ﻿using System.Net;
 
-using Library.Helpers;
-
 namespace Library.Web.Helpers;
 
 public static class HttpStatusCodeHelper

@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 
 using Library.Data.SqlServer.Dynamics.Collections;
+using Library.Helpers;
 
 using static Library.Data.SqlServer.SqlStatementBuilder;
 

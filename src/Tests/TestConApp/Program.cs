@@ -1,4 +1,6 @@
-﻿using Library.Coding;
+﻿using BenchmarkDotNet.Running;
+
+using ConAppTest;
 
 internal class Program
 {
@@ -7,3 +9,4 @@ internal class Program
         
     }
 }
+

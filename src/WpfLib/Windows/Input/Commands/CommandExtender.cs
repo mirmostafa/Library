@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+
 using Library.Exceptions.Validations;
 
 namespace Library.Wpf.Windows.Input.Commands;

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 
 using Library.Exceptions.Validations;
+using Library.Helpers;
 using Library.Results;
 
 namespace Library.Helpers;

@@ -5,6 +5,7 @@ using System.Reflection;
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
+using Library.Helpers;
 using Library.Interfaces;
 using Library.Types;
 using Library.Validations;
@@ -13,16 +14,6 @@ namespace Library.Helpers;
 
 public static class ObjectHelper
 {
-    /// <summary>
-    /// Works just like 'as' C# keyword
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="obj">The object.</param>
-    /// <returns></returns>
-    [DebuggerStepThrough]
-    public static T? As<T>(this object? obj)
-        where T : class => obj as T;
-
     /// <summary>
     /// Checks the database null.
     /// </summary>
@@ -251,7 +242,7 @@ public static class ObjectHelper
     {
         var methodInfo = obj.ArgumentNotNull(nameof(obj)).GetType().GetMethod(name, bindingFlags);
         return methodInfo is not null
-            ? As<TDelegate>(Delegate.CreateDelegate(typeof(TDelegate), obj, methodInfo))
+            ? Cast.As<TDelegate>(Delegate.CreateDelegate(typeof(TDelegate), obj, methodInfo))
             : null;
     }
 
@@ -270,7 +261,7 @@ public static class ObjectHelper
     {
         var methodInfo = objType.GetMethod(name, bindingFlags);
         return methodInfo is not null
-            ? As<TDelegate>(Delegate.CreateDelegate(typeof(TDelegate), null, methodInfo))
+            ? Cast.As<TDelegate>(Delegate.CreateDelegate(typeof(TDelegate), null, methodInfo))
             : null;
     }
 
@@ -425,7 +416,7 @@ public static class ObjectHelper
     /// <param name="value">The value.</param>
     /// <returns><c>true</c> if [is null or empty string] [the specified value]; otherwise, <c>false</c>.</returns>
     public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
-        => string.IsNullOrEmpty(ToString(value));
+        => string.IsNullOrEmpty(Cast.ToString(value));
 
     public static IEnumerable<T> Repeat<T>(T value, int count)
     {
@@ -446,30 +437,4 @@ public static class ObjectHelper
         var property = obj?.GetType().GetProperty(propertyName);
         property?.SetValue(obj, value, null);
     }
-
-    public static T To<T>(this object? obj)
-        => (T)obj;
-
-    public static T To<T>(this object obj, [DisallowNull] Func<object, T> convert)
-        => convert.ArgumentNotNull().Invoke(obj);
-
-    /// <summary>
-    /// Converts the string representation of a number to an integer.
-    /// </summary>
-    /// <param name="obj">The object.</param>
-    /// <returns></returns>
-    public static int ToInt(this object obj)
-        => Convert.ToInt32(obj);
-        
-    /// <summary>
-    /// Converts to long.
-    /// </summary>
-    /// <param name="obj">The object.</param>
-    /// <returns></returns>
-    //[Obsolete("No more is required.")]
-    public static long ToLong(this object obj)
-        => Convert.ToInt64(obj);
-    
-    public static string? ToString(in object? value, in string defaultValue = "")
-        => (value ?? defaultValue)?.ToString();
 }

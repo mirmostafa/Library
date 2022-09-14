@@ -2,6 +2,7 @@
 using System.Runtime.ExceptionServices;
 
 using Library.DesignPatterns.ExceptionHandlingPattern;
+using Library.Helpers;
 using Library.Results;
 using Library.Validations;
 

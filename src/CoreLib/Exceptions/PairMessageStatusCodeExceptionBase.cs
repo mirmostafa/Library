@@ -1,4 +1,6 @@
-﻿namespace Library.Exceptions;
+﻿using Library.Helpers;
+
+namespace Library.Exceptions;
 
 [Serializable]
 public abstract class PairMessageStatusCodeExceptionBase<TStatusCode> : LibraryExceptionBase, IApiException

@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 
+using Library.Helpers;
+
 namespace Library.Logging;
 
 public sealed class VsOutputLogger : FastLoggerBase<object>, ILogger

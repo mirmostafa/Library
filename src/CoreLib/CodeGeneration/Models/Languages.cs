@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 
+using Library.Helpers;
+
 namespace Library.CodeGeneration.Models;
 
 public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>

@@ -169,34 +169,43 @@ public static class StringHelper
     public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';')
         => keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
 
-    [Pure]
-    public static string? GetPhrase(this string str, in int index, in char start, char end = default)
+    public static string? GetPhrase(this string? str, in int index, in char start, char end = default)
     {
+        if (str.IsNullOrEmpty())
+        {
+            return null;
+        }
+
         if (end == default(char))
         {
             end = start;
         }
         var buffer = str;
-        for (int i = 0; i < index; i++)
+        for (var i = 0; i < index; i++)
         {
-            var indexOfStart = buffer.IndexOf(end);
-            if (indexOfStart < 0)
+            var (text, indexOfStart) = find(buffer, start, end);
+            if (indexOfStart is null or < 0 || text is null)
+            {
                 return null;
-            buffer = buffer[indexOfStart..];
+            }
+            var nextIndex = indexOfStart.Value + text.Length + 2;
+            buffer = buffer[nextIndex..];
         }
-        return find(buffer, start, end);
 
-        static string? find(string str, char start, char end)
+        var (result, _) = find(buffer, start, end);
+        return result;
+
+        static (string? Text, int? StartIndex) find(string str, char start, char end)
         {
             var indexOfStart = str.IndexOf(start);
             if (indexOfStart < 0)
-                return null;
-            var indexOfEnd = str.IndexOf(end, indexOfStart);
-            if (indexOfEnd < 0)
-                return null;
-            return str.Substring(indexOfStart, indexOfEnd);
-        }
+            {
+                return (default, default);
+            }
 
+            var indexOfEnd = str.IndexOf(end, indexOfStart + 1);
+            return indexOfEnd < 0 ? ((string? Text, int? StartIndex))(default, default) : ((string? Text, int? StartIndex))(str.Substring(indexOfStart + 1, indexOfEnd - indexOfStart - 1), indexOfStart);
+        }
     }
 
     public static IEnumerable<string?> GetPhrases(this string str, char start, char end = default)
@@ -321,7 +330,7 @@ public static class StringHelper
         => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
     public static bool IsInRange(string? text, params string[] range)
-        => IsInRange(text,true, range);
+        => IsInRange(text, true, range);
 
     public static bool IsInString(this char c, in string text)
         => text?.Contains(c.ToString()) ?? false;
@@ -337,7 +346,7 @@ public static class StringHelper
     [Pure]
     [DebuggerStepThrough]
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
-        => str?.Length is null or 0;
+        => str == null || str.Length == 0;
 
     public static bool IsNumber(in string text)
         => double.TryParse(text, out _);

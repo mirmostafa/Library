@@ -2,6 +2,5 @@
   <Repository>..\</Repository>
   <ParallelBuilds>true</ParallelBuilds>
   <ParallelTestRuns>true</ParallelTestRuns>
-  <EnablePdbs>true</EnablePdbs>
   <TestCaseTimeout>180000</TestCaseTimeout>
 </LUTConfig>

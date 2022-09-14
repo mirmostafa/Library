@@ -9,7 +9,7 @@ public class StringHelperTest
     private const string VERY_SHORT_TEXT = "text";
 
     //[Benchmark]
-    public void _WasteTimeToWarmUpBenchmark() 
+    public void _WasteTimeToWarmUpBenchmark()
         => Thread.Sleep(3000);
 
     [TestMethod]
@@ -55,18 +55,6 @@ public class StringHelperTest
     }
 
     [TestMethod]
-    public void HasPersianTest()
-    {
-        var hasPersian = "Hello. My اسم is Mohammad.";
-        var has = StringHelper.HasPersian(hasPersian);
-        Assert.IsTrue(has);
-
-        var hasNotPersian = "Hello. My name is Mohammad";
-        var hasNot = StringHelper.HasPersian(hasNotPersian);
-        Assert.IsTrue(hasNot);
-    }
-
-    [TestMethod]
     public void GetPhraseTest()
     {
         var result1 = LONG_TEXT.GetPhrase(0, '\'', '\'');
@@ -85,8 +73,26 @@ public class StringHelperTest
     [TestMethod]
     public void GetPhraseTest2()
     {
+        var result4 = StringHelper.GetPhrase(null, 0, '\'', '\"');
+        Assert.AreEqual(null, result4);
+    }
+    [TestMethod]
+    public void GetPhraseTest3()
+    {
         var result4 = LONG_TEXT.GetPhrase(0, '\'', '\"');
         Assert.AreEqual("a text', inside 'another text'. I want 'to find", result4);
+    }
+
+    [TestMethod]
+    public void HasPersianTest()
+    {
+        var hasPersian = "Hello. My اسم is Mohammad.";
+        var has = StringHelper.HasPersian(hasPersian);
+        Assert.IsTrue(has);
+
+        var hasNotPersian = "Hello. My name is Mohammad";
+        var hasNot = StringHelper.HasPersian(hasNotPersian);
+        Assert.IsTrue(hasNot);
     }
 
     [TestMethod]

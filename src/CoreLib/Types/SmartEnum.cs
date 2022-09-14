@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics;
 
+using Library.Helpers;
+
 namespace Library.Types;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]

@@ -1,11 +1,17 @@
 ﻿using System.Collections.Immutable;
+
 using Library.Globalization;
+using Library.Helpers;
 
 namespace Library.Helpers;
 
 public static class NumberHelper
 {
-    public static int Add(in int x, in int y) => x + y;
+    public static IEnumerable<int> GenerateRandomNumbers(int count, int? seed = null)
+    {
+        var rnd = seed is null ? new Random() : new Random(seed.Value);
+        return Enumerable.Range(0, count).Select(_ => rnd.Next());
+    }
 
     public static bool IsBetween(this int num, in int min, in int max) => num > min && num <= max;
 
@@ -23,5 +29,6 @@ public static class NumberHelper
         return result;
     }
 
-    public static string ToString(this int? number, string format = "0", int defaultValue = 0) => (number ?? defaultValue).ToString(format);
+    public static string ToString(this int? number, string format = "0", int defaultValue = 0)
+        => (number ?? defaultValue).ToString(format);
 }
