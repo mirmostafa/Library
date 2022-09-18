@@ -1,6 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
 
-namespace ConAppTest;
+namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
 public class IsNullOrEmptyBenchmarks

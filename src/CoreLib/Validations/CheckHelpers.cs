@@ -4,7 +4,9 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
+using Library.Data.SqlServer.Dynamics;
 using Library.Exceptions.Validations;
+using Library.Results;
 
 namespace Library.Validations;
 
@@ -52,6 +54,20 @@ public static class CheckHelpers
     [return: NotNull]
     public static T NotNull<T>([NotNull] this T obj, Func<string> getMessage)
         => obj.NotValid(x => x is null, () => new NullValueValidationException(getMessage(), null))!;
+
+    [return: NotNull]
+    public static async Task<TResult> NotNullAsync<TResult>([NotNull] this Task<TResult> task, Func<Exception> getException)
+    {
+        var result = await task;
+        return result.NotNull(getException);
+    }
+
+    [return: NotNull]
+    public static async Task<TResult> NotNullAsync<TResult>([NotNull] this Func<Task<TResult>> asyncFunc, Func<Exception> getException)
+    {
+        var result = await asyncFunc();
+        return result.NotNull(getException);
+    }
 
     public static T ThrowIfDisposed<T>(this T @this, [DoesNotReturnIf(true)] bool disposed)
         where T : IDisposable

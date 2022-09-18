@@ -43,6 +43,12 @@ public static class ResultHelper
     public static bool IsValid<TValue>([NotNullWhen(true)] this Result<TValue>? result)
         => result is not null and { IsSucceed: true } and { Value: not null };
 
+    public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null)
+    {
+        _ = result.As<ResultBase>()!.InnerThrowOnFail(owner, instruction);
+        return result;
+    }
+
     public static Result<TValue> ThrowOnFail<TValue>([DisallowNull] this Result<TValue> result, object? owner = null, string? instruction = null)
     {
         _ = result.As<ResultBase>()!.InnerThrowOnFail(owner, instruction);
@@ -99,7 +105,7 @@ public static class ResultHelper
             result.Errors.Select(x => x.Data).Cast<Exception>().FirstOrDefault()
             ?? result.Status switch
             {
-                Exception ex => ex.With(x => x.Source = owner?.ToString()),
+                Exception ex => ex.Then(x => x.Source = owner?.ToString()),
                 _ => new ValidationException(result.ToString(), instruction ?? result.FullMessage?.Instruction, owner: owner)
             };
         Throw(exception);

@@ -16,34 +16,6 @@ namespace Library.Coding;
 public static class CodeHelper
 {
     /// <summary>
-    /// Asynchronouses the specified action.
-    /// </summary>
-    /// <param name="action">           The action.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns></returns>
-    public static Task Async(Action action, CancellationToken cancellationToken = default)
-        => Task.Run(action, cancellationToken);
-
-    /// <summary>
-    /// Asynchronouses the specified result.
-    /// </summary>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="result">The result.</param>
-    /// <returns></returns>
-    public static Task<TResult> Async<TResult>(TResult result)
-        => Task.FromResult(result);
-
-    /// <summary>
-    /// Asynchronouses the specified action.
-    /// </summary>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="action">           The action.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns></returns>
-    public static Task<TResult> Async<TResult>(Func<CancellationToken, TResult> action, CancellationToken cancellationToken = default)
-        => Task.Run(() => action.ArgumentNotNull(nameof(action))(cancellationToken), cancellationToken);
-
-    /// <summary>
     /// Breaks code execution.
     /// </summary>
     [DoesNotReturn]
@@ -76,16 +48,16 @@ public static class CodeHelper
         }
     }
 
-    public static Result<TValue> CatchResult<TValue>([DisallowNull] in Func<TValue> action)
+    public static Result<TResult> CatchResult<TResult>([DisallowNull] in Func<TResult> action, TResult? defaultResult = default)
     {
         Check.IfArgumentNotNull(action);
         try
         {
-            return Result<TValue>.CreateSuccess(action());
+            return Result<TResult>.CreateSuccess(action());
         }
         catch (Exception ex)
         {
-            return Result<TValue?>.CreateFail(ex.GetBaseException().Message, default, ex)!;
+            return Result<TResult?>.CreateFail(ex.GetBaseException().Message, defaultResult, ex)!;
         }
     }
 
@@ -109,20 +81,6 @@ public static class CodeHelper
         }
     }
 
-    public static async Task<Result<TValue>> CatchResultAsync<TValue>([DisallowNull] Func<Task<TValue>> action)
-    {
-        Check.IfArgumentNotNull(action);
-        try
-        {
-            return Result<TValue>.CreateSuccess(await action());
-        }
-        catch (Exception ex)
-        {
-            return Result<TValue?>.CreateFail(ex.GetBaseException().Message, default, ex)!;
-        }
-    }
-
-    [DebuggerStepThrough]
     public static Func<TResult2> Compose<TResult1, TResult2>([DisallowNull] this Func<TResult1> create, Func<TResult1, TResult2> func)
     {
         Check.IfArgumentNotNull(create);
@@ -130,7 +88,6 @@ public static class CodeHelper
         return [DebuggerStepThrough] () => func(create());
     }
 
-    [DebuggerStepThrough]
     public static Func<Result<TResult2>> Compose<TResult1, TResult2>([DisallowNull] this Func<Result<TResult1>> create, Func<TResult1, Result<TResult2>> func, Func<Result<TResult1>, Result<TResult2>>? onFail = null)
     {
         Check.IfArgumentNotNull(create);
@@ -139,12 +96,11 @@ public static class CodeHelper
         {
             var result = create();
             return result.IsSucceed
-                            ? func(result.Value)
-                            : onFail?.Invoke(result) ?? Result<TResult2>.From(result, default!);
+                ? func(result.Value)
+                : onFail?.Invoke(result) ?? Result<TResult2>.From(result, default!);
         };
     }
 
-    [DebuggerStepThrough]
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TArg, TResult2> func, TArg arg)
     {
         Check.IfArgumentNotNull(create);
@@ -152,67 +108,61 @@ public static class CodeHelper
         return [DebuggerStepThrough] () => func(create(), arg);
     }
 
-    [DebuggerStepThrough]
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TResult2> func, Action<TArg> action, TArg arg)
     {
         Check.IfArgumentNotNull(create);
         Check.IfArgumentNotNull(func);
         return [DebuggerStepThrough] () =>
         {
-            action(arg);
+            action?.Invoke(arg);
             return func(create());
         };
     }
 
-    [DebuggerStepThrough]
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TResult1, TArg> action, TArg arg)
     {
         Check.IfArgumentNotNull(create);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
-            action(result, arg);
+            action?.Invoke(result, arg);
             return result;
         };
     }
 
-    [DebuggerStepThrough]
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TArg> action, TArg arg)
     {
         Check.IfArgumentNotNull(create);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
-            action(arg);
+            action?.Invoke(arg);
             return result;
         };
     }
 
-    [DebuggerStepThrough]
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TArg> action, Func<TResult1, TArg> getArg)
     {
         Check.IfArgumentNotNull(create);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
-            action(getArg(result));
+            action?.Invoke(getArg(result));
             return result;
         };
     }
 
-    [DebuggerStepThrough]
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TResult1, TArg> action, Func<TResult1, TArg> getArg)
     {
         Check.IfArgumentNotNull(create);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
-            action(result, getArg(result));
+            action?.Invoke(result, getArg(result));
             return result;
         };
     }
 
-    [DebuggerStepThrough]
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TArg, TResult2> func, Func<TResult1, TArg> getArg)
     {
         Check.IfArgumentNotNull(create);
@@ -224,7 +174,6 @@ public static class CodeHelper
         };
     }
 
-    [DebuggerStepThrough]
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TResult2> func, Action<TArg> action, Func<TResult1, TArg> getArg)
     {
         Check.IfArgumentNotNull(create);
@@ -232,7 +181,7 @@ public static class CodeHelper
         return [DebuggerStepThrough] () =>
         {
             var start = create();
-            action(getArg(start));
+            action?.Invoke(getArg(start));
             return func(start);
         };
     }
@@ -254,8 +203,7 @@ public static class CodeHelper
     /// <param name="disposable">The disposable.</param>
     /// <param name="action">    The action.</param>
     /// <returns></returns>
-    public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TDisposable, TResult> action)
-        where TDisposable : IDisposable
+    public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TDisposable, TResult> action) where TDisposable : IDisposable
         => Dispose(disposable, action);
 
     /// <summary>
@@ -266,8 +214,7 @@ public static class CodeHelper
     /// <param name="disposable">The disposable.</param>
     /// <param name="result">    The result.</param>
     /// <returns></returns>
-    public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in TResult result)
-        where TDisposable : IDisposable
+    public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in TResult result) where TDisposable : IDisposable
         => Dispose(disposable, result);
 
     /// <summary>
@@ -278,8 +225,7 @@ public static class CodeHelper
     /// <param name="disposable">The disposable.</param>
     /// <param name="action">    The action.</param>
     /// <returns></returns>
-    public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TResult> action)
-        where TDisposable : IDisposable
+    public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TResult> action) where TDisposable : IDisposable
         => Dispose(disposable, action);
 
     /// <summary>
@@ -418,7 +364,8 @@ public static class CodeHelper
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     public static TDelegate GetDelegate<TType, TDelegate>(in string methodName)
-        => (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate), typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new Exceptions.InvalidOperationException()));
+        => (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate),
+                                                             typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new Exceptions.InvalidOperationException()));
 
     /// <summary>
     /// Gets the function.
@@ -467,6 +414,9 @@ public static class CodeHelper
     public static bool HasException(in Action tryFunc)
         => Catch(tryFunc) is not null;
 
+    public static TInstance Then<TInstance>(this TInstance instance, [DisallowNull] in Action<TInstance> action)
+        => instance.Fluent(action);
+
     /// <summary>
     /// Throws the on error.
     /// </summary>
@@ -490,14 +440,5 @@ public static class CodeHelper
 
             throw;
         }
-    }
-
-    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] in Action<TInstance> action)
-        => instance.Fluent(action);
-
-    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] in Action action)
-    {
-        action?.Invoke();
-        return instance;
     }
 }

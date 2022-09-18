@@ -79,6 +79,13 @@ public static class StringHelper
     public static int CompareTo(this string str1, in string str, bool ignoreCase = false) =>
         string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
+    public static string ConcatArray(string[] strings, string sep)
+        => (sep?.Length ?? 0) switch
+        {
+            0 => string.Concat(strings),
+            _ => string.Join(sep, strings, 0, strings.Length),
+        };
+
     [Pure]
     [return: NotNull]
     public static string ConcatStrings(this IEnumerable<string> values)
@@ -294,6 +301,25 @@ public static class StringHelper
             => string.Compare(current, item, ignoreCase) == 0;
     }
 
+    public static string Initialize(int count, Func<int, string> initializer)
+    {
+        _ = Check.MustBe(() => count >= 0, () => new ArgumentException("Input must be non-negative string", nameof(count))).ThrowOnFail();
+
+        var res = new StringBuilder(count);
+        var i = 0;
+        var num = checked(count - 1);
+        if (num >= i)
+        {
+            do
+            {
+                _ = res.Append(initializer.Invoke(i));
+                i++;
+            }
+            while (i != num + 1);
+        }
+        return res.ToString();
+    }
+
     [Pure]
     public static bool IsCommon(this char c)
         => c == ' ';
@@ -349,7 +375,7 @@ public static class StringHelper
         => str == null || str.Length == 0;
 
     public static bool IsNumber(in string text)
-        => double.TryParse(text, out _);
+        => text.All(char.IsNumber);
 
     public static bool IsPersian(char c)
         => c.IsCommon() || PersianTools.Chars.Any(pc => pc == c) || PersianTools.SpecialChars.Any(pc => pc == c);
@@ -378,6 +404,43 @@ public static class StringHelper
             .Sum() % 11;
 
         return sum < 2 ? check == sum : check + sum == 11;
+    }
+
+    public static void Iterate(this string str, [DisallowNull] Action<char> action)
+    {
+        Check.IfArgumentNotNull(action);
+        if (str.IsNullOrEmpty())
+        {
+            return;
+        }
+        var i = 0;
+        var num = checked(str.Length - 1);
+        if (num >= i)
+        {
+            do
+            {
+                action(str[i]);
+                i++;
+            }
+            while (i != num + 1);
+        }
+    }
+
+    public static string Map(this string str, [DisallowNull] Func<char, char> mapping)
+    {
+        Check.IfArgumentNotNull(mapping);
+        if (string.IsNullOrEmpty(str))
+        {
+            return string.Empty;
+        }
+        var result = str.ToCharArray();
+        var i = 0;
+        foreach (var c in result)
+        {
+            result[i] = mapping(c);
+            i = checked(i + 1);
+        }
+        return new string(result);
     }
 
     public static string Merge(string quatStart, string quatEnd, string separator, params object[] array)
@@ -669,5 +732,5 @@ public static class StringHelper
         => length > value?.Length ? value : value?[..^length];
 
     public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
-        => CatchFunc(() => str.CountOf(c, index)).Fluent().Then(x => new TryMethodResult<int>(x.Exception is null, x.Result));
+        => CatchFunc(() => str.CountOf(c, index)).Fluent().ThenNew(x => new TryMethodResult<int>(x.Exception is null, x.Result));
 }

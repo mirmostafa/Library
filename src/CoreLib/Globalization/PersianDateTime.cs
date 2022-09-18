@@ -757,8 +757,8 @@ public readonly struct PersianDateTime :
     /// culture-specific formatting information.
     /// </param>
     /// <returns>A <see cref="T:System.DateTime"/> instance equivalent to the value of this instance.</returns>
-    public DateTime ToDateTime(IFormatProvider? provider) =>
-        this;
+    public DateTime ToDateTime(IFormatProvider? provider)
+        => this;
 
     public string? ToDefaultFomratString()
             => this.ToString("yyyy/MM/dd HH:mm:ss");
@@ -767,8 +767,8 @@ public readonly struct PersianDateTime :
     /// Returns a <see cref="string"/> that represents this instance.
     /// </summary>
     /// <returns>A <see cref="string"/> that represents this instance.</returns>
-    public override string ToString() =>
-        this.ToString(ToStringFormat);
+    public override string ToString()
+        => this.ToString(ToStringFormat);
 
     /// <summary>
     /// Returns a <see cref="string"/> that represents this instance.
@@ -824,58 +824,60 @@ public readonly struct PersianDateTime :
     static PersianDateTime IParsable<PersianDateTime>.Parse(string s, IFormatProvider? provider)
         => s;
 
-    string IConvertible<PersianDateTime, string>.ConvertTo() => this;
+    string IConvertible<PersianDateTime, string>.ConvertTo()
+        => this;
 
-    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) =>
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        =>
             info.AddValue("Data", this.Data);
 
-    TypeCode IConvertible.GetTypeCode() =>
-            throw new NotSupportedException();
+    TypeCode IConvertible.GetTypeCode()
+        => throw new NotSupportedException();
 
-    bool IConvertible.ToBoolean(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    bool IConvertible.ToBoolean(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    byte IConvertible.ToByte(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    byte IConvertible.ToByte(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    char IConvertible.ToChar(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    char IConvertible.ToChar(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    decimal IConvertible.ToDecimal(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    decimal IConvertible.ToDecimal(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    double IConvertible.ToDouble(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    double IConvertible.ToDouble(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    short IConvertible.ToInt16(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    short IConvertible.ToInt16(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    int IConvertible.ToInt32(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    int IConvertible.ToInt32(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    long IConvertible.ToInt64(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    long IConvertible.ToInt64(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    sbyte IConvertible.ToSByte(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    sbyte IConvertible.ToSByte(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    float IConvertible.ToSingle(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    float IConvertible.ToSingle(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    string IConvertible.ToString(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    string IConvertible.ToString(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
     object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
             => throw RaiseInvalidTypeCastException();
 
-    ushort IConvertible.ToUInt16(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    ushort IConvertible.ToUInt16(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    uint IConvertible.ToUInt32(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    uint IConvertible.ToUInt32(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
-    ulong IConvertible.ToUInt64(IFormatProvider? provider) =>
-            throw RaiseInvalidTypeCastException();
+    ulong IConvertible.ToUInt64(IFormatProvider? provider)
+        => throw RaiseInvalidTypeCastException();
 
     /// <summary>
     /// Raises the invalid type cast exception.
@@ -888,6 +890,6 @@ public readonly struct PersianDateTime :
         throw new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
     }
 
-    private string GetDebuggerDisplay() =>
-        this.ToString()!;
+    private string GetDebuggerDisplay()
+        => this.ToString()!;
 }

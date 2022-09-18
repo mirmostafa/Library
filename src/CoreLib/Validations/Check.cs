@@ -103,11 +103,13 @@ public sealed class Check
     public static void IfNotValid<T>([AllowNull] T? obj, [DisallowNull] in Func<T?, bool> validate, in Func<Exception> getException)
         => obj.NotValid(validate, getException);
 
-    public static Result MustBe([DoesNotReturnIf(false)] bool ok)
+    public static Result MustBe(bool ok)
         => ok ? Result.Success : Result.Fail;
 
-    public static Result<T> MustBe<T>([DoesNotReturnIf(false)] Func<bool> predicate, T obj, Func<Exception> getException)
+    public static Result<T> MustBe<T>(Func<bool> predicate, T obj, Func<Exception> getException)
         => predicate() ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException())!;
+    public static Result MustBe(Func<bool> predicate, Func<Exception> getException)
+        => predicate() ? Result.CreateSuccess() : Result.CreateFail(error: getException());
 
     public static Result<T> MustBeNotNull<T>(T? obj) where T : class
         => MustBe(() => obj is not null, obj!, ()=> new NullValueValidationException());

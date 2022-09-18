@@ -262,7 +262,8 @@ public static class EnumerableHelper
             ? Enumerable.Empty<TSource>()
             : items.Where(x => x is not null).Select(x => x!);
 
-    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key) => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
+    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
+        => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
 
     public static int CountNotEnumerated<T>(this IEnumerable<T> source)
     {
@@ -278,11 +279,24 @@ public static class EnumerableHelper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T[] EmptyArray<T>() => Array.Empty<T>();
+    public static T[] EmptyArray<T>()
+        => Array.Empty<T>();
 
-    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude) => source.Where(x => !exclude(x));
+    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
+        => source.Where(x => !exclude(x));
 
-    public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items) => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
+    public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items)
+        => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
+
+    public static T Fold<T>(this IEnumerable<T> items, Func<(T result, T item), T> folder, T defaultValue)
+    {
+        var total = defaultValue;
+        foreach (var item in items)
+        {
+            total = folder((total, item));
+        }
+        return total;
+    }
 
     public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
@@ -424,6 +438,16 @@ public static class EnumerableHelper
     public static string MergeToString<T>(this IEnumerable<T> source)
         => source.Aggregate(new StringBuilder(), (current, item) => current.Append(item)).ToString();
 
+    public static T? Reduce<T>(this IEnumerable<T?> items, Func<(T? Result, T? Item), T?> reducer)
+    {
+        T? result = default;
+        foreach (var item in items)
+        {
+            result = reducer((result, item));
+        }
+        return result;
+    }
+
     public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
     {
         Check.IfArgumentNotNull(list);
@@ -519,8 +543,7 @@ public static class EnumerableHelper
         return dic;
     }
 
-    public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
-        where TKey : notnull
+    public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)        where TKey : notnull
         => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
@@ -582,7 +605,8 @@ public static class EnumerableHelper
     public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items)
         => ImmutableList.CreateRange(items).ToHashSet();
 
-    public static TryMethodResult<int> TryCountNotEnumerated<T>([DisallowNull] this IEnumerable<T> source) => new(source.TryGetNonEnumeratedCount(out var count), count);
+    public static TryMethodResult<int> TryCountNotEnumerated<T>([DisallowNull] this IEnumerable<T> source)
+        => new(source.TryGetNonEnumeratedCount(out var count), count);
 
     public static async IAsyncEnumerable<TItem> WhereAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, bool>? func, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -595,11 +619,12 @@ public static class EnumerableHelper
         }
     }
 
-    private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!) => items switch
-    {
-        [] => defaultValue,
-        [var item] => item,
-        { Length: 2 } => aggregator(items[0], items[1]),
-        [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
-    };
+    private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
+        => items switch
+        {
+            [] => defaultValue,
+            [var item] => item,
+            { Length: 2 } => aggregator(items[0], items[1]),
+            [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
+        };
 }

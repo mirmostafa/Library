@@ -205,7 +205,7 @@ public static class ServiceHelper
                 {
                     await transaction.CommitAsync();
                 }
-                saveResult = await (saveChanges is not null ? saveChanges() : CodeHelper.CatchResultAsync(() => dbContext.SaveChangesAsync()));
+                saveResult = await (saveChanges is not null ? saveChanges() : CodeHelper.CatchResult(() => dbContext.SaveChangesAsync()));
                 if (saveResult.IsSucceed && onCommitted is not null)
                 {
                     onCommitted(model, entity);

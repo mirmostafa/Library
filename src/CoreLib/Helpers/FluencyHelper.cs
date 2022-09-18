@@ -43,10 +43,10 @@ public static class FluencyHelper
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Func<TInstance, TInstance> func)
         => func.Invoke(instance);
 
-    public static async Task<Fluency<TResult>> FluentAsync<TFuncResult, TResult>(this object @this, Func<Task<TFuncResult>> funcAsync, Func<TFuncResult, TResult> action)
+    public static async Task<Fluency<TResult>> Fluent<TFuncResult, TResult>(this object @this, Func<Task<TFuncResult>> funcAsync, Func<TFuncResult, TResult> action)
         => action(await funcAsync());
 
-    public static async Task<Fluency<TResult>> FluentAsync<TResult>(this object @this, Func<Task<TResult>> funcAsync, Action action)
+    public static async Task<Fluency<TResult>> Fluent<TResult>(this object @this, Func<Task<TResult>> funcAsync, Action action)
     {
         var result = await funcAsync();
         action();
@@ -87,27 +87,19 @@ public static class FluencyHelper
         return instance;
     }
 
-    public static Fluency<TResult> Then<TInstance, TResult>(this Fluency<TInstance> instance, in Action action, in TResult result)
-    {
-        action?.Invoke();
-        return result;
-    }
-
     public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Action<TInstance> action)
     {
         action(instance);
         return instance;
     }
 
-    //public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Func<TInstance, TInstance> action)
-    //    => action(instance);
-
-    public static Fluency<TResult> Then<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
+    public static Fluency<TResult> ThenNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
         => action(instance);
 
-    //! Not Object Oriented !
-    ////public static Fluency<TResult> Then<TInstance, TResult>(this Fluency<TInstance> instance, in TResult result)
-    ////    => result;
-    ////public static Fluency<TResult> Then<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TResult> result)
-    ////    => result();
+    public static Fluency<TResult> Then<TResult>(this Fluency<TResult> instance, in Func<TResult, TResult> func) 
+        => Fluency<TResult>.From(func(instance.Value));
+    public static TResult Convert<TResult>(object o1, object x)
+    {
+        return x.To<TResult>();
+    }
 }
