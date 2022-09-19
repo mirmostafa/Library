@@ -8,7 +8,7 @@ internal class Program
 {
     private static void Main()
     {
-        BenchmarkRunner.Run<IsNullOrEmptyBenchmarks>();
+        BenchmarkRunner.Run<FactorialBenchmarks>();
         //Console.WriteLine(FactorialBenchmarks.Instance.MyConventional2());
     }
 }

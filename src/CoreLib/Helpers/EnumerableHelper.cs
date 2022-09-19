@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 using Library.Collections;
 using Library.Interfaces;
@@ -20,7 +21,7 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    /// Adds the specified item immutaly and returns a new instance of source.
+    /// Adds the specified item immutably and returns a new instance of source.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="source">The source.</param>
@@ -137,6 +138,9 @@ public static class EnumerableHelper
     {
         yield return item;
     }
+
+    public static Span<TItem> AsSpan<TItem>(this List<TItem> list)
+        => CollectionsMarshal.AsSpan(list);
 
     public static IReadOnlyList<T> Build<T>([DisallowNull] this IEnumerable<T> items)
     {
@@ -350,8 +354,11 @@ public static class EnumerableHelper
         }
     }
 
+    public static void ForEachParallel<TItem>(IEnumerable<TItem> items, Action<TItem> action)
+        => Parallel.ForEach(items, action);
+
     public static void ForEachTreeNode<T>(T root, Func<T, IEnumerable<T>>? getChildren, Action<T>? rootAction, Action<T, T>? childAction)
-        where T : class
+            where T : class
     {
         if (root is null)
         {
@@ -543,7 +550,7 @@ public static class EnumerableHelper
         return dic;
     }
 
-    public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)        where TKey : notnull
+    public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull
         => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
@@ -579,6 +586,9 @@ public static class EnumerableHelper
         }
         return result;
     }
+
+    public static Span<TItem> ToListAsSpan<TItem>(this IEnumerable<TItem> items)
+        => items.ToList().AsSpan();
 
     public static async Task<List<TItem>> ToListAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {

@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Runtime.InteropServices;
 
 using BenchmarkDotNet.Attributes;
 
@@ -8,13 +9,27 @@ namespace ConAppTest.MyBenchmarks;
 public class FactorialBenchmarks
 {
     public static readonly FactorialBenchmarks Instance = new();
-    private readonly int number = 40;
 
-    //[Benchmark]
+    [Params(40, 4_000)]
+    public int Number { get; set; }
+
+    [Benchmark]
+    public BigInteger AsParallel()
+    {
+        BigInteger result = 1;
+
+        foreach (var item in Enumerable.Range(1, this.Number).AsParallel())
+        {
+            result *= item;
+        }
+        return result;
+    }
+
+    [Benchmark]
     public BigInteger Conventional()
     {
         BigInteger result = 1;
-        for (var i = 1; i < this.number + 1; i++)
+        for (var i = 1; i < this.Number + 1; i++)
         {
             result *= i;
         }
@@ -22,23 +37,11 @@ public class FactorialBenchmarks
     }
 
     [Benchmark]
-    public BigInteger MyConventional1() //! 🏆 Winner
+    public BigInteger EmbededAsParallel()
     {
         BigInteger result = 1;
 
-        foreach (var item in Enumerable.Range(1, this.number).AsParallel())
-        {
-            result *= item;
-        }
-        return result;
-    }
-
-    [Benchmark]
-    public BigInteger MyConventional2()
-    {
-        BigInteger result = 1;
-
-        foreach (var item in Range(1, this.number).AsParallel())
+        foreach (var item in Range(1, this.Number).AsParallel())
         {
             result *= item;
         }
@@ -56,23 +59,11 @@ public class FactorialBenchmarks
     }
 
     [Benchmark]
-    public BigInteger MyConventional3()
+    public BigInteger EmbededForEachToListAsParallel()
     {
         BigInteger result = 1;
 
-        foreach (var item in Enumerable.Range(1, this.number).ToList().AsParallel())
-        {
-            result *= item;
-        }
-        return result;
-    }
-
-    [Benchmark]
-    public BigInteger MyConventional4()
-    {
-        BigInteger result = 1;
-
-        foreach (var item in Range(1, this.number).ToList().AsParallel())
+        foreach (var item in Range(1, this.Number).ToList().AsParallel())
         {
             result *= item;
         }
@@ -87,19 +78,93 @@ public class FactorialBenchmarks
                 yield return current;
             }
         }
+    }
+
+    [Benchmark]
+    public BigInteger ForEachAsParallel()
+    {
+        BigInteger result = 1;
+
+        foreach (var item in Enumerable.Range(1, this.Number).AsParallel())
+        {
+            result *= item;
+        }
+        return result;
+    }
+
+    [Benchmark]
+    public BigInteger ForEachParallelTest() // 🏆 Winner
+    {
+        BigInteger result = 1;
+        _ = Parallel.ForEach(Enumerable.Range(1, this.Number), x => result *= x);
+        return result;
+    }
+
+    [Benchmark]
+    public BigInteger ForEachSpan()
+    {
+        BigInteger result = 1;
+
+        foreach (var item in CollectionsMarshal.AsSpan(Enumerable.Range(1, this.Number).ToList()))
+        {
+            result *= item;
+        }
+        return result;
+    }
+
+    [Benchmark]
+    public BigInteger ForToArray()
+    {
+        BigInteger result = 1;
+
+        var data = Enumerable.Range(1, this.Number).ToArray();
+
+        for (var i = 0; i < data.Length; i++)
+        {
+            result *= data[i];
+        }
+        return result;
+    }
+
+    [Benchmark]
+    public BigInteger ForToList()
+    {
+        BigInteger result = 1;
+
+        var data = Enumerable.Range(1, this.Number).ToList();
+
+        for (var i = 0; i < data.Count; i++)
+        {
+            result *= data[i];
+        }
+        return result;
+    }
+
+    [Benchmark]
+    public BigInteger ForToListAsSpan()
+    {
+        BigInteger result = 1;
+
+        var data = CollectionsMarshal.AsSpan(Enumerable.Range(1, this.Number).ToList());
+
+        for (var i = 0; i < data.Length; i++)
+        {
+            result *= data[i];
+        }
+        return result;
     }
 
     //[Benchmark]
     public BigInteger Recursive()
     {
-        return Factorial(this.number);
+        return Factorial(this.Number);
         static BigInteger Factorial(in long num) => num <= 1 ? num : num * Factorial(num - 1);
     }
 
     //[Benchmark]
     public BigInteger Stirling()
     {
-        var n = this.number;
+        var n = this.Number;
         if (n == 1)
         {
             return 1;
@@ -111,5 +176,29 @@ public class FactorialBenchmarks
         z = Math.Sqrt(2 * 3.14 * n) *
             Math.Pow(n / e, n);
         return (BigInteger)z;
+    }
+
+    [Benchmark]
+    public BigInteger ToArrayAsParallel()
+    {
+        BigInteger result = 1;
+
+        foreach (var item in Enumerable.Range(1, this.Number).ToArray().AsParallel())
+        {
+            result *= item;
+        }
+        return result;
+    }
+
+    [Benchmark]
+    public BigInteger ToListAsParallel()
+    {
+        BigInteger result = 1;
+
+        foreach (var item in Enumerable.Range(1, this.Number).ToList().AsParallel())
+        {
+            result *= item;
+        }
+        return result;
     }
 }
