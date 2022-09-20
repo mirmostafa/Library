@@ -201,4 +201,19 @@ public class FactorialBenchmarks
         }
         return result;
     }
+
+    [Benchmark]
+    public BigInteger _Exam1()
+    {
+        return Range(Number).Aggregate(new BigInteger(1), (p, item) => p* item);
+
+        static IEnumerable<BigInteger> Range(BigInteger source)
+        {
+            for (BigInteger i = 1; i < source; i++)
+            {
+                yield return i;
+            }
+        }
+
+    }
 }
