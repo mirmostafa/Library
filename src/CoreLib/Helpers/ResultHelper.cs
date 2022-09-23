@@ -105,7 +105,7 @@ public static class ResultHelper
             result.Errors.Select(x => x.Data).Cast<Exception>().FirstOrDefault()
             ?? result.Status switch
             {
-                Exception ex => ex.Then(x => x.Source = owner?.ToString()),
+                Exception ex => ex.With(x => x.Source = owner?.ToString()),
                 _ => new ValidationException(result.ToString(), instruction ?? result.FullMessage?.Instruction, owner: owner)
             };
         Throw(exception);

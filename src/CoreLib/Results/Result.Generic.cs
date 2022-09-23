@@ -28,8 +28,11 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     public static Result<TValue> CreateSuccess(in TValue value, in string? message = null, in object? status = null)
         => new(value, status, message);
 
-    public static Result<TValue> From<TValue1>([DisallowNull] in Result<TValue1> other, TValue value)
+    public static Result<TValue> From<TValue1>([DisallowNull] in Result<TValue1> other, in TValue value)
         => ResultBase.From(other, new Result<TValue>(value));
+
+    public static Result<TValue> From([DisallowNull] in Result<TValue> @this, in Result<TValue> other)
+        => ResultBase.From(@this, other);
 
     public static Result<TValue> From([DisallowNull] in Result other, in TValue value)
         => ResultBase.From(other, new Result<TValue>(value));
@@ -58,19 +61,21 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     public bool Equals(Result<TValue?> other)
         => other is not null && (other.Status, other.IsSucceed) == (this.Status, this.IsSucceed) && (other.Value?.Equals(this.Value) ?? this.Value is null);
 
-    
-    public Task<Result<TValue>> ToTask()
-        => Task.FromResult(this);
-
-    public Result<TValue1> With<TValue1>(in TValue1 value1)
-        => Result<TValue1>.From(this, value1);
-
-    static Result<TValue> IConvertible<Result<TValue>, Result>.From(Result other)
-        => From(other, default!);
-
     public Result<TValue1> ToResult<TValue1>(TValue1 value)
         => From(this, new Result<TValue1>(value));
 
     public Result<TValue1> ToResult<TValue1>(Func<Result<TValue>, TValue1> action)
-        => From(this, new Result<TValue1>(action(this)));    
+        => From(this, new Result<TValue1>(action(this)));
+
+    public Task<Result<TValue>> ToTask()
+                => Task.FromResult(this);
+
+    public Result<TValue1> With<TValue1>(in TValue1 value1)
+        => Result<TValue1>.From(this, value1);
+
+    public Result<TValue> With(in Result<TValue> other)
+        => Result<TValue>.From(this, other);
+
+    static Result<TValue> IConvertible<Result<TValue>, Result>.From(Result other)
+        => From(other, default!);
 }

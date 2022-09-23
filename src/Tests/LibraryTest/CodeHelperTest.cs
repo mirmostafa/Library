@@ -7,11 +7,47 @@ namespace UnitTest;
 public class FunctionalTests
 {
     [TestMethod]
-    [ExpectedException(typeof(BreakException))]
-    public void BreakTest()
+    public void AddCompositionTest1()
     {
-        Break();
+        var start = () => 5;
+        var add = (int x) => x + 5;
+        var sub = (int x) => x - 5;
+
+        var starting = start;
+        var adding = starting.Compose(add);
+        var ended = adding.Compose(sub);
+        var result = ended();
+
+        Assert.AreEqual(5, result);
     }
+
+    [TestMethod]
+    public void AddCompositionTest2()
+    {
+        var add = (int x) => (int y) => x + y;
+        var result = add(3)(4);
+        Assert.AreEqual(7, result);
+        
+        var add3 = (int x) => (int y) => (int z) => x + y + z;
+        result = add3(3)(4)(5);
+        Assert.AreEqual(12, result);
+    }
+
+    [TestMethod]
+    public void AddCompositionTest3()
+    {
+        var three = () => 3;
+        var four = () => 4;
+        var add = (Func<int> x) => (Func<int> y) => x() + y();
+        var result = add(three)(four);
+
+        Assert.AreEqual(7, result);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(BreakException))]
+    public void BreakTest() 
+        => Break();
 
     [TestMethod]
     public void ResultCompositionTest()
@@ -26,7 +62,22 @@ public class FunctionalTests
     }
 
     [TestMethod]
-    public void SimeCompositionTest()
+    public void SimpleCompositionTest1()
+    {
+        var five = () => 5;
+        var addFive = (int x) => x + 5;
+        var subFive = (int x) => x - 5;
+
+        var starting = five;
+        var adding = starting.Compose(addFive).Compose(addFive);
+        var ended = adding.Compose(subFive);
+        var result = ended();
+
+        Assert.AreEqual(10, result);
+    }
+
+    [TestMethod]
+    public void ComplexCompositionTest2()
     {
         var start = () => 5;
         var add = (int x) => x + 5;

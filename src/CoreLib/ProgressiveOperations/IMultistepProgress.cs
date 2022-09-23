@@ -30,6 +30,16 @@ public record struct StepInfo<TState>(in Func<(TState State, IMultistepProgress 
         }, description, progressCount);
 }
 
+public interface IMultistepProgress
+{
+    static IMultistepProgress New([DisallowNull] in Action<(string Description, int Max, int Current)> onReporting, in Action<string?>? onEnded = null)
+        => new MultistepProgress(onReporting, onEnded);
+
+    void Ended(in string? description = null);
+
+    void Report(in string description, in int max = -1, in int current = -1);
+}
+
 internal class MultistepProgress : IMultistepProgress
 {
     private readonly Action<string?>? _onEnded;
@@ -46,16 +56,6 @@ internal class MultistepProgress : IMultistepProgress
 
     public void Report(in string description, in int max = -1, in int current = -1)
         => this._onReporting((description, max, current));
-}
-
-public interface IMultistepProgress
-{
-    static IMultistepProgress New([DisallowNull] in Action<(string Description, int Max, int Current)> onReporting, in Action<string?>? onEnded = null)
-        => new MultistepProgress(onReporting, onEnded);
-
-    void Ended(in string? description = null);
-
-    void Report(in string description, in int max = -1, in int current = -1);
 }
 
 public class MultistepProgressManager<TState>
@@ -114,7 +114,10 @@ public class MultistepProgressManager<TState>
     public MultistepProgressManager<TState> AddStep(IEnumerable<StepInfo<TState>> steps)
         => this.AddStep(steps.ToArray());
 
-    public async Task<TState> StartAsync(CancellationToken? token)
+    public MultistepProgressManager<TState> AddStep(Func<TState, Task> action, in string description, int progressCount = 1)
+        => this.AddStep(StepInfo<TState>.New(action, description, progressCount));
+
+    public async Task<TState> StartAsync(CancellationToken? token = default)
     {
         var stepList = this.Steps.ToList();
         this._max = stepList.Select(x => x.ProgressCount).Sum();

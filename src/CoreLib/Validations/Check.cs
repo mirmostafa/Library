@@ -106,14 +106,24 @@ public sealed class Check
     public static Result MustBe(bool ok)
         => ok ? Result.Success : Result.Fail;
 
-    public static Result<T> MustBe<T>(Func<bool> predicate, T obj, Func<Exception> getException)
-        => predicate() ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException())!;
+    public static Result<T?> MustBe<T>(T obj, Func<bool> predicate, Func<Exception> getException)
+        => predicate() ? Result<T?>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException());
+
+    public static Result<T?> MustBe<T>(T? obj, Func<T?, bool> predicate, Func<Exception> getException)
+        => predicate(obj) ? Result<T?>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException());
+
     public static Result MustBe(Func<bool> predicate, Func<Exception> getException)
         => predicate() ? Result.CreateSuccess() : Result.CreateFail(error: getException());
 
     public static Result<T> MustBeNotNull<T>(T? obj) where T : class
-        => MustBe(() => obj is not null, obj!, ()=> new NullValueValidationException());
+        => MustBe(obj!, () => obj is not null, () => new NullValueValidationException());
+
+    public static Result<TInstance> MustBeNotNull<TInstance, T>(TInstance instance, T? obj) where T : class
+        => MustBe(instance, () => obj is not null, () => new NullValueValidationException());
 
     public static Result<string> MustBeNotNull(string? obj)
-        => MustBe(() => !obj.IsNullOrEmpty(), obj!, () => new NullValueValidationException());
+        => MustBe(obj!, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException());
+
+    public static Result<T> MustBeNotNull<T>(T instance, string? obj) 
+        => MustBe(instance, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException());
 }

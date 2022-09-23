@@ -1,12 +1,11 @@
 ﻿using Library.Results;
 
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore;
 
 namespace Library.Interfaces;
 
 /// <summary>
-/// A standardizer for sercvies to CRUD data asynchronously.
+/// A standardizer for services to CRUD data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier.</typeparam>
@@ -17,7 +16,7 @@ public interface IAsyncCrudService<TViewModel, TId> : IAsyncReadService<TViewMod
 }
 
 /// <summary>
-/// A standardizer for sercvies to CRUD data asynchronously.
+/// A standardizer for services to CRUD data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <seealso cref="Library.Interfaces.IAsyncReadService&lt;TViewModel, TId&gt;"/>
@@ -26,7 +25,7 @@ public interface IAsyncCrudService<TViewModel> : IAsyncReadService<TViewModel>, 
 { }
 
 /// <summary>
-/// A standardizer for sercvies to read data asynchronously which supports pagination.
+/// A standardizer for services to read data asynchronously which supports pagination.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier.</typeparam>
@@ -47,14 +46,14 @@ public interface IAsyncReadPagingService<TViewModel, in TId>
 }
 
 /// <summary>
-/// A standardizer for sercvies to read data asynchronously which supports pagination.
+/// A standardizer for services to read data asynchronously which supports pagination.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 public interface IAsyncReadPagingService<TViewModel> : IAsyncReadPagingService<TViewModel, long>
 { }
 
 /// <summary>
-/// A standardizer for sercvies to read data asynchronously.
+/// A standardizer for services to read data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier (long, Guid, Id, ...).</typeparam>
@@ -75,7 +74,7 @@ public interface IAsyncReadService<TViewModel, in TId>
 }
 
 /// <summary>
-/// A standardizer for sercvies to read data asynchronously.
+/// A standardizer for services to read data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 public interface IAsyncReadService<TViewModel> : IAsyncReadService<TViewModel, long>
@@ -107,7 +106,7 @@ public interface IAsyncTransactionSaveService : IAsyncTransactionalService, IAsy
 }
 
 /// <summary>
-/// A standardizer for sercvies to write data asynchronously.
+/// A standardizer for services to write data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier.</typeparam>
@@ -137,7 +136,7 @@ public interface IAsyncWriteService<TViewModel, TId>
 }
 
 /// <summary>
-/// A standardizer for sercvies to write data asynchronously.
+/// A standardizer for services to write data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 public interface IAsyncWriteService<TViewModel> : IAsyncWriteService<TViewModel, long>
@@ -168,18 +167,18 @@ public interface IDbEntityToViewModelConverter<out TViewModel, in TDbEntity>
 public interface IHierarchicalDbEntityService<TDbEntity>
 {
     /// <summary>
-    /// Gets the all child enities of specific entity asynchronously.
+    /// Gets the all child entities of specific entity asynchronously.
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
-    Task<IEnumerable<TDbEntity>> GetChildEnitiesAsync(TDbEntity entity);
+    Task<IEnumerable<TDbEntity>> GetChildEntitiesAsync(TDbEntity entity);
 
     /// <summary>
-    /// Gets the child enities by a specific identifier asynchronously.
+    /// Gets the child entities by a specific identifier asynchronously.
     /// </summary>
     /// <param name="parentId">The parent identifier.</param>
     /// <returns></returns>
-    Task<IEnumerable<TDbEntity>> GetChildEnitiesByIdAsync(long parentId);
+    Task<IEnumerable<TDbEntity>> GetChildEntitiesByIdAsync(long parentId);
 
     /// <summary>
     /// Gets the parent entity asynchronously.
@@ -189,10 +188,10 @@ public interface IHierarchicalDbEntityService<TDbEntity>
     Task<TDbEntity?> GetParentEntityAsync(long childId);
 
     /// <summary>
-    /// Gets the root enities asynchronously.
+    /// Gets the root entities asynchronously.
     /// </summary>
     /// <returns></returns>
-    Task<IEnumerable<TDbEntity>> GetRootEnitiesAsync();
+    Task<IEnumerable<TDbEntity>> GetRootEntitiesAsync();
 }
 
 public interface IHierarchicalViewModelService<TViewModel>
@@ -230,7 +229,7 @@ public interface IResetChanges
 }
 
 /// <summary>
-/// A base infatce for all services declared in the application
+/// A base interface for all services declared in the application
 /// </summary>
 public interface IService
 {
@@ -273,7 +272,6 @@ public interface IViewModelToDbEntityConverter<in TViewModel, out TDbEntity>
 
 /// <summary>
 /// </summary>
-/// <seealso cref="System.IEquatable&lt;Library.Interfaces.PagingParams&gt;"/>
 /// <seealso cref="System.IEquatable&lt;Library.Interfaces.PagingParams&gt;"/>
 public record PagingParams(in int PageIndex = 0, in int? PageSize = null);
 /// <summary>

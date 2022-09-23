@@ -2,7 +2,6 @@
 
 using Library.DesignPatterns.Markers;
 using Library.Dynamic;
-using Library.Helpers;
 using Library.Validations;
 
 namespace Library.CodeGeneration.Models;
@@ -50,7 +49,7 @@ public record Code : IEquatable<Code>
     public string FileName => this._FileName.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial));
 
     public override int GetHashCode()
-        => HashCode.Combine(this.Name);
+        => (this.Name?.GetHashCode() ?? 0) * 45;
     public virtual bool Equals(Code? other)
         => this.Name == other?.Name;
     public bool Equals(string name)

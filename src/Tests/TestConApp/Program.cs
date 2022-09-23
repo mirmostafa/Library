@@ -1,14 +1,28 @@
-﻿using BenchmarkDotNet.Running;
+﻿using Library.Helpers;
+using Library.IO;
 
-using ConAppTest.MyBenchmarks;
-
-using Library.Helpers;
-
-internal class Program
+internal partial class Program
 {
     private static void Main()
     {
-        BenchmarkRunner.Run<FactorialBenchmarks>();
-        //Console.WriteLine(FactorialBenchmarks.Instance.MyConventional2());
+        WatchHardDisk();
+        _ = ReadLine();
+    }
+
+    private static void WatchHardDisk()
+    {
+        Thread.Sleep(50);
+        var watchers = Drive.GetDrives().Select(getWatcher).ForEach(x => WriteLine($"Watching {x.Path}")).ToList();
+        WriteLine("Ready");
+        _ = ReadKey();
+        WriteLine("Closing...");
+        _ = watchers.ForEachEager(x => x.Dispose());
+
+        static Library.IO.FileSystemWatcher getWatcher(Drive drive)
+            => Library.IO.FileSystemWatcher.Start(drive, includeSubdirectories: true,
+                onChanged: e => Logger.Log($"{e.Item.FullName} changed."),
+                onCreated: e => Logger.Log($"{e.Item.FullName} created."),
+                onDeleted: e => Logger.Log($"{e.Item.FullName} deleted."),
+                onRenamed: e => Logger.Log($"in {e.Item.FullPath} : {e.Item.OldName} renamed to {e.Item.NewName}."));
     }
 }

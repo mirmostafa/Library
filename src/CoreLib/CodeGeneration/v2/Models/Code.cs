@@ -47,7 +47,7 @@ public readonly record struct Code : IEquatable<Code>
     public string FileName => this._fileName.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial));
 
     public override int GetHashCode()
-        => HashCode.Combine(this.Name);
+        => (this.Name?.GetHashCode() ?? 0) * 45;
     public bool Equals(Code other)
         => this.Name == other.Name;
     public bool Equals(string name)

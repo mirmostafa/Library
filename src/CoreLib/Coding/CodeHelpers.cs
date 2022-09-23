@@ -414,9 +414,6 @@ public static class CodeHelper
     public static bool HasException(in Action tryFunc)
         => Catch(tryFunc) is not null;
 
-    public static TInstance Then<TInstance>(this TInstance instance, [DisallowNull] in Action<TInstance> action)
-        => instance.Fluent(action);
-
     /// <summary>
     /// Throws the on error.
     /// </summary>
@@ -441,4 +438,7 @@ public static class CodeHelper
             throw;
         }
     }
+
+    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] in Action<TInstance> action)
+            => instance.Fluent(action);
 }
