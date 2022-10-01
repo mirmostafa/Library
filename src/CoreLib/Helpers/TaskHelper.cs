@@ -1,9 +1,37 @@
-﻿using Library.Results;
-
-namespace Library.Helpers;
+﻿namespace Library.Helpers;
 
 public static class TaskHelper
 {
+    public static async void InvokeAsync(this Action? action, TaskScheduler? scheduler = null, CancellationToken token = default)
+    {
+        if (action == null)
+        {
+            return;
+        }
+
+        if (scheduler != null)
+        {
+            await Task.Factory.StartNew(action, token, TaskCreationOptions.None, scheduler);
+        }
+        else
+        {
+            await Task.Factory.StartNew(action, token);
+        }
+    }
+
+    public static Task<TResult> WaitAsync<TResult>(this Task<TResult> task, TimeSpan timeout, Func<Exception> getExceptionOnTimeout)
+    {
+        try
+        {
+            return task.WaitAsync(timeout);
+        }
+        catch (TimeoutException ex)
+        {
+            _ = getExceptionOnTimeout?.Invoke() ?? ex;
+            throw ex;
+        }
+    }
+
     /// <summary>
     /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
     /// objects in an array have completed.
@@ -69,17 +97,4 @@ public static class TaskHelper
         }
         throw allTasks.Exception ?? throw new Exception("This can't possibly happen");
     }
-
-    public static Task<TResult> WaitAsync<TResult>(this Task<TResult> task, TimeSpan timeout, Func<Exception> getExceptionOnTimeout)
-    {
-        try
-        {
-            return task.WaitAsync(timeout);
-        }
-        catch (TimeoutException ex)
-        {
-            var e = getExceptionOnTimeout?.Invoke() ?? ex;
-            throw ex;
-        }
-    }    
 }

@@ -2,7 +2,7 @@
 
 namespace Library.Helpers;
 
-public static class CultureInfoExtensions
+public static class CultureInfoHelper
 {
     /// <summary>
     /// The weekday/weekend state for a given day.

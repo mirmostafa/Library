@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 using Library.Globalization.DataTypes;
-using Library.Helpers;
 using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
@@ -161,12 +160,12 @@ public readonly struct PersianDateTime :
     /// to the current date and time on this computer, expressed as the local time.
     /// </summary>
     /// <returns>An object whose value is the current local date and time.</returns>
-    public static PersianDateTime Now => new(DateTime.Now);
+    public static PersianDateTime Now => DateTime.Now;
 
     /// <summary>
-    /// Gets the persian week days.
+    /// Gets the Persian week days.
     /// </summary>
-    /// <value>The persian week days.</value>
+    /// <value>The Persian week days.</value>
     public static IEnumerable<(DayOfWeek Day, string Name)> PersianWeekDays
     {
         get
@@ -182,9 +181,9 @@ public readonly struct PersianDateTime :
     }
 
     /// <summary>
-    /// Gets the persian week days abbreviations.
+    /// Gets the Persian week days abbreviations.
     /// </summary>
-    /// <value>The persian week days abbreviations.</value>
+    /// <value>The Persian week days abbreviations.</value>
     public static IEnumerable<(DayOfWeek Day, string Name)> PersianWeekDaysAbbrs
     {
         get
@@ -200,8 +199,17 @@ public readonly struct PersianDateTime :
     }
 
     public static string ShortDatePattern { get; set; } = CultureConstants.SHORT_DATE_PATTERN;
+
     public static string TimeSeparator { get; set; } = CultureConstants.TIME_SEPARATOR;
+
     public static string ToStringFormat { get; set; } = CultureConstants.DEFAULT_DATE_TIME_PATTERN;
+
+    /// <summary>
+    /// Gets a System.DateTime object that is set to the current date and time on this computer,
+    /// expressed as the Coordinated Universal Time (UTC) in Persian.
+    /// </summary>
+    /// <value>An object whose value is the current UTC date and time in Persian.</value>
+    public static PersianDateTime UtcNow => DateTime.UtcNow;
 
     public bool IsHoliday => this.DayOfWeek.IsPersianHoliday();
     public bool IsInitiated { get; }
@@ -291,27 +299,27 @@ public readonly struct PersianDateTime :
     private string? DebuggerDisplay => this.ToString();
 
     /// <summary>
-    /// Adds the specified persian date time1.
+    /// Adds the specified Persian date time1.
     /// </summary>
-    /// <param name="persianDateTime1">The persian date time1.</param>
-    /// <param name="persianDateTime2">The persian date time2.</param>
+    /// <param name="PersianDateTime1">The Persian date time1.</param>
+    /// <param name="PersianDateTime2">The Persian date time2.</param>
     /// <returns></returns>
-    public static PersianDateTime Add(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
-        => persianDateTime1 + persianDateTime2;
+    public static PersianDateTime Add(in PersianDateTime PersianDateTime1, in PersianDateTime PersianDateTime2)
+        => PersianDateTime1 + PersianDateTime2;
 
     /// <summary>
     /// Compares the specified Persian date time1.
     /// </summary>
-    /// <param name="persianDateTime1">The Persian date time1.</param>
-    /// <param name="persianDateTime2">The Persian date time2.</param>
+    /// <param name="PersianDateTime1">The Persian date time1.</param>
+    /// <param name="PersianDateTime2">The Persian date time2.</param>
     /// <returns></returns>
     /// <exception cref="InvalidCastException">
-    /// cannot cast persianDateTime1 to PersianDateTime or cannot cast persianDateTime2 to PersianDateTime
+    /// cannot cast PersianDateTime1 to PersianDateTime or cannot cast PersianDateTime2 to PersianDateTime
     /// </exception>
-    public static int Compare(in string persianDateTime1, in string persianDateTime2)
+    public static int Compare(in string PersianDateTime1, in string PersianDateTime2)
     {
-        Check.If(TryParse(persianDateTime1, out var p1), () => new InvalidCastException($"cannot cast {nameof(persianDateTime1)} to PersianDateTime"));
-        Check.If(TryParse(persianDateTime2, out var p2), () => new InvalidCastException($"cannot cast {nameof(persianDateTime2)} to PersianDateTime"));
+        Check.If(TryParse(PersianDateTime1, out var p1), () => new InvalidCastException($"cannot cast {nameof(PersianDateTime1)} to PersianDateTime"));
+        Check.If(TryParse(PersianDateTime2, out var p2), () => new InvalidCastException($"cannot cast {nameof(PersianDateTime2)} to PersianDateTime"));
 
         return p1.CompareTo(p2);
     }
@@ -325,20 +333,20 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Performs an implicit conversion from <see cref="PersianDateTime"/> to <see cref="DateTime"/>.
     /// </summary>
-    /// <param name="persianDateTime">The Persian date time.</param>
+    /// <param name="PersianDateTime">The Persian date time.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator DateTime(in PersianDateTime persianDateTime)
+    public static implicit operator DateTime(in PersianDateTime PersianDateTime)
         => PersianCalendar.ToDateTime(
-            persianDateTime.Year,
-            persianDateTime.Month,
-            persianDateTime.Day,
-            persianDateTime.Hour,
-            persianDateTime.Minute,
-            persianDateTime.Second == -1 ? 0 : persianDateTime.Second,
+            PersianDateTime.Year,
+            PersianDateTime.Month,
+            PersianDateTime.Day,
+            PersianDateTime.Hour,
+            PersianDateTime.Minute,
+            PersianDateTime.Second == -1 ? 0 : PersianDateTime.Second,
             0);
 
-    public static implicit operator PersianDateTime(in string persianDateTimeString)
-        => ParsePersian(persianDateTimeString);
+    public static implicit operator PersianDateTime(in string PersianDateTimeString)
+        => ParsePersian(PersianDateTimeString);
 
     /// <summary>
     /// Performs an implicit conversion from <see cref="DateTime"/> to <see cref="PersianDateTime"/>.
@@ -350,9 +358,9 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Performs an implicit conversion from <see cref="PersianDateTime"/> to <see cref="string"/>.
     /// </summary>
-    /// <param name="persianDateTime">The persian date time.</param>
+    /// <param name="PersianDateTime">The Persian date time.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator string(in PersianDateTime persianDateTime) => persianDateTime.ToString();
+    public static implicit operator string(in PersianDateTime PersianDateTime) => PersianDateTime.ToString();
 
     public static bool IsPersianDateTime(in string s)
         => TryParse(s).IsSucceed;
@@ -360,35 +368,35 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Implements the operator -.
     /// </summary>
-    /// <param name="persianDateTime1">The persian date time1.</param>
-    /// <param name="persianDateTime2">The persian date time2.</param>
+    /// <param name="PersianDateTime1">The Persian date time1.</param>
+    /// <param name="PersianDateTime2">The Persian date time2.</param>
     /// <returns>The result of the operator.</returns>
-    public static PersianDateTime operator -(PersianDateTime persianDateTime1, PersianDateTime persianDateTime2)
+    public static PersianDateTime operator -(PersianDateTime PersianDateTime1, PersianDateTime PersianDateTime2)
     {
-        DateTime dateTime1 = persianDateTime1;
-        DateTime dateTime2 = persianDateTime2;
+        DateTime dateTime1 = PersianDateTime1;
+        DateTime dateTime2 = PersianDateTime2;
         return dateTime1.Subtract(new TimeSpan(dateTime2.Ticks)).ToPersianDateTime();
     }
 
     /// <summary>
     /// Implements the operator !=.
     /// </summary>
-    /// <param name="persianDateTime1">The persian date time1.</param>
-    /// <param name="persianDateTime2">The persian date time2.</param>
+    /// <param name="PersianDateTime1">The Persian date time1.</param>
+    /// <param name="PersianDateTime2">The Persian date time2.</param>
     /// <returns>The result of the operator.</returns>
-    public static bool operator !=(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
-        => !persianDateTime1.Equals(persianDateTime2);
+    public static bool operator !=(in PersianDateTime PersianDateTime1, in PersianDateTime PersianDateTime2)
+        => !PersianDateTime1.Equals(PersianDateTime2);
 
     /// <summary>
     /// Implements the operator +.
     /// </summary>
-    /// <param name="persianDateTime1">The Persian date time1.</param>
-    /// <param name="persianDateTime2">The Persian date time2.</param>
+    /// <param name="PersianDateTime1">The Persian date time1.</param>
+    /// <param name="PersianDateTime2">The Persian date time2.</param>
     /// <returns>The result of the operator.</returns>
-    public static PersianDateTime operator +(PersianDateTime persianDateTime1, PersianDateTime persianDateTime2)
+    public static PersianDateTime operator +(PersianDateTime PersianDateTime1, PersianDateTime PersianDateTime2)
     {
-        DateTime dateTime1 = persianDateTime1;
-        DateTime dateTime2 = persianDateTime2;
+        DateTime dateTime1 = PersianDateTime1;
+        DateTime dateTime2 = PersianDateTime2;
         return dateTime1.Add(new TimeSpan(dateTime2.Ticks)).ToPersianDateTime();
     }
 
@@ -418,11 +426,11 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Implements the operator ==.
     /// </summary>
-    /// <param name="persianDateTime1">The persian date time1.</param>
-    /// <param name="persianDateTime2">The persian date time2.</param>
+    /// <param name="PersianDateTime1">The Persian date time1.</param>
+    /// <param name="PersianDateTime2">The Persian date time2.</param>
     /// <returns>The result of the operator.</returns>
-    public static bool operator ==(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
-        => persianDateTime1.Equals(persianDateTime2);
+    public static bool operator ==(in PersianDateTime PersianDateTime1, in PersianDateTime PersianDateTime2)
+        => PersianDateTime1.Equals(PersianDateTime2);
 
     /// <summary>
     /// Implements the operator &gt;.
@@ -467,7 +475,7 @@ public readonly struct PersianDateTime :
     }
 
     /// <summary>
-    /// Parses the persian.
+    /// Parses the Persian.
     /// </summary>
     /// <param name="dateTimeString">The date time string.</param>
     /// <returns></returns>
@@ -546,16 +554,16 @@ public readonly struct PersianDateTime :
     }
 
     /// <summary>
-    /// Subtracts the specified persian date time1.
+    /// Subtracts the specified Persian date time1.
     /// </summary>
-    /// <param name="persianDateTime1">The persian date time1.</param>
-    /// <param name="persianDateTime2">The persian date time2.</param>
+    /// <param name="PersianDateTime1">The Persian date time1.</param>
+    /// <param name="PersianDateTime2">The Persian date time2.</param>
     /// <returns></returns>
-    public static PersianDateTime Subtract(in PersianDateTime persianDateTime1, in PersianDateTime persianDateTime2)
-        => persianDateTime1 - persianDateTime2;
+    public static PersianDateTime Subtract(in PersianDateTime PersianDateTime1, in PersianDateTime PersianDateTime2)
+        => PersianDateTime1 - PersianDateTime2;
 
     /// <summary>
-    /// Converts to persian.
+    /// Converts to Persian.
     /// </summary>
     /// <param name="dateTime">The date time.</param>
     /// <returns></returns>
@@ -591,10 +599,10 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Adds the specified PersianDate time.
     /// </summary>
-    /// <param name="persianDateTime">The PersianDate time.</param>
+    /// <param name="PersianDateTime">The PersianDate time.</param>
     /// <returns></returns>
-    public PersianDateTime Add(in PersianDateTime persianDateTime)
-        => Add(this, persianDateTime);
+    public PersianDateTime Add(in PersianDateTime PersianDateTime)
+        => Add(this, PersianDateTime);
 
     public PersianDateTime AddDays(in int value)
         => this.ToDateTime().AddDays(value).ToPersianDateTime();
@@ -727,7 +735,7 @@ public readonly struct PersianDateTime :
         this.Data.GetHashCode();
 
     /// <summary>
-    /// Converts to persian date string.
+    /// Converts to Persian date string.
     /// </summary>
     /// <param name="separator">The separator.</param>
     /// <returns></returns>
@@ -804,7 +812,7 @@ public readonly struct PersianDateTime :
             => throw new NotImplementedException();
 
     /// <summary>
-    /// Converts to persian time string.
+    /// Converts to Persian time string.
     /// </summary>
     /// <param name="separator">The separator.</param>
     /// <returns></returns>

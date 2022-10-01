@@ -14,7 +14,7 @@ public static class FluencyHelper
     }
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance o)
-        => new(o);
+            => new(o);
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action action)
     {
@@ -54,7 +54,19 @@ public static class FluencyHelper
     }
 
     public static Fluency<TInstance> If<TInstance>([DisallowNull] this Fluency<TInstance> @this, bool b, in Func<TInstance, TInstance> ifTrue, in Func<TInstance, TInstance> ifFalse)
-        => b is true ? new(ifTrue.NotNull()(@this.Value)) : new(ifFalse.NotNull()(@this.Value));
+    {
+        if(b is true)
+        {
+            if (ifTrue is not null)
+                return new(ifTrue(@this.Value));
+        }
+        else
+        {
+            if(ifFalse is not null)
+                return new(ifFalse(@this.Value));
+        }
+        return @this;
+    }
 
     public static Fluency<TInstance> IfTrue<TInstance>(this Fluency<TInstance> @this, bool b, in Action ifTrue)
     {
@@ -87,19 +99,15 @@ public static class FluencyHelper
         return instance;
     }
 
-    public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Action<TInstance> action)
+    public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Action<TInstance>? action)
     {
-        action(instance);
+        action?.Invoke(instance);
         return instance;
     }
 
-    public static Fluency<TResult> ThenNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
-        => action(instance);
+    public static Fluency<TResult> Then<TResult>(this Fluency<TResult> instance, in Func<TResult, TResult>? func) 
+        => func is null ? instance : Fluency<TResult>.From(func(instance.Value));
 
-    public static Fluency<TResult> Then<TResult>(this Fluency<TResult> instance, in Func<TResult, TResult> func) 
-        => Fluency<TResult>.From(func(instance.Value));
-    public static TResult Convert<TResult>(object o1, object x)
-    {
-        return x.To<TResult>();
-    }
+    public static Fluency<TResult> ThenNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
+            => action(instance);
 }

@@ -95,7 +95,7 @@ public static class DateTimeHelper
 
     public static bool IsWeekend([DisallowNull] this DateTime dateTime, CultureInfo? culture = null)
             => (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(dateTime.ArgumentNotNull(nameof(dateTime)).DayOfWeek)
-                is CultureInfoExtensions.WeekdayState.Weekend or CultureInfoExtensions.WeekdayState.WorkdayMorning;
+                is CultureInfoHelper.WeekdayState.Weekend or CultureInfoHelper.WeekdayState.WorkdayMorning;
 
     /// <summary>
     ///     Converts to datetime.

@@ -17,12 +17,14 @@ public class ArchitecturalTests
         Assert.IsTrue(!allSealed.Any());
     }
 
-    //[TestMethod]
-    //public void TypesMustBeSealed()
-    //{
-    //    var asm = typeof(StringHelper).Assembly;
-    //    var types = asm.GetTypes();
-    //    var offenders = types.Where(x => !x.IsInterface && !x.IsInstanceOfType(typeof(object))).Where(x => !x.IsSealed);
-    //    Assert.IsFalse(offenders.Any());
-    //}
+    [TestMethod]
+    public void TypesMustBeSealed()
+    {
+        var asm = typeof(StringHelper).Assembly;
+        var types = asm.GetTypes();
+        var offenders = types.Where(x => !x.IsInterface && !x.IsInstanceOfType(typeof(object))).Where(x => !x.IsSealed);
+        Console.WriteLine("Hello");
+        Debug.WriteLine("Hi");
+        Assert.IsFalse(offenders.Any());
+    }
 }

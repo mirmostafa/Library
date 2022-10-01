@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-using Library.Collections;
+﻿using Library.Collections;
 using Library.DesignPatterns.ExceptionHandlingPattern;
 
 namespace Library.Logging;
@@ -57,5 +55,5 @@ public abstract class LoggersBase<TMessage> :
     }
 
     public new bool Remove(ILogger<TMessage> item)
-            => base.Remove(item).Result;
+                => base.Remove(item).Result;
 }

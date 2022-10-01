@@ -7,7 +7,7 @@ namespace Library.Data.SqlServer;
 public static partial class SqlStatementBuilder
 {
     public static ISelectStatement AddColumn([DisallowNull] this ISelectStatement statement, params string[] columns)
-        => statement.ArgumentNotNull().Fluent(() => columns.Compact().ForEach(c => statement.Columns.Add(c)).Build()).GetValue();
+        => statement.ArgumentNotNull().Fluent(() => columns.Compact().ForEach(c => statement.Columns.Add(c)).Build()).Build();
 
     public static ISelectStatement AddColumns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
         => statement.AddColumn(columns.ToArray());
@@ -16,7 +16,7 @@ public static partial class SqlStatementBuilder
         => statement.Star();
 
     public static ISelectStatement Ascending([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull().Fluent(() => statement.OrderByDirection = OrderByDirection.Ascending).GetValue();
+        => statement.ArgumentNotNull().Fluent(() => statement.OrderByDirection = OrderByDirection.Ascending).Build();
 
     public static string Build([DisallowNull] this ISelectStatement statement, string indent = "    ")
     {
@@ -57,10 +57,10 @@ public static partial class SqlStatementBuilder
         {
             statement.OrderByColumn = null;
             statement.OrderByDirection = OrderByDirection.None;
-        }).GetValue();
+        }).Build();
 
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, params string[] columns)
-        => statement.ArgumentNotNull().Fluent(() => statement.Columns.ClearAndAddRange(columns.Compact())).GetValue();
+        => statement.ArgumentNotNull().Fluent(() => statement.Columns.ClearAndAddRange(columns.Compact())).Build();
 
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
     {
@@ -70,13 +70,13 @@ public static partial class SqlStatementBuilder
     }
 
     public static ISelectStatement Descending([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull().Fluent(() => statement.OrderByDirection = OrderByDirection.Descending).GetValue();
+        => statement.ArgumentNotNull().Fluent(() => statement.OrderByDirection = OrderByDirection.Descending).Build();
 
     public static ISelectStatement From([DisallowNull] this ISelectStatement statement, [DisallowNull] string tableName)
-        => statement.ArgumentNotNull().Fluent(() => statement.TableName = tableName.ArgumentNotNull()).GetValue();
+        => statement.ArgumentNotNull().Fluent(() => statement.TableName = tableName.ArgumentNotNull()).Build();
 
     public static ISelectStatement OrderBy([DisallowNull] this ISelectStatement statement, string? column)
-        => statement.ArgumentNotNull().Fluent(() => statement.OrderByColumn = column).GetValue();
+        => statement.ArgumentNotNull().Fluent(() => statement.OrderByColumn = column).Build();
 
     public static ISelectStatement Select<TEntity>()
     {
@@ -94,10 +94,10 @@ public static partial class SqlStatementBuilder
         => new SelectStatement();
 
     public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull().Fluent(statement.Columns.Clear).GetValue();
+        => statement.ArgumentNotNull().Fluent(statement.Columns.Clear).Build();
 
     public static ISelectStatement Where([DisallowNull] this ISelectStatement statement, string? whereClause)
-        => statement.ArgumentNotNull().Fluent(() => statement.WhereClause = whereClause).GetValue();
+        => statement.ArgumentNotNull().Fluent(() => statement.WhereClause = whereClause).Build();
 
     private struct SelectStatement : ISelectStatement
     {

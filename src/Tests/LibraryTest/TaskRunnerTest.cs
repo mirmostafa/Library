@@ -1,9 +1,12 @@
-﻿using Library.Helpers;
-using Library.MultistepProgress;
+﻿using Library.MultistepProgress;
 
-internal partial class Program
+namespace UnitTest;
+
+[TestClass]
+public class TaskRunnerTest
 {
-    private static async Task Main()
+    [TestMethod]
+    public async void SimpleTest1()
     {
         var add5 = (int x) => x + 5;
         var init = () => 5;
@@ -13,6 +16,6 @@ internal partial class Program
             .Then(add5.ToAsync())
             .Then(add5.ToAsync())
             .RunAsync();
-        Console.WriteLine(result.Value);
+        Assert.AreEqual(15, result);
     }
 }

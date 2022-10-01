@@ -2,6 +2,7 @@
 
 using Library.Data.SqlServer.Dynamics;
 using Library.Helpers;
+using Library.MultistepProgress;
 using Library.ProgressiveOperations;
 using Library.Validations;
 

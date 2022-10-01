@@ -33,7 +33,7 @@ public record struct Fluency<T>(T Value) : IEquatable<T>, IConvertible<Fluency<T
     public static T From(Fluency<T> other)
         => other.Value;
 
-    public T GetValue()
+    public T Build()
         => this.Value;
     public T GetValue([NotNullWhen(true)] bool checkNotNull)
         => checkNotNull && this.Value is null ? throw new NullValueValidationException() : this.Value;

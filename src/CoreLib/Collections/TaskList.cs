@@ -7,30 +7,30 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
     private readonly CancellationTokenSource _cancellationTokenSource;
     private bool _disposedValue;
 
-    public TaskList(List<Task> list) : base(list) =>
-        this._cancellationTokenSource = new CancellationTokenSource();
+    public TaskList(List<Task> list) : base(list)
+        => this._cancellationTokenSource = new CancellationTokenSource();
 
-    public TaskList(IEnumerable<Task> list) : base(list) =>
-        this._cancellationTokenSource = new CancellationTokenSource();
+    public TaskList(IEnumerable<Task> list) : base(list)
+        => this._cancellationTokenSource = new CancellationTokenSource();
 
-    public TaskList(int capacity) : base(capacity) =>
-        this._cancellationTokenSource = new CancellationTokenSource();
+    public TaskList(int capacity) : base(capacity)
+        => this._cancellationTokenSource = new CancellationTokenSource();
 
-    public TaskList() =>
-        this._cancellationTokenSource = new CancellationTokenSource();
+    public TaskList()
+        => this._cancellationTokenSource = new CancellationTokenSource();
 
-    public TaskList([DisallowNull] CancellationTokenSource cancellationTokenSource) =>
-        this._cancellationTokenSource = cancellationTokenSource.ArgumentNotNull();
+    public TaskList([DisallowNull] CancellationTokenSource cancellationTokenSource)
+        => this._cancellationTokenSource = cancellationTokenSource.ArgumentNotNull();
 
     public bool IsCancellationRequested => this.CancellationTokenSource.IsCancellationRequested;
 
     private CancellationTokenSource CancellationTokenSource => this.This()._cancellationTokenSource;
 
-    public static TaskList New() =>
-                new();
+    public static TaskList New()
+        => new();
 
-    public void CancelAll() =>
-        this.CancellationTokenSource.Cancel();
+    public void CancelAll()
+        => this.CancellationTokenSource.Cancel();
 
     public void Dispose()
     {
@@ -43,20 +43,6 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
 
     public TaskList Run(Func<Task> action)
         => this.This().Add(action.ArgumentNotNull(nameof(action))());
-
-    public TaskList Run(params Action[] actions)
-    {
-        foreach (var action in actions)
-        {
-            _ = this.This().Run(action);
-        }
-        return this.This();
-    }
-
-    //public async Task<TaskList> RunAsync(Action action)
-    //    => await Task.Run(() => this.Run(action));
-    public TaskList Run(IEnumerable<Action> actions)
-        => this.This().Run(actions.ToArray());
 
     public TaskList WaitAll(TimeSpan timeout)
     {
@@ -100,6 +86,6 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
         }
     }
 
-    private TaskList This() =>
-        this.ThrowIfDisposed(this._disposedValue);
+    private TaskList This()
+        => this.ThrowIfDisposed(this._disposedValue);
 }
