@@ -25,9 +25,9 @@ public static class FluencyHelper
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in object? obj)
         => instance;
 
-    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action<TInstance> action)
+    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action<TInstance>? action)
     {
-        action(instance);
+        action?.Invoke(instance);
         return instance;
     }
 

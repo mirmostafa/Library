@@ -190,7 +190,7 @@ public static class ServiceHelper
         //! Before committing
         var entity = convertToEntity(model) // Convert model to entity
             .NotNull(() => "Entity cannot be null.").Fluent() // Cannot be null
-            .IfTrue(onCommitting is not null, x => onCommitting!(x)).Build(); // On Before commit
+            .IfTrue(onCommitting is not null, x => onCommitting!(x)).GetValue(); // On Before commit
 
         //! Manipulation
         var entry = manipulate(entity);

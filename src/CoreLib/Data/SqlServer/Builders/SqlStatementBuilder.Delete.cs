@@ -11,10 +11,10 @@ public partial class SqlStatementBuilder
         => new DeleteStatement();
 
     public static IDeleteStatement From([DisallowNull] this IDeleteStatement statement, [DisallowNull] string tableName)
-        => statement.ArgumentNotNull().Fluent(() => statement.TableName = tableName.ArgumentNotNull()).Build();
+        => statement.ArgumentNotNull().Fluent(() => statement.TableName = tableName.ArgumentNotNull()).GetValue();
 
     public static IDeleteStatement Where([DisallowNull] this IDeleteStatement statement, string? whereClause)
-        => statement.ArgumentNotNull().Fluent(() => statement.WhereClause = whereClause).Build();
+        => statement.ArgumentNotNull().Fluent(() => statement.WhereClause = whereClause).GetValue();
 
     public static string Build([DisallowNull] this IDeleteStatement statement, string indent = "    ")
     {

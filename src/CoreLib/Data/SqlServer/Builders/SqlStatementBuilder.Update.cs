@@ -9,7 +9,7 @@ public static partial class SqlStatementBuilder
     public static IUpdateStatement Update([DisallowNull] string tableName)
         => new UpdateStatement { TableName = tableName.ArgumentNotNull(nameof(tableName)) };
     public static IUpdateStatement Table([DisallowNull] this IUpdateStatement statement, [DisallowNull] string tableName)
-        => statement.Fluent(statement.ArgumentNotNull().TableName = tableName.ArgumentNotNull()).Build();
+        => statement.Fluent(statement.ArgumentNotNull().TableName = tableName.ArgumentNotNull()).GetValue();
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, string column, object value)
     {
         statement.ArgumentNotNull(nameof(statement)).ColumnsValue.Add(column.ArgumentNotNull(nameof(column)), value);
@@ -29,7 +29,7 @@ public static partial class SqlStatementBuilder
     }
 
     public static IUpdateStatement Where([DisallowNull] this IUpdateStatement statement, string? whereClause)
-        => statement.Fluent(statement.ArgumentNotNull().WhereClause = whereClause).Build();
+        => statement.Fluent(statement.ArgumentNotNull().WhereClause = whereClause).GetValue();
 
     public static string Build([DisallowNull] this IUpdateStatement statement, string indent = "    ")
     {

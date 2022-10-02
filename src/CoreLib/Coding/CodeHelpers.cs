@@ -439,6 +439,6 @@ public static class CodeHelper
         }
     }
 
-    public static TInstance With<TInstance>(this TInstance instance, [DisallowNull] in Action<TInstance> action)
+    public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action)
             => instance.Fluent(action);
 }
