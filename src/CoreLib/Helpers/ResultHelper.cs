@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 
 using Library.Exceptions.Validations;
-using Library.Helpers;
 using Library.Results;
 
 namespace Library.Helpers;
@@ -77,9 +76,6 @@ public static class ResultHelper
         var value1 = getNewValue(result);
         return Result<TValue1>.From(result, value1);
     }
-
-    //public static ivalidationResult Validate<TValue>(this Result<TValue> result)
-    //    => IsValid(result) ? valid.Result : invalid.Result;
 
     private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId)
         where TResult : ResultBase

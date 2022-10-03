@@ -118,12 +118,15 @@ public sealed class Check
     public static Result<T> MustBeNotNull<T>(T? obj) where T : class
         => MustBe(obj!, () => obj is not null, () => new NullValueValidationException());
 
-    public static Result<TInstance> MustBeNotNull<TInstance, T>(TInstance instance, T? obj) where T : class
+    public static Result<TInstance> MustBeNotNull<TInstance>(TInstance instance, object? obj)
         => MustBe(instance, () => obj is not null, () => new NullValueValidationException());
+
+    public static Result<TInstance> MustBeNotNull<TInstance>(TInstance instance, Func<string> getExceptionMessage)
+        => MustBe(instance, () => instance is not null, () => new NullValueValidationException(getExceptionMessage(), null));
 
     public static Result<string> MustBeNotNull(string? obj)
         => MustBe(obj!, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException());
 
-    public static Result<T> MustBeNotNull<T>(T instance, string? obj) 
+    public static Result<T> MustBeNotNull<T>(T instance, string? obj)
         => MustBe(instance, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException());
 }

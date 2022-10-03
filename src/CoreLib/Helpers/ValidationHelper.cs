@@ -1,5 +1,4 @@
 ﻿using Library.Exceptions.Validations;
-using Library.Results;
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -17,30 +16,4 @@ public static class ValidationHelper
 
     public static async Task<TItem> CheckValidatorAsync<TItem>([DisallowNull] this IAsyncValidator<TItem> validator, TItem item)
         => await validator.ValidateAsync(item).ThrowOnFailAsync();
-
-    public static Result<TItem> Validate<TItem>(Func<TItem> action)
-    {
-        try
-        {
-            var item = action();
-            return Result<TItem>.CreateSuccess(item);
-        }
-        catch (ValidationException ex)
-        {
-            return Result<TItem>.CreateFail(message: ex.Message);
-        }
-    }
-
-    public static Result<TItem> Validate<TItem>(Func<TItem> action, TItem item)
-    {
-        try
-        {
-            item = action();
-            return Result<TItem>.CreateSuccess(item);
-        }
-        catch (ValidationException ex)
-        {
-            return Result<TItem>.CreateFail(ex.Message, value: item);
-        }
-    }
 }
