@@ -39,10 +39,7 @@ public static class FluentCondition
     }
 
     public static IfCondition<T> If<T>(this Fluency<bool> condition)
-            => new(condition);
-
-    public static T Result<T>(this IfCondition<T> condition)
-        => condition.Result;
+        => new(condition);
 
     public static IfCondition<T> Then<T>(this IfCondition<T> condition, Func<T> action)
     {

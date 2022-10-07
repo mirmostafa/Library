@@ -27,12 +27,19 @@ public class IfStatementTest
     public void IfStatementTestMethod4()
     {
         var _true = () => true;
+        _true.Fluent().If().Then(Methods.Empty).Else(Methods.Empty);
+    }
+
+    [TestMethod]
+    public void IfStatementTestMethod5()
+    {
+        var _true = () => true;
         var actual = _true.Fluent().If<int>().Then(() => 1).Else(() => 2);
         Assert.AreEqual(1, actual);
     }
 
     [TestMethod]
-    public void IfStatementTestMethod5()
+    public void IfStatementTestMethod6()
     {
         var _false = () => false;
         var actual = _false.Fluent().If<int>().Then(() => 1).Else(() => 2);
