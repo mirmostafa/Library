@@ -39,9 +39,6 @@ public static class ResultHelper
         return InnerCheck(result, condition, errorMessage, errorId);
     }
 
-    public static bool IsValid<TValue>([NotNullWhen(true)] this Result<TValue>? result)
-        => result is not null and { IsSucceed: true } and { Value: not null };
-
     public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null)
     {
         _ = result.As<ResultBase>()!.InnerThrowOnFail(owner, instruction);
@@ -67,9 +64,6 @@ public static class ResultHelper
         return InnerThrowOnFail(result, owner, instruction);
     }
 
-    public static Task<TResult> ToAsync<TResult>(this TResult result)
-        where TResult : ResultBase => Task.FromResult(result);
-
     public static async Task<Result<TValue1>> ToResultAsync<TValue, TValue1>(this Task<Result<TValue>> resultTask, Func<TValue, TValue1> getNewValue)
     {
         var result = await resultTask;
@@ -77,8 +71,15 @@ public static class ResultHelper
         return Result<TValue1>.From(result, value1);
     }
 
+    public static bool Try<TResult>([DisallowNull] this TResult input, out TResult result) where TResult : ResultBase
+        => (result = input).IsSucceed;
+
+    //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
+    ////public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase 
+    ////    => (result = await input).IsSucceed;
+
     private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId)
-        where TResult : ResultBase
+            where TResult : ResultBase
     {
         if (condition)
         {

@@ -10,7 +10,7 @@ namespace Library.Helpers;
 public static class Cast
 {
     /// <summary>
-    /// Works just like 'as' C# keyword
+    /// Works just like <code>as</code> C# keyword
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="obj">The object.</param>

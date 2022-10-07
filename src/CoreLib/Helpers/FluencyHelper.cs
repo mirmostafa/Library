@@ -16,7 +16,7 @@ public static class FluencyHelper
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance o)
             => new(o);
 
-    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action action)
+    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action? action)
     {
         action?.Invoke();
         return instance;

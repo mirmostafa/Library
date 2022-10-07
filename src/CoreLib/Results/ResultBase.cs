@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 
 using Library.Exceptions;
-using Library.Helpers;
 using Library.Validations;
 using Library.Windows;
 
@@ -51,16 +50,16 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         => EqualityComparer<ResultBase>.Default.Equals(left, right);
 
     public void Deconstruct(out bool isSucceed, out string? message)
-                => (isSucceed, message) = (this.IsSucceed, this.Message);
+        => (isSucceed, message) = (this.IsSucceed, this.Message);
 
-    public override bool Equals(object? obj) =>
-        this.Equals(obj as ResultBase);
+    public override bool Equals(object? obj)
+        => this.Equals(obj as ResultBase);
 
-    public bool Equals(ResultBase? other) =>
-        other is not null && this.Status == other.Status;
+    public bool Equals(ResultBase? other)
+        => other is not null && this.Status == other.Status;
 
-    public override int GetHashCode() =>
-        HashCode.Combine(this.Status, this.Message, this.Errors);
+    public override int GetHashCode()
+        => HashCode.Combine(this.Status, this.Message, this.Errors);
 
     public override string ToString()
     {
@@ -96,8 +95,8 @@ public abstract class ResultBase : IEquatable<ResultBase?>
     }
 
     internal void SetIsSucceed(bool? isSucceed)
-            => this._isSucceed = isSucceed;
+        => this._isSucceed = isSucceed;
 
     private string GetDebuggerDisplay()
-            => this.ToString();
+        => this.ToString();
 }

@@ -109,11 +109,23 @@ public sealed class Check
     public static Result<T?> MustBe<T>(T obj, Func<bool> predicate, Func<Exception> getException)
         => predicate() ? Result<T?>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException());
 
+    public static bool MustBe<T>(T obj, Func<bool> predicate, Func<Exception> getException, out Result<T?> result)
+    {
+        result = predicate() ? Result<T?>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException());
+        return result.IsSucceed;
+    }
+
     public static Result<T?> MustBe<T>(T? obj, Func<T?, bool> predicate, Func<Exception> getException)
         => predicate(obj) ? Result<T?>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException());
 
     public static Result MustBe(Func<bool> predicate, Func<Exception> getException)
         => predicate() ? Result.CreateSuccess() : Result.CreateFail(error: getException());
+
+    public static Result<TValue?> MustBeArgumentNotNull<TValue>([AllowNull] TValue? obj, [CallerArgumentExpression("obj")] string? argName = null)
+        => Result<TValue?>.From(MustBeArgumentNotNull(obj is not null, argName!), obj);
+
+    public static Result MustBeArgumentNotNull(bool isNotNull, [DisallowNull] string argName)
+        => MutBe(isNotNull, () => new ArgumentNullException(argName));
 
     public static Result<T> MustBeNotNull<T>(T? obj) where T : class
         => MustBe(obj!, () => obj is not null, () => new NullValueValidationException());
@@ -129,4 +141,10 @@ public sealed class Check
 
     public static Result<T> MustBeNotNull<T>(T instance, string? obj)
         => MustBe(instance, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException());
+
+    public static Result MutBe(bool ok, in Func<Exception> getExceptionIfNot)
+        => !ok ? Result.CreateFail(error: getExceptionIfNot()) : Result.CreateSuccess();
+
+    public static bool TryMustBeArgumentNotNull<TValue>([AllowNull][NotNullWhen(true)] TValue? obj, out Result<TValue?> result, [CallerArgumentExpression("obj")] string? argName = null) 
+        => (result = MustBeArgumentNotNull(obj, argName)).IsSucceed;
 }

@@ -58,20 +58,23 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>
     public void Deconstruct(out bool isSucceed, out TValue Value)
         => (isSucceed, Value) = (this.IsSucceed, this.Value);
 
-    public bool Equals(Result<TValue?> other)
+    public bool Equals(in Result<TValue?> other)
         => other is not null && (other.Status, other.IsSucceed) == (this.Status, this.IsSucceed) && (other.Value?.Equals(this.Value) ?? this.Value is null);
+
+    public bool IsValid()
+        => this is not null and { IsSucceed: true } and { Value: not null };
+
+    public Task<Result<TValue>> ToAsync()
+        => Task.FromResult(this);
 
     public Result<TValue1> ToResult<TValue1>(TValue1 value)
         => From(this, new Result<TValue1>(value));
 
-    public Result<TValue1> ToResult<TValue1>(Func<Result<TValue>, TValue1> action)
+    public Result<TValue1> ToResult<TValue1>(in Func<Result<TValue>, TValue1> action)
         => From(this, new Result<TValue1>(action(this)));
 
-    public Task<Result<TValue>> ToTask()
-                => Task.FromResult(this);
-
     public Result<TValue1> With<TValue1>(in TValue1 value1)
-        => Result<TValue1>.From(this, value1);
+            => Result<TValue1>.From(this, value1);
 
     public Result<TValue> With(in Result<TValue> other)
         => Result<TValue>.From(this, other);

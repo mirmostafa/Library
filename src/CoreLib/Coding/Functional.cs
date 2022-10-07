@@ -258,7 +258,7 @@ public static class Functional
         return @this;
     }
 
-    public static void If(this Func<bool> b, in Action ifTrue, in Action ifFalse)
+    public static void If(Func<bool> b, in Action ifTrue, in Action ifFalse)
     {
         if (b() is true)
         {
@@ -291,7 +291,7 @@ public static class Functional
         return b;
     }
 
-    public static T IfTrue<T>(bool b, in Func<T> ifTrue, in T defaultValue = default!)
+    public static T IfTrue<T>(this bool b, in Func<T> ifTrue, in T defaultValue = default!)
         => b is true ? ifTrue.Invoke() : defaultValue;
 
     public static void Lock(object? lockObject, Action action)

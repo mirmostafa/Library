@@ -16,8 +16,14 @@ public class HostDialog
     public static HostDialog Create<TPage>() where TPage : LibPageBase, new()
         => new(new TPage());
 
+    public HostDialog OnLoad(Action action)
+    {
+        this._dialogBox.Loaded += (_, _) => action?.Invoke();
+        return this;
+    }
+
     public HostDialog SetCancelEnabled(in bool cancelEnabled)
-        => this.Fluent(this._dialogBox.IsCancelEnabled = cancelEnabled);
+            => this.Fluent(this._dialogBox.IsCancelEnabled = cancelEnabled);
 
     public HostDialog SetDirection(FlowDirection direction)
         => this.Fluent(this._dialogBox.Direction = direction);

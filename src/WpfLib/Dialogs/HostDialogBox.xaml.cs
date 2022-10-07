@@ -93,4 +93,9 @@ internal partial class HostDialogBox
             this.Close();
         }
     }
+
+    private void Me_Loaded(object sender, RoutedEventArgs e)
+    {
+
+    }
 }

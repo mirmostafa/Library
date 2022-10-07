@@ -9,8 +9,8 @@ namespace Library.Interfaces;
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier.</typeparam>
-/// <seealso cref="Library.Interfaces.IAsyncReadService&lt;TViewModel, TId&gt;"/>
-/// <seealso cref="Library.Interfaces.IAsyncWriteService&lt;TViewModel, TId&gt;"/>
+/// <seealso cref="IAsyncReadService&lt;TViewModel, TId&gt;"/>
+/// <seealso cref="IAsyncWriteService&lt;TViewModel, TId&gt;"/>
 public interface IAsyncCrudService<TViewModel, TId> : IAsyncReadService<TViewModel, TId>, IAsyncWriteService<TViewModel, TId>
 {
 }
@@ -19,8 +19,8 @@ public interface IAsyncCrudService<TViewModel, TId> : IAsyncReadService<TViewMod
 /// A standardizer for services to CRUD data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
-/// <seealso cref="Library.Interfaces.IAsyncReadService&lt;TViewModel, TId&gt;"/>
-/// <seealso cref="Library.Interfaces.IAsyncWriteService&lt;TViewModel, TId&gt;"/>
+/// <seealso cref="IAsyncReadService&lt;TViewModel, TId&gt;"/>
+/// <seealso cref="IAsyncWriteService&lt;TViewModel, TId&gt;"/>
 public interface IAsyncCrudService<TViewModel> : IAsyncReadService<TViewModel>, IAsyncWriteService<TViewModel>
 { }
 
@@ -272,10 +272,10 @@ public interface IViewModelToDbEntityConverter<in TViewModel, out TDbEntity>
 
 /// <summary>
 /// </summary>
-/// <seealso cref="System.IEquatable&lt;Library.Interfaces.PagingParams&gt;"/>
+/// <seealso cref="IEquatable&lt;PagingParams&gt;"/>
 public record PagingParams(in int PageIndex = 0, in int? PageSize = null);
 /// <summary>
 /// </summary>
 /// <typeparam name="T"></typeparam>
-/// <seealso cref="System.IEquatable&lt;Library.Interfaces.PagingResult&lt;T&gt;&gt;"/>
+/// <seealso cref="IEquatable&lt;PagingResult&lt;T&gt;&gt;"/>
 public record PagingResult<T>(IReadOnlyList<T> Result, in long TotalCount);

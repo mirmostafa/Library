@@ -439,6 +439,15 @@ public static class CodeHelper
         }
     }
 
+    public static Task ToVoidAsync<TValue>(this Task<TValue> task)
+        => task;
+
     public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action)
             => instance.Fluent(action);
+
+    public static TInstance With<TInstance>(this TInstance instance, in Action? action)
+        => instance.Fluent(action);
+
+    public static TInstance With<TInstance>(this TInstance instance, in object? obj)
+        => instance.Fluent(obj);
 }

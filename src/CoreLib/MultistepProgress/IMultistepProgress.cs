@@ -117,14 +117,22 @@ public class MultistepProgressManager<TState>
     public MultistepProgressManager<TState> AddStep(Func<TState, Task> action, in string description, int progressCount = 1)
         => this.AddStep(StepInfo<TState>.New(action, description, progressCount));
 
-    public async Task<TState> StartAsync(CancellationToken? token = default)
+    public MultistepProgressManager<TState> AddStep(Action action, in string description, int progressCount = 1)
+        => this.AddStep(StepInfo<TState>.New(action, description, progressCount));
+    public MultistepProgressManager<TState> AddStep(Action<TState> action, in string description, int progressCount = 1)
+            => this.AddStep(StepInfo<TState>.New(action, description, progressCount));
+
+    public async Task<TState> StartAsync(CancellationToken? cancellationToken = default)
     {
         var stepList = this.Steps.ToList();
         this._max = stepList.Select(x => x.ProgressCount).Sum();
         this._current = 0;
+        var canBeCancelled = cancellationToken is not null and { CanBeCanceled: true };
+        var token = cancellationToken is null ? default : cancellationToken.Value;
+        var isCancellationRequested = () => canBeCancelled && token.IsCancellationRequested;
         foreach (var step in stepList)
         {
-            if (token is not null and { CanBeCanceled: true } and { IsCancellationRequested: true })
+            if (isCancellationRequested())
             {
                 break;
             }

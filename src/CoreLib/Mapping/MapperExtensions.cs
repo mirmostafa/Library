@@ -17,7 +17,7 @@ public static class MapperExtensions
         => entity.Fluent(action);
 
     public static TEntity? ForMemberIfNotNull<TEntity>(TEntity? entity, Action<TEntity> action)
-            => IfTrue(entity is not null && action is not null, () => entity.Fluent(action));
+            => Functional.IfTrue(entity is not null && action is not null, () => entity.Fluent(action));
 
     internal static void Copy<TSource, TDestination>(TSource source, TDestination destination, PropertyInfo dstProp)
         where TDestination : class

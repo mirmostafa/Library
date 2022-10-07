@@ -14,7 +14,7 @@ public class FunctionalTest
     public void IfConditionTest()
     {
         var bolleanTest = true;
-        var trueResult = IfTrue(bolleanTest, () => "true");
+        var trueResult = Functional.IfTrue(bolleanTest, () => "true");
         //IfTrue(bolleanTest, Methods.Empty);
         Assert.AreEqual("true", trueResult);
     }

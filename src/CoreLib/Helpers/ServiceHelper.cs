@@ -23,8 +23,14 @@ public static class ServiceHelper
         where TDbEntity : class, IIdenticalEntity<long>, new()
         where TViewModel : IHasKey<long?>
     {
-        Check.IfArgumentNotNull(model?.Id);
-        Check.IfArgumentNotNull(dbContext);
+        if (!Check.TryMustBeArgumentNotNull(model?.Id, out var res1))
+        {
+            return res1;
+        }
+        if (!Check.TryMustBeArgumentNotNull(dbContext, out var res2))
+        {
+            return res2;
+        }
 
         var id = (long)(model?.Id.Value)!;
         logger?.Debug($"Deleting {nameof(TDbEntity)}, id={id}");
@@ -165,15 +171,25 @@ public static class ServiceHelper
         where TId : notnull
     {
         //! Argument checks
-        Check.IfArgumentNotNull(model);
-        Check.IfArgumentNotNull(manipulate);
-        Check.IfArgumentNotNull(convertToEntity);
+        if (Check.TryMustBeArgumentNotNull(model, out var res1))
+        {
+            return Result<ManipulationResult<TViewModel, TDbEntity?>>.From(res1, default);
+        }
+        if (Check.TryMustBeArgumentNotNull(manipulate, out var res2))
+        {
+            return Result<ManipulationResult<TViewModel, TDbEntity?>>.From(res2, default);
+        }
+        if (Check.TryMustBeArgumentNotNull(convertToEntity, out var res3))
+        {
+            return Result<ManipulationResult<TViewModel, TDbEntity?>>.From(res3, default);
+        }
 
         if (persist)
         {
             logger?.Debug($"Manipulation started. Entity: {nameof(TDbEntity)}, Action:{nameof(manipulate)}");
         }
-        //! Setup transcation
+
+        //! Setup transaction
         var transaction = persist && transactionInfo is { } t and { UseTransaction: true }
             ? await dbContext.Database.BeginTransactionAsync()
             : null;

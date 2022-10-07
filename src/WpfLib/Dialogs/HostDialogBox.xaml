@@ -11,6 +11,7 @@
     d:Height="450"
     d:Width="400"
     x:ClassModifier="internal"
+    Loaded="Me_Loaded"
     ResizeMode="NoResize"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
