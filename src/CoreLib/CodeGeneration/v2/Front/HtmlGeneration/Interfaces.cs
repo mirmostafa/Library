@@ -18,7 +18,7 @@ public interface IHtmlElementInfo
         => new HtmlElement(name);
 }
 
-public interface IParentHtmlElement : IHtmlElementInfo, IHasChild<IHtmlElementInfo>
+public interface IParentHtmlElement : IHtmlElementInfo, IHasChildren<IHtmlElementInfo>
 {
     static new IParentHtmlElement New(string name)
         => new HtmlElement(name);

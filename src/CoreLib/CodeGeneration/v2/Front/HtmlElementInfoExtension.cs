@@ -24,7 +24,7 @@ public static class HtmlElementInfoExtension
             _ = codeStatement.AppendLine().Append(indent).Append(element.InnerHtml);
             _ = codeStatement.AppendLine().Append(indent).Append($"</{element.Name}>");
         }
-        else if (element is IHasChild<IHtmlElementInfo> parent && parent.Children.Any())
+        else if (element is IHasChildren<IHtmlElementInfo> parent && parent.Children.Any())
         {
             _ = codeStatement.Append('>');
             foreach (var child in parent.Children)

@@ -55,15 +55,19 @@ public static class FluencyHelper
 
     public static Fluency<TInstance> If<TInstance>([DisallowNull] this Fluency<TInstance> @this, bool b, in Func<TInstance, TInstance> ifTrue, in Func<TInstance, TInstance> ifFalse)
     {
-        if(b is true)
+        if (b is true)
         {
             if (ifTrue is not null)
+            {
                 return new(ifTrue(@this.Value));
+            }
         }
         else
         {
-            if(ifFalse is not null)
+            if (ifFalse is not null)
+            {
                 return new(ifFalse(@this.Value));
+            }
         }
         return @this;
     }
@@ -93,21 +97,21 @@ public static class FluencyHelper
     public static (TInstance Instance, TResult Result) Result<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TResult> func)
         => (instance.Value, func.Invoke());
 
-    public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Action action)
+    public static Fluency<TInstance> With<TInstance>(this Fluency<TInstance> instance, in Action action)
     {
         action?.Invoke();
         return instance;
     }
 
-    public static Fluency<TInstance> Then<TInstance>(this Fluency<TInstance> instance, in Action<TInstance>? action)
+    public static Fluency<TInstance> With<TInstance>(this Fluency<TInstance> instance, in Action<TInstance>? action)
     {
         action?.Invoke(instance);
         return instance;
     }
 
-    public static Fluency<TResult> Then<TResult>(this Fluency<TResult> instance, in Func<TResult, TResult>? func) 
+    public static Fluency<TResult> With<TResult>(this Fluency<TResult> instance, in Func<TResult, TResult>? func)
         => func is null ? instance : Fluency<TResult>.From(func(instance.Value));
 
-    public static Fluency<TResult> ThenNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
+    public static Fluency<TResult> WithNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
             => action(instance);
 }

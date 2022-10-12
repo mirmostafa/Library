@@ -7,7 +7,7 @@ namespace Library.Collections;
 
 [Immutable]
 [Fluent]
-public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChild<Node<T>>
+public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
 {
     public static readonly Node<T?> Empty = new(default, null);
 

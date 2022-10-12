@@ -279,3 +279,8 @@ public record PagingParams(in int PageIndex = 0, in int? PageSize = null);
 /// <typeparam name="T"></typeparam>
 /// <seealso cref="IEquatable&lt;PagingResult&lt;T&gt;&gt;"/>
 public record PagingResult<T>(IReadOnlyList<T> Result, in long TotalCount);
+
+public interface IAsyncCreator<TViewModel>
+{
+    Task<TViewModel> CreateAsync();
+}

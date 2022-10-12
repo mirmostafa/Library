@@ -108,6 +108,8 @@ public sealed class Check
 
     public static Result<T?> MustBe<T>(T obj, Func<bool> predicate, Func<Exception> getException)
         => predicate() ? Result<T?>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException());
+    public static Result<T> MustBe<T>(T obj, bool ok, Func<Exception> getException)
+        => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException());
 
     public static bool MustBe<T>(T obj, Func<bool> predicate, Func<Exception> getException, out Result<T?> result)
     {

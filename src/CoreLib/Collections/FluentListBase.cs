@@ -49,13 +49,13 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     private TList This => this.As<TList>()!;
 
     public TList Add(TItem item)
-        => this.This.Fluent(this.CheckReadOnly).Then(() => this._list.Add(item));
+        => this.This.Fluent(this.CheckReadOnly).With(() => this._list.Add(item));
 
     public List<TItem> AsList() =>
         this._list.ToList();
 
     public TList Clear()
-        => this.This.Fluent(this.CheckReadOnly).Then(this._list.Clear);
+        => this.This.Fluent(this.CheckReadOnly).With(this._list.Clear);
 
     public (TList List, bool Result) Contains(TItem item)
         => (this.This, this._list.Contains(item));
@@ -76,7 +76,7 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
         => this.This.Fluent(this.CheckReadOnly).Result(() => this._list.Remove(item))!;
 
     public TList RemoveAt(int index)
-        => this.This.Fluent(this.CheckReadOnly).Then(() => this._list.RemoveAt(index));
+        => this.This.Fluent(this.CheckReadOnly).With(() => this._list.RemoveAt(index));
 
     IEnumerator IEnumerable.GetEnumerator()
                         => ((IEnumerable)this._list).GetEnumerator();
@@ -89,5 +89,5 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
         => (this.This, this._list.IndexOf(item));
 
     private TList OnInsert(int index, TItem item)
-        => this.This.Fluent(this.This.CheckReadOnly).Then(() => this._list.Insert(index, item));
+        => this.This.Fluent(this.This.CheckReadOnly).With(() => this._list.Insert(index, item));
 }

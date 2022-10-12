@@ -244,7 +244,7 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TItem> Collect<TItem>(IEnumerable<TItem> items)
-        where TItem : IHasChild<TItem>
+        where TItem : IHasChildren<TItem>
     {
         foreach (var item in items)
         {
@@ -258,7 +258,7 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TItem> Collect<TItem>(this TItem root)
-        where TItem : IHasChild<TItem>
+        where TItem : IHasChildren<TItem>
         => Collect(AsEnumerableItem(root));
 
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)

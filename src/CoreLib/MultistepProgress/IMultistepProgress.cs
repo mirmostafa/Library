@@ -58,7 +58,7 @@ internal class MultistepProgress : IMultistepProgress
         => this._onReporting((description, max, current));
 }
 
-public class MultistepProgressManager<TState>
+public class MultistepProcessRunner<TState>
 {
     private readonly IMultistepProgress _reporter;
     private readonly List<StepInfo<TState>> _steps = new();
@@ -67,14 +67,14 @@ public class MultistepProgressManager<TState>
     private int _max;
     private TState _state;
 
-    public MultistepProgressManager(in TState state, in IMultistepProgress reporter, IMultistepProgress? subReporter = null)
+    public MultistepProcessRunner(in TState state, in IMultistepProgress reporter, IMultistepProgress? subReporter = null)
     {
         this._reporter = reporter;
         this._subReporter = subReporter ?? IMultistepProgress.New(_ => { });
         this._state = state;
     }
 
-    public MultistepProgressManager(in TState state,
+    public MultistepProcessRunner(in TState state,
         in Action<(string Description, int Max, int Current)> reporter,
         Action<(string Description, int Max, int Current)>? subReporter = null)
         : this(state, IMultistepProgress.New(reporter), subReporter is null ? null : IMultistepProgress.New(subReporter))
@@ -83,46 +83,46 @@ public class MultistepProgressManager<TState>
 
     public IEnumerable<StepInfo<TState>> Steps => this._steps;
 
-    public static MultistepProgressManager<TState> New(in TState state, in IMultistepProgress reporter, IMultistepProgress? subReporter = null)
+    public static MultistepProcessRunner<TState> New(in TState state, in IMultistepProgress reporter, IMultistepProgress? subReporter = null)
         => new(state, reporter, subReporter);
 
-    public static MultistepProgressManager<TState> New(in TState state,
+    public static MultistepProcessRunner<TState> New(in TState state,
         in Action<(string Description, int Max, int Current)> reporter,
         Action<(string Description, int Max, int Current)>? subReporter = null)
         => new(state, reporter, subReporter);
 
-    public static Task<TState> StartAsync(
+    public static Task<TState> RunAsync(
         in TState state, in IEnumerable<StepInfo<TState>> steps,
         in Action<(string Description, int Max, int Current)> reporter,
         in Action<(string Description, int Max, int Current)>? subReporter = null,
         in CancellationToken? token = default)
     {
-        var manager = new MultistepProgressManager<TState>(state, reporter, subReporter);
+        var manager = new MultistepProcessRunner<TState>(state, reporter, subReporter);
         _ = manager.AddStep(steps);
-        return manager.StartAsync(default);
+        return manager.RunAsync(default);
     }
 
-    public static Task<TState> StartAsync(in TState state, in IEnumerable<StepInfo<TState>> steps, in IMultistepProgress reporter, IMultistepProgress? subReporter = null, in CancellationToken? token = default)
-        => MultistepProgressManager<TState>.New(state, reporter, subReporter).AddStep(steps).StartAsync(token);
+    public static Task<TState> RunAsync(in TState state, in IEnumerable<StepInfo<TState>> steps, in IMultistepProgress reporter, IMultistepProgress? subReporter = null, in CancellationToken? token = default)
+        => MultistepProcessRunner<TState>.New(state, reporter, subReporter).AddStep(steps).RunAsync(token);
 
-    public MultistepProgressManager<TState> AddStep(params StepInfo<TState>[] step)
+    public MultistepProcessRunner<TState> AddStep(params StepInfo<TState>[] step)
     {
         this._steps.AddRange(step);
         return this;
     }
 
-    public MultistepProgressManager<TState> AddStep(IEnumerable<StepInfo<TState>> steps)
+    public MultistepProcessRunner<TState> AddStep(IEnumerable<StepInfo<TState>> steps)
         => this.AddStep(steps.ToArray());
 
-    public MultistepProgressManager<TState> AddStep(Func<TState, Task> action, in string description, int progressCount = 1)
+    public MultistepProcessRunner<TState> AddStep(Func<TState, Task> action, in string description, int progressCount = 1)
         => this.AddStep(StepInfo<TState>.New(action, description, progressCount));
 
-    public MultistepProgressManager<TState> AddStep(Action action, in string description, int progressCount = 1)
+    public MultistepProcessRunner<TState> AddStep(Action action, in string description, int progressCount = 1)
         => this.AddStep(StepInfo<TState>.New(action, description, progressCount));
-    public MultistepProgressManager<TState> AddStep(Action<TState> action, in string description, int progressCount = 1)
+    public MultistepProcessRunner<TState> AddStep(Action<TState> action, in string description, int progressCount = 1)
             => this.AddStep(StepInfo<TState>.New(action, description, progressCount));
 
-    public async Task<TState> StartAsync(CancellationToken? cancellationToken = default)
+    public async Task<TState> RunAsync(CancellationToken? cancellationToken = default)
     {
         var stepList = this.Steps.ToList();
         this._max = stepList.Select(x => x.ProgressCount).Sum();
