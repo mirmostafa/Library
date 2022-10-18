@@ -1,6 +1,8 @@
 ﻿using Library.Data.SqlServer;
 using Library.Data.SqlServer.Builders;
 
+using UnitTest;
+
 namespace LibraryTest;
 
 [TestClass]

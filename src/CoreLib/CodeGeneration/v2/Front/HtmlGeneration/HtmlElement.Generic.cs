@@ -8,13 +8,13 @@ namespace Library.CodeGeneration.V2.HtmlGeneration;
 public abstract class HtmlElement<TSelf> : IParentHtmlElement
 {
     protected Dictionary<string, string?> AttributeList = new();
-    protected List<IHtmlElementInfo> ChildList = new();
 
     protected HtmlElement(string name)
         => this.Name = name;
 
     public IEnumerable<(string Key, string? Value)> Attributes => this.AttributeList.ToEnumerable();
-    public IEnumerable<IHtmlElementInfo> Children => this.ChildList; public virtual ClosingTagType ClosingTagType { get; set; } = ClosingTagType.Full;
+    public IList<IHtmlElementInfo> Children => new List<IHtmlElementInfo>(); 
+    public virtual ClosingTagType ClosingTagType { get; set; } = ClosingTagType.Full;
     public string? InnerHtml { get; set; }
     public string Name { get; }
 
@@ -26,7 +26,7 @@ public abstract class HtmlElement<TSelf> : IParentHtmlElement
 
     public TSelf AddChild(IHtmlElementInfo child)
     {
-        this.ChildList.Add(child);
+        this.Children.Add(child);
         return this.This();
     }
 
@@ -38,7 +38,7 @@ public abstract class HtmlElement<TSelf> : IParentHtmlElement
 
     public TSelf RemoveChild(IHtmlElementInfo child)
     {
-        _ = this.ChildList.Remove(child);
+        _ = this.Children.Remove(child);
         return this.This();
     }
 

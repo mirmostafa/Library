@@ -54,7 +54,7 @@ public static class TypeMemberNameHelper
     public static IEnumerable<string> GetNameSpaces(in string fullName)
     {
         var (classFullData, genericParamsFullData) = GetFullData(fullName);
-        var result = EnumerableHelper.AsEnumerableItem(classFullData.NameSpace)
+        var result = EnumerableHelper.ToEnumerable(classFullData.NameSpace)
             .AddRangeImmuted(genericParamsFullData.Select(gpf => gpf.NameSpace)).Compact();
         return result;
     }

@@ -1,11 +1,12 @@
 ﻿namespace Library.Net;
+
 public static class Dns
 {
-    public static IpAddress GetHostIpAddress() =>
-        IpAddress.Parse(System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList.Last().ToString());
+    public static IpAddress? GetHostIpAddress()
+        => GetIpAddress(System.Net.Dns.GetHostName());
 
-    public static string GetHostName() =>
-        System.Net.Dns.GetHostName();
+    public static string GetHostName()
+        => System.Net.Dns.GetHostName();
 
     public static IpAddress? GetIpAddress(string name)
     {

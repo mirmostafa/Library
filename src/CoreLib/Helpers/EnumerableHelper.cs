@@ -134,11 +134,6 @@ public static class EnumerableHelper
         return false;
     }
 
-    public static IEnumerable<T> AsEnumerableItem<T>(T item)
-    {
-        yield return item;
-    }
-
     public static Span<TItem> AsSpan<TItem>(this List<TItem> list)
         => CollectionsMarshal.AsSpan(list);
 
@@ -244,7 +239,7 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TItem> Collect<TItem>(IEnumerable<TItem> items)
-        where TItem : IHasChildren<TItem>
+        where TItem : IParent<TItem>
     {
         foreach (var item in items)
         {
@@ -258,8 +253,8 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TItem> Collect<TItem>(this TItem root)
-        where TItem : IHasChildren<TItem>
-        => Collect(AsEnumerableItem(root));
+        where TItem : IParent<TItem>
+        => Collect(ToEnumerable(root));
 
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
                 where TSource : class => items is null
@@ -553,6 +548,11 @@ public static class EnumerableHelper
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull
         => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
+    public static IEnumerable<T> ToEnumerable<T>(T item)
+    {
+        yield return item;
+    }
+
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
     {
         if (source is not null)
@@ -607,7 +607,8 @@ public static class EnumerableHelper
             ? await ToListAsync(EmptyAsyncEnumerable<TItem>.Empty, cancellationToken: cancellationToken)
             : await WhereAsync(asyncItems, x => x is not null, cancellationToken).ToListAsync(cancellationToken: cancellationToken);
 
-    public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source) => new(source);
+    public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
+        => new(source);
 
     public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items)
         => new List<T>(items).AsReadOnly();
@@ -628,6 +629,9 @@ public static class EnumerableHelper
             }
         }
     }
+
+    public static T[] ToArray<T>(T item)
+        => ToEnumerable(item).ToArray();
 
     private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
         => items switch

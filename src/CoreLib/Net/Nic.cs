@@ -1,15 +1,19 @@
 ﻿using System.Net.NetworkInformation;
 
-using Library.Helpers;
-
 namespace Library.Net;
+
 public class Nic
 {
     private long _bytesReceivedLast;
     private long _bytesSentLast;
 
-    public Nic(NetworkInterface networkInterface) =>
-        this.NetworkInterface = networkInterface;
+    public Nic(NetworkInterface networkInterface)
+        => this.NetworkInterface = networkInterface;
+
+    public NetworkInterface NetworkInterface { get; private set; }
+
+    public static IEnumerable<NetworkInterface> GetAllNetworkInterfaceCards()
+        => NetworkInterface.GetAllNetworkInterfaces();
 
     public int GetBytesSent()
     {
@@ -26,9 +30,4 @@ public class Nic
         this._bytesReceivedLast = interfaceStats.BytesReceived;
         return result.ToInt();
     }
-
-    public NetworkInterface NetworkInterface { get; private set; }
-
-    public static IEnumerable<NetworkInterface> GetAllNetworkInterfaceCards() =>
-        NetworkInterface.GetAllNetworkInterfaces();
 }

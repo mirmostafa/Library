@@ -14,12 +14,12 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
     public Node(in T value, in string? display = null)
         => (this.Value, this.Display) = (value, display ?? value?.ToString());
 
-    public IEnumerable<Node<T>> Children => this.Childs.ToEnumerable();
+    public IEnumerable<Node<T>> Children => this.ChildList.ToEnumerable();
     public IEnumerable<T> ChildValues => this.Children.Select(x => x.To<T>());
     public string? Display { get; init; }
     public Node<T>? Parent { get; private set; }
     public T Value { get; init; }
-    protected FluentList<Node<T>> Childs { get; } = new();
+    protected FluentList<Node<T>> ChildList { get; } = new();
 
     public static implicit operator T?(Node<T> node)
         => node is null ? default : node.Value;
@@ -41,7 +41,7 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
         Check.IfArgumentNotNull(node, nameof(node));
 
         node.Parent = this;
-        _ = this.Childs.Add(node);
+        _ = this.ChildList.Add(node);
         _ = nodes.ForEach(x => AddChild(x)).Build();
         return this;
     }
@@ -61,7 +61,7 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
     {
         Node<T> result = Node<T>.Empty;
         EnumerableHelper.BuildTree<(T Value, string? Display), Node<T>>(
-            EnumerableHelper.AsEnumerableItem(getRoot())!
+            EnumerableHelper.ToEnumerable(getRoot())!
             , raw => new(raw.Value, raw.Display)
             , raw => getChidren(raw), raw => result = new(raw.Value, raw.Display)
             , (p, c) => p.AddChild(c));
@@ -72,7 +72,7 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
     {
         Node<T> result = Node<T>.Empty;
         EnumerableHelper.BuildTree<T, Node<T>>(
-            EnumerableHelper.AsEnumerableItem(getRoot())!
+            EnumerableHelper.ToEnumerable(getRoot())!
             , raw => new(raw)
             , raw => getChidren(raw), raw => result = raw
             , (p, c) => p.AddChild(c));
@@ -136,7 +136,7 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
     public Node<T> WithParent(Node<T> parent, string? display = null)
     {
         var result = new Node<T>(this.Value, display ?? this.Display) { Parent = parent };
-        _ = result.Childs.AddRange(this.Childs);
+        _ = result.ChildList.AddRange(this.ChildList);
         return result;
     }
 

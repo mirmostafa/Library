@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace LibraryTest;
+namespace UnitTest;
 
-internal record struct Person(string Name, DateOnly DateOfBirth, Gender Gender)
+internal record struct PersonRecrd(string Name, DateOnly DateOfBirth, Gender Gender)
 {
     public int Age => DateTime.Now.Year - this.DateOfBirth.Year;
 
@@ -22,28 +22,27 @@ internal enum Gender
 [Table("Person", Schema = "dbo")]
 internal class PersonEntity
 {
-    [Key]
-    [Column(Order = 0)]
-    public long Id { get; set; }
-
-    [Column(Order = 1)]
-    public string? Name { get; set; }
-
-    [DatabaseGenerated(DatabaseGeneratedOption.None)]
-    public string? FullName { get; set; }
+    [ForeignKey(nameof(AddressId))]
+    public AddressEntity? Address { get; set; }
 
     [Column(Order = 3)]
     public long AddressId { get; set; }
 
-    [ForeignKey(nameof(AddressId))]
-    public AddressEntity? Address { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public string? FullName { get; set; }
+
+    [Key]
+    [Column(Order = 0)]
+    public long Id { get; set; }
 
     [Column("LName", Order = 2)]
     public string? LastName { get; set; }
+
+    [Column(Order = 1)]
+    public string? Name { get; set; }
 }
 
 [Table("Address", Schema = "dbo")]
 internal class AddressEntity
 {
-
 }

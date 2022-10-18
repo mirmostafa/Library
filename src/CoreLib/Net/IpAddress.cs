@@ -1,7 +1,6 @@
 ﻿using System.Net.NetworkInformation;
 
 using Library.DesignPatterns.Markers;
-using Library.Helpers;
 using Library.Validations;
 
 namespace Library.Net;
@@ -11,8 +10,122 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>
 {
     private readonly int[] _parts;
 
-    private IpAddress([DisallowNull] string ip) =>
+    private IpAddress([DisallowNull] in string ip)
+    {
+        Validate(ip);
         this._parts = Split(ip);
+    }
+
+    public int this[in int index] => this._parts[index];
+
+    public static string Format(in string ip)
+    {
+        Validate(ip);
+        return Merge(Split(ip));
+    }
+
+    public static IpAddress? GetCurrentIp()
+            => Dns.GetHostIpAddress();
+
+    public static IEnumerable<IpAddress> GetRange(IpAddress start, IpAddress end)
+    {
+        var current = start;
+        while (current.CompareTo(end) == -1)
+        {
+            current = current.GetNext();
+            yield return current;
+        }
+    }
+
+    public static IEnumerable<IpAddress> GetRange(string start, string end)
+    {
+        Check.IfArgumentNotNull(start);
+        Check.IfArgumentNotNull(end);
+
+        var enumerate = new IpAddress(start);
+        var endIp = new IpAddress(end);
+        do
+        {
+            yield return enumerate;
+            enumerate = enumerate.GetNext();
+        } while (enumerate.CompareTo(endIp) == -1);
+    }
+
+    public static implicit operator string?(in IpAddress? ipAddress)
+        => ipAddress?.ToString();
+
+    public static bool IsValid(in string ip)
+    {
+        try
+        {
+            Validate(ip);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public static bool operator !=(in IpAddress left, IpAddress right)
+        => !Equals(left, right);
+
+    public static bool operator <(in IpAddress left, IpAddress right)
+        => left is null ? right is not null : left.CompareTo(right) < 0;
+
+    public static bool operator <=(in IpAddress left, IpAddress right)
+        => left is null || left.CompareTo(right) <= 0;
+
+    public static bool operator ==(in IpAddress left, IpAddress right)
+        => Equals(left, right);
+
+    public static bool operator >(in IpAddress left, IpAddress right)
+        => left is not null && left.CompareTo(right) > 0;
+
+    public static bool operator >=(in IpAddress left, IpAddress right)
+        => left is null ? right is null : left.CompareTo(right) >= 0;
+
+    public static IpAddress Parse(in string ip)
+        => new(ip);
+
+    public static PingReply Ping(in string hostNameOrAddress, TimeSpan timeout)
+    {
+        Check.IfArgumentNotNull(hostNameOrAddress);
+
+        using var ping = new Ping();
+        return ping.Send(hostNameOrAddress, timeout.TotalMilliseconds.ToInt());
+    }
+
+    public static PingReply Ping(in string hostNameOrAddress)
+    {
+        Check.IfArgumentNotNull(hostNameOrAddress);
+
+        using var ping = new Ping();
+        return ping.Send(hostNameOrAddress);
+    }
+
+    public static string ResolveIp(in string ip)
+    {
+        Validate(ip);
+        return ip != null ? System.Net.Dns.GetHostEntry(ip).HostName : string.Empty;
+    }
+
+    public static int[] Split(in IpAddress ipAddress)
+        => ipAddress._parts;
+
+    public static bool TryParse(in string ip, out IpAddress? result)
+    {
+        try
+        {
+            result = new IpAddress(ip);
+            return true;
+        }
+        catch
+        {
+            result = null;
+            return false;
+        }
+    }
 
     /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
@@ -23,13 +136,9 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>
     /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="other" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="other" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="other" /> in the sort order.</description></item></list>
     /// </returns>
     public int CompareTo(IpAddress? other)
-    {
-        return other is null
+        => other is null
             ? -1
-            : merge(this._parts).Replace(".", "").ToLong().CompareTo(merge(other._parts).Replace(".", "").ToLong());
-
-        static string merge(int[] parts) => string.Format("{0}.{1}.{2}.{3}", parts[0].ToString("000"), parts[1].ToString("000"), parts[2].ToString("000"), parts[3].ToString("000"));
-    }
+            : Merge(this._parts).Replace(".", "").ToLong().CompareTo(Merge(other._parts).Replace(".", "").ToLong());
 
     /// <summary>
     ///     Indicates whether the current object is equal to another object of the same type.
@@ -56,82 +165,43 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>
         return true;
     }
 
-    public int this[in int index] => this._parts[index];
+    public bool Equals(in string ip)
+        => this.ToString().Equals(ip);
 
-    public static IpAddress Parse(string ip) => new(ip);
+    /// <summary>
+    ///     Determines whether the specified <see cref="T:System.Object" /> is equal to the current
+    ///     <see cref="T:System.Object" />.
+    /// </summary>
+    /// <returns>
+    ///     true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />;
+    ///     otherwise, false.
+    /// </returns>
+    /// <param name="obj">
+    ///     The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Object" />.
+    /// </param>
+    /// <exception cref="T:System.NullReferenceException">
+    ///     The <paramref name="obj" /> parameter is null.
+    /// </exception>
+    /// <filterpriority>2</filterpriority>
+    public override bool Equals(object? obj)
+        => obj is IpAddress ip && this.Equals(ip);
 
-    public static bool TryParse(string ip, out IpAddress? result)
+    public string Format()
+        => Merge(this._parts);
+
+    /// <summary>
+    ///     Serves as a hash function for a particular type.
+    /// </summary>
+    /// <returns>
+    ///     A hash code for the current <see cref="T:System.Object" />.
+    /// </returns>
+    /// <filterpriority>2</filterpriority>
+    public override int GetHashCode()
+        => this._parts.GetHashCode();
+
+    public IpAddress GetNext()
     {
-        try
-        {
-            result = new IpAddress(ip);
-            return true;
-        }
-        catch
-        {
-            result = null;
-            return false;
-        }
-    }
-
-    public static int[] Split(string ip)
-    {
-        Validate(ip);
-        return ip.Split('.').Select(s => s.ToInt()).ToArray();
-    }
-
-    private static void Validate(string ip)
-    {
-        Check.IfArgumentNotNull(ip);
-
-        string[] parts;
-        Check.If((parts = ip.Split('.')).Length != 4, () => new InvalidCastException("Paramater cannot be cast to IpAddress"));
-        Check.If(parts.Any(part => !part.IsInteger()), () => new InvalidCastException("Paramater cannot be cast to IpAddress"));
-        Check.If(parts.Any(part => !part.ToInt().IsBetween(0, 255)), () => new InvalidCastException("Paramater cannot be cast to IpAddress"));
-    }
-
-    public static bool IsValid(string ip)
-    {
-        try
-        {
-            Validate(ip);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public static IEnumerable<IpAddress> GetRange(IpAddress start, IpAddress end)
-    {
-        while (start.CompareTo(end) == -1)
-        {
-            start = start.GetNext();
-            yield return start;
-        }
-    }
-
-    public static IEnumerable<IpAddress> GetRange(string start, string end)
-    {
-        Check.IfArgumentNotNull(start);
-        Check.IfArgumentNotNull(end);
-
-        var enumerate = new IpAddress(start);
-        var endIp = new IpAddress(end);
-        do
-        {
-            yield return enumerate;
-            enumerate = enumerate.GetNext();
-        } while (enumerate.CompareTo(endIp) == -1);
-    }
-
-    public static int[] Split(IpAddress ipAddress)
-        => ipAddress._parts;
-
-    internal IpAddress GetNext()
-    {
-        var result = new IpAddress(this.ToString());
+        var result = FromIp(this);
         result._parts[3]++;
         if (result._parts[3] == 256)
         {
@@ -156,38 +226,17 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>
         return result;
     }
 
-    public bool Equals(string ip) => this.ToString().Equals(ip);
+    public bool IsInRange(in IEnumerable<IpAddress> ipAddresses)
+            => ipAddresses.Any(ip => ip.Equals(this));
 
-    /// <summary>
-    ///     Determines whether the specified <see cref="T:System.Object" /> is equal to the current
-    ///     <see cref="T:System.Object" />.
-    /// </summary>
-    /// <returns>
-    ///     true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />;
-    ///     otherwise, false.
-    /// </returns>
-    /// <param name="obj">
-    ///     The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Object" />.
-    /// </param>
-    /// <exception cref="T:System.NullReferenceException">
-    ///     The <paramref name="obj" /> parameter is null.
-    /// </exception>
-    /// <filterpriority>2</filterpriority>
-    public override bool Equals(object? obj) =>
-        obj is IpAddress ip && this.Equals(ip);
+    public PingReply Ping(in TimeSpan timeout)
+        => Ping(this.ToString(), timeout);
 
-    /// <summary>
-    ///     Serves as a hash function for a particular type.
-    /// </summary>
-    /// <returns>
-    ///     A hash code for the current <see cref="T:System.Object" />.
-    /// </returns>
-    /// <filterpriority>2</filterpriority>
-    public override int GetHashCode() => this._parts.GetHashCode();
+    public PingReply Ping()
+        => Ping(this.ToString());
 
-    public static bool operator ==(IpAddress left, IpAddress right) => Equals(left, right);
-
-    public static bool operator !=(IpAddress left, IpAddress right) => !Equals(left, right);
+    public string Resolve()
+        => ResolveIp(this.ToString());
 
     /// <summary>
     ///     Returns a <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.
@@ -196,52 +245,9 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>
     ///     A <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.
     /// </returns>
     /// <filterpriority>2</filterpriority>
-    public override string ToString() => string.Format("{0}.{1}.{2}.{3}", this._parts[0], this._parts[1], this._parts[2], this._parts[3]);
-
-    public PingReply Ping(TimeSpan timeout) => Ping(this.ToString(), timeout);
-
-    public static PingReply Ping(string hostNameOrAddress, TimeSpan timeout)
-    {
-        Check.IfArgumentNotNull(hostNameOrAddress);
-
-        using var ping = new Ping();
-        return ping.Send(hostNameOrAddress, timeout.TotalMilliseconds.ToInt());
-    }
-
-    public static PingReply Ping(string hostNameOrAddress)
-    {
-        Check.IfArgumentNotNull(hostNameOrAddress);
-
-        using var ping = new Ping();
-        return ping.Send(hostNameOrAddress);
-    }
-
-    public PingReply Ping() => Ping(this.ToString());
-
-    public static implicit operator string(IpAddress? ipAddress) => ipAddress is not null ? ipAddress.ToString() : string.Empty;
-
-    public string GetFormatted() => string.Format("{0}.{1}.{2}.{3}", this._parts[0].ToString("000"), this._parts[1].ToString("000"), this._parts[2].ToString("000"), this._parts[3].ToString("000"));
-
-    public static string GetFormated(string ip)
-    {
-        Validate(ip);
-        var parts = Split(ip);
-        return string.Format("{0}.{1}.{2}.{3}", parts[0].ToString("000"), parts[1].ToString("000"), parts[2].ToString("000"), parts[3].ToString("000"));
-    }
-
-    public static string GetFormated(IpAddress ipAddress) => ipAddress.GetFormatted();
-
-    public static string ResolveIp(string ip)
-    {
-        Validate(ip);
-        return ip != null ? System.Net.Dns.GetHostEntry(ip).HostName : string.Empty;
-    }
-
-    public string Resolve() => ResolveIp(this.ToString());
-
-    public bool IsInRange(IEnumerable<IpAddress> ipAddresses) => ipAddresses.Where(ip => ip.Equals(this)).Any();
-
-    public static IpAddress GetCurrentIp() => Dns.GetHostIpAddress();
+    [return: NotNull]
+    public override string ToString()
+        => Merge(this._parts);
 
     public bool TryResolve(out string? computerName)
     {
@@ -257,11 +263,20 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>
         }
     }
 
-    public static bool operator <(IpAddress left, IpAddress right) => left is null ? right is not null : left.CompareTo(right) < 0;
+    private static IpAddress FromIp(in IpAddress ip)
+                                => new(ip.ToString());
 
-    public static bool operator <=(IpAddress left, IpAddress right) => left is null || left.CompareTo(right) <= 0;
+    private static string Merge(in int[] parts)
+        => $"{parts[0]:000}.{parts[1]:000}.{parts[2]:000}.{parts[3]:000}";
 
-    public static bool operator >(IpAddress left, IpAddress right) => left is not null && left.CompareTo(right) > 0;
+    private static int[] Split(in string ip)
+        => ip.Split('.').Select(s => s.ToInt()).ToArray();
 
-    public static bool operator >=(IpAddress left, IpAddress right) => left is null ? right is null : left.CompareTo(right) >= 0;
+    private static void Validate(in string ip)
+    {
+        var parts = ip.ArgumentNotNull().Split('.');
+        Check.If(parts.Length != 4, () => new InvalidCastException("Parameter cannot be cast to IpAddress"));
+        Check.If(parts.Any(part => !part.IsInteger()), () => new InvalidCastException("Parameter cannot be cast to IpAddress"));
+        Check.If(parts.Any(part => !part.ToInt().IsBetween(0, 255)), () => new InvalidCastException("Parameter cannot be cast to IpAddress"));
+    }
 }
