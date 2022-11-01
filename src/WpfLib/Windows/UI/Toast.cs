@@ -45,13 +45,20 @@ public class Toast
             _toast = InnerCreateToast(ToastTemplateType.ToastText01, new[] { content })
         };
 
-    public static Toast CreateLongContent(string content, string title, string appTitle)
+    public static Toast CreateLongContent(string title, string content, string appTitle)
         => new(appTitle)
         {
             _toast = InnerCreateToast(ToastTemplateType.ToastText02, new[] { title, content })
         };
 
-    public static Toast CreateLongTitle(string content, string title, string appTitle) =>
+    /// <summary>
+    /// Creates a long content toast notification.
+    /// </summary>
+    /// <param name="content">The content. (Max length: 170 chars)</param>
+    /// <param name="title">The title.</param>
+    /// <param name="appTitle">The application title.</param>
+    /// <returns></returns>
+    public static Toast CreateLongTitle(string title, string content, string appTitle) =>
         new(appTitle)
         {
             _toast = InnerCreateToast(ToastTemplateType.ToastText03, new[] { title, content })
@@ -79,6 +86,9 @@ public class Toast
     public Toast SetRemoteId(string id)
         => this.Do(t => t.RemoteId = id);
 
+    /// <summary>
+    /// Shows this instance.
+    /// </summary>
     public void Show()
     {
         if (this._toastNotifier is null)

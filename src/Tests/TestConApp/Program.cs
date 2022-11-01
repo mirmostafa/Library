@@ -1,16 +1,6 @@
-﻿using BenchmarkDotNet.Running;
-
-using ConAppTest.MyBenchmarks;
-
-using Library.Helpers;
-using Library.MultistepProgress;
+﻿namespace ConAppTest;
 
 internal partial class Program
 {
-    private static async Task Main()
-    {
-        BenchmarkRunner.Run<RangeEnumeratorBenchmarks>();
-        //RangeEnumeratorBenchmarks instance = new();
-        //instance.RangeForEach();
-    }
+    private static int Main(string[] args) => 0;
 }

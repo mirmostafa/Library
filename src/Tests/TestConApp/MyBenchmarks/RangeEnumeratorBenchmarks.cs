@@ -5,7 +5,7 @@ using Library.Helpers;
 namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
-public class RangeEnumeratorBenchmarks
+public class RangeEnumeratorBenchmarks: IBenchmark<RangeEnumeratorBenchmarks>
 {
     [Params(10, 1000, 1_000_000)]
     public int _size = 5;

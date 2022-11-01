@@ -9,7 +9,7 @@
 		<LangVersion>preview</LangVersion>
 		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 		<GenerateRequiresPreviewFeaturesAttribute>true</GenerateRequiresPreviewFeaturesAttribute>
-		<StartupObject>Program</StartupObject>
+		<StartupObject>ConAppTest.Program</StartupObject>
 		<Title>Mohammad Library Tester</Title>
 		<Company>Mirmostafa</Company>
 		<Product>Library</Product>

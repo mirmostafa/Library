@@ -3,7 +3,7 @@
 namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
-public class IsNumberBenchmark
+public class IsNumberBenchmark : IBenchmark<IsNumberBenchmark>
 {
     private readonly string _text = "This is not a number";
 

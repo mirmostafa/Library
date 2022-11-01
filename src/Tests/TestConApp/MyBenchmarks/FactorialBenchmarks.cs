@@ -6,12 +6,24 @@ using BenchmarkDotNet.Attributes;
 namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
-public class FactorialBenchmarks
+public class FactorialBenchmarks : IBenchmark<FactorialBenchmarks>
 {
-    public static readonly FactorialBenchmarks Instance = new();
-
     [Params(40, 4_000)]
     public int Number { get; set; }
+
+    [Benchmark]
+    public BigInteger _Exam1()
+    {
+        return Range(this.Number).Aggregate(new BigInteger(1), (p, item) => p * item);
+
+        static IEnumerable<BigInteger> Range(BigInteger source)
+        {
+            for (BigInteger i = 1; i < source; i++)
+            {
+                yield return i;
+            }
+        }
+    }
 
     [Benchmark]
     public BigInteger AsParallel()
@@ -200,20 +212,5 @@ public class FactorialBenchmarks
             result *= item;
         }
         return result;
-    }
-
-    [Benchmark]
-    public BigInteger _Exam1()
-    {
-        return Range(Number).Aggregate(new BigInteger(1), (p, item) => p* item);
-
-        static IEnumerable<BigInteger> Range(BigInteger source)
-        {
-            for (BigInteger i = 1; i < source; i++)
-            {
-                yield return i;
-            }
-        }
-
     }
 }

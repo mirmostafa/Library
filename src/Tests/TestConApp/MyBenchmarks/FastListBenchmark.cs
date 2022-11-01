@@ -1,26 +1,27 @@
 ﻿using BenchmarkDotNet.Attributes;
 
-using Library.Collections;
 using Library.Helpers;
 
 namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
-public class FastListBenchmark
+public class FastListBenchmark : IBenchmark<FastListBenchmark>
 {
-    private FastList<int> _fastList;
-    private List<int> _list;
+    [Obsolete]
+    private FastList<int>? _fastList;
+    private List<int>? _list;
 
-    [GlobalSetup]
-    public void Setup()
+    [Benchmark]
+    [Obsolete]
+    public void FastListAdd()
     {
-        _fastList = FastList<int>.New(0);
-        _ = Enumerable.Range(1, 10 ^ 5).ForEach(x => _fastList.Add(x)).Build();
-
-        _list = new List<int>();
-        _ = Enumerable.Range(1, 10 ^ 5).ForEach(_list.Add).Build();
+        int buffer;
+        foreach (var item in _fastList)
+        {
+            buffer = item;
+        }
     }
-        
+
     [Benchmark]
     public void ListAdd()
     {
@@ -31,14 +32,14 @@ public class FastListBenchmark
         }
     }
 
-    [Benchmark]
-    public void FastListAdd()
+    [GlobalSetup]
+    [Obsolete]
+    public void Setup()
     {
-        int buffer;
-        foreach (var item in _fastList)
-        {
-            buffer = item;
-        }
-    }
+        this._fastList = FastList<int>.New(0);
+        _ = Enumerable.Range(1, 10 ^ 5).ForEach(x => this._fastList.Add(x)).Build();
 
+        this._list = new List<int>();
+        _ = Enumerable.Range(1, 10 ^ 5).ForEach(this._list.Add).Build();
+    }
 }

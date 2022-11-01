@@ -1,4 +1,6 @@
-﻿partial class Program
+﻿namespace ConAppTest;
+
+partial class Program
 {
     private static void HtmlCodeGenerationTest()
     {

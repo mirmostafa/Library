@@ -15,7 +15,8 @@ public static class NumberHelper
 
     public static bool IsBetween(this int num, in int min, in int max) => num > min && num <= max;
 
-    public static bool IsPrime(int number) => Enumerable.Range(2, Math.Sqrt(number).ToInt() - 1).All(d => number % d != 0);
+    public static bool IsPrime(int number) 
+        => Enumerable.Range(2, Math.Sqrt(number).ToInt() - 1).All(d => number % d != 0);
 
     public static string ToPersian(this int number)
     {

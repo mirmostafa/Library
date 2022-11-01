@@ -1,5 +1,5 @@
-﻿using ConAppTest;
+﻿namespace ConAppTest;
 
-internal partial class Program : ProgramBase
+internal partial class Program : ConAppTest.ProgramBase
 {
 }

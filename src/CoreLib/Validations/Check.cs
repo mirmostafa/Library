@@ -106,8 +106,12 @@ public sealed class Check
     public static Result MustBe(bool ok)
         => ok ? Result.Success : Result.Fail;
 
+    public static Result<T?> MustBe<T>(T obj, bool ok)
+        => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj);
+
     public static Result<T?> MustBe<T>(T obj, Func<bool> predicate, Func<Exception> getException)
         => predicate() ? Result<T?>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException());
+
     public static Result<T> MustBe<T>(T obj, bool ok, Func<Exception> getException)
         => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj, error: getException());
 
@@ -147,6 +151,6 @@ public sealed class Check
     public static Result MutBe(bool ok, in Func<Exception> getExceptionIfNot)
         => !ok ? Result.CreateFail(error: getExceptionIfNot()) : Result.CreateSuccess();
 
-    public static bool TryMustBeArgumentNotNull<TValue>([AllowNull][NotNullWhen(true)] TValue? obj, out Result<TValue?> result, [CallerArgumentExpression("obj")] string? argName = null) 
-        => (result = MustBeArgumentNotNull(obj, argName)).IsSucceed;
+    public static bool TryMustBeArgumentNotNull<TValue>([AllowNull][NotNullWhen(true)] TValue? obj, out Result<TValue?> result, [CallerArgumentExpression("obj")] string? argName = null)
+        => MustBeArgumentNotNull(obj, argName).TryParse(out result);
 }
