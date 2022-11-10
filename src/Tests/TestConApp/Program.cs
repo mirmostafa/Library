@@ -2,5 +2,9 @@
 
 internal partial class Program
 {
-    private static int Main(string[] args) => 0;
+    private static void Main(string[] args)
+    {
+        // take the two args and add them together
+        
+    }
 }

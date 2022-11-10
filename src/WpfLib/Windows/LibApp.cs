@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
 using Library.Exceptions;
+using Library.Exceptions.Validations;
 using Library.Mapping;
 using Library.Wpf.Dialogs;
 
@@ -8,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Wpf.Windows;
 
-public abstract class LibApp : Application
+public abstract class LibApp : Bases.ApplicationBase
 {
     protected LibApp()
     {
@@ -43,14 +44,20 @@ public abstract class LibApp : Application
 
     protected virtual void HandleException(Exception exception)
     {
+        var title = exception.As<IException>()?.Title ?? ApplicationTitle ?? exception?.GetType().Name;
+        var owner = (IException ex) => ex.Title ?? ex.Owner?.ToString() ?? title;
         switch (exception)
         {
             case BreakException:
                 break;
 
+            case IValidationException ex:
+                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message, owner(ex), detailsExpandedText: ex.Details);
+                break;
+
             case OperationCancelledException ex:
                 this.Logger.Warn(ex.Instruction ?? ex.Message, sender: owner(ex));
-                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message ?? "Operation cancelled by user.", owner(ex));
+                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message ?? "Operation canceled by user.", owner(ex));
                 break;
 
             case IException ex:
@@ -59,18 +66,13 @@ public abstract class LibApp : Application
                 break;
 
             case Exception ex:
-                this.Logger.Log(ex.GetFullMessage(), LogLevel.Fatal, stackTrace: ex.StackTrace, sender: ex.Source ?? title());
-                _ = MsgBox2.Exception(ex, caption: title());
+                this.Logger.Log(ex.GetFullMessage(), LogLevel.Fatal, stackTrace: ex.StackTrace, sender: ex.Source ?? title);
+                _ = MsgBox2.Exception(ex, caption: title);
                 break;
 
             default:
                 break;
         }
-
-        string title()
-            => exception.As<IException>()?.Title ?? ApplicationTitle ?? exception.GetType().Name;
-        string owner(IException ex)
-            => ex.Title ?? ex.Owner?.ToString() ?? title();
     }
 
     protected virtual void OnConfigureServices(ServiceCollection services)

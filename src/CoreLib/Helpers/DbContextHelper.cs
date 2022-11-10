@@ -298,7 +298,7 @@ public static class DbContextHelper
     private static TDbContext DisposeCurrentTransaction<TDbContext>([DisallowNull] this TDbContext dbContext)
         where TDbContext : DbContext
     {
-        dbContext.ArgumentNotNull().Database.CurrentTransaction?.Dispose();
+        dbContext.ArgumentNotNull().Database?.CurrentTransaction?.Dispose();
         return dbContext;
     }
 }

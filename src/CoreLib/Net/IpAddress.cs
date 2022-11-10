@@ -264,7 +264,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>
     }
 
     private static IpAddress FromIp(in IpAddress ip)
-                                => new(ip.ToString());
+        => new(ip.ToString());
 
     private static string Merge(in int[] parts)
         => $"{parts[0]:000}.{parts[1]:000}.{parts[2]:000}.{parts[3]:000}";

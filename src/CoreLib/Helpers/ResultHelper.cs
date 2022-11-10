@@ -5,7 +5,7 @@ using Library.Results;
 
 namespace Library.Helpers;
 
-[DebuggerStepThrough]
+//[DebuggerStepThrough]
 [StackTraceHidden]
 public static class ResultHelper
 {

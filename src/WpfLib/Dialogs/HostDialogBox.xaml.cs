@@ -83,15 +83,18 @@ internal partial class HostDialogBox
                 IAsyncValidatable asyncValidatable => await asyncValidatable.ValidateAsync(),
                 _ => Result.Empty,
             };
-        if (!validation.IsSucceed)
-        {
-            this.ValidationErrorText = validation.Message;
-        }
-        else
-        {
-            this.DialogResult = true;
-            this.Close();
-        }
+        validation.ThrowOnFail(this.Title);
+        this.DialogResult = true;
+        this.Close();
+        //if (!validation.IsSucceed)
+        //{
+        //    this.ValidationErrorText = validation.Message;
+        //}
+        //else
+        //{
+        //    this.DialogResult = true;
+        //    this.Close();
+        //}
     }
 
     private void Me_Loaded(object sender, RoutedEventArgs e)

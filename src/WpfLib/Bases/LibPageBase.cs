@@ -2,31 +2,20 @@
 using Library.Wpf.Windows.Input.Commands;
 
 namespace Library.Wpf.Bases;
+
 public class LibPageBase : Page, ISupportAsyncDataBinding
 {
     private CommandController? _commandManager;
 
-    public LibPageBase()
-    {
-        this.Loaded += this.LibPage_LoadedAsync;
-        this.Initialized += this.LibPageBase_Initialized;
-    }
-
     private bool _isBounded = false;
-    private async Task FirstBind()
-    {
-        if (this._isBounded)
-        {
-            return;
-        }
 
-        await this.BindDataAsync();
-        this._isBounded = true;
-    }
+    /// <summary>
+    /// Occurs when [binding data].
+    /// </summary>
+    public event EventHandler? BindingData;
 
-    private async void LibPageBase_Initialized(object? sender, EventArgs e) => await this.FirstBind();
-
-    private async void LibPage_LoadedAsync(object sender, RoutedEventArgs e) => await this.FirstBind();
+    public LibPageBase()
+        => this.Loaded += this.LibPage_LoadedAsync;
 
     /// <summary>
     /// Gets the command manager.
@@ -45,11 +34,6 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
     protected bool Initializing { get; private set; }
 
     /// <summary>
-    /// Occurs when [binding data].
-    /// </summary>
-    public event EventHandler? BindingData;
-
-    /// <summary>
     /// Starts the initialization process for this element.
     /// </summary>
     public override void BeginInit()
@@ -62,27 +46,6 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
         this.Initializing = true;
         base.BeginInit();
     }
-
-    /// <summary>
-    /// Indicates that the initialization process for the element is complete.
-    /// </summary>
-    public override void EndInit()
-    {
-        if (!this.Initializing)
-        {
-            return;
-        }
-
-        this.Initializing = false;
-        base.EndInit();
-    }
-
-    protected override void OnInitialized(EventArgs e) => base.OnInitialized(e);
-
-    /// <summary>
-    /// Called when [bind data asynchronous].
-    /// </summary>
-    protected virtual async Task OnBindDataAsync() => await Task.CompletedTask;
 
     /// <summary>
     /// Binds the data asynchronously.
@@ -110,6 +73,43 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
         }
     }
 
-    public Task RebindDataAsync() => this.BindDataAsync();
-}
+    /// <summary>
+    /// Indicates that the initialization process for the element is complete.
+    /// </summary>
+    public override void EndInit()
+    {
+        if (!this.Initializing)
+        {
+            return;
+        }
 
+        this.Initializing = false;
+        base.EndInit();
+    }
+
+    public Task RebindDataAsync()
+        => this.BindDataAsync();
+
+    /// <summary>
+    /// Called when [bind data asynchronous].
+    /// </summary>
+    protected virtual Task OnBindDataAsync()
+        => Task.CompletedTask;
+
+    protected override void OnInitialized(EventArgs e)
+        => base.OnInitialized(e);
+
+    private async Task FirstBind()
+    {
+        if (this._isBounded)
+        {
+            return;
+        }
+
+        await this.BindDataAsync();
+        this._isBounded = true;
+    }
+
+    private async void LibPage_LoadedAsync(object sender, RoutedEventArgs e)
+        => await this.FirstBind();
+}

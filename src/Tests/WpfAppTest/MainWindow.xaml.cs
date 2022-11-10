@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 
 using Library.EventsArgs;
-using Library.Wpf.Helpers;
 using Library.Wpf.Windows.Input.Commands;
 using Library.Wpf.Windows.UI;
 
@@ -17,8 +16,6 @@ public partial class MainWindow
     private void Button_Click(object sender, RoutedEventArgs e)
     {
         Toast2.Test();
-        int a;
-
 
     }
 

@@ -56,7 +56,7 @@ public interface IAsyncReadPagingService<TViewModel> : IAsyncReadPagingService<T
 /// A standardizer for services to read data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
-/// <typeparam name="TId">The type of the identifier (long, Guid, Id, ...).</typeparam>
+/// <typeparam name="TId">The type of the identifier (long, <see cref="System.Guid"/>, Id, ...).</typeparam>
 public interface IAsyncReadService<TViewModel, in TId>
 {
     /// <summary>
@@ -234,11 +234,14 @@ public interface IResetChanges
 public interface IService
 {
 }
+public interface IBusinesService: IService
+{
 
+}
 /// <summary>
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
-public interface IViewModelFill<TViewModel>
+public interface IAsyncViewModelFiller<TViewModel>
 {
     /// <summary>
     /// Fills the view model.

@@ -410,16 +410,14 @@ public static class ControlHelper
         control.SetSelectedItem(selectedItem);
     }
 
-    public static void Refresh(this UIElement uiElement)
-    {
-        Check.IfArgumentNotNull(uiElement);
+    public static void Refresh(this UIElement uiElement) 
+        => uiElement?.Dispatcher.Invoke(DispatcherPriority.Render, Methods.Empty);
 
-        _ = uiElement.Dispatcher.Invoke(DispatcherPriority.Render, Methods.Empty);
-    }
+    public static IEnumerable<dynamic>? RetieveCheckedItems(this MultiSelector dg)
+        => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.As<dynamic>()).Compact();
 
-    public static IEnumerable<dynamic>? RetieveCheckedItems(this MultiSelector dg) => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.As<dynamic>()).Compact();
-
-    public static IEnumerable<TItem>? RetieveCheckedItems<TItem>(this MultiSelector dg) => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.To<TItem>());
+    public static IEnumerable<TItem>? RetieveCheckedItems<TItem>(this MultiSelector dg)
+        => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.To<TItem>());
 
     public static TResult RunCodeBlock<TResult>(this FrameworkElement element, [DisallowNull] in Func<TResult> action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true)
     {
@@ -470,7 +468,8 @@ public static class ControlHelper
 
     public static async Task<TResult> RunCodeBlockAsync<TResult>(this FrameworkElement element, [DisallowNull] Func<Task<TResult>> action, [DisallowNull] ILogger logger, string? start, string? end = null, string? error = null, bool changeMousePointer = true) => await RunCodeBlock(element, action, logger, start, end, error, changeMousePointer);
 
-    public static void RunInControlThread(this DispatcherObject control, in Action action) => control?.Dispatcher.Invoke(action);
+    public static void RunInControlThread(this DispatcherObject control, in Action action)
+        => control?.Dispatcher.Invoke(action);
 
     public static bool SetProperty<TValue>(
         this INotifyPropertyChanged item,

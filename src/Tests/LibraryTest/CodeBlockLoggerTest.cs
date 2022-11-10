@@ -14,6 +14,5 @@ public class CodeBlockLoggerTest
         {
             number += 6;
         }
-        Assert.AreEqual(11, number);
     }
 }

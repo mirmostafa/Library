@@ -47,7 +47,7 @@ public static class ObjectHelper
     /// <param name="createInstance">    The create instance.</param>
     /// <param name="initializeInstance">The initialize instance.</param>
     /// <returns></returns>
-    public static Lazy<TSingleton?> GenerateLazySingletonInstance<TSingleton>(
+    public static Lazy<TSingleton> GenerateLazySingletonInstance<TSingleton>(
         Func<TSingleton>? createInstance = null,
         Action<TSingleton>? initializeInstance = null)
         where TSingleton : class, ISingleton<TSingleton>

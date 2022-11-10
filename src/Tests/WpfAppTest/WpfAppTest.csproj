@@ -13,6 +13,8 @@
 		<Authors>Mohammad Mirmostafa</Authors>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<AnalysisLevel>6.0-all</AnalysisLevel>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<StartupObject>WpfApp1.App</StartupObject>
 	</PropertyGroup>
 
 	<ItemGroup>

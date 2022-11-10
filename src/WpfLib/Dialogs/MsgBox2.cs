@@ -15,6 +15,10 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
 {
     public static event EventHandler<ItemActedEventArgs<Window>>? WindowRequired;
 
+    private MsgBox2()
+    {
+    }
+
     public static Window? DefaultWindow { get; set; }
 
     public static TaskDialogResult Ask(string? instructionText = null,
@@ -327,7 +331,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
 
     /// <summary>
     /// </summary>
-    /// <param name="action">                   
+    /// <param name="action">
     /// TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;: isBackgroundWorking
     /// </param>
     /// <param name="maximum">                  </param>
@@ -688,7 +692,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
 
     /// <summary>
     /// </summary>
-    /// <param name="action">              
+    /// <param name="action">
     /// TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;: isBackgroundWorking
     /// </param>
     /// <param name="maximum">             </param>
@@ -729,7 +733,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
 
     /// <summary>
     /// </summary>
-    /// <param name="action">              
+    /// <param name="action">
     /// TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;: isBackgroundWorking
     /// </param>
     /// <param name="maximum">             </param>
@@ -779,7 +783,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
 
     /// <summary>
     /// </summary>
-    /// <param name="action">                   
+    /// <param name="action">
     /// TaskDialog: Hosting Dialog, Func&lt;bool&gt;: isCancellationRequested, Func&lt;bool&gt;: isBackgroundWorking
     /// </param>
     /// <param name="maximum">                  </param>
@@ -1059,7 +1063,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
            runInTask: runInTask);
 
     public static void Warn(string? instructionText = null, string? text = null,
-        string? caption = null,
+            string? caption = null,
         string? detailsExpandedLabel = null,
         string? detailsExpandedText = null,
         bool cancelable = false,

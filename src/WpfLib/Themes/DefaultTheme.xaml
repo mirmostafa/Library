@@ -392,7 +392,7 @@
         x:Key="GroupTitleBlock"
         BasedOn="{StaticResource {x:Type TextBlock}}"
         TargetType="TextBlock">
-        <Setter Property="Foreground" Value="Navy" />
+        <Setter Property="Foreground" Value="{StaticResource HeadingTextBlockFoegound}" />
         <Setter Property="Padding" Value="8" />
     </Style>
 
@@ -400,7 +400,7 @@
         x:Key="TabItemHeaderBlock"
         BasedOn="{StaticResource {x:Type TextBlock}}"
         TargetType="TextBlock">
-        <Setter Property="Foreground" Value="Navy" />
+        <Setter Property="Foreground" Value="{StaticResource HeadingTextBlockFoegound}" />
     </Style>
 
     <Style TargetType="DataGrid">

@@ -1,8 +1,6 @@
 ﻿using Library;
 using Library.Logging;
 
-using Library.Threading.MultistepProgress;
-
 namespace Library.Threading.MultistepProgress;
 
 public class MultiStepLogEventArgs : LogEventArgs

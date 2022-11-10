@@ -10,11 +10,29 @@ using Library.Validations;
 namespace Library.Globalization;
 
 // Created: 85/5/4
+/// <summary>
+/// 
+/// </summary>
+/// <seealso cref="System.IComparable" />
+/// <seealso cref="System.IComparable&lt;System.DateTime&gt;" />
+/// <seealso cref="System.IConvertible" />
+/// <seealso cref="System.IEquatable&lt;System.DateTime&gt;" />
+/// <seealso cref="System.ISpanFormattable" />
+/// <seealso cref="System.IFormattable" />
+/// <seealso cref="System.Runtime.Serialization.ISerializable" />
+/// <seealso cref="System.ICloneable" />
+/// <seealso cref="System.IComparable&lt;Library.Globalization.PersianDateTime&gt;" />
+/// <seealso cref="System.IEquatable&lt;Library.Globalization.PersianDateTime&gt;" />
+/// <seealso cref="Library.Interfaces.IConvertible&lt;Library.Globalization.PersianDateTime, System.DateTime&gt;" />
+/// <seealso cref="Library.Interfaces.IConvertible&lt;Library.Globalization.PersianDateTime, System.String&gt;" />
+/// <seealso cref="Library.Interfaces.IAdditionOperators&lt;Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime&gt;" />
+/// <seealso cref="Library.Interfaces.ISubtractionOperators&lt;Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime&gt;" />
+/// <seealso cref="Library.Interfaces.IParsable&lt;Library.Globalization.PersianDateTime&gt;" />
 [Serializable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 public readonly struct PersianDateTime :
-    IComparable, IComparable<DateTime>, IConvertible, IEquatable<DateTime>, ISpanFormattable, IFormattable, ISerializable,
-    ICloneable, IComparable<PersianDateTime>, IEquatable<PersianDateTime>,
+    IComparable, IComparable<DateTime>, IConvertible, IEquatable<DateTime>, ISpanFormattable, IFormattable, ISerializable, ICloneable,
+    IComparable<PersianDateTime>, IEquatable<PersianDateTime>,
     IConvertible<PersianDateTime, DateTime>, IConvertible<PersianDateTime, string>,
     IAdditionOperators<PersianDateTime, PersianDateTime, PersianDateTime>,
     ISubtractionOperators<PersianDateTime, PersianDateTime, PersianDateTime>,
@@ -127,9 +145,18 @@ public readonly struct PersianDateTime :
         this.IsInitiated = true;
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PersianDateTime" /> struct.
+    /// </summary>
+    /// <param name="data">The data.</param>
     private PersianDateTime(in PersianDateTimeData data)
         => (this.Data, this.IsInitiated) = (data, true);
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PersianDateTime"/> struct.
+    /// </summary>
+    /// <param name="info">The information.</param>
+    /// <param name="context">The context.</param>
     private PersianDateTime(in SerializationInfo info, in StreamingContext context)
     {
         Check.IfArgumentNotNull(info);
@@ -198,10 +225,28 @@ public readonly struct PersianDateTime :
         }
     }
 
+    /// <summary>
+    /// Gets or sets the short date pattern.
+    /// </summary>
+    /// <value>
+    /// The short date pattern.
+    /// </value>
     public static string ShortDatePattern { get; set; } = CultureConstants.SHORT_DATE_PATTERN;
 
+    /// <summary>
+    /// Gets or sets the time separator.
+    /// </summary>
+    /// <value>
+    /// The time separator.
+    /// </value>
     public static string TimeSeparator { get; set; } = CultureConstants.TIME_SEPARATOR;
 
+    /// <summary>
+    /// Converts to stringformat.
+    /// </summary>
+    /// <value>
+    /// To string format.
+    /// </value>
     public static string ToStringFormat { get; set; } = CultureConstants.DEFAULT_DATE_TIME_PATTERN;
 
     /// <summary>
@@ -211,7 +256,20 @@ public readonly struct PersianDateTime :
     /// <value>An object whose value is the current UTC date and time in Persian.</value>
     public static PersianDateTime UtcNow => DateTime.UtcNow;
 
+    /// <summary>
+    /// Gets a value indicating whether this date is holiday.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if this instance is holiday; otherwise, <c>false</c>.
+    /// </value>
     public bool IsHoliday => this.DayOfWeek.IsPersianHoliday();
+
+    /// <summary>
+    /// Gets a value indicating whether this instance is initiated.
+    /// </summary>
+    /// <value>
+    ///   <c>true</c> if this instance is initiated; otherwise, <c>false</c>.
+    /// </value>
     public bool IsInitiated { get; }
 
     /// <summary>
@@ -238,6 +296,12 @@ public readonly struct PersianDateTime :
         }
     }
 
+    /// <summary>
+    /// Gets the persian month name abbrs in persian.
+    /// </summary>
+    /// <value>
+    /// The persian month name abbrs in persian.
+    /// </value>
     internal static IEnumerable<string> PersianMonthNameAbbrsInPersian
     {
         get
@@ -295,6 +359,12 @@ public readonly struct PersianDateTime :
         }
     }
 
+    /// <summary>
+    /// Gets the debugger display.
+    /// </summary>
+    /// <value>
+    /// The debugger display.
+    /// </value>
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string? DebuggerDisplay => this.ToString();
 
@@ -409,19 +479,38 @@ public readonly struct PersianDateTime :
     public static bool operator <(in PersianDateTime left, in PersianDateTime right)
         => left.CompareTo(right) < 0;
 
-    public static bool operator <(in PersianDateTime left, in DateTime right) =>
-            left.CompareTo(right) < 0;
+    /// <summary>
+    /// Implements the operator &lt;.
+    /// </summary>
+    /// <param name="left">The left.</param>
+    /// <param name="right">The right.</param>
+    /// <returns>
+    /// The result of the operator.
+    /// </returns>
+    public static bool operator <(in PersianDateTime left, in DateTime right)
+        => left.CompareTo(right) < 0;
 
     /// <summary>
     /// Implements the operator &lt;=.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
-    /// <returns>The result of the operator.</returns>
-    public static bool operator <=(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) <= 0;
+    /// <returns>
+    /// The result of the operator.
+    /// </returns>
+    public static bool operator <=(in PersianDateTime left, in PersianDateTime right)
+        => left.CompareTo(right) <= 0;
 
-    public static bool operator <=(in PersianDateTime left, in DateTime right) =>
-            left.CompareTo(right) <= 0;
+    /// <summary>
+    /// Implements the operator &lt;=.
+    /// </summary>
+    /// <param name="left">The left.</param>
+    /// <param name="right">The right.</param>
+    /// <returns>
+    /// The result of the operator.
+    /// </returns>
+    public static bool operator <=(in PersianDateTime left, in DateTime right)
+        => left.CompareTo(right) <= 0;
 
     /// <summary>
     /// Implements the operator ==.
@@ -438,10 +527,19 @@ public readonly struct PersianDateTime :
     /// <param name="left"> The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
-    public static bool operator >(in PersianDateTime left, in PersianDateTime right) => left.CompareTo(right) > 0;
+    public static bool operator >(in PersianDateTime left, in PersianDateTime right)
+        => left.CompareTo(right) > 0;
 
-    public static bool operator >(in PersianDateTime left, in DateTime right) =>
-            left.CompareTo(right) > 0;
+    /// <summary>
+    /// Implements the operator &gt;.
+    /// </summary>
+    /// <param name="left">The left.</param>
+    /// <param name="right">The right.</param>
+    /// <returns>
+    /// The result of the operator.
+    /// </returns>
+    public static bool operator >(in PersianDateTime left, in DateTime right)
+        => left.CompareTo(right) > 0;
 
     /// <summary>
     /// Implements the operator &gt;=.
@@ -449,11 +547,30 @@ public readonly struct PersianDateTime :
     /// <param name="left"> The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
-    public static bool operator >=(in PersianDateTime left, in PersianDateTime right) =>
-        left.CompareTo(right) >= 0;
+    public static bool operator >=(in PersianDateTime left, in PersianDateTime right)
+        => left.CompareTo(right) >= 0;
 
-    public static bool operator >=(in PersianDateTime left, in DateTime right) =>
-            left.CompareTo(right) >= 0;
+    /// <summary>
+    /// Implements the operator &gt;=.
+    /// </summary>
+    /// <param name="left">The left.</param>
+    /// <param name="right">The right.</param>
+    /// <returns>
+    /// The result of the operator.
+    /// </returns>
+    public static bool operator >=(in PersianDateTime left, in DateTime right)
+        => left.CompareTo(right) >= 0;
+
+    /// <summary>
+    /// Parses a string into a value.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
+    /// <returns>
+    /// The result of parsing <paramref name="s" />.
+    /// </returns>
+    static PersianDateTime IParsable<PersianDateTime>.Parse(string s, IFormatProvider? provider)
+        => s;
 
     /// <summary>
     /// Parses the date time.
@@ -464,7 +581,7 @@ public readonly struct PersianDateTime :
         => new(dateTime);
 
     /// <summary>
-    /// Parses the english string datetime.
+    /// Parses the English string datetime.
     /// </summary>
     /// <param name="dateTimeString">The date time string.</param>
     /// <returns></returns>
@@ -578,7 +695,6 @@ public readonly struct PersianDateTime :
     /// <returns></returns>
     public static bool TryParse(in string str, out PersianDateTime result)
     {
-        result = Now;
         try
         {
             result = ParsePersian(str);
@@ -586,13 +702,34 @@ public readonly struct PersianDateTime :
         }
         catch
         {
+            result = Now;
             return false;
         }
     }
 
+    /// <summary>
+    /// Tries to parses a string into a value.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
+    /// <param name="result">On return, contains the result of successfully parsing <paramref name="s" /> or an undefined
+    /// value on failure.</param>
+    /// <returns>
+    ///   <c>true</c> if <paramref name="s" /> was successfully parsed; otherwise, <c>false</c>.
+    /// </returns>
     public static TryMethodResult<PersianDateTime> TryParse(in string str)
         => new(TryParse(str, out var result), result);
 
+    /// <summary>
+    /// Tries to parses a string into a value.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
+    /// <param name="result">On return, contains the result of successfully parsing <paramref name="s" /> or an undefined
+    /// value on failure.</param>
+    /// <returns>
+    ///   <c>true</c> if <paramref name="s" /> was successfully parsed; otherwise, <c>false</c>.
+    /// </returns>
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out PersianDateTime result)
         => TryParse(s.ArgumentNotNull(), out result);
 
@@ -626,14 +763,14 @@ public readonly struct PersianDateTime :
         => this.ToDateTime().AddTicks(ticks).ToPersianDateTime();
 
     public PersianDateTime AddYears(in int value)
-                                    => this.ToDateTime().AddYears(value).ToPersianDateTime();
+        => this.ToDateTime().AddYears(value).ToPersianDateTime();
 
     /// <summary>
     /// Creates a new object that is a copy of the current instance.
     /// </summary>
     /// <returns>A new object that is a copy of this instance.</returns>
-    public object Clone() =>
-        new PersianDateTime(this.Year, this.Month, this.Day, this.Hour, this.Minute, this.Second, this.Millisecond);
+    public object Clone()
+        => new PersianDateTime(this.Year, this.Month, this.Day, this.Hour, this.Minute, this.Second, this.Millisecond);
 
     /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer
@@ -643,21 +780,39 @@ public readonly struct PersianDateTime :
     /// <param name="other">An object to compare with this instance.</param>
     /// <returns>
     /// A value that indicates the relative order of the objects being compared. The return value
-    /// has these meanings: Value Meaning Less than zero This instance precedes <paramref
-    /// name="other"/> in the sort order. Zero This instance occurs in the same position in the sort
-    /// order as <paramref name="other"/>. Greater than zero This instance follows <paramref
-    /// name="other"/> in the sort order.
+    /// has these meanings: Value Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order. Zero This instance occurs in the same position in the sort
+    /// order as <paramref name="other" />. Greater than zero This instance follows <paramref name="other" /> in the sort order.
     /// </returns>
-    public int CompareTo(PersianDateTime other) =>
-        DateTime.Compare(this, other);
+    public int CompareTo(PersianDateTime other)
+        => DateTime.Compare(this, other);
 
-    public int CompareTo(object? obj) =>
-            obj is PersianDateTime pdt ? this.CompareTo(pdt) : 1;
+    /// <summary>
+    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// </summary>
+    /// <param name="obj">An object to compare with this instance.</param>
+    /// <returns>
+    /// A value that indicates the relative order of the objects being compared. The return value has these meanings:
+    /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="obj" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="obj" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="obj" /> in the sort order.</description></item></list>
+    /// </returns>
+    public int CompareTo(object? obj)
+        => obj is PersianDateTime pdt ? this.CompareTo(pdt) : 1;
 
-    public int CompareTo(DateTime other) =>
-            ((PersianDateTime)other).CompareTo(this);
+    /// <summary>
+    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// </summary>
+    /// <param name="other">An object to compare with this instance.</param>
+    /// <returns>
+    /// A value that indicates the relative order of the objects being compared. The return value has these meanings:
+    /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="other" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="other" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="other" /> in the sort order.</description></item></list>
+    /// </returns>
+    public int CompareTo(DateTime other)
+        => ((PersianDateTime)other).CompareTo(this);
 
-    public DateTime ConvertTo() => this;
+    public DateTime ConvertTo()
+        => this;
+
+    string IConvertible<PersianDateTime, string>.ConvertTo()
+        => this;
 
     /// <summary>
     /// Deconstructs this instance.
@@ -715,14 +870,28 @@ public readonly struct PersianDateTime :
     /// <returns>
     /// <c>true</c> if the specified <see cref="object"/> is equal to this instance; otherwise, <c>false</c>.
     /// </returns>
-    public override bool Equals(object? obj) =>
-        obj is PersianDateTime target && this.CompareTo(target) == 0;
+    public override bool Equals(object? obj)
+        => obj is PersianDateTime target && this.CompareTo(target) == 0;
 
-    public bool Equals(PersianDateTime other) =>
-        this.CompareTo(other) == 0;
+    /// <summary>
+    /// Indicates whether the current object is equal to another object of the same type.
+    /// </summary>
+    /// <param name="other">An object to compare with this object.</param>
+    /// <returns>
+    ///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
+    /// </returns>
+    public bool Equals(PersianDateTime other)
+        => this.CompareTo(other) == 0;
 
-    public bool Equals(DateTime other) =>
-            ((PersianDateTime)other).Equals(this);
+    /// <summary>
+    /// Indicates whether the current object is equal to another object of the same type.
+    /// </summary>
+    /// <param name="other">An object to compare with this object.</param>
+    /// <returns>
+    ///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
+    /// </returns>
+    public bool Equals(DateTime other)
+        => ((PersianDateTime)other).Equals(this);
 
     /// <summary>
     /// Returns a hash code for this instance.
@@ -731,8 +900,23 @@ public readonly struct PersianDateTime :
     /// A hash code for this instance, suitable for use in hashing algorithms and data structures
     /// like a hash table.
     /// </returns>
-    public override int GetHashCode() =>
-        this.Data.GetHashCode();
+    public override int GetHashCode()
+        => this.Data.GetHashCode();
+
+    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        => info.AddValue("Data", this.Data);
+
+    TypeCode IConvertible.GetTypeCode()
+        => throw new NotSupportedException();
+
+    bool IConvertible.ToBoolean(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
+
+    byte IConvertible.ToByte(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
+
+    char IConvertible.ToChar(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
 
     /// <summary>
     /// Converts to Persian date string.
@@ -754,7 +938,8 @@ public readonly struct PersianDateTime :
     /// Converts to the DateTime.
     /// </summary>
     /// <returns></returns>
-    public DateTime ToDateTime() => this;
+    public DateTime ToDateTime()
+        => this;
 
     /// <summary>
     /// Converts the value of this instance to an equivalent <see cref="T:System.DateTime"/> using
@@ -768,8 +953,29 @@ public readonly struct PersianDateTime :
     public DateTime ToDateTime(IFormatProvider? provider)
         => this;
 
+    decimal IConvertible.ToDecimal(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
+
     public string? ToDefaultFomratString()
-            => this.ToString("yyyy/MM/dd HH:mm:ss");
+        => this.ToString("yyyy/MM/dd HH:mm:ss");
+
+    double IConvertible.ToDouble(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
+
+    short IConvertible.ToInt16(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
+
+    int IConvertible.ToInt32(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
+
+    long IConvertible.ToInt64(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
+
+    sbyte IConvertible.ToSByte(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
+
+    float IConvertible.ToSingle(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
 
     /// <summary>
     /// Returns a <see cref="string"/> that represents this instance.
@@ -808,8 +1014,27 @@ public readonly struct PersianDateTime :
         return result;
     }
 
+    /// <summary>
+    /// Converts to string.
+    /// </summary>
+    /// <param name="format">The format.</param>
+    /// <param name="formatProvider">The format provider.</param>
+    /// <returns>
+    /// A <see cref="string" /> that represents this instance.
+    /// </returns>
+    /// <exception cref="System.NotImplementedException"></exception>
     public string ToString(string? format, IFormatProvider? formatProvider)
-            => throw new NotImplementedException();
+        => throw new NotImplementedException();
+
+    /// <summary>
+    /// Converts to string.
+    /// </summary>
+    /// <param name="provider">The provider.</param>
+    /// <returns>
+    /// A <see cref="string" /> that represents this instance.
+    /// </returns>
+    string IConvertible.ToString(IFormatProvider? provider)
+        => throw GetInvalidTypeCastException();
 
     /// <summary>
     /// Converts to Persian time string.
@@ -826,78 +1051,47 @@ public readonly struct PersianDateTime :
             this.Second.ToString("00", CultureInfo.CurrentCulture));
     }
 
-    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-            => throw new NotImplementedException();
-
-    static PersianDateTime IParsable<PersianDateTime>.Parse(string s, IFormatProvider? provider)
-        => s;
-
-    string IConvertible<PersianDateTime, string>.ConvertTo()
-        => this;
-
-    void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
-        =>
-            info.AddValue("Data", this.Data);
-
-    TypeCode IConvertible.GetTypeCode()
-        => throw new NotSupportedException();
-
-    bool IConvertible.ToBoolean(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    byte IConvertible.ToByte(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    char IConvertible.ToChar(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    decimal IConvertible.ToDecimal(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    double IConvertible.ToDouble(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    short IConvertible.ToInt16(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    int IConvertible.ToInt32(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    long IConvertible.ToInt64(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    sbyte IConvertible.ToSByte(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    float IConvertible.ToSingle(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
-    string IConvertible.ToString(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
-
     object IConvertible.ToType(Type conversionType, IFormatProvider? provider)
-            => throw RaiseInvalidTypeCastException();
+        => throw GetInvalidTypeCastException();
 
     ushort IConvertible.ToUInt16(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
+        => throw GetInvalidTypeCastException();
 
     uint IConvertible.ToUInt32(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
+        => throw GetInvalidTypeCastException();
 
     ulong IConvertible.ToUInt64(IFormatProvider? provider)
-        => throw RaiseInvalidTypeCastException();
+        => throw GetInvalidTypeCastException();
+
+    /// <summary>
+    /// Tries to format the value of the current instance into the provided span of characters.
+    /// </summary>
+    /// <param name="destination">When this method returns, this instance's value formatted as a span of characters.</param>
+    /// <param name="charsWritten">When this method returns, the number of characters that were written in <paramref name="destination" />.</param>
+    /// <param name="format">A span containing the characters that represent a standard or custom format string that defines the acceptable format for <paramref name="destination" />.</param>
+    /// <param name="provider">An optional object that supplies culture-specific formatting information for <paramref name="destination" />.</param>
+    /// <returns>
+    ///   <see langword="true" /> if the formatting was successful; otherwise, <see langword="false" />.
+    /// </returns>
+    /// <exception cref="System.NotImplementedException"></exception>
+    public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+        => throw new NotImplementedException();
 
     /// <summary>
     /// Raises the invalid type cast exception.
     /// </summary>
     /// <returns></returns>
     [DoesNotReturn]
-    private static InvalidCastException RaiseInvalidTypeCastException()
+    private static InvalidCastException GetInvalidTypeCastException()
     {
         var targetType = CodeHelper.GetCallerMethodName()![2..];
         throw new InvalidCastException($"Unable to cast PersianDateTime to {targetType}");
     }
 
+    /// <summary>
+    /// Gets the debugger display.
+    /// </summary>
+    /// <returns></returns>
     private string GetDebuggerDisplay()
         => this.ToString()!;
 }

@@ -127,6 +127,12 @@ public sealed class Check
     public static Result MustBe(Func<bool> predicate, Func<Exception> getException)
         => predicate() ? Result.CreateSuccess() : Result.CreateFail(error: getException());
 
+    public static Result MustBe(bool ok, Func<string> getErrorMessage)
+        => ok ? Result.CreateSuccess() : Result.CreateFail(message: getErrorMessage());
+
+    public static Result MustBe(Func<bool> predicate, Func<string> getErrorMessage)
+        => predicate() ? Result.CreateSuccess() : Result.CreateFail(error: getErrorMessage());
+
     public static Result<TValue?> MustBeArgumentNotNull<TValue>([AllowNull] TValue? obj, [CallerArgumentExpression("obj")] string? argName = null)
         => Result<TValue?>.From(MustBeArgumentNotNull(obj is not null, argName!), obj);
 

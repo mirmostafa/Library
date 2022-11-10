@@ -1,14 +1,15 @@
-﻿using Library;
-
-using Library.Threading.MultistepProgress;
-using Library.Validations;
+﻿using Library.EventsArgs;
 
 namespace Library.Threading.MultistepProgress;
 
 public interface IMultistepProcess
 {
-    static IMultistepProcess New([DisallowNull] in Action<(int Max, int Current, string? Description)> onReporting, in Action<string?>? onEnded = null)
-        => new MultistepProcess(onReporting, onEnded);
+    event EventHandler<ItemActedEventArgs<string?>>? Eneded;
+
+    event EventHandler<ItemActedEventArgs<(int Max, int Current, string? Description)>>? Reported;
+
+    static IMultistepProcess New()
+        => new MultistepProcess();
 
     void Ended(in string? description = null);
 
@@ -27,14 +28,17 @@ public class MultistepProcessRunner<TState>
     public MultistepProcessRunner(in TState state, in IMultistepProcess reporter, IMultistepProcess? subReporter = null)
     {
         this._reporter = reporter;
-        this._subReporter = subReporter ?? IMultistepProcess.New(_ => { });
+        this._subReporter = subReporter ?? IMultistepProcess.New();
         this._state = state;
     }
 
     public MultistepProcessRunner(in TState state,
-        in Action<(int Max, int Current, string? Description)> reporter,
+        Action<(int Max, int Current, string? Description)> reporter,
         Action<(int Max, int Current, string? Description)>? subReporter = null)
-        : this(state, IMultistepProcess.New(reporter), subReporter is null ? null : IMultistepProcess.New(subReporter))
+        : this(state,
+              IMultistepProcess.New().With(x => x.Reported += (_, e) => reporter?.Invoke(e.Item)),
+              subReporter is null ? null :
+                IMultistepProcess.New().With(x => x.Reported += (_, e) => subReporter(e.Item)))
     {
     }
 
@@ -126,20 +130,26 @@ public class MultistepProcessRunner<TState>
 
 internal class MultistepProcess : IMultistepProcess
 {
-    private readonly Action<string?>? _onEnded;
-    private readonly Action<(int Max, int Current, string? Description)> _onReporting;
+    public event EventHandler<ItemActedEventArgs<string?>>? Eneded;
 
-    public MultistepProcess([DisallowNull] in Action<(int Max, int Current, string? Description)> onReporting, in Action<string?>? onEnded)
+    public event EventHandler<ItemActedEventArgs<(string? Description, int Max, int Current)>>? Reported;
+
+    event EventHandler<ItemActedEventArgs<(int Max, int Current, string? Description)>>? IMultistepProcess.Reported
     {
-        this._onReporting = onReporting.ArgumentNotNull();
-        this._onEnded = onEnded;
+        add => throw new NotImplementedException();
+
+        remove => throw new NotImplementedException();
+    }
+
+    public MultistepProcess()
+    {
     }
 
     public void Ended(in string? description)
-        => this._onEnded?.Invoke(description);
+        => this.Eneded?.Invoke(this, new(description));
 
     public void Report(in int max = -1, in int current = -1, in string? description = null)
-        => this._onReporting((max, current, description));
+        => this.Reported(this, new((description, max, current)));
 }
 
 public record struct StepInfo<TState>(in Func<(TState State, IMultistepProcess SubProgress), Task<TState>> AsyncAction, in string? Description, in int ProgressCount);
