@@ -71,7 +71,7 @@ public static class ResultHelper
         return Result<TValue1>.From(result, value1);
     }
 
-    public static bool TryParse<TResult>([DisallowNull] this TResult input, out TResult result) where TResult : ResultBase
+    public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNullWhen(true)] out TResult result) where TResult : ResultBase
         => (result = input).IsSucceed;
     
     //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters

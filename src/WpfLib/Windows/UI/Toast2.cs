@@ -17,7 +17,7 @@ public class Toast2 : IDisposable
     private readonly ToastContentBuilder _builder = new();
     private readonly List<Button> _buttonList = new();
     private bool _disposedValue;
-    private Action<string>? _onActivated;
+    private Action<Toast2>? _onActivated;
 
     public Toast2()
     {
@@ -31,7 +31,8 @@ public class Toast2 : IDisposable
         this.Dispose(disposing: false);
     }
 
-    public static void ClearHistory() => ToastNotificationManagerCompat.History.Clear();
+    public static void ClearHistory()
+        => ToastNotificationManagerCompat.History.Clear();
 
     public static Toast2 New()
                 => new();
@@ -41,8 +42,7 @@ public class Toast2 : IDisposable
         var toast = new Toast2();
 
         toast
-
-    .AddText("Andrew sent you a picture")
+            .AddText("Andrew sent you a picture")
     //.AddText("Check this out, The Enchantments in Washington!")
 
     .AddInlineImage(@"D:\icon-128x128.png")
@@ -70,7 +70,7 @@ public class Toast2 : IDisposable
     /// </summary>
     /// <param name="content">Text to display on the button.</param>
     /// <param name="arguments">App-defined string of arguments that the app can later retrieve once it is activated when the user clicks the button.</param>
-    /// <returns>The current instance of <see cref="ToastContentBuilder"/></returns>
+    /// <returns>The current instance of <see cref="Toast2"/></returns>
     public Toast2 AddButton(string text, Action<Button> onClick, string? id = null)
         => this.AddButton(new(text, onClick, id));
 
@@ -81,7 +81,7 @@ public class Toast2 : IDisposable
     /// <param name="content">Text to display on the button.</param>
     /// <param name="activationType">Type of activation this button will use when clicked. Defaults to Foreground.</param>
     /// <param name="arguments">App-defined string of arguments that the app can later retrieve once it is activated when the user clicks the button.</param>
-    /// <returns>The current instance of <see cref="ToastContentBuilder"/></returns>
+    /// <returns>The current instance of <see cref="Toast2"/></returns>
     public Toast2 AddButton(string textBoxId, string text, Action<Button> onClick, string? id = null)
         => this.AddButton(new(text, onClick, id));
 
@@ -96,10 +96,10 @@ public class Toast2 : IDisposable
         });
 
     public Toast2 AddInlineImage(Uri imageUri)
-            => this.Do(b => b.AddInlineImage(imageUri));
+        => this.Do(b => b.AddInlineImage(imageUri));
 
     public Toast2 AddInlineImage(string imagePath)
-            => this.AddInlineImage(new Uri(imagePath));
+        => this.AddInlineImage(new Uri(imagePath));
 
     /// <summary>
     /// Add an input text box that the user can type into.
@@ -107,7 +107,7 @@ public class Toast2 : IDisposable
     /// <param name="id">Required ID property so that developers can retrieve user input once the app is activated.</param>
     /// <param name="placeHolderContent">Placeholder text to be displayed on the text box when the user hasn't typed any text yet.</param>
     /// <param name="title">Title text to display above the text box.</param>
-    /// <returns>The current instance of <see cref="ToastContentBuilder"/></returns>
+    /// <returns>The current instance of <see cref="Toast2"/></returns>
     public Toast2 AddInputTextBox(string id, string? placeHolderContent = default, string? title = default)
         => this.Do(b => b.AddInputTextBox(id, placeHolderContent, title));
 
@@ -135,7 +135,7 @@ public class Toast2 : IDisposable
 
     public Toast2 SetOnNotificationActivated(Action<string> onActivated)
     {
-        this._onActivated = onActivated;
+        this._onActivated = (Action<Toast2>?)onActivated;
         return this;
     }
 
@@ -181,8 +181,12 @@ public class Toast2 : IDisposable
         {
             Application.Current.RunInUiThread(() => click(button));
         }
-
         //!? I know that this block is called twice, but I have no solution so far.
+        else
+        {
+            Application.Current.RunInUiThread(() => this._onActivated?.Invoke(this));
+        }
+
         ////else
         ////{
         ////    // Obtain the arguments from the notification

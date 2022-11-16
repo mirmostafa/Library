@@ -13,7 +13,9 @@ public class Result : ResultBase, IEmpty<Result>
         : base(status, fullMessage) { }
 
     public static Result Empty { get; } = _staticFields.Empty ??= NewEmpty();
+
     public static Result Fail => _staticFields.Fail ??= CreateFail();
+
     public static Result Success => _staticFields.Success ??= CreateSuccess();
 
     public static Result CreateFail(in string? message = null, in object? error = null)
@@ -31,8 +33,8 @@ public class Result : ResultBase, IEmpty<Result>
     public static explicit operator Result(bool b)
         => b ? Success : Fail;
 
-    public static Result From([DisallowNull] in ResultBase other) 
-        => From(other, new Result());
+    public static Result From([DisallowNull] in ResultBase other)
+        => Copy(other, new Result());
 
     public static implicit operator bool(Result result)
             => result.NotNull().IsSucceed;
@@ -42,4 +44,7 @@ public class Result : ResultBase, IEmpty<Result>
 
     public static Result NewEmpty()
         => New();
+
+    public Task<Result> ToAsync()
+        => Task.FromResult(this);
 }

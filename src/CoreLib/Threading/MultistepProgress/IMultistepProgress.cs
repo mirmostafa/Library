@@ -132,14 +132,7 @@ internal class MultistepProcess : IMultistepProcess
 {
     public event EventHandler<ItemActedEventArgs<string?>>? Eneded;
 
-    public event EventHandler<ItemActedEventArgs<(string? Description, int Max, int Current)>>? Reported;
-
-    event EventHandler<ItemActedEventArgs<(int Max, int Current, string? Description)>>? IMultistepProcess.Reported
-    {
-        add => throw new NotImplementedException();
-
-        remove => throw new NotImplementedException();
-    }
+    public event EventHandler<ItemActedEventArgs<(int Max, int Current, string? Description)>>? Reported;
 
     public MultistepProcess()
     {
@@ -149,7 +142,7 @@ internal class MultistepProcess : IMultistepProcess
         => this.Eneded?.Invoke(this, new(description));
 
     public void Report(in int max = -1, in int current = -1, in string? description = null)
-        => this.Reported(this, new((description, max, current)));
+        => this.Reported(this, new((max, current, description)));
 }
 
 public record struct StepInfo<TState>(in Func<(TState State, IMultistepProcess SubProgress), Task<TState>> AsyncAction, in string? Description, in int ProgressCount);

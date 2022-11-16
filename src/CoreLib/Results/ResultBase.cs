@@ -83,7 +83,7 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         return result.ToString();
     }
 
-    internal static TResult From<TResult>(in ResultBase source, in TResult dest)
+    internal static TResult Copy<TResult>(in ResultBase source, in TResult dest)
         where TResult : ResultBase
     {
         dest.Status = source.Status;

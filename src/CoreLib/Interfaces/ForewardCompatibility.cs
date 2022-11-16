@@ -21,27 +21,6 @@ public interface IAdditionOperators<in TSelf, in TOther, out TResult>
 }
 
 /// <summary>
-/// Defines a mechanism for computing the difference of two values.
-/// </summary>
-/// <typeparam name="TSelf">The type that implements this interface.</typeparam>
-/// <typeparam name="TOther">The type that will be subtracted from <typeparamref name="TSelf"/>.</typeparam>
-/// <typeparam name="TResult">
-/// The type that contains the difference of <typeparamref name="TOther"/> subtracted from
-/// <typeparamref name="TSelf"/>.
-/// </typeparam>
-public interface ISubtractionOperators<in TSelf, in TOther, out TResult>
-    where TSelf : ISubtractionOperators<TSelf, TOther, TResult>
-{
-    /// <summary>
-    /// Subtracts two values to compute their difference.
-    /// </summary>
-    /// <param name="left"> The value from which <paramref name="right"/> is subtracted.</param>
-    /// <param name="right">The value which is subtracted from <paramref name="left"/>.</param>
-    /// <returns>The difference of <paramref name="right"/> subtracted from <paramref name="left"/>.</returns>
-    static abstract TResult operator -(TSelf left, TOther right);
-}
-
-/// <summary>
 /// Defines a mechanism for parsing a string to a value.
 /// </summary>
 /// <typeparam name="TSelf">The type that implements this interface.</typeparam>
@@ -70,10 +49,39 @@ public interface IParsable<TSelf>
     /// <param name="provider">
     /// An object that provides culture-specific formatting information about <paramref name="s"/>.
     /// </param>
-    /// <param name="result">  
+    /// <param name="result">
     /// On return, contains the result of successfully parsing <paramref name="s"/> or an undefined
     /// value on failure.
     /// </param>
     /// <returns><c>true</c> if <paramref name="s"/> was successfully parsed; otherwise, <c>false</c>.</returns>
     static abstract bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(returnValue: false)] out TSelf result);
 }
+
+/// <summary>
+/// Defines a mechanism for computing the difference of two values.
+/// </summary>
+/// <typeparam name="TSelf">The type that implements this interface.</typeparam>
+/// <typeparam name="TOther">The type that will be subtracted from <typeparamref name="TSelf"/>.</typeparam>
+/// <typeparam name="TResult">
+/// The type that contains the difference of <typeparamref name="TOther"/> subtracted from
+/// <typeparamref name="TSelf"/>.
+/// </typeparam>
+public interface ISubtractionOperators<in TSelf, in TOther, out TResult>
+    where TSelf : ISubtractionOperators<TSelf, TOther, TResult>
+{
+    /// <summary>
+    /// Subtracts two values to compute their difference.
+    /// </summary>
+    /// <param name="left"> The value from which <paramref name="right"/> is subtracted.</param>
+    /// <param name="right">The value which is subtracted from <paramref name="left"/>.</param>
+    /// <returns>The difference of <paramref name="right"/> subtracted from <paramref name="left"/>.</returns>
+    static abstract TResult operator -(TSelf left, TOther right);
+}
+
+//public interface IBinaryOperators<in TSelf, in TOther, out TResult>
+//    where TSelf : class
+//    where TOther : class
+//    where TResult : class
+//{
+//    static abstract TResult operator |(TSelf left, TOther right);
+//}
