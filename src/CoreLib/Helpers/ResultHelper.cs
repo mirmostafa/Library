@@ -1,11 +1,16 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Xml;
+using System.Xml.Serialization;
 
 using Library.Exceptions.Validations;
+using Library.Logging;
 using Library.Results;
+using Library.Validations;
 
 namespace Library.Helpers;
 
-//[DebuggerStepThrough]
+[DebuggerStepThrough]
 [StackTraceHidden]
 public static class ResultHelper
 {
@@ -39,6 +44,27 @@ public static class ResultHelper
         return InnerCheck(result, condition, errorMessage, errorId);
     }
 
+    public static TResult LogDebug<TResult>(this TResult result, ILogger logger, [CallerMemberName] object? sender = null, DateTime? time = null)
+        where TResult : ResultBase
+    {
+        if (result.IsSucceed)
+        {
+            logger.Debug(result, sender, time);
+        }
+        else
+        {
+            logger.Error(result, sender, time);
+        }
+
+        return result;
+    }
+
+    public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath)
+    {
+        Validations.Check.IfArgumentNotNull(filePath);
+        return result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
+    }
+
     public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null)
     {
         _ = result.As<ResultBase>()!.InnerThrowOnFail(owner, instruction);
@@ -64,6 +90,16 @@ public static class ResultHelper
         return InnerThrowOnFail(result, owner, instruction);
     }
 
+    public static Result<Stream> ToFile(this Result<Stream> result, string filePath, FileMode fileMode = FileMode.Create)
+    {
+        Validations.Check.IfArgumentNotNull(filePath);
+        var stream = result.Value;
+        using var fileStream = new FileStream(filePath, fileMode, FileAccess.Write);
+        stream.CopyTo(fileStream);
+
+        return result;
+    }
+
     public static async Task<Result<TValue1>> ToResultAsync<TValue, TValue1>(this Task<Result<TValue>> resultTask, Func<TValue, TValue1> getNewValue)
     {
         var result = await resultTask;
@@ -71,11 +107,24 @@ public static class ResultHelper
         return Result<TValue1>.From(result, value1);
     }
 
-    public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNullWhen(true)] out TResult result) where TResult : ResultBase
-        => (result = input).IsSucceed;
-    
-    //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
-    ////public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase 
+    public static Result<StreamWriter> ToStreamWriter(this Result<Stream> result)
+        => new(new(result.Value));
+
+    public static Result<string> ToText(this Result<Stream> result)
+    {
+        var stream = result.Value;
+        using var reader = new StreamReader(stream);
+        return new(reader.ReadToEnd());
+    }
+
+    public static Result<XmlWriter> ToXmlWriter(this Result<Stream> result, bool indent = true)
+        => new(XmlWriter.Create(result.ToStreamWriter(), new XmlWriterSettings { Indent = indent }));
+
+    public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase
+        => (result = input.ArgumentNotNull()).IsSucceed;
+
+    //!? Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
+    ////public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
     ////    => (result = await input).IsSucceed;
 
     private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId)
@@ -108,33 +157,4 @@ public static class ResultHelper
         Throw(exception);
         return result;
     }
-
-    //public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath)
-    //{
-    //    Check.IfArgumentNotNull(filePath);
-    //    return result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
-    //}
-
-    //public static Result<Stream> ToFile(this Result<Stream> result, string filePath, FileMode fileMode = FileMode.Create)
-    //{
-    //    Check.IfArgumentNotNull(filePath);
-    //    var stream = result.Value;
-    //    using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-    //    stream.CopyTo(fileStream);
-
-    //    return result;
-    //}
-
-    //public static Result<StreamWriter> ToStreamWriter(this Result<Stream> result)
-    //    => new(new(result.Value));
-
-    //public static Result<string> ToText(this Result<Stream> result)
-    //{
-    //    var stream = result.Value;
-    //    using var reader = new StreamReader(stream);
-    //    return new(reader.ReadToEnd());
-    //}
-
-    //public static Result<XmlWriter> ToXmlWriter(this Result<Stream> result, bool indent = true)
-    //    => new(XmlWriter.Create(result.ToStreamWriter(), new XmlWriterSettings { Indent = indent }));
 }

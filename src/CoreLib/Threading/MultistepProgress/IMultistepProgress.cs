@@ -111,7 +111,7 @@ public class MultistepProcessRunner<TState>
         this._max = stepList.Select(x => x.ProgressCount).Sum();
         this._current = 0;
         var canBeCancelled = cancellationToken is not null and { CanBeCanceled: true };
-        var token = cancellationToken is null ? default : cancellationToken.Value;
+        var token = cancellationToken ?? default;
         var isCancellationRequested = () => canBeCancelled && token.IsCancellationRequested;
         foreach (var step in stepList)
         {
