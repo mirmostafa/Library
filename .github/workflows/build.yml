@@ -1,4 +1,4 @@
-name: Build 🏗
+name: Build 🏗 in Git repo
 on:
   push:
     branches: [ main ]
