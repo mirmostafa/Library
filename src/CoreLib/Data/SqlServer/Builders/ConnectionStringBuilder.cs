@@ -49,7 +49,7 @@ public class ConnectionStringBuilder : IValidatable<ConnectionStringBuilder>
     public static ConnectionStringBuilder Create(string connectionString)
         => new(connectionString);
 
-    public static void Validate(string connectionString)
+    public static Result<ConnectionStringBuilder> Validate(string connectionString)
         => Create(connectionString).Validate();
 
     public ConnectionStringBuilder ApplicationName(string value)

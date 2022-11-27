@@ -1,7 +1,5 @@
 ﻿using System.Text;
 
-using Library;
-using Library.Cqrs;
 using Library.DesignPatterns.Markers;
 
 namespace UnitTest;
@@ -32,11 +30,11 @@ public class ArchitecturalTests
         {
             return;
         }
-        
+
         var result = new StringBuilder("The following classes are marked as Immutable but they have muted properties.");
         foreach (var prop in props)
         {
-            result.AppendLine($"Type: `{prop.DeclaringType}`. Property: {prop}");
+            _ = result.AppendLine($"Type: `{prop.DeclaringType}`. Property: {prop}");
         }
         Assert.Fail(result.ToString());
     }
@@ -57,6 +55,27 @@ public class ArchitecturalTests
         var wpfLibTypes = wpfLibAsm.GetTypes();
 
         _libraryTypes = new(codeLibTypes, cqrsLibTypes, webLibTypes, wpfLibTypes);
+    }
+
+    [TestMethod]
+    public void ObeyFluencyRule()
+    {
+        var methods = GetAllTypes()
+                    .Where(ObjectHelper.HasAttribute<FluentAttribute>)
+                    .SelectMany(t => t.GetMethods())
+                    .Where(x => x.Name != "Deconstruct" && !x.Name.StartsWith("set_") && x.IsPublic && x.ReturnType?.Name == "Void");
+
+        if (!methods.Any())
+        {
+            return;
+        }
+
+        var result = new StringBuilder("The following classes are marked as Fluent but they have voided methods.");
+        foreach (var method in methods)
+        {
+            _ = result.AppendLine($"Type: `{method.DeclaringType}`. Method: {method}");
+        }
+        Assert.Fail(result.ToString());
     }
 
     private static IEnumerable<Type> GetAllTypes()
