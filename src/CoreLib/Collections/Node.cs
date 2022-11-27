@@ -16,9 +16,9 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
 
     public IEnumerable<Node<T>> Children => this.ChildList.ToEnumerable();
     public IEnumerable<T> ChildValues => this.Children.Select(x => x.To<T>());
-    public string? Display { get; init; }
+    public string? Display { get; }
     public Node<T>? Parent { get; private set; }
-    public T Value { get; init; }
+    public T Value { get; }
     protected FluentList<Node<T>> ChildList { get; } = new();
 
     public static implicit operator T?(Node<T> node)

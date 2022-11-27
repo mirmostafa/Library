@@ -2,12 +2,11 @@
 using System.Diagnostics;
 
 using Library.DesignPatterns.Markers;
-using Library.Helpers;
 
 namespace Library.Collections;
 
 [Fluent]
-[Immutable]
+//x [Immutable]
 public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     where TList : FluentListBase<TItem, TList>
 {
@@ -66,8 +65,11 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     public IEnumerator<TItem> GetEnumerator()
         => this._list.GetEnumerator();
 
+    IEnumerator IEnumerable.GetEnumerator()
+        => ((IEnumerable)this._list).GetEnumerator();
+
     public (TList List, int Result) IndexOf(TItem item)
-        => this.OnIndexOf(item);
+            => this.OnIndexOf(item);
 
     public TList Insert(int index, TItem item)
         => this.OnInsert(index, item);
@@ -77,9 +79,6 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
 
     public TList RemoveAt(int index)
         => this.This.Fluent(this.CheckReadOnly).With(() => this._list.RemoveAt(index));
-
-    IEnumerator IEnumerable.GetEnumerator()
-                        => ((IEnumerable)this._list).GetEnumerator();
 
     [DebuggerStepThrough]
     protected TList CheckReadOnly()

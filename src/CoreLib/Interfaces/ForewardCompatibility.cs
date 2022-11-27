@@ -18,6 +18,9 @@ public interface IAdditionOperators<in TSelf, in TOther, out TResult>
     /// <param name="right">The value which is added to <paramref name="left"/>.</param>
     /// <returns>The sum of <paramref name="left"/> and <paramref name="right"/>.</returns>
     static abstract TResult operator +(TSelf left, TOther right);
+
+    //! Not supported yet.
+    //x static TResult operator checked +(TSelf left, TOther right);
 }
 
 /// <summary>

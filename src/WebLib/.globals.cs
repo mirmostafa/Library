@@ -10,3 +10,8 @@ global using System.Diagnostics.CodeAnalysis;
 //{
 //    private static void Main(params string[] args) { }
 //}
+
+//x [ModuleInitializer]
+public static class WebLibModule
+{
+}

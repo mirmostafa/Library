@@ -115,10 +115,10 @@ public static class EnumerableHelper
         => InnerAggregate(items.ToArray(), aggregator, defaultValue);
 
     public static T Aggregate<T>(this T[] items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
-        => InnerAggregate(items, (x, y) => x + y, defaultValue);
+        => InnerAggregate(items, (x, y) => x + y!, defaultValue);
 
     public static T Aggregate<T>(this IEnumerable<T> items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
-        => InnerAggregate(items.ToArray(), (x, y) => x + y, defaultValue);
+        => InnerAggregate(items.ToArray(), (x, y) => x + y!, defaultValue);
 
     public static bool Any([NotNullWhen(true)] this IEnumerable source)
     {
@@ -257,9 +257,9 @@ public static class EnumerableHelper
         => Collect(ToEnumerable(root));
 
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
-                where TSource : class => items is null
-            ? Enumerable.Empty<TSource>()
-            : items.Where(x => x is not null).Select(x => x!);
+        where TSource : class => items is null
+        ? Enumerable.Empty<TSource>()
+        : items.Where(x => x is not null).Select(x => x!);
 
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
         => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
@@ -281,11 +281,27 @@ public static class EnumerableHelper
     public static T[] EmptyArray<T>()
         => Array.Empty<T>();
 
-    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
-        => source.Where(x => !exclude(x));
+    public static IEnumerable<T> Except<T>(this IEnumerable<T> items, Func<T, bool> exceptor)
+        => items.Where(x => !exceptor(x));
 
-    public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items)
-        => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
+    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
+            => source.Where(x => !exclude(x));
+
+    //! Not fast enough. Lost in benchmark.
+    //x public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items)
+    //x     => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
+
+    public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> items)
+    {
+        var buffer = new HashSet<T>();
+        foreach (var item in items)
+        {
+            if (!buffer.Add(item))
+            {
+                yield return item;
+            }
+        }
+    }
 
     public static T Fold<T>(this IEnumerable<T> items, Func<(T result, T item), T> folder, T defaultValue)
     {
@@ -545,8 +561,11 @@ public static class EnumerableHelper
         return dic;
     }
 
+    public static T[] ToArray<T>(T item)
+        => ToEnumerable(item).ToArray();
+
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull
-        => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
+            => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
     public static IEnumerable<T> ToEnumerable<T>(T item)
     {
@@ -629,9 +648,6 @@ public static class EnumerableHelper
             }
         }
     }
-
-    public static T[] ToArray<T>(T item)
-        => ToEnumerable(item).ToArray();
 
     private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
         => items switch

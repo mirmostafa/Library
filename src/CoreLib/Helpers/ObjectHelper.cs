@@ -337,6 +337,16 @@ public static class ObjectHelper
         return properties.Select(property => property.Name);
     }
 
+    public static bool HasAttribute<TType, TAttribute>() where TAttribute : Attribute 
+        => HasAttribute<TAttribute>(typeof(Type));
+
+    public static bool HasAttribute<TAttribute>(Type type)
+        where TAttribute : Attribute
+    {
+        var attributes = type.GetCustomAttributes(typeof(TAttribute), false);
+        return attributes.Length > 0;
+    }
+
     public static bool Implements([DisallowNull] in object obj, Type type)
         => obj.GetType()
             .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 
@@ -26,7 +27,7 @@ public readonly struct Language : IEquatable<Language>
     /// <value>
     /// The file extension.
     /// </value>
-    public string? FileExtension { get; init; }
+    public string? FileExtension { get; }
 
     /// <summary>
     /// Gets the name of language.
@@ -34,7 +35,7 @@ public readonly struct Language : IEquatable<Language>
     /// <value>
     /// The name.
     /// </value>
-    public string Name { get; init; }
+    public string Name { get; }
 
     public static bool operator !=(Language left, Language right)
         => !(left == right);

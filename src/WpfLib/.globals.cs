@@ -12,3 +12,9 @@ global using Library.Validations;
 global using Library.Wpf.Helpers;
 global using Library.Wpf.Media;
 global using static Library.Coding.Functional;
+
+//x [ModuleInitializer]
+public static class WpfLibModule
+{
+
+}

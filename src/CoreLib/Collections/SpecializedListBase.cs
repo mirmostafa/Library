@@ -1,10 +1,9 @@
 ﻿using Library.DesignPatterns.Markers;
-using Library.Helpers;
 
 namespace Library.Collections;
 
 [Fluent]
-public abstract class SpecializedListBase<TItem, TEnumerable> : ReadOnlySpecializedList<TItem, TEnumerable>, IList<TItem?>
+public abstract class SpecializedListBase<TItem, TEnumerable> : ReadOnlySpecializedList<TItem, TEnumerable>//, IList<TItem?>
         where TEnumerable : SpecializedListBase<TItem?, TEnumerable>
 {
     protected SpecializedListBase(IEnumerable<TItem?> items)
@@ -43,7 +42,7 @@ public abstract class SpecializedListBase<TItem, TEnumerable> : ReadOnlySpeciali
 
     public TEnumerable Remove(TItem? item)
     {
-         this.AsList().Remove(item);
+        _ = this.AsList().Remove(item);
         return this.This();
     }
 
@@ -53,32 +52,32 @@ public abstract class SpecializedListBase<TItem, TEnumerable> : ReadOnlySpeciali
         return this.This();
     }
 
-    void ICollection<TItem?>.Add(TItem? item)
-    {
-        this.OnInserting(this.Count, item);
-        this.InnetList.Add(item);
-    }
+    //void ICollection<TItem?>.Add(TItem? item)
+    //{
+    //    this.OnInserting(this.Count, item);
+    //    this.InnetList.Add(item);
+    //}
 
-    void ICollection<TItem?>.Clear()
-        => this.InnetList.Clear();
+    //void ICollection<TItem?>.Clear()
+    //    => this.InnetList.Clear();
 
-    void ICollection<TItem?>.CopyTo(TItem?[] array, int arrayIndex)
-        => this.InnetList.CopyTo(array, arrayIndex);
+    //void ICollection<TItem?>.CopyTo(TItem?[] array, int arrayIndex)
+    //    => this.InnetList.CopyTo(array, arrayIndex);
 
-    void IList<TItem?>.Insert(int index, TItem? item)
-    {
-        this.OnInserting(index, item);
-        this.InnetList.Insert(index, item);
-    }
+    //void IList<TItem?>.Insert(int index, TItem? item)
+    //{
+    //    this.OnInserting(index, item);
+    //    this.InnetList.Insert(index, item);
+    //}
 
-    bool ICollection<TItem?>.Remove(TItem? item)
-        => this.InnetList.Remove(item);
+    //bool ICollection<TItem?>.Remove(TItem? item)
+    //    => this.InnetList.Remove(item);
 
-    void IList<TItem?>.RemoveAt(int index)
-        => this.InnetList.RemoveAt(index);
+    //void IList<TItem?>.RemoveAt(int index)
+    //    => this.InnetList.RemoveAt(index);
 
     protected IList<TItem?> AsList()
-                                => this.As<IList<TItem?>>()!;
+        => this.InnetList.ToEnumerable().ToList();
 
     protected virtual void OnInserting(int index, TItem? item)
     { }

@@ -1,5 +1,8 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
+
 using Autofac;
+
 using Library.Cqrs.Engine.Command;
 using Library.Cqrs.Engine.Query;
 using Library.Cqrs.Models.Commands;
@@ -7,7 +10,7 @@ using Library.Cqrs.Models.Queries;
 
 namespace Library.Cqrs;
 
-public static class CqrsModule
+public static class CqrsExtensions
 {
     public static ContainerBuilder AddCqrs(this ContainerBuilder builder, params Assembly[] scannedAssemblies)
     {

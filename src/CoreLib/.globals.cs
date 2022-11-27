@@ -11,3 +11,9 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Library.Web")]
 [assembly: InternalsVisibleTo("LibraryTest")]
 [assembly: InternalsVisibleTo("Library.Cqrs")]
+
+
+//x [ModuleInitializer]
+public static class CoreLibModule
+{
+}
