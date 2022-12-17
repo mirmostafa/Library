@@ -1,4 +1,4 @@
-﻿namespace Library.CodeGeneration.V2.HtmlGeneration;
+﻿namespace Library.CodeGeneration.v2.Front.HtmlGeneration;
 
 public class ButtonElement : HtmlElement<ButtonElement>
 {
@@ -16,7 +16,7 @@ public class ButtonElement : HtmlElement<ButtonElement>
 
         return result;
     }
-    
+
     public static ButtonElement GetBlazorClickCodeStatement(string buttonName, string caption, string? handlerParameter)
     {
         var result = New(caption, ("name", buttonName), ("@onclick", $"{buttonName}_OnClick({handlerParameter})"));

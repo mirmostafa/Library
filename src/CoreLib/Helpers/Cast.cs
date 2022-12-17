@@ -18,11 +18,10 @@ public static class Cast
     public static T? As<T>(this object? obj)
         where T : class => obj as T;
 
+
     public static T? Match<T>(object obj)
     {
-        if (obj is T result)
-            return result;
-        return default;
+        return obj is T result ? result : default;
     }
 
     public static IEnumerable<T> OfType<T>(IEnumerable items)

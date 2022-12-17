@@ -1,29 +1,17 @@
 ﻿using System.Collections;
-using Library.CodeGeneration.v2.Models;
+
 using Library.DesignPatterns.Markers;
 
 namespace Library.CodeGeneration.v2;
 
 [Immutable]
-public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>
+public readonly struct Languages : IEnumerable<Language>
 {
     public static readonly Language Blazor = new("Blazor", "razor.cs");
     public static readonly Language CSharp = new("C#", "cs");
     public static readonly Language Html = new("HTML", "htm");
     public static readonly Language None = new("(Unknown)", "");
     public static readonly Language Xaml = new("XAML", "xaml.cs");
-
-    public static bool operator !=(Languages left, Languages right)
-        => !(left == right);
-
-    public static bool operator ==(Languages left, Languages right)
-        => left.Equals(right);
-
-    public override bool Equals(object? obj)
-                => base.Equals(obj);
-
-    public bool Equals(Languages other)
-        => this == other;
 
     public IEnumerator<Language> GetEnumerator()
     {
@@ -35,7 +23,7 @@ public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>
     }
 
     public override int GetHashCode()
-                => base.GetHashCode();
+        => base.GetHashCode();
 
     public override string? ToString()
         => base.ToString();

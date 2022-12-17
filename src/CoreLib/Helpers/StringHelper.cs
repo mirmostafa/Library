@@ -172,6 +172,11 @@ public static class StringHelper
     public static bool EqualsToAny(this string str1, params string[] array)
         => array.Any(s => str1.EqualsTo(s));
 
+    public static string? FixSize(string? name, int maxLength, char gapChar = ' ') 
+        => name.IsNullOrEmpty()
+            ? Add(string.Empty, maxLength, gapChar)
+            : name.Length > maxLength ? name[..maxLength] : name.Add(maxLength - name.Length, gapChar);
+
     [Pure]
     public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';')
         => keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
@@ -451,13 +456,17 @@ public static class StringHelper
 
     public static string Merge(string quat, string separator, params string[] array) => array.Merge(quat, separator);
 
-    public static string Merge(this IEnumerable<string> array, in string separator) => string.Join(separator, array.ToArray());
+    public static string Merge(this IEnumerable<string> array, in string separator)
+        => string.Join(separator, array.ToArray());
 
-    public static string Merge(this IEnumerable<string> array, in char separator) => string.Join(separator, array.ToArray());
+    public static string Merge(this IEnumerable<string> array, in char separator)
+        => string.Join(separator, array.ToArray());
 
-    public static string Merge(this IEnumerable<string> array, string quat, string separator) => array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator} ").Trim()[..^1];
+    public static string Merge(this IEnumerable<string> array, string quat, string separator) => array.Aggregate(string.Empty, (current, str)
+        => $"{current}{quat}{str}{quat}{separator} ").Trim()[..^1];
 
-    public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";") => string.Join(statementSeparator, splitPair.Select(pair => $"{pair.Item1}{keyValueSeparator}{pair.Item2}"));
+    public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";")
+        => string.Join(statementSeparator, splitPair.Select(pair => $"{pair.Item1}{keyValueSeparator}{pair.Item2}"));
 
     public static string PatternPolicy(in string text)
     {
@@ -479,12 +488,15 @@ public static class StringHelper
     /// </summary>
     /// <param name="text">The text.</param>
     /// <returns></returns>
-    public static string? Pluralize(string? text) => text.IsNullOrEmpty() ? null : Pluralizer.Pluralize(text);
+    public static string? Pluralize(string? text)
+        => text.IsNullOrEmpty() ? null : Pluralizer.Pluralize(text);
 
     [return: NotNullIfNotNull("str")]
-    public static string? Remove(this string? str, in string? value) => str is null ? null : value is null ? str : str.Replace(value, "");
+    public static string? Remove(this string? str, in string? value)
+        => str is null ? null : value is null ? str : str.Replace(value, "");
 
-    public static string RemoveEnd(this string str, in int count) => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
+    public static string RemoveEnd(this string str, in int count)
+        => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
 
     public static string RemoveEnd(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
     {

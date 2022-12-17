@@ -3,12 +3,12 @@
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 
-namespace Library.CodeGeneration.v2.Models;
+namespace Library.CodeGeneration.v2;
 
 /// <summary>
 ///
 /// </summary>
-/// <seealso cref="System.IEquatable&lt;Library.CodeGeneration.v2.Models.Language&gt;" />
+/// <seealso cref="IEquatable&lt;Language&gt;" />
 [Immutable]
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public readonly struct Language : IEquatable<Language>

@@ -286,6 +286,9 @@ public static class ObjectHelper
         return property is not null ? (TPropertyType?)property.GetValue(obj, null) : default;
     }
 
+    public static PropertyInfo? GetProp<TDeclaringType>(string propName)
+        => typeof(TDeclaringType).GetProperty(propName);
+
     /// <summary>
     /// Gets the property.
     /// </summary>
@@ -337,7 +340,7 @@ public static class ObjectHelper
         return properties.Select(property => property.Name);
     }
 
-    public static bool HasAttribute<TType, TAttribute>() where TAttribute : Attribute 
+    public static bool HasAttribute<TType, TAttribute>() where TAttribute : Attribute
         => HasAttribute<TAttribute>(typeof(Type));
 
     public static bool HasAttribute<TAttribute>(Type type)

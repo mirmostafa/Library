@@ -137,6 +137,9 @@ public static class EnumerableHelper
     public static Span<TItem> AsSpan<TItem>(this List<TItem> list)
         => CollectionsMarshal.AsSpan(list);
 
+    public static Span<TItem> AsSpan<TItem>(this IEnumerable<TItem> items)
+        => items is null ? default : MemoryExtensions.AsSpan(items.ToArray());
+
     public static IReadOnlyList<T> Build<T>([DisallowNull] this IEnumerable<T> items)
     {
         Check.IfArgumentNotNull(items);
@@ -565,7 +568,7 @@ public static class EnumerableHelper
         => ToEnumerable(item).ToArray();
 
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull
-            => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
+        => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
     public static IEnumerable<T> ToEnumerable<T>(T item)
     {
@@ -606,9 +609,6 @@ public static class EnumerableHelper
         return result;
     }
 
-    public static Span<TItem> ToListAsSpan<TItem>(this IEnumerable<TItem> items)
-        => items.ToList().AsSpan();
-
     public static async Task<List<TItem>> ToListAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
         Check.IfArgumentNotNull(asyncItems);
@@ -630,7 +630,7 @@ public static class EnumerableHelper
         => new(source);
 
     public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items)
-        => new List<T>(items).AsReadOnly();
+        => items is List<T> l ? l.AsReadOnly() : new List<T>(items).AsReadOnly();
 
     public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items)
         => ImmutableList.CreateRange(items).ToHashSet();

@@ -1,6 +1,6 @@
 ﻿using Library.DesignPatterns.Markers;
 
-namespace Library.CodeGeneration.Models;
+namespace Library.CodeGeneration.v2.Back;
 
 [Immutable]
 public readonly struct TypePath : IEquatable<TypePath>
@@ -25,13 +25,19 @@ public readonly struct TypePath : IEquatable<TypePath>
         }
     }
 
-    public IList<TypePath> GenericTypes { get; } = new List<TypePath>();
+    public ISet<TypePath> GenericTypes { get; } = new HashSet<TypePath>();
 
     public string? Name { get; }
 
     public string? NameSpace { get; }
 
-    public static string Combine(string part1, params string[] parts)
+    public static implicit operator string?(in TypePath typeInfo)
+        => typeInfo.ToString();
+
+    public static implicit operator TypePath(in string? typeInfo)
+        => new(typeInfo);
+
+    public static string Merge(string part1, params string[] parts)
     {
         var result = new StringBuilder(part1);
         foreach (var part in parts)
@@ -40,12 +46,6 @@ public readonly struct TypePath : IEquatable<TypePath>
         }
         return result.ToString();
     }
-
-    public static implicit operator string?(in TypePath typeInfo)
-        => typeInfo.ToString();
-
-    public static implicit operator TypePath(in string? typeInfo)
-        => new(typeInfo);
 
     public static TypePath New(in string? name, in string? nameSpace = null)
         => new(name, nameSpace);
@@ -76,9 +76,10 @@ public readonly struct TypePath : IEquatable<TypePath>
         return dotLastIndex == -1 ? ((string? Name, string? NameSpace))(typePath, null) : ((string? Name, string? NameSpace))(typePath[(dotLastIndex + 1)..], typePath[..dotLastIndex]);
     }
 
-    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null) => string.IsNullOrEmpty(nameSpace)
+    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null) 
+        => string.IsNullOrEmpty(nameSpace)
             ? SplitTypePath(name)
-            : nameSpace!.EndsWith(".") ? SplitTypePath($"{nameSpace}{name}") : SplitTypePath($"{nameSpace}.{name}");
+            : nameSpace.EndsWith(".") ? SplitTypePath($"{nameSpace}{name}") : SplitTypePath($"{nameSpace}.{name}");
 
     public TypePath AddGenericType(TypePath typePath)
     {

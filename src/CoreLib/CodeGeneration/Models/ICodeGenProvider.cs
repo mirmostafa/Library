@@ -2,5 +2,5 @@
 
 public interface ICodeGenProvider
 {
-    Codes GenerateBehindCode(in INameSpace nameSpace, in GenerateCodesParameters arguments);
+    Codes GenerateBehindCode(in INameSpace nameSpace, in GenerateCodesParameters? arguments = default);
 }

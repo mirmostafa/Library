@@ -137,4 +137,10 @@ public static class BackgroundTimerExtensions
         Thread.Sleep(wait);
         return instance;
     }
+
+    public static async Task<BackgroundTimer> SleepAsync(this BackgroundTimer instance, TimeSpan wait)
+    {
+        await Task.Delay(wait);
+        return instance;
+    }
 }

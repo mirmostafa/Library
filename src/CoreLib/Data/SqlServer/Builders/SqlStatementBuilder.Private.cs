@@ -13,17 +13,20 @@ public static partial class SqlStatementBuilder
         }).Merge('.');
         return result;
     }
-    private static string FormatValue(object value) => value switch
-    {
-        int i => i.ToString(),
-        float f => f.ToString(),
-        decimal d => d.ToString(),
-        long l => l.ToString(),
-        string and { Length: 0 } => "''",
-        string s => $"N'{s}'",
-        null => DBNull.Value.ToString(),
-        _ => $"'{value}'",
-    };
+
     private static StringBuilder AddClause(in string clause, in string indent, in StringBuilder result)
         => result.AppendLine().Append($"{indent}{clause}");
+
+    private static string FormatValue(object value)
+        => value switch
+        {
+            int i => i.ToString(),
+            float f => f.ToString(),
+            decimal d => d.ToString(),
+            long l => l.ToString(),
+            string and { Length: 0 } => "''",
+            string s => $"N'{s}'",
+            null => DBNull.Value.ToString(),
+            _ => $"'{value}'",
+        };
 }

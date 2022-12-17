@@ -1,26 +1,30 @@
-﻿using System.ComponentModel;
+﻿//using System.ComponentModel;
 
 namespace Library.Data.SqlServer.ObjectModel;
 
-[EditorBrowsable(EditorBrowsableState.Never)]
-public abstract class SqlObjectAttribute : Attribute
-{
-    public string Name { get; set; }
-}
+//[AttributeUsage(AttributeTargets.Property)]
+//public sealed class SqlFieldAttribute : SqlObjectAttribute
+//{
+//    public bool IsIdentity { get; set; }
+//}
 
-public sealed class SqlTableAttribute : SqlObjectAttribute
-{
-}
+//[AttributeUsage(AttributeTargets.All)]
+//public sealed class SqlIgnoreAttribute : Attribute
+//{
+//}
 
-public sealed class SqlFieldAttribute : SqlObjectAttribute
-{
-    public bool IsIdentity { get; set; }
-}
+//[EditorBrowsable(EditorBrowsableState.Never)]
+//public abstract class SqlObjectAttribute : Attribute
+//{
+//    public string? Name { get; set; }
+//}
 
-public sealed class SqlIgnoreAttribute : Attribute
-{
-}
+//[AttributeUsage(AttributeTargets.Class)]
+//public sealed class SqlTableAttribute : SqlObjectAttribute
+//{
+//}
 
+[AttributeUsage(AttributeTargets.Property)]
 public sealed class SqlAutoIcreamentalAttribute : Attribute
 {
 }

@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using Library.CodeGeneration.v2.Models;
+
 using Library.DesignPatterns.Markers;
 using Library.Interfaces;
 using Library.Validations;
@@ -8,14 +8,14 @@ namespace Library.CodeGeneration.v2;
 
 [Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public readonly record struct Code : IEquatable<Code>
+public readonly record struct Code : IEquatable<Code>, IAdditionOperators<Code, Code, Codes>
 {
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
 
     public Code(in string name, in Language language, in string statement, in bool isPartial = false)
     {
-        this.Name = name.NotNull();
-        this.Statement = statement.NotNull();
+        this.Name = name.ArgumentNotNull();
+        this.Statement = statement.ArgumentNotNull();
         this.Language = language;
         this.IsPartial = isPartial;
         this._fileName = null;
@@ -64,6 +64,8 @@ public readonly record struct Code : IEquatable<Code>
         => left.Equals(code);
     public static bool operator !=(Code left, string code)
         => !(left == code);
+    public static Codes operator +(Code left, Code right)
+        => new(left, right);
 
     private string GetDebuggerDisplay()
         => this.Name;

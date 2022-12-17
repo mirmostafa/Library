@@ -6,8 +6,8 @@ using Library.Validations;
 
 namespace Library.CodeGeneration.Models;
 
-[Fluent]
-[Immutable]
+//[Fluent]
+//[Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 public record Code : IEquatable<Code>
 {
@@ -43,7 +43,7 @@ public record Code : IEquatable<Code>
 
     private string? _FileName { get; init; }
     public string Name { get; }
-    public string Statement { get; }
+    public string Statement { get; init; }
     public Language Language { get; }
     public bool IsPartial { get; }
     public string FileName => this._FileName.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial));

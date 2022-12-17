@@ -1,4 +1,4 @@
-﻿using Library.CodeGeneration.V2.HtmlGeneration;
+﻿using Library.CodeGeneration.v2.Front.HtmlGeneration;
 using Library.Interfaces;
 
 namespace Library.CodeGeneration.v2.Front;

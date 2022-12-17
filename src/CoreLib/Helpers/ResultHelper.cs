@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -10,8 +9,10 @@ using Library.Validations;
 
 namespace Library.Helpers;
 
+#if !DEBUG
 [DebuggerStepThrough]
 [StackTraceHidden]
+#endif
 public static class ResultHelper
 {
     public static async Task<TResult> BreakOnFail<TResult>(this Task<TResult> task)
@@ -66,29 +67,16 @@ public static class ResultHelper
     }
 
     public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null)
-    {
-        _ = result.As<ResultBase>()!.InnerThrowOnFail(owner, instruction);
-        return result;
-    }
+        => InnerThrowOnFail(result, owner, instruction);
 
     public static Result<TValue> ThrowOnFail<TValue>([DisallowNull] this Result<TValue> result, object? owner = null, string? instruction = null)
-    {
-        _ = result.As<ResultBase>()!.InnerThrowOnFail(owner, instruction);
-        return result;
-    }
+        => InnerThrowOnFail(result, owner, instruction);
 
     public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null)
-    {
-        var result = await resultAsync;
-        _ = InnerThrowOnFail(result, owner, instruction);
-        return result;
-    }
+        => InnerThrowOnFail(await resultAsync, owner, instruction);
 
     public static async Task<Result> ThrowOnFailAsync(this Task<Result> resultAsync, object? owner = null, string? instruction = null)
-    {
-        var result = await resultAsync;
-        return InnerThrowOnFail(result, owner, instruction);
-    }
+        => InnerThrowOnFail(await resultAsync, owner, instruction);
 
     public static Result<Stream> ToFile(this Result<Stream> result, string filePath, FileMode fileMode = FileMode.Create)
     {
@@ -139,9 +127,10 @@ public static class ResultHelper
         return result;
     }
 
-    private static TResult InnerThrowOnFail<TResult>([DisallowNull] this TResult result, object? owner, string? instruction = null)
+    private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
         where TResult : ResultBase
     {
+        Validations.Check.IfArgumentNotNull(result);
         if (result.IsSucceed)
         {
             return result;

@@ -3,7 +3,7 @@ using Library.Collections;
 
 namespace Library.Wpf.Windows.Input.Commands;
 
-internal sealed class CommandExtenderList : UniqueList<CommandExtender>,
+internal sealed class CommandExtenderList : HashSet<CommandExtender>,
     IIndexable<CommandExtender?, RoutedUICommand>,
     IIndexable<CommandExtender?, CommandBinding>,
     IIndexable<CommandExtender?, string>

@@ -111,8 +111,8 @@ public class MultistepProcessRunner<TState>
         this._max = stepList.Select(x => x.ProgressCount).Sum();
         this._current = 0;
         var canBeCancelled = cancellationToken is not null and { CanBeCanceled: true };
-        var token = cancellationToken ?? default;
-        var isCancellationRequested = () => canBeCancelled && token.IsCancellationRequested;
+        var token = canBeCancelled ? cancellationToken!.Value : default;
+        Func<bool> isCancellationRequested = canBeCancelled ? () => token.IsCancellationRequested : () => false;
         foreach (var step in stepList)
         {
             if (isCancellationRequested())
@@ -142,7 +142,7 @@ internal class MultistepProcess : IMultistepProcess
         => this.Eneded?.Invoke(this, new(description));
 
     public void Report(in int max = -1, in int current = -1, in string? description = null)
-        => this.Reported(this, new((max, current, description)));
+        => this.Reported?.Invoke(this, new((max, current, description)));
 }
 
 public record struct StepInfo<TState>(in Func<(TState State, IMultistepProcess SubProgress), Task<TState>> AsyncAction, in string? Description, in int ProgressCount);

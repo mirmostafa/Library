@@ -1,4 +1,5 @@
 ﻿using System.CodeDom;
+
 using Library.CodeGeneration.Models;
 using Library.Helpers.CodeGen;
 using Library.Validations;
@@ -7,7 +8,10 @@ namespace Library.CodeGeneration;
 
 public sealed class CodeDomCodeGenProvider : ICodeGenProvider
 {
-    public Codes GenerateBehindCode(in INameSpace nameSpace, in GenerateCodesParameters arguments)
+    public static CodeDomCodeGenProvider New()
+        => new();
+
+    public Codes GenerateBehindCode(in INameSpace nameSpace, in GenerateCodesParameters? arguments = default)
     {
         LibLogger.Debug("Generating Behind Code");
         var myNameSpace = nameSpace.ArgumentNotNull(nameof(nameSpace));
@@ -25,9 +29,11 @@ public sealed class CodeDomCodeGenProvider : ICodeGenProvider
                     case FieldInfo field:
                         codeType = codeType.AddField(field.Type, field.Type, field.Comment, field.AccessModifier);
                         break;
+
                     case PropertyInfo property when property.HasBackingField:
                         codeType = addProperty(codeType, property);
                         break;
+
                     case PropertyInfo property:
                         codeType = addProperty(codeType, property);
                         break;

@@ -3,7 +3,7 @@
 using Library.CodeGeneration.v2.Front;
 using Library.Validations;
 
-namespace Library.CodeGeneration.V2.HtmlGeneration;
+namespace Library.CodeGeneration.v2.Front.HtmlGeneration;
 
 public class TableElement : HtmlElement<TableElement>, ISelfCoder
 {
@@ -12,8 +12,11 @@ public class TableElement : HtmlElement<TableElement>, ISelfCoder
     }
 
     public int? BorderSize { get; set; }
+
     public IEnumerable? Data { get; set; }
+
     public List<TableHeader> Headers { get; } = new();
+
     public string? Width { get; set; }
 
     public static string CreateHtmlTable(in IEnumerable<TableHeader> columns

@@ -1,4 +1,4 @@
-﻿using Library.Data.SqlServer.Builders;
+﻿using Library.Data.SqlServer;
 using Library.Data.SqlServer.Builders.Bases;
 using Library.Validations;
 
@@ -41,13 +41,13 @@ public static partial class SqlStatementBuilder
         }
         if (statement.OrderByDirection != OrderByDirection.None)
         {
-            _ = AddClause($"ORDER BY {AddBrackets(statement.OrderByColumn.NotNull(nameof(statement.OrderByColumn)))}", indent, result);
-            result = statement.OrderByDirection switch
+            _ = AddClause($"ORDER BY {AddBrackets(statement.OrderByColumn.NotNull())}", indent, result);
+            _ = result.Append(statement.OrderByDirection switch
             {
-                OrderByDirection.Ascending => result.Append(" ASC"),
-                OrderByDirection.Descending => result.Append(" DESC"),
+                OrderByDirection.Ascending => " ASC",
+                OrderByDirection.Descending => " DESC",
                 _ => throw new NotImplementedException(),
-            };
+            });
         }
         return result.ToString();
     }
@@ -78,11 +78,14 @@ public static partial class SqlStatementBuilder
     public static ISelectStatement OrderBy([DisallowNull] this ISelectStatement statement, string? column)
         => statement.ArgumentNotNull().Fluent(() => statement.OrderByColumn = column).GetValue();
 
+    public static ISelectStatement OrderByDescending([DisallowNull] this ISelectStatement statement, string? column)
+        => OrderBy(statement, column).Descending();
+
     public static ISelectStatement Select<TEntity>()
     {
-        var table = EntityModelConverterHelper.GetTableInfo<TEntity>();
+        var table = SqlEntity.GetTableInfo<TEntity>();
         var result = Select()
-                        .Columns(table.Columns.OrderBy(c => c.Order).Select(c => c.Name))
+                        .Columns(table.Columns.Select(c => c.Name))
                         .From(table.Name);
         return result;
     }
@@ -108,10 +111,15 @@ public static partial class SqlStatementBuilder
         }
 
         public List<string> Columns { get; } = new();
+
         public string? OrderBy { get; set; }
+
         public string? OrderByColumn { get; set; }
+
         public OrderByDirection OrderByDirection { get; set; } = OrderByDirection.None;
+
         public string TableName { get; set; }
+
         public string? WhereClause { get; set; }
     }
 }

@@ -36,8 +36,11 @@ public class Result : ResultBase, IEmpty<Result>
     public static Result From([DisallowNull] in ResultBase other)
         => Copy(other, new Result());
 
+    public static Result From([DisallowNull] in Result @this, in Result other)
+        => Copy(@this, other);
+
     public static implicit operator bool(Result result)
-            => result.NotNull().IsSucceed;
+        => result.NotNull().IsSucceed;
 
     public static Result New()
         => new();
@@ -45,6 +48,12 @@ public class Result : ResultBase, IEmpty<Result>
     public static Result NewEmpty()
         => New();
 
+    public static Result operator +(Result left, Result right)
+        => left.With(right);
+
     public Task<Result> ToAsync()
         => Task.FromResult(this);
+
+    public Result With(in Result other)
+        => Result.From(this, other);
 }

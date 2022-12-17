@@ -115,6 +115,7 @@ public class ConsoleProgressBar : IDisposable, IProgress<double>
         //}
         //Console.Write(outputBuilder);
 
+        //x Get length of common portion
         Console.CursorLeft = this.startIndex ?? (this.startIndex = Console.CursorLeft).Value;
         if (this._showInTitle)
         {

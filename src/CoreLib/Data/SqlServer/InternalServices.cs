@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
 using Library.Data.SqlServer.ObjectModel;
 
 namespace Library.Data.SqlServer;
@@ -66,13 +67,14 @@ internal static class InternalServices
             getValue = p => null;
         }
 
-        var tableAttr = tableEntity.GetCustomAttributes(typeof(SqlTableAttribute), true).Cast<SqlTableAttribute>().FirstOrDefault();
+        var tableAttr = tableEntity.GetCustomAttributes(typeof(TableAttribute), true).Cast<TableAttribute>().FirstOrDefault();
         var tablename = tableAttr != null ? tableAttr.Name : tableEntity.Name;
         var columns = new List<(string Value1, object Value2)>();
         foreach (var property in tableEntity.GetProperties()
-            .Where(property =>
-                property.CustomAttributes.FirstOrDefault(
-                    attr => attr.AttributeType == typeof(SqlIgnoreAttribute)) == null))
+            //.Where(property =>
+            //    property.CustomAttributes.FirstOrDefault(
+            //        attr => attr.AttributeType == typeof(SqlIgnoreAttribute)) == null)
+            )
         {
             if (!includeAutoIcreamentals)
             {
@@ -81,8 +83,7 @@ internal static class InternalServices
                     continue;
                 }
             }
-
-            var attrdata = property.CustomAttributes.FirstOrDefault(attr => attr.AttributeType == typeof(SqlFieldAttribute));
+            var attrdata = property.CustomAttributes.FirstOrDefault(attr => attr.AttributeType == typeof(ColumnAttribute));
             if (attrdata == null)
             {
                 columns.Add(new(string.Concat("[", property.Name, "]"), getValue(property)));

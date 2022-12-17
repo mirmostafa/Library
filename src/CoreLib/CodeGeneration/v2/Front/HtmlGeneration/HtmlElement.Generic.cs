@@ -1,8 +1,6 @@
 ﻿using System.ComponentModel;
 
-using Library.Helpers;
-
-namespace Library.CodeGeneration.V2.HtmlGeneration;
+namespace Library.CodeGeneration.v2.Front.HtmlGeneration;
 
 [EditorBrowsable(EditorBrowsableState.Advanced)]
 public abstract class HtmlElement<TSelf> : IParentHtmlElement
@@ -13,9 +11,13 @@ public abstract class HtmlElement<TSelf> : IParentHtmlElement
         => this.Name = name;
 
     public IEnumerable<(string Key, string? Value)> Attributes => this.AttributeList.ToEnumerable();
-    public IList<IHtmlElementInfo> Children => new List<IHtmlElementInfo>(); 
+
+    public IList<IHtmlElementInfo> Children => new List<IHtmlElementInfo>();
+
     public virtual ClosingTagType ClosingTagType { get; set; } = ClosingTagType.Full;
+
     public string? InnerHtml { get; set; }
+
     public string Name { get; }
 
     public TSelf AddAttribute(string key, string? value = null)

@@ -1,4 +1,4 @@
-﻿namespace Library.CodeGeneration.V2.HtmlGeneration;
+﻿namespace Library.CodeGeneration.v2.Front.HtmlGeneration;
 
 public sealed class HtmlElement : HtmlElement<HtmlElement>
 {
