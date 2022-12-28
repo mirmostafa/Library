@@ -1,10 +1,10 @@
 ﻿namespace UnitTest;
 
 [TestClass]
-public class ObjectExtenderTest
+public class ObjectHelperTest
 {
     [TestMethod]
-    public void MyTestMethod()
+    public void ExtrapropertyTest()
     {
         var testString = "Ali";
         testString.props().IsReadOnly = true;
