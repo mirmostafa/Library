@@ -13,6 +13,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 
+using Library.ComponentModel;
 using Library.Data.Models;
 
 namespace Library.Wpf.Helpers;
@@ -357,6 +358,31 @@ public static class ControlHelper
         }
     }
 
+    public static void InitializeChildren(Visual parent)
+    {
+        var children = parent.GetChildren();
+        foreach (var child in children)
+        {
+            if (child is IInitialzable initialzable)
+            {
+                initialzable.Initialize();
+            }
+            InitializeChildren(child);
+        }
+    }
+    public static async Task InitializeChildrenAsync(Visual parent)
+    {
+        var children = parent.GetChildren();
+        foreach (var child in children)
+        {
+            if (child is IAsyncInitialzable initialzable)
+            {
+                await initialzable.InitializeAsync();
+            }
+            InitializeChildren(child);
+        }
+    }
+
     public static bool IsDesignTime() => Application.Current?.MainWindow is null;
 
     public static bool MoveToNextUIElement() => Keyboard.FocusedElement is UIElement elementWithFocus && elementWithFocus.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
@@ -410,7 +436,7 @@ public static class ControlHelper
         control.SetSelectedItem(selectedItem);
     }
 
-    public static void Refresh(this UIElement uiElement) 
+    public static void Refresh(this UIElement uiElement)
         => uiElement?.Dispatcher.Invoke(DispatcherPriority.Render, Methods.Empty);
 
     public static IEnumerable<dynamic>? RetieveCheckedItems(this MultiSelector dg)

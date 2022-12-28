@@ -4,5 +4,6 @@
 /// </summary>
 public partial class LabeledControl : UserControl
 {
-    public LabeledControl() => this.InitializeComponent();
+    public LabeledControl() 
+        => this.InitializeComponent();
 }

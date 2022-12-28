@@ -4,7 +4,7 @@ using Library.Windows;
 
 namespace Library.Results;
 
-public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>, IAdditionOperators<Result<TValue>, Result<TValue>, Result<TValue>>
+public class Result<TValue> : ResultBase, IConvertible<Result<TValue>, Result>, IAdditionOperators<Result<TValue>, Result<TValue>, Result<TValue>>, IEquatable<Result<TValue?>>
 {
     public Result(in TValue value, in object? status = null, in string? message = null) : base(status, message)
         => this.Value = value;
@@ -64,8 +64,14 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue?>, Result>,
     public void Deconstruct(out bool isSucceed, out TValue Value)
         => (isSucceed, Value) = (this.IsSucceed, this.Value);
 
-    public bool Equals(in Result<TValue?> other)
+    public bool Equals(Result<TValue?>? other)
         => other is not null && (other.Status, other.IsSucceed) == (this.Status, this.IsSucceed) && (other.Value?.Equals(this.Value) ?? this.Value is null);
+
+    public override bool Equals(object? obj) 
+        => this.Equals(obj as Result<TValue?>);
+
+    public override int GetHashCode() 
+        => this.Value?.GetHashCode() ?? 0;
 
     public bool IsValid()
         => this is not null and { IsSucceed: true } and { Value: not null };

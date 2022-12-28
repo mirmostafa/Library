@@ -36,7 +36,7 @@ public static class CodeHelper
     /// <returns></returns>
     public static Result CatchResult([DisallowNull] in Action action)
     {
-        Check.IfArgumentNotNull(action);
+        Check.IfArgumentNotNull(action, nameof(action));
         try
         {
             action();

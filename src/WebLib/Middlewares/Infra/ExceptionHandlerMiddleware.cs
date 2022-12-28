@@ -37,10 +37,6 @@ public class ExceptionHandlerMiddleware : IInfraMiddleware
 #if DEBUG
         Debugger.Break();
 #endif
-        //! Try and retrieve the error from the ExceptionHandler middleware
-        //var exceptionDetails = context.Features.Get<IExceptionHandlerFeature>();
-        //var exception = exceptionDetails?.Error;
-
         //! Should always exist, but best to be safe!
         if (exception is null)
         {

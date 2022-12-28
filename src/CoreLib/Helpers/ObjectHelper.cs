@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
@@ -12,6 +13,8 @@ namespace Library.Helpers;
 
 public static class ObjectHelper
 {
+    private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
+
     /// <summary>
     /// Checks the database null.
     /// </summary>
@@ -408,18 +411,17 @@ public static class ObjectHelper
     public static bool IsNull([NotNullWhen(false)] in object? value)
         => value is null;
 
-    public static bool IsNull<TStruct>(this TStruct @struct)
-            where TStruct : struct
-            => @struct.Equals(default(TStruct));
+    public static bool IsNull<TStruct>(this TStruct @struct) where TStruct : struct
+        => @struct.Equals(default(TStruct));
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid? guid)
-            => guid is null || guid == Guid.Empty;
+        => guid is null || guid == Guid.Empty;
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid guid)
-            => guid == Guid.Empty;
+        => guid == Guid.Empty;
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
-            => id == Guid.Empty;
+        => id == Guid.Empty;
 
     /// <summary>
     /// Determines whether [is null or empty string] [the specified value].
@@ -428,6 +430,9 @@ public static class ObjectHelper
     /// <returns><c>true</c> if [is null or empty string] [the specified value]; otherwise, <c>false</c>.</returns>
     public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
         => string.IsNullOrEmpty(Cast.ToString(value));
+
+    public static dynamic props(this object o) 
+        => _propsExpando.GetOrCreateValue(o);
 
     public static IEnumerable<T> Repeat<T>(T value, int count)
     {
