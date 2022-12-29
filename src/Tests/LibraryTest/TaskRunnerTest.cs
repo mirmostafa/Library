@@ -6,16 +6,16 @@ namespace UnitTest;
 public class TaskRunnerTest
 {
     [TestMethod]
-    public async void SimpleTest1()
+    public void SimpleTest1()
     {
         var add5 = (int x) => x + 5;
         var init = () => 5;
 
-        var result = await TaskRunner<int>.New()
+        var result = TaskRunner<int>.New()
             .StartWith(init.ToAsync())
             .Then(add5.ToAsync())
             .Then(add5.ToAsync())
-            .RunAsync();
+            .RunAsync().Result;
         Assert.AreEqual(15, result);
     }
 }

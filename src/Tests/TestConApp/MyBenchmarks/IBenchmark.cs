@@ -6,7 +6,7 @@ public interface IBenchmark<TBenchmark>
     where TBenchmark : new()
 {
     public static TBenchmark GetInstance()
-        => new TBenchmark();
+        => new();
 
     public static void Run()
         => BenchmarkRunner.Run<TBenchmark>();

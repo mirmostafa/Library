@@ -3,6 +3,15 @@ using System.Diagnostics;
 
 namespace Library.Coding;
 
+public interface IStopwatchTimer : IDisposable
+{
+    TimeSpan Elapsed { get; }
+
+    void Dispose();
+
+    TimeSpan Stop();
+}
+
 public class LibStopwatch
 {
     private readonly StopwatchTimer _stopwatchTimer;
@@ -13,11 +22,14 @@ public class LibStopwatch
     public TimeSpan Elapsed
         => this._stopwatchTimer.Elapsed;
 
-    public StopwatchTimer Start() => this._stopwatchTimer.Start();
+    public static IStopwatchTimer StartNew()
+        => new LibStopwatch().Start();
+
+    public IStopwatchTimer Start()
+        => this._stopwatchTimer.Start();
 }
 
-[EditorBrowsable(EditorBrowsableState.Advanced)]
-public class StopwatchTimer : IDisposable
+internal class StopwatchTimer : IStopwatchTimer
 {
     private readonly Stopwatch _stopwatch;
 
