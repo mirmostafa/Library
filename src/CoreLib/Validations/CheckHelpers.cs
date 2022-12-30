@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 using Library.Exceptions.Validations;
+using Library.Results;
 
 namespace Library.Validations;
 
@@ -13,7 +14,7 @@ public static class CheckHelpers
 {
     [return: NotNull]
     public static string ArgumentNotNull([NotNull][AllowNull] this string obj, [CallerArgumentExpression("obj")] string argName = null)
-        => obj.NotValid(x => x.IsNullOrEmpty(), () => new ArgumentNullException(argName));
+            => obj.NotValid(x => x.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
     [return: NotNull]
     public static T ArgumentNotNull<T>([NotNull][AllowNull] this T obj, [CallerArgumentExpression("obj")] string argName = null)
@@ -22,7 +23,7 @@ public static class CheckHelpers
     public static TEnumerable HasAny<TEnumerable>([NotNull] this TEnumerable obj, [DisallowNull] Func<Exception> getException)
             where TEnumerable : IEnumerable
     {
-        if (!obj.NotNull().Any())
+        if (!NotNull(obj).Any())
         {
             Throw(getException);
         }
@@ -57,18 +58,18 @@ public static class CheckHelpers
     public static async Task<TResult> NotNullAsync<TResult>([NotNull] this Task<TResult> task, Func<Exception> getException)
     {
         var result = await task;
-        return result.NotNull(getException);
+        return NotNull(result, getException);
     }
 
     [return: NotNull]
     public static async Task<TResult> NotNullAsync<TResult>([NotNull] this Func<Task<TResult>> asyncFunc, Func<Exception> getException)
     {
         var result = await asyncFunc();
-        return result.NotNull(getException);
+        return NotNull(result, getException);
     }
 
     public static T ThrowIfDisposed<T>(this T @this, [DoesNotReturnIf(true)] bool disposed)
-        where T : IDisposable
+                                        where T : IDisposable
     {
         Check.If(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
         return @this;

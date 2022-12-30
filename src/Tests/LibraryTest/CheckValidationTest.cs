@@ -1,4 +1,6 @@
-﻿using Library.Exceptions.Validations;
+﻿using System.Collections;
+
+using Library.Exceptions.Validations;
 using Library.Validations;
 
 namespace UnitTest;
@@ -30,6 +32,42 @@ public class CheckValidationTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ValidationException))]
+    public void IfFalseTest()
+        => Check.If(false);
+
+    [TestMethod]
+    [ExpectedException(typeof(ValidationException))]
+    public void IfHasAnyFalse()
+    {
+        var array = Array.Empty<string>();
+        Check.IfHasAny(array, () => new ValidationException());
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ValidationException))]
+    public void IfHasAnyNull()
+    {
+        string[]? array = null;
+        Check.IfHasAny(array, () => new ValidationException());
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ValidationException))]
+    public void IfHasAnyPure()
+    {
+        IEnumerable array = Array.Empty<string>();
+        Check.IfHasAny(array, () => new ValidationException());
+    }
+
+    [TestMethod]
+    public void IfHasAnyTrue()
+    {
+        var array = new string[1];
+        Check.IfHasAny(array, () => new ValidationException());
+    }
+
+    [TestMethod]
     public void IfIs1()
     {
         var lname = "Mirmostafa";
@@ -45,6 +83,25 @@ public class CheckValidationTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ValidationException))]
+    public void IfMessageFalseTest()
+        => Check.If(false, () => "Hi");
+
+    [TestMethod]
+    public void IfMessageTrueTest()
+        => Check.If(true, () => "Hi");
+
+    [TestMethod]
+    [ExpectedException(typeof(RequiredValidationException))]
+    public void IfRequiredFalseTest() => Check.IfRequired(false);
+
+    [TestMethod]
+    public void IfRequiredTrueTest() => Check.IfRequired(true);
+
+    [TestMethod]
+    public void IfTrueTest() => Check.If(true);
+
+    [TestMethod]
     public void MinMaxTest()
     {
         var (min, arg) = (0, 5);
@@ -57,6 +114,36 @@ public class CheckValidationTest
     {
         var (arg, min) = (0, 5);
         Check.IfArgumentBiggerThan(arg, min);
+    }
+
+    [TestMethod]
+    public void MustBeFalseTest()
+    {
+        var result = Check.MustBe(false);
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public void MustBeGenericFalseTest()
+    {
+        var result = Check.MustBe(5, false);
+        Assert.AreEqual(5, result);
+        Assert.IsFalse(result);
+    }
+
+    [TestMethod]
+    public void MustBeGenericTrueTest()
+    {
+        var result = Check.MustBe(5, true);
+        Assert.AreEqual(5, result);
+        Assert.IsTrue(result);
+    }
+
+    [TestMethod]
+    public void MustBeTrueTest()
+    {
+        var result = Check.MustBe(true);
+        Assert.IsTrue(result);
     }
 
     [TestMethod]

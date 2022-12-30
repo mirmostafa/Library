@@ -1,10 +1,13 @@
 ﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
 using Library.Exceptions.Validations;
 using Library.Results;
+
+using ValidationException = Library.Exceptions.Validations.ValidationException;
 
 namespace Library.Validations;
 
@@ -35,7 +38,7 @@ public sealed class Check
         => If(ok, () => new TValidationException());
 
     public static void If([DoesNotReturnIf(false)] bool required)
-        => If<RequiredValidationException>(required);
+        => If<ValidationException>(required);
 
     public static void If([DoesNotReturnIf(false)] bool required, Func<string> getMessage)
         => If(required, () => new ValidationException(getMessage.NotNull()()));
@@ -103,6 +106,9 @@ public sealed class Check
     public static void IfNotValid<T>([AllowNull] T? obj, [DisallowNull] in Func<T?, bool> validate, in Func<Exception> getException)
         => obj.NotValid(validate, getException);
 
+    public static void IfRequired([DoesNotReturnIf(false)] bool required)
+        => If<RequiredValidationException>(required);
+
     public static Result MustBe(bool ok)
         => ok ? Result.Success : Result.Fail;
 
@@ -158,5 +164,5 @@ public sealed class Check
         => !ok ? Result.CreateFail(error: getExceptionIfNot()) : Result.CreateSuccess();
 
     public static bool TryMustBeArgumentNotNull<TValue>([AllowNull][NotNullWhen(true)] TValue? obj, out Result<TValue?> result, [CallerArgumentExpression("obj")] string? argName = null)
-        => MustBeArgumentNotNull(obj, argName).TryParse(out result);
+                                        => MustBeArgumentNotNull(obj, argName).TryParse(out result);
 }

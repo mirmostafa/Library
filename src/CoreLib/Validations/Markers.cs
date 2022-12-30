@@ -2,30 +2,27 @@
 
 namespace Library.Validations;
 
-public interface IValidatable
+public interface IAsyncValidator
 {
-    Result Validate();
+    Task<Result> ValidateAsync();
 }
+
+public interface IAsyncValidator<TItem>
+{
+    Task<Result<TItem>> ValidateAsync(TItem item);
+}
+
 public interface IValidatable<T>
 {
     Result<T> Validate();
 }
 
-public interface IAsyncValidatable
+public interface IValidator
 {
-    Task<Result> ValidateAsync();
-}
-
-public interface IAsyncValidatable<T>
-{
-    Task<Result<T>> ValidateAsync();
+    Result Validate();
 }
 
 public interface IValidator<TItem>
 {
-    Result<TItem> Validate(TItem item);
-}
-public interface IAsyncValidator<TItem>
-{
-    Task<Result<TItem>> ValidateAsync(TItem item);
+    Result<TItem> Validate(TItem? item);
 }
