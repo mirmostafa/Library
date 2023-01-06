@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
 using Library.Exceptions.Validations;
-using Library.Results;
 
 namespace Library.Validations;
 
@@ -69,7 +68,7 @@ public static class CheckHelpers
     }
 
     public static T ThrowIfDisposed<T>(this T @this, [DoesNotReturnIf(true)] bool disposed)
-                                        where T : IDisposable
+        where T : IDisposable
     {
         Check.If(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
         return @this;

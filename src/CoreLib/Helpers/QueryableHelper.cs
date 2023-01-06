@@ -11,7 +11,11 @@ namespace Library.Helpers;
 public static class QueryableHelper
 {
     public static Task<TResult?> FirstOrDefaultLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock)
-        => asyncLock.ArgumentNotNull(nameof(asyncLock)).LockAsync(async () => await query.ArgumentNotNull(nameof(query)).FirstOrDefaultAsync());
+    {
+        Check.IfArgumentNotNull(query);
+        Check.IfArgumentNotNull(asyncLock);
+        return asyncLock.LockAsync(async () => await query.FirstOrDefaultAsync());
+    }
 
     public static IEnumerable<T> ToEnumerable<T>(this IQueryable<T> query)
     {
@@ -28,7 +32,7 @@ public static class QueryableHelper
 
     public static async IAsyncEnumerable<TSource> ToEnumerableAsync<TSource>(this IQueryable<TSource> query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(query, nameof(query));
+        Check.IfArgumentNotNull(query);
         await foreach (var item in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
         {
             yield return item;
@@ -36,7 +40,7 @@ public static class QueryableHelper
     }
 
     public static Task<List<TResult>> ToListLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock)
-        => asyncLock.ArgumentNotNull(nameof(asyncLock)).LockAsync(async () => await query.ToListAsync());
+        => asyncLock.ArgumentNotNull().LockAsync(async () => await query.ToListAsync());
 
     public static async Task<PagingResult<T>> ToListPagingAsync<T>(this IQueryable<T> query, PagingParams? paging, CancellationToken cancellationToken = default)
     {

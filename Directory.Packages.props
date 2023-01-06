@@ -18,7 +18,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Autofac" Version="6.5.0" />
-    <PackageVersion Include="BenchmarkDotNet" Version="0.13.2" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.13.3" />
     <PackageVersion Include="BenchmarkDotNet.Core" Version="0.10.14" />
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
     <PackageVersion Include="FSharp.Core" Version="6.0.5" />

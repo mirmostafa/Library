@@ -49,3 +49,8 @@ public interface IResetable<T>
 {
     T Reset();
 }
+
+public interface SupportReadOnly
+{
+    bool IsReadOnly { get; set; }
+}
