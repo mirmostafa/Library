@@ -10,7 +10,7 @@ internal partial class Program
 {
     private static void Main(string[] args)
     {
-        BenchmarkRunner.Run(new[] { typeof(AwaitValBenchmark), typeof(AwaitRefBenchmark) });
+        BenchmarkRunner.Run<AwaitValBenchmark>();
     }
 
     private static IEnumerable<TResult> SimdActor<T1, T2, TResult>(
