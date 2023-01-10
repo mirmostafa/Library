@@ -11,7 +11,7 @@ namespace Library.Globalization;
 
 // Created: 85/5/4
 /// <summary>
-/// 
+///
 /// </summary>
 /// <seealso cref="System.IComparable" />
 /// <seealso cref="System.IComparable&lt;System.DateTime&gt;" />
@@ -24,16 +24,16 @@ namespace Library.Globalization;
 /// <seealso cref="System.IComparable&lt;Library.Globalization.PersianDateTime&gt;" />
 /// <seealso cref="System.IEquatable&lt;Library.Globalization.PersianDateTime&gt;" />
 /// <seealso cref="Library.Interfaces.IConvertible&lt;Library.Globalization.PersianDateTime, System.DateTime&gt;" />
-/// <seealso cref="Library.Interfaces.IConvertible&lt;Library.Globalization.PersianDateTime, System.String&gt;" />
+/// <seealso cref="Library.Interfaces.IConvertible&lt;Library.Globalization.PersianDateTime, string&gt;" />
 /// <seealso cref="Library.Interfaces.IAdditionOperators&lt;Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime&gt;" />
 /// <seealso cref="Library.Interfaces.ISubtractionOperators&lt;Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime&gt;" />
-/// <seealso cref="Library.Interfaces.IParsable&lt;Library.Globalization.PersianDateTime&gt;" />
+/// <seealso cref="IParsable&lt;PersianDateTime&gt;" />
 [Serializable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 public readonly struct PersianDateTime :
     IComparable, IComparable<DateTime>, IConvertible, IEquatable<DateTime>, ISpanFormattable, IFormattable, ISerializable, ICloneable,
     IComparable<PersianDateTime>, IEquatable<PersianDateTime>,
-    IConvertible<PersianDateTime, DateTime>, IConvertible<PersianDateTime, string>,
+    //IConvertible<PersianDateTime, DateTime>, IConvertible<PersianDateTime, string>,
     IAdditionOperators<PersianDateTime, PersianDateTime, PersianDateTime>,
     ISubtractionOperators<PersianDateTime, PersianDateTime, PersianDateTime>,
     IParsable<PersianDateTime>
@@ -405,7 +405,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="PersianDateTime">The Persian date time.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator DateTime(in PersianDateTime PersianDateTime)
+    public static implicit operator DateTime(PersianDateTime PersianDateTime)
         => PersianCalendar.ToDateTime(
             PersianDateTime.Year,
             PersianDateTime.Month,
@@ -415,7 +415,7 @@ public readonly struct PersianDateTime :
             PersianDateTime.Second == -1 ? 0 : PersianDateTime.Second,
             0);
 
-    public static implicit operator PersianDateTime(in string PersianDateTimeString)
+    public static implicit operator PersianDateTime(string PersianDateTimeString)
         => ParsePersian(PersianDateTimeString);
 
     /// <summary>
@@ -423,14 +423,14 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="dateTime">The date time.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator PersianDateTime(in DateTime dateTime) => dateTime.ToPersianDateTime();
+    public static implicit operator PersianDateTime(DateTime dateTime) => dateTime.ToPersianDateTime();
 
     /// <summary>
     /// Performs an implicit conversion from <see cref="PersianDateTime"/> to <see cref="string"/>.
     /// </summary>
     /// <param name="PersianDateTime">The Persian date time.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator string(in PersianDateTime PersianDateTime) => PersianDateTime.ToString();
+    public static implicit operator string(PersianDateTime PersianDateTime) => PersianDateTime.ToString();
 
     public static bool IsPersianDateTime(in string s)
         => TryParse(s).IsSucceed;
@@ -811,9 +811,6 @@ public readonly struct PersianDateTime :
     public DateTime ConvertTo()
         => this;
 
-    string IConvertible<PersianDateTime, string>.ConvertTo()
-        => this;
-
     /// <summary>
     /// Deconstructs this instance.
     /// </summary>
@@ -1022,7 +1019,7 @@ public readonly struct PersianDateTime :
     /// <returns>
     /// A <see cref="string" /> that represents this instance.
     /// </returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
     public string ToString(string? format, IFormatProvider? formatProvider)
         => throw new NotImplementedException();
 
@@ -1073,7 +1070,7 @@ public readonly struct PersianDateTime :
     /// <returns>
     ///   <see langword="true" /> if the formatting was successful; otherwise, <see langword="false" />.
     /// </returns>
-    /// <exception cref="System.NotImplementedException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
         => throw new NotImplementedException();
 

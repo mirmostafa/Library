@@ -1,9 +1,8 @@
-﻿using System.Runtime.Versioning;
+﻿namespace Library.Interfaces;
 
-namespace Library.Interfaces;
+//public interface IConvertible<TSelf, TOther>
+//{
+//    static abstract TThis From(TOther other);
 
-public interface IConvertible<TThis, TOther>
-{
-    TOther ConvertTo();
-    static abstract TThis From(TOther other);
-}
+//    TOther ConvertTo();
+//}

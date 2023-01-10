@@ -4,7 +4,10 @@ using Library.Windows;
 
 namespace Library.Results;
 
-public class Result<TValue> : ResultBase, IConvertible<Result<TValue>, Result>, IAdditionOperators<Result<TValue>, Result<TValue>, Result<TValue>>, IEquatable<Result<TValue?>>
+public class Result<TValue> : ResultBase
+    , IAdditionOperators<Result<TValue>, Result<TValue>, Result<TValue>>
+    , IEquatable<Result<TValue?>>
+    //, IConvertible<Result<TValue>, Result>
 {
     public Result(in TValue value, in object? status = null, in string? message = null) : base(status, message)
         => this.Value = value;
@@ -37,16 +40,14 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue>, Result>, 
     public static Result<TValue> From([DisallowNull] in Result other, in TValue value)
         => Copy(other, new Result<TValue>(value));
 
-    static Result<TValue> IConvertible<Result<TValue>, Result>.From(Result other)
-        => From(other, default!);
 
-    public static implicit operator bool(in Result<TValue?> result)
+    public static implicit operator bool(Result<TValue?> result)
         => result.IsSucceed;
 
-    public static implicit operator Result(in Result<TValue> result)
+    public static implicit operator Result(Result<TValue> result)
         => result.ToResult();
 
-    public static implicit operator TValue(in Result<TValue> result)
+    public static implicit operator TValue(Result<TValue> result)
         => result.Value;
 
     public static Result<TValue> New(TValue item)
@@ -54,9 +55,6 @@ public class Result<TValue> : ResultBase, IConvertible<Result<TValue>, Result>, 
 
     public static Result<TValue> operator +(Result<TValue> left, Result<TValue> right)
         => left.With(right);
-
-    Result IConvertible<Result<TValue>, Result>.ConvertTo()
-        => this.ToResult();
 
     public void Deconstruct(out object? Status, out NotificationMessage? Message, out TValue Value)
         => (Status, Message, Value) = (this.Status, this.FullMessage, this.Value);

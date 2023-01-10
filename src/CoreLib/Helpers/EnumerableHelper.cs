@@ -308,12 +308,12 @@ public static class EnumerableHelper
 
     public static T Fold<T>(this IEnumerable<T> items, Func<(T result, T item), T> folder, T defaultValue)
     {
-        var total = defaultValue;
+        var result = defaultValue;
         foreach (var item in items)
         {
-            total = folder((total, item));
+            result = folder((result, item));
         }
-        return total;
+        return result;
     }
 
     public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)

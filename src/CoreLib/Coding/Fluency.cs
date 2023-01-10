@@ -7,7 +7,7 @@ namespace Library.Coding;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
-public record struct Fluency<T>(T Value) : IEquatable<T>, IConvertible<Fluency<T>, T>, IConvertible<T, Fluency<T>>
+public record struct Fluency<T>(T Value) : IEquatable<T>//, IConvertible<Fluency<T>, T>, IConvertible<T, Fluency<T>>
 {
     public bool Equals(T? other)
         => this.Value?.Equals(other) ?? (other is null);
@@ -26,9 +26,6 @@ public record struct Fluency<T>(T Value) : IEquatable<T>, IConvertible<Fluency<T
         => this.Value;
     public static Fluency<T> From(T other)
         => new(other);
-
-    Fluency<T> IConvertible<T, Fluency<T>>.ConvertTo()
-        => new(this.Value);
 
     public static T From(Fluency<T> other)
         => other.Value;

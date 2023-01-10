@@ -405,4 +405,5 @@ public readonly struct Id :
     /// <returns></returns>
     private string GetDebuggerDisplay()
         => this.ToString();
+    public IdType Convert() => throw new NotImplementedException();
 }
