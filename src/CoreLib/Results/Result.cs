@@ -1,11 +1,13 @@
-﻿using Library.Dynamic;
+﻿using System;
+
+using Library.Dynamic;
 using Library.Interfaces;
 using Library.Validations;
 using Library.Windows;
 
 namespace Library.Results;
 
-public class Result : ResultBase, IEmpty<Result>
+public record Result : ResultBase, IEmpty<Result>
 {
     private static readonly dynamic _staticFields = new Expando();
 

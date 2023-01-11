@@ -5,7 +5,7 @@ using Library.Web.Helpers;
 
 namespace Library.Web.Results;
 
-public class ApiResult : ResultBase, IApiResult
+public record ApiResult : ResultBase, IApiResult
 {
     public ApiResult(int? statusCode = null, string? message = null)
         : base(statusCode, message) { }

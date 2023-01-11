@@ -1,10 +1,12 @@
-﻿using Library.Exceptions;
+﻿using System.ComponentModel.DataAnnotations;
+
+using Library.Exceptions;
 using Library.Interfaces;
 using Library.Windows;
 
 namespace Library.Results;
 
-public class Result<TValue> : ResultBase
+public record Result<TValue> : ResultBase
     , IAdditionOperators<Result<TValue>, Result<TValue>, Result<TValue>>
     , IEquatable<Result<TValue?>>
     //, IConvertible<Result<TValue>, Result>
@@ -25,11 +27,19 @@ public class Result<TValue> : ResultBase
 
     [return: NotNull]
     public static Result<TValue?> CreateFail(in string? message = null, in TValue? value = default, in object? error = null)
-        => new(value, error ?? -1, message);
+    {
+        Result<TValue?> result = new(value, error ?? -1, message);
+        result.SetIsSucceed(false);
+        return result;
+    }
 
     [return: NotNull]
     public static Result<TValue> CreateSuccess(in TValue value, in string? message = null, in object? status = null)
-        => new(value, status, message);
+    {
+        Result<TValue> result = new(value, status, message);
+        result.SetIsSucceed(true);
+        return result;
+    }
 
     public static Result<TValue> From<TValue1>([DisallowNull] in Result<TValue1> other, in TValue value)
         => Copy(other, new Result<TValue>(value));
@@ -62,11 +72,11 @@ public class Result<TValue> : ResultBase
     public void Deconstruct(out bool isSucceed, out TValue Value)
         => (isSucceed, Value) = (this.IsSucceed, this.Value);
 
-    public bool Equals(Result<TValue?>? other)
+    public virtual bool Equals(Result<TValue?>? other)
         => other is not null && (other.Status, other.IsSucceed) == (this.Status, this.IsSucceed) && (other.Value?.Equals(this.Value) ?? this.Value is null);
 
-    public override bool Equals(object? obj) 
-        => this.Equals(obj as Result<TValue?>);
+    //public override bool Equals(object? obj) 
+    //    => this.Equals(obj as Result<TValue?>);
 
     public override int GetHashCode() 
         => this.Value?.GetHashCode() ?? 0;

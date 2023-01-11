@@ -34,7 +34,7 @@ public static partial class SqlStatementBuilder
     public static string Build([DisallowNull] this IUpdateStatement statement, string indent = "    ")
     {
         _ = statement.TableName.NotNull(nameof(statement.TableName));
-        Check.IfAny(statement.ColumnsValue, nameof(statement.ColumnsValue));
+        Check.IfHasAny(statement.ColumnsValue, nameof(statement.ColumnsValue));
         var result = new StringBuilder($"Update {AddBrackets(statement.TableName)}");
         _ = AddClause($"SET ({statement.ColumnsValue.Select(cv => AddBrackets(cv.Key)).Merge(", ")})", indent, result);
         _ = AddClause($"VALUES ({statement.ColumnsValue.Select(cv => FormatValue(cv.Value)).Merge(", ")})", indent, result);

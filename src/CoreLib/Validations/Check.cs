@@ -48,7 +48,7 @@ public sealed class Check
         => If(required, () => new ValidationException(getMessage.NotNull()()));
 
     [return: NotNull]
-    public static void IfAny([NotNull][AllowNull] IEnumerable? obj, [CallerArgumentExpression("obj")] string? argName = null)
+    public static void IfHasAny([NotNull][AllowNull] IEnumerable? obj, [CallerArgumentExpression("obj")] string? argName = null)
         => IfNotValid(obj, _ => !obj?.Any() ?? false, () => new NoItemValidationException(argName!));
 
     [return: NotNull]

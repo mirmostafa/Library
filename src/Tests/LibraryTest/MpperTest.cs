@@ -12,7 +12,7 @@ public class MapperTest
     {
         var mapper = new Mapper();
         var student = new StudenRecord("Ali", 5, "Math");
-        var person = mapper.Map<PersonRecord>(student, () => new(null, 0));
+        var person = mapper.Map<PersonClass>(student);
         Assert.IsNotNull(student);
         Assert.AreEqual(person.Name, student.Name);
         Assert.AreEqual(person.Age, student.Age);

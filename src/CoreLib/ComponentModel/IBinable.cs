@@ -50,7 +50,7 @@ public interface IResetable<T>
     T Reset();
 }
 
-public interface SupportReadOnly
+public interface ISupportReadOnly
 {
     bool IsReadOnly { get; set; }
 }

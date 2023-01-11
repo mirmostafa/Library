@@ -306,7 +306,7 @@ public static class EnumerableHelper
         }
     }
 
-    public static T Fold<T>(this IEnumerable<T> items, Func<(T result, T item), T> folder, T defaultValue)
+    public static T Fold<T>(this IEnumerable<T> items, Func<(T Result, T Current), T> folder, T defaultValue)
     {
         var result = defaultValue;
         foreach (var item in items)
@@ -387,6 +387,9 @@ public static class EnumerableHelper
                 ForEachTreeNode(c, getChildren, rootAction, childAction);
             }));
     }
+
+    public static TOutput Fork<TInput, TOutput>(this IEnumerable<Func<TInput, TOutput>> prongs, Func<IEnumerable<TOutput>, TOutput> joinFunc, TInput input)
+        => joinFunc(prongs.Select(x => x(input)));
 
     public static IEnumerable<T> GetAll<T>([DisallowNull] Func<IEnumerable<T>> getRootElements, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
     {

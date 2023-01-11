@@ -6,8 +6,7 @@ using Library.Windows;
 
 namespace Library.Results;
 
-[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-public abstract class ResultBase : IEquatable<ResultBase?>
+public abstract record ResultBase : IEquatable<ResultBase?>
 {
     private NotificationMessage? _fullMessage;
     private bool? _isSucceed;
@@ -43,19 +42,19 @@ public abstract class ResultBase : IEquatable<ResultBase?>
         protected set;
     }
 
-    public static bool operator !=(ResultBase? left, ResultBase? right)
-        => !(left == right);
+    //public static bool operator !=(ResultBase? left, ResultBase? right)
+    //    => !(left == right);
 
-    public static bool operator ==(ResultBase? left, ResultBase? right)
-        => EqualityComparer<ResultBase>.Default.Equals(left, right);
+    //public static bool operator ==(ResultBase? left, ResultBase? right)
+    //    => EqualityComparer<ResultBase>.Default.Equals(left, right);
 
     public void Deconstruct(out bool isSucceed, out string? message)
         => (isSucceed, message) = (this.IsSucceed, this.Message);
 
-    public override bool Equals(object? obj)
-        => this.Equals(obj as ResultBase);
+    //public override bool Equals(object? obj)
+    //    => this.Equals(obj as ResultBase);
 
-    public bool Equals(ResultBase? other)
+    public virtual bool Equals(ResultBase? other)
         => other is not null && this.Status == other.Status;
 
     public override int GetHashCode()
@@ -96,7 +95,4 @@ public abstract class ResultBase : IEquatable<ResultBase?>
 
     internal void SetIsSucceed(bool? isSucceed)
         => this._isSucceed = isSucceed;
-
-    private string GetDebuggerDisplay()
-        => this.ToString();
 }

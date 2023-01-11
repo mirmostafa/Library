@@ -1,6 +1,6 @@
 ﻿namespace Library.DesignPatterns.Markers;
 
-public interface Builder<out TResult>
+public interface IBuilder<out TResult>
 {
     TResult Build();
 }
@@ -10,7 +10,22 @@ public interface IBuilder
     void Build();
 }
 
-public interface Builder<in TArgs, out TResult>
+public interface IBuilder<in TArgs, out TResult>
 {
     TResult Build(TArgs args);
+}
+
+public interface IBuilderExtender<in TThis>
+{
+    static abstract void Build(TThis @this);
+}
+
+public interface IBuilderExtender<in TThis, out TResult>
+{
+    static abstract TResult Build(TThis @this);
+}
+
+public interface IBuilderExtender<in TThis, in TArgs, out TResult>
+{
+    static abstract TResult Build(TThis @this, TArgs args);
 }

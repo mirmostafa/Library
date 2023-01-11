@@ -1,16 +1,11 @@
 ﻿using System.Numerics;
 
-using BenchmarkDotNet.Running;
-
-using ConAppTest.MyBenchmarks;
-
 namespace ConAppTest;
-
 internal partial class Program
 {
     private static void Main(string[] args)
     {
-        BenchmarkRunner.Run<AwaitValBenchmark>();
+        
     }
 
     private static IEnumerable<TResult> SimdActor<T1, T2, TResult>(

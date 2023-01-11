@@ -1,6 +1,12 @@
-﻿namespace ConAppTest;
+﻿using Library.CodeGeneration.v2.Front;
+using Library.CodeGeneration.v2.Front.HtmlGeneration;
+using Library.DesignPatterns.StateMachine;
+using Library.Helpers;
+using Library.IO;
 
-partial class Program
+namespace ConAppTest;
+
+internal partial class Program
 {
     private static void HtmlCodeGenerationTest()
     {
@@ -22,6 +28,7 @@ partial class Program
                     .AddChild(new InputElement("text"));
         WriteLine(div.ToHtml());
     }
+
     private static async Task StateMachineTest()
     {
         _ = await StateMachineManager.Dispatch(
@@ -64,6 +71,16 @@ partial class Program
             WriteLine("==================");
             return Task.CompletedTask;
         }
+    }
+
+    private static void UseMayBe()
+    {
+        //var name = "Moha";
+        string? name = null;
+        var game = name.Maybe()
+            .Do(x => string.Concat(x, "mm"))
+            .Do(x => string.Concat(x, "ad"));
+        WriteLine(game);
     }
 
     private static void WatchHardDisk()
