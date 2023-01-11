@@ -1,4 +1,5 @@
-﻿using Library.Results;
+﻿using Library.Exceptions.Validations;
+using Library.Results;
 
 namespace Library.Validations;
 
@@ -14,7 +15,7 @@ public static class ValidationExtension
     }
 
     public static Validation<TValue> BeNotNull<TValue>(this Validation<TValue> validation, (object? Id, object Data)? ifIsNull = null)
-        => Be(validation, x => !(x?.Equals(default) ?? true), ifIsNull ?? (-1, null!));
+        => Be(validation, x => !(x?.Equals(default) ?? true), ifIsNull ?? (-1, new NullValueValidationException()));
 
     public static Validation<TValue> Should<TValue>(this TValue value)
         => new(value);
