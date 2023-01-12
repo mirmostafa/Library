@@ -6,6 +6,7 @@ using Library.Windows;
 
 namespace Library.Results;
 
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public abstract record ResultBase : IEquatable<ResultBase?>
 {
     private NotificationMessage? _fullMessage;
@@ -95,4 +96,7 @@ public abstract record ResultBase : IEquatable<ResultBase?>
 
     internal void SetIsSucceed(bool? isSucceed)
         => this._isSucceed = isSucceed;
+
+    private string GetDebuggerDisplay() 
+        => this.ToString();
 }

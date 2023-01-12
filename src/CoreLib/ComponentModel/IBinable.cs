@@ -10,7 +10,7 @@ public interface IAsyncBindable
     Task BindAsync();
 }
 
-public interface IAsyncBindableBidirectionalViewModel<TViewModel> : IAsyncBindable, IBidirectionalViewModel<TViewModel>
+public interface IAsyncBindableBidirectionalViewModel<TViewModel> : IAsyncBindable<TViewModel>, IBidirectionalViewModel<TViewModel>
 {
 }
 
