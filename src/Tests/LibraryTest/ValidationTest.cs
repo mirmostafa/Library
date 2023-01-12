@@ -20,6 +20,23 @@ public class ValidationTest
     {
         string? arg = null;
 
-        arg = arg.Should().BeNotNull().ThrowOnFail();
+        arg = arg.Should().BeNotNull().Build();
+    }
+
+    [TestMethod]
+    public void _03_ArgumentBeNotNullNotNullTest()
+    {
+        var arg = "Test";
+
+        arg = arg.Should().ArgumentBeNotNull().ThrowOnFail();
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentNullException))]
+    public void _04_ArgumentBeNotNullNullTest()
+    {
+        string? arg = null;
+
+        arg = arg.Should().ArgumentBeNotNull().Build();
     }
 }
