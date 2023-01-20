@@ -10,14 +10,15 @@ public static class IdentityHelper
     {
         if (identityResult.ArgumentNotNull().Succeeded)
         {
-            return Result.CreateSuccess(fullMessage: successMessage);
+            return Result.CreateSuccess(message: successMessage);
         }
         var result = Result.CreateFail(message: errorMessage);
+        List<(object, object)> errors = new();
         foreach (var error in identityResult.Errors)
         {
-            result.Errors.Add((error.Code, error.Description));
+            errors.Add((error.Code, error.Description));
         }
-        return result;
+        return Result.CreateFail(message: errorMessage, errors: errors);
     }
 
     public static Result<TValue?> ToResult<TValue>(this IdentityResult identityResult,
@@ -30,11 +31,12 @@ public static class IdentityHelper
         {
             return Result<TValue>.CreateSuccess(value, message: successMessage);
         }
-        var result = Result<TValue>.CreateFail(message: errorMessage);
+        List<(object, object)> errors = new();
         foreach (var error in identityResult.Errors)
         {
-            result.Errors.Add((error.Code, error.Description));
+            errors.Add((error.Code, error.Description));
         }
+        var result = Result<TValue>.CreateFail(message: errorMessage, errors: errors);
         return result;
     }
 }

@@ -157,9 +157,9 @@ public class CheckValidationTest
     [TestMethod]
     public void MustBeFalse()
     {
-       var result = Check.MustBe(this, false, () => new ValidationException());
+        var result = Check.MustBe(this, false, () => new ValidationException());
         Assert.IsFalse(result);
-        Assert.IsInstanceOfType(result.Status, typeof(ValidationException));
+        Assert.IsInstanceOfType(result.Errors?.ElementAt(0).Error, typeof(ValidationException));
     }
 
     [TestMethod]
@@ -253,7 +253,7 @@ public class CheckValidationTest
     {
         var result = Check.MustBe(this._string_sample1, _ => false, () => new ValidationException());
         Assert.IsFalse(result);
-        Assert.IsInstanceOfType(result.Status, typeof(ValidationException));
+        Assert.IsInstanceOfType(result.Errors.ElementAt(0).Error, typeof(ValidationException));
     }
 
     [TestMethod]
@@ -278,7 +278,7 @@ public class CheckValidationTest
     {
         _ = Check.MustBe(this._string_sample1, () => false, () => new ValidationException(), out var result);
         Assert.IsFalse(result);
-        Assert.IsInstanceOfType(result.Status, typeof(ValidationException));
+        Assert.IsInstanceOfType(result.Errors.First().Error, typeof(ValidationException));
     }
 
     [TestMethod]
@@ -294,7 +294,7 @@ public class CheckValidationTest
     {
         var result = Check.MustBe(() => false, () => new ValidationException());
         Assert.IsFalse(result);
-        Assert.IsInstanceOfType(result.Status, typeof(ValidationException));
+        Assert.IsInstanceOfType(result.Errors.First().Error, typeof(ValidationException));
     }
 
     [TestMethod]
@@ -316,7 +316,7 @@ public class CheckValidationTest
     {
         var result = Check.MustBe(this, () => false, () => new ValidationException());
         Assert.IsFalse(result);
-        Assert.IsInstanceOfType(result.Status, typeof(ValidationException));
+        Assert.IsInstanceOfType(result.Errors.First().Error, typeof(ValidationException));
     }
 
     [TestMethod]
@@ -324,7 +324,7 @@ public class CheckValidationTest
     {
         var result = Check.MustBe(() => false, () => new ValidationException());
         Assert.IsFalse(result);
-        Assert.IsInstanceOfType(result.Status, typeof(ValidationException));
+        Assert.IsInstanceOfType(result.Errors.First().Error, typeof(ValidationException));
     }
 
     [TestMethod]

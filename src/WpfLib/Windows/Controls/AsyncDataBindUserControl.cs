@@ -30,8 +30,8 @@ public abstract class AsyncDataBindUserControl : UserControlBase, ISupportAsyncD
     /// <summary>
     /// Starts the initialization process for this element.
     /// </summary>
-    public override void BeginInit() =>
-        this.Initializing = true;
+    public override void BeginInit() 
+        => this.Initializing = true;
 
     /// <summary>
     /// Binds the data asynchronously.

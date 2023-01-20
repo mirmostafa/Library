@@ -1,8 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 
 using Library.Exceptions;
+using Library.Results;
 using Library.Web.Middlewares.Markers;
 using Library.Web.Results;
 
@@ -43,36 +45,40 @@ public class ExceptionHandlerMiddleware : IInfraMiddleware
             return;
         }
 
-        ApiResult result;
+        //ApiResult result;
+        int status;
+        string message;
+        Dictionary<string, object> extra = new();
+
         if (exception is IApiException apiException)
         {
-            result = new(apiException.StatusCode ?? HttpStatusCode.BadRequest.ToInt(), apiException.Message);
+            status = apiException.StatusCode ?? HttpStatusCode.BadRequest.ToInt();
+            message = apiException.Message;
         }
         else
         {
             if (exception is NotImplementedException)
             {
-                var statusCode = HttpStatusCode.NotImplemented.ToInt();
-                result = new(statusCode, "Sorry! This function is under development and is not done yet to be used. Please retry later.");
-
+                status = HttpStatusCode.NotImplemented.ToInt();
+                message = "Sorry! This function is under development and is not done yet to be used. Please retry later.";
             }
             else
             {
-                var statusCode = HttpStatusCode.InternalServerError.ToInt();
-                result = new(statusCode, exception.GetBaseException().Message);
-
+                status = HttpStatusCode.InternalServerError.ToInt();
+                message = exception.ToString();
                 var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
                 if (traceId is not null)
                 {
-                    result.Extra.Add("traceId", traceId);
+                    extra.Add("traceId", traceId);
                 }
             }
-            this._Logger.LogError($"Exception Handler Middleware Report: Error Message: '{result.Message}'{Environment.NewLine}Status Code: {result.Status}");
+            this._Logger.LogError($"Exception Handler Middleware Report: Error Message: '{message}'{Environment.NewLine}Status Code: {status}");
         }
         var jsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
+        ApiResult result = new(false, status, message, ExtraData: extra.ToImmutableDictionary());
         var json = JsonSerializer.Serialize(result, jsonOptions);
 
         context.Response.ContentType = "application/problem+json";

@@ -15,6 +15,7 @@ using System.Windows.Threading;
 
 using Library.ComponentModel;
 using Library.Data.Models;
+using Library.Wpf.Windows;
 
 namespace Library.Wpf.Helpers;
 
@@ -570,7 +571,13 @@ public static class ControlHelper
         {
             selector.DisplayMemberPath = displayMemebrPath;
         }
-        //var binding = new Binding { Mode = model, Source = items, Path = new PropertyPath(displayMemebrPath ?? ".") };
-        //BindingOperations.SetBinding(selector, ItemsControl.ItemsSourceProperty, binding);
     }
+    
+    public static TStatefulPage SetIsViewModelChanged<TStatefulPage>(this TStatefulPage page, bool isViewModelChanged)
+        where TStatefulPage : IStatefulPage
+    {
+        page.IsViewModelChanged = isViewModelChanged;
+        return page;
+    }
+
 }

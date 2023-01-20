@@ -116,16 +116,16 @@ public static class ResultHelper
     ////public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
     ////    => (result = await input).IsSucceed;
 
-    private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId)
+    private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object errorId)
             where TResult : ResultBase
     {
-        if (condition)
-        {
-            result.Errors.Add((errorId, errorMessage ?? string.Empty));
-            result.SetIsSucceed(null);
-        }
-
-        return result;
+        return condition
+            ? (result with
+            {
+                Succeed = null,
+                Errors = EnumerableHelper.ToEnumerable((errorId, errorMessage ?? string.Empty))
+            })
+            : result;
     }
 
     private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
@@ -138,11 +138,11 @@ public static class ResultHelper
         }
 
         var exception =
-            result.Errors.Select(x => x.Data).Cast<Exception>().FirstOrDefault()
+            result.Errors?.Select(x => x.Error).Cast<Exception>().FirstOrDefault()
             ?? result.Status switch
             {
                 Exception ex => ex.With(x => x.Source = owner?.ToString()),
-                _ => new ValidationException(result.ToString(), instruction ?? result.FullMessage?.Instruction, owner: owner)
+                _ => new ValidationException(result.ToString(), instruction ?? result.Message, owner: owner)
             };
         Throw(exception);
         return result;

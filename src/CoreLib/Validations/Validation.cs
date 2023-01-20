@@ -14,8 +14,11 @@ public static class ValidationExtension
     public static ValidationResult<TValue> ArgumentIsNotNull<TValue>(this ValidationResult<TValue> validation, (object Id, object Data)? ifIsNull = null)
         => Is(validation, x => x is null, ifIsNull ?? (-1, new ArgumentNullException(validation.VariableName)));
 
+    public static ValidationResult<string> ArgumentIsNotNull(this ValidationResult<string> validation, (object Id, object Data)? ifIsNull = null)
+        => Is(validation, x => x.IsNullOrEmpty(), ifIsNull ?? (-1, new ArgumentNullException(validation.VariableName)));
+
     [DebuggerStepThrough]
-    public static ValidationCheck<TValue> Be<TValue>(this ValidationCheck<TValue> validation, Func<TValue, bool> predicate, Func<Exception> onError)
+    public static ValidationCheck<TValue> Be<TValue>(this ValidationCheck<TValue> validation, in Func<TValue, bool> predicate, in Func<Exception> onError)
     {
         if (predicate(validation.GetValue()))
         {
@@ -35,11 +38,13 @@ public static class ValidationExtension
     public static ValidationResult<TValue> If<TValue>(this TValue value, [CallerArgumentExpression("value")] string argName = null)
         => new(value, argName);
 
-    public static ValidationResult<TValue> Is<TValue>(this ValidationResult<TValue> validation, Func<TValue, bool> predicate, (object Id, object Data)? ifIsNull = null)
+    public static ValidationResult<TValue> Is<TValue>(this ValidationResult<TValue> validation, in Func<TValue, bool> predicate, (object Id, object Data)? ifIsNull = null)
     {
-        if (predicate(validation.GetResult().Value))
+        if (predicate(validation.Result.Value))
         {
-            validation.GetResult().Errors.Add(ifIsNull ?? (-1, null!));
+            var oldResult = validation.Result;
+            var newResult = oldResult with { Succeed = false, Errors = EnumerableHelper.ToEnumerable(ifIsNull ?? (-1, null!)) };
+            return new(newResult, validation.VariableName);
         }
         return validation;
     }
@@ -52,39 +57,41 @@ public static class ValidationExtension
 
     public static TValue ThrowOnFail<TValue>(this ValidationResult<TValue> validation)
     {
-        _ = validation.GetResult().ThrowOnFail();
-        return validation.GetValue();
+        var result = validation.Result;
+        return result.ThrowOnFail();
     }
 }
 
 public sealed class ValidationResult<TValue> : IBuilder<TValue>
 {
-    private readonly Result<TValue> _result;
-
     internal ValidationResult(TValue value, string variableName)
     {
-        this._result = new(value);
+        this.Result = value is Result<TValue> r ? r : new(value);
         this.VariableName = variableName;
     }
 
+    internal ValidationResult(Result<TValue> result, string variableName)
+    {
+        this.Result = result;
+        this.VariableName = variableName;
+    }
+
+    public Result<TValue> Result { get; }
+
+    public TValue Value => this.Result.Value;
+
     internal string VariableName { get; }
 
-    public static implicit operator Result<TValue>(ValidationResult<TValue> validation)
-        => validation.GetResult();
+    public static implicit operator Result<TValue>(in ValidationResult<TValue> validation)
+        => validation.Result;
 
     public TValue Build()
         => this.ThrowOnFail();
-
-    public Result<TValue> GetResult()
-        => this._result;
-
-    public TValue GetValue()
-        => this.GetResult().Value;
 }
 
 public sealed record ValidationCheck<TValue>
 {
-    internal ValidationCheck(TValue value, string variableName)
+    internal ValidationCheck(in TValue value, in string variableName)
     {
         this.Value = value;
         this.VariableName = variableName;
@@ -96,4 +103,7 @@ public sealed record ValidationCheck<TValue>
 
     public TValue GetValue()
         => this.Value;
+
+    public static implicit operator TValue(ValidationCheck<TValue> vc)
+        => vc.Value;
 }

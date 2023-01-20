@@ -57,7 +57,7 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result<TResult?>.CreateFail(ex.GetBaseException().Message, defaultResult, ex)!;
+            return Result<TResult?>.CreateFail(ex.GetBaseException().Message, ex, defaultResult)!;
         }
     }
 

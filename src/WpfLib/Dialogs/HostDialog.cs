@@ -1,5 +1,6 @@
 ﻿using Library.Results;
 using Library.Wpf.Bases;
+using Library.Wpf.Pages;
 
 namespace Library.Wpf.Dialogs;
 
@@ -16,14 +17,28 @@ public class HostDialog
     public static HostDialog Create<TPage>() where TPage : LibPageBase, new()
         => new(new TPage());
 
-    public HostDialog OnLoad(Action action)
+    public static bool ShowDialog(object content, string title, string prompt, Func<LibPageBase, Result> onValidation)
     {
-        this._dialogBox.Loaded += (_, _) => action?.Invoke();
-        return this;
+        var hostPage = new HostPage
+        {
+            Content = content
+        };
+        var result = Create(hostPage)
+            .SetOwnerToDefault()
+            .SetTile(title)
+            .SetPrompt(prompt)
+            .SetValidation(onValidation)
+            .Show()
+            .IsTrue()
+            .With(_ => hostPage.Content = default);
+        return result;
     }
 
+    public HostDialog OnLoad(Action action)
+        => this.Fluent(() => this._dialogBox.Loaded += (_, _) => action?.Invoke());
+
     public HostDialog SetCancelEnabled(in bool cancelEnabled)
-            => this.Fluent(this._dialogBox.IsCancelEnabled = cancelEnabled);
+        => this.Fluent(this._dialogBox.IsCancelEnabled = cancelEnabled);
 
     public HostDialog SetDirection(FlowDirection direction)
         => this.Fluent(this._dialogBox.Direction = direction);
@@ -33,6 +48,9 @@ public class HostDialog
 
     public HostDialog SetOwner(in Window owner)
         => this.Fluent(this._dialogBox.Owner = owner);
+
+    public HostDialog SetOwnerToDefault()
+        => this.SetOwner(Application.Current.MainWindow);
 
     public HostDialog SetPrompt(string? prompt)
         => this.Fluent(this._dialogBox.Prompt = prompt);

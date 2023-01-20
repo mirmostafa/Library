@@ -5,13 +5,14 @@
 /// </summary>
 public partial class HostPage
 {
-    public HostPage() => this.InitializeComponent();
+    public HostPage() 
+        => this.InitializeComponent();
 
     /// <summary>
-    /// Content of the Page
+    /// Gets or sets the content of a System.Windows.Controls.Page.
     /// </summary>
-    /// <remarks>Page only supports one child</remarks>
-    public new object Content
+    /// <remarks>An object that contains the content of a System.Windows.Controls.Page. Page supports one child only.</remarks>
+    public new object? Content
     {
         get => base.Content;
         set
@@ -23,7 +24,7 @@ public partial class HostPage
 
     private void OnContentChanged()
     {
-        if (this.Content is FrameworkElement element)
+        if (this.Content is FrameworkElement)
         {
             this.Width = 400;// element.Width;
             this.Height = 600;// element.Height;

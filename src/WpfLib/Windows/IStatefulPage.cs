@@ -3,7 +3,7 @@
 namespace Library.Wpf.Windows;
 public interface IStatefulPage
 {
-    public bool IsViewModelChanged { get; }
+    public bool IsViewModelChanged { get; set; }
 }
 
 public interface IAsyncSavePage

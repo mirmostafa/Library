@@ -233,7 +233,7 @@ public static class DbContextHelper
         }
         catch (Exception ex)
         {
-            var result = Result<int>.CreateFail(ex.GetBaseException().Message, -1, ex);
+            var result = Result<int>.CreateFail(ex.GetBaseException().Message, ex, -1);
             return result;
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Immutable;
+using System.Net;
 
 using Library.Results;
 using Library.Web.Helpers;
@@ -8,10 +9,15 @@ namespace Library.Web.Results;
 public record ApiResult : ResultBase, IApiResult
 {
     public ApiResult(int? statusCode = null, string? message = null)
-        : base(statusCode, message) { }
+        : base(null, statusCode, message) { }
 
     public ApiResult(HttpStatusCode? statusCode = null, string? message = null)
-        : base(statusCode?.ToInt(), message) { }
+        : base(null, statusCode?.ToInt(), message) { }
+
+    public ApiResult(in bool? Succeed = null, in object? Status = null, in string? Message = null, in IEnumerable<(object Id, object Error)>? Errors = null, in ImmutableDictionary<string, object>? ExtraData = null)
+        : base(Succeed, Status, Message, Errors, ExtraData)
+    {
+    }
 
     public HttpStatusCode? HttpStatusCode => HttpStatusCodeHelper.ToHttpStatusCode(this.Status?.ToInt());
     public override bool IsSucceed => this.Status?.ToInt() is null or (>= 200 and < 300);
