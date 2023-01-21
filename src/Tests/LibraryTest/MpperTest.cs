@@ -11,7 +11,7 @@ public class MapperTest
     public void RecordMappingTest()
     {
         var mapper = new Mapper();
-        var student = new StudenRecord("Ali", 5, "Math");
+        var student = new StudentRecord("Ali", 5, "Math");
         var person = mapper.Map<PersonClass>(student);
         Assert.IsNotNull(student);
         Assert.AreEqual(person.Name, student.Name);
@@ -23,7 +23,7 @@ public class MapperTest
     {
         var mapper = new Mapper();
         var person = new PersonClass { Name = "Ali", Age = 10 };
-        var student = mapper.Map<StudenClass>(person).ForMember(x => x.Major = "Math");
+        var student = mapper.Map<StudentClass>(person).ForMember(x => x.Major = "Math");
         Assert.IsNotNull(student);
         Assert.AreEqual(person.Name, student.Name);
         Assert.AreEqual(person.Age, student.Age);
@@ -34,7 +34,7 @@ public class MapperTest
     public void StraightForwardTest()
     {
         var mapper = new Mapper();
-        var student = new StudenClass { Name = "Ali", Age = 10 };
+        var student = new StudentClass { Name = "Ali", Age = 10 };
         var person = mapper.Map<PersonClass>(student);
         Assert.IsNotNull(student);
         Assert.AreEqual(person.Name, student.Name);

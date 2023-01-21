@@ -10,9 +10,9 @@ internal class PersonClass
 
 internal record PersonRecord(string? Name, int Age);
 
-internal class StudenClass : PersonClass, IEntity
+internal class StudentClass : PersonClass, IEntity
 {
     public string? Major { get; set; }
 }
 
-internal record StudenRecord(string Name, int Age, string? Major) : IEntity;
+internal record StudentRecord(string Name, int Age, string? Major) : IEntity;

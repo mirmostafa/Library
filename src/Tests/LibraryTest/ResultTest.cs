@@ -29,7 +29,7 @@ public class ResultTest
     }
 
     private static Result<int> Add(int a, int b)
-                => Result<int>.CreateSuccess(a + b);
+        => Result<int>.CreateSuccess(a + b);
 
     private static Result<int> AddThreeResults()
     {

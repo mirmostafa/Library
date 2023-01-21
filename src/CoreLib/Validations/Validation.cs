@@ -52,7 +52,7 @@ public static class ValidationExtension
     public static ValidationResult<TValue> IsNotNull<TValue>(this ValidationResult<TValue> validation, (object Id, object Data)? ifIsNull = null)
         => Is(validation, x => x?.Equals(default) ?? true, ifIsNull ?? (-1, new NullValueValidationException(validation.VariableName)));
 
-    public static ValidationCheck<TValue> Should<TValue>(this TValue value, [CallerArgumentExpression("value")] string argName = null)
+    public static ValidationCheck<TValue> Should<TValue>(this TValue value, [CallerArgumentExpression(nameof(value))] string argName = null)
             => new(value, argName);
 
     public static TValue ThrowOnFail<TValue>(this ValidationResult<TValue> validation)
