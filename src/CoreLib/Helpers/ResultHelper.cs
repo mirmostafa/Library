@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -117,16 +116,13 @@ public static class ResultHelper
     ////    => (result = await input).IsSucceed;
 
     private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object errorId)
-            where TResult : ResultBase
-    {
-        return condition
+            where TResult : ResultBase => condition
             ? (result with
             {
                 Succeed = null,
                 Errors = EnumerableHelper.ToEnumerable((errorId, errorMessage ?? string.Empty))
             })
             : result;
-    }
 
     private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
         where TResult : ResultBase
@@ -147,4 +143,7 @@ public static class ResultHelper
         Throw(exception);
         return result;
     }
+
+    public static Task<TResult> ToAsync<TResult>(this TResult result) where TResult : ResultBase 
+        => Task.FromResult(result);
 }

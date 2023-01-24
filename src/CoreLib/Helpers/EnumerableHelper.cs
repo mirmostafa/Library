@@ -439,7 +439,7 @@ public static class EnumerableHelper
         where TResult : new()
     {
         var tryResult = resultSet.TryGetValue(equalValue, out var actualValue);
-        return new(tryResult, actualValue);
+        return TryMethodResult<TResult?>.TryParseResult(tryResult, actualValue);
     }
 
     public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
@@ -639,7 +639,7 @@ public static class EnumerableHelper
         => ImmutableList.CreateRange(items).ToHashSet();
 
     public static TryMethodResult<int> TryCountNotEnumerated<T>([DisallowNull] this IEnumerable<T> source)
-        => new(source.TryGetNonEnumeratedCount(out var count), count);
+        => TryMethodResult<int>.TryParseResult(source.TryGetNonEnumeratedCount(out var count), count);
 
     public static async IAsyncEnumerable<TItem> WhereAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, bool>? func, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {

@@ -744,5 +744,5 @@ public static class StringHelper
         => length > value?.Length ? value : value?[..^length];
 
     public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
-        => CatchFunc(() => str.CountOf(c, index)).Fluent().WithNew(x => new TryMethodResult<int>(x.Exception is null, x.Result));
+        => CatchFunc(() => str.CountOf(c, index)).Fluent().WithNew(x => TryMethodResult<int>.TryParseResult(x.Exception is null, x.Result));
 }

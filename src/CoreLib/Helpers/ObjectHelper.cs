@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -343,8 +344,25 @@ public static class ObjectHelper
         return properties.Select(property => property.Name);
     }
 
+    public static PropertyInfo GetPropertyInfo<TSource, TProperty>(TSource source, Expression<Func<TSource, TProperty>> propertyLambda)
+    {
+        var type = typeof(TSource);
+
+        if (propertyLambda.Body is not MemberExpression member)
+        {
+            throw new ArgumentException(string.Format("Expression '{0}' refers to a method, not a property.", propertyLambda.ToString()));
+        }
+
+        var propInfo = member.Member as PropertyInfo;
+        return propInfo == null
+            ? throw new ArgumentException(string.Format("Expression '{0}' refers to a field, not a property.", propertyLambda.ToString()))
+            : type != propInfo.ReflectedType && !type.IsSubclassOf(propInfo.ReflectedType)
+            ? throw new ArgumentException(string.Format("Expression '{0}' refers to a property that is not from type {1}.", propertyLambda.ToString(), type))
+            : propInfo;
+    }
+
     public static bool HasAttribute<TType, TAttribute>() where TAttribute : Attribute
-        => HasAttribute<TAttribute>(typeof(Type));
+            => HasAttribute<TAttribute>(typeof(Type));
 
     public static bool HasAttribute<TAttribute>(Type type)
         where TAttribute : Attribute
@@ -431,7 +449,7 @@ public static class ObjectHelper
     public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
         => string.IsNullOrEmpty(Cast.ToString(value));
 
-    public static dynamic props(this object o) 
+    public static dynamic props(this object o)
         => _propsExpando.GetOrCreateValue(o);
 
     public static IEnumerable<T> Repeat<T>(T value, int count)

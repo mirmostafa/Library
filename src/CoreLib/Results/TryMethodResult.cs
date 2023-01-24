@@ -10,10 +10,8 @@ public sealed record TryMethodResult<TValue>(in TValue? Value,
                                              in ImmutableDictionary<string, object>? ExtraData = null)
     : Result<TValue?>(Value, Succeed, Status, Message, Errors, ExtraData)
 {
-    public TryMethodResult(bool? succeed, TValue? value)
-        : this(value, succeed)
-    {
-    }
+    public static TryMethodResult<TValue> TryParseResult(bool? succeed, TValue? value, string? message = null)
+        => new(value, succeed, Message: message);
 
     public static explicit operator bool(TryMethodResult<TValue?> result) => result.IsSucceed;
 

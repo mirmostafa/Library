@@ -718,7 +718,7 @@ public readonly struct PersianDateTime :
     ///   <c>true</c> if <paramref name="s" /> was successfully parsed; otherwise, <c>false</c>.
     /// </returns>
     public static TryMethodResult<PersianDateTime> TryParse(in string str)
-        => new(TryParse(str, out var result), result);
+        => TryMethodResult<PersianDateTime>.TryParseResult(TryParse(str, out var result), result);
 
     /// <summary>
     /// Tries to parses a string into a value.

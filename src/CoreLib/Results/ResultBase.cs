@@ -93,8 +93,8 @@ public record Result(in bool? Succeed = null,
 
     public static Result Success => _success ??= CreateSuccess();
 
-    public static Result CreateFail(in object? status = null, in string? message = null, in IEnumerable<(object Id, object Error)>? errors = null)
-        => new(false, status, message, Errors: errors);
+    public static Result CreateFail(in object? status = null, in string? message = null, in IEnumerable<(object Id, object Error)>? errors = null, in ImmutableDictionary<string, object>? extraData = null)
+        => new(false, status, message, Errors: errors, extraData);
     public static Result CreateFail(in string? message, in IEnumerable<(object Id, object Error)>? errors)
         => new(false, null, message, Errors: errors);
 
@@ -131,6 +131,9 @@ public record Result<TValue>(in TValue Value,
     , IAdditionOperators<Result<TValue>, ResultBase, Result<TValue>>
     , IEquatable<Result<TValue>>
 {
+    private static Result<TValue?>? _fail;
+    public static Result<TValue?> Fail => _fail ??= CreateFail();
+
     public static Result<TValue> New(in TValue value,
                                      in bool? succeed = null,
                                      in object? status = null,
@@ -184,6 +187,12 @@ public record Result<TValue>(in TValue Value,
 
     public static Result<TValue?> CreateFail(in string message, in TValue value)
         => CreateFail(value, null, message);
+
+    public Result<TValue> WithValue(in TValue value)
+        => this with { Value = value };
+
+    public Result<TValue> WithError(params (object Id, object Error)[] errors)
+        => this with { Errors = errors };
 }
 
 //[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]

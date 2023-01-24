@@ -1,6 +1,6 @@
 ﻿namespace Library.Windows;
 
-public record struct NotificationMessage(in string Text, in string? Instruction = null, in string? Title = null, in string? Details = null, MessageLevel? level = MessageLevel.Info, object? Owner = null)
+public record struct NotificationMessage(in string Text, in string? Instruction = null, in string? Title = null, in string? Details = null, MessageLevel? level = MessageLevel.Info, in object? Owner = null)
 {
     public static explicit operator string?(NotificationMessage? fullMessage) => fullMessage?.Text;
     public static implicit operator NotificationMessage?(string? message) => message is null ? null : new(message);
@@ -16,21 +16,19 @@ public enum MessageLevel
     Error
 }
 
-public interface IFromNotificationMessage<T>
-    where T : IFromNotificationMessage<T>
+public interface IFromNotificationMessage<TSelf>: IToNotificationMessage<TSelf>
+    where TSelf : IFromNotificationMessage<TSelf>
 {
-    static abstract T FromNotificationMessage(NotificationMessage message);
-
-    NotificationMessage ToNotificationMessage();
+    static abstract TSelf FromNotificationMessage(NotificationMessage message);
 }
 
-public interface IToNotificationMessage<T>
-    where T : IToNotificationMessage<T>
+public interface IToNotificationMessage<TSelf>
+    where TSelf : IToNotificationMessage<TSelf>
 {
     NotificationMessage ToNotificationMessage();
 }
 
-public interface INotificationMessageCompatible<T> : IToNotificationMessage<T>, IFromNotificationMessage<T>
-    where T : INotificationMessageCompatible<T>
+public interface INotificationMessageCompatible<TSelf> : IToNotificationMessage<TSelf>, IFromNotificationMessage<TSelf>
+    where TSelf : INotificationMessageCompatible<TSelf>
 {
 }
