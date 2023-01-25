@@ -11,12 +11,12 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
 {
     #region Fields, ctors and properties
 
-    private readonly bool _isLazyCheck;
+    private readonly bool _throwOnFail;
     private readonly List<(Func<TValue, bool> IsValid, Func<Exception> OnError)> _rules;
     private readonly string _valueName;
 
-    public ValidationResultSet(TValue value, bool isLazyCheck, string valueName)
-        => (this.Value, this._valueName, this._isLazyCheck, this._rules) = (value, valueName, isLazyCheck, new());
+    public ValidationResultSet(TValue value, bool throwOnFail, string valueName)
+        => (this.Value, this._valueName, this._throwOnFail, this._rules) = (value, valueName, throwOnFail, new());
 
     public IEnumerable<(Func<TValue, bool> IsValid, Func<Exception> OnError)> Rules
         => this._rules.ToEnumerable();
@@ -59,10 +59,10 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     public ValidationResultSet<TValue> ArgumentNotNull(Func<Exception>? onError = null)
     => this.AddRule(x => x, x => this.Value is not null, onError, () => new ArgumentNullException(this._valueName));
 
-    public ValidationResultSet<TValue> IsNotBiggerThan(Expression<Func<TValue, int>> propertyExpression, int max, Func<Exception>? onError = null)
+    public ValidationResultSet<TValue> NotBiggerThan(Expression<Func<TValue, int>> propertyExpression, int max, Func<Exception>? onError = null)
         => this.AddRule(propertyExpression, x => !(x > max), onError, x => new ValidationException(x));
 
-    public ValidationResultSet<TValue> IsNullOrEmpty(Expression<Func<TValue, string>> propertyExpression, Func<Exception>? onError = null)
+    public ValidationResultSet<TValue> NotNullOrEmpty(Expression<Func<TValue, string>> propertyExpression, Func<Exception>? onError = null)
         => this.AddRule(propertyExpression, x => !string.IsNullOrEmpty(x), onError, x => new NullReferenceException(x));
 
     public ValidationResultSet<TValue> RuleFor(Func<TValue, bool> isValid, Func<Exception> onError)
@@ -73,11 +73,11 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     #region Private methods
 
     private static TType Invoke<TType>(Expression<Func<TValue, TType>> propertyExpression, TValue value)
-    => propertyExpression.Compile().Invoke(value);
+        => propertyExpression.Compile().Invoke(value);
 
     private ValidationResultSet<TValue> AddRole(Func<TValue, bool> validator, Func<Exception> error)
     {
-        if (!this._isLazyCheck)
+        if (this._throwOnFail)
         {
             if (!validator(this.Value))
             {
@@ -117,6 +117,6 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
 
 public static class Validation
 {
-    public static ValidationResultSet<TValue> Check<TValue>(this TValue value, bool isLazyCheck = true, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => new(value, isLazyCheck, argName);
+    public static ValidationResultSet<TValue> Check<TValue>(this TValue value, bool throwOnFail = false, [CallerArgumentExpression(nameof(value))] string argName = null!)
+        => new(value, throwOnFail, argName);
 }

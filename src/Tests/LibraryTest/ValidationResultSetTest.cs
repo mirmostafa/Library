@@ -19,7 +19,7 @@ public class ValidationResultSetTest
     public void _02_IsNullOrEmptyStringTest()
     {
         var arg = new Person("", 0);
-        arg = arg.Check().IsNullOrEmpty(x => x.Name).Build().ThrowOnFail();
+        arg = arg.Check().NotNullOrEmpty(x => x.Name).Build().ThrowOnFail();
     }
 
     [TestMethod]
@@ -27,7 +27,7 @@ public class ValidationResultSetTest
     public void _03_IsBiggerThanIntTest()
     {
         var arg = new Person("", 20);
-        arg = arg.Check().IsNotBiggerThan(x => x.Age, 10).ThrowOnFail();
+        arg = arg.Check().NotBiggerThan(x => x.Age, 10).ThrowOnFail();
     }
 
     [TestMethod]
@@ -51,8 +51,8 @@ public class ValidationResultSetTest
         var arg = new Person("Ali", 20);
         arg = arg.Check()
                  .ArgumentNotNull()
-                 .IsNullOrEmpty(x => x.Name)
-                 .IsNotBiggerThan(x => x.Age, 25)
+                 .NotNullOrEmpty(x => x.Name)
+                 .NotBiggerThan(x => x.Age, 25)
                  .Build()
                  .ThrowOnFail();
     }
@@ -64,8 +64,8 @@ public class ValidationResultSetTest
         var arg = new Person("", 20);
         arg = arg.Check()
                  .ArgumentNotNull()
-                 .IsNullOrEmpty(x => x.Name)
-                 .IsNotBiggerThan(x => x.Age, 25)
+                 .NotNullOrEmpty(x => x.Name)
+                 .NotBiggerThan(x => x.Age, 25)
                  .Build()
                  .ThrowOnFail();
     }
@@ -77,8 +77,8 @@ public class ValidationResultSetTest
         var arg = new Person("Ali", 20);
         arg = arg.Check()
                  .ArgumentNotNull()
-                 .IsNullOrEmpty(x => x.Name)
-                 .IsNotBiggerThan(x => x.Age, 10)
+                 .NotNullOrEmpty(x => x.Name)
+                 .NotBiggerThan(x => x.Age, 10)
                  .Build()
                  .ThrowOnFail();
     }
@@ -89,8 +89,8 @@ public class ValidationResultSetTest
         var arg = new Person("", 20);
         var result = arg.Check()
                         .ArgumentNotNull()
-                        .IsNullOrEmpty(x => x.Name)
-                        .IsNotBiggerThan(x => x.Age, 10)
+                        .NotNullOrEmpty(x => x.Name)
+                        .NotBiggerThan(x => x.Age, 10)
                         .Build();
         Assert.AreEqual(2, result.Errors?.Count());
     }
@@ -102,8 +102,8 @@ public class ValidationResultSetTest
         Person? arg = null;
         var result = arg.Check()
                         .ArgumentNotNull()
-                        .IsNullOrEmpty(x => x!.Name)
-                        .IsNotBiggerThan(x => x!.Age, 10)
+                        .NotNullOrEmpty(x => x!.Name)
+                        .NotBiggerThan(x => x!.Age, 10)
                         .ThrowOnFail();
     }
 
@@ -114,8 +114,8 @@ public class ValidationResultSetTest
         var arg = new Person("", 20);
         var result = arg.Check()
                         .ArgumentNotNull()
-                        .IsNullOrEmpty(x => x!.Name)
-                        .IsNotBiggerThan(x => x!.Age, 10)
+                        .NotNullOrEmpty(x => x!.Name)
+                        .NotBiggerThan(x => x!.Age, 10)
                         .ThrowOnFail();
     }
 
@@ -124,7 +124,7 @@ public class ValidationResultSetTest
     public void _12_IsArgumentNullNullNotIsLazyTest()
     {
         Person? arg = null;
-        _ = arg.Check(false).ArgumentNotNull();
+        _ = arg.Check(true).ArgumentNotNull();
     }
 }
 
