@@ -1,7 +1,7 @@
 ﻿using Library.Exceptions;
 using Library.Results;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class FunctionalTests
@@ -27,7 +27,7 @@ public class FunctionalTests
         var add = (int x) => (int y) => x + y;
         var result = add(3)(4);
         Assert.AreEqual(7, result);
-        
+
         var add3 = (int x) => (int y) => (int z) => x + y + z;
         result = add3(3)(4)(5);
         Assert.AreEqual(12, result);
@@ -46,7 +46,7 @@ public class FunctionalTests
 
     [TestMethod]
     [ExpectedException(typeof(BreakException))]
-    public void BreakTest() 
+    public void BreakTest()
         => Break();
 
     [TestMethod]

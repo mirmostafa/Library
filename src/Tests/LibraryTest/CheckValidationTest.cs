@@ -3,7 +3,7 @@
 using Library.Exceptions.Validations;
 using Library.Validations;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class CheckValidationTest

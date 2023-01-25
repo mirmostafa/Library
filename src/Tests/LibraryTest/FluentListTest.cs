@@ -1,6 +1,6 @@
 ﻿using Library.Collections;
 
-namespace LibraryTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class FluentListTest

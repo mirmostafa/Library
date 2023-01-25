@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Numerics;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class AvxTest
 {
-    
+
 }

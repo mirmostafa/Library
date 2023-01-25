@@ -1,7 +1,7 @@
 ﻿
 using Library.Coding;
 
-namespace LibraryTest;
+namespace Library.UnitTest;
 [TestClass]
 public class FunctionalTest
 {
@@ -14,7 +14,7 @@ public class FunctionalTest
     public void IfConditionTest()
     {
         var bolleanTest = true;
-        var trueResult = Functional.IfTrue(bolleanTest, () => "true");
+        var trueResult = bolleanTest.IfTrue(() => "true");
         //IfTrue(bolleanTest, Methods.Empty);
         Assert.AreEqual("true", trueResult);
     }
@@ -33,7 +33,7 @@ public class FunctionalTest
     public void FluentTest()
     {
         this.Fluent(Methods.Empty);
-        var two = 2.Fluent<int>(() => { });
+        var two = 2.Fluent(() => { });
         Assert.AreEqual(2, two.Value);
     }
 

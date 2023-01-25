@@ -1,6 +1,6 @@
 ﻿using Library.Results;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class ValidationHelperTest

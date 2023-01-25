@@ -1,6 +1,6 @@
 ﻿using Library.Threading.MultistepProgress;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class TaskRunnerTest

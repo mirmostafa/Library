@@ -1,7 +1,7 @@
 ﻿
 using Library.CodeGeneration.v2.Back;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class CodeGenV2Test

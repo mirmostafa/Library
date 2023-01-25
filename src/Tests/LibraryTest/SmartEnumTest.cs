@@ -1,6 +1,6 @@
 ﻿using Library.Types;
 
-namespace LibraryTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class SmartEnumTest

@@ -1,7 +1,7 @@
 ﻿using Library.Coding;
 using Library.Logging;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class CodeHelperTest

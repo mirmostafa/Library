@@ -1,4 +1,4 @@
-﻿namespace UnitTest;
+﻿namespace Library.UnitTest;
 
 [TestClass]
 public class RangeHelperTest

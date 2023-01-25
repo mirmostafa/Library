@@ -2,7 +2,7 @@
 
 using Library.DesignPatterns.Markers;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class ArchitecturalTests

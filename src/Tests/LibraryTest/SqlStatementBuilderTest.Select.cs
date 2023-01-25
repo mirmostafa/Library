@@ -1,6 +1,6 @@
 ﻿using Library.Data.SqlServer;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class SelectStatementBuilderTest
@@ -75,7 +75,7 @@ public class SelectStatementBuilderTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Library.Exceptions.Validations.NullValueValidationException))]
+    [ExpectedException(typeof(Exceptions.Validations.NullValueValidationException))]
     public void BuildAscendingFromSelectTest()
     {
         var specQueryActual = SqlStatementBuilder

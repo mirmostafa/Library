@@ -1,6 +1,6 @@
-﻿using UnitTest.Models;
+﻿using Library.UnitTest.Models;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class CastTest
@@ -9,7 +9,7 @@ public class CastTest
     public void AsTest1()
     {
         StudentClass p = new();
-        var s = Cast.As<PersonClass>(p);
+        var s = p.As<PersonClass>();
         Assert.IsNotNull(s);
     }
 
@@ -17,7 +17,7 @@ public class CastTest
     public void AsTest2()
     {
         PersonClass p = new();
-        var s = Cast.As<StudentClass>(p);
+        var s = p.As<StudentClass>();
         Assert.IsNull(s);
     }
 }

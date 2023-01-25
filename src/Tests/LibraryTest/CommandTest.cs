@@ -1,6 +1,6 @@
 ﻿using Library.Interfaces;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class CommandTest

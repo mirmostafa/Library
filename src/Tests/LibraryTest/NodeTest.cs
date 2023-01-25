@@ -2,7 +2,7 @@
 
 using Library.Collections;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class NodeTestClass

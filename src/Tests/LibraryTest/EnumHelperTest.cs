@@ -1,4 +1,4 @@
-﻿namespace LibraryTest;
+﻿namespace Library.UnitTest;
 [TestClass]
 public class EnumHelperTest
 {

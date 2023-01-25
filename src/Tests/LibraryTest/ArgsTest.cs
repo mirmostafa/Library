@@ -1,6 +1,6 @@
 ﻿using Library.Coding;
 
-namespace LibraryTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class ArgsTest

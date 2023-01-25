@@ -1,6 +1,6 @@
 ﻿using Library.Globalization;
 
-namespace LibraryTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class PersianDateTimeTest

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Library.Data.SqlServer;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class SqlEntityTest

@@ -1,6 +1,6 @@
 ﻿using Library.Coding;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class IfStatementTest

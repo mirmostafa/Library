@@ -1,6 +1,6 @@
 ﻿using Library.DesignPatterns.StateMachine;
 
-namespace UnitTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class MyTestClass
@@ -8,6 +8,6 @@ public class MyTestClass
     [TestMethod]
     public void Test01()
     {
-        
+
     }
 }

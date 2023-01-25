@@ -1,6 +1,6 @@
 ﻿using Library.Data.SqlServer;
 
-namespace LibraryTest;
+namespace Library.UnitTest;
 
 [TestClass]
 public class UpdateStatementBuilderTest

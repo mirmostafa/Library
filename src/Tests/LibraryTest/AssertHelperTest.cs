@@ -1,6 +1,6 @@
 ﻿using Library.Exceptions.Validations;
 
-namespace LibraryTest;
+namespace Library.UnitTest;
 
 [TestClass]
 
