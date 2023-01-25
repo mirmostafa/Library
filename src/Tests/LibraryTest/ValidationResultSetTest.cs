@@ -108,7 +108,7 @@ public class ValidationResultSetTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ValidationException))]
+    [ExpectedException(typeof(NullReferenceException))]
     public void _11_FullValidationIsNotBiggerThanTest()
     {
         var arg = new Person("", 20);

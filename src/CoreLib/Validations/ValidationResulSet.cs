@@ -60,7 +60,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     => this.AddRule(x => x, x => this.Value is not null, onError, () => new ArgumentNullException(this._valueName));
 
     public ValidationResultSet<TValue> IsNotBiggerThan(Expression<Func<TValue, int>> propertyExpression, int max, Func<Exception>? onError = null)
-            => this.AddRule(propertyExpression, x => !(x > max), onError, x => new ValidationException(x));
+        => this.AddRule(propertyExpression, x => !(x > max), onError, x => new ValidationException(x));
 
     public ValidationResultSet<TValue> IsNullOrEmpty(Expression<Func<TValue, string>> propertyExpression, Func<Exception>? onError = null)
         => this.AddRule(propertyExpression, x => !string.IsNullOrEmpty(x), onError, x => new NullReferenceException(x));
