@@ -27,7 +27,7 @@ public class WebApiCreator
     public WebApiCreator Create(in HttpMethod method, in string route, in Delegate body)
     {
         Check.IfArgumentNotNull(route);
-        Check.IfArgumentNotNull(body);
+        Check.ArgumentNotNull(body);
 
         _ = method switch
         {

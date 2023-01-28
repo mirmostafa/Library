@@ -4,14 +4,14 @@ namespace Library.Threading.MultistepProgress;
 
 public interface IMultistepProcess
 {
-    event EventHandler<ItemActedEventArgs<string?>>? Eneded;
+    event EventHandler<ItemActedEventArgs<string?>>? Ended;
 
     event EventHandler<ItemActedEventArgs<(int Max, int Current, string? Description)>>? Reported;
 
     static IMultistepProcess New()
         => new MultistepProcess();
 
-    void Ended(in string? description = null);
+    void End(in string? description = null);
 
     void Report(in int max = -1, in int current = -1, in string? description = null);
 }
@@ -123,14 +123,14 @@ public class MultistepProcessRunner<TState>
             this._reporter.Report(this._max, this._current += step.ProgressCount, step.Description);
             this._state = await step.AsyncAction((this._state, this._subReporter));
         }
-        this._reporter.Ended();
+        this._reporter.End();
         return this._state;
     }
 }
 
 internal class MultistepProcess : IMultistepProcess
 {
-    public event EventHandler<ItemActedEventArgs<string?>>? Eneded;
+    public event EventHandler<ItemActedEventArgs<string?>>? Ended;
 
     public event EventHandler<ItemActedEventArgs<(int Max, int Current, string? Description)>>? Reported;
 
@@ -138,8 +138,8 @@ internal class MultistepProcess : IMultistepProcess
     {
     }
 
-    public void Ended(in string? description)
-        => this.Eneded?.Invoke(this, new(description));
+    public void End(in string? description)
+        => this.Ended?.Invoke(this, new(description));
 
     public void Report(in int max = -1, in int current = -1, in string? description = null)
         => this.Reported?.Invoke(this, new((max, current, description)));

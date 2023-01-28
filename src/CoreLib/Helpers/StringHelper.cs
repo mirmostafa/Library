@@ -281,7 +281,7 @@ public static class StringHelper
 
     public static int? IndexOf([DisallowNull] this IEnumerable<string?> items, in string? item, bool trimmed = false, bool ignoreCase = true)
     {
-        Check.IfArgumentNotNull(items, nameof(items));
+        Check.ArgumentNotNull(items, nameof(items));
 
         var itm = get(item, trimmed);
         var index = 0;
@@ -413,7 +413,7 @@ public static class StringHelper
 
     public static void Iterate(this string str, [DisallowNull] Action<char> action)
     {
-        Check.IfArgumentNotNull(action);
+        Check.ArgumentNotNull(action);
         if (str.IsNullOrEmpty())
         {
             return;
@@ -433,7 +433,7 @@ public static class StringHelper
 
     public static string Map(this string str, [DisallowNull] Func<char, char> mapping)
     {
-        Check.IfArgumentNotNull(mapping);
+        Check.ArgumentNotNull(mapping);
         if (string.IsNullOrEmpty(str))
         {
             return string.Empty;
@@ -682,7 +682,7 @@ public static class StringHelper
     public static byte[] ToBytes([DisallowNull] this string value, [DisallowNull] in Encoding encoding)
     {
         Check.IfArgumentNotNull(value);
-        Check.IfArgumentNotNull(encoding);
+        Check.ArgumentNotNull(encoding);
 
         return encoding.GetBytes(value);
     }

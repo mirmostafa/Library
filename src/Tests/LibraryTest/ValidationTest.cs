@@ -7,6 +7,7 @@ namespace Library.UnitTest;
 public class ValidationTest
 {
     [TestMethod]
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public void _01_ValidationResult_BeNotNullNotNullTest()
     {
         var arg = "Test";
@@ -16,6 +17,7 @@ public class ValidationTest
 
     [TestMethod]
     [ExpectedException(typeof(NullValueValidationException))]
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public void _02_ValidationCheck_BeNotNullNullTest()
     {
         string? arg = null;
@@ -24,6 +26,7 @@ public class ValidationTest
     }
 
     [TestMethod]
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public void _03_ValidationResult_ArgumentBeNotNullNotNullTest()
     {
         var arg = "Test";
@@ -33,6 +36,7 @@ public class ValidationTest
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentNullException))]
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public void _04_ValidationCheck_ArgumentBeNotNullNullTest()
     {
         string? arg = null;

@@ -67,8 +67,8 @@ public class NavigationUICommand : LibRoutedUICommand
             return false;
         }
 
-        Check.IfNotNull(this.Frame);
-        Check.IfNotNull(this.Source);
+        Check.NotNull(this.Frame);
+        Check.NotNull(this.Source);
 
         return this.Frame.Navigate(this.Source);
     }

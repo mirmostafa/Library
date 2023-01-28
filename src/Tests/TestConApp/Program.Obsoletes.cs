@@ -1,4 +1,7 @@
-﻿using Library.CodeGeneration.v2.Front;
+﻿#pragma warning disable IDE0051 // Remove unused private members
+using System.Numerics;
+
+using Library.CodeGeneration.v2.Front;
 using Library.CodeGeneration.v2.Front.HtmlGeneration;
 using Library.DesignPatterns.StateMachine;
 using Library.Helpers;
@@ -29,6 +32,25 @@ internal partial class Program
         WriteLine(div.ToHtml());
     }
 
+    private static IEnumerable<TResult> SimdActor<T1, T2, TResult>(
+        IEnumerable<T1> left, IEnumerable<T2> right, Func<Vector<T1>, Vector<T2>, Vector<TResult>> actor, long count)
+        where T1 : struct
+        where T2 : struct
+        where TResult : struct
+    {
+        var leftArray = left.ToArray();
+        var rightArray = right.ToArray();
+        var result = new TResult[count];
+        var offset = Vector<TResult>.Count;
+        for (var i = 0; i < count - offset; i += offset)
+        {
+            var v1 = new Vector<T1>(leftArray, i);
+            var v2 = new Vector<T2>(rightArray, i);
+            actor(v1, v2).CopyTo(result, i);
+        }
+        return result;
+    }
+
     private static async Task StateMachineTest()
     {
         _ = await StateMachineManager.Dispatch(
@@ -41,10 +63,10 @@ internal partial class Program
 
         static (int Current, MoveDirection Direction) move((int Current, IEnumerable<(int State, MoveDirection Direction)>) flow)
         {
-            WriteLine($"Current: {flow.Current}. Press Up or Down to move foreword or backword. Or press any other key to done.");
-            var resp = ReadKey().Key;
+            WriteLine($"Current: {flow.Current}. Press Up or Down to move foreword or backward. Or press any other key to done.");
+            var response = ReadKey().Key;
             MoveDirection direction;
-            switch (resp)
+            switch (response)
             {
                 case ConsoleKey.UpArrow:
                     flow.Current++;
@@ -100,3 +122,4 @@ internal partial class Program
                 onRenamed: e => Logger.Log($"in {e.Item.FullPath} : {e.Item.OldName} renamed to {e.Item.NewName}."));
     }
 }
+#pragma warning restore IDE0051 // Remove unused private members

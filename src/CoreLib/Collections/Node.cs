@@ -38,7 +38,7 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
 
     public Node<T> AddChild([DisallowNull] Node<T> node, params Node<T>[] nodes)
     {
-        Check.IfArgumentNotNull(node, nameof(node));
+        Check.ArgumentNotNull(node, nameof(node));
 
         node.Parent = this;
         _ = this.ChildList.Add(node);
@@ -48,7 +48,7 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
 
     public Node<T> AddChildren([DisallowNull] IEnumerable<T> values)
     {
-        Check.IfArgumentNotNull(values, nameof(values));
+        Check.ArgumentNotNull(values, nameof(values));
 
         foreach (var value in values)
         {

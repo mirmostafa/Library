@@ -123,7 +123,7 @@ public static class Functional
         in ExceptionHandling? handling = null,
         bool throwException = false)
     {
-        Check.IfArgumentNotNull(tryAction, nameof(tryAction));
+        Check.ArgumentNotNull(tryAction, nameof(tryAction));
 
         handling?.Reset();
         try
@@ -358,8 +358,8 @@ public static class Functional
 
     public static IEnumerable<TResult> While<TResult>(Func<bool> predicate, Func<TResult> action, Action? onIterationDone = null)
     {
-        Check.IfArgumentNotNull(predicate);
-        Check.IfArgumentNotNull(action);
+        Check.ArgumentNotNull(predicate);
+        Check.ArgumentNotNull(action);
 
         while (predicate())
         {
@@ -371,7 +371,7 @@ public static class Functional
 
     public static void While(in Func<bool> predicate, in Action? action = null)
     {
-        Check.IfArgumentNotNull(predicate);
+        Check.ArgumentNotNull(predicate);
 
         while (predicate())
         {

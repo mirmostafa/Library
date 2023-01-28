@@ -9,6 +9,7 @@ using Library.Results;
 
 namespace Library.Validations;
 
+[Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
 public static class ValidationExtension
 {
     public static ValidationResult<TValue> ArgumentIsNotNull<TValue>(this ValidationResult<TValue> validation, (object Id, object Data)? ifIsNull = null)
@@ -18,6 +19,7 @@ public static class ValidationExtension
         => Is(validation, x => x.IsNullOrEmpty(), ifIsNull ?? (-1, new ArgumentNullException(validation.VariableName)));
 
     [DebuggerStepThrough]
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public static ValidationCheck<TValue> Be<TValue>(this ValidationCheck<TValue> validation, in Func<TValue, bool> predicate, in Func<Exception> onError)
     {
         if (predicate(validation.GetValue()))
@@ -32,12 +34,15 @@ public static class ValidationExtension
         => Be(validation, x => x?.Equals(default) ?? true, () => new NullValueValidationException(validation.VariableName));
 
     [DebuggerStepThrough]
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public static ValidationCheck<TValue> BeNotNull<TValue>(this ValidationCheck<TValue> validation, Func<string> errorMessage)
         => Be(validation, x => x?.Equals(default) ?? true, () => new NullValueValidationException(errorMessage(), null));
 
-    public static ValidationResult<TValue> If<TValue>(this TValue value, [CallerArgumentExpression("value")] string argName = null)
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static ValidationResult<TValue> If<TValue>(this TValue value, [CallerArgumentExpression(nameof(value))] string argName = null)
         => new(value, argName);
 
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public static ValidationResult<TValue> Is<TValue>(this ValidationResult<TValue> validation, in Func<TValue, bool> predicate, (object Id, object Data)? ifIsNull = null)
     {
         if (predicate(validation.Result.Value))
@@ -52,9 +57,11 @@ public static class ValidationExtension
     public static ValidationResult<TValue> IsNotNull<TValue>(this ValidationResult<TValue> validation, (object Id, object Data)? ifIsNull = null)
         => Is(validation, x => x?.Equals(default) ?? true, ifIsNull ?? (-1, new NullValueValidationException(validation.VariableName)));
 
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public static ValidationCheck<TValue> Should<TValue>(this TValue value, [CallerArgumentExpression(nameof(value))] string argName = null)
             => new(value, argName);
 
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public static TValue ThrowOnFail<TValue>(this ValidationResult<TValue> validation)
     {
         var result = validation.Result;
@@ -62,6 +69,7 @@ public static class ValidationExtension
     }
 }
 
+[Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
 public sealed class ValidationResult<TValue> : IBuilder<TValue>
 {
     internal ValidationResult(TValue value, string variableName)
@@ -89,6 +97,7 @@ public sealed class ValidationResult<TValue> : IBuilder<TValue>
         => this.ThrowOnFail();
 }
 
+[Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
 public sealed record ValidationCheck<TValue>
 {
     internal ValidationCheck(in TValue value, in string variableName)

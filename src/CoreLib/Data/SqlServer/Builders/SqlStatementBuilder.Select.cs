@@ -21,7 +21,7 @@ public static partial class SqlStatementBuilder
 
     public static string Build([DisallowNull] this ISelectStatement statement, string indent = "    ")
     {
-        Check.IfNotNull(statement.TableName, nameof(statement.TableName));
+        Check.NotNull(statement.TableName, nameof(statement.TableName));
         var result = new StringBuilder("SELECT");
         if (statement.Columns.Any())
         {
@@ -65,7 +65,7 @@ public static partial class SqlStatementBuilder
 
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
     {
-        Check.IfArgumentNotNull(statement, nameof(statement));
+        Check.ArgumentNotNull(statement, nameof(statement));
         statement.Columns.Clear();
         return statement.AddColumns(columns);
     }

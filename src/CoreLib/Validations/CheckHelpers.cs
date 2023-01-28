@@ -12,14 +12,17 @@ namespace Library.Validations;
 public static class CheckHelpers
 {
     [return: NotNull]
-    public static string ArgumentNotNull([NotNull][AllowNull] this string obj, [CallerArgumentExpression("obj")] string argName = null)
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static string ArgumentNotNull([NotNull][AllowNull] string obj, [CallerArgumentExpression("obj")] string argName = null)
             => obj.NotValid(x => x.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
     [return: NotNull]
-    public static T ArgumentNotNull<T>([NotNull][AllowNull] this T obj, [CallerArgumentExpression("obj")] string argName = null)
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static T ArgumentNotNull<T>([NotNull][AllowNull] T obj, [CallerArgumentExpression("obj")] string argName = null)
         => obj.NotValid(x => x is null, () => new ArgumentNullException(argName));
 
-    public static TEnumerable HasAny<TEnumerable>([NotNull] this TEnumerable obj, [DisallowNull] Func<Exception> getException)
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static TEnumerable HasAny<TEnumerable>([NotNull] TEnumerable obj, [DisallowNull] Func<Exception> getException)
             where TEnumerable : IEnumerable
     {
         if (!NotNull(obj).Any())
@@ -30,41 +33,47 @@ public static class CheckHelpers
     }
 
     [return: NotNull]
-    public static string NotNull([AllowNull][NotNull] this string obj,/*[InvokerParameterName]*/ [CallerArgumentExpression("obj")] string argName = null)
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static string NotNull([AllowNull][NotNull] string obj,/*[InvokerParameterName]*/ [CallerArgumentExpression("obj")] string argName = null)
         => obj.NotValid(x => x.IsNullOrEmpty(), () => new NullValueValidationException(argName!));
 
     [return: NotNull]
-    public static T NotNull<T>([NotNull] this T obj, [DisallowNull] Func<Exception> getException)
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static T NotNull<T>([NotNull] T obj, [DisallowNull] Func<Exception> getException)
         => obj.NotValid(x => x is null, getException)!;
 
     [return: NotNull]
-    public static T NotNull<T, TException>([AllowNull][NotNull] this T obj) where TException : Exception, new()
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static T NotNull<T, TException>([AllowNull][NotNull] T obj) where TException : Exception, new()
         => obj.NotValid(x => x is null, () => new TException());
 
     [return: NotNull]
-    public static T NotNull<T>([NotNull] this T obj, [CallerArgumentExpression("obj")] string argName = null)
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static T NotNull<T>([NotNull] T obj, [CallerArgumentExpression(nameof(obj))] string argName = null)
         => obj.NotValid(x => x is null, () => new NullValueValidationException(argName!))!;
 
     [return: NotNull]
-    public static T NotNull<T>([NotNull] this T @this, [NotNull] object obj, [CallerArgumentExpression("obj")] string argName = null)
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static T NotNull<T>([NotNull] T @this, [NotNull] object obj, [CallerArgumentExpression(nameof(obj))] string argName = null)
         => @this.NotValid(_ => obj is null, () => new NullValueValidationException(argName!))!;
 
     [return: NotNull]
-    public static T NotNull<T>([NotNull] this T obj, Func<string> getMessage)
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
+    public static T NotNull<T>([NotNull] T obj, Func<string> getMessage)
         => obj.NotValid(x => x is null, () => new NullValueValidationException(getMessage(), null))!;
 
     [return: NotNull]
     public static async Task<TResult> NotNullAsync<TResult>([NotNull] this Task<TResult> task, Func<Exception> getException)
     {
         var result = await task;
-        return NotNull(result, getException);
+        return result.NotNull(getException);
     }
 
     [return: NotNull]
     public static async Task<TResult> NotNullAsync<TResult>([NotNull] this Func<Task<TResult>> asyncFunc, Func<Exception> getException)
     {
         var result = await asyncFunc();
-        return NotNull(result, getException);
+        return result.NotNull(getException);
     }
 
     public static T ThrowIfDisposed<T>(this T @this, [DoesNotReturnIf(true)] bool disposed)

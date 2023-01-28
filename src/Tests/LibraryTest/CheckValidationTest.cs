@@ -70,47 +70,47 @@ public class CheckValidationTest
     [TestMethod]
     [ExpectedException(typeof(NullValueValidationException))]
     public void IfNotNullFalse()
-        => Check.IfNotNull(null);
+        => Check.NotNull(null);
 
     [TestMethod]
     [ExpectedException(typeof(NullValueValidationException))]
     public void IfNotNullFalseMessage()
-        => Check.IfNotNull(null, () => this._string_sample1);
+        => Check.NotNull(null, () => this._string_sample1);
 
     [TestMethod]
     [ExpectedException(typeof(NullValueValidationException))]
     public void IfNotNullFalseObject()
-        => Check.IfNotNull(this, null, this._string_sample1);
+        => Check.NotNull(this, null, this._string_sample1);
 
     [TestMethod]
     public void IfNotNullTrue()
-        => Check.IfNotNull(this._string_sample1);
+        => Check.NotNull(this._string_sample1);
 
     [TestMethod]
     public void IfNotNullTrueMessage()
-        => Check.IfNotNull(this._string_sample1, () => this._string_sample1);
+        => Check.NotNull(this._string_sample1, () => this._string_sample1);
 
     [TestMethod]
     public void IfNotNullTrueObject()
-        => Check.IfNotNull(this, this._string_sample1, this._string_sample1);
+        => Check.NotNull(this, this._string_sample1, this._string_sample1);
 
     [TestMethod]
     public void IfNotValidNotNullStringTest()
-        => Check.IfNotNull(this._string_sample1, () => new NullValueValidationException());
+        => Check.NotNull(this._string_sample1, () => new NullValueValidationException());
 
     [TestMethod]
     public void IfNotValidNotNullTest()
-        => Check.IfNotValid(this._string_sample1, x => x is null, () => new NullValueValidationException());
+        => Check.NotValid(this._string_sample1, x => x is null, () => new NullValueValidationException());
 
     [TestMethod]
     [ExpectedException(typeof(NullValueValidationException))]
     public void IfNotValidNullStringTest()
-        => Check.IfNotNull(this._string_null, () => new NullValueValidationException());
+        => Check.NotNull(this._string_null, () => new NullValueValidationException());
 
     [TestMethod]
     [ExpectedException(typeof(NullValueValidationException))]
     public void IfNotValidNullTest()
-        => Check.IfNotValid(this._string_null, x => x is null, () => new NullValueValidationException());
+        => Check.NotValid(this._string_null, x => x is null, () => new NullValueValidationException());
 
     [TestMethod]
     [ExpectedException(typeof(RequiredValidationException))]

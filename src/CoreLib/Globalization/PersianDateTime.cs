@@ -159,7 +159,7 @@ public readonly struct PersianDateTime :
     /// <param name="context">The context.</param>
     private PersianDateTime(in SerializationInfo info, in StreamingContext context)
     {
-        Check.IfArgumentNotNull(info);
+        Check.ArgumentNotNull(info);
 
         this.Data = (PersianDateTimeData)info.GetValue("Data", typeof(PersianDateTimeData))!;
         this.IsInitiated = true;

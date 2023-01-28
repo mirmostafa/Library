@@ -247,7 +247,7 @@ public sealed class NumericFormatInfo
     /// <exception cref="ArgumentNullException">numericFormatInfo</exception>
     public static void MapToNumberFormatInfo(NumberFormatInfo numberFormatInfo, NumericFormatInfo numericFormatInfo)
     {
-        Check.IfArgumentNotNull(numericFormatInfo, nameof(numericFormatInfo));
+        Check.ArgumentNotNull(numericFormatInfo, nameof(numericFormatInfo));
 
         numberFormatInfo.CurrencyDecimalDigits = numericFormatInfo.Currency.DecimalDigits;
         numberFormatInfo.CurrencyGroupSeparator = numericFormatInfo.Currency.GroupSeparator.ToString();

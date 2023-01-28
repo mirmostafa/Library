@@ -10,7 +10,7 @@ public interface IConvertible<out T>
 //    static abstract implicit operator TDestination(TSelf source);
 //}
 
-public interface IConveter<in TSource, out TDestination>
+public interface IConvetert<in TSource, out TDestination>
 {
     abstract static TDestination Convert(TSource source);
 }

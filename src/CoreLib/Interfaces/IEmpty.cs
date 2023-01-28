@@ -1,6 +1,6 @@
 ﻿namespace Library.Interfaces;
 
-public interface IEmpty<out T>
+public interface IEmpty<out TSelf>
 {
     /// <summary>
     /// Gets an empty instance of current class.
@@ -8,10 +8,10 @@ public interface IEmpty<out T>
     /// <value>
     /// An empty instance.
     /// </value>
-    static abstract T Empty { get; }
+    static abstract TSelf Empty { get; }
     /// <summary>
     /// Creates an empty instance of current class.
     /// </summary>
     /// <returns>An empty instance of current class.</returns>
-    static abstract T NewEmpty();
+    static abstract TSelf NewEmpty();
 }

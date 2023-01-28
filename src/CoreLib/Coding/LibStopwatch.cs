@@ -1,13 +1,10 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace Library.Coding;
 
 public interface IStopwatchTimer : IDisposable
 {
     TimeSpan Elapsed { get; }
-
-    void Dispose();
 
     TimeSpan Stop();
 }
@@ -44,7 +41,7 @@ internal class StopwatchTimer : IStopwatchTimer
 
     public StopwatchTimer Start()
     {
-        this._stopwatch.Start();
+        this._stopwatch.Restart();
         return this;
     }
 

@@ -25,14 +25,13 @@
 
         public static void Error(Exception exception, string? text = null, string? caption = null, Window? owner = null)
         {
-            Check.IfArgumentNotNull(exception);
-            _ = Show(
-                $"{text}{Environment.NewLine}{exception.GetBaseException().Message}",
-                caption,
-                MessageBoxButton.OK,
-                MessageBoxImage.Error,
-                MessageBoxResult.OK,
-                owner);
+            Check.ArgumentNotNull(exception);
+            _ = Show($"{text}{Environment.NewLine}{exception.GetBaseException().Message}",
+                     caption,
+                     MessageBoxButton.OK,
+                     MessageBoxImage.Error,
+                     MessageBoxResult.OK,
+                     owner);
         }
     }
 }

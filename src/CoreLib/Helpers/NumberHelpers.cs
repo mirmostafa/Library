@@ -19,11 +19,11 @@ public static class NumberHelper
     public static bool IsPrime(int number)
         => Enumerable.Range(2, Math.Sqrt(number).ToInt() - 1).All(d => number % d != 0);
 
-    public static string SizeSuffixComputer(this long value, int measure = 1000, int decimalPlaces = 1)
+    public static string ToStandardMetricScale(this long value, int measure = 1000, int decimalPlaces = 1)
     {
         if (value < 0)
         {
-            return "-" + SizeSuffixComputer(-value, measure, decimalPlaces);
+            return "-" + ToStandardMetricScale(-value, measure, decimalPlaces);
         }
         if (measure == 1)
         {

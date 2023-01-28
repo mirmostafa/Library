@@ -15,7 +15,7 @@ public static class EnumerableHelper
 {
     public static IList<KeyValuePair<TKey, TValue>> Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
     {
-        Check.IfArgumentNotNull(list);
+        Check.ArgumentNotNull(list);
         list.Add(new(key, value));
         return list;
     }
@@ -79,8 +79,8 @@ public static class EnumerableHelper
 
     public static async Task<ICollection<TItem>> AddRangeAsync<TItem>([DisallowNull] this ICollection<TItem> list, [DisallowNull] IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(list);
-        Check.IfArgumentNotNull(asyncItems);
+        Check.ArgumentNotNull(list);
+        Check.ArgumentNotNull(asyncItems);
 
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
@@ -142,7 +142,7 @@ public static class EnumerableHelper
 
     public static IReadOnlyList<T> Build<T>([DisallowNull] this IEnumerable<T> items)
     {
-        Check.IfArgumentNotNull(items);
+        Check.ArgumentNotNull(items);
 
         var result = new List<T>();
         foreach (var item in items)
@@ -170,11 +170,11 @@ public static class EnumerableHelper
         [DisallowNull] in Action<TItem> addToRoots,
         [DisallowNull] in Action<TItem, TItem> addChild)
     {
-        Check.IfArgumentNotNull(rootElements);
-        Check.IfArgumentNotNull(getNewItem);
-        Check.IfArgumentNotNull(getChildren);
-        Check.IfArgumentNotNull(addToRoots);
-        Check.IfArgumentNotNull(addChild);
+        Check.ArgumentNotNull(rootElements);
+        Check.ArgumentNotNull(getNewItem);
+        Check.ArgumentNotNull(getChildren);
+        Check.ArgumentNotNull(addToRoots);
+        Check.ArgumentNotNull(addChild);
 
         foreach (var siteMap in rootElements)
         {
@@ -208,7 +208,7 @@ public static class EnumerableHelper
         {
             yield break;
         }
-        Check.IfArgumentNotNull(converter);
+        Check.ArgumentNotNull(converter);
 
         foreach (var item in input)
         {
@@ -231,7 +231,7 @@ public static class EnumerableHelper
 
     public static ICollection<TItem> ClearAndAddRange<TItem>(this ICollection<TItem> list, [DisallowNull] in IEnumerable<TItem> items)
     {
-        Check.IfArgumentNotNull(items);
+        Check.ArgumentNotNull(items);
 
         list.Clear();
         foreach (var item in items)
@@ -318,7 +318,7 @@ public static class EnumerableHelper
 
     public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
-        Check.IfArgumentNotNull(items);
+        Check.ArgumentNotNull(items);
         var buffer = items;
 
         foreach (var item in buffer)
@@ -330,7 +330,7 @@ public static class EnumerableHelper
 
     public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems);
+        Check.ArgumentNotNull(asyncItems);
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             yield return action(item);
@@ -339,7 +339,7 @@ public static class EnumerableHelper
 
     public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems);
+        Check.ArgumentNotNull(asyncItems);
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             action(item);
@@ -349,7 +349,7 @@ public static class EnumerableHelper
 
     public static IReadOnlyList<T> ForEachEager<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
-        Check.IfArgumentNotNull(items);
+        Check.ArgumentNotNull(items);
         foreach (var item in items)
         {
             action?.Invoke(item);
@@ -359,8 +359,8 @@ public static class EnumerableHelper
 
     public static IEnumerable<TResult> ForEachItem<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
     {
-        Check.IfArgumentNotNull(items);
-        Check.IfArgumentNotNull(action);
+        Check.ArgumentNotNull(items);
+        Check.ArgumentNotNull(action);
 
         foreach (var item in items)
         {
@@ -474,7 +474,7 @@ public static class EnumerableHelper
 
     public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
     {
-        Check.IfArgumentNotNull(list);
+        Check.ArgumentNotNull(list);
         _ = list.Remove(list.GetItemByKey(key));
         return list;
     }
@@ -544,7 +544,7 @@ public static class EnumerableHelper
 
     public static IList<KeyValuePair<TKey, TValue>> SetByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
     {
-        Check.IfArgumentNotNull(list);
+        Check.ArgumentNotNull(list);
         _ = list.RemoveByKey(key);
         list.Add(new(key, value));
         return list;
@@ -553,7 +553,7 @@ public static class EnumerableHelper
     public static Dictionary<TKey, TValue> SetByKey<TKey, TValue>([DisallowNull] this Dictionary<TKey, TValue> dic, TKey key, TValue value)
         where TKey : notnull
     {
-        Check.IfArgumentNotNull(dic);
+        Check.ArgumentNotNull(dic);
 
         if (dic.ContainsKey(key))
         {
@@ -603,7 +603,7 @@ public static class EnumerableHelper
 
     public static async Task<IEnumerable<TItem>> ToEnumerableAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems);
+        Check.ArgumentNotNull(asyncItems);
         var result = New<List<TItem>>();
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
@@ -614,7 +614,7 @@ public static class EnumerableHelper
 
     public static async Task<List<TItem>> ToListAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems);
+        Check.ArgumentNotNull(asyncItems);
         var result = New<List<TItem>>();
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {

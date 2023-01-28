@@ -21,7 +21,7 @@ public static class MultistepProcessHelper
         dispose(process);
 
         process.Reported += process_Reported;
-        process.Eneded += process_Ended;
+        process.Ended += process_Ended;
 
         void process_Reported(object? sender, ItemActedEventArgs<(int Max, int Current, string? Description)> e)
         {
@@ -34,7 +34,7 @@ public static class MultistepProcessHelper
         void dispose(IMultistepProcess process)
         {
             process.Reported -= process_Reported;
-            process.Eneded -= process_Ended;
+            process.Ended -= process_Ended;
         }
     }
 }

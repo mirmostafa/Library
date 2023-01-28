@@ -53,7 +53,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        Check.IfArgumentNotNull(info, nameof(info));
+        Check.ArgumentNotNull(info, nameof(info));
 
         this.FillByProperties(info, context);
     }
