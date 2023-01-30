@@ -25,7 +25,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
 
     #endregion Fields, ctors and properties
 
-    #region Interfaces implementations
+    #region Public methods
 
     public static implicit operator TValue(ValidationResultSet<TValue> source)
         => source.Value;
@@ -54,6 +54,9 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
         }
         return this.Value;
     }
+
+    public Result<TValue> ToResult()
+        => Build();
 
     #endregion Interfaces implementations
 
