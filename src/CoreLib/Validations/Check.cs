@@ -85,37 +85,40 @@ public sealed class Check
     //    => _ = obj.HasAny(getException);
 
     public static void IfIs<T>([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-        => NotValid(obj, x => x is not T, () => new TypeMismatchValidationException(argName!));
+        => NotValid(obj, x => x is T, () => new TypeMismatchValidationException(argName!));
 
     public static void NotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-            => NotNull(obj is not null, argName!);
+        => NotNull(obj is not null, argName!);
 
     public static void NotNull([NotNull][AllowNull] object? obj, Func<string> getMessage)
-            => NotValid(obj, x => x is null, () => new NullValueValidationException(getMessage()));
+        => NotValid(obj, x => x is not null, () => new NullValueValidationException(getMessage()));
 
     public static void NotNull(in object? @this, [NotNull][AllowNull] string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-            => NotValid(@this, _ => obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!));
+        => NotValid(@this, _ => !obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!));
 
     public static void NotNull([DoesNotReturnIf(false)] bool isNotNull, string argName)
-            => If(isNotNull, () => new NullValueValidationException(argName));
+        => If(isNotNull, () => new NullValueValidationException(argName));
 
     public static void NotValid([AllowNull] object? obj, [DisallowNull] in Func<object?, bool> validate, in Func<Exception> getException)
-            => NotValid(obj, validate, getException);
+    {
+        if (!validate(obj))
+            Throw(getException);
+    }
 
     public static void IfRequired([DoesNotReturnIf(false)] bool required)
-            => If<RequiredValidationException>(required);
+        => If<RequiredValidationException>(required);
 
     public static Result MustBe(in bool ok)
-            => ok ? Result.Success : Result.Fail;
+        => ok ? Result.Success : Result.Fail;
 
     public static Result<T> MustBe<T>(in T obj, in bool ok)
-            => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj);
+        => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj);
 
     public static Result<T> MustBe<T>(in T obj, in Func<bool> predicate, in Func<Exception> getException)
-            => predicate() ? Result<T>.CreateSuccess(obj) : Result<T?>.CreateFail(getException(), value: obj);
+        => predicate() ? Result<T>.CreateSuccess(obj) : Result<T?>.CreateFail(getException(), value: obj);
 
     public static Result<T> MustBe<T>(in T obj, in bool ok, in Func<Exception> getException)
-            => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(getException(), value: obj);
+        => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(getException(), value: obj);
 
     public static bool MustBe<T>(in T obj, in Func<bool> predicate, in Func<Exception> getException, out Result<T> result)
     {
@@ -124,40 +127,40 @@ public sealed class Check
     }
 
     public static Result<T> MustBe<T>(in T obj, in Func<T, bool> predicate, in Func<Exception> getException)
-            => predicate(obj) ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(getException(), value: obj);
+        => predicate(obj) ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(getException(), value: obj);
 
     public static Result MustBe(in bool ok, in Func<string> getErrorMessage)
-            => ok ? Result.CreateSuccess() : Result.CreateFail(message: getErrorMessage());
+        => ok ? Result.CreateSuccess() : Result.CreateFail(message: getErrorMessage());
 
     public static Result MustBe(in Func<bool> predicate, in Func<string> getErrorMessage)
-            => predicate() ? Result.CreateSuccess() : Result.CreateFail(getErrorMessage());
+        => predicate() ? Result.CreateSuccess() : Result.CreateFail(getErrorMessage());
 
     public static Result MustBe(in Func<bool> predicate, in Func<Exception> getException)
-            => predicate() ? Result.Success : Result.CreateFail(error: getException());
+        => predicate() ? Result.Success : Result.CreateFail(error: getException());
 
     public static Result MustBe(in bool ok, in Func<Exception> getExceptionIfNot)
-            => !ok ? Result.CreateFail(error: getExceptionIfNot()) : Result.CreateSuccess();
+        => !ok ? Result.CreateFail(error: getExceptionIfNot()) : Result.CreateSuccess();
 
     public static Result<TValue?> MustBeArgumentNotNull<TValue>([AllowNull] TValue? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-                    => Result<TValue?>.From(MustBeArgumentNotNull(obj is not null, argName!), obj);
+                => Result<TValue?>.From(MustBeArgumentNotNull(obj is not null, argName!), obj);
 
     public static Result MustBeArgumentNotNull(in bool isNotNull, [DisallowNull] string argName)
-            => MustBe(isNotNull, () => new ArgumentNullException(argName));
+        => MustBe(isNotNull, () => new ArgumentNullException(argName));
 
     public static Result<T> MustBeNotNull<T>(T obj) where T : class
-            => MustBe(obj!, () => obj is not null, () => new NullValueValidationException());
+        => MustBe(obj!, () => obj is not null, () => new NullValueValidationException());
 
     public static Result<TInstance> MustBeNotNull<TInstance>(in TInstance instance, object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-            => MustBe(instance, () => obj is not null, () => new NullValueValidationException(argName!));
+        => MustBe(instance, () => obj is not null, () => new NullValueValidationException(argName!));
 
     public static Result<TInstance> MustBeNotNull<TInstance>(TInstance instance, Func<string> getExceptionMessage)
-            => MustBe(instance, () => instance is not null, () => new NullValueValidationException(getExceptionMessage(), null));
+        => MustBe(instance, () => instance is not null, () => new NullValueValidationException(getExceptionMessage(), null));
 
     public static Result<string> MustBeNotNull(string? obj)
-            => MustBe(obj!, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException());
+        => MustBe(obj!, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException());
 
     public static Result<T> MustBeNotNull<T>(in T instance, string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-            => MustBe(instance, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!));
+        => MustBe(instance, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!));
 
     /// <summary>
     /// Makes sure the specified argument is not null.
@@ -167,7 +170,7 @@ public sealed class Check
     /// <param name="argName"></param>
     /// <exception cref="ArgumentNullException"/>
     public static void NotNull([NotNull][AllowNull] object? obj, [DisallowNull] Func<Exception> getException)
-        => NotValid(obj, x => x is null, getException);
+        => NotValid(obj, x => x is not null, getException);
 
     public static bool TryMustBeArgumentNotNull<TValue>([AllowNull][NotNullWhen(true)] TValue? obj, out Result<TValue?> result, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => MustBeArgumentNotNull(obj, argName).TryParse(out result);
