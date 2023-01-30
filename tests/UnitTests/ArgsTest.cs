@@ -1,43 +1,59 @@
-﻿using Library.Coding;
+﻿using System.CodeDom;
+
+using Library.Coding;
+
+using Xunit.Abstractions;
 
 namespace UnitTests;
 
 [Trait("Category", "Code Helpers")]
 public class ArgsTest
 {
-    [Fact]
-    public void MyTestMethod()
-    {
-        var sum = (Args<int> nums) => nums.Sum();
-        var r1 = sum(1);
-        var r2 = sum((1, 2));
-        var r3 = sum((1, 2, 3));
-        var r4 = sum((1, 2, 3, 4));
+    private readonly ITestOutputHelper _output;
 
-        Assert.Equal(1, r1);
-        Assert.Equal(3, r2);
-        Assert.Equal(6, r3);
-        Assert.Equal(10, r4);
+    public ArgsTest(ITestOutputHelper output)
+    {
+        this._output = output;
+    }
+    [Theory]
+    [MemberData(nameof(Data))]
+    public void MyTestMethod(Args<int> nums, int expected)
+    {
+        var sum = (Args<int> n) => n.Sum();
+        var actual = sum(nums);
+
+        Assert.Equal(expected, actual);
     }
 
-    [Fact]
+    //public static IEnumerable<object[]> Data => new[] { new object[] { 5, 6, 11 }, new object[] { -1, 10, 9 }, new object[] { 0, 0, 0 } };
+    public static IEnumerable<object[]> Data => new[] {
+        new object[] { new Args<int>(1), 1 },
+        new object[] { new Args<int>(1, 2), 3 },
+        new object[] { new Args<int>(1, 2,3), 6 },
+        new object[] { new Args<int>(1, 2, 3, 4), 10 }
+        };
+
+    [Fact] 
     public void MyTestMethod1()
     {
         var display = (Args<int> nums) =>
         {
             using var enumerator = nums.GetEnumerator();
-            While(enumerator.MoveNext, () => Console.WriteLine(enumerator.Current));
+            While(enumerator.MoveNext, () => WriteLine(enumerator.Current));
         };
         display(1);
         display((1, 2, 3, 4, 5));
     }
+
+    private void WriteLine(object? o) 
+        => _output.WriteLine(o?.ToString() ?? string.Empty);
 
     [Fact]
     public void MyTestMethod3()
     {
         var display = (Args<int> nums) =>
         {
-            For(nums, (int item, int _) => Console.WriteLine(item));
+            For(nums, (int item, int _) => WriteLine(item));
         };
         display((1, 2, 3, 4, 5));
     }
@@ -47,7 +63,7 @@ public class ArgsTest
     {
         var display = (Args<int> nums) =>
         {
-            For(nums, (int item, int _) => Console.WriteLine(item));
+            For(nums, (int item, int _) => WriteLine(item));
         };
         display((1, 2, 3, 4, 5, 6, 7));
         Assert.Equal(2, new Args<int>(1, 2).Count);

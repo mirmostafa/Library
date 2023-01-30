@@ -44,7 +44,7 @@ public class ValidationResultSetTest
     {
         var arg = new Person("", 20);
         var check = arg.Check().ArgumentNotNull();
-        check.ThrowOnFail();
+        _ = check.ThrowOnFail();
     }
 
     [Fact]
@@ -52,11 +52,11 @@ public class ValidationResultSetTest
     {
         var arg = new Person("Ali", 20);
         var check = arg.Check()
-                         .ArgumentNotNull()
-                         .NotNullOrEmpty(x => x.Name)
-                         .NotBiggerThan(x => x.Age, 25)
-                         .Build();
-        check.ThrowOnFail();
+                       .ArgumentNotNull()
+                       .NotNullOrEmpty(x => x.Name)
+                       .NotBiggerThan(x => x.Age, 25)
+                       .Build();
+        _ = check.ThrowOnFail();
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class ValidationResultSetTest
                                 .ArgumentNotNull()
                                 .NotNullOrEmpty(x => x!.Name)
                                 .NotBiggerThan(x => x!.Age, 10);
-        Assert.Throws<System.ArgumentNullException>(() => check.ThrowOnFail());
+        _ = Assert.Throws<System.ArgumentNullException>(check.ThrowOnFail);
     }
 
     [Fact]

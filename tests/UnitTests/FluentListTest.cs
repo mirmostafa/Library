@@ -15,10 +15,12 @@ public class FluentListTest
     }
 
     [Fact]
-    public void IndexerTest() => Assert.Equal(5, this._List[5]);
+    public void IndexerTest() 
+        => Assert.Equal(5, this._List[5]);
 
     [Fact]
-    public void CountTest() => Assert.Equal(10, this._List.Count);
+    public void CountTest() 
+        => Assert.Equal(10, this._List.Count);
 
     [Fact]
     public void CreateTest()
