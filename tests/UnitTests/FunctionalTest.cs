@@ -2,6 +2,7 @@
 
 namespace UnitTests;
 
+[Trait("Category", "Code Helpers")]
 public class FunctionalTest
 {
     private static readonly Action<int> _emptyIntAction = x => { };

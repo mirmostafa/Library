@@ -2,6 +2,7 @@
 
 namespace UnitTests;
 
+[Trait("Category", "Helpers")]
 public class ApiHelperTest
 {
     [Fact]

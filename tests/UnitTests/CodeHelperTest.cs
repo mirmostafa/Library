@@ -4,6 +4,7 @@ using Library.Results;
 namespace UnitTests;
 
 
+[Trait("Category", "Code Helpers")]
 public class FunctionalTests
 {
     [Fact]

@@ -3,6 +3,7 @@
 namespace UnitTests;
 
 
+[Trait("Category", "Code Helpers")]
 public class IfStatementTest
 {
     [Fact]

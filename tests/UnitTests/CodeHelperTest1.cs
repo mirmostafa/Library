@@ -4,6 +4,8 @@ using Library.Logging;
 namespace UnitTests;
 
 
+[Trait("Category", "Helpers")]
+[Trait("Category", "Code Helpers")]
 public class CodeHelperTest
 {
     [Fact]

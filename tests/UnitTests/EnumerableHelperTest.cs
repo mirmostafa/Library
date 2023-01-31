@@ -1,6 +1,7 @@
 ﻿namespace UnitTests;
 
 
+[Trait("Category", "Helpers")]
 public class EnumerableHelperTest
 {
     private readonly string[] _names = new[] { "Nick", "Mike", "John", "Leyla", "David", "Damian" };

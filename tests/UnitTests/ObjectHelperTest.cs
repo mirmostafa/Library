@@ -1,6 +1,7 @@
 ﻿namespace UnitTests;
 
 
+[Trait("Category", "Helpers")]
 public class ObjectHelperTest
 {
     [Fact]

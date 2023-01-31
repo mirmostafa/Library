@@ -120,33 +120,7 @@ public static class StringHelper
                     .Replace((char)1740, (char)1610)
                     .Replace((char)1705, (char)1603)));
 
-    public static int CountOf(this string str, in char c, int index)
-    {
-        if (str is null)
-        {
-            return 0;
-        }
-
-        if (index == 0)
-        {
-            return str.IndexOf(c);
-        }
-
-        var foundCount = 0;
-        index++;
-        var i = 0;
-        while (i < str.Length && foundCount < index)
-        {
-            if (str[i] == c)
-            {
-                foundCount++;
-            }
-
-            i++;
-        }
-
-        return i - 1;
-    }
+    public static int CountOf(this string str, char c, int index = 0) => str?[index..].Where(x => x == c).Count() ?? 0;
 
     [Pure]
     public static bool EndsWithAny(this string str, in IEnumerable<object> array)
@@ -172,7 +146,7 @@ public static class StringHelper
     public static bool EqualsToAny(this string str1, params string[] array)
         => array.Any(s => str1.EqualsTo(s));
 
-    public static string? FixSize(string? name, int maxLength, char gapChar = ' ') 
+    public static string? FixSize(string? name, int maxLength, char gapChar = ' ')
         => name.IsNullOrEmpty()
             ? Add(string.Empty, maxLength, gapChar)
             : name.Length > maxLength ? name[..maxLength] : name.Add(maxLength - name.Length, gapChar);
@@ -379,8 +353,8 @@ public static class StringHelper
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
         => str == null || str.Length == 0;
 
-    public static bool IsNumber(in string text)
-        => text.All(char.IsNumber);
+    public static bool IsNumber(in string text) 
+        => float.TryParse(text, out _);
 
     public static bool IsPersian(char c)
         => c.IsCommon() || PersianTools.Chars.Any(pc => pc == c) || PersianTools.SpecialChars.Any(pc => pc == c);
@@ -394,7 +368,8 @@ public static class StringHelper
     public static bool IsPersianOrNumber(in string text, bool canAcceptMinusKey)
         => CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || IsPersian(c));
 
-    public static bool IsUnicode(this string str) => str.Any(c => c > 255);
+    public static bool IsUnicode(this string str) 
+        => str.Any(c => c > 255);
 
     public static bool IsValidIranianNationalCode(string input)
     {
@@ -491,7 +466,7 @@ public static class StringHelper
     public static string? Pluralize(string? text)
         => text.IsNullOrEmpty() ? null : Pluralizer.Pluralize(text);
 
-    [return: NotNullIfNotNull("str")]
+    [return: NotNullIfNotNull(nameof(str))]
     public static string? Remove(this string? str, in string? value)
         => str is null ? null : value is null ? str : str.Replace(value, "");
 

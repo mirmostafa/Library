@@ -1,16 +1,11 @@
 ﻿namespace UnitTests;
 
-//[MemoryDiagnoser]
-
+[Trait("Category", "Helpers")]
 public class StringHelperTest
 {
     private const string LONG_TEXT = "There 'a text', inside 'another text'. I want 'to find\" it.";
     private const string SSHORT_TEXT = "There 'a text', inside 'another text'.";
     private const string VERY_SHORT_TEXT = "text";
-
-    //[Benchmark]
-    public void _WasteTimeToWarmUpBenchmark()
-        => Thread.Sleep(3000);
 
     [Fact]
     public void AddStartEndTest()
@@ -108,54 +103,41 @@ public class StringHelperTest
         Assert.False(sampleStrIsEmpty);
     }
 
-    [Fact]
-    public void IsNumberTest()
+    [Theory]
+    [InlineData("0", true)]
+    [InlineData("100", true)]
+    [InlineData("09124438164", true)]
+    [InlineData("12345678.9", true)]
+    [InlineData("-12345678.9", true)]
+    [InlineData("12-345678.9", false)]
+    [InlineData("12345678..9", false)]
+    public void IsNumberValid(string number, bool expected)
     {
-        var numStr = "123456789";
-        var numStrIsNumber = StringHelper.IsNumber(numStr);
+        var actual = StringHelper.IsNumber(number);
 
-        var invNumStr = "12345678..9";
-        var invNumStrIsNumber = StringHelper.IsNumber(invNumStr);
-
-        Assert.True(numStrIsNumber);
-        Assert.False(invNumStrIsNumber);
+        Assert.Equal(expected, actual);
     }
 
-    [Fact]
-    public void NationalCodeTest()
-    {
-        var nc1 = "0062614614";
-        var isValid1 = StringHelper.IsValidIranianNationalCode(nc1);
 
-        Assert.True(isValid1);
+    [Theory]
+    [InlineData("0062614614", true)]
+    [InlineData("0062614615", false)]
+    public void NationalCodeTest(string nationalCode, bool expected)
+    {
+        var actual = StringHelper.IsValidIranianNationalCode(nationalCode);
+
+        Assert.Equal(expected, actual);
     }
 
-    [Fact]
-    public void NationalCodeTest2()
+    [Theory]
+    [InlineData("numbers", "number")]
+    [InlineData("cases", "case")]
+    [InlineData("handies", "handy")]
+    [InlineData("people", "person")]
+    [InlineData("children", "child")]
+    public void _08_PluralizeTest(string pluralized, string single)
     {
-        var nc2 = "0062614615";
-        var isValid2 = StringHelper.IsValidIranianNationalCode(nc2);
-
-        Assert.False(isValid2);
-    }
-
-    [Fact]
-    public void NationalCodeTest3()
-    {
-        var nc3 = "006261461";
-        var isValid3 = StringHelper.IsValidIranianNationalCode(nc3);
-
-        Assert.False(isValid3);
-    }
-
-    [Fact]
-    public void PluralizeTest()
-    {
-        Assert.Equal("numbers", StringHelper.Pluralize("number"));
-        Assert.Equal("cases", StringHelper.Pluralize("case"));
-        Assert.Equal("handies", StringHelper.Pluralize("handy"));
-        Assert.Equal("people", StringHelper.Pluralize("person"));
-        Assert.Equal("children", StringHelper.Pluralize("child"));
+        Assert.Equal(pluralized, StringHelper.Pluralize(single));
     }
 
     [Fact]
@@ -167,14 +149,15 @@ public class StringHelperTest
         Assert.Equal(actual, factor);
     }
 
-    [Fact]
-    public void SingularizeTest()
+    [Theory]
+    [InlineData("numbers", "number")]
+    [InlineData("cases", "case")]
+    [InlineData("handies", "handy")]
+    [InlineData("people", "person")]
+    [InlineData("children", "child")]
+    public void _08_SingularizeTest(string pluralized, string single)
     {
-        Assert.Equal("number", StringHelper.Singularize("numbers"));
-        Assert.Equal("case", StringHelper.Singularize("cases"));
-        Assert.Equal("handy", StringHelper.Singularize("handies"));
-        Assert.Equal("person", StringHelper.Singularize("people"));
-        Assert.Equal("child", StringHelper.Singularize("children"));
+        Assert.Equal(single, StringHelper.Singularize(pluralized));
     }
 
     [Fact]
