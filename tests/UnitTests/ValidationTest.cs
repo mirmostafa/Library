@@ -2,6 +2,7 @@
 
 namespace UnitTests;
 
+[Trait("Category", "Validation Tests")]
 public class ValidationTest
 {
     [Fact(Skip = "Use `ValidationResultSet<TValue>` instead.")]

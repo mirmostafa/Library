@@ -8,8 +8,10 @@ namespace UnitTests;
 
 public class WebResultTest
 {
-    private static ApiResult Failed() => ApiResult.BadRequest();
-    private static ApiResult Succeed() => ApiResult.Ok();
+    private static ApiResult Failed() 
+        => ApiResult.BadRequest();
+    private static ApiResult Succeed() 
+        => ApiResult.Ok();
 
     [Fact]
     public void OkTest1()

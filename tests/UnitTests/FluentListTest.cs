@@ -5,7 +5,7 @@ namespace UnitTests;
 
 public class FluentListTest
 {
-    private FluentList<int> _List;
+    private readonly FluentList<int> _List;
     private static readonly Func<int, int> _selfIntFunc = x => x;
     private static readonly Action<int> _emptyIntAction = x => { };
 
@@ -37,23 +37,30 @@ public class FluentListTest
     }
 
     [Fact]
-    public void InsertTest() => this._List.Insert(5, 5);
+    public void InsertTest() 
+        => this._List.Insert(5, 5);
 
     [Fact]
-    public void RemoveTest() => this._List.Remove(5);
+    public void RemoveTest() 
+        => this._List.Remove(5);
 
     [Fact]
-    public void RemoveAtTest() => this._List.RemoveAt(5);
+    public void RemoveAtTest() 
+        => this._List.RemoveAt(5);
 
     [Fact]
-    public void AddTest() => this._List.Add(5);
+    public void AddTest() 
+        => this._List.Add(5);
 
     [Fact]
-    public void ClearTest() => this._List.Clear();
+    public void ClearTest() 
+        => this._List.Clear();
 
     [Fact]
-    public void ContainsTest() => Assert.True(this._List.Contains(4).Result);
+    public void ContainsTest() 
+        => Assert.True(this._List.Contains(4).Result);
 
     [Fact]
-    public void IterationTest() => this._List.ForEach(_emptyIntAction);
+    public void IterationTest() 
+        => this._List.ForEach(_emptyIntAction);
 }

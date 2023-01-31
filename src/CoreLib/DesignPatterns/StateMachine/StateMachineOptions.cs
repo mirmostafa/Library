@@ -1,6 +1,8 @@
-﻿namespace Library.DesignPatterns.StateMachine;
+﻿using Library.Extensions.Options;
 
-public class StateMachineOptions<TState>
+namespace Library.DesignPatterns.StateMachine;
+
+public class StateMachineOptions<TState>:IOptions
 {
     public StateMachineOptions(IAsyncStateMachine<TState> owner)
         => Owner = owner;

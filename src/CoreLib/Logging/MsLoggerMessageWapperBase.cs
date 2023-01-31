@@ -6,10 +6,10 @@ using Microsoft.Extensions.Logging;
 
 namespace Library.Logging;
 
-public class MsLoggerMessageWapperOptions : IOptions { }
+public class MsLoggerMessageWrapperOptions : IOptions { }
 
-public abstract class MsLoggerMessageWapperBase<TMsLoggerMessageWapper> : IConfigurable<TMsLoggerMessageWapper, MsLoggerMessageWapperOptions>
-    where TMsLoggerMessageWapper : MsLoggerMessageWapperBase<TMsLoggerMessageWapper>
+public abstract class MsLoggerMessageWrapperBase<TMsLoggerMessageWapper> : IConfigurable<TMsLoggerMessageWapper, MsLoggerMessageWrapperOptions>
+    where TMsLoggerMessageWapper : MsLoggerMessageWrapperBase<TMsLoggerMessageWapper>
 {
     protected readonly IMsLogger _logger;
 
@@ -18,7 +18,7 @@ public abstract class MsLoggerMessageWapperBase<TMsLoggerMessageWapper> : IConfi
     protected readonly Action<IMsLogger, string, Exception?> _error;
     protected readonly Action<IMsLogger, string, Exception?> _warning;
 
-    protected MsLoggerMessageWapperBase(IMsLogger logger, string name, int eventId)
+    protected MsLoggerMessageWrapperBase(IMsLogger logger, string name, int eventId)
     {
         this._logger = logger;
         this._info = LoggerMessage.Define<string>(MsLogLevel.Information, new EventId(eventId, name), "{Log}");
@@ -27,9 +27,9 @@ public abstract class MsLoggerMessageWapperBase<TMsLoggerMessageWapper> : IConfi
         this._warning = LoggerMessage.Define<string>(MsLogLevel.Warning, new EventId(eventId, name), "{Log}");
     }
 
-    private MsLoggerMessageWapperOptions Options { get; } = new();
+    private MsLoggerMessageWrapperOptions Options { get; } = new();
 
-    public TMsLoggerMessageWapper Configure(Action<MsLoggerMessageWapperOptions> configure)
+    public TMsLoggerMessageWapper Configure(Action<MsLoggerMessageWrapperOptions> configure)
     {
         configure.ArgumentNotNull()(this.Options);
         return this.As<TMsLoggerMessageWapper>()!;

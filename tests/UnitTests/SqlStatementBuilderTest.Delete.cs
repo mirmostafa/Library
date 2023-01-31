@@ -2,16 +2,18 @@
 
 namespace UnitTests;
 
-
 public class DeleteStatementBuilderTest
 {
     [Fact]
-    public void CreateMinimalDeleteTest()
+    public void CreateDeleteFullTest()
     {
         var actual = SqlStatementBuilder
-                        .Delete("Person")
+                        .Delete()
+                        .Where("Id = 5")
+                        .From("Person")
                         .Build();
-        var expected = "DELETE FROM [Person]";
+        var expected = @"DELETE FROM [Person]
+    WHERE Id = 5";
         Assert.Equal(expected, actual);
     }
 
@@ -26,16 +28,14 @@ public class DeleteStatementBuilderTest
     WHERE Id = 5";
         Assert.Equal(expected, actual);
     }
+
     [Fact]
-    public void CreateDeleteFullTest()
+    public void CreateMinimalDeleteTest()
     {
         var actual = SqlStatementBuilder
-                        .Delete()
-                        .Where("Id = 5")
-                        .From("Person")
+                        .Delete("Person")
                         .Build();
-        var expected = @"DELETE FROM [Person]
-    WHERE Id = 5";
+        var expected = "DELETE FROM [Person]";
         Assert.Equal(expected, actual);
     }
 }

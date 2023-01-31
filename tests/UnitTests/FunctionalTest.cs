@@ -12,18 +12,17 @@ public class FunctionalTest
     [Fact]
     public void IfConditionTest()
     {
-        var bolleanTest = true;
-        var trueResult = bolleanTest.IfTrue(() => "true");
-        //IfTrue(bolleanTest, Methods.Empty);
+        var booleanTest = true;
+        var trueResult = booleanTest.IfTrue(() => "true");
         Assert.Equal("true", trueResult);
     }
 
     [Fact]
     public void IfConditionTest2()
     {
-        var bolleanTest = false;
-        var falseResult = bolleanTest.IfFalse(() => "false");
-        _ = bolleanTest.IfFalse(Methods.Empty);
+        var booleanTest = false;
+        var falseResult = booleanTest.IfFalse(() => "false");
+        _ = booleanTest.IfFalse(Methods.Empty);
 
         Assert.Equal("false", falseResult);
     }

@@ -4,7 +4,7 @@
 public class ObjectHelperTest
 {
     [Fact]
-    public void ExtrapropertyTest()
+    public void ExtraPropertyTest()
     {
         var testString = "Ali";
         testString.props().IsReadOnly = true;

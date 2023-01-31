@@ -5,31 +5,30 @@ namespace UnitTests;
 
 public class PersianDateTimeTest
 {
-    [Fact]
-    public void DateTimeToPersianTest1()
+    [Theory]
+    [InlineData(2021, 9, 3, "1400/06/12")]
+    [InlineData(1977, 9, 3, "1356/06/12")]
+    [InlineData(2020, 1, 31, "1398/11/11")]
+    public void DateTimeToPersianDate(int year, int month, int day, string expected)
     {
-        var date = new DateTime(2021, 9, 3);
-        var pers = PersianDateTime.ParseDateTime(date).ToDateString();
-        Assert.Equal("1400/06/12", pers);
+        var date = new DateTime(year, month, day);
+        var actual = PersianDateTime.ParseDateTime(date).ToDateString();
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(1356, 06, 12, 01, 00, 00, "1356/06/12 01:00:00 AM")]
+    [InlineData(1357, 07, 13, 10, 00, 00, "1357/07/13 10:00:00 AM")]
+    [InlineData(1358, 09, 14, 13, 00, 00, "1358/09/14 01:00:00 PM")]
+    public void DateTimeToPersianDateTime(int year, int month, int day, int hour, int min, int sec, string expected)
+    {
+        var actual = new PersianDateTime(year, month, day, hour, min, sec, 0);
+        Assert.Equal(expected, actual.ToString());
     }
 
     [Fact]
-    public void DateTimeToPersianTest2()
-    {
-        var date = new DateTime(1977, 9, 3);
-        var pers = PersianDateTime.ParseDateTime(date).ToDateString();
-        Assert.Equal("1356/06/12", pers);
-    }
-
-    [Fact]
-    public void Ctor1Test()
-    {
-        var pers = new PersianDateTime(1356, 06, 12, 13, 0, 0, 0);
-        Assert.Equal("1356/06/12 01:00:00 PM", pers.ToString());
-    }
-
-    [Fact]
-    public void LocalizationTest() => Assert.Equal("Doshanbeh", PersianDateTime.DaysOfWeek.ElementAt(1));
+    public void LocalizationTest()
+        => Assert.Equal("Doshanbeh", PersianDateTime.DaysOfWeek.ElementAt(1));
 
     [Fact]
     public void NowTest()

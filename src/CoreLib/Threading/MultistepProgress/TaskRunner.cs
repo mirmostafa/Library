@@ -1,7 +1,5 @@
-﻿using Library;
-using Library.Logging;
+﻿using Library.Logging;
 using Library.Results;
-using Library.Threading.MultistepProgress;
 using Library.Validations;
 
 namespace Library.Threading.MultistepProgress;
@@ -21,7 +19,7 @@ public sealed class TaskRunner<TArg> : ILoggerContainer
     private Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)>? _onStepping;
     private Func<Task<TArg?>> _startWith = null!;
 
-    public TaskRunner(ILogger? logger = null, string name = null, CancellationToken? cancellationToken = default)
+    public TaskRunner(ILogger? logger = null, string? name = null, CancellationToken? cancellationToken = default)
     {
         this._taskList = new();
         this._cancellationToken = cancellationToken;
@@ -31,7 +29,7 @@ public sealed class TaskRunner<TArg> : ILoggerContainer
 
     public ILogger Logger { get; }
 
-    public static TaskRunner<TArg> New(ILogger? logger = null, string name = null, CancellationToken? cancellationToken = default)
+    public static TaskRunner<TArg> New(ILogger? logger = null, string? name = null, CancellationToken? cancellationToken = default)
         => new(logger, name, cancellationToken);
 
     public TaskRunner<TArg?> ContinueOnException(bool continueOnException = true)
@@ -138,6 +136,9 @@ public sealed class TaskRunner<TArg> : ILoggerContainer
     public TaskRunner<TArg?> StartWith(TArg? arg)
         => this.StartWith(() => Task.FromResult(arg));
 
+    public TaskRunner<TArg?> StartWith(Func<TArg?> action)
+        => this.StartWith(action.ToAsync());
+
     public TaskRunner<TArg?> StartWith(Func<Task<TArg?>> getArg)
     {
         _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
@@ -151,6 +152,9 @@ public sealed class TaskRunner<TArg> : ILoggerContainer
         return this;
     }
 
-    public override string ToString()
-        => _name.IsNullOrEmpty() ? base.ToString() : _name;
+    public TaskRunner<TArg?> Then(Func<TArg?, TArg?> action)
+        => this.Then(action.ToAsync());
+
+    public override string? ToString()
+        => this._name.IsNullOrEmpty() ? base.ToString() : this._name;
 }

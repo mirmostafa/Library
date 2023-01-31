@@ -3,18 +3,13 @@
 
 public class RangeHelperTest
 {
-    [Fact]
-    public void BasicTest()
+    [Theory]
+    [InlineData(0, 10)]
+    [InlineData(10, 0)]
+    public void BasicTest(int min, int max)
     {
-        try
+        foreach (var item in min..max)
         {
-            foreach (var item in 0..10)
-            {
-            }
-        }
-        catch (Exception ex)
-        {
-            Assert.Fail(ex.GetBaseException().Message);
         }
     }
 }

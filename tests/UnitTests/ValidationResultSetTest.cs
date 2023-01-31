@@ -12,7 +12,7 @@ public class ValidationResultSetTest
     {
         var arg = new Person("", 0);
         var check = arg.Check().RuleFor(x => !x.Name.IsNullOrEmpty(), () => new NullReferenceException());
-        _ = Assert.Throws<System.NullReferenceException>(check.ThrowOnFail);
+        _ = Assert.Throws<NullReferenceException>(check.ThrowOnFail);
     }
 
     [Fact]
@@ -36,7 +36,7 @@ public class ValidationResultSetTest
     {
         PersonClass? arg = null;
         var check = arg.Check().ArgumentNotNull();
-        _ = Assert.Throws<System.ArgumentNullException>(check.ThrowOnFail);
+        _ = Assert.Throws<ArgumentNullException>(check.ThrowOnFail);
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class ValidationResultSetTest
                                 .ArgumentNotNull()
                                 .NotNullOrEmpty(x => x!.Name)
                                 .NotBiggerThan(x => x!.Age, 10);
-        _ = Assert.Throws<System.ArgumentNullException>(check.ThrowOnFail);
+        _ = Assert.Throws<ArgumentNullException>(check.ThrowOnFail);
     }
 
     [Fact]
@@ -122,7 +122,7 @@ public class ValidationResultSetTest
     {
         PersonClass? arg = null;
         var check = arg.Check(true);
-        _ = Assert.Throws<System.ArgumentNullException>(() => check.ArgumentNotNull());
+        _ = Assert.Throws<ArgumentNullException>(() => check.ArgumentNotNull());
     }
 }
 

@@ -4,7 +4,7 @@ using Library.Results;
 namespace UnitTests;
 
 
-[Trait("Category","Validation Tests")]
+[Trait("Category", "Validation Tests")]
 public class ValidationHelperTest
 {
     [Fact]

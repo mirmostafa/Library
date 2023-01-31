@@ -25,7 +25,7 @@ public class SelectStatementBuilderTest
     }
 
     [Fact]
-    public void _02_BuildMinimialFromSelectTest()
+    public void _02_BuildMinimalFromSelectTest()
     {
         var specQueryActual = SqlStatementBuilder
                         .Select("Person")

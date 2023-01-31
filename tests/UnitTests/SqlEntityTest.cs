@@ -45,7 +45,7 @@ public class SqlEntityTest
 }
 
 [Table("Person", Schema = "dbo")]
-internal class Person
+file class Person
 {
     [ForeignKey(nameof(AddressId))]
     public Address? Address { get; set; }
@@ -68,6 +68,6 @@ internal class Person
 }
 
 [Table("Address", Schema = "dbo")]
-internal class Address
+file class Address
 {
 }
