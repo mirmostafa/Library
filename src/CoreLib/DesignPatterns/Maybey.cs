@@ -1,6 +1,4 @@
-﻿#nullable disable
-
-namespace ConAppTest;
+﻿namespace Library.DesignPatterns;
 
 public sealed class Just<T> : Maybe<T>
 {
@@ -20,14 +18,14 @@ public abstract class Maybe<T>
 
 public sealed class Nothing<T> : Maybe<T>
 {
-    public override T Value => default;
+    public override T Value => default!;
 }
 
 public static class Extensions
 {
-    public static Maybe<TToType> Do<TFromType, TToType>(this Maybe<TFromType> selft, Func<TFromType, TToType> bind)
+    public static Maybe<TToType> Do<TFromType, TToType>(this Maybe<TFromType> self, Func<TFromType, TToType> bind)
     {
-        switch (selft)
+        switch (self)
         {
             case Just<TFromType> st when !EqualityComparer<TFromType>.Default.Equals(st.Value, default):
                 try

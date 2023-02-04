@@ -7,6 +7,22 @@ public class StringHelperTest
     private const string SSHORT_TEXT = "There 'a text', inside 'another text'.";
     private const string VERY_SHORT_TEXT = "text";
 
+    [Theory]
+    [InlineData("numbers", "number")]
+    [InlineData("cases", "case")]
+    [InlineData("handies", "handy")]
+    [InlineData("people", "person")]
+    [InlineData("children", "child")]
+    public void _08_PluralizeTest(string pluralized, string single) => Assert.Equal(pluralized, StringHelper.Pluralize(single));
+
+    [Theory]
+    [InlineData("numbers", "number")]
+    [InlineData("cases", "case")]
+    [InlineData("handies", "handy")]
+    [InlineData("people", "person")]
+    [InlineData("children", "child")]
+    public void _08_SingularizeTest(string pluralized, string single) => Assert.Equal(single, StringHelper.Singularize(pluralized));
+
     [Fact]
     public void AddStartEndTest()
     {
@@ -49,6 +65,21 @@ public class StringHelperTest
         Assert.Equal(expected, actual);
     }
 
+    [Trait("Category", "Optimizations")]
+    [Theory]
+    [InlineData(@"https://my.parsvds.com", "://", "/", "my.parsvds.com")]
+    [InlineData(@"https://my.parsvds.com/", "://", "/", "my.parsvds.com")]
+    [InlineData(@"https://my.parsvds.com/clientarea.php", "://", "/", "my.parsvds.com")]
+    [InlineData(@"https://my.parsvds.com/clientarea.php?id={50E204C7-C1BC-4139-A339-100090D3E493}", "://", "/", "my.parsvds.com")]
+    [InlineData(@"This is mohammad", "mohammad", "hello", "")]
+    [InlineData(@"This is mohammad", "", "hello", "This is mohammad")]
+    [InlineData(@"This is mohammad", "", "", "")]
+    public void GetPhrase_StringOptimization(string text, string start, string end, string expected)
+    {
+        var actual = StringHelper.GetPhrase(text, start, end);
+        Assert.Equal(expected, actual);
+    }
+
     [Fact]
     public void GetPhraseTest()
     {
@@ -71,6 +102,7 @@ public class StringHelperTest
         var result4 = StringHelper.GetPhrase(null, 0, '\'', '\"');
         Assert.Null(result4);
     }
+
     [Fact]
     public void GetPhraseTest3()
     {
@@ -90,17 +122,21 @@ public class StringHelperTest
         Assert.True(hasNot);
     }
 
-    [Fact]
-    public void IsNullOrEmptyTest()
+    public static IEnumerable<object[]> IsNullOrEmptyData => new[]
     {
-        var emptyStr = string.Empty;
-        var sampleStr = "Sample String";
+        new object[] { null!, true },
+        new object[] { "", true },
+        new object[] { string.Empty, true },
+        new object[] { "Hello. My name is Mohammad", false },
 
-        var emptyStrIsEmpty = emptyStr.IsNullOrEmpty();
-        var sampleStrIsEmpty = sampleStr.IsNullOrEmpty();
+    };
 
-        Assert.True(emptyStrIsEmpty, "Hey, Why did you change it?😡 I was working like a charm!");
-        Assert.False(sampleStrIsEmpty);
+    [Theory]
+    [MemberData(nameof(IsNullOrEmptyData))]
+    public void IsNullOrEmptyTrue(string? text, bool expected)
+    {
+        var actual = text.IsNullOrEmpty();
+        Assert.Equal(actual, expected);
     }
 
     [Theory]
@@ -118,7 +154,6 @@ public class StringHelperTest
         Assert.Equal(expected, actual);
     }
 
-
     [Theory]
     [InlineData("0062614614", true)]
     [InlineData("0062614615", false)]
@@ -129,17 +164,6 @@ public class StringHelperTest
         Assert.Equal(expected, actual);
     }
 
-    [Theory]
-    [InlineData("numbers", "number")]
-    [InlineData("cases", "case")]
-    [InlineData("handies", "handy")]
-    [InlineData("people", "person")]
-    [InlineData("children", "child")]
-    public void _08_PluralizeTest(string pluralized, string single)
-    {
-        Assert.Equal(pluralized, StringHelper.Pluralize(single));
-    }
-
     [Fact]
     public void SeparateCamelCaseTest()
     {
@@ -147,17 +171,6 @@ public class StringHelperTest
         var merged = factor.Remove(" ");
         var actual = merged.SeparateCamelCase();
         Assert.Equal(actual, factor);
-    }
-
-    [Theory]
-    [InlineData("numbers", "number")]
-    [InlineData("cases", "case")]
-    [InlineData("handies", "handy")]
-    [InlineData("people", "person")]
-    [InlineData("children", "child")]
-    public void _08_SingularizeTest(string pluralized, string single)
-    {
-        Assert.Equal(single, StringHelper.Singularize(pluralized));
     }
 
     [Fact]
@@ -180,22 +193,21 @@ public class StringHelperTest
     public void SpaceTest()
         => Assert.Equal("     ", StringHelper.Space(5));
 
-    [Fact]
-    public void SplitMergeTest()
+    [Theory]
+    [InlineData("Hello, my name is Mohammad. How are you? Just fine. @mohammad.", new[] { "Hello, my name is ", "Mohammad. ", "How are you? ", "Just fine. @mohammad." })]
+    public void SplitMergeTest(string text, string[] expected)
     {
-        var test = "Hello, my name is Mohammad. How are you? Just fine. @mohammad.";
-        var actual = test.SplitCamelCase();
-        var expected = new[] { "Hello, my name is ", "Mohammad. ", "How are you? ", "Just fine. @mohammad." };
+        var actual = text.SplitCamelCase();
         Assert.Equal(expected, actual);
     }
 
-    [Fact]
-    public void SplitPairTest()
+    [Theory]
+    [InlineData(@"Server=myServerAddress;Database=myDatabase;Trusted_Connection=True;", "Database", "MyDatabase")]
+    public void SplitPairTest(string text, string slice, string expected)
     {
-        var cs = @"Server=myServerAddress;Database=myDatabase;Trusted_Connection=True;";
-        var pairs = StringHelper.SplitPair(cs);
-        (_, var value) = pairs.Where(kv => kv.Key == "Database").Single();
-        Assert.Equal("myDatabase", value);
+        var pairs = StringHelper.SplitPair(text);
+        (_, var result) = pairs.Where(kv => kv.Key == slice).Single();
+        Assert.Equal(expected, result);
     }
 
     [Fact]

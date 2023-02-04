@@ -25,7 +25,6 @@ public class ArgsTest
         Assert.Equal(expected, actual);
     }
 
-    //public static IEnumerable<object[]> Data => new[] { new object[] { 5, 6, 11 }, new object[] { -1, 10, 9 }, new object[] { 0, 0, 0 } };
     public static IEnumerable<object[]> Data => new[] {
         new object[] { new Args<int>(1), 1 },
         new object[] { new Args<int>(1, 2), 3 },

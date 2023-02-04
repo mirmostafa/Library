@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 using Library.Globalization;
@@ -194,6 +195,16 @@ public static class StringHelper
         }
     }
 
+    public static string GetPhrase(in string text, in string start, in string end)
+    {
+        var prefixOffset = text.AsSpan().IndexOf(start);
+        var startIndex = prefixOffset == -1 ? 0 : (prefixOffset + start.Length);
+        var endIndex = text.AsSpan(startIndex).IndexOf(end);
+        var buffer = endIndex == -1 ? text.AsSpan(startIndex) : text.AsSpan(startIndex, endIndex);
+        var result = buffer.ToString();
+        return result;
+    }
+
     public static IEnumerable<string?> GetPhrases(this string str, char start, char end = default)
     {
         var index = 0;
@@ -350,10 +361,11 @@ public static class StringHelper
 
     [Pure]
     [DebuggerStepThrough]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
         => str == null || str.Length == 0;
 
-    public static bool IsNumber(in string text) 
+    public static bool IsNumber(in string text)
         => float.TryParse(text, out _);
 
     public static bool IsPersian(char c)
@@ -368,7 +380,7 @@ public static class StringHelper
     public static bool IsPersianOrNumber(in string text, bool canAcceptMinusKey)
         => CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || IsPersian(c));
 
-    public static bool IsUnicode(this string str) 
+    public static bool IsUnicode(this string str)
         => str.Any(c => c > 255);
 
     public static bool IsValidIranianNationalCode(string input)

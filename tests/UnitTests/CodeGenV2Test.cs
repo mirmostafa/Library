@@ -6,7 +6,7 @@ namespace UnitTests;
 public class CodeGenV2Test
 {
     [Fact]
-    public void Test1()
+    public void CodeGenV2Basic()
     {
         var datamodels = INamespace
             .New("Data.Models")

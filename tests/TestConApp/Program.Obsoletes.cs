@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Library.CodeGeneration.v2.Front;
 using Library.CodeGeneration.v2.Front.HtmlGeneration;
+using Library.DesignPatterns;
 using Library.DesignPatterns.StateMachine;
 using Library.Helpers;
 using Library.IO;
@@ -93,16 +94,6 @@ internal partial class Program
             WriteLine("==================");
             return Task.CompletedTask;
         }
-    }
-
-    private static void UseMayBe()
-    {
-        //var name = "Moha";
-        string? name = null;
-        var game = name.Maybe()
-            .Do(x => string.Concat(x, "mm"))
-            .Do(x => string.Concat(x, "ad"));
-        WriteLine(game);
     }
 
     private static void WatchHardDisk()
