@@ -1,6 +1,5 @@
 ﻿namespace UnitTests;
 
-
 [Trait("Category", "Helpers")]
 public class ObjectHelperTest
 {
@@ -11,5 +10,12 @@ public class ObjectHelperTest
         testString.props().IsReadOnly = true;
         var actual = testString.props().IsReadOnly;
         Assert.True(actual);
+    }
+
+    [Fact]
+    public void MapTest()
+    {
+        var a = "5".Map(Convert.ToInt32);
+        var b = 5.Map(Convert.ToString);
     }
 }

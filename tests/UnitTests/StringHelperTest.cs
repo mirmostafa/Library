@@ -7,6 +7,14 @@ public class StringHelperTest
     private const string SSHORT_TEXT = "There 'a text', inside 'another text'.";
     private const string VERY_SHORT_TEXT = "text";
 
+    public static IEnumerable<object[]> IsNullOrEmptyData => new[]
+    {
+        new object[] { null!, true },
+        new object[] { "", true },
+        new object[] { string.Empty, true },
+        new object[] { "Hello. My name is Mohammad", false },
+    };
+
     [Theory]
     [InlineData("numbers", "number")]
     [InlineData("cases", "case")]
@@ -24,21 +32,7 @@ public class StringHelperTest
     public void _08_SingularizeTest(string pluralized, string single) => Assert.Equal(single, StringHelper.Singularize(pluralized));
 
     [Fact]
-    public void AddStartEndTest()
-    {
-        const string MOHAMMAD = "Mohammad ";
-        const string REZA = "reza";
-        const string EXPECTED = "Mohammad reza";
-
-        var actual1 = REZA.AddStart(MOHAMMAD);
-        Assert.Equal(EXPECTED, actual1);
-
-        var actual2 = MOHAMMAD.AddEnd(REZA);
-        Assert.Equal(EXPECTED, actual2);
-    }
-
-    [Fact]
-    public void AddTest()
+    public void Add()
     {
         var addAfter = VERY_SHORT_TEXT.Add(2);
         Assert.Equal(VERY_SHORT_TEXT + "  ", addAfter);
@@ -47,8 +41,24 @@ public class StringHelperTest
         Assert.Equal("  " + VERY_SHORT_TEXT, addBefore);
     }
 
+    [Theory]
+    [InlineData("Start", "End", "StartEnd")]
+    public void AddEnd(string text, string prefix, string expected)
+    {
+        var actual = text.AddEnd(prefix);
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("End", "Start", "StartEnd")]
+    public void AddStart(string text, string suffix, string expected)
+    {
+        var actual = text.AddStart(suffix);
+        Assert.Equal(expected, actual);
+    }
+
     [Fact]
-    public void AllIndexesOfTest()
+    public void AllIndexesOf()
     {
         var test = "Mohammad";
         var indexes = test.AllIndexesOf("m");
@@ -57,7 +67,7 @@ public class StringHelperTest
     }
 
     [Fact]
-    public void CompactTest()
+    public void Compact()
     {
         var arr = new[] { "Hello", "", "I ", "am", "", "Mohammad", ".", "", "I'm", "", "a ", "", "C# ", "", "Developer." };
         var actual = arr.Compact().ToArray();
@@ -65,8 +75,20 @@ public class StringHelperTest
         Assert.Equal(expected, actual);
     }
 
-    [Trait("Category", "Optimizations")]
+    [Trait("Last test", "this")]
     [Theory]
+    [InlineData(LONG_TEXT,0, '\'', '\'', "a text")]
+    [InlineData(LONG_TEXT, 0, '\'', default, "a text")]
+    [InlineData(LONG_TEXT, 1, '\'', '\'', "another text")]
+    [InlineData(LONG_TEXT, 1, 'q', default, null)]
+    public void GetPhrase(string? str, int index, char start, char end, string expected)
+    {
+        var actual = str.GetPhrase(index, start, end);
+        Assert.Equal(expected, actual);
+    }
+
+    [Trait("Category", "Optimizations")]
+    [Theory(DisplayName = $"{nameof(GetPhrase_StringOptimization)} : memory allocation.")]
     [InlineData(@"https://my.parsvds.com", "://", "/", "my.parsvds.com")]
     [InlineData(@"https://my.parsvds.com/", "://", "/", "my.parsvds.com")]
     [InlineData(@"https://my.parsvds.com/clientarea.php", "://", "/", "my.parsvds.com")]
@@ -78,22 +100,6 @@ public class StringHelperTest
     {
         var actual = StringHelper.GetPhrase(text, start, end);
         Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void GetPhraseTest()
-    {
-        var result1 = LONG_TEXT.GetPhrase(0, '\'', '\'');
-        Assert.Equal("a text", result1);
-
-        result1 = LONG_TEXT.GetPhrase(0, '\'');
-        Assert.Equal("a text", result1);
-
-        var result2 = LONG_TEXT.GetPhrase(1, '\'', '\'');
-        Assert.Equal("another text", result2);
-
-        var result3 = LONG_TEXT.GetPhrase(1, 'q');
-        Assert.Null(result3);
     }
 
     [Fact]
@@ -111,7 +117,7 @@ public class StringHelperTest
     }
 
     [Fact]
-    public void HasPersianTest()
+    public void HasPersian()
     {
         var hasPersian = "Hello. My اسم is Mohammad.";
         var has = StringHelper.HasPersian(hasPersian);
@@ -121,15 +127,6 @@ public class StringHelperTest
         var hasNot = StringHelper.HasPersian(hasNotPersian);
         Assert.True(hasNot);
     }
-
-    public static IEnumerable<object[]> IsNullOrEmptyData => new[]
-    {
-        new object[] { null!, true },
-        new object[] { "", true },
-        new object[] { string.Empty, true },
-        new object[] { "Hello. My name is Mohammad", false },
-
-    };
 
     [Theory]
     [MemberData(nameof(IsNullOrEmptyData))]
@@ -165,7 +162,7 @@ public class StringHelperTest
     }
 
     [Fact]
-    public void SeparateCamelCaseTest()
+    public void SeparateCamelCase()
     {
         var factor = "Hello, My Name Is Mohammad. How Are You? Just Fine.";
         var merged = factor.Remove(" ");
@@ -174,7 +171,7 @@ public class StringHelperTest
     }
 
     [Fact]
-    public void SliceTest()
+    public void Slice()
     {
         var sliceStr = "Mohammad Mirmostafa is a C# Developer.";
 
@@ -186,12 +183,12 @@ public class StringHelperTest
     }
 
     [Fact]
-    public void SpaceExceptionTest()
-        => Assert.Throws<ArgumentOutOfRangeException>(() => Assert.Equal("     ", StringHelper.Space(-5)));
+    public void Space()
+        => Assert.Equal("     ", StringHelper.Space(5));
 
     [Fact]
-    public void SpaceTest()
-        => Assert.Equal("     ", StringHelper.Space(5));
+    public void SpaceException()
+        => Assert.Throws<ArgumentOutOfRangeException>(() => Assert.Equal("     ", StringHelper.Space(-5)));
 
     [Theory]
     [InlineData("Hello, my name is Mohammad. How are you? Just fine. @mohammad.", new[] { "Hello, my name is ", "Mohammad. ", "How are you? ", "Just fine. @mohammad." })]
@@ -202,7 +199,7 @@ public class StringHelperTest
     }
 
     [Theory]
-    [InlineData(@"Server=myServerAddress;Database=myDatabase;Trusted_Connection=True;", "Database", "MyDatabase")]
+    [InlineData(@"Server=myServerAddress;Database=MyDatabase;Trusted_Connection=True;", "Database", "MyDatabase")]
     public void SplitPairTest(string text, string slice, string expected)
     {
         var pairs = StringHelper.SplitPair(text);
@@ -211,7 +208,7 @@ public class StringHelperTest
     }
 
     [Fact]
-    public void TruncateTest()
+    public void Truncate()
     {
         var result = LONG_TEXT.Truncate(LONG_TEXT.Length - 5);
         Assert.Equal("There", result);

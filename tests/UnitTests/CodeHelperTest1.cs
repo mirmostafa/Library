@@ -20,22 +20,22 @@ public class CodeHelperTest
     }
 
     [Fact]
-    public void LibStopwatchTest1()
+    public async void LibStopwatchTest1()
     {
         var stopwatch = new LibStopwatch();
         using (stopwatch.Start())
         {
-            Task.Delay(1000).Wait();
+            await Task.Delay(1000);
         }
         var elapsed = stopwatch.Elapsed;
         Assert.True(elapsed.Ticks > 0);
     }
 
     [Fact]
-    public void LibStopwatchTest2()
+    public async Task LibStopwatchTest2Async()
     {
         var stopwatch = LibStopwatch.StartNew();
-        Task.Delay(1000).Wait();
+        await Task.Delay(1000);
         _ = stopwatch.Stop();
         var elapsed = stopwatch.Elapsed;
         Assert.True(elapsed.Ticks > 0);

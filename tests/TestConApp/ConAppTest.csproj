@@ -9,7 +9,7 @@
 		<LangVersion>preview</LangVersion>
 		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 		<GenerateRequiresPreviewFeaturesAttribute>true</GenerateRequiresPreviewFeaturesAttribute>
-		<StartupObject>ConAppTest.Program</StartupObject>
+		<StartupObject></StartupObject>
 		<Title>Mohammad Library Tester</Title>
 		<Company>Mirmostafa</Company>
 		<Product>Library</Product>
@@ -31,6 +31,13 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\CoreLib\CoreLib.csproj" />
 	  <ProjectReference Include="..\..\src\WebLib\WebLib.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Using Include="Library.Helpers" />
+	  <Using Include="System.Console">
+	    <Static>True</Static>
+	  </Using>
 	</ItemGroup>
 
 </Project>

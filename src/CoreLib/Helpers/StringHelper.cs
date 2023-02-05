@@ -197,6 +197,11 @@ public static class StringHelper
 
     public static string GetPhrase(in string text, in string start, in string end)
     {
+        if (start.IsNullOrEmpty() && end.IsNullOrEmpty())
+        {
+            return string.Empty;
+        }
+
         var prefixOffset = text.AsSpan().IndexOf(start);
         var startIndex = prefixOffset == -1 ? 0 : (prefixOffset + start.Length);
         var endIndex = text.AsSpan(startIndex).IndexOf(end);
@@ -361,6 +366,7 @@ public static class StringHelper
 
     [Pure]
     [DebuggerStepThrough]
+    [StackTraceHidden]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
         => str == null || str.Length == 0;

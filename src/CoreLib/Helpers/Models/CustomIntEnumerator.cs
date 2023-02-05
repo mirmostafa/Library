@@ -30,7 +30,7 @@ public class CustomIntEnumerator : IEnumerator<int>
                     ? ((CustomIntEnumerator me) =>
                                 {
                                     me.Current--;
-                                    return me.Current <= me._start;
+                                    return me.Current >= me._start;
                                 })
                     : ((CustomIntEnumerator me) =>
                                 {

@@ -274,7 +274,8 @@ public static class EnumerableHelper
     }
 
     [return: NotNull]
-    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items) => items is null ? Enumerable.Empty<T>() : items;
+    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items) 
+        => items is null ? Enumerable.Empty<T>() : items;
 
     /// <summary>
     /// Creates an empty array.

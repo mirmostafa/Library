@@ -8,9 +8,11 @@ using Library.DesignPatterns.StateMachine;
 using Library.Helpers;
 using Library.IO;
 
+using Microsoft.Extensions.Logging;
+
 namespace ConAppTest;
 
-internal partial class Program
+internal partial class Obsoletes
 {
     private static void HtmlCodeGenerationTest()
     {
@@ -107,10 +109,12 @@ internal partial class Program
 
         static Library.IO.FileSystemWatcher getWatcher(Drive drive)
             => Library.IO.FileSystemWatcher.Start(drive, includeSubdirectories: true,
-                onChanged: e => Logger.Log($"{e.Item.FullName} changed."),
-                onCreated: e => Logger.Log($"{e.Item.FullName} created."),
-                onDeleted: e => Logger.Log($"{e.Item.FullName} deleted."),
-                onRenamed: e => Logger.Log($"in {e.Item.FullPath} : {e.Item.OldName} renamed to {e.Item.NewName}."));
+                onChanged: e => _logger.Log($"{e.Item.FullName} changed."),
+                onCreated: e => _logger.Log($"{e.Item.FullName} created."),
+                onDeleted: e => _logger.Log($"{e.Item.FullName} deleted."),
+                onRenamed: e => _logger.Log($"in {e.Item.FullPath} : {e.Item.OldName} renamed to {e.Item.NewName}."));
     }
+
+    private static readonly Library.Logging.ILogger _logger = ConsoleServices.Logger;
 }
 #pragma warning restore IDE0051 // Remove unused private members

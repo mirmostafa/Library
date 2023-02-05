@@ -1,7 +1,8 @@
-﻿using Library.Results;
+﻿using System.Runtime.CompilerServices;
+
+using Library.Results;
 
 namespace UnitTests;
-
 
 public class ResultTest
 {
@@ -24,13 +25,11 @@ public class ResultTest
     [Fact]
     public void SimpleTest()
     {
-        var five = Add(2, 3);
+        var five = Result<int>.CreateSuccess(5, 60);
         Assert.Equal(5, five);
     }
 
-    private static Result<int> Add(int a, int b)
-        => Result<int>.CreateSuccess(a + b);
-
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Result<int> AddThreeResults()
     {
         var one = Result<int>.CreateFail(1, 401, "One", error: (1, "Error One"));
