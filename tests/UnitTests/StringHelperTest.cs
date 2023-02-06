@@ -1,4 +1,4 @@
-﻿namespace UnitTests;
+namespace UnitTests;
 
 [Trait("Category", "Helpers")]
 public class StringHelperTest
@@ -142,6 +142,28 @@ public class StringHelperTest
     }
 
     [Theory]
+    [InlineData("hello", "hello", true, true)]
+    [InlineData("hello", "hello", false, true)]
+    [InlineData("hello", "heLLo", true, true)]
+    [InlineData("hello", "heLLo", false, false)]
+    public void CompareTo(string str1, string str2, bool ignoreCase, bool expected)
+    {
+        var actual = StringHelper.CompareTo(str1, str2, ignoreCase) == 0;
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("hello", "hello", true, true)]
+    [InlineData("hello", "hello", false, true)]
+    [InlineData("hello", "heLLo", true, true)]
+    [InlineData("hello", "heLLo", false, false)]
+    public void EqualsTo(string str1, string str2, bool ignoreCase, bool expected)
+    {
+        var actual = StringHelper.EqualsTo(str1, str2, ignoreCase);
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
     [InlineData(LONG_TEXT, 0, '\'', '\'', "a text")]
     [InlineData(LONG_TEXT, 0, '\'', NULL_CHAR, "a text")]
     [InlineData(LONG_TEXT, 1, '\'', '\'', "another text")]
@@ -278,27 +300,5 @@ public class StringHelperTest
     {
         var result = LONG_TEXT.Truncate(LONG_TEXT.Length - 5);
         Assert.Equal("There", result);
-    }
-
-    [Theory]
-    [InlineData("hello", "hello", true, true)]
-    [InlineData("hello", "hello", false, true)]
-    [InlineData("hello", "heLLo", true, true)]
-    [InlineData("hello", "heLLo", false, false)]
-    public void CompareTo(string str1, string str2, bool ignoreCase, bool expected)
-    {
-        var actual = StringHelper.CompareTo(str1, str2, ignoreCase) == 0;
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("hello", "hello", true, true)]
-    [InlineData("hello", "hello", false, true)]
-    [InlineData("hello", "heLLo", true, true)]
-    [InlineData("hello", "heLLo", false, false)]
-    public void EqualsTo(string str1, string str2, bool ignoreCase, bool expected)
-    {
-        var actual = StringHelper.EqualsTo(str1, str2, ignoreCase);
-        Assert.Equal(expected, actual);
     }
 }
