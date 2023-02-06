@@ -281,13 +281,24 @@ public class StringHelperTest
     }
 
     [Theory]
-    [InlineData("hello", "hello", true, 0)]
-    [InlineData("hello", "hello", false, 0)]
-    [InlineData("hello", "heLLo", true, 0)]
-    [InlineData("hello", "heLLo", false, 1)]
-    public void Compare(string str1, string str2, bool ignoreCase, int expected)
+    [InlineData("hello", "hello", true, true)]
+    [InlineData("hello", "hello", false, true)]
+    [InlineData("hello", "heLLo", true, true)]
+    [InlineData("hello", "heLLo", false, false)]
+    public void CompareTo(string str1, string str2, bool ignoreCase, bool expected)
     {
-        var actual = StringHelper.CompareTo(str1, str2, ignoreCase);
+        var actual = StringHelper.CompareTo(str1, str2, ignoreCase) == 0;
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("hello", "hello", true, true)]
+    [InlineData("hello", "hello", false, true)]
+    [InlineData("hello", "heLLo", true, true)]
+    [InlineData("hello", "heLLo", false, false)]
+    public void EqualsTo(string str1, string str2, bool ignoreCase, bool expected)
+    {
+        var actual = StringHelper.EqualsTo(str1, str2, ignoreCase);
         Assert.Equal(expected, actual);
     }
 }

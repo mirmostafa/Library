@@ -78,8 +78,8 @@ public static class StringHelper
         => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     [Pure]
-    public static int CompareTo(this string str1, in string str, bool ignoreCase = false) =>
-        string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+    public static int CompareTo(this string str1, in string str, bool ignoreCase = false) 
+        => string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
     public static string ConcatAll(IEnumerable<string> strings, string sep)
         => (sep?.Length ?? 0) switch
