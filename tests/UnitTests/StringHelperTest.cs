@@ -4,14 +4,25 @@
 public class StringHelperTest
 {
     private const string LONG_TEXT = "There 'a text', inside 'another text'. I want 'to find\" it.";
+    private const char NULL_CHAR = default!;
     private const string SSHORT_TEXT = "There 'a text', inside 'another text'.";
     private const string VERY_SHORT_TEXT = "text";
+
+    public static IEnumerable<object[]> CompactData => new[]
+    {
+        new object[]
+        {
+            new[] { "Hello", "", "I ", "am", "", "Mohammad", ".", "", "I'm", "", "a ", "", "C# ", "", "Developer." },
+            new[] { "Hello", "I ", "am", "Mohammad", ".", "I'm", "a ", "C# ", "Developer." }
+        }
+    };
 
     public static IEnumerable<object[]> IsNullOrEmptyData => new[]
     {
         new object[] { null!, true },
-        new object[] { "", true },
         new object[] { string.Empty, true },
+        new object[] { "", true },
+        new object[] { " ", false },
         new object[] { "Hello. My name is Mohammad", false },
     };
 
@@ -66,21 +77,75 @@ public class StringHelperTest
         Assert.Equal(5, indexes.ElementAt(1));
     }
 
-    [Fact]
-    public void Compact()
+    [Theory]
+    [InlineData("Mohammad", "mhM", true)]
+    [InlineData(null, "mhM", false)]
+    [InlineData(null, null, false)]
+    public void AnyCharInString(string str, string range, bool expected)
     {
-        var arr = new[] { "Hello", "", "I ", "am", "", "Mohammad", ".", "", "I'm", "", "a ", "", "C# ", "", "Developer." };
-        var actual = arr.Compact().ToArray();
-        var expected = new[] { "Hello", "I ", "am", "Mohammad", ".", "I'm", "a ", "C# ", "Developer." };
+        var actual = str.AnyCharInString(range);
         Assert.Equal(expected, actual);
     }
 
-    [Trait("Last test", "this")]
+    [Fact]
+    public void AnyCharInString_Exception()
+    {
+        var text = "Mohammad";
+        string? range = null;
+        _ = Assert.Throws<ArgumentNullException>(() => text.AnyCharInString(range));
+    }
+
     [Theory]
-    [InlineData(LONG_TEXT,0, '\'', '\'', "a text")]
-    [InlineData(LONG_TEXT, 0, '\'', default, "a text")]
+    [InlineData("سلامﮎ", "سلامک")]
+    [InlineData("سلامي", "سلامی")]
+    public void ArabicCharsToPersian(string arabic, string expected)
+    {
+        var actual = arabic.ArabicCharsToPersian();
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("This is a text", false)]
+    [InlineData("this is a text", true)]
+    public void CheckAllValidations(string text, bool expected)
+    {
+        var isLower = (char x) => x == char.ToLower(x);
+        var actual = StringHelper.CheckAllValidations(text, isLower);
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("This is a text", true)]
+    [InlineData("this is a text", true)]
+    [InlineData("THIS IS A TEXT", false)]
+    public void CheckAnyValidations(string text, bool expected)
+    {
+        var isLower = (char x) => x == char.ToLower(x) && x != ' ';
+        var actual = StringHelper.CheckAnyValidations(text, isLower);
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [MemberData(nameof(CompactData))]
+    public void Compact_Array(string[] data, string[] expected)
+    {
+        var actual = StringHelper.Compact(data).ToArray();
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [MemberData(nameof(CompactData))]
+    public void Compact_Enumerable(IEnumerable<string> data, IEnumerable<string> expected)
+    {
+        var actual = data.Compact().ToArray();
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(LONG_TEXT, 0, '\'', '\'', "a text")]
+    [InlineData(LONG_TEXT, 0, '\'', NULL_CHAR, "a text")]
     [InlineData(LONG_TEXT, 1, '\'', '\'', "another text")]
-    [InlineData(LONG_TEXT, 1, 'q', default, null)]
+    [InlineData(LONG_TEXT, 1, 'q', NULL_CHAR, null)]
     public void GetPhrase(string? str, int index, char start, char end, string expected)
     {
         var actual = str.GetPhrase(index, start, end);
@@ -89,10 +154,10 @@ public class StringHelperTest
 
     [Trait("Category", "Optimizations")]
     [Theory(DisplayName = $"{nameof(GetPhrase_StringOptimization)} : memory allocation.")]
-    [InlineData(@"https://my.parsvds.com", "://", "/", "my.parsvds.com")]
-    [InlineData(@"https://my.parsvds.com/", "://", "/", "my.parsvds.com")]
-    [InlineData(@"https://my.parsvds.com/clientarea.php", "://", "/", "my.parsvds.com")]
-    [InlineData(@"https://my.parsvds.com/clientarea.php?id={50E204C7-C1BC-4139-A339-100090D3E493}", "://", "/", "my.parsvds.com")]
+    [InlineData(@"https://my.site.com", "://", "/", "my.site.com")]
+    [InlineData(@"https://my.site.com/", "://", "/", "my.site.com")]
+    [InlineData(@"https://my.site.com/clientarea.php", "://", "/", "my.site.com")]
+    [InlineData(@"https://my.site.com/clientarea.php?id={50E204C7-C1BC-4139-A339-100090D3E493}", "://", "/", "my.site.com")]
     [InlineData(@"This is mohammad", "mohammad", "hello", "")]
     [InlineData(@"This is mohammad", "", "hello", "This is mohammad")]
     [InlineData(@"This is mohammad", "", "", "")]
@@ -161,13 +226,14 @@ public class StringHelperTest
         Assert.Equal(expected, actual);
     }
 
-    [Fact]
-    public void SeparateCamelCase()
+    [Theory]
+    [InlineData("ThisIsMohammad", "This Is Mohammad")]
+    [InlineData("", "")]
+    [InlineData(null, null)]
+    public void SeparateCamelCase(string text, string expected)
     {
-        var factor = "Hello, My Name Is Mohammad. How Are You? Just Fine.";
-        var merged = factor.Remove(" ");
-        var actual = merged.SeparateCamelCase();
-        Assert.Equal(actual, factor);
+        var actual = text.SeparateCamelCase();
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -200,7 +266,7 @@ public class StringHelperTest
 
     [Theory]
     [InlineData(@"Server=myServerAddress;Database=MyDatabase;Trusted_Connection=True;", "Database", "MyDatabase")]
-    public void SplitPairTest(string text, string slice, string expected)
+    public void SplitPair(string text, string slice, string expected)
     {
         var pairs = StringHelper.SplitPair(text);
         (_, var result) = pairs.Where(kv => kv.Key == slice).Single();
@@ -212,5 +278,27 @@ public class StringHelperTest
     {
         var result = LONG_TEXT.Truncate(LONG_TEXT.Length - 5);
         Assert.Equal("There", result);
+    }
+
+    [Theory]
+    [InlineData("hello", "hello", true, true)]
+    [InlineData("hello", "hello", false, true)]
+    [InlineData("hello", "heLLo", true, true)]
+    [InlineData("hello", "heLLo", false, false)]
+    public void CompareTo(string str1, string str2, bool ignoreCase, bool expected)
+    {
+        var actual = StringHelper.CompareTo(str1, str2, ignoreCase) == 0;
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("hello", "hello", true, true)]
+    [InlineData("hello", "hello", false, true)]
+    [InlineData("hello", "heLLo", true, true)]
+    [InlineData("hello", "heLLo", false, false)]
+    public void EqualsTo(string str1, string str2, bool ignoreCase, bool expected)
+    {
+        var actual = StringHelper.EqualsTo(str1, str2, ignoreCase);
+        Assert.Equal(expected, actual);
     }
 }
