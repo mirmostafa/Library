@@ -1,4 +1,4 @@
-﻿namespace UnitTests;
+namespace UnitTests;
 
 [Trait("Category", "Helpers")]
 public class StringHelperTest
