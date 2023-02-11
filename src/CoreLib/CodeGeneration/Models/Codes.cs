@@ -5,7 +5,7 @@ namespace Library.CodeGeneration.Models;
 
 [Fluent]
 [Immutable]
-public sealed class Codes : SpecializedListBase<Code?, Codes>, IIndexable<Code?, string>, IIndexable<Codes, Language>, IIndexable<Codes, bool>, IEnumerable<Code?>
+public sealed class Codes : SpecializedListBase<Code?, Codes>, IIndexable<string, Code?>, IIndexable<Language, Codes>, IIndexable<bool, Codes>, IEnumerable<Code?>
 {
     public Codes(IEnumerable<Code?> items)
         : base(items)

@@ -8,9 +8,9 @@ namespace Library.CodeGeneration.v2;
 [Fluent]
 [Immutable]
 public sealed class Codes : SpecializedListBase<Code, Codes>
-    , IIndexable<Code?, string>
-    , IIndexable<Codes, Language>
-    , IIndexable<Codes, bool>
+    , IIndexable<string, Code?>
+    , IIndexable<Language, Codes>
+    , IIndexable<bool, Codes>
     , IEnumerable<Code>
     , IAdditionOperators<Codes, Code, Codes>
     , IAdditionOperators<Codes, Codes, Codes>

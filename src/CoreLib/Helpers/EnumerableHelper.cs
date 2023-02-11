@@ -264,6 +264,13 @@ public static class EnumerableHelper
         ? Enumerable.Empty<TSource>()
         : items.Where(x => x is not null).Select(x => x!);
 
+    public static object Equal<T>(IEnumerable<T> enum1, IEnumerable<T> enum2, bool ignoreIndexes)
+    {
+        return ignoreIndexes
+            ? !enum1.ArgumentNotNull().Except(enum2).Any() && !enum2.ArgumentNotNull().Except(enum1).Any()
+            : (object)enum1.SequenceEqual(enum2);
+    }
+
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
         => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
 
@@ -274,7 +281,7 @@ public static class EnumerableHelper
     }
 
     [return: NotNull]
-    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items) 
+    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items)
         => items is null ? Enumerable.Empty<T>() : items;
 
     /// <summary>

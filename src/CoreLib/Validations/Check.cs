@@ -9,10 +9,6 @@ using ValidationException = Library.Exceptions.Validations.ValidationException;
 
 namespace Library.Validations;
 
-#if !DEBUG
-[DebuggerStepThrough]
-[StackTraceHidden]
-#endif
 public sealed class Check
 {
     private static Check? _that;

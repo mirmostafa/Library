@@ -10,28 +10,28 @@ public abstract class ReadOnlySpecializedList<TItem, TEnumerable> : IEnumerable<
         where TEnumerable : SpecializedListBase<TItem?, TEnumerable>
 {
     protected ReadOnlySpecializedList(IEnumerable<TItem?> items)
-        => this.InnetList = new(items);
+        => this.InnerList = new(items);
 
     protected ReadOnlySpecializedList()
-        => this.InnetList = new();
+        => this.InnerList = new();
 
-    public TItem? this[int index] => this.InnetList[index];
+    public TItem? this[int index] => this.InnerList[index];
 
-    public int Count => this.InnetList.Count;
+    public int Count => this.InnerList.Count;
 
-    protected List<TItem?> InnetList { get; }
+    protected List<TItem?> InnerList { get; }
 
     public TItem? ByCriteria(Predicate<TItem?> predicate)
         => this.FirstOrDefault(x => predicate.ArgumentNotNull(nameof(predicate)).Invoke(x));
 
     public bool Contains(TItem? item)
-        => this.InnetList.Contains(item);
+        => this.InnerList.Contains(item);
 
     public IEnumerator<TItem?> GetEnumerator()
-        => this.InnetList.GetEnumerator();
+        => this.InnerList.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()
-        => ((IEnumerable)this.InnetList).GetEnumerator();
+        => ((IEnumerable)this.InnerList).GetEnumerator();
 
     public TEnumerable GetNew(IEnumerable<TItem?> items)
         => this.OnGetNew(items);
@@ -40,7 +40,7 @@ public abstract class ReadOnlySpecializedList<TItem, TEnumerable> : IEnumerable<
         => this.OnGetNew(this.Where(x => predicate.ArgumentNotNull(nameof(predicate)).Invoke(x)));
 
     public int IndexOf(TItem? item)
-        => this.InnetList.IndexOf(item);
+        => this.InnerList.IndexOf(item);
 
     protected abstract TEnumerable OnGetNew(IEnumerable<TItem?> items);
 

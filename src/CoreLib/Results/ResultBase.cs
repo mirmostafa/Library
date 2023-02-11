@@ -195,4 +195,7 @@ public record Result<TValue>(in TValue Value,
 
     public Result<TValue> WithError(params (object Id, object Error)[] errors)
         => this with { Errors = errors };
+
+    public Task<Result<TValue>> ToAsync()
+        => Task.FromResult(this);
 }

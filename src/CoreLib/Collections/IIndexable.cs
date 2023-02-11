@@ -1,23 +1,14 @@
 ﻿namespace Library.Collections;
-public interface IIndexable<out TResult, TIndex>
+
+public interface IIndexable<in TIndex, out TResult>
 {
     TResult this[TIndex index] { get; }
 }
 
-public interface IIndexable<out TResult> : IIndexable<TResult, int>, IReadOnlyList<TResult>
+public interface IIndexable<out TResult> : IIndexable<int, TResult>
 {
 }
 
-public interface IStringIndexable<out TResult> : IIndexable<TResult, string>
+public interface IStringIndexable<out TResult> : IIndexable<string, TResult>
 {
-}
-
-public interface IIndexedEnumerable<out TResult, TIndex> : IIndexable<TResult, TIndex>, IEnumerable<TResult>
-{
-
-}
-
-public interface IIndexedEnumerable<out TResult> : IIndexedEnumerable<TResult, int>
-{
-
 }

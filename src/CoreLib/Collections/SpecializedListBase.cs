@@ -12,7 +12,7 @@ public abstract class SpecializedListBase<TItem, TEnumerable> : ReadOnlySpeciali
     protected SpecializedListBase()
         : base() { }
 
-    public bool IsReadOnly => ((ICollection<TItem?>)this.InnetList).IsReadOnly;
+    public bool IsReadOnly => ((ICollection<TItem?>)this.InnerList).IsReadOnly;
 
     public TEnumerable Add(TItem? item)
     {
@@ -77,7 +77,7 @@ public abstract class SpecializedListBase<TItem, TEnumerable> : ReadOnlySpeciali
     //    => this.InnetList.RemoveAt(index);
 
     protected IList<TItem?> AsList()
-        => this.InnetList.ToEnumerable().ToList();
+        => this.InnerList.ToEnumerable().ToList();
 
     protected virtual void OnInserting(int index, TItem? item)
     { }

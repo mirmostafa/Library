@@ -1,4 +1,5 @@
 ﻿using System.Windows.Input;
+
 using Library.EventsArgs;
 
 namespace Library.Wpf.Windows.Input.Commands;
@@ -25,8 +26,10 @@ public class LibRoutedUICommand : RoutedUICommand, ILibCommand
 
 public class NavigationUICommand : LibRoutedUICommand
 {
+    public event EventHandler<ItemActedEventArgs<NavigatingEventArgs>>? Navigating;
+
     public NavigationUICommand()
-        : base() => this.InitializeComponents();
+            : base() => this.InitializeComponents();
 
     public NavigationUICommand(string text, string name, Type ownerType)
         : base(text, name, ownerType) => this.InitializeComponents();
@@ -54,8 +57,6 @@ public class NavigationUICommand : LibRoutedUICommand
         this.InitializeComponents();
     }
 
-    public event EventHandler<ItemActedEventArgs<NavigatingEventArgs>> Navigating;
-
     public Frame? Frame { get; set; }
 
     public Uri? Source { get; set; }
@@ -78,7 +79,7 @@ public class NavigationUICommand : LibRoutedUICommand
         (this.Frame, this.Source) = (frame, source);
         return this.Navigate();
     }
-    
+
     protected virtual void OnNavigating(ItemActedEventArgs<NavigatingEventArgs> args)
     {
         if (Navigating is not null)
@@ -93,11 +94,8 @@ public class NavigationUICommand : LibRoutedUICommand
         }
     }
 
-    private void InitializeComponents()
-    {
-        this.IsEnabled = true;
-        //this.CanExecuteChanged
-    }
+    private void InitializeComponents() 
+        => this.IsEnabled = true;
 
     public record NavigatingEventArgs(Frame? Frame, Uri? Source);
 }

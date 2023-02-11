@@ -11,19 +11,12 @@ namespace Library.IO;
 public abstract record FileSystem
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="FileSystem"/> class.
-    /// </summary>
-    /// <param name="fullPath">The full path.</param>
-    protected FileSystem([DisallowNull] string fullPath)
-        => this.FullPath = fullPath.NotNull();
-
-    /// <summary>
     /// Gets the full path.
     /// </summary>
     /// <value>
     /// The full path.
     /// </value>
-    public string FullPath { get; }
+    public abstract string FullPath { get; }
 
     /// <summary>
     /// Equalses the specified other.
@@ -61,7 +54,6 @@ public sealed record Drive : FileSystem
     /// </summary>
     /// <param name="driveInfo">The drive information.</param>
     public Drive([DisallowNull] in SysDriveInfo driveInfo)
-        : base(driveInfo.Name)
         => this._sysDriveInfo = driveInfo;
 
     /// <summary>
@@ -106,6 +98,8 @@ public sealed record Drive : FileSystem
     /// </value>
     public string Name => this._sysDriveInfo.Name;
 
+    public override string FullPath => this._sysDriveInfo.Name;
+
     [return: NotNull]
     public static Drive FromSystemIoDriveInfo([DisallowNull] SysDriveInfo driveInfo)
         => new(driveInfo);
@@ -124,6 +118,8 @@ public sealed record Folder : FileSystem
 {
     private readonly SysFolderInfo _sysFolder;
 
+    public override string FullPath => this._sysFolder.FullName;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Folder"/> class.
     /// </summary>
@@ -138,7 +134,7 @@ public sealed record Folder : FileSystem
     /// </summary>
     /// <param name="directory">The directory.</param>
     public Folder([DisallowNull] SysFolderInfo directory)
-        : base(directory.NotNull().FullName) => this._sysFolder = directory;
+        => this._sysFolder = directory;
 
     /// <summary>
     /// Gets the folders.
@@ -160,6 +156,29 @@ public sealed record Folder : FileSystem
     public static Folder FromSystemIoDirectoryInfo([NotNull] SysFolderInfo directory)
         => new(directory.NotNull());
 
+    /// <summary>
+    /// Gets the files.
+    /// </summary>
+    /// <param name="searchPattern">The search pattern.</param>
+    /// <returns></returns>
+    public IEnumerable<File> GetFiles(string searchPattern)
+        => this._sysFolder.GetFiles(searchPattern).Select(x => new File(x));
+    /// <summary>
+    /// Gets the files.
+    /// </summary>
+    /// <param name="searchPattern">The search pattern.</param>
+    /// <param name="enumerationOptions">The enumeration options.</param>
+    /// <returns></returns>
+    public IEnumerable<File> GetFiles(string searchPattern, EnumerationOptions enumerationOptions)
+        => this._sysFolder.GetFiles(searchPattern, enumerationOptions).Select(x => new File(x));
+    /// <summary>
+    /// Gets the files.
+    /// </summary>
+    /// <param name="searchPattern">The search pattern.</param>
+    /// <param name="searchOption">The search option.</param>
+    /// <returns></returns>
+    public IEnumerable<File> GetFiles(string searchPattern, SearchOption searchOption)
+        => this._sysFolder.GetFiles(searchPattern, searchOption).Select(x => new File(x));
     /// <summary>
     /// Gets the files.
     /// </summary>
@@ -197,7 +216,6 @@ public sealed record File : FileSystem
     /// </summary>
     /// <param name="sysFileInfo">The system file information.</param>
     public File(SysFileInfo sysFileInfo)
-        : base(sysFileInfo.FullName)
         => this._sysFileInfo = sysFileInfo;
 
     /// <summary>
@@ -208,4 +226,6 @@ public sealed record File : FileSystem
         : this(new SysFileInfo(fullPath))
     {
     }
+
+    public override string FullPath => this._sysFileInfo.FullName;
 }
