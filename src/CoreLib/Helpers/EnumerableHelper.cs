@@ -268,7 +268,7 @@ public static class EnumerableHelper
     {
         return ignoreIndexes
             ? !enum1.ArgumentNotNull().Except(enum2).Any() && !enum2.ArgumentNotNull().Except(enum1).Any()
-            : (object)enum1.SequenceEqual(enum2);
+            : enum1.SequenceEqual(enum2);
     }
 
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
