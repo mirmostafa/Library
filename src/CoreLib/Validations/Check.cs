@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
@@ -9,6 +10,8 @@ using ValidationException = Library.Exceptions.Validations.ValidationException;
 
 namespace Library.Validations;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public sealed class Check
 {
     private static Check? _that;

@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace Library.Coding;
 
-public struct Args<T> : IReadOnlyList<T>
+public readonly struct Args<T> : IReadOnlyList<T>
 {
     private readonly List<T> _arguments = new();
 

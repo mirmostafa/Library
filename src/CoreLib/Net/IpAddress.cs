@@ -112,7 +112,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     public static int[] Split(in IpAddress ipAddress)
         => ipAddress._parts;
 
-    public static bool TryParse(in string ip, out IpAddress? result)
+    public static bool TryParse([DisallowNull] in string ip, out IpAddress? result)
     {
         Check.IfArgumentNotNull(ip);
         try
@@ -124,6 +124,19 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         {
             result = null;
             return false;
+        }
+    }
+
+    public static TryMethodResult<IpAddress> TryParse([DisallowNull] in string ip)
+    {
+        Check.IfArgumentNotNull(ip);
+        try
+        {
+            return TryMethodResult<IpAddress>.CreateSuccess(new IpAddress(ip));
+        }
+        catch (Exception ex)
+        {
+            return TryMethodResult<IpAddress>.CreateFail(status: ex);
         }
     }
 
@@ -146,7 +159,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
     }
 
-    public static Result Validate(in string ip) 
+    public static Result Validate(in string ip)
         => ip.ArgumentNotNull().Split('.').Check()
              .RuleFor(x => x.Length != 4, () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.Any(part => !part.IsInteger()), () => "Parameter cannot be cast to IpAddress")

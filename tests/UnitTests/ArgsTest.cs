@@ -1,6 +1,4 @@
-﻿using System.CodeDom;
-
-using Library.Coding;
+﻿using Library.Coding;
 
 using Xunit.Abstractions;
 
@@ -11,10 +9,15 @@ public class ArgsTest
 {
     private readonly ITestOutputHelper _output;
 
-    public ArgsTest(ITestOutputHelper output)
-    {
-        this._output = output;
-    }
+    public ArgsTest(ITestOutputHelper output) => this._output = output;
+
+    public static IEnumerable<object[]> Data => new[] {
+        new object[] { new Args<int>(1), 1 },
+        new object[] { new Args<int>(1, 2), 3 },
+        new object[] { new Args<int>(1, 2,3), 6 },
+        new object[] { new Args<int>(1, 2, 3, 4), 10 }
+        };
+
     [Theory]
     [MemberData(nameof(Data))]
     public void MyTestMethod(Args<int> nums, int expected)
@@ -25,34 +28,24 @@ public class ArgsTest
         Assert.Equal(expected, actual);
     }
 
-    public static IEnumerable<object[]> Data => new[] {
-        new object[] { new Args<int>(1), 1 },
-        new object[] { new Args<int>(1, 2), 3 },
-        new object[] { new Args<int>(1, 2,3), 6 },
-        new object[] { new Args<int>(1, 2, 3, 4), 10 }
-        };
-
-    [Fact] 
+    [Fact]
     public void MyTestMethod1()
     {
         var display = (Args<int> nums) =>
         {
             using var enumerator = nums.GetEnumerator();
-            While(enumerator.MoveNext, () => WriteLine(enumerator.Current));
+            While(enumerator.MoveNext, () => this.WriteLine(enumerator.Current));
         };
         display(1);
         display((1, 2, 3, 4, 5));
     }
-
-    private void WriteLine(object? o) 
-        => _output.WriteLine(o?.ToString() ?? string.Empty);
 
     [Fact]
     public void MyTestMethod3()
     {
         var display = (Args<int> nums) =>
         {
-            For(nums, (int item, int _) => WriteLine(item));
+            For(nums, (int item, int _) => this.WriteLine(item));
         };
         display((1, 2, 3, 4, 5));
     }
@@ -62,10 +55,13 @@ public class ArgsTest
     {
         var display = (Args<int> nums) =>
         {
-            For(nums, (int item, int _) => WriteLine(item));
+            For(nums, (int item, int _) => this.WriteLine(item));
         };
         display((1, 2, 3, 4, 5, 6, 7));
         Assert.Equal(2, new Args<int>(1, 2).Count);
         Assert.Equal(2, new Args<int>(1, 2)[1]);
     }
+
+    private void WriteLine(object? o)
+                => this._output.WriteLine(o?.ToString() ?? string.Empty);
 }

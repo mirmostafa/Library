@@ -86,4 +86,6 @@ public static class LibLogger
 
     internal static void DebugEndedAction()
         => Debug(CodeHelper.GetCallerMethodName() ?? $"({nameof(DebugEndedAction)} called)", sender: CodeHelper.GetCallerMethod()?.DeclaringType?.Name);
+    public static void AddConsole() 
+        => LibLogger.AddLogger(new TextWriterLogger(Console.Out));
 }

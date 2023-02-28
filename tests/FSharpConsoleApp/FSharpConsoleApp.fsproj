@@ -6,6 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="FuncTest.fs" />
+    <Compile Include="OldSource.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

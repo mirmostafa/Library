@@ -151,21 +151,21 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
 public static class Validation
 {
     [return: NotNull]
-    public static TValue ArgumentNotNull<TValue>([NotNull] this TValue value, [CallerArgumentExpression(nameof(value))] string argName = null!)
+    public static TValue ArgumentNotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
         => Check(value, true).ArgumentNotNull();
 
     public static ValidationResultSet<TValue> Check<TValue>(this TValue value, bool throwOnFail = false, [CallerArgumentExpression(nameof(value))] string argName = null!)
         => new(value, throwOnFail, argName);
 
     [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue value, [CallerArgumentExpression(nameof(value))] string argName = null!)
+    public static TValue NotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
         => Check(value, true).NotNull();
 
     [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string argName = null!)
+    public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string argName = null!)
         => Check(value, true).NotNull(onErrorMessage);
 
     [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string argName = null!)
+    public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string argName = null!)
         => Check(value, true).NotNull(onError);
 }

@@ -13,11 +13,29 @@ namespace Library.Helpers;
 
 public static class EnumerableHelper
 {
-    public static IList<KeyValuePair<TKey, TValue>> Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
+    //public static IList<KeyValuePair<TKey, TValue>> Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
+    //{
+    //    Check.ArgumentNotNull(list);
+    //    list.Add(new(key, value));
+    //    return list;
+    //}
+
+    /// <summary>
+    /// Adds an item to the System.Collections.Generic.ICollection`1.
+    /// </summary>
+    /// <typeparam name="TDic">The type of the dic.</typeparam>
+    /// <typeparam name="TKey">The type of the key.</typeparam>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="dic">The dic.</param>
+    /// <param name="key">The key.</param>
+    /// <param name="value">The value.</param>
+    /// <returns></returns>
+    public static TDic Add<TDic, TKey, TValue>([DisallowNull] this TDic dic, in TKey key, in TValue value)
+        where TDic : IList<KeyValuePair<TKey, TValue>>
     {
-        Check.ArgumentNotNull(list);
-        list.Add(new(key, value));
-        return list;
+        Check.ArgumentNotNull(dic);
+        dic.Add(new(key, value));
+        return dic;
     }
 
     /// <summary>
@@ -40,7 +58,42 @@ public static class EnumerableHelper
         yield return item;
     }
 
+    /// <summary>
+    /// Adds the specified item immutably and returns a new instance of source.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="source">The source.</param>
+    /// <param name="item">  The item.</param>
+    /// <returns></returns>
+    public static TList AddImmuted<TList, T>(this TList? source, T item)
+        where TList : IList<T>, new()
+    {
+        var result = new TList();
+        if (source?.Any() is true)
+        {
+            result.AddRange(source.ToEnumerable()).Add(item);
+        }
+        else
+        {
+            result.Add(item);
+        }
+
+        return result;
+    }
+
     public static IList<T> AddRange<T>([DisallowNull] this IList<T> list, in IEnumerable<T> items)
+    {
+        if (items?.Any() is true)
+        {
+            foreach (var item in items)
+            {
+                list.Add(item);
+            }
+        }
+        return list;
+    }
+
+    public static ObservableCollection<T> AddRange<T>([DisallowNull] this ObservableCollection<T> list, in IEnumerable<T> items)
     {
         if (items?.Any() is true)
         {
@@ -91,16 +144,19 @@ public static class EnumerableHelper
 
     public static IEnumerable<T> AddRangeImmuted<T>(this IEnumerable<T>? source, IEnumerable<T>? items)
     {
-        if (source is not null)
+        return (source, items) switch
         {
-            foreach (var i in source)
+            (null, null) => Enumerable.Empty<T>(),
+            (_, null) => source,
+            (null, _) => items,
+            (_, _) => addRangeImmutedIterator(source, items)
+        };
+        static IEnumerable<T> addRangeImmutedIterator(IEnumerable<T> source, IEnumerable<T> items)
+        {
+            foreach (var item in source)
             {
-                yield return i;
+                yield return item;
             }
-        }
-
-        if (items is not null)
-        {
             foreach (var item in items)
             {
                 yield return item;
@@ -264,13 +320,6 @@ public static class EnumerableHelper
         ? Enumerable.Empty<TSource>()
         : items.Where(x => x is not null).Select(x => x!);
 
-    public static object Equal<T>(IEnumerable<T> enum1, IEnumerable<T> enum2, bool ignoreIndexes)
-    {
-        return ignoreIndexes
-            ? !enum1.ArgumentNotNull().Except(enum2).Any() && !enum2.ArgumentNotNull().Except(enum1).Any()
-            : enum1.SequenceEqual(enum2);
-    }
-
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
         => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
 
@@ -292,15 +341,15 @@ public static class EnumerableHelper
     public static T[] EmptyArray<T>()
         => Array.Empty<T>();
 
+    public static object Equal<T>(IEnumerable<T> enum1, IEnumerable<T> enum2, bool ignoreIndexes) => ignoreIndexes
+            ? !enum1.ArgumentNotNull().Except(enum2).Any() && !enum2.ArgumentNotNull().Except(enum1).Any()
+            : enum1.SequenceEqual(enum2);
+
     public static IEnumerable<T> Except<T>(this IEnumerable<T> items, Func<T, bool> exceptor)
         => items.Where(x => !exceptor(x));
 
     public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
             => source.Where(x => !exclude(x));
-
-    //! Not fast enough. Lost in benchmark.
-    //x public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items)
-    //x     => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
 
     public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> items)
     {
@@ -314,9 +363,12 @@ public static class EnumerableHelper
         }
     }
 
-    public static T Fold<T>(this IEnumerable<T> items, Func<(T Result, T Current), T> folder, T defaultValue)
+    //! Not fast enough. Lost in benchmark.
+    //x public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items)
+    //x     => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
+    public static T Fold<T>(this IEnumerable<T> items, Func<(T Result, T Current), T> folder, T initialValue)
     {
-        var result = defaultValue;
+        var result = initialValue;
         foreach (var item in items)
         {
             result = folder((result, item));
@@ -469,6 +521,15 @@ public static class EnumerableHelper
 
     public static string MergeToString<T>(this IEnumerable<T> source)
         => source.Aggregate(new StringBuilder(), (current, item) => current.Append(item)).ToString();
+
+    public static async IAsyncEnumerable<int> RangeAsync(int start, int count)
+    {
+        await Task.Yield();
+        for (var i = 0; i < count; i++)
+        {
+            yield return start + i;
+        }
+    }
 
     public static T? Reduce<T>(this IEnumerable<T?> items, Func<(T? Result, T? Item), T?> reducer)
     {

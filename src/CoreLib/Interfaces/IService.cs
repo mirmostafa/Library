@@ -56,7 +56,7 @@ public interface IAsyncReadPagingService<TViewModel> : IAsyncReadPagingService<T
 /// A standardizer for services to read data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
-/// <typeparam name="TId">The type of the identifier (long, <see cref="System.Guid"/>, Id, ...).</typeparam>
+/// <typeparam name="TId">The type of the identifier (long, <see cref="Guid"/>, Id, ...).</typeparam>
 public interface IAsyncReadService<TViewModel, in TId>
 {
     /// <summary>
@@ -106,6 +106,19 @@ public interface IAsyncTransactionSaveService : IAsyncTransactionalService, IAsy
 }
 
 /// <summary>
+/// </summary>
+/// <typeparam name="TViewModel">The type of the view model.</typeparam>
+public interface IAsyncViewModelFiller<TViewModel>
+{
+    /// <summary>
+    /// Fills the view model.
+    /// </summary>
+    /// <param name="model">The model.</param>
+    /// <returns></returns>
+    Task<TViewModel?> FillViewModelAsync(TViewModel? model);
+}
+
+/// <summary>
 /// A standardizer for services to write data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
@@ -141,6 +154,10 @@ public interface IAsyncWriteService<TViewModel, TId>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 public interface IAsyncWriteService<TViewModel> : IAsyncWriteService<TViewModel, long>
 { }
+
+public interface IBusinesService : IService
+{
+}
 
 /// <summary>
 /// Database entity to view model converter
@@ -233,22 +250,6 @@ public interface IResetChanges
 /// </summary>
 public interface IService
 {
-}
-public interface IBusinesService: IService
-{
-
-}
-/// <summary>
-/// </summary>
-/// <typeparam name="TViewModel">The type of the view model.</typeparam>
-public interface IAsyncViewModelFiller<TViewModel>
-{
-    /// <summary>
-    /// Fills the view model.
-    /// </summary>
-    /// <param name="model">The model.</param>
-    /// <returns></returns>
-    Task<TViewModel?> FillViewModelAsync(TViewModel? model);
 }
 
 /// <summary>
