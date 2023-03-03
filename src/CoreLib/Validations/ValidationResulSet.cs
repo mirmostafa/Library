@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
 using Library.DesignPatterns.Markers;
@@ -56,14 +57,22 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     }
 
     public Result<TValue> ToResult()
-        => Build();
+        => this.Build();
 
-    #endregion Interfaces implementations
+    #endregion Public methods
 
     #region Validators
 
     public ValidationResultSet<TValue> ArgumentNotNull(Func<Exception>? onError = null)
         => this.AddRule(x => x, _ => this.Value is not null, onError, () => new ArgumentNullException(this._valueName));
+
+    public ValidationResultSet<TValue> ArgumentOutOfRange<TProperty>(Expression<Func<TValue, TProperty?>> propertyExpression, Func<TProperty?, bool> isValid)
+        => this.AddRule(propertyExpression, isValid, null, x => new ArgumentOutOfRangeException(x));
+
+    [DebuggerStepThrough]
+    [StackTraceHidden]
+    public ValidationResultSet<TValue> ArgumentOutOfRange(Func<TValue?, bool> isValid)
+        => this.AddRule(x => x, isValid, null, () => new ArgumentOutOfRangeException(this._valueName));
 
     public ValidationResultSet<TValue> NotBiggerThan(Expression<Func<TValue, int>> propertyExpression, int max, Func<Exception>? onError = null)
         => this.AddRule(propertyExpression, x => !(x > max), onError, x => new ValidationException(x));
@@ -93,13 +102,16 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
         => this.AddRule(propertyExpression, x => !string.IsNullOrEmpty(x), null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
 
     public ValidationResultSet<TValue> RuleFor(Func<TValue, bool> isValid, Func<Exception> onError)
-        => this.AddRole(isValid, onError);
+        => this.InnerAddRule(isValid, onError);
+
     public ValidationResultSet<TValue> RuleFor((Func<TValue, bool> IsValid, Func<Exception> OnError) rule)
-        => this.AddRole(rule.IsValid, rule.OnError);
+        => this.InnerAddRule(rule.IsValid, rule.OnError);
+
     public ValidationResultSet<TValue> RuleFor(Func<TValue, bool> isValid, Func<string> onErrorMessage)
-        => this.AddRole(isValid, () => new ValidationException(onErrorMessage()));
+        => this.InnerAddRule(isValid, () => new ValidationException(onErrorMessage()));
+
     public ValidationResultSet<TValue> RuleFor((Func<TValue, bool> IsValid, Func<string> OnErrorMessage) rule)
-        => this.AddRole(rule.IsValid, () => new ValidationException(rule.OnErrorMessage()));
+        => this.InnerAddRule(rule.IsValid, () => new ValidationException(rule.OnErrorMessage()));
 
     #endregion Validators
 
@@ -108,7 +120,31 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     private static TType Invoke<TType>(Expression<Func<TValue, TType>> propertyExpression, TValue value)
         => propertyExpression.Compile().Invoke(value);
 
-    private ValidationResultSet<TValue> AddRole(Func<TValue, bool> validator, Func<Exception> error)
+    private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception>? onError, Func<string, Exception> onErrorAlternative)
+    {
+        bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
+        var error = onError ?? this.GetOnError(propertyExpression, onErrorAlternative);
+        return this.InnerAddRule(validator, error);
+    }
+
+    [DebuggerStepThrough]
+    [StackTraceHidden]
+    private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception>? onError, Func<Exception> onErrorAlternative)
+    {
+        var error = onError ?? onErrorAlternative;
+        bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
+        return this.InnerAddRule(validator, error);
+    }
+
+    private Func<Exception> GetOnError<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<string, Exception> onError)
+        => () => onError(this.GetPropertyName(propertyExpression));
+
+    private string GetPropertyName<TType>(Expression<Func<TValue, TType>> propertyExpression)
+        => ObjectHelper.GetPropertyInfo(this.Value, propertyExpression).Name;
+
+    [DebuggerStepThrough]
+    [StackTraceHidden]
+    private ValidationResultSet<TValue> InnerAddRule(Func<TValue, bool> validator, Func<Exception> error)
     {
         if (this._throwOnFail)
         {
@@ -124,26 +160,6 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
 
         return this;
     }
-
-    private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception>? onError, Func<string, Exception> onErrorAlternative)
-    {
-        bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
-        var error = onError ?? this.GetOnError(propertyExpression, onErrorAlternative);
-        return this.AddRole(validator, error);
-    }
-
-    private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception>? onError, Func<Exception> onErrorAlternative)
-    {
-        var error = onError ?? onErrorAlternative;
-        bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
-        return this.AddRole(validator, error);
-    }
-
-    private Func<Exception> GetOnError<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<string, Exception> onError)
-        => () => onError(this.GetPropertyName(propertyExpression));
-
-    private string GetPropertyName<TType>(Expression<Func<TValue, TType>> propertyExpression)
-        => ObjectHelper.GetPropertyInfo(this.Value, propertyExpression).Name;
 
     #endregion Private methods
 }
