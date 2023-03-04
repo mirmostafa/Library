@@ -15,7 +15,7 @@ public class CommandDependencyPropertyBag<TUiElement>
 
     public void AddCommand(LibRoutedUICommand command, string? key = null)
     {
-        Check.ArgumentNotNull(command, nameof(command));
+        Check.IfArgumentNotNull(command, nameof(command));
         this._bag.Add(key ?? command.Name, command);
     }
 

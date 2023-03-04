@@ -20,7 +20,7 @@ public static class LoggingHelper
     public static TLogger LogBlock<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] in Action action, in (object Message, LogLevel Level)? finallMessage = null)
             where TLogger : ILogger
     {
-        Check.ArgumentNotNull(action);
+        Check.IfArgumentNotNull(action);
         action();
         if (finallMessage is { } message)
         {
@@ -36,7 +36,7 @@ public static class LoggingHelper
     public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, string starting, [DisallowNull] Func<Task> action, string done = "Ready")
         where TLogger : ILogger
     {
-        Check.ArgumentNotNull(action);
+        Check.IfArgumentNotNull(action);
         logger.Debug(starting);
         await action();
         logger.Debug(done);
@@ -46,7 +46,7 @@ public static class LoggingHelper
     public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task> action)
         where TLogger : ILogger
     {
-        Check.ArgumentNotNull(action);
+        Check.IfArgumentNotNull(action);
         await action();
         logger.Debug("Ready");
         return logger;
@@ -55,7 +55,7 @@ public static class LoggingHelper
     public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task<object?>> action)
         where TLogger : ILogger
     {
-        Check.ArgumentNotNull(action);
+        Check.IfArgumentNotNull(action);
         var finallMessage = await action();
         if (finallMessage is not null)
         {
@@ -71,7 +71,7 @@ public static class LoggingHelper
     public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task> action, object? finallMessage)
         where TLogger : ILogger
     {
-        Check.ArgumentNotNull(action);
+        Check.IfArgumentNotNull(action);
         await action();
         if (finallMessage is not null)
         {
@@ -87,7 +87,7 @@ public static class LoggingHelper
     public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task<(object Message, LogLevel Level)?>> action)
         where TLogger : ILogger
     {
-        Check.ArgumentNotNull(action);
+        Check.IfArgumentNotNull(action);
         var finallMessage = await action();
         if (finallMessage is { } message)
         {
@@ -103,7 +103,7 @@ public static class LoggingHelper
     public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task> action, (object Message, LogLevel Level)? finallMessage)
         where TLogger : ILogger
     {
-        Check.ArgumentNotNull(action);
+        Check.IfArgumentNotNull(action);
         await action();
         if (finallMessage is { } message)
         {

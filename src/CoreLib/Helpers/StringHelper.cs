@@ -85,7 +85,7 @@ public static class StringHelper
         => (sep?.Length ?? 0) switch
         {
             0 => string.Concat(strings),
-            _ => string.Join(sep, strings, 0, strings.Count()),
+            _ => string.Join(sep, strings),
         };
 
     [return: NotNull]
@@ -93,9 +93,13 @@ public static class StringHelper
         => string.Concat(values.ToArray());
 
     public static bool Contains(string str, in string value, bool ignoreCase = true)
-        => str is not null && (ignoreCase
-                ? str.ArgumentNotNull(nameof(str)).ToLowerInvariant().Contains(value.ArgumentNotNull(nameof(value)).ToLowerInvariant())
-                : str.ArgumentNotNull(nameof(str)).Contains(value));
+    {
+        return str == null 
+                ? false 
+                : ignoreCase 
+                    ? str.ToLowerInvariant().Contains(value?.ToLowerInvariant()) 
+                    : str.Contains(value);
+    }
 
     [Pure]
     public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase)
@@ -111,12 +115,14 @@ public static class StringHelper
     public static bool ContainsOf(this string str, in string target) =>
         str.ToLower().Contains(target.ToLower());
 
-    public static string CorrectUnicodeProblem(in string text) =>
-        string.IsNullOrEmpty(text)
-            ? text
-            : Encoding.UTF8.GetString(Encoding.Unicode.GetBytes(text
-                    .Replace((char)1740, (char)1610)
-                    .Replace((char)1705, (char)1603)));
+    //public static string CorrectUnicodeProblem(in string text) =>
+    //    string.IsNullOrEmpty(text)
+    //        ? text
+    //        : Encoding.UTF8.GetString(Encoding.Unicode.GetBytes(text
+    //                .Replace((char)1740, (char)1610)
+    //                .Replace((char)1705, (char)1603)));
+    public static string CorrectUnicodeProblem(in string text)
+        => ArabicCharsToPersian(text);
 
     public static int CountOf(this string str, char c, int index = 0) 
         => str?[index..].Where(x => x == c).Count() ?? 0;
@@ -269,7 +275,7 @@ public static class StringHelper
 
     public static int? IndexOf([DisallowNull] this IEnumerable<string?> items, in string? item, bool trimmed = false, bool ignoreCase = true)
     {
-        Check.ArgumentNotNull(items, nameof(items));
+        Check.IfArgumentNotNull(items, nameof(items));
 
         var itm = get(item, trimmed);
         var index = 0;
@@ -404,7 +410,7 @@ public static class StringHelper
 
     public static void Iterate(this string str, [DisallowNull] Action<char> action)
     {
-        Check.ArgumentNotNull(action);
+        Check.IfArgumentNotNull(action);
         if (str.IsNullOrEmpty())
         {
             return;
@@ -424,7 +430,7 @@ public static class StringHelper
 
     public static string Map(this string str, [DisallowNull] Func<char, char> mapping)
     {
-        Check.ArgumentNotNull(mapping);
+        Check.IfArgumentNotNull(mapping);
         if (string.IsNullOrEmpty(str))
         {
             return string.Empty;
@@ -513,7 +519,8 @@ public static class StringHelper
         return string.Concat(Enumerable.Repeat(text, count));
     }
 
-    public static string Replace2(this string s, char old, in char replacement, in int count = 1) => s.Replace2(old.ToString(), replacement.ToString(), count);
+    public static string Replace2(this string s, char old, in char replacement, in int count = 1) 
+        => s.Replace2(old.ToString(), replacement.ToString(), count);
 
     public static string Replace2(this string s, in string old, in string replacement, in int count = 1)
         => new Regex(Regex.Escape(old)).Replace(s, replacement, count);
@@ -673,7 +680,7 @@ public static class StringHelper
     public static byte[] ToBytes([DisallowNull] this string value, [DisallowNull] in Encoding encoding)
     {
         Check.IfArgumentNotNull(value);
-        Check.ArgumentNotNull(encoding);
+        Check.IfArgumentNotNull(encoding);
 
         return encoding.GetBytes(value);
     }
@@ -719,8 +726,8 @@ public static class StringHelper
     public static string ToPersianDigits(this string value)
         => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
 
-    public static string ToUnicode(this string str)
-        => Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
+    public static string? ToUnicode(this string? str)
+        => str is null ? null : Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
 
     public static IEnumerable<string> Trim(this IEnumerable<string> strings)
         => strings.Where(item => !item.IsNullOrEmpty());

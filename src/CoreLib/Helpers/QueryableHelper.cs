@@ -12,8 +12,8 @@ public static class QueryableHelper
 {
     public static Task<TResult?> FirstOrDefaultLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock)
     {
-        Check.ArgumentNotNull(query);
-        Check.ArgumentNotNull(asyncLock);
+        Check.IfArgumentNotNull(query);
+        Check.IfArgumentNotNull(asyncLock);
         return asyncLock.LockAsync(async () => await query.FirstOrDefaultAsync());
     }
 
@@ -32,7 +32,7 @@ public static class QueryableHelper
 
     public static async IAsyncEnumerable<TSource> ToEnumerableAsync<TSource>(this IQueryable<TSource> query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        Check.ArgumentNotNull(query);
+        Check.IfArgumentNotNull(query);
         await foreach (var item in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
         {
             yield return item;

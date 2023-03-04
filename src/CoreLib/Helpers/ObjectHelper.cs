@@ -462,7 +462,7 @@ public static class ObjectHelper
 
     public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
     {
-        Check.ArgumentNotNull(obj);
+        Check.IfArgumentNotNull(obj);
         obj.GetType().GetField(fieldName)?.SetValue(obj, value);
     }
 

@@ -124,7 +124,7 @@ public static class ResultHelper
     private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
         where TResult : ResultBase
     {
-        Validations.Check.ArgumentNotNull(result);
+        Validations.Check.IfArgumentNotNull(result);
         if (result.IsSucceed)
         {
             return result;

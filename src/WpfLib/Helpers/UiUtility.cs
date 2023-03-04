@@ -12,8 +12,8 @@ public static class UiUtility
     /// <param name="info">The options used for the selection process</param>
     public static void SetSelectedItem<T>(ItemsControl control, SetSelectedInfo<T> info)
     {
-        Check.ArgumentNotNull(control);
-        Check.ArgumentNotNull(info?.Items);
+        Check.IfArgumentNotNull(control);
+        Check.IfArgumentNotNull(info?.Items);
         
         var currentItem = info.Items.First();
 

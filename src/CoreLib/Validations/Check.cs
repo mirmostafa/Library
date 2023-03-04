@@ -31,7 +31,7 @@ public sealed class Check
     public static Check That => _that ??= new();
 
     [return: NotNull]
-    public static void ArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
+    public static void IfArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => IfArgumentNotNull(obj is not null, argName!);
 
     public static void If([DoesNotReturnIf(false)] bool ok, in Func<Exception> getExceptionIfNot)

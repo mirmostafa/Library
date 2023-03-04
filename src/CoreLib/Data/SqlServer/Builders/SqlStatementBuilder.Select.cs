@@ -65,7 +65,7 @@ public static partial class SqlStatementBuilder
 
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
     {
-        Check.ArgumentNotNull(statement, nameof(statement));
+        Check.IfArgumentNotNull(statement, nameof(statement));
         statement.Columns.Clear();
         return statement.AddColumns(columns);
     }

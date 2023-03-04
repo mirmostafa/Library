@@ -82,8 +82,8 @@ public static class DbContextHelper
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
-        Check.ArgumentNotNull(dbContext);
-        Check.ArgumentNotNull(entity);
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
 
         var id = entity.Id;
         var ntt = dbContext.Set<TEntity>()?.FirstOrDefault(x => x.Id.Equals(id));
@@ -100,8 +100,8 @@ public static class DbContextHelper
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
-        Check.ArgumentNotNull(dbContext);
-        Check.ArgumentNotNull(entity);
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
 
         var id = entity.Id;
         var ntt = dbContext.Set<TEntity>()?.Local?.FirstOrDefault(x => x.Id.Equals(id));
@@ -119,8 +119,8 @@ public static class DbContextHelper
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull
     {
-        Check.ArgumentNotNull(dbContext);
-        Check.ArgumentNotNull(entity);
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
 
         var id = entity.Id;
         var ntt = dbContext.Set<TEntity>()?.Local?.FirstOrDefault(x => x.Id.Equals(id));
@@ -137,8 +137,8 @@ public static class DbContextHelper
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<Guid>
     {
-        Check.ArgumentNotNull(dbContext);
-        Check.ArgumentNotNull(entity);
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
 
         var id = entity.Id;
         var ntt = dbContext.Set<TEntity>()?.Local?.FirstOrDefault(x => x.Id.Equals(id));
@@ -188,8 +188,8 @@ public static class DbContextHelper
         where TEntity : class, IIdenticalEntity<TId>, new()
         where TId : notnull
     {
-        Check.ArgumentNotNull(dbContext);
-        Check.ArgumentNotNull(ids);
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(ids);
 
         var entities = dbContext.Set<TEntity>().Where(e => ids.Contains(e.Id));
         if (detach)
@@ -256,8 +256,8 @@ public static class DbContextHelper
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<Guid>
     {
-        Check.ArgumentNotNull(dbContext);
-        Check.ArgumentNotNull(entity);
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
 
         if (GetLocalGuidEntry(dbContext, entity) is { } entry && entry.State != state)
         {
@@ -270,8 +270,8 @@ public static class DbContextHelper
         where TDbContext : notnull, DbContext
         where TEntity : class, IIdenticalEntity<long>
     {
-        Check.ArgumentNotNull(dbContext);
-        Check.ArgumentNotNull(entity);
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
 
         if (GetLocalEntry(dbContext, entity) is { } entry && entry.State != state)
         {
@@ -285,8 +285,8 @@ public static class DbContextHelper
         where TEntity : class, IIdenticalEntity<TId>
         where TId : notnull
     {
-        Check.ArgumentNotNull(dbContext);
-        Check.ArgumentNotNull(entity);
+        Check.IfArgumentNotNull(dbContext);
+        Check.IfArgumentNotNull(entity);
 
         if (GetLocalEntry<TDbContext, TEntity, TId>(dbContext, entity) is { } entry && entry.State != state)
         {

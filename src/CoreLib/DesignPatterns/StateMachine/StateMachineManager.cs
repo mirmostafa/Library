@@ -12,9 +12,9 @@ public static class StateMachineManager
         Func<(TState? Current, IEnumerable<(TState State, MoveDirection Direction)> History), Task>? done = null,
         Stack<(TState State, MoveDirection Direction)>? history = null)
     {
-        Check.ArgumentNotNull(start);
-        Check.ArgumentNotNull(moveNext);
-        Check.ArgumentNotNull(moveBack);
+        Check.IfArgumentNotNull(start);
+        Check.IfArgumentNotNull(moveNext);
+        Check.IfArgumentNotNull(moveBack);
 
         history ??= new();
         history.Clear();
