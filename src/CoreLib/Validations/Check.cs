@@ -30,10 +30,6 @@ public sealed class Check
     /// </remarks>
     public static Check That => _that ??= new();
 
-    [return: NotNull]
-    public static void IfArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-        => IfArgumentNotNull(obj is not null, argName!);
-
     public static void If([DoesNotReturnIf(false)] bool ok, in Func<Exception> getExceptionIfNot)
     {
         if (!ok)
@@ -61,6 +57,10 @@ public sealed class Check
     }
 
     [return: NotNull]
+    public static void IfArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
+        => IfArgumentNotNull(obj is not null, argName!);
+
+    [return: NotNull]
     public static void IfArgumentNotNull([NotNull][AllowNull] in string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => IfArgumentNotNull(!obj.IsNullOrEmpty(), argName!);
 
@@ -86,33 +86,28 @@ public sealed class Check
     public static void IfIs<T>([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => NotValid(obj, x => x is T, () => new TypeMismatchValidationException(argName!));
 
-    public static void NotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-        => NotNull(obj is not null, argName!);
-
-    public static void NotNull([NotNull][AllowNull] object? obj, Func<string> getMessage)
-        => NotValid(obj, x => x is not null, () => new NullValueValidationException(getMessage()));
-
-    public static void NotNull(in object? @this, [NotNull][AllowNull] string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-        => NotValid(@this, _ => !obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!));
-
-    public static void NotNull([DoesNotReturnIf(false)] bool isNotNull, string argName)
-        => If(isNotNull, () => new NullValueValidationException(argName));
-
-    public static void NotValid([AllowNull] object? obj, [DisallowNull] in Func<object?, bool> validate, in Func<Exception> getException)
-    {
-        if (!validate(obj))
-            Throw(getException);
-    }
-
     public static void IfRequired([DoesNotReturnIf(false)] bool required)
         => If<RequiredValidationException>(required);
 
+    /// <summary>
+    /// Returns a result object based on a given boolean value.
+    /// </summary>
+    /// <param name="ok">The boolean value to check.</param>
+    /// <returns>A result object that indicates success or failure.</returns>
     public static Result MustBe(in bool ok)
         => ok ? Result.Success : Result.Fail;
 
     public static Result<T> MustBe<T>(in T obj, in bool ok)
         => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj);
 
+    /// <summary>
+    /// Checks if a given object satisfies a given predicate and returns a result object accordingly.
+    /// </summary>
+    /// <typeparam name="T">The type of the object to check.</typeparam>
+    /// <param name="obj">The object to check.</param>
+    /// <param name="predicate">The predicate to evaluate on the object.</param>
+    /// <param name="getException">The function to get the exception to throw in case of failure.</param>
+    /// <returns>A result object that contains either the original object or an exception.</returns>
     public static Result<T> MustBe<T>(in T obj, in Func<bool> predicate, in Func<Exception> getException)
         => predicate() ? Result<T>.CreateSuccess(obj) : Result<T?>.CreateFail(getException(), value: obj);
 
@@ -134,6 +129,12 @@ public sealed class Check
     public static Result MustBe(in Func<bool> predicate, in Func<string> getErrorMessage)
         => predicate() ? Result.CreateSuccess() : Result.CreateFail(getErrorMessage());
 
+    /// <summary>
+    /// Checks if a given predicate evaluates to true and returns a result object accordingly.
+    /// </summary>
+    /// <param name="predicate">The predicate to evaluate.</param>
+    /// <param name="getException">The function to get the exception to throw in case of failure.</param>
+    /// <returns>A result object that indicates success or contains an exception.</returns>
     public static Result MustBe(in Func<bool> predicate, in Func<Exception> getException)
         => predicate() ? Result.Success : Result.CreateFail(error: getException());
 
@@ -161,6 +162,18 @@ public sealed class Check
     public static Result<T> MustBeNotNull<T>(in T instance, string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => MustBe(instance, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!));
 
+    public static void NotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
+        => NotNull(obj is not null, argName!);
+
+    public static void NotNull([NotNull][AllowNull] object? obj, Func<string> getMessage)
+        => NotValid(obj, x => x is not null, () => new NullValueValidationException(getMessage()));
+
+    public static void NotNull(in object? @this, [NotNull][AllowNull] string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
+        => NotValid(@this, _ => !obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!));
+
+    public static void NotNull([DoesNotReturnIf(false)] bool isNotNull, string argName)
+        => If(isNotNull, () => new NullValueValidationException(argName));
+
     /// <summary>
     /// Makes sure the specified argument is not null.
     /// </summary>
@@ -170,6 +183,14 @@ public sealed class Check
     /// <exception cref="ArgumentNullException"/>
     public static void NotNull([NotNull][AllowNull] object? obj, [DisallowNull] Func<Exception> getException)
         => NotValid(obj, x => x is not null, getException);
+
+    public static void NotValid([AllowNull] object? obj, [DisallowNull] in Func<object?, bool> validate, in Func<Exception> getException)
+    {
+        if (!validate(obj))
+        {
+            Throw(getException);
+        }
+    }
 
     public static bool TryMustBeArgumentNotNull<TValue>([AllowNull][NotNullWhen(true)] TValue? obj, out Result<TValue?> result, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => MustBeArgumentNotNull(obj, argName).TryParse(out result);

@@ -273,9 +273,10 @@ public static class EnumerableHelper
     }
 
     [Obsolete("Use .Net 6.0 Chunk, instead.")]
-    public static IEnumerable<IEnumerable<T>> ChunkBy<T>([DisallowNull] this IEnumerable<T> source, int chunkSize) => source.Select((x, i) => new { Index = i, Value = x })
-                        .GroupBy(x => x.Index / chunkSize)
-                        .Select(x => x.Select(v => v.Value));
+    public static IEnumerable<IEnumerable<T>> ChunkBy<T>([DisallowNull] this IEnumerable<T> source, int chunkSize)
+        => source.Select((x, i) => new { Index = i, Value = x })
+                 .GroupBy(x => x.Index / chunkSize)
+                 .Select(x => x.Select(v => v.Value));
 
     public static T ClearAndAdd<T>([DisallowNull] this T collection, in object? item)
         where T : notnull, IList
@@ -649,24 +650,26 @@ public static class EnumerableHelper
 
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
     {
-        if (source is not null)
+        if (source is null)
         {
-            foreach (var item in source)
-            {
-                yield return item;
-            }
+            yield break;
+        }
+        foreach (var item in source)
+        {
+            yield return item;
         }
     }
 
     public static IEnumerable<(TKey, TValue)> ToEnumerable<TKey, TValue>(this Dictionary<TKey, TValue> source)
         where TKey : notnull
     {
-        if (source is not null)
+        if (source is null)
         {
-            foreach (var item in source)
-            {
-                yield return (item.Key, item.Value);
-            }
+            yield break;
+        }
+        foreach (var item in source)
+        {
+            yield return (item.Key, item.Value);
         }
     }
 
