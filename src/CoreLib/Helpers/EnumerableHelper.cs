@@ -15,7 +15,7 @@ public static class EnumerableHelper
 {
     //public static IList<KeyValuePair<TKey, TValue>> Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
     //{
-    //    Check.ArgumentNotNull(list);
+    //    Check.IfArgumentNotNull(list);
     //    list.Add(new(key, value));
     //    return list;
     //}
@@ -550,7 +550,7 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default)
-        => defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (item?.Equals(defaultValue)) ?? true);
+        => defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (!item?.Equals(defaultValue)) ?? false);
 
     public static IEnumerable<T> RemoveImmuted<T>(this IEnumerable<T>? source, T item)
     {
