@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Library.Results;
+using Library.Wpf.Helpers;
 //using ClientType = System.Windows.Controls.UserControl;
 using ClientType = Library.Wpf.Bases.LibPageBase;
 
@@ -70,8 +71,8 @@ internal partial class HostDialogBox
     }
     public static readonly DependencyProperty ValidationErrorTextProperty = ControlHelper.GetDependencyProperty<string?, HostDialogBox>(nameof(ValidationErrorText));
 
-    public HostDialogBox() =>
-        this.InitializeComponent();
+    public HostDialogBox()
+        => this.InitializeComponent();
 
     private async void OkButton_Click(object sender, RoutedEventArgs e)
     {
