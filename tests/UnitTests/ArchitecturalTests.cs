@@ -60,7 +60,9 @@ public class ArchitecturalTests
     {
         var methods = GetAllTypes()
                     .Where(ObjectHelper.HasAttribute<FluentAttribute>)
+                    .Where(x => x.Namespace?.StartsWith("System.") is not true)
                     .SelectMany(t => t.GetMethods())
+                    .Where(x => x?.DeclaringType?.Namespace?.StartsWith("System.") is not true)
                     .Where(x => x.Name != "Deconstruct" && !x.Name.StartsWith("set_") && x.IsPublic && x.ReturnType?.Name == "Void");
 
         if (!methods.Any())

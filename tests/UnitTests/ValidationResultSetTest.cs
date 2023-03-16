@@ -89,7 +89,7 @@ public class ValidationResultSetTest
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
             .NotBiggerThan(x => x.Age, 10)
-            .Build();
+            .BuildAll();
         Assert.Equal(2, result.Errors?.Count());
     }
 

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -57,6 +56,9 @@ public static class ResultHelper
         return result;
     }
 
+    public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase 
+        => result is true ? next() : result;
+
     public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath)
     {
         Validations.Check.IfArgumentNotNull(filePath);
@@ -74,6 +76,9 @@ public static class ResultHelper
 
     public static async Task<Result> ThrowOnFailAsync(this Task<Result> resultAsync, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(await resultAsync, owner, instruction);
+
+    public static Task<TResult> ToAsync<TResult>(this TResult result) where TResult : ResultBase
+        => Task.FromResult(result);
 
     public static Result<Stream> ToFile(this Result<Stream> result, string filePath, FileMode fileMode = FileMode.Create)
     {
@@ -140,7 +145,4 @@ public static class ResultHelper
         Throw(exception);
         return result;
     }
-
-    public static Task<TResult> ToAsync<TResult>(this TResult result) where TResult : ResultBase 
-        => Task.FromResult(result);
 }

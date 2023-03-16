@@ -1,8 +1,12 @@
-﻿using Library.Results;
+﻿using System.Diagnostics;
+
+using Library.Results;
 using Library.Validations;
 
 namespace Library.Helpers;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class ValidationHelper
 {
     public static TItem CheckValidator<TItem>([DisallowNull] this IValidator<TItem> validator, TItem item)

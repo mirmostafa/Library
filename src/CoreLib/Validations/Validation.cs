@@ -92,7 +92,7 @@ public sealed class ValidationResult<TValue> : IBuilder<TValue>
     public static implicit operator Result<TValue>(in ValidationResult<TValue> validation)
         => validation.Result;
 
-    public TValue Build()
+    public TValue BuildAll()
         => this.ThrowOnFail();
 }
 

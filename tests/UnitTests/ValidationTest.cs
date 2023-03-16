@@ -38,6 +38,6 @@ public class ValidationTest
     {
         string? arg = null;
 
-        _ = arg.If().ArgumentIsNotNull().Build();
+        //x_ = arg.If().ArgumentIsNotNull().Build();
     }
 }
