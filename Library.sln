@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfLib", "src\WpfLib\WpfLib
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLib", "src\CoreLib\CoreLib.csproj", "{28AC04BB-51BD-4C5D-83A9-688D87917276}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C3AC6F73-3D60-4E97-BA63-598C15E41B1E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "items", "items", "{C3AC6F73-3D60-4E97-BA63-598C15E41B1E}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Packages.props = Directory.Packages.props
 	EndProjectSection
