@@ -16,6 +16,5 @@
         Block.LineHeight="2"
         FontFamily="Cascadia Code"
         IsReadOnly="True"
-        IsReadOnlyCaretVisible="True">
-    </RichTextBox>
+        IsReadOnlyCaretVisible="True" />
 </UserControl>
