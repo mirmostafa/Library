@@ -14,7 +14,7 @@ namespace ConAppTest;
 
 internal partial class Obsoletes
 {
-    private static void HtmlCodeGenerationTest()
+    public static void HtmlCodeGenerationTest()
     {
         var div = new DivElement()
                     .AddAttribute("row")

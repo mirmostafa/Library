@@ -198,4 +198,6 @@ public record Result<TValue>(in TValue Value,
 
     public Task<Result<TValue>> ToAsync()
         => Task.FromResult(this);
+    public TValue GetValue()
+        => this.Value;
 }
