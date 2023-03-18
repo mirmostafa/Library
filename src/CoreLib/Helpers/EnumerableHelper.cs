@@ -298,6 +298,10 @@ public static class EnumerableHelper
         return list;
     }
 
+    [return: NotNull]
+    public static IEnumerable<T> ClearImmuted<T>(this IEnumerable<T>? source) 
+        => Enumerable.Empty<T>();
+
     public static IEnumerable<TItem> Collect<TItem>(IEnumerable<TItem> items)
         where TItem : IParent<TItem>
     {

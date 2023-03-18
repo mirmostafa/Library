@@ -31,6 +31,26 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     public static implicit operator TValue(ValidationResultSet<TValue> source)
         => source.Value;
 
+    /// <summary>
+    /// Traverses the rules and create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.
+    /// </summary>
+    /// <returns>Create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.</returns>
+    public Result<TValue> Build()
+    {
+        foreach (var (isValid, onError) in this.Rules)
+        {
+            if (!isValid(this.Value))
+            {
+                return Result<TValue>.CreateFail(onError(), this.Value);
+            }
+        }
+        return Result<TValue>.CreateSuccess(this.Value);
+    }
+
+    /// <summary>
+    /// Traverses all the rules and composes ll the rules' process result in a <code>Result<TValue></code>.
+    /// </summary>
+    /// <returns>Composes ll the rules' process result in a <code>Result<TValue></code>.</returns>
     public Result<TValue> BuildAll()
     {
         var result = new Result<TValue>(this.Value);
@@ -42,17 +62,6 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
             }
         }
         return result;
-    }
-    public Result<TValue> Build()
-    {
-        foreach (var (isValid, onError) in this.Rules)
-        {
-            if (!isValid(this.Value))
-            {
-                return Result<TValue>.CreateFail(onError(), this.Value);
-            }
-        }
-        return Result<TValue>.CreateSuccess(this.Value);
     }
 
     public TValue ThrowOnFail()
@@ -95,7 +104,11 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
         => this.AddRule(x => x, _ => this.Value is not null, onError, () => new NullValueValidationException(this._valueName));
 
     public ValidationResultSet<TValue> NotNull(Func<string> onErrorMessage)
-        => this.AddRule(x => x, _ => this.Value is not null, null, () => new NullValueValidationException(onErrorMessage() ?? this._valueName));
+        => this.AddRule(x => x, _ => this.Value is not null, null, () =>
+        {
+            var message = onErrorMessage?.Invoke();
+            return message.IsNullOrEmpty() ? new NullValueValidationException(this._valueName) : new NullValueValidationException(message, null);
+        });
 
     public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object?>> propertyExpression)
         => this.AddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(x));

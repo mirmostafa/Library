@@ -12,7 +12,7 @@ public abstract class NotifyPropertyChanged : INotifyPropertyChanged
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         => this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-    protected virtual void SetProperty<TProperty>(ref TProperty backingField, TProperty value, [CallerMemberName] string? propertyName = null)
+    protected virtual void SetProperty<TProperty>(ref TProperty backingField, TProperty value, [CallerMemberName] string? propertyName = null, params string[] orderPropertyNames)
     {
         if (this.ValidateOnPropertySet && value?.Equals(backingField) is true)
         {
@@ -21,5 +21,6 @@ public abstract class NotifyPropertyChanged : INotifyPropertyChanged
 
         backingField = value;
         this.OnPropertyChanged(propertyName);
+        _ = orderPropertyNames.ForEach(this.OnPropertyChanged).Build();
     }
 }

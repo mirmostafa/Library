@@ -443,7 +443,13 @@ public static class CodeHelper
         => task;
 
     public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action)
-            => instance.Fluent(action);
+        => instance.Fluent(action);
+    public static async Task<TInstance> WithAsync<TInstance>(this Task<TInstance> instanceAsync, Action<TInstance>? action)
+    {
+        var result = await instanceAsync;
+        action?.Invoke(result);
+        return result;
+    }
 
     public static TInstance With<TInstance>(this TInstance instance, in Action? action)
         => instance.Fluent(action);

@@ -7,11 +7,12 @@ namespace Library.Coding;
 
 [Fluent]
 [Immutable]
-public sealed class ActionScope
+public sealed class ActionScope : IDisposable
 {
     public const string BEGINING_MESSAGE = null;
     public const string ENDING_MESSAGE = "Ready";
     private readonly ILogger _logger;
+    private bool _isEnded = false;
 
     public ActionScope(ILogger logger)
         => this._logger = logger.ArgumentNotNull();
@@ -28,9 +29,19 @@ public sealed class ActionScope
     public ActionScope Begin(string message = BEGINING_MESSAGE)
         => this.Prompt(message);
 
-    public ActionScope End(string message = ENDING_MESSAGE)
-        => this.Prompt(message);
+    public void Dispose()
+        => this.End();
 
+    public void End(string message = ENDING_MESSAGE)
+    {
+        if (this._isEnded)
+        {
+            return;
+        }
+
+        _ = this.Prompt(message);
+        this._isEnded = true;
+    }
     public ActionScope Prompt(string message)
     {
         this._logger?.Debug(message);
@@ -65,20 +76,20 @@ public static class ActionScopeExtensions
             => ActionScope
                 .Begin(logger, beginMessage)
                 .Do(action)
-                .End();
+                .With(x => x.End()).Result;
 
     public static void ActionScopeRun(this ILogger logger, Action action, string beginMessage = ActionScope.BEGINING_MESSAGE, string endMessage = ActionScope.ENDING_MESSAGE)
     {
         var scope = ActionScope.Begin(logger, beginMessage);
         action();
-        _ = scope.End(endMessage);
+        scope.End(endMessage);
     }
 
     public static TResult ActionScopeRun<TResult>(this ILogger logger, Func<TResult> action, string beginMessage = ActionScope.BEGINING_MESSAGE, string endMessage = ActionScope.ENDING_MESSAGE)
     {
         var scope = ActionScope.Begin(logger, beginMessage);
         var result = action();
-        _ = scope.End(endMessage);
+        scope.End(endMessage);
         return result;
     }
 
@@ -86,7 +97,7 @@ public static class ActionScopeExtensions
     {
         var scope = ActionScope.Begin(loggerContainer, beginMessage);
         var result = action();
-        _ = scope.End(endMessage);
+        scope.End(endMessage);
         return result;
     }
 
@@ -94,14 +105,14 @@ public static class ActionScopeExtensions
     {
         var scope = ActionScope.Begin(logger, beginMessage);
         await action();
-        _ = scope.End(endMessage);
+        scope.End(endMessage);
     }
 
     public static async Task ActionScopeRunAsync(this ILoggerContainer loggerContainer, Func<Task> action, string beginMessage = ActionScope.BEGINING_MESSAGE, string endMessage = ActionScope.ENDING_MESSAGE)
     {
         var scope = ActionScope.Begin(loggerContainer, beginMessage);
         await action();
-        _ = scope.End(endMessage);
+        scope.End(endMessage);
     }
 
     public static (TResult Result, ActionScope Scope) Do<TResult>(this ActionScope scope, Func<TResult> action, string beginMessage = ActionScope.BEGINING_MESSAGE, string endMessage = ActionScope.ENDING_MESSAGE)
@@ -111,12 +122,11 @@ public static class ActionScopeExtensions
         return (result, scope);
     }
 
-    public static Result End(this (Result Result, ActionScope Scope) result, string endMessage = ActionScope.ENDING_MESSAGE)
+    public static void End(this (Result Result, ActionScope Scope) result, string endMessage = ActionScope.ENDING_MESSAGE)
         => result.Scope.End(result.Result, endMessage);
+    
+    public static void End(this ActionScope scope, ResultBase result, string endMessage = ActionScope.ENDING_MESSAGE) 
+        => scope.End(result.Message ?? endMessage);
 
-    public static Result End(this ActionScope scope, Result result, string endMessage = ActionScope.ENDING_MESSAGE)
-    {
-        _ = scope.End(result.Message ?? endMessage);
-        return result;
-    }
+
 }

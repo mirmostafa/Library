@@ -42,6 +42,7 @@ public static class ValidationExtension
     public static ValidationResult<TValue> If<TValue>(this TValue value, [CallerArgumentExpression(nameof(value))] string argName = null)
         => new(value, argName);
 
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public static ValidationResult<TValue> Is<TValue>(this ValidationResult<TValue> validation, in Func<TValue, bool> predicate, (object Id, object Data)? ifIsNull = null)
     {
         if (predicate(validation.Result.Value))
@@ -53,6 +54,7 @@ public static class ValidationExtension
         return validation;
     }
 
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public static ValidationResult<TValue> IsNotNull<TValue>(this ValidationResult<TValue> validation, (object Id, object Data)? ifIsNull = null)
         => Is(validation, x => x?.Equals(default) ?? true, ifIsNull ?? (-1, new NullValueValidationException(validation.VariableName)));
 

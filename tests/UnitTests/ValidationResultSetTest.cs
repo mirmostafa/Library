@@ -2,7 +2,7 @@
 
 namespace UnitTests;
 
-[Trait("Category", "Validation Tests")]
+[Trait("Category", "Active Validation Tests")]
 public class ValidationResultSetTest
 {
     [Fact]

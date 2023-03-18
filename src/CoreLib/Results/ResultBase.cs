@@ -185,7 +185,7 @@ public record Result<TValue>(in TValue Value,
         => CreateFail(value, null, message, EnumerableHelper.ToEnumerable(((object)0, (object)ex)));
 
     public static Result<TValue?> CreateFail(in Exception error, in TValue? value = default)
-        => CreateFail(value, null, null, EnumerableHelper.ToEnumerable(((object)0, (object)error)));
+        => CreateFail(value, null, error.Message, EnumerableHelper.ToEnumerable(((object)0, (object)error)));
 
     public static Result<TValue?> CreateFail(in string message, in TValue value)
         => CreateFail(value, null, message);

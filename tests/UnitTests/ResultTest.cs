@@ -1,6 +1,11 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
 
+using Library.Exceptions.Validations;
 using Library.Results;
+using Library.Validations;
+
+using Xunit;
 
 namespace UnitTests;
 
@@ -38,4 +43,39 @@ public class ResultTest
         var all = one + two + thr;
         return all;
     }
+
+    [Fact]
+    public void OnSuccessFalseTest()
+    {
+        var actual = Check(true, "1")
+            .OnSucceed(() => Check(true, "2"))
+            .OnSucceed(() => Check(false, "3"))
+            .OnSucceed(() => Check(false, "4"));
+        Assert.False(actual);
+        Assert.Equal("3", actual.Message);
+    }
+    [Fact]
+    public void OnSuccessTrueTest()
+    {
+        var actual = Check(true, "1")
+            .OnSucceed(() => Check(true, "2"))
+            .OnSucceed(() => Check(true, "3"))
+            .OnSucceed(() => Check(true, "4"));
+        Assert.True(actual);
+        Assert.Equal("4", actual.Message);
+    }
+    [Fact]
+    public void OnSuccessWithExceptionTest()
+    {
+        var actual = Record.Exception(() => Check(true, "1")
+            .OnSucceed(() => Check(true, "2"))
+            .OnSucceed(() => Check(false, "3"))
+            .OnSucceed(() => Check(false, "4"))
+            .ThrowOnFail());
+        Assert.IsAssignableFrom<ValidationException>(actual);
+        Assert.Equal("3", actual.Message);
+    }
+
+    static Result Check(bool isSucceed, string? message = null)
+        => isSucceed ? Result.CreateSuccess(message: message) : Result.CreateFail(message: message);
 }
