@@ -22,7 +22,7 @@ public class Table : SqlObject<Table, Database>, IEnumerable
     }
 
     public Row this[int index] => this.Rows.ElementAt(index);
-    public Columns Columns => this._columns ??= this.GetColumns();
+    public Columns Columns { get => this._columns ??= this.GetColumns(); set => _columns = value; }
     public DateTime CreateDate { get; set; }
     public long Id { get; set; }
     public DateTime ModifyDate { get; set; }
