@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -9,6 +10,8 @@ using Library.Validations;
 
 namespace Library.Helpers;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class ResultHelper
 {
     public static async Task<TResult> BreakOnFail<TResult>(this Task<TResult> task)

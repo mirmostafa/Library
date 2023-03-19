@@ -13,7 +13,7 @@ public interface IMultistepProcess
 
     void End(in string? description = null);
 
-    void Report(in int max = -1, in int current = -1, in string? description = null);
+    void Report(in string? description = null, in int max = 0, in int current = 0);
 }
 
 public class MultistepProcessRunner<TState>
@@ -120,7 +120,7 @@ public class MultistepProcessRunner<TState>
                 break;
             }
 
-            this._reporter.Report(this._max, this._current += step.ProgressCount, step.Description);
+            this._reporter.Report(step.Description, this._max, this._current += step.ProgressCount);
             this._state = await step.AsyncAction((this._state, this._subReporter));
         }
         this._reporter.End();
@@ -141,7 +141,7 @@ internal class MultistepProcess : IMultistepProcess
     public void End(in string? description)
         => this.Ended?.Invoke(this, new(description));
 
-    public void Report(in int max = -1, in int current = -1, in string? description = null)
+    public void Report(in string? description = null, in int max = -1, in int current = -1)
         => this.Reported?.Invoke(this, new((max, current, description)));
 }
 

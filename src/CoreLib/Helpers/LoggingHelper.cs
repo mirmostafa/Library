@@ -1,7 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
 
+using Library.EventsArgs;
 using Library.Globalization.Helpers;
 using Library.Logging;
+using Library.Threading.MultistepProgress;
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -141,8 +143,27 @@ public static class LoggingHelper
             (LogFormat.STACK_TRACE, (logRecord.StackTrace?.ToString() ?? string.Empty).Add(1) ?? string.Empty))) ?? string.Empty;
     }
 
-    public static string Reformat(this LogRecord logRecord, string? format = LogFormat.DEFAULT_FORMAT)
-        => InnerPatternMatching(logRecord, format);
+    //public static string Reformat(this LogRecord logRecord, string? format = LogFormat.DEFAULT_FORMAT)
+    //{
+    //    if (logRecord is null)
+    //    {
+    //        return string.Empty;
+    //    }
+    //    var message = logRecord.Message switch
+    //    {
+    //        IFormattableMessage formattable => formattable.Format(),
+    //        Exception ex => logRecord.Level is not LogLevel.Trace ? ex.GetBaseException().Message : ex.GetFullMessage(),
+    //        { } msg => msg.ToString() ?? string.Empty,
+    //        _ => string.Empty,
+    //    };
+    //    return message.IsNullOrEmpty() ? string.Empty : (format?.ReplaceAll(
+    //        (LogFormat.DATE, (logRecord.Time ?? DateTime.Now).ToLocalString().Add(1) ?? string.Empty),
+    //        (LogFormat.LEVEL, logRecord.Level.ToString().Add(1) ?? string.Empty),
+    //        (LogFormat.MESSAGE, message.Add(1) ?? string.Empty),
+    //        (LogFormat.NEW_LINE, Environment.NewLine),
+    //        (LogFormat.SENDER, (logRecord.Sender?.ToString() ?? string.Empty).Add(1) ?? string.Empty),
+    //        (LogFormat.STACK_TRACE, (logRecord.StackTrace?.ToString() ?? string.Empty).Add(1) ?? string.Empty))) ?? string.Empty;
+    //}
 
     public static string Reformat<TMessage>(object logObject, string? format = LogFormat.DEFAULT_FORMAT)
         => InnerPatternMatching(logObject, format);
@@ -184,4 +205,26 @@ public static class LoggingHelper
             null => string.Empty,
             _ => logObject.ToString() ?? string.Empty
         };
+
+    public static TLogger HandleReporterEvents<TLogger>(this TLogger logger, IMultistepProcess reporter)
+        where TLogger : ILogger
+    {
+        reporter.Reported -= Reporter_Reported;
+        reporter.Ended -= Reporter_Ended;
+
+        reporter.Reported += Reporter_Reported;
+        reporter.Ended += Reporter_Ended;
+        return logger;
+
+        void Reporter_Ended(object? sender, ItemActedEventArgs<string?> e)
+        {
+            if (e.Item != null)
+            {
+                logger.Log(e.Item);
+            }
+        }
+
+        void Reporter_Reported(object? sender, ItemActedEventArgs<(int Max, int Current, string? Description)> e)
+            => logger.Log($"{e.Item.Current:00}-{e.Item.Max:00}] [{e.Item.Description}");
+    }
 }
