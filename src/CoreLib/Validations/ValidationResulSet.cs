@@ -58,7 +58,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
         {
             if (!isValid(this.Value))
             {
-                result += Result<TValue>.CreateFail(onError(), this.Value);
+                result += Result<TValue>.CreateFailure(onError(), this.Value);
             }
         }
         return result;

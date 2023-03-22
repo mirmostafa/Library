@@ -11,70 +11,6 @@ public class FunctionalTest
     private static readonly Func<int> _returnsTwo = () => 2;
     private record EmptyRecord();
 
-
-    [Fact]
-    public void IfConditionTest()
-    {
-        var booleanTest = true;
-        var trueResult = booleanTest.IfTrue(() => "true");
-        Assert.Equal("true", trueResult);
-    }
-
-    [Fact]
-    public void IfConditionTest2()
-    {
-        var booleanTest = false;
-        var falseResult = booleanTest.IfFalse(() => "false");
-        _ = booleanTest.IfFalse(Methods.Empty);
-
-        Assert.Equal("false", falseResult);
-    }
-
-    [Fact]
-    public void FluentTest()
-    {
-        this.Fluent(Methods.Empty);
-        var two = 2.Fluent(() => { });
-        Assert.Equal(2, two.Value);
-    }
-
-    [Fact]
-    public void FluentByResultTest()
-    {
-        var actualTwo = 2.Fluent().Result(_returnsTwo);
-        Assert.Equal((2, 2), actualTwo);
-    }
-
-    [Fact]
-    public void FluentByResultTest2()
-    {
-
-        var actualThree = 3.Fluent().Result(_returnsTwo);
-        Assert.Equal((3, 2), actualThree);
-    }
-
-    //[Fact]
-    //public async void FluentByResultAsyncTest()
-    //{
-    //    var actualTask = await 2.FluentAsync(Methods.SelfTask<int>());
-    //    Assert.Equal(2, actualTask);
-    //}
-
-    [Fact]
-    public void ForEachTest() => Enumerable.Range(1, 1).ForEach(_emptyIntAction);
-
-    [Fact]
-    public void LockTest() => Lock(this, Methods.Empty);
-
-    [Fact]
-    public void NewTest() => New<EmptyRecord>();
-
-    [Fact]
-    public void WhileTest() => While(() => false);
-
-    [Fact]
-    public void WhileFuncTest() => _ = While(() => false, _returnsTwo);
-
     [Fact]
     public void BreakTest()
         => Assert.Throws<BreakException>(Break);
@@ -146,7 +82,7 @@ public class FunctionalTest
     {
         var start = () => Result<int>.CreateSuccess(5);
         var step = (int x) => Result<int>.CreateSuccess(x + 1);
-        var err = (int x) => Result<int>.CreateFail(value: x);
+        var err = (int x) => Result<int>.CreateFailure(value: x);
         var fail = (Result<int> x) => x;
 
         var actual = start.Compose(step, fail).Compose(step, fail).Compose(err, fail).Compose(step, fail).Compose(step, fail)();
@@ -167,4 +103,74 @@ public class FunctionalTest
 
         Assert.Equal(10, result);
     }
+
+    [Fact]
+    public void FluentByResultTest()
+    {
+        var actualTwo = 2.Fluent().Result(_returnsTwo);
+        Assert.Equal((2, 2), actualTwo);
+    }
+
+    [Fact]
+    public void FluentByResultTest2()
+    {
+        var actualThree = 3.Fluent().Result(_returnsTwo);
+        Assert.Equal((3, 2), actualThree);
+    }
+
+    [Fact]
+    public void FluentTest()
+    {
+        _ = this.Fluent(Methods.Empty);
+        var two = 2.Fluent(() => { });
+        Assert.Equal(2, two.Value);
+    }
+
+    [Fact]
+    public void ForEachTest() 
+        => Enumerable.Range(1, 1).ForEach(_emptyIntAction);
+
+    [Fact]
+    public void IfConditionTest()
+    {
+        var booleanTest = true;
+        var trueResult = booleanTest.IfTrue(() => "true");
+        Assert.Equal("true", trueResult);
+    }
+
+    [Fact]
+    public void IfConditionTest2()
+    {
+        var booleanTest = false;
+        var falseResult = booleanTest.IfFalse(() => "false");
+        _ = booleanTest.IfFalse(Methods.Empty);
+
+        Assert.Equal("false", falseResult);
+    }
+
+    [Fact]
+    public void ListTest()
+    {
+        var list = List(5, 6, 7);
+        _ = Assert.IsAssignableFrom<List<int>>(list);
+        Assert.Equal(3, list.Count);
+        Assert.Equal(6, list[1]);
+        Assert.Equal(7, list[2]);
+    }
+
+    [Fact]
+    public void LockTest() 
+        => Lock(this, Methods.Empty);
+
+    [Fact]
+    public void NewTest() 
+        => New<EmptyRecord>();
+
+    [Fact]
+    public void WhileFuncTest()
+        => _ = While(() => false, _returnsTwo);
+
+    [Fact]
+    public void WhileTest()
+        => While(() => false);
 }

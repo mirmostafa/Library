@@ -95,10 +95,10 @@ public sealed class Check
     /// <param name="ok">The boolean value to check.</param>
     /// <returns>A result object that indicates success or failure.</returns>
     public static Result MustBe(in bool ok)
-        => ok ? Result.Success : Result.Fail;
+        => ok ? Result.Success : Result.Failure;
 
     public static Result<T> MustBe<T>(in T obj, in bool ok)
-        => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(value: obj);
+        => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFailure(value: obj);
 
     /// <summary>
     /// Checks if a given object satisfies a given predicate and returns a result object accordingly.
@@ -109,25 +109,25 @@ public sealed class Check
     /// <param name="getException">The function to get the exception to throw in case of failure.</param>
     /// <returns>A result object that contains either the original object or an exception.</returns>
     public static Result<T> MustBe<T>(in T obj, in Func<bool> predicate, in Func<Exception> getException)
-        => predicate() ? Result<T>.CreateSuccess(obj) : Result<T?>.CreateFail(getException(), value: obj);
+        => predicate() ? Result<T>.CreateSuccess(obj) : Result<T?>.CreateFailure(getException(), value: obj);
 
     public static Result<T> MustBe<T>(in T obj, in bool ok, in Func<Exception> getException)
-        => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(getException(), value: obj);
+        => ok ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFailure(getException(), value: obj);
 
     public static bool MustBe<T>(in T obj, in Func<bool> predicate, in Func<Exception> getException, out Result<T> result)
     {
-        result = predicate() ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(getException(), value: obj);
+        result = predicate() ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFailure(getException(), value: obj);
         return result.IsSucceed;
     }
 
     public static Result<T> MustBe<T>(in T obj, in Func<T, bool> predicate, in Func<Exception> getException)
-        => predicate(obj) ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFail(getException(), value: obj);
+        => predicate(obj) ? Result<T>.CreateSuccess(obj) : Result<T>.CreateFailure(getException(), value: obj);
 
     public static Result MustBe(in bool ok, in Func<string> getErrorMessage)
-        => ok ? Result.CreateSuccess() : Result.CreateFail(message: getErrorMessage());
+        => ok ? Result.CreateSuccess() : Result.CreateFailure(message: getErrorMessage());
 
     public static Result MustBe(in Func<bool> predicate, in Func<string> getErrorMessage)
-        => predicate() ? Result.CreateSuccess() : Result.CreateFail(getErrorMessage());
+        => predicate() ? Result.CreateSuccess() : Result.CreateFailure(getErrorMessage());
 
     /// <summary>
     /// Checks if a given predicate evaluates to true and returns a result object accordingly.
@@ -136,10 +136,10 @@ public sealed class Check
     /// <param name="getException">The function to get the exception to throw in case of failure.</param>
     /// <returns>A result object that indicates success or contains an exception.</returns>
     public static Result MustBe(in Func<bool> predicate, in Func<Exception> getException)
-        => predicate() ? Result.Success : Result.CreateFail(error: getException());
+        => predicate() ? Result.Success : Result.CreateFailure(error: getException());
 
     public static Result MustBe(in bool ok, in Func<Exception> getExceptionIfNot)
-        => !ok ? Result.CreateFail(error: getExceptionIfNot()) : Result.CreateSuccess();
+        => !ok ? Result.CreateFailure(error: getExceptionIfNot()) : Result.CreateSuccess();
 
     public static Result<TValue?> MustBeArgumentNotNull<TValue>([AllowNull] TValue? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
                 => Result<TValue?>.From(MustBeArgumentNotNull(obj is not null, argName!), obj);
