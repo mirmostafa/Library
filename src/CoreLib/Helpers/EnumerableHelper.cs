@@ -550,7 +550,7 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default)
-        => defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (item?.Equals(defaultValue)) ?? true);
+        => defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (!item?.Equals(defaultValue)) ?? false);
 
     public static IEnumerable<T> RemoveImmuted<T>(this IEnumerable<T>? source, T item)
     {

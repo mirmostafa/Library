@@ -1,6 +1,6 @@
 ﻿namespace Library.Logging;
 
-internal class EmptyLogger<TMessage> : ILogger<TMessage>
+public class EmptyLogger<TMessage> : ILogger<TMessage>
 {
     public bool IsEnabled { get; set; } = false;
 

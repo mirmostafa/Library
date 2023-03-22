@@ -31,7 +31,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     public static implicit operator TValue(ValidationResultSet<TValue> source)
         => source.Value;
 
-    public Result<TValue> Build()
+    public Result<TValue> BuildAll()
     {
         var result = new Result<TValue>(this.Value);
         foreach (var (isValid, onError) in this.Rules)
@@ -42,6 +42,17 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
             }
         }
         return result;
+    }
+    public Result<TValue> Build()
+    {
+        foreach (var (isValid, onError) in this.Rules)
+        {
+            if (!isValid(this.Value))
+            {
+                return Result<TValue>.CreateFail(onError(), this.Value);
+            }
+        }
+        return Result<TValue>.CreateSuccess(this.Value);
     }
 
     public TValue ThrowOnFail()
@@ -57,7 +68,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     }
 
     public Result<TValue> ToResult()
-        => this.Build();
+        => this.BuildAll();
 
     #endregion Public methods
 

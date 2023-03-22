@@ -164,7 +164,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
              .RuleFor(x => x.Length != 4, () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.Any(part => !part.IsInteger()), () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.Any(part => !part.ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
-             .Build();
+             .BuildAll();
 
     /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.

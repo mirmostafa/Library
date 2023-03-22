@@ -2,7 +2,7 @@
 
 public interface IBuilder<out TResult>
 {
-    TResult Build();
+    TResult BuildAll();
 }
 
 public interface IBuilder
