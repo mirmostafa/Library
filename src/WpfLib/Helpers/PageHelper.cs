@@ -15,7 +15,7 @@ public static class PageHelper
         => page.NotNull().IsViewModelChanged
             ? MsgBox2.AskWithCancel(ask) switch
             {
-                TaskDialogResult.Cancel or TaskDialogResult.Close => Result.Fail,
+                TaskDialogResult.Cancel or TaskDialogResult.Close => Result.Failure,
                 TaskDialogResult.Yes => await page.SaveAsync(),
                 TaskDialogResult.No => Result.Success,
                 _ => Result.Success

@@ -130,7 +130,7 @@ public sealed class TaskRunner<TArg> : ILoggerContainer
             => token is not null and { CanBeCanceled: true } and { IsCancellationRequested: true };
 
         static Result<TArg> fail(TArg? arg, Exception ex)
-            => Result<TArg>.CreateFail(value: arg, error: ex);
+            => Result<TArg>.CreateFailure(value: arg, error: ex);
     }
 
     public TaskRunner<TArg?> StartWith(TArg? arg)

@@ -44,7 +44,7 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result.CreateFail(ex.GetBaseException().Message, ex);
+            return Result.CreateFailure(ex.GetBaseException().Message, ex);
         }
     }
 
@@ -365,7 +365,7 @@ public static class CodeHelper
     /// <exception cref="InvalidOperationException"></exception>
     public static TDelegate GetDelegate<TType, TDelegate>(in string methodName)
         => (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate),
-                                                             typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new Exceptions.InvalidOperationException()));
+            typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new Exceptions.InvalidOperationException()));
 
     /// <summary>
     /// Gets the function.
@@ -442,14 +442,44 @@ public static class CodeHelper
     public static Task ToVoidAsync<TValue>(this Task<TValue> task)
         => task;
 
+    public static Result TryInvoke(this Action action)
+    {
+        Check.IfArgumentNotNull(action);
+        try
+        {
+            action();
+            return Result.Success;
+        }
+        catch(Exception ex)
+        {
+            return Result.CreateFailure(ex);
+        }
+    }
+
+    public static Result<TValue?> TryInvoke<TValue>(this Func<TValue> action)
+    {
+        Check.IfArgumentNotNull(action);
+        try
+        {
+            return Result<TValue>.CreateFailure(action());
+        }
+        catch (Exception ex)
+        {
+            return Result<TValue>.CreateFailure(ex);
+        }
+    }
+
     public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action)
         => instance.Fluent(action);
+<<<<<<< HEAD:src/CoreLib/Coding/CodeHelpers.cs
     public static async Task<TInstance> WithAsync<TInstance>(this Task<TInstance> instanceAsync, Action<TInstance>? action)
     {
         var result = await instanceAsync;
         action?.Invoke(result);
         return result;
     }
+=======
+>>>>>>> 5681c22d35b75924ec27a5dedd109df5172c66f5:src/CoreLib/Coding/CodeHelper.cs
 
     public static TInstance With<TInstance>(this TInstance instance, in Action? action)
         => instance.Fluent(action);
@@ -457,3 +487,5 @@ public static class CodeHelper
     public static TInstance With<TInstance>(this TInstance instance, in object? obj)
         => instance.Fluent(obj);
 }
+
+public record TryWithRecord<TValue>(Result<TValue> Result);

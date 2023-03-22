@@ -6,7 +6,7 @@ namespace UnitTests;
 
 public class ActionScopeTest
 {
-    private readonly Func<Result> _failiureResult = () => Result.Fail;
+    private readonly Func<Result> _failiureResult = () => Result.Failure;
     private readonly ILogger _logger = ILogger.Empty;
     private readonly Func<Result> _succeedResult = () => Result.Success;
 

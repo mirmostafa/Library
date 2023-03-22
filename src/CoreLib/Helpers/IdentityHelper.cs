@@ -12,13 +12,13 @@ public static class IdentityHelper
         {
             return Result.CreateSuccess(message: successMessage);
         }
-        var result = Result.CreateFail(message: errorMessage);
+        var result = Result.CreateFailure(message: errorMessage);
         List<(object, object)> errors = new();
         foreach (var error in identityResult.Errors)
         {
             errors.Add((error.Code, error.Description));
         }
-        return Result.CreateFail(message: errorMessage, errors: errors);
+        return Result.CreateFailure(message: errorMessage, errors: errors);
     }
 
     public static Result<TValue?> ToResult<TValue>(this IdentityResult identityResult,
@@ -36,7 +36,7 @@ public static class IdentityHelper
         {
             errors.Add((error.Code, error.Description));
         }
-        var result = Result<TValue>.CreateFail(message: errorMessage, errors: errors);
+        var result = Result<TValue>.CreateFailure(message: errorMessage, errors: errors);
         return result;
     }
 }

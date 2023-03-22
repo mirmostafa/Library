@@ -2,7 +2,6 @@
 using System.Runtime.ExceptionServices;
 
 using Library.DesignPatterns.ExceptionHandlingPattern;
-using Library.Helpers;
 using Library.Results;
 using Library.Validations;
 
@@ -11,6 +10,7 @@ namespace Library.Coding;
 /// <summary>
 /// C# statements in functional way. (nothing more)
 /// </summary>
+//! C# statements in functional way. (nothing more)
 [DebuggerStepThrough]
 [StackTraceHidden]
 public static class Functional
@@ -88,7 +88,7 @@ public static class Functional
         }
         catch (Exception ex)
         {
-            return Result.CreateFail(error: ex);
+            return Result.CreateFailure(error: ex);
         }
     }
 
@@ -100,7 +100,7 @@ public static class Functional
         }
         catch (Exception ex)
         {
-            return Result<TResult?>.CreateFail(error: ex);
+            return Result<TResult?>.CreateFailure(error: ex);
         }
     }
 
@@ -294,8 +294,15 @@ public static class Functional
     public static T IfTrue<T>(this bool b, in Func<T> ifTrue, in T defaultValue = default!)
         => b is true ? ifTrue.Invoke() : defaultValue;
 
+    public static List<TItem> List<TItem>(params TItem[] items)
+    {
+        var result = new List<TItem>();
+        result.AddRange(items);
+        return result;
+    }
+
     public static void Lock(object? lockObject, Action action)
-        => _ = Lock(lockObject, ()
+            => _ = Lock(lockObject, ()
             =>
             {
                 action.ArgumentNotNull(nameof(action))();
@@ -378,4 +385,9 @@ public static class Functional
             action?.Invoke();
         }
     }
+
+    public static Action ToAction(Action action) 
+        => action;
+    public static Func<TResult> ToFunc<TResult>(Func<TResult> action)
+        => action;
 }

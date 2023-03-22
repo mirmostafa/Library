@@ -27,7 +27,7 @@ public static class DbContextHelper
         }
         catch (Exception ex)
         {
-            return Result.CreateFail(ex.GetBaseException().Message, ex);
+            return Result.CreateFailure(ex.GetBaseException().Message, ex);
         }
     }
 
