@@ -15,7 +15,7 @@ public static class EnumerableHelper
 {
     //public static IList<KeyValuePair<TKey, TValue>> Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
     //{
-    //    Check.ArgumentNotNull(list);
+    //    Check.IfArgumentNotNull(list);
     //    list.Add(new(key, value));
     //    return list;
     //}

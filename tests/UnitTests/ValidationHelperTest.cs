@@ -25,11 +25,11 @@ public class ValidationHelperTest
         Result<string> startsWithStart(string x)
             => x.StartsWith("Start")
                 ? Result<string>.CreateSuccess(INPUT)
-                : Result<string>.CreateFail("Not started with 'Start'", 2, INPUT)!;
+                : Result<string>.CreateFailure("Not started with 'Start'", 2, INPUT)!;
         Result<string> endsWithStart(string x)
             => x.EndsWith("End")
                 ? Result<string>.CreateSuccess(INPUT)
-                : Result<string>.CreateFail("Not ended with 'End'", 2, INPUT)!;
+                : Result<string>.CreateFailure("Not ended with 'End'", 2, INPUT)!;
         return ValidationHelper.CheckAll(INPUT, startsWithStart, endsWithStart);
     }
 }

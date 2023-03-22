@@ -32,9 +32,9 @@ public class ResultTest
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Result<int> AddThreeResults()
     {
-        var one = Result<int>.CreateFail(1, 401, "One", error: (1, "Error One"));
-        var two = Result<int>.CreateFail(2, 402, "Two", error: (2, "Error Two"));
-        var thr = Result<int>.CreateFail(3, 403, "Thr", error: (3, "Error Thr"));
+        var one = Result<int>.CreateFailure(1, 401, "One", error: (1, "Error One"));
+        var two = Result<int>.CreateFailure(2, 402, "Two", error: (2, "Error Two"));
+        var thr = Result<int>.CreateFailure(3, 403, "Thr", error: (3, "Error Thr"));
         var all = one + two + thr;
         return all;
     }
