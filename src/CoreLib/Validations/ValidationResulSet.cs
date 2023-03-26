@@ -8,16 +8,38 @@ using Library.Results;
 
 namespace Library.Validations;
 
-public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
+public static class Validation
+{
+    [return: NotNull]
+    public static TValue ArgumentNotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
+        => Check(value, CheckBehavior.ThrowOnFail).ArgumentNotNull();
+
+    public static ValidationResultSet<TValue> Check<TValue>(this TValue value, CheckBehavior behavior = CheckBehavior.ReturnFirstFailure, [CallerArgumentExpression(nameof(value))] string argName = null!)
+        => new(value, behavior, argName);
+
+    [return: NotNull]
+    public static TValue NotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
+        => Check(value, CheckBehavior.ThrowOnFail).NotNull();
+
+    [return: NotNull]
+    public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string argName = null!)
+        => Check(value, CheckBehavior.ThrowOnFail).NotNull(onErrorMessage);
+
+    [return: NotNull]
+    public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string argName = null!)
+        => Check(value, CheckBehavior.ThrowOnFail).NotNull(onError);
+}
+
+public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
 {
     #region Fields, ctors and properties
 
+    private readonly CheckBehavior _behavior;
     private readonly List<(Func<TValue, bool> IsValid, Func<Exception> OnError)> _rules;
-    private readonly bool _throwOnFail;
     private readonly string _valueName;
 
-    public ValidationResultSet(TValue value, bool throwOnFail, string valueName)
-        => (this.Value, this._valueName, this._throwOnFail, this._rules) = (value, valueName, throwOnFail, new());
+    public ValidationResultSet(TValue value, CheckBehavior behavior, string valueName)
+        => (this.Value, this._valueName, this._behavior, this._rules) = (value, valueName, behavior, new());
 
     public IEnumerable<(Func<TValue, bool> IsValid, Func<Exception> OnError)> Rules
         => this._rules.ToEnumerable();
@@ -35,34 +57,8 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     /// Traverses the rules and create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.
     /// </summary>
     /// <returns>Create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.</returns>
-    public Result<TValue> Build()
-    {
-        foreach (var (isValid, onError) in this.Rules)
-        {
-            if (!isValid(this.Value))
-            {
-                return Result<TValue>.CreateFail(onError(), this.Value);
-            }
-        }
-        return Result<TValue>.CreateSuccess(this.Value);
-    }
-
-    /// <summary>
-    /// Traverses all the rules and composes ll the rules' process result in a <code>Result<TValue></code>.
-    /// </summary>
-    /// <returns>Composes ll the rules' process result in a <code>Result<TValue></code>.</returns>
-    public Result<TValue> BuildAll()
-    {
-        var result = new Result<TValue>(this.Value);
-        foreach (var (isValid, onError) in this.Rules)
-        {
-            if (!isValid(this.Value))
-            {
-                result += Result<TValue>.CreateFailure(onError(), this.Value);
-            }
-        }
-        return result;
-    }
+    public Result<TValue?> Build() 
+        => this.InnerBuild(this._behavior);
 
     public TValue ThrowOnFail()
     {
@@ -76,8 +72,37 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
         return this.Value;
     }
 
-    public Result<TValue> ToResult()
-        => this.BuildAll();
+    public Result<TValue?> ToResult()
+        => this.InnerBuild(CheckBehavior.GatherAll);
+
+    private Result<TValue?> InnerBuild(CheckBehavior behavior)
+    {
+        foreach (var (isValid, onError) in this.Rules)
+        {
+            var result = new Result<TValue>(this.Value);
+            if (!isValid(this.Value))
+            {
+                switch (behavior)
+                {
+                    case CheckBehavior.GatherAll:
+                        result += Result<TValue>.CreateFailure(onError(), this.Value);
+                        break;
+
+                    case CheckBehavior.ReturnFirstFailure:
+                        return Result<TValue>.CreateFailure(onError(), this.Value);
+
+                    case CheckBehavior.ThrowOnFail:
+                        _ = Result<TValue>.CreateFailure(onError(), this.Value).ThrowOnFail();
+                        break;
+
+                    default:
+                        break;
+                }
+                return Result<TValue>.CreateFailure(onError(), this.Value);
+            }
+        }
+        return Result<TValue?>.CreateSuccess(this.Value);
+    }
 
     #endregion Public methods
 
@@ -170,7 +195,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     [StackTraceHidden]
     private ValidationResultSet<TValue> InnerAddRule(Func<TValue, bool> validator, Func<Exception> error)
     {
-        if (this._throwOnFail)
+        if (this._behavior == CheckBehavior.ThrowOnFail)
         {
             if (!validator(this.Value))
             {
@@ -188,24 +213,9 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     #endregion Private methods
 }
 
-public static class Validation
+public enum CheckBehavior
 {
-    [return: NotNull]
-    public static TValue ArgumentNotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, true).ArgumentNotNull();
-
-    public static ValidationResultSet<TValue> Check<TValue>(this TValue value, bool throwOnFail = false, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => new(value, throwOnFail, argName);
-
-    [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, true).NotNull();
-
-    [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, true).NotNull(onErrorMessage);
-
-    [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, true).NotNull(onError);
+    GatherAll,
+    ReturnFirstFailure,
+    ThrowOnFail,
 }

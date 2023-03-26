@@ -18,12 +18,12 @@
 //        => this.Value = value;
 
 //    public static Result<TValue?> Fail
-//        => CreateFail(error: -1);
+//        => CreateFailure(error: -1);
 
 //    public TValue Value { get; }
 
 //    [return: NotNull]
-//    public static Result<TValue?> CreateFail(in string? message = null, in TValue? value = default, in object? error = null)
+//    public static Result<TValue?> CreateFailure(in string? message = null, in TValue? value = default, in object? error = null)
 //    {
 //        Result<TValue?> result = new(value, error ?? -1, message);
 //        result.SetIsSucceed(false);
@@ -84,7 +84,7 @@
 //        => Task.FromResult(this);
 
 //    public Result ToResult()
-//        => this.IsSucceed ? Result.CreateSuccess(this.FullMessage, this.Status) : Result.CreateFail(this.FullMessage, this.Status);
+//        => this.IsSucceed ? Result.CreateSuccess(this.FullMessage, this.Status) : Result.CreateFailure(this.FullMessage, this.Status);
 
 //    public Result<TValue1> ToResult<TValue1>(TValue1 value)
 //        => Add(this, new Result<TValue1>(value));

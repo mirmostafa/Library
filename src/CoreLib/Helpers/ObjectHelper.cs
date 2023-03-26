@@ -471,7 +471,4 @@ public static class ObjectHelper
         var property = obj?.GetType().GetProperty(propertyName);
         property?.SetValue(obj, value, null);
     }
-
-    public static TResult Map<TSource, TResult>(this TSource obj, Func<TSource, TResult> mapper)
-        => mapper(obj);
 }

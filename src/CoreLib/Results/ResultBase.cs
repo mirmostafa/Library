@@ -181,18 +181,13 @@ public record Result<TValue>(in TValue Value,
     public static Result<TValue> From(in Result result, in TValue value)
         => new(value, result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
 
-    public static Result<TValue?> CreateFail(in string message, in Exception ex, in TValue? value)
+    public static Result<TValue?> CreateFailure(in string message, in Exception ex, in TValue? value)
         => CreateFailure(value, ex, message);
 
-<<<<<<< HEAD
-    public static Result<TValue?> CreateFail(in Exception error, in TValue? value = default)
-        => CreateFail(value, null, error.Message, EnumerableHelper.ToEnumerable(((object)0, (object)error)));
-=======
     public static Result<TValue?> CreateFailure(in Exception error, in TValue? value = default)
         => CreateFailure(value, error, null);
->>>>>>> 5681c22d35b75924ec27a5dedd109df5172c66f5
 
-    public static Result<TValue?> CreateFail(in string message, in TValue value)
+    public static Result<TValue?> CreateFailure(in string message, in TValue value)
         => CreateFailure(value, null, message);
 
     public Result<TValue> WithValue(in TValue value)

@@ -16,17 +16,17 @@
 
 //    public static Result Empty { get; } = _staticFields.Empty ??= NewEmpty();
 
-//    public static Result Fail => _staticFields.Fail ??= CreateFail();
+//    public static Result Fail => _staticFields.Fail ??= CreateFailure();
 
 //    public static Result Success => _staticFields.Success ??= CreateSuccess();
 
-//    public static Result CreateFail(in string? message = null, in object? error = null)
+//    public static Result CreateFailure(in string? message = null, in object? error = null)
 //        => new(error ?? -1, message) { IsSucceed = false };
 
-//    public static Result CreateFail(in NotificationMessage? message, in object? error = null)
+//    public static Result CreateFailure(in NotificationMessage? message, in object? error = null)
 //        => new(error ?? -1, message) { IsSucceed = false };
 
-//    public static Result CreateFail(in string message, in string instruction, in string tiltle, in string details, in object? error = null)
+//    public static Result CreateFailure(in string message, in string instruction, in string tiltle, in string details, in object? error = null)
 //        => new(error, new NotificationMessage(message, instruction, tiltle, details)) { IsSucceed = false };
 
 //    public static Result CreateSuccess(in NotificationMessage? fullMessage = null, in object? status = null)

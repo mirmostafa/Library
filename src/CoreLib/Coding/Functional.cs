@@ -258,9 +258,21 @@ public static class Functional
         return @this;
     }
 
-    public static void If(Func<bool> b, in Action ifTrue, in Action ifFalse)
+    public static void If(Func<bool> b, in Action ifTrue, in Action? ifFalse = null)
     {
-        if (b() is true)
+        if (b() == true)
+        {
+            ifTrue?.Invoke();
+        }
+        else
+        {
+            ifFalse?.Invoke();
+        }
+    }
+
+    public static void If(bool b, in Action ifTrue, in Action? ifFalse = null)
+    {
+        if (b == true)
         {
             ifTrue?.Invoke();
         }
@@ -349,8 +361,14 @@ public static class Functional
     public static void Throw(in Func<Exception> getException)
         => ExceptionDispatchInfo.Throw(getException());
 
+    public static Action ToAction(Action action)
+        => action;
+
+    public static Func<TResult> ToFunc<TResult>(Func<TResult> action)
+        => action;
+
     public static void Using<TDisposable>(Func<TDisposable> getItem, Action<TDisposable> action)
-        where TDisposable : IDisposable
+                where TDisposable : IDisposable
     {
         using var item = getItem();
         action(item);
@@ -385,9 +403,4 @@ public static class Functional
             action?.Invoke();
         }
     }
-
-    public static Action ToAction(Action action) 
-        => action;
-    public static Func<TResult> ToFunc<TResult>(Func<TResult> action)
-        => action;
 }

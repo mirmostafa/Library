@@ -13,107 +13,117 @@ public static class LoggingHelper
     public static void Debug(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
         => container?.Logger?.Debug(message, sender, time);
 
+    public static async Task<TLogger> DebugBlockAsync<TLogger>(
+        [DisallowNull] this TLogger logger,
+        [DisallowNull] Func<Task> action,
+        string start,
+        string end,
+        string? exceptionFormat = null) where TLogger : ILogger
+    {
+        Check.IfArgumentNotNull(action);
+        try
+        {
+            await action();
+            if (!start.IsNullOrEmpty())
+            {
+                logger.Debug(start);
+            }
+        }
+        catch (Exception ex)
+        {
+            if (!exceptionFormat.IsNullOrEmpty())
+            {
+                logger.Error(string.Format(exceptionFormat, ex.GetBaseException().Message));
+            }
+            else
+                throw;
+        }
+        finally
+        {
+            if (!end.IsNullOrEmpty())
+            {
+                logger.Debug(end);
+            }
+        }
+        return logger;
+    }
+
+    public static async Task<(TResult? Result, TLogger Logger)> DebugBlockAsync<TLogger, TResult>(
+        [DisallowNull] this TLogger logger,
+        [DisallowNull] Func<Task<TResult>> action,
+        string start,
+        string end,
+        string? exceptionFormat = null) where TLogger : ILogger
+    {
+        Check.IfArgumentNotNull(action);
+        try
+        {
+            if (!start.IsNullOrEmpty())
+            {
+                logger.Debug(start);
+            }
+            var result = await action();
+            return (result, logger);
+        }
+        catch (Exception ex)
+        {
+            if (!exceptionFormat.IsNullOrEmpty())
+            {
+                logger.Error(string.Format(exceptionFormat, ex.GetBaseException().Message));
+                return (default, logger);
+            }
+            else
+                throw;
+        }
+        finally
+        {
+            if (!end.IsNullOrEmpty())
+            {
+                logger.Debug(end);
+            }
+        }
+    }
+
     public static void Error(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
-        => container?.Logger?.Debug(message, sender, time);
-    
+            => container?.Logger?.Debug(message, sender, time);
+
+    public static TLogger HandleReporterEvents<TLogger>(this TLogger logger, IMultistepProcess reporter)
+        where TLogger : ILogger
+    {
+        reporter.Reported -= Reporter_Reported;
+        reporter.Ended -= Reporter_Ended;
+
+        reporter.Reported += Reporter_Reported;
+        reporter.Ended += Reporter_Ended;
+        return logger;
+
+        void Reporter_Ended(object? sender, ItemActedEventArgs<string?> e)
+        {
+            if (e.Item != null)
+            {
+                logger.Log(e.Item);
+            }
+        }
+
+        void Reporter_Reported(object? sender, ItemActedEventArgs<(int Max, int Current, string? Description)> e)
+            => logger.Log($"{e.Item.Current:00}-{e.Item.Max:00}] [{e.Item.Description}");
+    }
+
     public static void Info(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
-        => container?.Logger?.Info(message, sender, time);
+            => container?.Logger?.Info(message, sender, time);
 
-    public static TLogger LogBlock<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] in Action action, in (object Message, LogLevel Level)? finallMessage = null)
-            where TLogger : ILogger
-    {
-        Check.IfArgumentNotNull(action);
-        action();
-        if (finallMessage is { } message)
-        {
-            logger.Log(message.Message, message.Level);
-        }
-        else
-        {
-            logger.Debug("Ready");
-        }
-        return logger;
-    }
-
-    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, string starting, [DisallowNull] Func<Task> action, string done = "Ready")
+    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task> action, Action<TLogger> onStart, Action<TLogger> onSucceed, Action<Exception, TLogger> onError, Action<TLogger> onFinal)
         where TLogger : ILogger
     {
         Check.IfArgumentNotNull(action);
-        logger.Debug(starting);
-        await action();
-        logger.Debug(done);
-        return logger;
-    }
-
-    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task> action)
-        where TLogger : ILogger
-    {
-        Check.IfArgumentNotNull(action);
-        await action();
-        logger.Debug("Ready");
-        return logger;
-    }
-
-    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task<object?>> action)
-        where TLogger : ILogger
-    {
-        Check.IfArgumentNotNull(action);
-        var finallMessage = await action();
-        if (finallMessage is not null)
+        try
         {
-            logger.Info(finallMessage);
+            await action();
+            onSucceed(logger);
         }
-        else
+        catch (Exception ex)
         {
-            logger.Debug("Ready");
-        }
-        return logger;
-    }
-
-    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task> action, object? finallMessage)
-        where TLogger : ILogger
-    {
-        Check.IfArgumentNotNull(action);
-        await action();
-        if (finallMessage is not null)
-        {
-            logger.Info(finallMessage);
-        }
-        else
-        {
-            logger.Debug("Ready");
-        }
-        return logger;
-    }
-
-    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task<(object Message, LogLevel Level)?>> action)
-        where TLogger : ILogger
-    {
-        Check.IfArgumentNotNull(action);
-        var finallMessage = await action();
-        if (finallMessage is { } message)
-        {
-            logger.Log(message.Message, message.Level);
-        }
-        else
-        {
-            logger.Debug("Ready");
-        }
-        return logger;
-    }
-
-    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task> action, (object Message, LogLevel Level)? finallMessage)
-        where TLogger : ILogger
-    {
-        Check.IfArgumentNotNull(action);
-        await action();
-        if (finallMessage is { } message)
-        {
-            logger.Log(message.Message, message.Level);
-        }
-        else
-        {
-            logger.Debug("Ready");
+            onError(ex, logger);
         }
         return logger;
     }
@@ -205,26 +215,4 @@ public static class LoggingHelper
             null => string.Empty,
             _ => logObject.ToString() ?? string.Empty
         };
-
-    public static TLogger HandleReporterEvents<TLogger>(this TLogger logger, IMultistepProcess reporter)
-        where TLogger : ILogger
-    {
-        reporter.Reported -= Reporter_Reported;
-        reporter.Ended -= Reporter_Ended;
-
-        reporter.Reported += Reporter_Reported;
-        reporter.Ended += Reporter_Ended;
-        return logger;
-
-        void Reporter_Ended(object? sender, ItemActedEventArgs<string?> e)
-        {
-            if (e.Item != null)
-            {
-                logger.Log(e.Item);
-            }
-        }
-
-        void Reporter_Reported(object? sender, ItemActedEventArgs<(int Max, int Current, string? Description)> e)
-            => logger.Log($"{e.Item.Current:00}-{e.Item.Max:00}] [{e.Item.Description}");
-    }
 }

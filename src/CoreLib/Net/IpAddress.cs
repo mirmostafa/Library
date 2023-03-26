@@ -136,7 +136,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
         catch (Exception ex)
         {
-            return TryMethodResult<IpAddress>.CreateFail(status: ex);
+            return TryMethodResult<IpAddress>.CreateFailure(status: ex);
         }
     }
 

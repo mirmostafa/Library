@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
 
+using Library.Exceptions;
 using Library.Exceptions.Validations;
 using Library.Logging;
 using Library.Results;
@@ -132,9 +133,9 @@ public static class ResultHelper
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase
         => (result = input.ArgumentNotNull()).IsSucceed;
 
-    //!? Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
-    ////public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
-    ////    => (result = await input).IsSucceed;
+    //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
+    //x public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
+    //x     => (result = await input).IsSucceed;
 
     private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object errorId)
             where TResult : ResultBase => condition
@@ -159,7 +160,7 @@ public static class ResultHelper
             ?? result.Status switch
             {
                 Exception ex => ex.With(x => x.Source = owner?.ToString()),
-                _ => new ValidationException(result.ToString(), instruction ?? result.Message, owner: owner)
+                _ => new CommonException(result.ToString(), instruction ?? result.Message, owner: owner)
             };
         Throw(exception);
         return result;

@@ -57,7 +57,7 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result<TResult?>.CreateFail(ex.GetBaseException().Message, ex, defaultResult)!;
+            return Result<TResult?>.CreateFailure(ex.GetBaseException().Message, ex, defaultResult)!;
         }
     }
 
@@ -77,7 +77,7 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result<TResult?>.CreateFail(ex.GetBaseException().Message, defaultResult);
+            return Result<TResult?>.CreateFailure(ex.GetBaseException().Message, defaultResult);
         }
     }
 
@@ -471,15 +471,13 @@ public static class CodeHelper
 
     public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action)
         => instance.Fluent(action);
-<<<<<<< HEAD:src/CoreLib/Coding/CodeHelpers.cs
+
     public static async Task<TInstance> WithAsync<TInstance>(this Task<TInstance> instanceAsync, Action<TInstance>? action)
     {
         var result = await instanceAsync;
         action?.Invoke(result);
         return result;
     }
-=======
->>>>>>> 5681c22d35b75924ec27a5dedd109df5172c66f5:src/CoreLib/Coding/CodeHelper.cs
 
     public static TInstance With<TInstance>(this TInstance instance, in Action? action)
         => instance.Fluent(action);

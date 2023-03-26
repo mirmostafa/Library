@@ -18,3 +18,9 @@ public sealed class CodeBlockLogger : IDisposable
     public void Dispose()
         => this._end.IsNullOrEmpty().IfFalse(() => this._logger.Info(this._end!));
 }
+
+public static class CodeBlockLoggerExtensions
+{
+    public static IDisposable InfoBlock(this ILogger logger, string start, string end)
+        => CodeBlockLogger.New(logger, start, end);
+}
