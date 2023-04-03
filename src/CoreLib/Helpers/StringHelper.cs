@@ -78,7 +78,7 @@ public static class StringHelper
         => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     [Pure]
-    public static int CompareTo(this string str1, in string str, bool ignoreCase = false) 
+    public static int CompareTo(this string str1, in string str, bool ignoreCase = false)
         => string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
     public static string ConcatAll(IEnumerable<string> strings, string sep)
@@ -92,14 +92,11 @@ public static class StringHelper
     public static string ConcatStrings(this IEnumerable<string> values)
         => string.Concat(values.ToArray());
 
-    public static bool Contains(string str, in string value, bool ignoreCase = true)
-    {
-        return str == null 
-                ? false 
-                : ignoreCase 
-                    ? str.ToLowerInvariant().Contains(value?.ToLowerInvariant()) 
+    public static bool Contains(string str, in string value, bool ignoreCase = true) => str == null
+                ? false
+                : ignoreCase
+                    ? str.ToLowerInvariant().Contains(value?.ToLowerInvariant())
                     : str.Contains(value);
-    }
 
     [Pure]
     public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase)
@@ -124,7 +121,7 @@ public static class StringHelper
     public static string CorrectUnicodeProblem(in string text)
         => ArabicCharsToPersian(text);
 
-    public static int CountOf(this string str, char c, int index = 0) 
+    public static int CountOf(this string str, char c, int index = 0)
         => str?[index..].Where(x => x == c).Count() ?? 0;
 
     [Pure]
@@ -155,6 +152,10 @@ public static class StringHelper
         => name.IsNullOrEmpty()
             ? Add(string.Empty, maxLength, gapChar)
             : name.Length > maxLength ? name[..maxLength] : name.Add(maxLength - name.Length, gapChar);
+
+    [Pure]
+    public static string Format(this string format, params object[] args) 
+        => string.Format(format, args);
 
     [Pure]
     public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';')
@@ -428,22 +429,23 @@ public static class StringHelper
         }
     }
 
-    public static string Map(this string str, [DisallowNull] Func<char, char> mapping)
-    {
-        Check.IfArgumentNotNull(mapping);
-        if (string.IsNullOrEmpty(str))
-        {
-            return string.Empty;
-        }
-        var result = str.ToCharArray();
-        var i = 0;
-        foreach (var c in result)
-        {
-            result[i] = mapping(c);
-            i = checked(i + 1);
-        }
-        return new string(result);
-    }
+    // TODO: Delete this code.
+    //public static string Map(this string str, [DisallowNull] Func<char, char> mapping)
+    //{
+    //    Check.IfArgumentNotNull(mapping);
+    //    if (string.IsNullOrEmpty(str))
+    //    {
+    //        return string.Empty;
+    //    }
+    //    var result = str.ToCharArray();
+    //    var i = 0;
+    //    foreach (var c in result)
+    //    {
+    //        result[i] = mapping(c);
+    //        i = checked(i + 1);
+    //    }
+    //    return new string(result);
+    //}
 
     public static string Merge(string quatStart, string quatEnd, string separator, params object[] array)
     {
@@ -519,7 +521,7 @@ public static class StringHelper
         return string.Concat(Enumerable.Repeat(text, count));
     }
 
-    public static string Replace2(this string s, char old, in char replacement, in int count = 1) 
+    public static string Replace2(this string s, char old, in char replacement, in int count = 1)
         => s.Replace2(old.ToString(), replacement.ToString(), count);
 
     public static string Replace2(this string s, in string old, in string replacement, in int count = 1)

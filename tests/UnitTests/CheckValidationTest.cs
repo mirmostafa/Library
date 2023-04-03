@@ -1,11 +1,9 @@
 ﻿#nullable disable
 
-using Library;
 using Library.Exceptions.Validations;
 using Library.Validations;
 
 namespace UnitTests;
-
 
 [Trait("Category", "Validation Tests")]
 public class CheckValidationTest
@@ -29,7 +27,7 @@ public class CheckValidationTest
 
     [Fact]
     public void IfFalseTest()
-        => Assert.Throws< ValidationException>(()=> Check.If(false));
+        => Assert.Throws<ValidationException>(() => Check.If(false));
 
     [Fact]
     public void IfHasAnyEmpty()
@@ -126,7 +124,7 @@ public class CheckValidationTest
     public void MinMaxTest1()
     {
         var (arg, min) = (0, 5);
-        Assert.Throws<ArgumentException>(() => Check.IfArgumentBiggerThan(arg, min));
+        _ = Assert.Throws<ArgumentException>(() => Check.IfArgumentBiggerThan(arg, min));
     }
 
     [Fact]
@@ -148,7 +146,7 @@ public class CheckValidationTest
     {
         var result = Check.MustBe(this, false, () => new ValidationException());
         Assert.False(result);
-        Assert.IsType<ValidationException>(result.Errors?.ElementAt(0).Error);
+        _ = Assert.IsType<ValidationException>(result.Status);
     }
 
     [Fact]
@@ -242,7 +240,7 @@ public class CheckValidationTest
     {
         var result = Check.MustBe(this._string_sample1, _ => false, () => new ValidationException());
         Assert.False(result);
-        Assert.IsType<ValidationException>(result.Errors.ElementAt(0).Error);
+        _ = Assert.IsType<ValidationException>(result.Status);
     }
 
     [Fact]
@@ -267,7 +265,7 @@ public class CheckValidationTest
     {
         _ = Check.MustBe(this._string_sample1, () => false, () => new ValidationException(), out var result);
         Assert.False(result);
-        Assert.IsType<ValidationException>(result.Errors.First().Error);
+        _ = Assert.IsType<ValidationException>(result.Status);
     }
 
     [Fact]
@@ -283,7 +281,7 @@ public class CheckValidationTest
     {
         var result = Check.MustBe(() => false, () => new ValidationException());
         Assert.False(result);
-        Assert.IsType<ValidationException>(result.Errors.First().Error);
+        _ = Assert.IsType<ValidationException>(result.Status);
     }
 
     [Fact]
@@ -305,7 +303,7 @@ public class CheckValidationTest
     {
         var result = Check.MustBe(this, () => false, () => new ValidationException());
         Assert.False(result);
-        Assert.IsType<ValidationException>(result.Errors.First().Error);
+        _ = Assert.IsType<ValidationException>(result.Status);
     }
 
     [Fact]
@@ -313,7 +311,7 @@ public class CheckValidationTest
     {
         var result = Check.MustBe(() => false, () => new ValidationException());
         Assert.False(result);
-        Assert.IsType<ValidationException>(result.Errors.First().Error);
+        _ = Assert.IsType<ValidationException>(result.Status);
     }
 
     [Fact]

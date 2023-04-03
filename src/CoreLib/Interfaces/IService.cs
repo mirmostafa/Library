@@ -188,14 +188,14 @@ public interface IHierarchicalDbEntityService<TDbEntity>
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
-    Task<IEnumerable<TDbEntity>> GetChildEntitiesAsync(TDbEntity entity);
+    IAsyncEnumerable<TDbEntity> GetChildEntitiesAsync(TDbEntity entity);
 
     /// <summary>
     /// Gets the child entities by a specific identifier asynchronously.
     /// </summary>
     /// <param name="parentId">The parent identifier.</param>
     /// <returns></returns>
-    Task<IEnumerable<TDbEntity>> GetChildEntitiesByIdAsync(long parentId);
+    IAsyncEnumerable<TDbEntity> GetChildEntitiesByIdAsync(long parentId);
 
     /// <summary>
     /// Gets the parent entity asynchronously.
@@ -208,7 +208,7 @@ public interface IHierarchicalDbEntityService<TDbEntity>
     /// Gets the root entities asynchronously.
     /// </summary>
     /// <returns></returns>
-    Task<IEnumerable<TDbEntity>> GetRootEntitiesAsync();
+    IAsyncEnumerable<TDbEntity> GetRootEntitiesAsync();
 }
 
 public interface IHierarchicalViewModelService<TViewModel>

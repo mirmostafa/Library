@@ -23,10 +23,10 @@ public static class MultistepProcessHelper
         process.Reported += process_Reported;
         process.Ended += process_Ended;
 
-        void process_Reported(object? sender, ItemActedEventArgs<(int Max, int Current, string? Description)> e)
+        void process_Reported(object? sender, ItemActedEventArgs<ProgressData> e)
         {
         }
-        void process_Ended(object? sender, ItemActedEventArgs<string?> e)
+        void process_Ended(object? sender, ItemActedEventArgs<ProgressData?> e)
         {
             dispose((IMultistepProcess)sender!);
         }

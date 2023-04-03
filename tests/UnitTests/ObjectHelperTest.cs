@@ -12,10 +12,11 @@ public class ObjectHelperTest
         Assert.True(actual);
     }
 
-    [Fact]
-    public void MapTest()
-    {
-        var a = "5".Map(Convert.ToInt32);
-        var b = 5.Map(Convert.ToString);
-    }
+    // TODO: Delete this code.
+    //[Fact]
+    //public void MapTest()
+    //{
+    //    var a = "5".Map(Convert.ToInt32);
+    //    var b = 5.Map(Convert.ToString);
+    //}
 }

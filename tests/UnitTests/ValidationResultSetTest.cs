@@ -85,11 +85,11 @@ public class ValidationResultSetTest
     public void _09_FullValidation_Invalid()
     {
         var arg = new Person("", 20);
-        var result = arg.Check()
+        var result = arg.Check(CheckBehavior.GatherAll)
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
             .NotBiggerThan(x => x.Age, 10)
-            .BuildAll();
+            .Build();
         Assert.Equal(2, result.Errors?.Count());
     }
 
@@ -119,7 +119,7 @@ public class ValidationResultSetTest
     public void _12_IsArgumentNull_Null_ThrowOnFail()
     {
         Person? arg = null;
-        var check = arg.Check(true);
+        var check = arg.Check(CheckBehavior.ThrowOnFail);
         _ = Assert.Throws<ArgumentNullException>(() => check.ArgumentNotNull());
     }
 }

@@ -1,8 +1,5 @@
 ﻿using System.Collections;
-using System.Diagnostics;
 
-using Library;
-using Library.Helpers;
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -18,11 +15,7 @@ public static class Cast
     public static T? As<T>(this object? obj)
         where T : class => obj as T;
 
-
-    public static T? Match<T>(object obj)
-    {
-        return obj is T result ? result : default;
-    }
+    public static T? Match<T>(object obj) => obj is T result ? result : default;
 
     public static IEnumerable<T> OfType<T>(IEnumerable items)
         => items.OfType<T>();
@@ -40,6 +33,16 @@ public static class Cast
     /// <returns></returns>
     public static int ToInt(this object obj)
         => Convert.ToInt32(obj);
+
+    public static int ToInt(this object? obj, int defaultValue)
+    {
+        if (!int.TryParse(Convert.ToString(obj), out var result))
+        {
+            result = defaultValue;
+        }
+
+        return result;
+    }
 
     /// <summary>
     /// Converts to long.
@@ -64,19 +67,16 @@ public static class Cast
         }
     }
 
-    public static T? TypeOf<T>(object obj)
-    {
-        if (obj.GetType() == typeof(T))
-            return (T)obj;
-        return default;
-    }
+    public static T? TypeOf<T>(object obj) => obj.GetType() == typeof(T) ? (T)obj : default;
 
     public static IEnumerable<T> WhereIs<T>(IEnumerable items)
     {
         foreach (var item in items)
         {
             if (item is T result)
+            {
                 yield return result;
+            }
         }
     }
 }

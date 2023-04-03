@@ -4,7 +4,6 @@ using System.Xml;
 using System.Xml.Serialization;
 
 using Library.Exceptions;
-using Library.Exceptions.Validations;
 using Library.Logging;
 using Library.Results;
 using Library.Validations;
@@ -60,19 +59,32 @@ public static class ResultHelper
         return result;
     }
 
-    public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase 
-        => result == true ? next() : result;
+    public static TResult OnDone<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    {
+        action(result);
+        return result;
+    }
+
+    public static TResult OnFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    {
+        if (result == false)
+        {
+            action(result);
+        }
+
+        return result;
+    }
+
+    public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
+            => result == true ? next() : result;
 
     public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
         if (result == true)
+        {
             action(result);
-        return result;
-    }
-    public static TResult OnFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
-    {
-        if (result == false)
-            action(result);
+        }
+
         return result;
     }
 

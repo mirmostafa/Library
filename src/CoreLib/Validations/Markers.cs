@@ -9,7 +9,7 @@ public interface IAsyncValidator
 
 public interface IAsyncValidator<TItem>
 {
-    Task<Result<TItem>> ValidateAsync(TItem item);
+    Task<Result<TItem?>> ValidateAsync(TItem? item);
 }
 
 public interface IValidatable<T>
@@ -24,5 +24,5 @@ public interface IValidator
 
 public interface IValidator<TItem>
 {
-    Result<TItem> Validate(TItem? item);
+    Result<TItem?> Validate(in TItem? item);
 }

@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
 using Library.DesignPatterns.Markers;
+using Library.Exceptions;
 using Library.Exceptions.Validations;
 using Library.Results;
 
@@ -57,7 +58,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     /// Traverses the rules and create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.
     /// </summary>
     /// <returns>Create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.</returns>
-    public Result<TValue?> Build() 
+    public Result<TValue?> Build()
         => this.InnerBuild(this._behavior);
 
     public TValue ThrowOnFail()
@@ -77,9 +78,9 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
 
     private Result<TValue?> InnerBuild(CheckBehavior behavior)
     {
+        var result = new Result<TValue?>(this.Value);
         foreach (var (isValid, onError) in this.Rules)
         {
-            var result = new Result<TValue>(this.Value);
             if (!isValid(this.Value))
             {
                 switch (behavior)
@@ -92,16 +93,14 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
                         return Result<TValue>.CreateFailure(onError(), this.Value);
 
                     case CheckBehavior.ThrowOnFail:
-                        _ = Result<TValue>.CreateFailure(onError(), this.Value).ThrowOnFail();
-                        break;
+                        return Result<TValue>.CreateFailure(onError(), this.Value).ThrowOnFail();
 
                     default:
-                        break;
+                        throw new UnsupportedOperationException();
                 }
-                return Result<TValue>.CreateFailure(onError(), this.Value);
             }
         }
-        return Result<TValue?>.CreateSuccess(this.Value);
+        return result;
     }
 
     #endregion Public methods
@@ -120,7 +119,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
         => this.AddRule(x => x, isValid, null, () => new ArgumentOutOfRangeException(this._valueName));
 
     public ValidationResultSet<TValue> NotBiggerThan(Expression<Func<TValue, int>> propertyExpression, int max, Func<Exception>? onError = null)
-        => this.AddRule(propertyExpression, x => !(x > max), onError, x => new ValidationException(x));
+        => this.AddRule(propertyExpression, x => !(x > max), onError, x => new ValidationException($"{x} must be bigger than {max}"));
 
     public ValidationResultSet<TValue> NotNull()
         => this.AddRule(x => x, _ => this.Value is not null, null, () => new NullValueValidationException(this._valueName));
