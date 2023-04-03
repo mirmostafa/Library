@@ -15,7 +15,7 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
         => (this.Value, this.Display) = (value, display ?? value?.ToString());
 
     public IEnumerable<Node<T>> Children => this.ChildList.ToEnumerable();
-    public IEnumerable<T> ChildValues => this.Children.Select(x => x.To<T>());
+    public IEnumerable<T> ChildValues => this.Children.Select(x => x.Cast().To<T>());
     public string? Display { get; }
     public Node<T>? Parent { get; private set; }
     public T Value { get; }
@@ -120,7 +120,7 @@ public class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
     {
         if (this.Value is TType)
         {
-            value = this.Value.To<TType>();
+            value = this.Value.Cast().To<TType>();
             return true;
         }
         value = default;

@@ -16,7 +16,7 @@ public partial class DataCrudGridView : UserControl
 
     public ICollection<object> ViewModel
     {
-        get => (this.DataContext ??= new List<object>()).To<IList<object>>();
+        get => (this.DataContext ??= new List<object>()).Cast().To<IList<object>>();
         set => this.DataContext = value;
     }
 

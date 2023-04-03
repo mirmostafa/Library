@@ -12,15 +12,15 @@ public record ApiResult : ResultBase, IApiResult
         : base(null, statusCode, message) { }
 
     public ApiResult(HttpStatusCode? statusCode = null, string? message = null)
-        : base(null, statusCode?.ToInt(), message) { }
+        : base(null, statusCode?.Cast().ToInt(), message) { }
 
     public ApiResult(in bool? Succeed = null, in object? Status = null, in string? Message = null, in IEnumerable<(object Id, object Error)>? Errors = null, in ImmutableDictionary<string, object>? ExtraData = null)
         : base(Succeed, Status, Message, Errors, ExtraData)
     {
     }
 
-    public HttpStatusCode? HttpStatusCode => HttpStatusCodeHelper.ToHttpStatusCode(this.Status?.ToInt());
-    public override bool IsSucceed => this.Status?.ToInt() is null or (>= 200 and < 300);
+    public HttpStatusCode? HttpStatusCode => HttpStatusCodeHelper.ToHttpStatusCode(this.Status?.Cast().ToInt());
+    public override bool IsSucceed => this.Status?.Cast().ToInt() is null or (>= 200 and < 300);
 
     public static ApiResult BadRequest(string? message = null)
         => New(System.Net.HttpStatusCode.BadRequest, message);

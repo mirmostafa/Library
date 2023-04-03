@@ -52,19 +52,19 @@ public class ExceptionHandlerMiddleware : IInfraMiddleware
 
         if (exception is IApiException apiException)
         {
-            status = apiException.StatusCode ?? HttpStatusCode.BadRequest.ToInt();
+            status = apiException.StatusCode ?? HttpStatusCode.BadRequest.Cast().ToInt();
             message = apiException.Message;
         }
         else
         {
             if (exception is NotImplementedException)
             {
-                status = HttpStatusCode.NotImplemented.ToInt();
+                status = HttpStatusCode.NotImplemented.Cast().ToInt();
                 message = "Sorry! This function is under development and is not done yet to be used. Please retry later.";
             }
             else
             {
-                status = HttpStatusCode.InternalServerError.ToInt();
+                status = HttpStatusCode.InternalServerError.Cast().ToInt();
                 message = exception.ToString();
                 var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
                 if (traceId is not null)
@@ -82,7 +82,7 @@ public class ExceptionHandlerMiddleware : IInfraMiddleware
         var json = JsonSerializer.Serialize(result, jsonOptions);
 
         context.Response.ContentType = "application/problem+json";
-        context.Response.StatusCode = result.Status?.ToInt() ?? HttpStatusCode.BadRequest.ToInt();
+        context.Response.StatusCode = result.Status?.Cast().ToInt() ?? HttpStatusCode.BadRequest.Cast().ToInt();
         await context.Response.WriteAsync(json);
     }
 }

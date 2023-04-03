@@ -1,11 +1,7 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 using Library.Exceptions.Validations;
 using Library.Results;
-using Library.Validations;
-
-using Xunit;
 
 namespace UnitTests;
 
@@ -15,33 +11,21 @@ public class ResultTest
     public void _01_AddOperationResultCountTest()
     {
         var all = AddThreeResults();
-        Assert.Equal(3, all.Errors?.Count());
+        Assert.NotNull(all.Errors);
+        Assert.Equal(5, all.Errors.Count());
+        Assert.Equal(403, all.Status);
+        Assert.Equal((3, "Error Thr"), all.Errors.Last());
     }
 
     [Fact]
     public void _02_AddOperationResultIndex1Test()
     {
         var all = AddThreeResults();
-        Assert.Equal("Error One", all.Errors?.ElementAt(0).Error);
-        Assert.Equal("Error Two", all.Errors?.ElementAt(1).Error);
-        Assert.Equal("Error Thr", all.Errors?.ElementAt(2).Error);
-    }
-
-    [Fact]
-    public void SimpleTest()
-    {
-        var five = Result<int>.CreateSuccess(5, 60);
-        Assert.Equal(5, five);
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static Result<int> AddThreeResults()
-    {
-        var one = Result<int>.CreateFailure(1, 401, "One", error: (1, "Error One"));
-        var two = Result<int>.CreateFailure(2, 402, "Two", error: (2, "Error Two"));
-        var thr = Result<int>.CreateFailure(3, 403, "Thr", error: (3, "Error Thr"));
-        var all = one + two + thr;
-        return all;
+        Assert.Equal((1, "Error One"), all.Errors?.ElementAt(0));
+        Assert.Equal((2, "Error Two"), all.Errors?.ElementAt(1));
+        Assert.Equal((null!, 401), all.Errors?.ElementAt(2));
+        Assert.Equal((null!, 402), all.Errors?.ElementAt(3));
+        Assert.Equal((3, "Error Thr"), all.Errors?.ElementAt(4));
     }
 
     [Fact]
@@ -54,6 +38,7 @@ public class ResultTest
         Assert.False(actual);
         Assert.Equal("3", actual.Message);
     }
+
     [Fact]
     public void OnSuccessTrueTest()
     {
@@ -64,18 +49,24 @@ public class ResultTest
         Assert.True(actual);
         Assert.Equal("4", actual.Message);
     }
+
     [Fact]
-    public void OnSuccessWithExceptionTest()
+    public void SimpleTest()
     {
-        var actual = Record.Exception(() => Check(true, "1")
-            .OnSucceed(() => Check(true, "2"))
-            .OnSucceed(() => Check(false, "3"))
-            .OnSucceed(() => Check(false, "4"))
-            .ThrowOnFail());
-        Assert.IsAssignableFrom<ValidationException>(actual);
-        Assert.Equal("3", actual.Message);
+        var five = Result<int>.CreateSuccess(5, 60);
+        Assert.Equal(5, five);
     }
 
-    static Result Check(bool isSucceed, string? message = null)
-        => isSucceed ? Result.CreateSuccess(message: message) : Result.CreateFail(message: message);
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Result<int> AddThreeResults()
+    {
+        var one = Result<int>.CreateFailure(value: 1, status: 401, message: "One", error: (1, "Error One"));
+        var two = Result<int>.CreateFailure(value: 2, status: 402, message: "Two", error: (2, "Error Two"));
+        var thr = Result<int>.CreateFailure(value: 3, status: 403, message: "Thr", error: (3, "Error Thr"));
+        var all = one + two + thr;
+        return all;
+    }
+
+    private static Result Check(bool isSucceed, string? message = null)
+        => isSucceed ? Result.CreateSuccess(message: message) : Result.CreateFailure(message: message);
 }

@@ -5,7 +5,7 @@ using Library.Validations;
 
 namespace Library.Coding;
 
-[Fluent]
+//[Fluent]
 [Immutable]
 public sealed class ActionScope : IDisposable
 {

@@ -19,12 +19,12 @@ public static class EnumHelper
     /// <typeparam name="TEnum"> </typeparam>
     /// <returns> </returns>
     public static TEnum AddFlag<TEnum>(this TEnum enumeration, in TEnum item)
-        where TEnum : Enum => (TEnum)Enum.ToObject(typeof(TEnum), enumeration.ToInt() | item.ToInt());
+        where TEnum : Enum => (TEnum)Enum.ToObject(typeof(TEnum), enumeration.Cast().ToInt() | item.Cast().ToInt());
 
     public static bool Contains<TEnum>(this Enum enumeration, TEnum item)
-        where TEnum : Enum => item.ToInt() is 0
-        ? enumeration.ToInt() == 0
-        : (enumeration.ToInt() | item.ToInt()) == enumeration.ToInt();
+        where TEnum : Enum => item.Cast().ToInt() is 0
+        ? enumeration.Cast().ToInt() == 0
+        : (enumeration.Cast().ToInt() | item.Cast().ToInt()) == enumeration.Cast().ToInt();
 
     /// <summary>
     /// </summary>
@@ -176,7 +176,7 @@ public static class EnumHelper
     /// <param name="item"> The item. </param>
     /// <returns> </returns>
     public static TEnum RemoveFlag<TEnum>(TEnum enumeration, TEnum item)
-        where TEnum : Enum => (TEnum)Enum.ToObject(typeof(TEnum), enumeration.ToInt() & ~item.ToInt());
+        where TEnum : Enum => (TEnum)Enum.ToObject(typeof(TEnum), enumeration.Cast().ToInt() & ~item.Cast().ToInt());
 
     /// <summary>
     ///     Converts to enum.
@@ -185,7 +185,7 @@ public static class EnumHelper
     /// <param name="value"> The value. </param>
     /// <returns> </returns>
     public static TEnum ToEnum<TEnum>(string value)
-        where TEnum : Enum => Enum.Parse(typeof(TEnum), value).To<TEnum>();
+        where TEnum : Enum => Enum.Parse(typeof(TEnum), value).Cast().To<TEnum>();
 
     /// <summary>
     ///     Converts to enum.
@@ -194,7 +194,7 @@ public static class EnumHelper
     /// <param name="value"> The value. </param>
     /// <returns> </returns>
     public static TEnum ToEnum<TEnum>(int value)
-        => Enum.Parse(typeof(TEnum), Enum.GetName(typeof(TEnum), value)!).To<TEnum>();
+        => Enum.Parse(typeof(TEnum), Enum.GetName(typeof(TEnum), value)!).Cast().To<TEnum>();
 
     /// <summary>
     ///     Tries the parse.

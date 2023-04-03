@@ -15,6 +15,28 @@ public static class DbContextHelper
     public static IDbContextTransaction BeginTransaction(this DbContext dbContext)
         => dbContext.Database.BeginTransaction();
 
+    /// <summary>
+    ///     Asynchronously starts a new transaction.
+    ///     <para>Don't forget to call <c>Commit</c> or <c>Rollback</c> at the end of transaction</para>
+    /// </summary>
+    /// <remarks>
+    ///     <para>
+    ///         Entity Framework Core does not support multiple parallel operations being run on the same DbContext instance. This
+    ///         includes both parallel execution of async queries and any explicit concurrent use from multiple threads.
+    ///         Therefore, always await async calls immediately, or use separate DbContext instances for operations that execute
+    ///         in parallel. See <see href="https://aka.ms/efcore-docs-threading">Avoiding DbContext threading issues</see>
+    ///         for more information.
+    ///     </para>
+    ///     <para>
+    ///         See <see href="https://aka.ms/efcore-docs-transactions">Transactions in EF Core</see> for more information.
+    ///     </para>
+    /// </remarks>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete.</param>
+    /// <returns>
+    ///     A task that represents the asynchronous transaction initialization. The task result contains a <see cref="IDbContextTransaction" />
+    ///     that represents the started transaction.
+    /// </returns>
+    /// <exception cref="OperationCanceledException">If the <see cref="CancellationToken" /> is canceled.</exception>
     public static Task<IDbContextTransaction> BeginTransactionAsync(this DbContext dbContext, CancellationToken cancellationToken = default)
         => dbContext.Database.BeginTransactionAsync(cancellationToken);
 
@@ -29,6 +51,46 @@ public static class DbContextHelper
         {
             return Result.CreateFailure(ex.GetBaseException().Message, ex);
         }
+    }
+
+    public static Func<TParam, Task<TResult>> CompileAsyncQuery<TDbContext, TResult, TParam>(
+        this TDbContext db,
+    Expression<Func<TDbContext, TParam, TResult>> queryExpression)
+    where TDbContext : DbContext
+    {
+        var rawResult = EF.CompileAsyncQuery(queryExpression);
+        var result = (TParam param) => rawResult(db, param);
+        return result;
+    }
+
+    public static Func<Task<TResult?>> CompileAsyncQuery<TDbContext, TResult>(
+        this TDbContext db,
+        Expression<Func<TDbContext, TResult?>> queryExpression)
+        where TDbContext : DbContext
+    {
+        var rawResult = EF.CompileAsyncQuery(queryExpression);
+        var result = () => rawResult(db);
+        return result;
+    }
+
+    public static Func<TParam1, IAsyncEnumerable<TResult>> CompileAsyncQuery<TContext, TParam1, TResult>(
+        this TContext db,
+        Expression<Func<TContext, TParam1, IQueryable<TResult>>> queryExpression)
+            where TContext : DbContext
+    {
+        var rawResult = EF.CompileAsyncQuery(queryExpression);
+        var result = (TParam1 param) => rawResult(db, param);
+        return result;
+    }
+
+    public static Func<IAsyncEnumerable<TResult>> CompileAsyncQuery<TContext, TResult>(
+        this TContext db,
+        Expression<Func<TContext, IQueryable<TResult>>> queryExpression)
+            where TContext : DbContext
+    {
+        var rawResult = EF.CompileAsyncQuery(queryExpression);
+        var result = () => rawResult(db);
+        return result;
     }
 
     public static TDbContext Detach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)

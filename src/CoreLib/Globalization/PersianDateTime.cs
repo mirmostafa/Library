@@ -50,7 +50,7 @@ public readonly struct PersianDateTime :
     /// Gets the day of week.
     /// </summary>
     /// <value>The day of week.</value>
-    public PersianDayOfWeek DayOfWeek => (PersianDayOfWeek)PersianCalendar.GetDayOfWeek(this).ToInt();
+    public PersianDayOfWeek DayOfWeek => (PersianDayOfWeek)PersianCalendar.GetDayOfWeek(this).Cast().ToInt();
 
     /// <summary>
     /// Gets the day of week title.

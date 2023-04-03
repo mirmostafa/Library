@@ -35,7 +35,7 @@ public abstract class LibApp : Bases.ApplicationBase
 
     public static string? ApplicationTitle => ApplicationHelper.ApplicationTitle ?? Current?.MainWindow?.Title;
 
-    public static FastLogger AppLogger => Current.To<LibApp>().Logger;
+    public static FastLogger AppLogger => Current.Cast().To<LibApp>().Logger;
 
     public FastLogger Logger { get; private set; }
 
@@ -44,7 +44,7 @@ public abstract class LibApp : Bases.ApplicationBase
 
     protected virtual void HandleException(Exception exception)
     {
-        var title = exception.As<IException>()?.Title ?? ApplicationTitle ?? exception?.GetType().Name;
+        var title = exception.Cast().As<IException>()?.Title ?? ApplicationTitle ?? exception?.GetType().Name;
         var owner = (IException ex) => ex.Title ?? ex.Owner?.ToString() ?? title;
         switch (exception)
         {

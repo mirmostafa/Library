@@ -22,7 +22,7 @@ public abstract class PairMessageStatusCodeExceptionBase<TStatusCode> : LibraryE
     /// </value>
     public (TStatusCode statusCode, string? message) Info => (this.StatusCode, this.GetBaseException()?.Message);
 
-    int? IApiException.StatusCode => this.StatusCode.ToInt();
+    int? IApiException.StatusCode => this.StatusCode.Cast().ToInt();
 
     /// <summary>
     ///     Deconstructs the specified status code and base exception.

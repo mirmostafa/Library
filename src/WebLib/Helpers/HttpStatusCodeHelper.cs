@@ -5,7 +5,7 @@ namespace Library.Web.Helpers;
 public static class HttpStatusCodeHelper
 {
     public static HttpStatusCodeKind GetKind(this HttpStatusCode code)
-        => code.ToInt() switch
+        => code.Cast().ToInt() switch
         {
             <= 199 => HttpStatusCodeKind.Informational,
             <= 299 => HttpStatusCodeKind.Success,

@@ -5,7 +5,7 @@ namespace Library.CodeGeneration.Models;
 public readonly struct Language : IEquatable<Language>
 {
     public Language(in string name, in string? fileExtension = null)
-        => (this.Name, this.FileExtension) = (name.Check(true).ArgumentNotNull(), fileExtension);
+        => (this.Name, this.FileExtension) = (name.Check(CheckBehavior.ThrowOnFail).ArgumentNotNull(), fileExtension);
 
     public string? FileExtension { get; init; }
 

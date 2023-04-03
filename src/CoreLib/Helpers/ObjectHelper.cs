@@ -14,8 +14,6 @@ namespace Library.Helpers;
 
 public static class ObjectHelper
 {
-    private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
-
     /// <summary>
     /// Checks the database null.
     /// </summary>
@@ -143,7 +141,7 @@ public static class ObjectHelper
         where TAttribute : Attribute =>
         property is null
                 ? throw new ArgumentNullException(nameof(property))
-                : property.GetCustomAttributes(typeof(TAttribute), true).FirstOrDefault().As<TAttribute>();
+                : property.GetCustomAttributes(typeof(TAttribute), true).FirstOrDefault().Cast().As<TAttribute>();
 
     /// <summary>
     /// Gets the attribute.
@@ -221,7 +219,7 @@ public static class ObjectHelper
         var field = obj?.GetType().GetFields().FirstOrDefault(fld => string.Compare(fld.Name, fieldName, StringComparison.Ordinal) == 0);
         return field switch
         {
-            not null => field.GetValue(obj)!.To<TFieldType>(),
+            not null => field.GetValue(obj)!.Cast().To<TFieldType>(),
             null => throw new ObjectNotFoundException("Field not found")
         };
     }
@@ -244,7 +242,7 @@ public static class ObjectHelper
     {
         var methodInfo = obj.ArgumentNotNull(nameof(obj)).GetType().GetMethod(name, bindingFlags);
         return methodInfo is not null
-            ? Cast.As<TDelegate>(Delegate.CreateDelegate(typeof(TDelegate), obj, methodInfo))
+            ? Delegate.CreateDelegate(typeof(TDelegate), obj, methodInfo).Cast().As<TDelegate>()
             : null;
     }
 
@@ -263,7 +261,7 @@ public static class ObjectHelper
     {
         var methodInfo = objType.GetMethod(name, bindingFlags);
         return methodInfo is not null
-            ? Cast.As<TDelegate>(Delegate.CreateDelegate(typeof(TDelegate), null, methodInfo))
+            ? Delegate.CreateDelegate(typeof(TDelegate), null, methodInfo).Cast().As<TDelegate>()
             : null;
     }
 
@@ -446,11 +444,9 @@ public static class ObjectHelper
     /// </summary>
     /// <param name="value">The value.</param>
     /// <returns><c>true</c> if [is null or empty string] [the specified value]; otherwise, <c>false</c>.</returns>
+    [Obsolete("Not object oriented.", true)]
     public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
-        => string.IsNullOrEmpty(Cast.ToString(value));
-
-    public static dynamic props(this object o)
-        => _propsExpando.GetOrCreateValue(o);
+        => string.IsNullOrEmpty(value.Cast().ToString());
 
     public static IEnumerable<T> Repeat<T>(T value, int count)
     {

@@ -1,26 +1,23 @@
 ﻿using Library.DesignPatterns.StateMachine;
 using Library.Helpers.ConsoleHelper;
 
+
 using Xunit.Abstractions;
 
 namespace UnitTests;
 
-public class MyTestClass
+public class StateMachineTest
 {
     private readonly ITestOutputHelper _output;
 
-    public MyTestClass(ITestOutputHelper output) => this._output = output;
-
-    [Fact]
-    public void Test01()
-    {
-    }
+    public StateMachineTest(ITestOutputHelper output) 
+        => this._output = output;
 
     static public IEnumerable<object[]> Data => new[] { new object[] { ConsoleKey.UpArrow }, new object[] { ConsoleKey.DownArrow }, new object[] { ConsoleKey.End } };
 
     [Theory]
     [MemberData(nameof(Data))]
-    public async Task StateMachineTest(ConsoleKey path)
+    public async Task StateMachineFullTest(ConsoleKey path)
     {
         _ = await StateMachineManager.Dispatch(
                         () => Task.FromResult((0, MoveDirection.Foreword)),
@@ -57,7 +54,6 @@ public class MyTestClass
         {
             this._output.WriteLine(flow.Current.ToString());
             _ = flow.History.ForEachEager(x => this._output.WriteLine(x.ToString()));
-            _ = this._output.WriteLine();
             this._output.WriteLine("==================");
             return Task.CompletedTask;
         }

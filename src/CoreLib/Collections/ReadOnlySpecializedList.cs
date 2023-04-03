@@ -45,7 +45,7 @@ public abstract class ReadOnlySpecializedList<TItem, TEnumerable> : IEnumerable<
     protected abstract TEnumerable OnGetNew(IEnumerable<TItem?> items);
 
     protected TEnumerable This()
-        => this.As<TEnumerable>()!;
+        => this.Cast().As<TEnumerable>()!;
 
     protected TEnumerable This(params Delegate[] delegates)
     {

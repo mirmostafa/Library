@@ -28,7 +28,7 @@ public class CodeHelperTest
             await Task.Delay(1000);
         }
         var elapsed = stopwatch.Elapsed;
-        Assert.True(elapsed.Ticks > 0);
+        Assert.True(elapsed.Ticks > 0, "Stopwatch is working like a charm!");
     }
 
     [Fact]

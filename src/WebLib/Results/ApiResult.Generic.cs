@@ -28,12 +28,12 @@ public record ApiResult<T> : ApiResult, IApiResult<T>
     }
 
     public static ApiResult<T> Ok(T value, string? message = null)
-        => new(System.Net.HttpStatusCode.OK.ToInt(), message) { Value = value };
+        => new(System.Net.HttpStatusCode.OK.Cast().ToInt(), message) { Value = value };
 
     public static ApiResult<T?> New(int? statusCode = null, string? message = null, T? value = default)
         => new(statusCode, message, value);
     public static ApiResult<T?> New(HttpStatusCode? statusCode = null, string? message = null, T? value = default)
-        => new(statusCode?.ToInt(), message, value);
+        => new(statusCode?.Cast().ToInt(), message, value);
 
     public static explicit operator T?(ApiResult<T> result) => result.Value;
 }

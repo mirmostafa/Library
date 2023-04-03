@@ -4,7 +4,7 @@ namespace Library.Helpers.ConsoleHelper;
 
 public static class ConsoleHelper
 {
-    public static T DumpLine<T>(this T t)
+    public static T DumpLine<T>( T t)
     {
         if (t == null)
         {
@@ -31,7 +31,7 @@ public static class ConsoleHelper
         return t;
     }
 
-    public static T WriteLine<T>(this T t)
+    public static T WriteLine<T>(T t)
     {
         if (t is not string)
         {

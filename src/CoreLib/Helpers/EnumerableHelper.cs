@@ -200,12 +200,7 @@ public static class EnumerableHelper
     {
         Check.IfArgumentNotNull(items);
 
-        var result = new List<T>();
-        foreach (var item in items)
-        {
-            result.Add(item);
-        }
-        return result.AsReadOnly();
+        return Array.AsReadOnly(items.ToArray());
     }
 
     /// <summary>
@@ -299,7 +294,7 @@ public static class EnumerableHelper
     }
 
     [return: NotNull]
-    public static IEnumerable<T> ClearImmuted<T>(this IEnumerable<T>? source) 
+    public static IEnumerable<T> ClearImmuted<T>(this IEnumerable<T>? source)
         => Enumerable.Empty<T>();
 
     public static IEnumerable<TItem> Collect<TItem>(IEnumerable<TItem> items)

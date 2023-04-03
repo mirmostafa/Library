@@ -126,7 +126,7 @@ public static class ControlHelper
         string path,
         BindingMode bindingMode = BindingMode.TwoWay) => target?.SetBinding(targetDependencyProperty, new Binding { Source = source, Path = new PropertyPath(path), Mode = bindingMode });
 
-    public static void EnsureVisible(this ListViewItem item) => item.ArgumentNotNull(nameof(item)).Parent.As<ListView>()?.ScrollIntoView(item);
+    public static void EnsureVisible(this ListViewItem item) => item.ArgumentNotNull(nameof(item)).Parent.Cast().As<ListView>()?.ScrollIntoView(item);
 
     public static void EnsureVisibleItem(this DataGrid dg, object item) => dg.ArgumentNotNull(nameof(dg)).ScrollIntoView(item);
 
@@ -140,7 +140,7 @@ public static class ControlHelper
         do
         {
             parent.IsExpanded = isExpanded;
-        } while ((parent = parent?.Parent.As<TreeViewItem>()) is not null);
+        } while ((parent = parent?.Parent.Cast().As<TreeViewItem>()) is not null);
 
         item.BringIntoView();
     }
@@ -188,7 +188,7 @@ public static class ControlHelper
                     : c is not TabItem tabItem
                         ? Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i))
                         : tabItem.Content is Visual
-                                            ? (IEnumerable<Visual>)(new[] { tabItem.Content.As<Visual>()!, tabItem.Header.As<Visual>()! })
+                                            ? (IEnumerable<Visual>)(new[] { tabItem.Content.Cast().As<Visual>()!, tabItem.Header.Cast().As<Visual>()! })
                                             : Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i));
             },
             result.Add,
@@ -283,17 +283,17 @@ public static class ControlHelper
     }
 
     public static T? GetSelectedValue<T>(this TreeView treeView) where T : class
-        => treeView.ArgumentNotNull(nameof(treeView)).SelectedItem.As<TreeViewItem>()?.DataContext.As<T>();
+        => treeView.ArgumentNotNull(nameof(treeView)).SelectedItem.Cast().As<TreeViewItem>()?.DataContext.Cast().As<T>();
 
     [Obsolete("Use listView.GetSelection, instead.")]
     public static T? GetSelection<T>(this SelectionChangedEventArgs e)
-        => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().To<T?>();
+        => e.ArgumentNotNull(nameof(e)).AddedItems.Cast<object?>().FirstOrDefault().Cast().To<T?>();
 
     public static T? GetSelection<T>([DisallowNull] this ListView listView, SelectionChangedEventArgs e)
-        => e?.AddedItems.Any() is true ? e.AddedItems[0].To<T?>() : GetSelections<T>(listView).FirstOrDefault();
+        => e?.AddedItems.Any() is true ? e.AddedItems[0].Cast().To<T?>() : GetSelections<T>(listView).FirstOrDefault();
 
     public static IEnumerable<T?> GetSelections<T>([DisallowNull] this ListView listView)
-        => listView.ArgumentNotNull().SelectedItems.Cast<object?>().Select(x => x.To<T?>());
+        => listView.ArgumentNotNull().SelectedItems.Cast<object?>().Select(x => x.Cast().To<T?>());
 
     public static string GetText([DisallowNull] this RichTextBox rtb)
     {
@@ -441,10 +441,10 @@ public static class ControlHelper
         => uiElement?.Dispatcher.Invoke(DispatcherPriority.Render, Methods.Empty);
 
     public static IEnumerable<dynamic>? RetieveCheckedItems(this MultiSelector dg)
-        => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.As<dynamic>()).Compact();
+        => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.Cast().As<dynamic>()).Compact();
 
     public static IEnumerable<TItem>? RetieveCheckedItems<TItem>(this MultiSelector dg)
-        => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.To<TItem>());
+        => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.Cast().To<TItem>());
 
     public static TResult RunCodeBlock<TResult>(this FrameworkElement element, [DisallowNull] in Func<TResult> action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true)
     {

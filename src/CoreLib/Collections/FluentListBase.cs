@@ -45,7 +45,7 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
 
     bool IFluentCollection<TList, TItem>.IsReadOnly { get; }
 
-    private TList This => this.As<TList>()!;
+    private TList This => this.Cast().As<TList>()!;
 
     public TList Add(TItem item)
         => this.This.Fluent(this.CheckReadOnly).With(() => this._list.Add(item));

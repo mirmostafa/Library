@@ -32,7 +32,7 @@ public abstract class MsLoggerMessageWrapperBase<TMsLoggerMessageWapper> : IConf
     public TMsLoggerMessageWapper Configure(Action<MsLoggerMessageWrapperOptions> configure)
     {
         configure.ArgumentNotNull()(this.Options);
-        return this.As<TMsLoggerMessageWapper>()!;
+        return this.Cast().As<TMsLoggerMessageWapper>()!;
     }
 
     public virtual void Debug(string log) => this._debug(this._logger, log, null);

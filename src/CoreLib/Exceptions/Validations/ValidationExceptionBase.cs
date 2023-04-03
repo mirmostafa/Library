@@ -7,7 +7,7 @@ namespace Library.Exceptions.Validations;
 [Serializable]
 public abstract class ValidationExceptionBase : LibraryExceptionBase, IValidationException
 {
-    public static int ErrorCode { get; } = HttpStatusCode.BadRequest.ToInt() * -1;
+    public static int ErrorCode { get; } = HttpStatusCode.BadRequest.Cast().ToInt() * -1;
 
     protected ValidationExceptionBase()
     {

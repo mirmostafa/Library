@@ -25,7 +25,7 @@ public sealed class EventualList<TItem> : IList<TItem>
         => this._innerList.Count;
 
     bool ICollection<TItem>.IsReadOnly
-        => this._innerList.As<IList<TItem>>()!.IsReadOnly;
+        => this._innerList.Cast().As<IList<TItem>>()!.IsReadOnly;
 
     public TItem this[int index]
     {

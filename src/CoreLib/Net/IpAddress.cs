@@ -91,7 +91,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         Check.IfArgumentNotNull(hostNameOrAddress);
 
         using var ping = new Ping();
-        return ping.Send(hostNameOrAddress, timeout.TotalMilliseconds.ToInt());
+        return ping.Send(hostNameOrAddress, timeout.TotalMilliseconds.Cast().ToInt());
     }
 
     public static PingReply Ping(in string hostNameOrAddress)
@@ -160,11 +160,11 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     }
 
     public static Result Validate(in string ip)
-        => ip.ArgumentNotNull().Split('.').Check()
+        => ip.ArgumentNotNull().Split('.').Check(CheckBehavior.GatherAll)
              .RuleFor(x => x.Length != 4, () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.Any(part => !part.IsInteger()), () => "Parameter cannot be cast to IpAddress")
-             .RuleFor(x => x.Any(part => !part.ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
-             .BuildAll();
+             .RuleFor(x => x.Any(part => !part.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
+             .Build();
 
     /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
@@ -175,7 +175,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="other" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="other" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="other" /> in the sort order.</description></item></list>
     /// </returns>
     public int CompareTo(IpAddress? other)
-        => other is null ? -1 : Merge(this._parts).Replace(".", "").ToLong().CompareTo(Merge(other._parts).Replace(".", "").ToLong());
+        => other is null ? -1 : Merge(this._parts).Replace(".", "").Cast().ToLong().CompareTo(Merge(other._parts).Replace(".", "").Cast().ToLong());
 
     /// <summary>
     ///     Indicates whether the current object is equal to another object of the same type.
@@ -310,5 +310,5 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         => $"{parts[0]:000}.{parts[1]:000}.{parts[2]:000}.{parts[3]:000}";
 
     private static int[] Split(in string ip)
-        => ip.Split('.').Select(s => s.ToInt()).ToArray();
+        => ip.Split('.').Select(s => s.Cast().ToInt()).ToArray();
 }

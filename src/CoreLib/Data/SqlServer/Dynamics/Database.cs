@@ -49,7 +49,7 @@ public class Database : SqlObject<Database, Server>
         => GetDatabasesCore(ConnectionStringBuilder.Build(datasource, username, password));
 
     public int GetTablesCount()
-        => this.GetSql().ExecuteScalarQuery("SELECT COUNT(name) FROM sys.tables")!.ToInt();
+        => this.GetSql().ExecuteScalarQuery("SELECT COUNT(name) FROM sys.tables")!.Cast().ToInt();
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {

@@ -12,7 +12,7 @@ public sealed class CommandExtender : IEquatable<RoutedUICommand>, IEquatable<Co
     {
         this.Command = commandBinding
            ?.Command
-            .As<RoutedUICommand>()
+            .Cast().As<RoutedUICommand>()
             .NotNull(() => new TypeMismatchValidationException($"{nameof(commandBinding)} is null. Or could not convert {nameof(this.CommandBinding.Command)} to {typeof(RoutedUICommand)}"))!;
         this.CommandBinding = commandBinding!;
         this.IsEnabled = this.Command.CanExecute(null, null);
@@ -91,7 +91,7 @@ public sealed class CommandExtender : IEquatable<RoutedUICommand>, IEquatable<Co
     // Returns:
     //     true if this command can be executed; otherwise, false.
     bool ICommand.CanExecute(object? parameter)
-        => this.Command.To<ICommand>().CanExecute(parameter);
+        => this.Command.Cast().To<ICommand>().CanExecute(parameter);
 
     public bool Equals(RoutedUICommand? other)
                         => other is not null && this.Command == other;
@@ -128,7 +128,7 @@ public sealed class CommandExtender : IEquatable<RoutedUICommand>, IEquatable<Co
     //     Data used by the command. If the command does not require data to be passed,
     //     this object can be set to null.
     void ICommand.Execute(object? parameter)
-        => this.Command.To<ICommand>().Execute(parameter);
+        => this.Command.Cast().To<ICommand>().Execute(parameter);
 
     public override int GetHashCode()
                 => HashCode.Combine(this.Command);

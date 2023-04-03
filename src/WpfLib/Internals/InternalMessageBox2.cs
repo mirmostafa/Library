@@ -89,7 +89,7 @@ public abstract class InternalMessageBox2
                 var closed = false;
                 const int steps = 100;
                 var timeoutMilliseconds = timeout.TotalMilliseconds;
-                var progress = new TaskDialogProgressBar(0, timeoutMilliseconds.ToInt(), 0);
+                var progress = new TaskDialogProgressBar(0, timeoutMilliseconds.Cast().ToInt(), 0);
                 result.Controls.Add(progress);
                 result.Closing += (_, __) => closed = true;
                 result.Opened += (_, __) => Task.Run(() =>

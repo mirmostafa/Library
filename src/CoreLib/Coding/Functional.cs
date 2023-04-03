@@ -339,7 +339,7 @@ public static class Functional
         => new();
 
     public static T New<T>(params object[] args)
-        => Activator.CreateInstance(typeof(T), args).NotNull().To<T>();
+        => Activator.CreateInstance(typeof(T), args).NotNull().Cast().To<T>();
 
     [DoesNotReturn]
     public static void Throw<TException>() where TException : Exception, new()

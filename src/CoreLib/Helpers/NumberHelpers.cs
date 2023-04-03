@@ -17,7 +17,7 @@ public static class NumberHelper
     public static bool IsBetween(this int num, in int min, in int max) => num > min && num <= max;
 
     public static bool IsPrime(int number)
-        => Enumerable.Range(2, Math.Sqrt(number).ToInt() - 1).All(d => number % d != 0);
+        => Enumerable.Range(2, Math.Sqrt(number).Cast().ToInt() - 1).All(d => number % d != 0);
 
     public static string ToStandardMetricScale(this long value, int measure = 1000, int decimalPlaces = 1)
     {

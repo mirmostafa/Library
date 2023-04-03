@@ -53,11 +53,22 @@ public abstract record ResultBase(in bool? Succeed = null,
         => this.ToString();
 
     protected static (bool? Succeed, object? Status, string? Message, IEnumerable<(object Id, object Error)>? Errors, ImmutableDictionary<string, object>? ExtraData) Combine(params ResultBase[] results)
-        => (results.All(x => x.Succeed == null) ? null : results.All(x => x.IsSucceed),
-            results.LastOrDefault(x => x.Status is not null)?.Status,
-            results.LastOrDefault(x => !x.Message.IsNullOrEmpty())?.Message,
-            results.SelectMany(x => EnumerableHelper.DefaultIfEmpty(x?.Errors)),
-            results.SelectMany(x => EnumerableHelper.DefaultIfEmpty(x.ExtraData)).ToImmutableDictionary());
+    {
+        bool? isSucceed = results.All(x => x.Succeed == null) ? null : results.All(x => x.IsSucceed);
+        var status = results.LastOrDefault(x => x.Status is not null)?.Status;
+        var message = results.LastOrDefault(x => !x.Message.IsNullOrEmpty())?.Message;
+        var errors = results.SelectMany(x => EnumerableHelper.DefaultIfEmpty(x?.Errors));
+        var extraData = results.SelectMany(x => EnumerableHelper.DefaultIfEmpty(x.ExtraData)).ToImmutableDictionary();
+
+        var statusBuffer = results.Where(x => x.Status is not null).Select(x => x.Status).ToList();
+        if (statusBuffer.Count > 1)
+        {
+            errors = errors.AddRangeImmuted(statusBuffer.Select(x => ((object)null!, x!)));
+            status = null;
+        }
+
+        return (isSucceed, status, message, errors, extraData);
+    }
 }
 
 public record Result(in bool? Succeed = null,
@@ -112,7 +123,6 @@ public record Result(in bool? Succeed = null,
         var result = new Result(data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
         return result;
     }
-
 }
 
 public record Result<TValue>(in TValue Value,

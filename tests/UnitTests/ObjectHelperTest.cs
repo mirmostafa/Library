@@ -7,15 +7,9 @@ public class ObjectHelperTest
     public void ExtraPropertyTest()
     {
         var testString = "Ali";
-        testString.props().IsReadOnly = true;
-        var actual = testString.props().IsReadOnly;
+        var fluency = testString.Fluent();
+        fluency.props().IsReadOnly = true;
+        var actual = fluency.props().IsReadOnly;
         Assert.True(actual);
-    }
-
-    [Fact]
-    public void MapTest()
-    {
-        var a = "5".Map(Convert.ToInt32);
-        var b = 5.Map(Convert.ToString);
     }
 }

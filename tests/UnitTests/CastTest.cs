@@ -1,4 +1,8 @@
-﻿namespace UnitTests;
+﻿using Library.Coding;
+using Library.Helpers;
+using Library.Validations;
+
+namespace UnitTests;
 
 [Trait("Category", "Helpers")]
 [Trait("Category", "Code Helpers")]
@@ -8,7 +12,7 @@ public class CastTest
     public void AsTest1()
     {
         Student p = new();
-        var s = p.As<Person>();
+        var s = p.Cast().As<Person>();
         Assert.NotNull(s);
     }
 
@@ -16,7 +20,7 @@ public class CastTest
     public void AsTest2()
     {
         Person p = new();
-        var s = p.As<Student>();
+        var s = p.Cast().As<Student>();
         Assert.Null(s);
     }
 }

@@ -12,5 +12,5 @@ public interface IThrowableException<TException>
     
     [DoesNotReturn]
     static void Throw(string message) 
-        => throw Activator.CreateInstance(typeof(TException), message)!.To<Exception>();
+        => throw Activator.CreateInstance(typeof(TException), message)!.Cast().To<Exception>();
 }

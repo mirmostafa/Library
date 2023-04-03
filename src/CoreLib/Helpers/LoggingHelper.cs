@@ -36,7 +36,9 @@ public static class LoggingHelper
                 logger.Error(string.Format(exceptionFormat, ex.GetBaseException().Message));
             }
             else
+            {
                 throw;
+            }
         }
         finally
         {
@@ -73,7 +75,9 @@ public static class LoggingHelper
                 return (default, logger);
             }
             else
+            {
                 throw;
+            }
         }
         finally
         {
@@ -97,7 +101,7 @@ public static class LoggingHelper
         reporter.Ended += Reporter_Ended;
         return logger;
 
-        void Reporter_Ended(object? sender, ItemActedEventArgs<string?> e)
+        void Reporter_Ended(object? sender, ItemActedEventArgs<ProgressData?> e)
         {
             if (e.Item != null)
             {
@@ -105,33 +109,56 @@ public static class LoggingHelper
             }
         }
 
-        void Reporter_Reported(object? sender, ItemActedEventArgs<(int Max, int Current, string? Description)> e)
-            => logger.Log($"{e.Item.Current:00}-{e.Item.Max:00}] [{e.Item.Description}");
+        void Reporter_Reported(object? sender, ItemActedEventArgs<ProgressData> e)
+            => logger.Log(e.Item switch
+            {
+                (_, null, null) => e.Item.Description!,
+                _ => $"{e.Item.Current:00}-{e.Item.Max:00} - {e.Item.Description}"
+            }, sender: e.Item.Sender);
     }
 
     public static void Info(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
             => container?.Logger?.Info(message, sender, time);
 
-    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger, [DisallowNull] Func<Task> action, Action<TLogger> onStart, Action<TLogger> onSucceed, Action<Exception, TLogger> onError, Action<TLogger> onFinal)
+    public static async Task<TLogger> LogBlockAsync<TLogger>([DisallowNull] this TLogger logger,
+        [DisallowNull] Func<Task> action,
+        Action<TLogger>? onStart,
+        Action<TLogger>? onSucceed,
+        Action<Exception, TLogger>? onError,
+        Action<TLogger>? onFinal = null)
         where TLogger : ILogger
     {
         Check.IfArgumentNotNull(action);
         try
         {
+            onStart?.Invoke(logger);
             await action();
-            onSucceed(logger);
+            onSucceed?.Invoke(logger);
         }
         catch (Exception ex)
         {
-            onError(ex, logger);
+            onError?.Invoke(ex, logger);
         }
         return logger;
     }
 
-    public static bool MeetsLevel(this LogLevel level, LogLevel minLevel)
-        => (minLevel & level) == level;
+    public static Task<TLogger> LogBlockAsync<TLogger>(
+        [DisallowNull] this TLogger logger,
+        [DisallowNull] Func<Task> action,
+        string? startMessage = "Running...",
+        string? succeedMessage = "Ready") where TLogger : ILogger
+        => LogBlockAsync(
+            logger,
+            action,
+            l => If(!startMessage.IsNullOrEmpty(), () => l.Debug(startMessage!)),
+            l => If(!succeedMessage.IsNullOrEmpty(), () => l.Debug(succeedMessage!)),
+            null,
+            null);
 
-    public static string Reformat<TMessage>(this LogRecord<TMessage> logRecord, string? format = LogFormat.DEFAULT_FORMAT)
+    public static bool MeetsLevel(this LogLevel level, LogLevel minLevel)
+    => (minLevel & level) == level;
+
+    public static string Reformat<TMessage>(this LogRecord<TMessage> logRecord, string? format = LogFormat.FORMAT_DEFAULT)
     {
         if (logRecord is null)
         {
@@ -145,12 +172,14 @@ public static class LoggingHelper
             _ => string.Empty,
         };
         return message.IsNullOrEmpty() ? string.Empty : (format?.ReplaceAll(
-            (LogFormat.DATE, (logRecord.Time ?? DateTime.Now).ToLocalString().Add(1) ?? string.Empty),
+            (LogFormat.LONG_DATE, (logRecord.Time ?? DateTime.Now).ToLocalString().Add(1) ?? string.Empty),
+            (LogFormat.SHORT_TIME, (logRecord.Time ?? DateTime.Now).ToShortTimeString() ?? string.Empty),
             (LogFormat.LEVEL, logRecord.Level.ToString().Add(1) ?? string.Empty),
-            (LogFormat.MESSAGE, message.Add(1) ?? string.Empty),
+            (LogFormat.MESSAGE, message ?? string.Empty),
             (LogFormat.NEW_LINE, Environment.NewLine),
-            (LogFormat.SENDER, (logRecord.Sender?.ToString() ?? string.Empty).Add(1) ?? string.Empty),
-            (LogFormat.STACK_TRACE, (logRecord.StackTrace?.ToString() ?? string.Empty).Add(1) ?? string.Empty))) ?? string.Empty;
+            (LogFormat.SENDER, (logRecord.Sender?.ToString() ?? string.Empty).Add(1, before: true) ?? string.Empty),
+            (LogFormat.STACK_TRACE, (logRecord.StackTrace?.ToString() ?? string.Empty).Add(1) ?? string.Empty))
+            .Replace("  ", " ")) ?? string.Empty;
     }
 
     //public static string Reformat(this LogRecord logRecord, string? format = LogFormat.DEFAULT_FORMAT)
@@ -175,10 +204,10 @@ public static class LoggingHelper
     //        (LogFormat.STACK_TRACE, (logRecord.StackTrace?.ToString() ?? string.Empty).Add(1) ?? string.Empty))) ?? string.Empty;
     //}
 
-    public static string Reformat<TMessage>(object logObject, string? format = LogFormat.DEFAULT_FORMAT)
+    public static string Reformat<TMessage>(object logObject, string? format = LogFormat.FORMAT_DEFAULT)
         => InnerPatternMatching(logObject, format);
 
-    public static string Reformat(object logObject, string? format = LogFormat.DEFAULT_FORMAT)
+    public static string Reformat(object logObject, string? format = LogFormat.FORMAT_DEFAULT)
         => InnerPatternMatching(logObject, format);
 
     public static LogLevel ToLibLogLevel(this MsLogLevel logLevel)

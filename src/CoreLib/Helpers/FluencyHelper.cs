@@ -1,12 +1,15 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 using Library.Validations;
 
 namespace Library.Helpers;
 
 [DebuggerStepThrough]
+[StackTraceHidden]
 public static class FluencyHelper
 {
+    private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
     public static async Task<TInstance> Async<TInstance>(this Fluency<TInstance> instance, Func<Task> funcAsync)
     {
         await funcAsync();
@@ -114,4 +117,7 @@ public static class FluencyHelper
 
     public static Fluency<TResult> WithNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
             => action(instance);
+
+    public static dynamic props<TInstance>(this Fluency<TInstance> o)
+        => _propsExpando.GetOrCreateValue(o.NotNull().Value.NotNull());
 }

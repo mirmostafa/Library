@@ -397,7 +397,7 @@ public sealed class NumberFormat : NumericFormatBase
     /// <summary>
     ///     The default negative pattern
     /// </summary>
-    public static readonly int DefaultNegativePattern = NumberNegativePattern.Value1.ToInt();
+    public static readonly int DefaultNegativePattern = NumberNegativePattern.Value1.Cast().ToInt();
 
     /// <summary>
     ///     The default negative sign
@@ -455,12 +455,12 @@ public sealed class PercentFormat : NumericFormatBase
     /// <summary>
     ///     The default negative pattern
     /// </summary>
-    public static readonly int DefaultNegativePattern = PercentNegativePattern.Value1.ToInt();
+    public static readonly int DefaultNegativePattern = PercentNegativePattern.Value1.Cast().ToInt();
 
     /// <summary>
     ///     The default positive pattern
     /// </summary>
-    public static readonly int DefaultPositivePattern = PercentPositivePattern.Value1.ToInt();
+    public static readonly int DefaultPositivePattern = PercentPositivePattern.Value1.Cast().ToInt();
 
     /// <summary>
     ///     The default group separator
@@ -513,12 +513,12 @@ public sealed class CurrencyFormat : NumericFormatBase
     /// <summary>
     ///     The default negative pattern
     /// </summary>
-    public static readonly int DefaultNegativePattern = CurrencyNegativePattern.Value5.ToInt();
+    public static readonly int DefaultNegativePattern = CurrencyNegativePattern.Value5.Cast().ToInt();
 
     /// <summary>
     ///     The default positive pattern
     /// </summary>
-    public static readonly int DefaultPositivePattern = CurrencyPositivePattern.Value1.ToInt();
+    public static readonly int DefaultPositivePattern = CurrencyPositivePattern.Value1.Cast().ToInt();
 
     /// <summary>
     ///     The default group separator
@@ -582,12 +582,12 @@ public sealed class CostFormat : NumericFormatBase
     /// <summary>
     ///     The default negative pattern
     /// </summary>
-    public static readonly int DefaultNegativePattern = CurrencyNegativePattern.Value5.ToInt();
+    public static readonly int DefaultNegativePattern = CurrencyNegativePattern.Value5.Cast().ToInt();
 
     /// <summary>
     ///     The default positive pattern
     /// </summary>
-    public static readonly int DefaultPositivePattern = CurrencyPositivePattern.Value3.ToInt();
+    public static readonly int DefaultPositivePattern = CurrencyPositivePattern.Value3.Cast().ToInt();
 
     /// <summary>
     ///     The default group separator

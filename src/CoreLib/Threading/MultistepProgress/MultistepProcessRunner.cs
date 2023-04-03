@@ -5,31 +5,23 @@ public class MultistepProcessRunner<TState>
     private readonly IMultistepProcess _reporter;
     private readonly List<StepInfo<TState>> _steps = new();
     private readonly IMultistepProcess _subReporter;
+    private readonly object? _owner;
     private int _current;
     private int _max;
     private TState _state;
 
-    public MultistepProcessRunner(in TState state, in IMultistepProcess reporter, IMultistepProcess? subReporter = null)
+    public MultistepProcessRunner(in TState state, in IMultistepProcess reporter, IMultistepProcess? subReporter = null, object? owner = null)
     {
         this._reporter = reporter;
         this._subReporter = subReporter ?? IMultistepProcess.New();
+        this._owner = owner;
         this._state = state;
-    }
-
-    private MultistepProcessRunner(in TState state,
-        Action<(int Max, int Current, string? Description)> reporter,
-        Action<(int Max, int Current, string? Description)>? subReporter = null)
-        : this(state,
-              IMultistepProcess.New().With(x => x.Reported += (_, e) => reporter?.Invoke(e.Item)),
-              subReporter is null ? null :
-                IMultistepProcess.New().With(x => x.Reported += (_, e) => subReporter(e.Item)))
-    {
     }
 
     public IEnumerable<StepInfo<TState>> Steps => this._steps;
 
-    public static MultistepProcessRunner<TState> New(in TState state, in IMultistepProcess reporter, in IMultistepProcess? subReporter = null)
-        => new(state, reporter, subReporter);
+    public static MultistepProcessRunner<TState> New(in TState state, in IMultistepProcess reporter, in IMultistepProcess? subReporter = null, object? owner = null)
+        => new(state, reporter, subReporter, owner);
 
     public MultistepProcessRunner<TState> AddStep(in StepInfo<TState> step)
         => this.AddStep(EnumerableHelper.ToArray(step));
@@ -85,7 +77,7 @@ public class MultistepProcessRunner<TState>
                 break;
             }
 
-            this._reporter.Report(step.Description, this._max, this._current += step.ProgressCount);
+            this._reporter.Report(new(this._max, this._current += step.ProgressCount, step.Description, this._owner));
             this._state = await step.AsyncAction((this._state, this._subReporter));
         }
         this._reporter.End();

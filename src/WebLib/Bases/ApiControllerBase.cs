@@ -21,7 +21,7 @@ public abstract class ApiControllerBase : ControllerBase
     protected virtual ICommandProcessor CommandProcessor => this._commandProcessor ??= this.GetService<ICommandProcessor>();
 
     protected virtual IApiResult Succees()
-        => ApiResult.New(HttpStatusCode.OK.ToInt());
+        => ApiResult.New(HttpStatusCode.OK.Cast().ToInt());
 
     protected virtual IApiResult<CommandResult> Succees(CommandResult commandResult)
         => ApiResult<CommandResult>.Ok(commandResult)!;
@@ -33,16 +33,16 @@ public abstract class ApiControllerBase : ControllerBase
         => ApiResult<TResult?>.Ok(commandResult.NotNull().Result);
 
     protected virtual IApiResult<TResult?> NoCotent<TResult>(TResult? result)
-        => this.Fail<TResult>(HttpStatusCode.NoContent.ToInt(), "آیتمی یافت نشد.");
+        => this.Fail<TResult>(HttpStatusCode.NoContent.Cast().ToInt(), "آیتمی یافت نشد.");
 
     protected new virtual IApiResult BadRequest()
-        => this.Fail(statusCode: HttpStatusCode.BadRequest.ToInt());
+        => this.Fail(statusCode: HttpStatusCode.BadRequest.Cast().ToInt());
 
     protected virtual IApiResult BadRequest(string message)
-        => this.Fail(HttpStatusCode.BadRequest.ToInt(), message);
+        => this.Fail(HttpStatusCode.BadRequest.Cast().ToInt(), message);
 
     protected virtual IApiResult Fail(int? statusCode, string? message = null)
-        => ApiResult.New(statusCode ?? HttpStatusCode.BadRequest.ToInt(), message);
+        => ApiResult.New(statusCode ?? HttpStatusCode.BadRequest.Cast().ToInt(), message);
 
     protected virtual IApiResult<TResult?> Fail<TResult>(int? statusCode, string? message = null, TResult? result = default)
         => new ApiResult<TResult?>(statusCode, message, result);
@@ -96,7 +96,7 @@ public abstract class ApiControllerBase : ControllerBase
             null => this.NoCotent(result),
             //x IEnumerable items when !items.Any() => this.NoCotent(result),
             StandardResult { IsSucceed: true } res => this.Succees(result),
-            StandardResult { IsFailure: true } res => this.Fail(res.Status?.ToInt(), res.Message, result),
+            StandardResult { IsFailure: true } res => this.Fail(res.Status?.Cast().ToInt(), res.Message, result),
             _ => this.Succees(result),
         };
 }

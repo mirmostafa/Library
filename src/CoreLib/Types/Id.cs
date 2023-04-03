@@ -394,9 +394,9 @@ public readonly struct Id :
     /// <returns>The default value of IdType</returns>
     private static Id GetDefaultValue()
         => typeof(IdType) == typeof(Guid)
-                ? Guid.Empty.To<Id>()
+                ? Guid.Empty.Cast().To<Id>()
                 : typeof(IdType) == typeof(long)
-                    ? 0.To<Id>()
+                    ? 0.Cast().To<Id>()
                     : default;
 
     /// <summary>

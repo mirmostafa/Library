@@ -48,7 +48,7 @@ public abstract class SmartEnum<TSmartEnum, TId> : IEquatable<TSmartEnum>
         //var staticFields = type.GetFields(System.Reflection.BindingFlags.Static);
         var staticFields = type.GetFields();
         var smartEnums = staticFields.Where(x => x.FieldType == typeof(TSmartEnum));
-        var rawResult = smartEnums.Select(x => x.GetValue(null).As<TSmartEnum>());
+        var rawResult = smartEnums.Select(x => x.GetValue(null).Cast().As<TSmartEnum>());
         var result = rawResult.Compact();
         return result;
     }

@@ -44,7 +44,7 @@ public class PersianDateTimeTest
 
     [Fact]
     public void DayOfWeekTest()
-        => Assert.Equal(DateTime.Now.DayOfWeek.ToInt(), PersianDateTime.Now.DayOfWeek.ToInt());
+        => Assert.Equal(DateTime.Now.DayOfWeek.Cast().ToInt(), PersianDateTime.Now.DayOfWeek.Cast().ToInt());
 
     [Fact]
     public void ParsePersianTest()

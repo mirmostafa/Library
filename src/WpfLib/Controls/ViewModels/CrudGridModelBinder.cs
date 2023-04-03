@@ -22,7 +22,7 @@ internal class CrudGridModelBinder<TItem> : ICrudGridModelBinder
     }
 
     public void Delete(object item) =>
-        this._items.Remove(item.To<TItem>());
+        this._items.Remove(item.Cast().To<TItem>());
 
     public IEnumerable GetItems() =>
         this._items;
