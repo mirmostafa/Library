@@ -53,8 +53,9 @@ public static class Caster
     public static IEnumerable<T> OfType<T>(IEnumerable items)
         => items.OfType<T>();
 
-    public static T? To<T>([DisallowNull] this ICastable o)
-                                                => (T?)o.Value;
+    [return: NotNull]
+    public static T To<T>([DisallowNull] this ICastable o)
+        => (T)o.Value!;
 
     public static int ToInt([DisallowNull] this ICastable o, int defaultValue)
     {

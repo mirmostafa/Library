@@ -1,6 +1,6 @@
 ﻿namespace Library.Cqrs.Models.Commands;
 
-public class CommandResult<T> : CommandResult
+public sealed class CommandResult<T> : CommandResult
 {
     public CommandResult(bool status, T result)
         : base(status)

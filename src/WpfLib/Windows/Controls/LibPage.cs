@@ -2,4 +2,4 @@
 
 namespace Library.Wpf.Windows.Controls;
 
-public class LibPage : LibPageBase { }
+public sealed class LibPage : LibPageBase { }

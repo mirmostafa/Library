@@ -3,7 +3,7 @@ using Library.Logging;
 
 namespace Library.Threading.MultistepProgress;
 
-public class MultiStepErrorOccurredEventArgs : LogEventArgs
+public sealed class MultiStepErrorOccurredEventArgs : LogEventArgs
 {
     public Exception Exception { get; }
 

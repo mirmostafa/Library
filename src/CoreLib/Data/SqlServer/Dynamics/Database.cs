@@ -10,7 +10,7 @@ using Library.Validations;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public class Database : SqlObject<Database, Server>
+public sealed class Database : SqlObject<Database, Server>
 {
     private IEnumerable<DataRow>? _allParams;
     private StoredProcedures? _storedProcedures;

@@ -5,7 +5,7 @@ using Library.Results;
 
 namespace UnitTests;
 
-public class ResultTest
+public sealed class ResultTest
 {
     [Fact]
     public void _01_AddOperationResultCountTest()

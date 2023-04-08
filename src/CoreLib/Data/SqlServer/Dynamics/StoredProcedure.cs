@@ -4,7 +4,7 @@ using Library.Data.SqlServer.Dynamics.Collections;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public class StoredProcedure : SqlObject<StoredProcedure, Database>
+public sealed class StoredProcedure : SqlObject<StoredProcedure, Database>
 {
     private StoredProcedureParams _Params;
 

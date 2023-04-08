@@ -7,7 +7,7 @@ namespace Library.Wpf.Behaviors;
 ///     WPF Maskable TextBox class. Just specify the TextBoxMaskBehavior.Mask attached property to a TextBox.
 ///     It protect your TextBox from unwanted non numeric symbols and make it easy to modify your numbers.
 /// </summary>
-public class TextBoxMaskBehavior
+public sealed class TextBoxMaskBehavior
 {
     public static readonly DependencyProperty MinimumValueProperty = DependencyProperty.RegisterAttached("MinimumValue",
         typeof(double),

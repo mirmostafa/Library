@@ -6,7 +6,7 @@ using Windows.UI.Notifications;
 
 namespace Library.Wpf.Windows.UI;
 
-public class Toast
+public sealed class Toast
 {
     private readonly string _appTitle;
     private ToastNotification? _toast;

@@ -2,7 +2,7 @@
 
 
 [Trait("Category", "Helpers")]
-public class RangeHelperTest
+public sealed class RangeHelperTest
 {
     [Theory]
     [InlineData(0, 10)]

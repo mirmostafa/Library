@@ -3,7 +3,7 @@ using Library.Logging;
 
 namespace Library.Threading.MultistepProgress;
 
-public class MultiStepStartedLogEventArgs : LogEventArgs
+public sealed class MultiStepStartedLogEventArgs : LogEventArgs
 {
     public double Max { get; private set; }
     public double InitialValue { get; private set; }

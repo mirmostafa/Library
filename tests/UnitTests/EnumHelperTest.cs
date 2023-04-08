@@ -1,7 +1,7 @@
 ﻿namespace UnitTests;
 
 [Trait("Category", "Helpers")]
-public class EnumHelperTest
+public sealed class EnumHelperTest
 {
     [Fact]
     public void GetStringTest()

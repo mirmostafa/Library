@@ -5,7 +5,7 @@
 
 //namespace Library.Wpf.Windows.Controls;
 
-//public class TreeViewExtender
+//public sealed class TreeViewExtender
 //{
 //    private static readonly Dictionary<DependencyObject, TreeViewSelectedItemBehavior> _Behaviors = new();
 

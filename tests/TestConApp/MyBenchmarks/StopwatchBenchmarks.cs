@@ -7,7 +7,7 @@ using Library.Coding;
 namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
-public class StopwatchBenchmarks : IBenchmark<StopwatchBenchmarks>
+public sealed class StopwatchBenchmarks : IBenchmark<StopwatchBenchmarks>
 {
     [Benchmark]
     public TimeSpan MyWay()

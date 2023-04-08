@@ -2,7 +2,7 @@
 using System.Windows.Data;
 
 namespace Library.Wpf.Converters;
-public class BooleanToVisibilityConverter : IValueConverter
+public sealed class BooleanToVisibilityConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         => parameter switch

@@ -1,6 +1,6 @@
 ﻿namespace Library.Threading.MultistepProgress;
 
-public class MultistepProcessRunner<TState>
+public sealed class MultistepProcessRunner<TState>
 {
     private readonly IMultistepProcess _reporter;
     private readonly List<StepInfo<TState>> _steps = new();

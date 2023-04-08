@@ -9,7 +9,7 @@ using BenchmarkDotNet.Attributes;
 namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
-public class AwaitValBenchmark
+public sealed class AwaitValBenchmark
 {
     private static readonly Task<int> MyTask = Task.FromResult(1);
 

@@ -4,7 +4,7 @@ using Library.Wpf.Pages;
 
 namespace Library.Wpf.Dialogs;
 
-public class HostDialog
+public sealed class HostDialog
 {
     private readonly HostDialogBox _dialogBox;
 

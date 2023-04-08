@@ -2,7 +2,7 @@ using System.Data.SqlClient;
 
 namespace Library.Data.SqlServer.Dynamics.Collections;
 
-public class Servers : SqlObjects<Server>
+public sealed class Servers : SqlObjects<Server>
 {
     internal Servers(IEnumerable<Server> items)
         : base(items)

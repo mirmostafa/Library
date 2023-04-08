@@ -4,7 +4,7 @@ using Library.Validations;
 
 namespace Library.DesignPatterns.Behavioral.Observation;
 
-public class ObservationRepository : IObservableRepository, IObserverRepository
+public sealed class ObservationRepository : IObservableRepository, IObserverRepository
 {
     private readonly List<RegisterObserver> _Observers = new();
     private readonly List<RegisterObservable> _Observables = new();

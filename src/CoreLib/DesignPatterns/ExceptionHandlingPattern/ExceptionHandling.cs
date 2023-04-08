@@ -7,7 +7,7 @@ namespace Library.DesignPatterns.ExceptionHandlingPattern;
 ///     ExceptionHandling Pattern
 /// </summary>
 /// <typeparam name="TException">The type of the exception.</typeparam>
-public class ExceptionHandling<TException>
+public abstract class ExceptionHandling<TException>
     where TException : Exception
 {
     /// <summary>
@@ -104,7 +104,7 @@ public class ExceptionHandling<TException>
 /// <summary>
 ///     Exception Handling Pattern
 /// </summary>
-public class ExceptionHandling : ExceptionHandling<Exception>
+public sealed class ExceptionHandling : ExceptionHandling<Exception>
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="ExceptionHandling" /> class.

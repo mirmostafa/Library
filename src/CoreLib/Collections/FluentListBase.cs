@@ -6,8 +6,7 @@ using Library.DesignPatterns.Markers;
 namespace Library.Collections;
 
 [Fluent]
-//x [Immutable]
-public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
+public abstract class FluentListBase<TItem, TList> : IFluentList<TList, TItem>, IList<TItem>
     where TList : FluentListBase<TItem, TList>
 {
     private readonly IList<TItem> _list;
@@ -50,20 +49,32 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     public TList Add(TItem item)
         => this.This.Fluent(this.CheckReadOnly).With(() => this._list.Add(item));
 
+    void ICollection<TItem>.Add(TItem item)
+        => this._list.Add(item);
+
     public List<TItem> AsList() =>
-        this._list.ToList();
+            this._list.ToList();
 
     public TList Clear()
         => this.This.Fluent(this.CheckReadOnly).With(this._list.Clear);
 
+    void ICollection<TItem>.Clear()
+        => this._list.Clear();
+
     public (TList List, bool Result) Contains(TItem item)
-        => (this.This, this._list.Contains(item));
+            => (this.This, this._list.Contains(item));
+
+    bool ICollection<TItem>.Contains(TItem item)
+        => this._list.Contains(item);
 
     public TList CopyTo(TItem[] array, int arrayIndex)
-        => this.This.Fluent(() => this._list.CopyTo(array, arrayIndex));
+            => this.This.Fluent(() => this._list.CopyTo(array, arrayIndex));
+
+    void ICollection<TItem>.CopyTo(TItem[] array, int arrayIndex)
+        => this._list.CopyTo(array, arrayIndex);
 
     public IEnumerator<TItem> GetEnumerator()
-        => this._list.GetEnumerator();
+            => this._list.GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator()
         => ((IEnumerable)this._list).GetEnumerator();
@@ -71,14 +82,26 @@ public class FluentListBase<TItem, TList> : IFluentList<TList, TItem>
     public (TList List, int Result) IndexOf(TItem item)
             => this.OnIndexOf(item);
 
+    int IList<TItem>.IndexOf(TItem item)
+        => this._list.IndexOf(item);
+
     public TList Insert(int index, TItem item)
-        => this.OnInsert(index, item);
+            => this.OnInsert(index, item);
+
+    void IList<TItem>.Insert(int index, TItem item)
+        => this._list.Insert(index, item);
 
     public (TList List, bool Result) Remove(TItem item)
-        => this.This.Fluent(this.CheckReadOnly).Result(() => this._list.Remove(item))!;
+            => this.This.Fluent(this.CheckReadOnly).Result(() => this._list.Remove(item))!;
+
+    bool ICollection<TItem>.Remove(TItem item)
+        => this._list.Remove(item);
 
     public TList RemoveAt(int index)
-        => this.This.Fluent(this.CheckReadOnly).With(() => this._list.RemoveAt(index));
+            => this.This.Fluent(this.CheckReadOnly).With(() => this._list.RemoveAt(index));
+
+    void IList<TItem>.RemoveAt(int index)
+        => this._list.RemoveAt(index);
 
     [DebuggerStepThrough]
     protected TList CheckReadOnly()

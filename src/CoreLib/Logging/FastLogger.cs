@@ -2,7 +2,7 @@
 
 namespace Library.Logging;
 
-public class FastLogger : FastLoggerBase<object>, ILogger, IEventualLogger
+public sealed class FastLogger : FastLoggerBase<object>, ILogger, IEventualLogger
 {
     public event EventHandler<ItemActedEventArgs<object>>? Logging;
 

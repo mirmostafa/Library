@@ -5,7 +5,7 @@ using Xunit.Abstractions;
 namespace UnitTests;
 
 [Trait("Category", "Code Helpers")]
-public class ArgsTest
+public sealed class ArgsTest
 {
     private readonly ITestOutputHelper _output;
 

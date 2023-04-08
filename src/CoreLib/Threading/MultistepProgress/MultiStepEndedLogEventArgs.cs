@@ -3,7 +3,7 @@ using Library.Logging;
 
 namespace Library.Threading.MultistepProgress;
 
-public class MultiStepEndedLogEventArgs : LogEventArgs
+public sealed class MultiStepEndedLogEventArgs : LogEventArgs
 {
     public bool IsSucceed { get; private set; }
     public bool IsCancelled { get; set; }

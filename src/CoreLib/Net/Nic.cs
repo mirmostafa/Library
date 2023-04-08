@@ -2,7 +2,7 @@
 
 namespace Library.Net;
 
-public class Nic
+public sealed class Nic
 {
     private long _bytesReceivedLast;
     private long _bytesSentLast;

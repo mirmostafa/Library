@@ -3,7 +3,7 @@
 namespace UnitTests;
 
 
-public class SmartEnumTest
+public sealed class SmartEnumTest
 {
 
     [Fact]

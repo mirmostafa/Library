@@ -5,7 +5,7 @@ using Library.Results;
 namespace UnitTests;
 
 [Trait("Category", "Code Helpers")]
-public class FunctionalTest
+public sealed class FunctionalTest
 {
     private static readonly Action<int> _emptyIntAction = x => { };
     private static readonly Func<int> _returnsTwo = () => 2;

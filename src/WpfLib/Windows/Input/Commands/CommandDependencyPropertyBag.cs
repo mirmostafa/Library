@@ -2,7 +2,7 @@
 
 namespace Library.Wpf.Windows.Input.Commands;
 
-public class CommandDependencyPropertyBag<TUiElement>
+public sealed class CommandDependencyPropertyBag<TUiElement>
     where TUiElement : UIElement
 {
     private readonly Dictionary<string, LibRoutedUICommand> _bag = new();

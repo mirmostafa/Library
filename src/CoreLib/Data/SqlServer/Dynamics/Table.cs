@@ -12,7 +12,7 @@ using static Library.Data.SqlServer.SqlStatementBuilder;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public class Table : SqlObject<Table, Database>, IEnumerable
+public sealed class Table : SqlObject<Table, Database>, IEnumerable
 {
     private Columns? _columns;
 

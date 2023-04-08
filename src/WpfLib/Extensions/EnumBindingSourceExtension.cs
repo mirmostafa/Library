@@ -4,7 +4,7 @@ using System.Windows.Markup;
 
 namespace Library.Wpf.Extensions;
 
-public class EnumBindingSourceExtension : MarkupExtension
+public sealed class EnumBindingSourceExtension : MarkupExtension
 {
     private Type _EnumType;
     public Type EnumType
@@ -53,7 +53,7 @@ public class EnumBindingSourceExtension : MarkupExtension
     }
 }
 
-public class EnumDescriptionTypeConverter : EnumConverter
+public sealed class EnumDescriptionTypeConverter : EnumConverter
 {
     public EnumDescriptionTypeConverter(Type type)
         : base(type)

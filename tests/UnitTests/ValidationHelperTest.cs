@@ -6,7 +6,7 @@ namespace UnitTests;
 
 [Trait("Category", "Helpers")]
 [Trait("Category", "Validation Tests")]
-public class ValidationHelperTest
+public sealed class ValidationHelperTest
 {
     [Fact]
     public void _01_ValidateAllTrueTest()

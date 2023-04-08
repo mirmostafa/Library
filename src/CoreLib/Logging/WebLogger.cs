@@ -32,7 +32,7 @@ public class WebLogger : IMsLogger, ILogger<string>
         => this._mainLogger.IsEnabled;
 }
 
-public class WebLogger<TCategoryName> : WebLogger, Microsoft.Extensions.Logging.ILogger<TCategoryName>
+public sealed class WebLogger<TCategoryName> : WebLogger, Microsoft.Extensions.Logging.ILogger<TCategoryName>
 {
     public WebLogger(ILogger mainLogger)
         : base(mainLogger)

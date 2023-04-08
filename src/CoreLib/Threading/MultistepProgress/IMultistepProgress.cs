@@ -19,7 +19,7 @@ public interface IMultistepProcess
         => this.Report(new(max, current, description));
 }
 
-internal class MultistepProcess : IMultistepProcess
+internal sealed class MultistepProcess : IMultistepProcess
 {
     public event EventHandler<ItemActedEventArgs<ProgressData?>>? Ended;
 

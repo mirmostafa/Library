@@ -6,7 +6,7 @@ using Library.Data.SqlServer.Dynamics.Collections;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public class Server : DynamicObject, ISqlObject
+public sealed class Server : DynamicObject, ISqlObject
 {
     private Databases _Databases;
 

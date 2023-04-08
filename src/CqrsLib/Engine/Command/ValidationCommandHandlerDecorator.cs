@@ -2,7 +2,7 @@
 
 namespace Library.Cqrs.Engine.Command;
 
-public class ValidationCommandHandlerDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult>
+public sealed class ValidationCommandHandlerDecorator<TCommand, TResult> : ICommandHandler<TCommand, TResult>
     where TCommand : ICommand
     where TResult : ICommandResult
 {

@@ -4,7 +4,7 @@ using System.Numerics;
 namespace UnitTests;
 
 
-public class AvxTest
+public sealed class AvxTest
 {
 
 }

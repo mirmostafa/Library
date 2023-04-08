@@ -4,7 +4,7 @@ using Library.Web.Middlewares.Markers;
 namespace Library.Web.Middlewares;
 
 [ShortCircuitMiddleware]
-public class LicenseManagerMiddleware : InfraMiddlewareBase, IInfraMiddleware
+public sealed class LicenseManagerMiddleware : InfraMiddlewareBase, IInfraMiddleware
 {
     public LicenseManagerMiddleware(RequestDelegate next)
         : base(next)

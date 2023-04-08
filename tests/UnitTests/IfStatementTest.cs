@@ -4,7 +4,7 @@ namespace UnitTests;
 
 
 [Trait("Category", "Code Helpers")]
-public class IfStatementTest
+public sealed class IfStatementTest
 {
     [Fact]
     public void IfStatementTestMethod1()

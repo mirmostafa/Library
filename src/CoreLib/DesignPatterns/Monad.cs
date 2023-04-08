@@ -1,6 +1,6 @@
 ﻿namespace Library.DesignPatterns;
 
-public class Monad<TValue>
+public sealed class Monad<TValue>
 {
     private readonly TValue? _value;
 

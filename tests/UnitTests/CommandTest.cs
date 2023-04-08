@@ -2,7 +2,7 @@
 
 namespace UnitTests;
 
-public class CommandTest
+public sealed class CommandTest
 {
     [Theory]
     [InlineData(1, 2, 3)]

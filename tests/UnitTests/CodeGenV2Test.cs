@@ -3,7 +3,7 @@
 namespace UnitTests;
 
 
-public class CodeGenV2Test
+public sealed class CodeGenV2Test
 {
     [Fact]
     public void CodeGenV2Basic()

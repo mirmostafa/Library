@@ -12,7 +12,7 @@ namespace Library.Wpf.Windows.UI;
 /// The uninstall method will clean up any scheduled and current notifications, remove any associated registry values, and remove any associated temporary files that were created by the library.
 /// </remarks>
 /// <seealso cref="IDisposable" />
-public class Toast2 : IDisposable
+public sealed class Toast2 : IDisposable
 {
     private readonly ToastContentBuilder _builder = new();
     private readonly List<Button> _buttonList = new();
@@ -154,7 +154,7 @@ public class Toast2 : IDisposable
             }
         });
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!this._disposedValue)
         {

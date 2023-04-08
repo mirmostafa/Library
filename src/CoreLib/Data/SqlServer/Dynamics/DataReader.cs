@@ -5,7 +5,7 @@ using Library.Validations;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public class DataReader : SqlObject<DataReader, Database>, IDisposable
+public sealed class DataReader : SqlObject<DataReader, Database>, IDisposable
 {
     public DataReader(SqlDataReader sqlDataReader, Database owner, string name, string connectionString)
         : base(owner, name, connectionString: connectionString) =>

@@ -3,7 +3,7 @@ using Library.Interfaces;
 namespace Library.Exceptions;
 
 [Serializable]
-public class BreakException : Exception
+public sealed class BreakException : Exception
 {
     public BreakException()
     {
