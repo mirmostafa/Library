@@ -12,7 +12,7 @@ public interface IDbCrudLogger : IMsLoggerMessageWapper
     void ItemUpdateFail(string log, Exception? exception = null);
 }
 
-public class DbCrudLogger : MsLoggerMessageWrapperBase<DbCrudLogger>, IDbCrudLogger
+public sealed class DbCrudLogger : MsLoggerMessageWrapperBase<DbCrudLogger>, IDbCrudLogger
 {
     private readonly Action<IMsLogger, string, Exception?> _itemAdded;
     private readonly Action<IMsLogger, string, Exception?> _itemAddFail;

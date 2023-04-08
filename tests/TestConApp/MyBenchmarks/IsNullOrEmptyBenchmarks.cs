@@ -3,7 +3,7 @@
 namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
-public class IsNullOrEmptyBenchmarks : IBenchmark<IsNullOrEmptyBenchmarks>
+public sealed class IsNullOrEmptyBenchmarks : IBenchmark<IsNullOrEmptyBenchmarks>
 {
     private readonly string _text = "Bug 325426: عدم نمایش مقدار اندیکاتور روی فرم با دسترسی محدود(مشتری جوش آزمای)";
 

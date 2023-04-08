@@ -10,7 +10,7 @@ namespace Library.Globalization.CustomFormatters;
 /// <seealso cref="System.IFormatProvider" />
 /// <seealso cref="System.ICustomFormatter" />
 [Serializable]
-public class CustomNumberFormatter : IFormatProvider, ICustomFormatter
+public sealed class CustomNumberFormatter : IFormatProvider, ICustomFormatter
 {
     public CustomNumberFormatter(NumericFormatInfo numericFormatInfo)
         : this((Thread.CurrentThread.CurrentCulture.NumberFormat.Clone()! as NumberFormatInfo)!, numericFormatInfo)

@@ -3,7 +3,7 @@
 namespace UnitTests;
 
 
-public class PersianDateTimeTest
+public sealed class PersianDateTimeTest
 {
     [Theory]
     [InlineData(2021, 9, 3, "1400/06/12")]

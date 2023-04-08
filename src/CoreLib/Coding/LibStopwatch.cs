@@ -9,7 +9,7 @@ public interface IStopwatchTimer : IDisposable
     TimeSpan Stop();
 }
 
-public class LibStopwatch
+public sealed class LibStopwatch
 {
     private readonly StopwatchTimer _stopwatchTimer;
 

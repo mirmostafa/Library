@@ -4,7 +4,7 @@ using Library.Exceptions.Validations;
 namespace UnitTests;
 
 
-public class UpdateStatementBuilderTest
+public sealed class UpdateStatementBuilderTest
 {
     [Fact]
     public void CreateFullUpdate()

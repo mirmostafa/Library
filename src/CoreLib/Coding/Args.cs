@@ -2,8 +2,11 @@
 
 using System.Collections;
 
+using Library.DesignPatterns.Markers;
+
 namespace Library.Coding;
 
+[Fluent]
 public readonly struct Args<T> : IReadOnlyList<T>
 {
     private readonly List<T> _arguments = new();

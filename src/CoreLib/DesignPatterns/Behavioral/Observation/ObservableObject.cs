@@ -2,7 +2,7 @@
 
 namespace Library.DesignPatterns.Behavioral.Observation;
 
-public class ObservableObject<TValue>
+public sealed class ObservableObject<TValue>
 {
     public event EventHandler<ItemActingEventArgs<TValue?>>? Changing;
     public event EventHandler<ItemActedEventArgs<TValue?>>? Changed;

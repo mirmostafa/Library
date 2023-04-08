@@ -2,7 +2,7 @@
 
 namespace Library.Types;
 
-public class EmptyDisposable : IDisposable, IEmpty<EmptyDisposable>
+public sealed class EmptyDisposable : IDisposable, IEmpty<EmptyDisposable>
 {
     private static EmptyDisposable? _empty;
     private bool _disposedValue;
@@ -16,7 +16,7 @@ public class EmptyDisposable : IDisposable, IEmpty<EmptyDisposable>
         GC.SuppressFinalize(this);
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!this._disposedValue)
         {

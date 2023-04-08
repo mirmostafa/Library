@@ -3,7 +3,7 @@ using Library.Exceptions;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public class Row : SqlObject<Row, Table>
+public sealed class Row : SqlObject<Row, Table>
 {
     public Row(Table owner, IEnumerable<KeyValuePair<string, object?>> data, string? connectionString = null)
         : base(owner, string.Empty, connectionString: connectionString ?? owner.ConnectionString) => this.Data = data;

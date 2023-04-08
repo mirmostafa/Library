@@ -7,7 +7,7 @@ using Library.Validations;
 namespace Library.Data.SqlServer.Builders;
 
 [Fluent]
-public class ConnectionStringBuilder : IValidatable<ConnectionStringBuilder>, IBuilder<string>
+public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuilder>, IBuilder<string>
 {
     private readonly SqlConnectionStringBuilder _builder;
 

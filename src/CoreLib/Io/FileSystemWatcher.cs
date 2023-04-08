@@ -6,7 +6,7 @@ using Library.Validations;
 
 namespace Library.IO;
 
-public class FileSystemWatcher : IDisposable, ISupportSilence
+public sealed class FileSystemWatcher : IDisposable, ISupportSilence
 {
     private readonly System.IO.FileSystemWatcher _innerWatcher;
     private bool _disposedValue;
@@ -96,7 +96,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
     public FileSystemWatcher Start()
         => this.Restart();
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!this._disposedValue)
         {
@@ -148,7 +148,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
     #region EventArgs
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public class ChangedEventArgs : FileSystemWatchEventArgs<EventArgsItem>
+    public sealed class ChangedEventArgs : FileSystemWatchEventArgs<EventArgsItem>
     {
         public ChangedEventArgs(in EventArgsItem item) : base(item)
         {
@@ -156,7 +156,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
     }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public class CreatedEventArgs : FileSystemWatchEventArgs<EventArgsItem>
+    public sealed class CreatedEventArgs : FileSystemWatchEventArgs<EventArgsItem>
     {
         public CreatedEventArgs(in EventArgsItem item) : base(item)
         {
@@ -164,7 +164,7 @@ public class FileSystemWatcher : IDisposable, ISupportSilence
     }
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public class DeletedEventArgs : FileSystemWatchEventArgs<EventArgsItem>
+    public sealed class DeletedEventArgs : FileSystemWatchEventArgs<EventArgsItem>
     {
         public DeletedEventArgs(in EventArgsItem item) : base(item)
         {

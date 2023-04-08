@@ -1,7 +1,7 @@
 ﻿namespace UnitTests;
 
 [Trait("Category", "Helpers")]
-public class ObjectHelperTest
+public sealed class ObjectHelperTest
 {
     [Fact]
     public void ExtraPropertyTest()

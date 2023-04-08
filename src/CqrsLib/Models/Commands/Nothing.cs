@@ -1,6 +1,6 @@
 ﻿namespace Library.Cqrs.Models.Commands;
 
-public class Nothing
+public sealed class Nothing
 {
     private Nothing()
     { }

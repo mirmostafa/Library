@@ -4,7 +4,7 @@ using Library.Threading.MultistepProgress;
 
 namespace Library.Threading.MultistepProgress;
 
-public class MultiStepOperationStep : MultiStepOperationStepBase
+public sealed class MultiStepOperationStep : MultiStepOperationStepBase
 {
     private Action Action { get; }
     private Action<MultiStepOperation> Action2 { get; }

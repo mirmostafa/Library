@@ -8,7 +8,7 @@ using UnitTests.Models;
 namespace UnitTests;
 
 
-public class SqlEntityTest
+public sealed class SqlEntityTest
 {
     [Fact]
     public void CreateSelectByEntityTest()

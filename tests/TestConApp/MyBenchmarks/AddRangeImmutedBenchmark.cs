@@ -3,7 +3,7 @@
 namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
-public class AddRangeImmutedBenchmark
+public sealed class AddRangeImmutedBenchmark
 {
     public static IEnumerable<T> AddRangeImmutedContact<T>(IEnumerable<T>? source, IEnumerable<T>? items)
         => (source, items) switch

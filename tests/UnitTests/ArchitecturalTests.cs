@@ -4,23 +4,25 @@ using Library.DesignPatterns.Markers;
 
 namespace UnitTests;
 
-public class ArchitecturalTests
+public sealed class ArchitecturalTests
 {
     private static (IEnumerable<Type> CoreLibTypes, IEnumerable<Type> CqrsLibTypes, IEnumerable<Type> WebLibTypes, IEnumerable<Type> WpfLibTypes) _libraryTypes;
 
     public ArchitecturalTests()
     {
+        var defaultPredicate = (Type x) => x.Namespace?.StartsWith("System.") is not true;
+        
         var coreLibAsm = typeof(CoreLibModule).Assembly;
-        var codeLibTypes = coreLibAsm.GetTypes();
+        var codeLibTypes = coreLibAsm.GetTypes().Where(defaultPredicate);
 
         var cqrsLibAsm = typeof(CqrsLibModule).Assembly;
-        var cqrsLibTypes = cqrsLibAsm.GetTypes();
+        var cqrsLibTypes = cqrsLibAsm.GetTypes().Where(defaultPredicate);
 
         var webLibAsm = typeof(WebLibModule).Assembly;
-        var webLibTypes = webLibAsm.GetTypes();
+        var webLibTypes = webLibAsm.GetTypes().Where(defaultPredicate);
 
         var wpfLibAsm = typeof(CoreLibModule).Assembly;
-        var wpfLibTypes = wpfLibAsm.GetTypes();
+        var wpfLibTypes = wpfLibAsm.GetTypes().Where(defaultPredicate);
 
         _libraryTypes = new(codeLibTypes, cqrsLibTypes, webLibTypes, wpfLibTypes);
     }
@@ -30,12 +32,29 @@ public class ArchitecturalTests
     {
         var types = _libraryTypes.CoreLibTypes;
         var helpers = types.Where(x => IsInNameSpace(x, "Library.Helpers")).Except(x => IsInNameSpace(x, "Library.Helpers.Model"));
-        var notSealed = helpers.Where(x => x.IsClass).Where(x => !x.IsSealed).ToList();
+        var notSealed = helpers.Where(x => x.IsClass).Where(x => !x.IsSealed);
         Assert.True(!notSealed.Any());
     }
 
     [Fact]
-    public void ImmutablesMustBeImmutable()
+    public void EveryClassMustBeAbstractOrSealedOrStatic()
+    {
+        var types = GetAllTypes().ToArray();
+        var notOkTypes = types.Where(x => x is not null and { IsClass: true} and { IsAbstract:false} and { IsSealed:false}).ToArray();
+        if(notOkTypes.Length == 0)
+        {
+            return;
+        }
+        var result = new StringBuilder("The following classes are not abstract or sealed or static.");
+        foreach (var notOkType in notOkTypes)
+        {
+            _ = result.AppendLine($"Type: `{notOkType}`");
+        }
+        Assert.Fail(result.ToString());
+    }
+
+    [Fact]
+    public void ImmutableShouldBeImmutable()
     {
         var props = GetAllTypes()
                     .Where(ObjectHelper.HasAttribute<ImmutableAttribute>)
@@ -56,14 +75,13 @@ public class ArchitecturalTests
     }
 
     [Fact]
-    public void ObeyFluencyRule()
+    public void FluentShouldBeFluent()
     {
         var methods = GetAllTypes()
-                    .Where(ObjectHelper.HasAttribute<FluentAttribute>)
-                    .Where(x => x.Namespace?.StartsWith("System.") is not true)
-                    .SelectMany(t => t.GetMethods())
-                    .Where(x => x?.DeclaringType?.Namespace?.StartsWith("System.") is not true)
-                    .Where(x => x.Name != "Deconstruct" && !x.Name.StartsWith("set_") && x.IsPublic && x.ReturnType?.Name == "Void");
+            .Where(ObjectHelper.HasAttribute<FluentAttribute>)
+            .SelectMany(t => t.GetMethods())
+            .Where(x => x?.DeclaringType?.Namespace?.StartsWith("System.") is not true)
+            .Where(x => x.Name != "Deconstruct" && !x.Name.StartsWith("set_") && x.IsPublic && x.ReturnType?.Name == "Void");
 
         if (!methods.Any())
         {

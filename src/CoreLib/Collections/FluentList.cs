@@ -1,6 +1,6 @@
 ﻿namespace Library.Collections;
 
-public class FluentList<TItem> : FluentListBase<TItem, FluentList<TItem>>, IFluentList<FluentList<TItem>, TItem>
+public sealed class FluentList<TItem> : FluentListBase<TItem, FluentList<TItem>>, IFluentList<FluentList<TItem>, TItem>
 {
     public FluentList()
         : base()

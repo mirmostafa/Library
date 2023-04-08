@@ -6,7 +6,7 @@ using Xunit.Abstractions;
 
 namespace UnitTests;
 
-public class StateMachineTest
+public sealed class StateMachineTest
 {
     private readonly ITestOutputHelper _output;
 

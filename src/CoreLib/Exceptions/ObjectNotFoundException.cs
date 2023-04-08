@@ -1,7 +1,7 @@
 namespace Library.Exceptions;
 
 [Serializable]
-public class ObjectNotFoundException : LibraryExceptionBase
+public sealed class ObjectNotFoundException : LibraryExceptionBase
 {
     public ObjectNotFoundException()
         : this("Object not found.")

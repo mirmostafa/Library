@@ -3,7 +3,7 @@
 namespace UnitTests;
 
 [Trait("Category", "Helpers")]
-public class ApiHelperTest
+public sealed class ApiHelperTest
 {
     [Fact]
     public void ResultTest1()

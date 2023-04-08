@@ -1,6 +1,6 @@
 ﻿namespace Library.Data.SqlServer.Dynamics;
 
-public class StoredProcedureParam : SqlObject<StoredProcedureParam, StoredProcedure>
+public sealed class StoredProcedureParam : SqlObject<StoredProcedureParam, StoredProcedure>
 {
     public StoredProcedureParam(StoredProcedure owner, string name, string connectionString)
         : base(owner, name, connectionString: connectionString)

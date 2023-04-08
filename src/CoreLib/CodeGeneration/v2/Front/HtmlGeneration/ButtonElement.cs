@@ -1,6 +1,6 @@
 ﻿namespace Library.CodeGeneration.v2.Front.HtmlGeneration;
 
-public class ButtonElement : HtmlElement<ButtonElement>
+public sealed class ButtonElement : HtmlElement<ButtonElement>
 {
     public ButtonElement(string type = "button") : base("button")
         => this.AttributeList.Add("type", type);

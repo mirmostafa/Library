@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Library.Logging;
 
-public class MsLoggerMessageWrapperOptions : IOptions { }
+public sealed class MsLoggerMessageWrapperOptions : IOptions { }
 
 public abstract class MsLoggerMessageWrapperBase<TMsLoggerMessageWapper> : IConfigurable<TMsLoggerMessageWapper, MsLoggerMessageWrapperOptions>
     where TMsLoggerMessageWapper : MsLoggerMessageWrapperBase<TMsLoggerMessageWapper>

@@ -3,7 +3,7 @@
 /// <summary>
 /// An ASCII progress bar
 /// </summary>
-public class ConsoleProgressBar : IDisposable, IProgress<double>
+public sealed class ConsoleProgressBar : IDisposable, IProgress<double>
 {
     private const string ANIMATION = @"|/-\";
     private readonly TimeSpan _animationInterval = TimeSpan.FromSeconds(1.0 / 8);
@@ -49,7 +49,7 @@ public class ConsoleProgressBar : IDisposable, IProgress<double>
         _ = Interlocked.Exchange(ref this._currentProgress, value);
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!this._disposed)
         {

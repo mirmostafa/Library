@@ -1,7 +1,7 @@
 ﻿namespace Library.Exceptions;
 
 [Serializable]
-public class DuplicateObjectFoundException : LibraryExceptionBase
+public sealed class DuplicateObjectFoundException : LibraryExceptionBase
 {
     public DuplicateObjectFoundException()
         : this("Object not found")

@@ -6,7 +6,7 @@ using UnitTests.Models;
 namespace UnitTests;
 
 
-public class MapperTest
+public sealed class MapperTest
 {
     [Fact]
     public void RecordMappingTest()

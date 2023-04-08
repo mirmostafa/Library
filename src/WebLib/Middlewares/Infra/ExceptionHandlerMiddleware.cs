@@ -11,7 +11,7 @@ using Library.Web.Results;
 namespace Library.Web.Middlewares.Infra;
 
 [MonitoringMiddleware]
-public class ExceptionHandlerMiddleware : IInfraMiddleware
+public sealed class ExceptionHandlerMiddleware : IInfraMiddleware
 {
     private readonly RequestDelegate _Next;
     private readonly ILogger<ExceptionHandlerMiddleware> _Logger;

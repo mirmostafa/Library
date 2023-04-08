@@ -4,7 +4,7 @@ using Library.Validations;
 namespace UnitTests;
 
 [Trait("Category", "Active Validation Tests")]
-public class ValidationResultSetTest
+public sealed class ValidationResultSetTest
 {
     [Fact]
     public void _01_Basic()

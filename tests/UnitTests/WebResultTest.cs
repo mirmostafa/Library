@@ -6,7 +6,7 @@ using Library.Web.Results;
 namespace UnitTests;
 
 
-public class WebResultTest
+public sealed class WebResultTest
 {
     private static ApiResult Failed() 
         => ApiResult.BadRequest();

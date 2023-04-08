@@ -3,7 +3,7 @@ using System.Collections;
 namespace UnitTests;
 
 [Trait("Category", "Helpers")]
-public class StringHelperTest
+public sealed class StringHelperTest
 {
     private const string LONG_TEXT = "There 'a text', inside 'another text'. I want 'to find\" it.";
     private const char NULL_CHAR = default!;

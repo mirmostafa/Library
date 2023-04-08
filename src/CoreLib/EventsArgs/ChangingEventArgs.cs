@@ -1,6 +1,6 @@
 namespace Library.EventsArgs;
 
-public class ChangingEventArgs<T> : ActingEventArgs
+public sealed class ChangingEventArgs<T> : ActingEventArgs
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="ChangingEventArgs{T}" /> class.

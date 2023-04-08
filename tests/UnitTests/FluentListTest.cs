@@ -2,65 +2,62 @@
 
 namespace UnitTests;
 
-
-public class FluentListTest
+public sealed class FluentListTest
 {
-    private readonly FluentList<int> _List;
-    private static readonly Func<int, int> _selfIntFunc = x => x;
     private static readonly Action<int> _emptyIntAction = x => { };
+    private static readonly Func<int, int> _selfIntFunc = x => x;
+    private readonly FluentList<int> _list;
 
-    public FluentListTest()
-    {
-        this._List = FluentList<int>.Create(Enumerable.Range(0, 10));
-    }
-
-    [Fact]
-    public void IndexerTest() 
-        => Assert.Equal(5, this._List[5]);
+    public FluentListTest() 
+        => this._list = FluentList<int>.Create(Enumerable.Range(0, 10));
 
     [Fact]
-    public void CountTest() 
-        => Assert.Equal(10, this._List.Count);
+    public void AddTest()
+        => this._list.Cast().To<IList<int>>().Add(5);
+
+    [Fact]
+    public void ClearTest()
+        => this._list.Clear();
+
+    [Fact]
+    public void ContainsTest()
+        => Assert.True(this._list.Contains(4).Result);
+
+    [Fact]
+    public void CountTest()
+        => Assert.Equal(10, this._list.Count);
 
     [Fact]
     public void CreateTest()
     {
         _ = FluentList<int>.Create();
-        _ = FluentList<int>.Create(this._List);
+        _ = FluentList<int>.Create(this._list);
     }
+
+    [Fact]
+    public void IndexerTest()
+        => Assert.Equal(5, this._list[5]);
 
     [Fact]
     public void IndexOfTest()
     {
-        var (_, result) = this._List.IndexOf(5);
+        var (_, result) = this._list.IndexOf(5);
         Assert.Equal(5, result);
     }
 
     [Fact]
-    public void InsertTest() 
-        => this._List.Insert(5, 5);
+    public void InsertTest()
+        => this._list.Insert(5, 5);
 
     [Fact]
-    public void RemoveTest() 
-        => this._List.Remove(5);
+    public void IterationTest()
+        => this._list.ForEach(_emptyIntAction);
 
     [Fact]
-    public void RemoveAtTest() 
-        => this._List.RemoveAt(5);
+    public void RemoveAtTest()
+        => this._list.RemoveAt(5);
 
     [Fact]
-    public void AddTest() 
-        => this._List.Add(5);
-
-    [Fact]
-    public void ClearTest() 
-        => this._List.Clear();
-
-    [Fact]
-    public void ContainsTest() 
-        => Assert.True(this._List.Contains(4).Result);
-
-    [Fact]
-    public void IterationTest() 
-        => this._List.ForEach(_emptyIntAction);
+    public void RemoveTest()
+        => this._list.Remove(5);
 }

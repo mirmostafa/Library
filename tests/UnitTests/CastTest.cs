@@ -6,7 +6,7 @@ namespace UnitTests;
 
 [Trait("Category", "Helpers")]
 [Trait("Category", "Code Helpers")]
-public class CastTest
+public sealed class CastTest
 {
     [Fact]
     public void AsTest1()

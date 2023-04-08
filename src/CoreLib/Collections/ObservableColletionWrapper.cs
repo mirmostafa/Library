@@ -4,21 +4,21 @@ using System.ComponentModel;
 
 namespace Library.Collections;
 
-public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColletionWrapper<T>>, IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable, IReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged, INotifyPropertyChanging
+public class ObservableCollectionWrapper<T> : FluentListBase<T, ObservableCollectionWrapper<T>>, IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable, IReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged, INotifyPropertyChanging
 {
-    protected ObservableColletionWrapper(IList<T> list) : base(list)
+    protected ObservableCollectionWrapper(IList<T> list) : base(list)
     {
     }
 
-    protected ObservableColletionWrapper(IEnumerable<T> list) : base(list)
+    protected ObservableCollectionWrapper(IEnumerable<T> list) : base(list)
     {
     }
 
-    protected ObservableColletionWrapper(int capacity) : base(capacity)
+    protected ObservableCollectionWrapper(int capacity) : base(capacity)
     {
     }
 
-    protected ObservableColletionWrapper()
+    protected ObservableCollectionWrapper()
     {
     }
 

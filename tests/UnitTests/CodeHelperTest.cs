@@ -6,7 +6,7 @@ namespace UnitTests;
 
 [Trait("Category", "Helpers")]
 [Trait("Category", "Code Helpers")]
-public class CodeHelperTest
+public sealed class CodeHelperTest
 {
     [Fact]
     public void CodeBlockLoggerTest()

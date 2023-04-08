@@ -5,7 +5,7 @@ namespace Library.Threading;
 
 [Immutable]
 [Fluent]
-public class BackgroundTimer : ILoggerContainer
+public sealed class BackgroundTimer : ILoggerContainer
 {
     private readonly CancellationTokenSource _cancellationSource;
     private readonly ILogger _Logger;

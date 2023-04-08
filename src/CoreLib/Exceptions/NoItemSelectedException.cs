@@ -3,7 +3,7 @@
 namespace Library.Exceptions;
 
 [Serializable]
-public class NoItemSelectedException : LibraryExceptionBase, IThrowableException<NoItemSelectedException>
+public sealed class NoItemSelectedException : LibraryExceptionBase, IThrowableException<NoItemSelectedException>
 {
     public NoItemSelectedException()
         : this("No item selected.")

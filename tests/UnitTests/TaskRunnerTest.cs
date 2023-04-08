@@ -3,7 +3,7 @@
 namespace UnitTests;
 
 
-public class TaskRunnerTest
+public sealed class TaskRunnerTest
 {
     [Theory]
     [InlineData(5, 5, 15)]

@@ -4,7 +4,7 @@ using Library.Exceptions.Validations;
 namespace UnitTests;
 
 
-public class SelectStatementBuilderTest
+public sealed class SelectStatementBuilderTest
 {
     [Fact]
     public void _01_BuildFullSelectTest()

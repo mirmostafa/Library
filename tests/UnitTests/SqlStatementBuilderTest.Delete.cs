@@ -2,7 +2,7 @@
 
 namespace UnitTests;
 
-public class DeleteStatementBuilderTest
+public sealed class DeleteStatementBuilderTest
 {
     [Fact]
     public void CreateDeleteFullTest()
