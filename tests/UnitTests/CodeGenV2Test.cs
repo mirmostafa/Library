@@ -3,6 +3,7 @@
 namespace UnitTests;
 
 
+[Trait("Category", "Code Generators")]
 public sealed class CodeGenV2Test
 {
     [Fact]

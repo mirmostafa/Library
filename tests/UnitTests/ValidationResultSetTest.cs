@@ -3,7 +3,7 @@ using Library.Validations;
 
 namespace UnitTests;
 
-[Trait("Category", "Active Validation Tests")]
+[Trait("Category", "Validation Tests")]
 public sealed class ValidationResultSetTest
 {
     [Fact]

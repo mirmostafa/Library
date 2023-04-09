@@ -3,7 +3,7 @@ using Library.Exceptions.Validations;
 
 namespace UnitTests;
 
-
+[Trait("Category", "SQL Data Access")]
 public sealed class SelectStatementBuilderTest
 {
     [Fact]
@@ -81,7 +81,7 @@ public sealed class SelectStatementBuilderTest
         var specQueryActual = SqlStatementBuilder
                         .Select("Person")
                         .Ascending();
-        Assert.Throws<NullValueValidationException>(() => specQueryActual.Build());
+        _ = Assert.Throws<NullValueValidationException>(() => specQueryActual.Build());
     }
 
     [Fact]

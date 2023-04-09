@@ -6,6 +6,7 @@ using Library.Web.Results;
 namespace UnitTests;
 
 
+[Trait("Category", "Web")]
 public sealed class WebResultTest
 {
     private static ApiResult Failed() 

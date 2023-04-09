@@ -4,7 +4,6 @@ using Library.Validations;
 
 namespace UnitTests;
 
-[Trait("Category", "Helpers")]
 [Trait("Category", "Code Helpers")]
 public sealed class CastTest
 {
@@ -25,8 +24,6 @@ public sealed class CastTest
     }
 }
 
-file class Person
-{ }
+file record Person;
 
-file class Student : Person
-{ }
+file record Student : Person { }

@@ -8,6 +8,7 @@ using UnitTests.Models;
 namespace UnitTests;
 
 
+[Trait("Category", "SQL Data Access")]
 public sealed class SqlEntityTest
 {
     [Fact]

@@ -2,7 +2,7 @@
 
 namespace UnitTests;
 
-[Trait("Category", "Helpers")]
+[Trait("Category", "Web")]
 public sealed class ApiHelperTest
 {
     [Fact]

@@ -2,6 +2,7 @@
 
 namespace UnitTests;
 
+[Trait("Category", "Design Patterns")]
 public sealed class CommandTest
 {
     [Theory]

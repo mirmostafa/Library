@@ -4,6 +4,7 @@ using Library.DesignPatterns.Markers;
 
 namespace UnitTests;
 
+[Trait("Category", nameof(ArchitecturalTests))]
 public sealed class ArchitecturalTests
 {
     private static (IEnumerable<Type> CoreLibTypes, IEnumerable<Type> CqrsLibTypes, IEnumerable<Type> WebLibTypes, IEnumerable<Type> WpfLibTypes) _libraryTypes;

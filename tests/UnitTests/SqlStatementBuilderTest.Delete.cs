@@ -2,6 +2,7 @@
 
 namespace UnitTests;
 
+[Trait("Category", "SQL Data Access")]
 public sealed class DeleteStatementBuilderTest
 {
     [Fact]
