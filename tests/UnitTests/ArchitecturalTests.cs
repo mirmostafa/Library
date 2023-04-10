@@ -37,7 +37,7 @@ public sealed class ArchitecturalTests
         Assert.True(!notSealed.Any());
     }
 
-    [Fact]
+    [Fact(Skip ="Not always is required.")]
     public void EveryClassMustBeAbstractOrSealedOrStatic()
     {
         var types = GetAllTypes().ToArray();

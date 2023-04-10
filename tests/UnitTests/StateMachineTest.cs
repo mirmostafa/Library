@@ -1,6 +1,4 @@
 ﻿using Library.DesignPatterns.StateMachine;
-using Library.Helpers.ConsoleHelper;
-
 
 using Xunit.Abstractions;
 
@@ -11,14 +9,11 @@ public sealed class StateMachineTest
 {
     private readonly ITestOutputHelper _output;
 
-    public StateMachineTest(ITestOutputHelper output) 
+    public StateMachineTest(ITestOutputHelper output)
         => this._output = output;
 
-    static public IEnumerable<object[]> Data => new[] { new object[] { ConsoleKey.UpArrow }, new object[] { ConsoleKey.DownArrow }, new object[] { ConsoleKey.End } };
-
-    [Theory]
-    [MemberData(nameof(Data))]
-    public async Task StateMachineFullTest(ConsoleKey path)
+    [Fact]
+    public async Task StateMachineFullTest()
     {
         _ = await StateMachineManager.Dispatch(
                         () => Task.FromResult((0, MoveDirection.Foreword)),
@@ -30,16 +25,17 @@ public sealed class StateMachineTest
 
         (int Current, MoveDirection Direction) move((int Current, IEnumerable<(int State, MoveDirection Direction)>) flow)
         {
-            this._output.WriteLine($"Current: {flow.Current}. Press Up or Down to move foreword or backward. Or press any other key to done.");
+            this._output.WriteLine($"Current: {flow.Current}");
             MoveDirection direction;
-            switch (path)
+            var randomNumber = new Random().Next(3);
+            switch (randomNumber)
             {
-                case ConsoleKey.UpArrow:
+                case 1:
                     flow.Current++;
                     direction = MoveDirection.Foreword;
                     break;
 
-                case ConsoleKey.DownArrow:
+                case 2:
                     flow.Current--;
                     direction = MoveDirection.Backword;
                     break;

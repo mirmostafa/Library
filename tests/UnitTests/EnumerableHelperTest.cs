@@ -59,18 +59,6 @@ public sealed class EnumerableHelperTest
         Assert.True(expected.SequenceEqual(actual));
     }
 
-    [Fact(Skip = "Not required in .Net ^6.0")]
-    [Obsolete("Not required in .Net ^6.0")]
-    public void ChunkByTest()
-    {
-        var chunks = this._names.ChunkBy(3);
-        Assert.NotNull(chunks);
-        Assert.Equal(2, chunks.Count());
-        Assert.Equal(3, chunks.ElementAt(0).Count());
-        Assert.Equal(3, chunks.ElementAt(1).Count());
-        Assert.Equal("Leyla", chunks.ElementAt(1).ElementAt(0));
-    }
-
     [Fact]
     public void CountNotEnumeratedTest()
         => Assert.Equal(6, this._names.CountNotEnumerated());
@@ -128,7 +116,6 @@ public sealed class EnumerableHelperTest
         Assert.Equal(expected, list.AsSpan().ToArray());
     }
 
-    // Use Theory and MemberData attributes to test different cases
     [Theory]
     [MemberData(nameof(TestCompactData))]
     public void TestCompact(IEnumerable<object?>? input, IEnumerable<object> expected)
