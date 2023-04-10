@@ -731,4 +731,17 @@ public static class EnumerableHelper
             { Length: 2 } => aggregator(items[0], items[1]),
             [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
         };
+
+    public static IEnumerable<T> WithCancellation<T>(this IEnumerable<T> query, CancellationToken cancellationToken = default)
+    {
+        if (query is null)
+        {
+            yield break;
+        }
+        var enumerator = query.GetEnumerator();
+        while (!cancellationToken.IsCancellationRequested && enumerator.MoveNext())
+        {
+            yield return enumerator.Current;
+        }
+    }
 }

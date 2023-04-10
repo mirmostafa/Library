@@ -2,15 +2,16 @@
 
 public static class SqlHelper
 {
-    internal static Type SqlTypeToNetType(string typeName) =>
+    public static Type SqlTypeToNetType(string typeName) =>
         typeName?.ToLower() switch
         {
+            "smallint" => typeof(short),
             "int" => typeof(int),
-            "bitint" => typeof(long),
+            "bigint" => typeof(long),
             "datetime" or "datetime2" => typeof(DateTime),
             "varchar" or "nvarchar" => typeof(string),
             "bit" => typeof(bool),
-            null => throw new NotImplementedException(),
+            null => throw new NotSupportedException(),
             _ => throw new NotImplementedException(),
         };
 }

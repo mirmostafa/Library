@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿
+using System.Runtime.CompilerServices;
 
 using Library.Exceptions.Validations;
 using Library.Results;
@@ -9,7 +10,7 @@ namespace UnitTests;
 public sealed class ResultTest
 {
     [Fact]
-    public void _01_AddOperationResultCountTest()
+    public void AddOperationResultCountTest()
     {
         var all = AddThreeResults();
         Assert.NotNull(all.Errors);
@@ -19,7 +20,7 @@ public sealed class ResultTest
     }
 
     [Fact]
-    public void _02_AddOperationResultIndex1Test()
+    public void AddOperationResultIndex1Test()
     {
         var all = AddThreeResults();
         Assert.Equal((1, "Error One"), all.Errors?.ElementAt(0));

@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
@@ -31,6 +30,7 @@ public static class ObjectHelper
     /// <typeparam name="T"></typeparam>
     /// <param name="values">The values.</param>
     /// <returns></returns>
+    [Obsolete("Subject to delete", true)]
     public static T ComposeByType<T>(this IEnumerable<T> values)
             where T : IMergable<T>, IEmpty<T>
     {
@@ -41,6 +41,11 @@ public static class ObjectHelper
         }
         return result;
     }
+
+    public static bool Contains(in object? obj, Type type)
+            => obj is not null && obj.GetType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Any(property => property.PropertyType.FindInterfaces((m, filterCriteria) => m.FullName == type.FullName, null).Any());
 
     /// <summary>
     /// Generates the lazy singleton instance.
@@ -224,8 +229,8 @@ public static class ObjectHelper
         };
     }
 
-    public static int GetHashCode(object o, params object[] properties) =>
-            properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
+    public static int GetHashCode(object o, params object[] properties)
+        => properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
 
     /// <summary>
     /// Gets the method.
@@ -240,7 +245,7 @@ public static class ObjectHelper
         BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance)
         where TDelegate : class
     {
-        var methodInfo = obj.ArgumentNotNull(nameof(obj)).GetType().GetMethod(name, bindingFlags);
+        var methodInfo = obj.ArgumentNotNull().GetType().GetMethod(name, bindingFlags);
         return methodInfo is not null
             ? Delegate.CreateDelegate(typeof(TDelegate), obj, methodInfo).Cast().As<TDelegate>()
             : null;
@@ -275,7 +280,7 @@ public static class ObjectHelper
     /// <returns></returns>
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, string propName, in int eventNoDefault)
     {
-        _ = obj.ArgumentNotNull(nameof(obj));
+        _ = obj.ArgumentNotNull();
 
         if (eventNoDefault != 0)
         {
@@ -301,7 +306,7 @@ public static class ObjectHelper
     /// <returns></returns>
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, [DisallowNull] string propName, bool searchPrivates = false)
     {
-        var type = obj.ArgumentNotNull(nameof(obj)).GetType();
+        var type = obj.ArgumentNotNull().GetType();
         var properties = type.GetProperties();
         if (!properties.Any())
         {
@@ -369,11 +374,6 @@ public static class ObjectHelper
         return attributes.Length > 0;
     }
 
-    public static bool Implements([DisallowNull] in object obj, Type type)
-        => obj.GetType()
-            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Any(property => property.PropertyType.FindInterfaces((m, filterCriteria) => m.FullName == type.FullName, null).Any());
-
     /// <summary>
     /// Get the index of range.
     /// </summary>
@@ -381,6 +381,7 @@ public static class ObjectHelper
     /// <param name="item"> The item.</param>
     /// <param name="range">The range.</param>
     /// <returns></returns>
+    [Obsolete("Subject to delete", true)]
     public static int? IndexOf<TSource>(in TSource item, params TSource[] range)
     {
         var result = Array.IndexOf(range, item);
@@ -388,17 +389,14 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    /// Determines whether [is database null] [the specified object].
+    /// Determines whether [is database null] [the specified o].
     /// </summary>
     /// <param name="o">The o.</param>
-    /// <returns><c>true</c> if [is database null] [the specified o]; otherwise, <c>false</c>.</returns>
+    /// <returns>
+    ///   <c>true</c> if [is database null] [the specified o]; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsDbNull(in object? o)
-        => o switch
-        {
-            null => true,
-            DBNull => true,
-            _ => false
-        };
+        => o is null or DBNull;
 
     /// <summary>
     /// Determines whether the specified value is default (null or zero or ...).
@@ -406,6 +404,7 @@ public static class ObjectHelper
     /// <typeparam name="T"></typeparam>
     /// <param name="value">The value.</param>
     /// <returns><c>true</c> if the specified value is default; otherwise, <c>false</c>.</returns>
+    [Obsolete("Subject to delete.", true)]
     public static bool IsDefault<T>(in T value)
         => value?.Equals(default(T)) ?? true;
 
@@ -416,8 +415,12 @@ public static class ObjectHelper
     /// <param name="item"> The item.</param>
     /// <param name="range">The range.</param>
     /// <returns><c>true</c> if the specified item is in; otherwise, <c>false</c>.</returns>
+    [Obsolete("Subject to delete. Too easy", true)]
     public static bool IsIn<TSource>(in TSource item, params TSource[] range)
         => range.Contains(item);
+
+    public static bool IsInheritedOrImplemented(in object? obj, [DisallowNull] in Type type)
+        => obj != null && type.ArgumentNotNull().IsAssignableFrom(obj.GetType());
 
     /// <summary>
     /// Determines whether the specified value is null.
@@ -438,15 +441,6 @@ public static class ObjectHelper
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
         => id == Guid.Empty;
-
-    /// <summary>
-    /// Determines whether [is null or empty string] [the specified value].
-    /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns><c>true</c> if [is null or empty string] [the specified value]; otherwise, <c>false</c>.</returns>
-    [Obsolete("Not object oriented.", true)]
-    public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
-        => string.IsNullOrEmpty(value.Cast().ToString());
 
     public static IEnumerable<T> Repeat<T>(T value, int count)
     {

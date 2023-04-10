@@ -31,23 +31,13 @@ public static class StateMachineManager
             }
             history.Push(flow);
             await proc((flow.State, history));
-            switch (flow.Direction)
+            
+            return flow.Direction switch
             {
-                case MoveDirection.Foreword:
-                    {
-                        var current = await moveNext((flow.State, history));
-                        return await moveAsync(current);
-                    }
-
-                case MoveDirection.Backword:
-                    {
-                        var current = await moveBack((flow.State, history));
-                        return await moveAsync(current);
-                    }
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(flow), flow.Direction, $"{nameof(flow.Direction)} is out of range.");
-            }
+                MoveDirection.Foreword => await moveAsync(await moveNext((flow.State, history))),
+                MoveDirection.Backword => await moveAsync(await moveBack((flow.State, history))),
+                _ => throw new ArgumentOutOfRangeException(nameof(flow), flow.Direction, $"{nameof(flow.Direction)} is out of range.")
+            };
         }
     }
 

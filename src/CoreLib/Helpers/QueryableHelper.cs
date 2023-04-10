@@ -17,16 +17,16 @@ public static class QueryableHelper
         return asyncLock.LockAsync(async () => await query.FirstOrDefaultAsync());
     }
 
-    public static IEnumerable<T> ToEnumerable<T>(this IQueryable<T> query)
+    public static IEnumerable<T> ToEnumerable<T>(this IQueryable<T> query, CancellationToken cancellationToken = default)
     {
         if (query is null)
         {
             yield break;
         }
-
-        foreach (var item in query)
+        var enumerator = query.GetEnumerator();
+        while (!cancellationToken.IsCancellationRequested && enumerator.MoveNext())
         {
-            yield return item;
+            yield return enumerator.Current;
         }
     }
 

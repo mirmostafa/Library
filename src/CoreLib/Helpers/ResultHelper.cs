@@ -129,18 +129,12 @@ public static class ResultHelper
         return Result<TValue1>.From(result, value1);
     }
 
-    public static Result<StreamWriter> ToStreamWriter(this Result<Stream> result)
-        => new(new(result.Value));
-
     public static Result<string> ToText(this Result<Stream> result)
     {
         var stream = result.Value;
         using var reader = new StreamReader(stream);
         return new(reader.ReadToEnd());
     }
-
-    public static Result<XmlWriter> ToXmlWriter(this Result<Stream> result, bool indent = true)
-        => new(XmlWriter.Create(result.ToStreamWriter(), new XmlWriterSettings { Indent = indent }));
 
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase
         => (result = input.ArgumentNotNull()).IsSucceed;
@@ -149,7 +143,7 @@ public static class ResultHelper
     //x public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
     //x     => (result = await input).IsSucceed;
 
-    private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object errorId)
+    private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId)
             where TResult : ResultBase => condition
             ? (result with
             {

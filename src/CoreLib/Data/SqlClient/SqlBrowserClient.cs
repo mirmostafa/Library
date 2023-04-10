@@ -48,9 +48,9 @@ public static class SqlBrowserClient
                match.Groups["np"].Captures.Count > 0 ? match.Groups["np"].Captures[0].Value : string.Empty);
 }
 
-public record SqlInstance(string ServerName, string InstanceName, bool IsClustered, string Version, int TcpPort, string NamedPipe);
+public sealed record SqlInstance(string ServerName, string InstanceName, bool IsClustered, string Version, int TcpPort, string NamedPipe);
 
-internal class UdpBroadcastMessage : IDisposable
+internal sealed class UdpBroadcastMessage : IDisposable
 {
     private const int SOCKET_TIMEOUT_EXCEPTION_CODE = 10060;
 
