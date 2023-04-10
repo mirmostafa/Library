@@ -19,19 +19,6 @@ public static class TaskHelper
         }
     }
 
-    public static Task<TResult> WaitAsync<TResult>(this Task<TResult> task, TimeSpan timeout, Func<Exception> getExceptionOnTimeout)
-    {
-        try
-        {
-            return task.WaitAsync(timeout);
-        }
-        catch (TimeoutException ex)
-        {
-            _ = getExceptionOnTimeout?.Invoke() ?? ex;
-            throw ex;
-        }
-    }
-
     /// <summary>
     /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
     /// objects in an array have completed.

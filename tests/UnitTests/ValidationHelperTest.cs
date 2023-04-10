@@ -30,6 +30,6 @@ public sealed class ValidationHelperTest
             => x.EndsWith("End")
                 ? Result<string>.CreateSuccess(INPUT)
                 : Result<string>.CreateFailure("Not ended with 'End'", 2, INPUT)!;
-        return ValidationHelper.CheckAll(INPUT, startsWithStart, endsWithStart);
+        return ValidatorHelper.CheckAll(INPUT, startsWithStart, endsWithStart);
     }
 }

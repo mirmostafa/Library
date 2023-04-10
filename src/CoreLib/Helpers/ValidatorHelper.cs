@@ -7,7 +7,7 @@ namespace Library.Helpers;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
-public static class ValidationHelper
+public static class ValidatorHelper
 {
     public static TItem CheckValidator<TItem>([DisallowNull] this IValidator<TItem> validator, TItem item)
         => validator.Validate(item).ThrowOnFail();
