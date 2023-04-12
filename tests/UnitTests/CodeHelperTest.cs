@@ -6,6 +6,7 @@ namespace UnitTests;
 
 [Trait("Category", "Helpers")]
 [Trait("Category", "Code Helpers")]
+[Obsolete("Subject to remove", true)]
 public sealed class CodeHelperTest
 {
     [Fact]
