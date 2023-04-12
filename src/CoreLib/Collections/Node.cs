@@ -1,28 +1,54 @@
 ﻿using Library.DesignPatterns.Markers;
-using Library.Helpers;
 using Library.Interfaces;
 using Library.Validations;
 
 namespace Library.Collections;
 
-[Immutable]
+//x[Immutable]
 [Fluent]
 public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<Node<T>>
 {
     public static readonly Node<T?> Empty = new(default, null);
 
-    public Node(in T value, in string? display = null)
-        => (this.Value, this.Display) = (value, display ?? value?.ToString());
+    private readonly List<Node<T>> _innerChildren = new();
 
-    public IEnumerable<Node<T>> Children => this.ChildList.ToEnumerable();
-    public IEnumerable<T> ChildValues => this.Children.Select(x => x.Cast().To<T>());
+    public Node(in T value, in string? display = null)
+            => (this.Value, this.Display) = (value, display ?? value?.ToString());
+
+    public IEnumerable<Node<T>> Children => this._innerChildren.ToEnumerable();
+
+    public IEnumerable<T> ChildValues => this._innerChildren.Select(x => x.Cast().To<T>());
+
     public string? Display { get; }
+
     public Node<T>? Parent { get; private set; }
+
     public T Value { get; }
-    protected FluentList<Node<T>> ChildList { get; } = new();
+
+    public static Node<T?> Create(Func<(T Value, string Display)> getRoot, Func<(T Value, string? Display), IEnumerable<(T Value, string? Display)>> getChildren)
+    {
+        Node<T?>? buffer = null;
+        EnumerableHelper.BuildTree<(T Value, string? Display), Node<T>>(
+            EnumerableHelper.ToEnumerable(getRoot())!
+            , raw => new(raw.Value, raw.Display)
+            , raw => getChildren(raw), raw => buffer = new(raw.Value, raw.Display)
+            , (p, c) => p.AddChild(c));
+        return buffer ?? Node<T?>.Empty;
+    }
+
+    public static Node<T?> Create(Func<T> getRoot, Func<T, IEnumerable<T>> getChildren)
+    {
+        var result = Node<T>.Empty;
+        EnumerableHelper.BuildTree<T, Node<T>>(
+            EnumerableHelper.ToEnumerable(getRoot())!
+            , raw => new(raw)
+            , raw => getChildren(raw), raw => result = raw!
+            , (p, c) => p.AddChild(c));
+        return result;
+    }
 
     public static implicit operator T?(Node<T> node)
-        => node is null ? default : node.Value;
+                => node is null ? default : node.Value;
 
     public static bool operator !=(Node<T> x, Node<T> y)
         => !(x == y);
@@ -41,8 +67,8 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
         Check.IfArgumentNotNull(node, nameof(node));
 
         node.Parent = this;
-        _ = this.ChildList.Add(node);
-        _ = nodes.ForEach(x => AddChild(x)).Build();
+        this._innerChildren.Add(node);
+        _ = nodes.ForEach(x => this.AddChild(x)).Build();
         return this;
     }
 
@@ -57,50 +83,11 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
         return this;
     }
 
-    public static Node<T> Create(Func<(T Value, string Display)> getRoot, Func<(T Value, string? Display), IEnumerable<(T Value, string? Display)>> getChidren)
-    {
-        Node<T> result = Node<T>.Empty;
-        EnumerableHelper.BuildTree<(T Value, string? Display), Node<T>>(
-            EnumerableHelper.ToEnumerable(getRoot())!
-            , raw => new(raw.Value, raw.Display)
-            , raw => getChidren(raw), raw => result = new(raw.Value, raw.Display)
-            , (p, c) => p.AddChild(c));
-        return result;
-    }
-
-    public static Node<T> Create(Func<T> getRoot, Func<T, IEnumerable<T>> getChidren)
-    {
-        Node<T> result = Node<T>.Empty;
-        EnumerableHelper.BuildTree<T, Node<T>>(
-            EnumerableHelper.ToEnumerable(getRoot())!
-            , raw => new(raw)
-            , raw => getChidren(raw), raw => result = raw
-            , (p, c) => p.AddChild(c));
-        return result;
-    }
-
     public override bool Equals(object? obj)
-            => obj is Node<T> other && this == other;
+        => obj is Node<T> other && this == other;
 
-    public bool Equals(Node<T>? other)
-    {
-        if (other is null)
-        {
-            return false;
-        }
-
-        if (this.Value is null && other.Value is null)
-        {
-            return true;
-        }
-
-        if (other.Value?.Equals(this.Value) == true)
-        {
-            return true;
-        }
-
-        return false;
-    }
+    public bool Equals(Node<T>? other) 
+        => other is not null && ((this.Value is null && other.Value is null) || other.Value?.Equals(this.Value) == true);
 
     public bool Equals(T? other)
         => (this.Value, other) switch
@@ -128,7 +115,7 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
     }
 
     public override string ToString()
-        => this.Display ?? this.Value?.ToString() ?? "Empty Value!";
+        => this.Display ?? this.Value?.ToString() ?? "(Empty Value)";
 
     public T ToType()
         => this.Value;
@@ -136,7 +123,7 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
     public Node<T> WithParent(Node<T> parent, string? display = null)
     {
         var result = new Node<T>(this.Value, display ?? this.Display) { Parent = parent };
-        _ = result.ChildList.AddRange(this.ChildList);
+        result._innerChildren.AddRange(this._innerChildren);
         return result;
     }
 

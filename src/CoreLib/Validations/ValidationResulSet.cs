@@ -13,22 +13,22 @@ public static class Validation
 {
     [return: NotNull]
     public static TValue ArgumentNotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, CheckBehavior.ThrowOnFail).ArgumentNotNull();
+        => Check(value, CheckBehavior.ReturnFirstFailure).ArgumentNotNull();
 
-    public static ValidationResultSet<TValue> Check<TValue>(this TValue value, CheckBehavior behavior = CheckBehavior.ThrowOnFail, [CallerArgumentExpression(nameof(value))] string argName = null!)
+    public static ValidationResultSet<TValue> Check<TValue>(this TValue value, CheckBehavior behavior = CheckBehavior.ReturnFirstFailure, [CallerArgumentExpression(nameof(value))] string argName = null!)
         => new(value, behavior, argName);
 
     [return: NotNull]
     public static TValue NotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, CheckBehavior.ThrowOnFail).NotNull();
+        => Check(value, CheckBehavior.ReturnFirstFailure).NotNull();
 
     [return: NotNull]
     public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, CheckBehavior.ThrowOnFail).NotNull(onErrorMessage);
+        => Check(value, CheckBehavior.ReturnFirstFailure).NotNull(onErrorMessage);
 
     [return: NotNull]
     public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, CheckBehavior.ThrowOnFail).NotNull(onError);
+        => Check(value, CheckBehavior.ReturnFirstFailure).NotNull(onError);
 }
 
 public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
@@ -194,7 +194,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     [StackTraceHidden]
     private ValidationResultSet<TValue> InnerAddRule(Func<TValue, bool> validator, Func<Exception> error)
     {
-        if (this._behavior == CheckBehavior.ThrowOnFail)
+        if (this._behavior == CheckBehavior.ReturnFirstFailure)
         {
             if (!validator(this.Value))
             {
