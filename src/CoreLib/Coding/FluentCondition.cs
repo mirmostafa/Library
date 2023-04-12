@@ -1,5 +1,6 @@
 ﻿namespace Library.Coding;
 
+[Obsolete("Subject to remove", true)]
 public static class FluentCondition
 {
     #region Type 1
@@ -66,7 +67,7 @@ public static class FluentCondition
 public record struct IfCondition(bool Condition);
 public record struct IfCondition<T>(bool Condition)
 {
-    public T Result { get; set; }
+    public T Result { get; internal set; }
 
     public static implicit operator T(IfCondition<T> condition)
         => condition.Result;

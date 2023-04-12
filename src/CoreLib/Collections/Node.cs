@@ -127,6 +127,6 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
         return result;
     }
 
-    public Node<T> WithParent(T parent, string? display = null) =>
-        this.WithParent(new(parent, display), display);
+    public Node<T> WithParent(T parent, string? display = null) 
+        => this.WithParent(new(parent, display), display);
 }

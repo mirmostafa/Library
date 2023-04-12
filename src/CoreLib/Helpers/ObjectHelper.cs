@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
@@ -13,6 +14,10 @@ namespace Library.Helpers;
 
 public static class ObjectHelper
 {
+    private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
+    public static dynamic props(this object o)
+        => _propsExpando.GetOrCreateValue(o);
+
     /// <summary>
     /// Checks the database null.
     /// </summary>

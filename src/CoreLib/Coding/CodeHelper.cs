@@ -68,7 +68,7 @@ public static class CodeHelper
     /// <param name="func">         The function.</param>
     /// <param name="defaultResult">The default result.</param>
     /// <returns></returns>
-    public static async Task<Result<TResult?>> CatchResult<TResult>(this Func<Task<TResult>> func, TResult? defaultResult = default)
+    public static async Task<Result<TResult?>> CatchResultAsync<TResult>( Func<Task<TResult>> func, TResult? defaultResult = default)
     {
         try
         {

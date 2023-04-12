@@ -44,7 +44,7 @@ public readonly record struct Code : IEquatable<Code>, IAdditionOperators<Code, 
     public string Statement { get; }
     public Language Language { get; }
     public bool IsPartial { get; }
-    public string FileName => this._fileName.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial));
+    public string FileName => this._fileName ?? GenerateFileName(this.Name, this.Language, this.IsPartial);
 
     public override int GetHashCode()
         => (this.Name?.GetHashCode() ?? 0) * 45;
@@ -68,7 +68,7 @@ public readonly record struct Code : IEquatable<Code>, IAdditionOperators<Code, 
         => new(left, right);
 
     private string GetDebuggerDisplay()
-        => this.Name;
+        => this.ToString();
 
     public override string ToString()
         => this.Name;

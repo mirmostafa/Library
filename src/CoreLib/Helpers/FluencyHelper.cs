@@ -9,7 +9,6 @@ namespace Library.Helpers;
 [StackTraceHidden]
 public static class FluencyHelper
 {
-    private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
     public static async Task<TInstance> Async<TInstance>(this Fluency<TInstance> instance, Func<Task> funcAsync)
     {
         await funcAsync();
@@ -113,11 +112,8 @@ public static class FluencyHelper
     }
 
     public static Fluency<TResult> With<TResult>(this Fluency<TResult> instance, in Func<TResult, TResult>? func)
-        => func is null ? instance : Fluency<TResult>.From(func(instance.Value));
+        => func is null ? instance : Fluency<TResult>.New(func(instance.Value));
 
     public static Fluency<TResult> WithNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
             => action(instance);
-
-    public static dynamic props<TInstance>(this Fluency<TInstance> o)
-        => _propsExpando.GetOrCreateValue(o.NotNull().Value.NotNull());
 }

@@ -7,6 +7,7 @@ namespace Library.Coding;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
+[Obsolete("Subject to remove", true)]
 public sealed class Final : IDisposable, IEnumerable<Action>
 {
     private readonly ActionList _actionList;

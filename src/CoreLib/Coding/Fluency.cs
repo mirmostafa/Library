@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 
 using Library.Exceptions.Validations;
-using Library.Interfaces;
 
 namespace Library.Coding;
 
@@ -9,12 +8,13 @@ namespace Library.Coding;
 [StackTraceHidden]
 public record struct Fluency<T>(T Value) : IEquatable<T>//, IConvertible<Fluency<T>, T>, IConvertible<T, Fluency<T>>
 {
-    public bool Equals(T? other)
+    public readonly bool Equals(T? other)
         => this.Value?.Equals(other) ?? (other is null);
-    public override string? ToString()
-        =>
-        this.Value?.ToString() ?? base.ToString();
-    public override int GetHashCode()
+
+    public override readonly string? ToString()
+        => this.Value?.ToString() ?? base.ToString();
+
+    public override readonly int GetHashCode()
         => this.Value?.GetHashCode() ?? base.GetHashCode();
 
     public static implicit operator T(Fluency<T> fluency)
@@ -22,16 +22,20 @@ public record struct Fluency<T>(T Value) : IEquatable<T>//, IConvertible<Fluency
     public static implicit operator Fluency<T>(T value)
         => new(value);
 
-    public T ConvertTo()
+    [Obsolete("Subject to remove", true)]
+    public readonly T ConvertTo()
         => this.Value;
-    public static Fluency<T> From(T other)
+
+    public static Fluency<T> New(T other)
         => new(other);
 
+
+    [Obsolete("Subject to remove", true)]
     public static T From(Fluency<T> other)
         => other.Value;
 
-    public T GetValue()
+    public readonly T GetValue()
         => this.Value;
-    public T GetValue([NotNullWhen(true)] bool checkNotNull)
+    public readonly T GetValue([NotNullWhen(true)] bool checkNotNull)
         => checkNotNull && this.Value is null ? throw new NullValueValidationException() : this.Value;
 }
