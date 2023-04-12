@@ -21,7 +21,7 @@ public static partial class SqlStatementBuilder
 
     public static string Build([DisallowNull] this ISelectStatement statement, string indent = "    ")
     {
-        Check.NotNull(statement.TableName, nameof(statement.TableName));
+        Check.IfArgumentNotNull(statement?.TableName);
         var result = new StringBuilder("SELECT");
         if (statement.Columns.Any())
         {
@@ -42,7 +42,8 @@ public static partial class SqlStatementBuilder
         }
         if (statement.OrderByDirection != OrderByDirection.None)
         {
-            _ = AddClause($"ORDER BY {AddBrackets(statement.OrderByColumn.NotNull())}", indent, result);
+            Check.IfArgumentNotNull(statement.OrderByColumn);
+            _ = AddClause($"ORDER BY {AddBrackets(statement.OrderByColumn)}", indent, result);
             _ = result.Append(statement.OrderByDirection switch
             {
                 OrderByDirection.Ascending => " ASC",

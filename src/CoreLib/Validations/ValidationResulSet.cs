@@ -61,7 +61,10 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     public Result<TValue?> Build()
         => this.InnerBuild(this._behavior);
 
-    public TValue ThrowOnFail()
+    public Result<TValue?> GatherToResult()
+        => this.InnerBuild(CheckBehavior.GatherAll);
+
+    public Result<TValue?> ThrowOnFail()
     {
         foreach (var (isValid, onError) in this.Rules)
         {
@@ -70,11 +73,11 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
                 throw onError();
             }
         }
-        return this.Value;
+        return this.ToResult();
     }
 
     public Result<TValue?> ToResult()
-        => this.InnerBuild(CheckBehavior.GatherAll);
+        => new(this.Value);
 
     private Result<TValue?> InnerBuild(CheckBehavior behavior)
     {
@@ -194,7 +197,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     [StackTraceHidden]
     private ValidationResultSet<TValue> InnerAddRule(Func<TValue, bool> validator, Func<Exception> error)
     {
-        if (this._behavior == CheckBehavior.ReturnFirstFailure)
+        if (this._behavior == CheckBehavior.ThrowOnFail)
         {
             if (!validator(this.Value))
             {

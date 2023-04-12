@@ -81,7 +81,7 @@ public sealed class SelectStatementBuilderTest
         var specQueryActual = SqlStatementBuilder
                         .Select("Person")
                         .Ascending();
-        _ = Assert.Throws<NullValueValidationException>(() => specQueryActual.Build());
+        _ = Assert.Throws<ArgumentNullException>(() => specQueryActual.Build());
     }
 
     [Fact]

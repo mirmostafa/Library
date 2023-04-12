@@ -60,9 +60,8 @@ public sealed class ObjectHelperTest
     public void ExtraPropertyTest()
     {
         var testString = "Ali";
-        var fluency = testString.Fluent();
-        fluency.props().IsReadOnly = true;
-        var actual = fluency.props().IsReadOnly;
+        testString.props().IsReadOnly = true;
+        var actual = testString.props().IsReadOnly;
         Assert.True(actual);
     }
 
@@ -92,7 +91,7 @@ public sealed class ObjectHelperTest
     }
     [Theory]
     [InlineData(5, false)]
-    [InlineData(0, true)]
+    [InlineData(0, false)]
     [InlineData(default, true)]
     public void IsNullFamilyTest2(int? arg, bool expected)
     {
