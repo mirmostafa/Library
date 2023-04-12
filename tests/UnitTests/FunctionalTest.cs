@@ -12,8 +12,106 @@ public sealed class FunctionalTest
     private record EmptyRecord();
 
     [Fact]
-    public void BreakTest()
+    public void Break_Generic()
+        => Assert.Throws<BreakException>(() => Break<int>());
+
+    [Fact]
+    public void Break_Should_Return_BreakException()
         => Assert.Throws<BreakException>(Break);
+
+    [Fact]
+    public void CatchResult_Failure()
+    {
+        // Arrange
+        var five = 1;
+        var zero = 0;
+
+        // Act
+        var actual = CatchResult(() => five / zero);
+
+        // Assert
+        // Assert
+        Assert.False(actual);
+        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Status);
+    }
+
+    [Fact]
+    public void CatchResult_Generic_Failure()
+    {
+        // Arrange
+        var five = 1;
+        var zero = 0;
+        void act() => _ = five / zero;
+
+        // Act
+        var actual = CatchResult(act);
+
+        // Assert
+        // Assert
+        Assert.False(actual);
+        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Status);
+    }
+
+    [Fact]
+    public void CatchResult_Generic_Success()
+    {
+        // Arrange
+        var five = 5;
+        var zero = 0;
+        void act() => _ = five + zero;
+
+        // Act
+        var actual = CatchResult(act);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void CatchResult_Success()
+    {
+        // Arrange
+        var five = 5;
+        var zero = 0;
+
+        // Act
+        var actual = CatchResult(() => five + zero);
+
+        // Assert
+        Assert.True(actual);
+        Assert.Equal(5, actual);
+    }
+
+    [Fact]
+    public async void CatchResultAsync_Generic_Success()
+    {
+        // Arrange
+        var five = 5;
+        var zero = 0;
+        Task<int> act() => Task.Run(() => _ = five + zero);
+
+        // Act
+        var actual =await CatchResultAsync(act);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public async void CatchResultAsync_Success()
+    {
+        // Arrange
+        var five = 5;
+        var zero = 0;
+        Task<int> act() => Task.Run(() => _ = five + zero);
+
+        // Act
+        var actual = await CatchResultAsync(act);
+
+        // Assert
+        Assert.True(actual);
+        Assert.Equal(5, actual);
+    }
 
     [Fact]
     public void Composition_AddTest1()
@@ -127,7 +225,7 @@ public sealed class FunctionalTest
     }
 
     [Fact]
-    public void ForEachTest() 
+    public void ForEachTest()
         => Enumerable.Range(1, 1).ForEach(_emptyIntAction);
 
     [Fact]
@@ -159,11 +257,11 @@ public sealed class FunctionalTest
     }
 
     [Fact]
-    public void LockTest() 
+    public void LockTest()
         => Lock(this, Methods.Empty);
 
     [Fact]
-    public void NewTest() 
+    public void NewTest()
         => New<EmptyRecord>();
 
     [Fact]
