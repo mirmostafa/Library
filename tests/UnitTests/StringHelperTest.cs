@@ -237,9 +237,11 @@ public sealed class StringHelperTest
 
     [Theory]
     [InlineData("ThisIsMohammad", "This Is Mohammad")]
+    [InlineData("Just_for_separate", "Just for separate")]
+    [InlineData("This-is-another-sentence.", "This is another sentence.")]
     [InlineData("", "")]
     [InlineData(null, null)]
-    public void SeparateCamelCase(string text, string expected)
+    public void SeparateCamelCaseTest(string text, string expected)
     {
         var actual = text.SeparateCamelCase();
         Assert.Equal(expected, actual);

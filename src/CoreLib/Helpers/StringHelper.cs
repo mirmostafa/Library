@@ -92,11 +92,10 @@ public static class StringHelper
     public static string ConcatStrings(this IEnumerable<string> values)
         => string.Concat(values.ToArray());
 
-    public static bool Contains(string str, in string value, bool ignoreCase = true) => str == null
-                ? false
-                : ignoreCase
+    public static bool Contains(string str, in string value, bool ignoreCase = true) => str != null
+&& (ignoreCase
                     ? str.ToLowerInvariant().Contains(value?.ToLowerInvariant())
-                    : str.Contains(value);
+                    : str.Contains(value));
 
     [Pure]
     public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase)
@@ -109,7 +108,7 @@ public static class StringHelper
     public static bool ContainsAny(this string str, IEnumerable<char> array)
         => array.Any(str.Contains);
 
-    public static bool ContainsOf(this string str, in string target) 
+    public static bool ContainsOf(this string str, in string target)
         => str.ToLower().Contains(target.ToLower());
 
     public static string CorrectUnicodeProblem(in string text)
@@ -148,7 +147,7 @@ public static class StringHelper
             : str.Length > maxLength ? str[..maxLength] : str.Add(maxLength - str.Length, gapChar);
 
     [Pure]
-    public static string Format(this string format, params object[] args) 
+    public static string Format(this string format, params object[] args)
         => string.Format(format, args);
 
     [Pure]
@@ -358,7 +357,7 @@ public static class StringHelper
     public static bool IsInteger(this string text)
         => int.TryParse(text, out _);
 
-    public static bool IsLetter(this char c) 
+    public static bool IsLetter(this char c)
         => c.IsEnglish() || IsPersian(c);
 
     public static bool IsLetterText(in string text)
@@ -532,25 +531,33 @@ public static class StringHelper
         }
     }
 
-    public static string SeparateCamelCase(this string? str)
+    [return: NotNullIfNotNull(nameof(str))]
+    public static string? SeparateCamelCase(this string? str)
     {
         if (str.IsNullOrEmpty())
         {
             return str;
         }
 
-        StringBuilder sb = new();
+        var sb = new StringBuilder();
         for (var i = 0; i < str.Length; i++)
         {
-            if (char.IsUpper(str[i]) && i > 0)
+            var result = parse(str[i]);
+            if (i > 0 && result.Separate)
             {
                 _ = sb.Append(' ');
             }
-
-            _ = sb.Append(str[i]);
+            if (!result.RemoveChar)
+                _ = sb.Append(str[i]);
         }
 
         return sb.ToString();
+
+        static (bool Separate, bool RemoveChar) parse(char c) => c switch
+        {
+            '\0' or '\n' or '\r' or '_' or '\t' or '-' => (true, true),
+            _ => (char.IsUpper(c), false)
+        };
     }
 
     public static string? SetPhrase(this string str, int index, string newStr, char start, char end = default)
