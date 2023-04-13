@@ -23,7 +23,7 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --verbosity normal --logger "trx:LogFileName=xtest.trx"
+      run: dotnet test --no-build --verbosity normal --logger "trx:LogFileName=xtest.trx"
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/composite@v2
       if: always()
