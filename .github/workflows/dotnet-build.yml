@@ -23,12 +23,12 @@ jobs:
     - name: Build with dotnet
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal --logger "trx:LogFileName=xtest.trx"
+      run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=xtests.trx"
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action/composite@v2
       if: always()
       with:
         files: |
           #test-results/**/*.xml
-          */test-results/**/*.trx
+          D:\a\Library\Library\src\UnitTests\TestResults\xtests.trx
           #test-results/**/*.json
