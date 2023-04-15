@@ -1,5 +1,10 @@
-﻿namespace Library.Coding;
+﻿using System.Diagnostics.Contracts;
 
+using Library.DesignPatterns.Markers;
+
+namespace Library.Coding;
+
+[Immutable]
 public sealed class Progress<T> : ProgressBase<T>
 {
     public Progress(Action<T> reporter) : base(reporter)
@@ -7,6 +12,7 @@ public sealed class Progress<T> : ProgressBase<T>
     }
 }
 
+[Immutable]
 public abstract class ProgressBase<T> : IProgress<T>
 {
     private readonly Action<T> _reporter;
@@ -18,6 +24,19 @@ public abstract class ProgressBase<T> : IProgress<T>
         => this._reporter(value);
 }
 
+[Pure]
+[Immutable]
+public sealed class ProgressDetailed<T> : ProgressBase<(T State, string Description)>
+{
+    public ProgressDetailed(Action<(T State, string Description)> reporter) : base(reporter)
+    {
+    }
+
+    public void Report(T state, string description)
+        => this.Report((state, description));
+}
+
+[Immutable]
 public sealed class ProgressiveReport<T> : ProgressBase<(T State, int Current, int Maximum, string Description)>
 {
     public static readonly ProgressiveReport<T> Empty = new(_ => { });
@@ -30,16 +49,7 @@ public sealed class ProgressiveReport<T> : ProgressBase<(T State, int Current, i
         => this.Report((state, current, maximum, description));
 }
 
-public sealed class ProgressRoutineDetailed<T> : ProgressBase<(T State, string Description)>
-{
-    public ProgressRoutineDetailed(Action<(T State, string Description)> reporter) : base(reporter)
-    {
-    }
-
-    public void Report(T state, string description)
-        => this.Report((state, description));
-}
-
+[Immutable]
 public sealed class ProgressiveReport : ProgressBase<(int Current, int Maximum, string Description)>
 {
     public static readonly ProgressiveReport Empty = new(_ => { });

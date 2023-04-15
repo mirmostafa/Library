@@ -105,18 +105,18 @@ public interface IAsyncTransactionSaveService : IAsyncTransactionalService, IAsy
 {
 }
 
-/// <summary>
-/// </summary>
-/// <typeparam name="TViewModel">The type of the view model.</typeparam>
-public interface IAsyncViewModelFiller<TViewModel>
-{
-    /// <summary>
-    /// Fills the view model.
-    /// </summary>
-    /// <param name="model">The model.</param>
-    /// <returns></returns>
-    Task<TViewModel?> FillViewModelAsync(TViewModel? model);
-}
+///// <summary>
+///// </summary>
+///// <typeparam name="TViewModel">The type of the view model.</typeparam>
+//public interface IAsyncViewModelFiller<TViewModel>
+//{
+//    /// <summary>
+//    /// Fills the view model.
+//    /// </summary>
+//    /// <param name="model">The model.</param>
+//    /// <returns></returns>
+//    Task<TViewModel?> FillViewModelAsync(TViewModel? model);
+//}
 
 /// <summary>
 /// A standardizer for services to write data asynchronously.
@@ -278,10 +278,12 @@ public interface IViewModelToDbEntityConverter<in TViewModel, out TDbEntity>
 /// </summary>
 /// <seealso cref="IEquatable&lt;PagingParams&gt;"/>
 public record PagingParams(in int PageIndex = 0, in int? PageSize = null);
+
 /// <summary>
+///
 /// </summary>
 /// <typeparam name="T"></typeparam>
-/// <seealso cref="IEquatable&lt;PagingResult&lt;T&gt;&gt;"/>
+/// <seealso cref="System.IEquatable&lt;Library.Interfaces.PagingResult&lt;T&gt;&gt;" />
 public record PagingResult<T>(IReadOnlyList<T> Result, in long TotalCount);
 
 public interface IAsyncCreator<TViewModel>

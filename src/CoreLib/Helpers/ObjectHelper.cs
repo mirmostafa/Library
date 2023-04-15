@@ -29,24 +29,7 @@ public static class ObjectHelper
     public static T CheckDbNull<T>(in object o, in T defaultValue, in Func<object, T> converter)
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
 
-    /// <summary>
-    /// Composes the specified objects.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="values">The values.</param>
-    /// <returns></returns>
-    [Obsolete("Subject to delete", true)]
-    public static T ComposeByType<T>(this IEnumerable<T> values)
-            where T : IMergable<T>, IEmpty<T>
-    {
-        var result = T.Empty;
-        foreach (var value in values)
-        {
-            result = value.Merge(result);
-        }
-        return result;
-    }
-
+    
     public static bool Contains(in object? obj, Type type)
             => obj is not null && obj.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
