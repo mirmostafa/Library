@@ -39,4 +39,7 @@ public sealed class Codes : ReadOnlyCollection<Code?>, IIndexable<string, Code?>
         }
         return result;
     }
+
+    public static Codes New()
+        => new();
 }

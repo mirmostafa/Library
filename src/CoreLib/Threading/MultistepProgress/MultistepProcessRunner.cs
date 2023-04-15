@@ -64,9 +64,7 @@ public sealed class MultistepProcessRunner<TState>
 
     public async Task<TState> RunAsync(CancellationToken? cancellationToken = default)
     {
-        var canBeCancelled = cancellationToken is not null and { CanBeCanceled: true };
-        var token = canBeCancelled ? cancellationToken!.Value : default;
-        Func<bool> isCancellationRequested = canBeCancelled ? () => token.IsCancellationRequested : () => false;
+        Func<bool> isCancellationRequested = cancellationToken != null ? () => cancellationToken.Value.IsCancellationRequested : () => false;
         var stepList = this.Steps.ToList();
         this._max = stepList.Select(x => x.ProgressCount).Sum();
         this._current = 0;
@@ -77,7 +75,7 @@ public sealed class MultistepProcessRunner<TState>
                 break;
             }
 
-            this._reporter.Report(new(this._max, this._current += step.ProgressCount, step.Description, this._owner));
+            this._reporter.Report(this._max, this._current += step.ProgressCount, step.Description, this._owner);
             this._state = await step.AsyncAction((this._state, this._subReporter));
         }
         this._reporter.End();

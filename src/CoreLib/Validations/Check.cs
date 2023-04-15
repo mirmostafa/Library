@@ -184,7 +184,7 @@ public sealed class Check
     public static void NotNull([NotNull][AllowNull] object? obj, [DisallowNull] Func<Exception> getException)
         => NotValid(obj, x => x is not null, getException);
 
-    public static void NotValid([AllowNull] object? obj, [DisallowNull] in Func<object?, bool> validate, in Func<Exception> getException)
+    public static void NotValid<T>([AllowNull] T? obj, [DisallowNull] in Func<T?, bool> validate, in Func<Exception> getException)
     {
         if (!validate(obj))
         {

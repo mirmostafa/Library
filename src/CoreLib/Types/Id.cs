@@ -73,7 +73,7 @@ public readonly struct Id :
     /// <summary>
     /// Creates new empty.
     /// </summary>
-    /// <returns>An empty instance of currebt class.</returns>
+    /// <returns>An empty instance of current class.</returns>
     /// <exception cref="NotImplementedException"></exception>
     public static Id NewEmpty()
         => new(GetDefaultValue());

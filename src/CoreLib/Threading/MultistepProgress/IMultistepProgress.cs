@@ -15,8 +15,8 @@ public interface IMultistepProcess
 
     void Report(in ProgressData description);
 
-    void Report(in string description, int max, int current)
-        => this.Report(new(max, current, description));
+    void Report(int max, int current, in string? description, in object? sender = null)
+        => this.Report(new(max, current, description, sender));
 }
 
 internal sealed class MultistepProcess : IMultistepProcess

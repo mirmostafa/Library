@@ -531,6 +531,7 @@ public static class StringHelper
         }
     }
 
+    [Pure]
     [return: NotNullIfNotNull(nameof(str))]
     public static string? SeparateCamelCase(this string? str)
     {

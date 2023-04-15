@@ -5,6 +5,15 @@ public sealed class EnumerableHelperTest
 {
     private readonly string[] _names = new[] { "Nick", "Mike", "John", "Leyla", "David", "Damian" };
 
+    public static TheoryData<IEnumerable<object?>?, IEnumerable<object>> TestCompactData =>
+        new()
+        {
+            { new string?[] { "a", "b", null, "c" }, new string[] { "a", "b", "c" } }, // Filter out a null value from a non-empty sequence
+            { new string?[] { null, null, null }, Array.Empty<string>() }, // Filter out all null values from a non-empty sequence
+            { Array.Empty<string?>(), Array.Empty<string>() }, // Filter out nothing from an empty sequence
+            { null, Array.Empty<string>() } // Return an empty sequence for a null input
+        };
+
     [Fact]
     public void AddImmutedToKeyValuePairTest()
     {
@@ -60,6 +69,19 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
+    public void Build_ReturnsReadOnlyList()
+    {
+        // Arrange
+        var items = new List<int> { 1, 2, 3 };
+
+        // Act
+        var result = items.Build();
+
+        // Assert
+        Assert.Equal(items.Count, result.Count);
+    }
+
+    [Fact]
     public void CountNotEnumeratedTest()
         => Assert.Equal(6, this._names.CountNotEnumerated());
 
@@ -83,6 +105,126 @@ public sealed class EnumerableHelperTest
         var actual = EnumerableHelper.Equal(ints1, ints2, ignoreIndexes);
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void FindDuplicatesOnDistinctListTest()
+    {
+        // Arrange
+        var list = new List<int> { 1, 2, 3, 4 };
+        var expected = new List<int>();
+
+        // Act
+        var actual = list.FindDuplicates();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void FindDuplicatesOnNonDistinctList_Test()
+    {
+        // Arrange
+        var list = new List<int> { 1, 2, 3, 4, 2 };
+        var expected = new List<int> { 2 };
+
+        // Act
+        var actual = list.FindDuplicates();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(0, 10, 1, new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })]
+    [InlineData(10, 0, -1, new int[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 })]
+    public void Range_ReturnsExpectedValues(int start, int end, int step, int[] expectedValues)
+    {
+        var actualValues = EnumerableHelper.Range(start, end, step).ToArray();
+        Assert.Equal(expectedValues, actualValues);
+    }
+
+    [Fact]
+    public void Range_ThrowsArgumentException_ForNegativeStepAndStartSmallerThanEnd()
+        => Assert.Throws<ArgumentException>(() => EnumerableHelper.Range(0, 10, -1).ToArray());
+
+    [Fact]
+    public void Range_ThrowsArgumentException_ForPositiveStepAndStartLargerThanEnd()
+        => Assert.Throws<ArgumentException>(() => EnumerableHelper.Range(10, 0, 1).ToArray());
+
+    [Fact]
+    public void Range_ThrowsArgumentOutOfRangeException_ForZeroStep()
+        => Assert.Throws<ArgumentOutOfRangeException>(() => EnumerableHelper.Range(0, 10, 0).ToArray());
+
+    [Theory]
+    [InlineData(11, 2, new int[] { 0, 2, 4, 6, 8, 10 })]
+    [InlineData(5, 1, new int[] { 0, 1, 2, 3, 4, 5 })]
+    public void Range_WithEndOnly_ReturnsExpectedValues(int end, int step, int[] expectedValues)
+    {
+        var actualValues = EnumerableHelper.Range(end, step).ToArray();
+        Assert.Equal(expectedValues, actualValues);
+    }
+
+    [Fact]
+    public void Range_WithEndOnly_ThrowsArgumentException_ForNegativeStepAndStartSmallerThanEnd() => Assert.Throws<ArgumentException>(() => EnumerableHelper.Range(0, 10, -1).ToArray());
+
+    [Fact]
+    public void Range_WithEndOnly_ThrowsArgumentException_ForPositiveStepAndStartLargerThanEnd() 
+        => Assert.Throws<ArgumentException>(() => EnumerableHelper.Range(10, 0, 1).ToArray());
+
+    [Fact]
+    public void Range_WithEndOnly_ThrowsArgumentOutOfRangeException_ForZeroStep() 
+        => Assert.Throws<ArgumentOutOfRangeException>(() => EnumerableHelper.Range(0, 10, 0).ToArray());
+
+    [Fact]
+    public void RunAllWhile_Test()
+    {
+        // Arrange
+        var actions = new List<Action>
+        {
+            () => Console.WriteLine("Action 1"),
+            () => Console.WriteLine("Action 2"),
+            () => Console.WriteLine("Action 3")
+        };
+
+        var counter = 0;
+        bool predicate()
+        {
+            counter++;
+            return counter < 2;
+        }
+
+        // Act
+        actions.RunAllWhile(predicate);
+
+        // Assert
+        Assert.Equal(2, counter);
+    }
+
+    [Theory]
+    [InlineData(new int[] { 1, 2, 3 }, 4, new int[] { 1, 2, 3, 4 })] // Add an item to a non-null array
+    [InlineData(null, 5, new int[] { 5 })] // Add an item to a null array
+
+    public void TestAddImmuted(int[]? input, int item, int[] expected) =>
+        // Call the static method and assert the result
+        Assert.Equal(expected, input.AddImmuted(item));
+
+    [Theory]
+    [InlineData(new int[] { 1, 2, 3 }, new int[] { 1, 2, 3 })] // Convert a non-empty list to a span
+    [InlineData(new int[] { }, new int[] { })] // Convert an empty list to a span
+
+    public void TestAsSpan(int[] input, int[] expected)
+    {
+        // Create a list from the input array
+        var list = new List<int>(input);
+
+        // Call the static method and assert the result
+        Assert.Equal(expected, list.AsSpan().ToArray());
+    }
+
+    [Theory]
+    [MemberData(nameof(TestCompactData))]
+    public void TestCompact(IEnumerable<object?>? input, IEnumerable<object> expected)
+        => Assert.Equal(expected, input.Compact());
 
     [Theory]
     [InlineData(3)]
@@ -122,92 +264,6 @@ public sealed class EnumerableHelperTest
                 Assert.Fail($"Expected value was: {count}. But actual value is: {index}");
             }
         }
-    }
-
-    #region Generated by AI
-
-    public static TheoryData<IEnumerable<object?>?, IEnumerable<object>> TestCompactData =>
-        new()
-        {
-            { new string?[] { "a", "b", null, "c" }, new string[] { "a", "b", "c" } }, // Filter out a null value from a non-empty sequence
-            { new string?[] { null, null, null }, Array.Empty<string>() }, // Filter out all null values from a non-empty sequence
-            { Array.Empty<string?>(), Array.Empty<string>() }, // Filter out nothing from an empty sequence
-            { null, Array.Empty<string>() } // Return an empty sequence for a null input
-        };
-
-    [Fact]
-    public void Build_ReturnsReadOnlyList()
-    {
-        // Arrange
-        var items = new List<int> { 1, 2, 3 };
-
-        // Act
-        var result = items.Build();
-
-        // Assert
-        Assert.Equal(items.Count, result.Count);
-    }
-
-    [Theory]
-    [InlineData(new int[] { 1, 2, 3 }, 4, new int[] { 1, 2, 3, 4 })] // Add an item to a non-null array
-    [InlineData(null, 5, new int[] { 5 })] // Add an item to a null array
-
-    public void TestAddImmuted(int[]? input, int item, int[] expected) =>
-        // Call the static method and assert the result
-        Assert.Equal(expected, input.AddImmuted(item));
-
-    [Theory]
-    [InlineData(new int[] { 1, 2, 3 }, new int[] { 1, 2, 3 })] // Convert a non-empty list to a span
-    [InlineData(new int[] { }, new int[] { })] // Convert an empty list to a span
-
-    public void TestAsSpan(int[] input, int[] expected)
-    {
-        // Create a list from the input array
-        var list = new List<int>(input);
-
-        // Call the static method and assert the result
-        Assert.Equal(expected, list.AsSpan().ToArray());
-    }
-
-    [Theory]
-    [MemberData(nameof(TestCompactData))]
-    public void TestCompact(IEnumerable<object?>? input, IEnumerable<object> expected)
-        // Call the static method and assert the result
-        => Assert.Equal(expected, input.Compact());
-    #endregion Generated by AI
-}
-
-#region Generated by AI
-[Trait("Category", "Helpers")]
-[Collection("FindDuplicatesTest")]
-public sealed class FindDuplicatesTest
-{
-    [Fact]
-    public void TestFindDuplicatesOnDistinctList()
-    {
-        // Arrange
-        var list = new List<int> { 1, 2, 3, 4 };
-        var expected = new List<int>();
-
-        // Act
-        var actual = list.FindDuplicates();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void TestFindDuplicatesOnNonDistinctList()
-    {
-        // Arrange
-        var list = new List<int> { 1, 2, 3, 4, 2 };
-        var expected = new List<int> { 2 };
-
-        // Act
-        var actual = list.FindDuplicates();
-
-        // Assert
-        Assert.Equal(expected, actual);
     }
 }
 
@@ -257,4 +313,3 @@ public sealed class RemoveDefaultsTest
         Assert.Equal(expected, actual);
     }
 }
-#endregion

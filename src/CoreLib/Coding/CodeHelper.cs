@@ -478,6 +478,13 @@ public static class CodeHelper
         action?.Invoke(result);
         return result;
     }
+    
+    public static async Task<TInstance> WithAsync<TInstance>(this TInstance instance, Func<TInstance, Task>? actionAsync)
+    {
+        if (actionAsync != null)
+            await actionAsync(instance);
+        return instance;
+    }
 
     public static TInstance With<TInstance>(this TInstance instance, in Action? action)
         => instance.Fluent(action);
