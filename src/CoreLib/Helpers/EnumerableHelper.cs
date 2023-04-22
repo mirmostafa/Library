@@ -526,9 +526,9 @@ public static class EnumerableHelper
         {
             throw new InvalidArgumentException(nameof(step));
         }
-        
+
         Func<int, bool> endCondition = step > 0 ? i => i <= end : i => i >= end;
-        
+
         for (var i = start; endCondition(i); i += step)
         {
             yield return i;
@@ -536,7 +536,7 @@ public static class EnumerableHelper
         var a = 5..10;
     }
 
-    public static IEnumerable<int> Range(int end, int step = 1) 
+    public static IEnumerable<int> Range(int end, int step = 1)
         => Range(0, end, step);
 
     [Obsolete("Subject to delete", true)]
