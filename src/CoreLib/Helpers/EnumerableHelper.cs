@@ -14,13 +14,6 @@ namespace Library.Helpers;
 
 public static class EnumerableHelper
 {
-    //public static IList<KeyValuePair<TKey, TValue>> Add<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
-    //{
-    //    Check.IfArgumentNotNull(list);
-    //    list.Add(new(key, value));
-    //    return list;
-    //}
-
     /// <summary>
     /// Adds an item to the System.Collections.Generic.ICollection`1.
     /// </summary>

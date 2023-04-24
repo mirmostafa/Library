@@ -1,4 +1,6 @@
-﻿namespace UnitTests;
+﻿using System.Collections;
+
+namespace UnitTests;
 
 [Trait("Category", "Helpers")]
 public sealed class ObjectHelperTest
@@ -54,6 +56,14 @@ public sealed class ObjectHelperTest
 
         // Assert
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void DeepSearchForClassByGrandParentInterface()
+    {
+        var asm = this.GetType().Assembly;
+        var types = asm.GetTypes();
+        var targets = ObjectHelper.DeepSearchFor(types, x => x.GetInterfaces(), x => x == typeof(IB)).Build();
     }
 
     [Fact]
@@ -114,7 +124,6 @@ public sealed class ObjectHelperTest
         var actual = ObjectHelper.IsNullOrEmpty(arg);
         Assert.Equal(expected, actual);
     }
-
     [Theory]
     [InlineData("John", 5)]
     [InlineData(3000, 2999)]
@@ -129,7 +138,20 @@ public sealed class ObjectHelperTest
 }
 
 #region Models
+file interface IA { }
+
+file interface IB : IA { }
+
+file interface IC { }
+
+file interface ID { }
+
+file interface IE { }
+
 file interface IStudent { }
 file record Person;
 file record Student : Person, IStudent;
+
+file class CA : IB, ID { }
+file class CB : IE, ID { }
 #endregion

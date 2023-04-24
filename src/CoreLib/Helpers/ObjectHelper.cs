@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -448,5 +449,39 @@ public static class ObjectHelper
     {
         var property = obj?.GetType().GetProperty(propertyName);
         property?.SetValue(obj, value, null);
+    }
+
+    /// <summary>
+    /// Search deeply for specific objects
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="roots">The roots.</param>
+    /// <param name="getChildren">The get children.</param>
+    /// <param name="isTarget">The is target.</param>
+    /// <returns>The objects</returns>
+    public static IEnumerable<T> DeepSearchFor<T>(IEnumerable<T> roots, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
+    {
+        foreach (T root in roots)
+        {
+            foreach (T result in lookForRecursive((root, root), getChildren, isTarget))
+            {
+                yield return result;
+            }
+        }
+
+        static IEnumerable<T> lookForRecursive((T Child, T Root) item, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
+        {
+            if ((!item.Child?.Equals(item.Root) ?? item.Root is null) && isTarget(item.Child))
+            {
+                yield return item.Root;
+            }
+            foreach (T child in getChildren(item.Child))
+            {
+                foreach (T result in lookForRecursive((child, item.Root), getChildren, isTarget))
+                {
+                    yield return result;
+                }
+            }
+        }
     }
 }
