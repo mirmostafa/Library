@@ -20,9 +20,9 @@ public static class ObjectHelper
     /// Checks the database null.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="o">           The o.</param>
+    /// <param name="o">The o.</param>
     /// <param name="defaultValue">The default value.</param>
-    /// <param name="converter">   The converter.</param>
+    /// <param name="converter">The converter.</param>
     /// <returns></returns>
     public static T CheckDbNull<T>(in object? o, in T defaultValue, in Func<object, T> converter)
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
