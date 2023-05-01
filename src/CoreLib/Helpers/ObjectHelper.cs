@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
-using Library.Interfaces;
 using Library.Types;
 using Library.Validations;
 
@@ -16,8 +15,6 @@ namespace Library.Helpers;
 public static class ObjectHelper
 {
     private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
-    public static dynamic props(this object o)
-        => _propsExpando.GetOrCreateValue(o);
 
     /// <summary>
     /// Checks the database null.
@@ -27,10 +24,9 @@ public static class ObjectHelper
     /// <param name="defaultValue">The default value.</param>
     /// <param name="converter">   The converter.</param>
     /// <returns></returns>
-    public static T CheckDbNull<T>(in object o, in T defaultValue, in Func<object, T> converter)
+    public static T CheckDbNull<T>(in object? o, in T defaultValue, in Func<object, T> converter)
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
 
-    
     public static bool Contains(in object? obj, Type type)
             => obj is not null && obj.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -381,10 +377,8 @@ public static class ObjectHelper
     /// Determines whether [is database null] [the specified o].
     /// </summary>
     /// <param name="o">The o.</param>
-    /// <returns>
-    ///   <c>true</c> if [is database null] [the specified o]; otherwise, <c>false</c>.
-    /// </returns>
-    public static bool IsDbNull(in object? o)
+    /// <returns><c>true</c> if [is database null] [the specified o]; otherwise, <c>false</c>.</returns>
+    public static bool IsDbNull([NotNullWhen(false)] in object? o)
         => o is null or DBNull;
 
     /// <summary>
@@ -411,10 +405,10 @@ public static class ObjectHelper
     /// <summary>
     /// Determines whether [is inherited or implemented] [the specified object].
     /// </summary>
-    /// <param name="obj">The object.</param>
+    /// <param name="obj"> The object.</param>
     /// <param name="type">The type.</param>
     /// <returns>
-    ///   <c>true</c> if [is inherited or implemented] [the specified object]; otherwise, <c>false</c>.
+    /// <c>true</c> if [is inherited or implemented] [the specified object]; otherwise, <c>false</c>.
     /// </returns>
     public static bool IsInheritedOrImplemented(in object? obj, [DisallowNull] in Type type)
         => obj != null && type.ArgumentNotNull().IsAssignableFrom(obj.GetType());
@@ -439,33 +433,16 @@ public static class ObjectHelper
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
         => id == Guid.Empty;
 
-    public static IEnumerable<T> Repeat<T>(T value, int count)
-    {
-        for (var i = 0; i < count; i++)
-        {
-            yield return value;
-        }
-    }
-
-    public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
-    {
-        Check.IfArgumentNotNull(obj);
-        obj.GetType().GetField(fieldName)?.SetValue(obj, value);
-    }
-
-    public static void SetProperty([DisallowNull] in object obj, in string propertyName, in object value)
-    {
-        var property = obj?.GetType().GetProperty(propertyName);
-        property?.SetValue(obj, value, null);
-    }
+    public static dynamic props(this object o)
+                                                                                                                                                => _propsExpando.GetOrCreateValue(o);
 
     /// <summary>
     /// Search deeply for specific objects
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="roots">The roots.</param>
+    /// <param name="roots">      The roots.</param>
     /// <param name="getChildren">The get children.</param>
-    /// <param name="isTarget">The is target.</param>
+    /// <param name="isTarget">   The is target.</param>
     /// <returns>The objects</returns>
     public static IEnumerable<T> RecursiveSearchFor<T>(IEnumerable<T> roots, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
     {
@@ -491,5 +468,25 @@ public static class ObjectHelper
                 }
             }
         }
+    }
+
+    public static IEnumerable<T> Repeat<T>(T value, int count)
+    {
+        for (var i = 0; i < count; i++)
+        {
+            yield return value;
+        }
+    }
+
+    public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
+    {
+        Check.IfArgumentNotNull(obj);
+        obj.GetType().GetField(fieldName)?.SetValue(obj, value);
+    }
+
+    public static void SetProperty([DisallowNull] in object obj, in string propertyName, in object value)
+    {
+        var property = obj?.GetType().GetProperty(propertyName);
+        property?.SetValue(obj, value, null);
     }
 }
