@@ -155,7 +155,7 @@ public interface IAsyncWriteService<TViewModel, TId>
 public interface IAsyncWriteService<TViewModel> : IAsyncWriteService<TViewModel, long>
 { }
 
-public interface IBusinesService : IService
+public interface IBusinessService : IService
 {
 }
 

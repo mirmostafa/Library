@@ -408,6 +408,14 @@ public static class ObjectHelper
     public static bool IsIn<TSource>(in TSource item, params TSource[] range)
         => range.Contains(item);
 
+    /// <summary>
+    /// Determines whether [is inherited or implemented] [the specified object].
+    /// </summary>
+    /// <param name="obj">The object.</param>
+    /// <param name="type">The type.</param>
+    /// <returns>
+    ///   <c>true</c> if [is inherited or implemented] [the specified object]; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsInheritedOrImplemented(in object? obj, [DisallowNull] in Type type)
         => obj != null && type.ArgumentNotNull().IsAssignableFrom(obj.GetType());
 
