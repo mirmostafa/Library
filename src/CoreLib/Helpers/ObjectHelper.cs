@@ -467,7 +467,7 @@ public static class ObjectHelper
     /// <param name="getChildren">The get children.</param>
     /// <param name="isTarget">The is target.</param>
     /// <returns>The objects</returns>
-    public static IEnumerable<T> DeepSearchFor<T>(IEnumerable<T> roots, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
+    public static IEnumerable<T> RecursiveSearchFor<T>(IEnumerable<T> roots, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
     {
         foreach (T root in roots)
         {

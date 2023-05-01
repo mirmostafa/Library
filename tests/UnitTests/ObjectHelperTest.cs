@@ -63,7 +63,7 @@ public sealed class ObjectHelperTest
     {
         var asm = this.GetType().Assembly;
         var types = asm.GetTypes();
-        var targets = ObjectHelper.DeepSearchFor(types, x => x.GetInterfaces(), x => x == typeof(IB)).Build();
+        var targets = ObjectHelper.RecursiveSearchFor(types, x => x.GetInterfaces(), x => x == typeof(IB)).Build();
     }
 
     [Fact]
