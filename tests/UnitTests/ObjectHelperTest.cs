@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+
+using Xunit;
 
 namespace UnitTests;
 
@@ -154,4 +157,5 @@ file record Student : Person, IStudent;
 
 file class CA : IB, ID { }
 file class CB : IE, ID { }
+
 #endregion
