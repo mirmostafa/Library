@@ -28,7 +28,7 @@ public static class ObjectHelper
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
 
     public static bool Contains(in object? obj, Type type)
-            => obj is not null && obj.GetType()
+        => obj is not null && obj.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .Any(property => property.PropertyType.FindInterfaces((m, filterCriteria) => m.FullName == type.FullName, null).Any());
 
@@ -62,7 +62,8 @@ public static class ObjectHelper
     /// an instance of TSingleton./&gt; After generating instance, searches for a method named:
     /// "InitializeComponents". If found will be called.
     /// </remarks>
-    public static TSingleton? GenerateSingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null, Action<TSingleton>? initializeInstance = null)
+    [return: NotNull]
+    public static TSingleton GenerateSingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null, Action<TSingleton>? initializeInstance = null)
         where TSingleton : class, ISingleton<TSingleton>
     {
         //! If (T) has implemented CreateInstance as a static method, use it to create an instance
@@ -82,7 +83,7 @@ public static class ObjectHelper
             if (constructor is null)
             {
                 throw new SingletonException(
-                    $"The class must have a static method: \"{typeof(TSingleton)} CreateInstance()\" or a private/protected parameter-less constructor.");
+                    $"""The class must have a static method: "{typeof(TSingleton)} CreateInstance()" or a private/protected parameter-less constructor.""");
             }
 
             result = constructor.Invoke(EnumerableHelper.EmptyArray<object>()) as TSingleton;
@@ -90,7 +91,7 @@ public static class ObjectHelper
             //! Just to make sure that the code will work.
             if (result is null)
             {
-                return null;
+                throw new SingletonException("Couldn't create instance.");
             }
         }
 
