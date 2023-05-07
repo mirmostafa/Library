@@ -21,7 +21,7 @@ public static class ServiceHelper
     #region CRUD
 
     [EditorBrowsable(EditorBrowsableState.Advanced)]
-    public static async Task<Result> DeleteAsync<TViewModel, TDbEntity>([DisallowNull] this IAsyncWriteService<TViewModel> service, [DisallowNull] DbContext dbContext, TViewModel model, bool persist, bool? detach = null, ILogger? logger = null)
+    public static async Task<Result> DeleteAsync<TViewModel, TDbEntity>([DisallowNull] IAsyncWriteService<TViewModel> service, [DisallowNull] DbContext dbContext, TViewModel model, bool persist, bool? detach = null, ILogger? logger = null)
         where TDbEntity : class, IIdenticalEntity<long>, new()
         where TViewModel : IHasKey<long?>
     {
@@ -50,12 +50,12 @@ public static class ServiceHelper
         return Result.Success;
     }
 
-    public static Task<IReadOnlyList<TViewModel>> GetAllAsync<TViewModel, TDbEntity>([DisallowNull] this IAsyncReadService<TViewModel> service, [DisallowNull] DbContext dbContext, Func<IEnumerable<TDbEntity?>, IEnumerable<TViewModel?>> toViewModel, AsyncLock asyncLock)
+    public static Task<IReadOnlyList<TViewModel>> GetAllAsync<TViewModel, TDbEntity>([DisallowNull] IAsyncReadService<TViewModel> service, [DisallowNull] DbContext dbContext, Func<IEnumerable<TDbEntity?>, IEnumerable<TViewModel?>> toViewModel, AsyncLock asyncLock)
         where TDbEntity : class
         where TViewModel : class
         => ServiceHelper.GetAllAsync(service, dbContext.Set<TDbEntity>(), toViewModel, asyncLock);
 
-    public static async Task<IReadOnlyList<TViewModel>> GetAllAsync<TViewModel, TDbEntity>([DisallowNull] this IAsyncReadService<TViewModel> _, [DisallowNull] IQueryable<TDbEntity> dbEntities, Func<IEnumerable<TDbEntity?>, IEnumerable<TViewModel?>> toViewModel, AsyncLock asyncLock)
+    public static async Task<IReadOnlyList<TViewModel>> GetAllAsync<TViewModel, TDbEntity>([DisallowNull] IAsyncReadService<TViewModel> _, [DisallowNull] IQueryable<TDbEntity> dbEntities, Func<IEnumerable<TDbEntity?>, IEnumerable<TViewModel?>> toViewModel, AsyncLock asyncLock)
         where TDbEntity : class
         where TViewModel : class
     {
@@ -67,12 +67,12 @@ public static class ServiceHelper
         return result;
     }
 
-    public static Task<TViewModel?> GetByIdAsync<TViewModel, TDbEntity>([DisallowNull] this IAsyncReadService<TViewModel> service, long id, [DisallowNull] DbContext dbContext, Func<TDbEntity?, TViewModel?> toViewModel, AsyncLock asyncLock)
+    public static Task<TViewModel?> GetByIdAsync<TViewModel, TDbEntity>([DisallowNull] IAsyncReadService<TViewModel> service, long id, [DisallowNull] DbContext dbContext, Func<TDbEntity?, TViewModel?> toViewModel, AsyncLock asyncLock)
         where TDbEntity : class, IIdenticalEntity<long>
         where TViewModel : class
         => GetByIdAsync(service, id, dbContext.Set<TDbEntity>(), toViewModel, asyncLock);
 
-    public static async Task<TViewModel?> GetByIdAsync<TViewModel, TDbEntity>([DisallowNull] this IAsyncReadService<TViewModel> service, long id, [DisallowNull] IQueryable<TDbEntity> entities, Func<TDbEntity?, TViewModel?> toViewModel, AsyncLock asyncLock)
+    public static async Task<TViewModel?> GetByIdAsync<TViewModel, TDbEntity>([DisallowNull] IAsyncReadService<TViewModel> service, long id, [DisallowNull] IQueryable<TDbEntity> entities, Func<TDbEntity?, TViewModel?> toViewModel, AsyncLock asyncLock)
         where TDbEntity : IHasKey<long>
     {
         var query = from entity in entities
@@ -83,7 +83,7 @@ public static class ServiceHelper
     }
 
     public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TViewModel, TDbEntity>(
-        [DisallowNull] this IAsyncWriteService<TViewModel> service,
+        [DisallowNull] IAsyncWriteService<TViewModel> service,
         [DisallowNull] DbContext dbContext,
         [DisallowNull] TViewModel model,
         [DisallowNull] Func<TViewModel, TDbEntity?> convert,
@@ -97,7 +97,7 @@ public static class ServiceHelper
         => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, validatorAsync, dbContext.NotNull().Add, null, persist, (true, null), saveChanges, onCommitted, logger);
 
     public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TViewModel, TDbEntity, TId>(
-        [DisallowNull] this IAsyncReadService<TViewModel> service,
+        [DisallowNull] IAsyncReadService<TViewModel> service,
         [DisallowNull] DbContext dbContext,
         [DisallowNull] TViewModel model,
         [DisallowNull] Func<TViewModel, TDbEntity?> convert,
@@ -112,7 +112,7 @@ public static class ServiceHelper
         => InnerManipulate<TViewModel, TDbEntity, TId>(dbContext, model, convert, validatorAsync, dbContext.NotNull().Add, null, persist, (true, null), saveChanges, onCommitted, logger);
 
     public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TService, TViewModel, TDbEntity>(
-        [DisallowNull] this TService service,
+        [DisallowNull] TService service,
         [DisallowNull] DbContext dbContext,
         [DisallowNull] TViewModel model,
         [DisallowNull] Func<TViewModel, TDbEntity?> convert,
@@ -125,7 +125,7 @@ public static class ServiceHelper
         => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, service.ValidateAsync, dbContext.Add, onCommitting, persist, (true, null), service.SaveChangesAsync, onCommitted, logger);
 
     public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TService, TViewModel, TDbEntity>(
-        [DisallowNull] this TService service,
+        [DisallowNull] TService service,
         [DisallowNull] DbContext dbContext,
         [DisallowNull] TViewModel model,
         [DisallowNull] Func<TViewModel, TDbEntity?> convert,
@@ -146,13 +146,13 @@ public static class ServiceHelper
             onCommitted: (m, e) => m.Id = e.Id,
             logger: service.Logger);
 
-    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TService, TViewModel, TDbEntity>([DisallowNull] this TService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, bool persist = true, Func<TDbEntity, TDbEntity>? onCommitting = null, ILogger? logger = null,
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TService, TViewModel, TDbEntity>([DisallowNull] TService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, bool persist = true, Func<TDbEntity, TDbEntity>? onCommitting = null, ILogger? logger = null,
         Action<TViewModel, TDbEntity>? onCommitted = null)
         where TDbEntity : class, IIdenticalEntity<long>
         where TService : IAsyncWriteService<TViewModel>, IAsyncValidator<TViewModel>, IAsyncSaveService
         => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, service.ValidateAsync, dbContext.Attach, onCommitting, persist, (true, null), service.SaveChangesAsync, onCommitted, logger);
 
-    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TViewModel, TDbEntity, TId>([DisallowNull] this IAsyncWriteService<TViewModel> service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null,
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TViewModel, TDbEntity, TId>([DisallowNull] IAsyncWriteService<TViewModel> service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, Func<TViewModel, Task<Result<TViewModel>>>? validatorAsync = null, Func<TDbEntity, TDbEntity>? onCommitting = null, bool persist = true, Func<Task<Result<int>>>? saveChanges = null, ILogger? logger = null,
         Action<TViewModel, TDbEntity>? onCommitted = null)
         where TDbEntity : class, IIdenticalEntity<TId>
         where TId : notnull

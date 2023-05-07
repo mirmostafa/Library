@@ -1,5 +1,4 @@
 ﻿namespace UnitTests;
-#endregion
 
 public class NumberHelperTest
 {
@@ -15,7 +14,7 @@ public class NumberHelperTest
         // Arrange
 
         // Act
-        string result = number.ToString(format, defaultValue);
+        var result = number.ToString(format, defaultValue);
 
         // Assert
         Assert.Equal(expected, result);
