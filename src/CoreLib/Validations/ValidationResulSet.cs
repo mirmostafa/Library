@@ -13,22 +13,22 @@ public static class Validation
 {
     [return: NotNull]
     public static TValue ArgumentNotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, CheckBehavior.ReturnFirstFailure).ArgumentNotNull();
+        => Check(value, CheckBehavior.ThrowOnFail).ArgumentNotNull();
 
     public static ValidationResultSet<TValue> Check<TValue>(this TValue value, CheckBehavior behavior = CheckBehavior.ReturnFirstFailure, [CallerArgumentExpression(nameof(value))] string argName = null!)
         => new(value, behavior, argName);
 
     [return: NotNull]
     public static TValue NotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, CheckBehavior.ReturnFirstFailure).NotNull();
+        => Check(value, CheckBehavior.ThrowOnFail).NotNull();
 
     [return: NotNull]
     public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, CheckBehavior.ReturnFirstFailure).NotNull(onErrorMessage);
+        => Check(value, CheckBehavior.ThrowOnFail).NotNull(onErrorMessage);
 
     [return: NotNull]
     public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => Check(value, CheckBehavior.ReturnFirstFailure).NotNull(onError);
+        => Check(value, CheckBehavior.ThrowOnFail).NotNull(onError);
 }
 
 public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
@@ -54,10 +54,9 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     public static implicit operator TValue(ValidationResultSet<TValue> source)
         => source.Value;
 
-    /// <summary>
-    /// Traverses the rules and create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.
-    /// </summary>
-    /// <returns>Create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.</returns>
+    /// <summary> Traverses the rules and create a fail <code>Result<TValue></code>, at first broken
+    /// rule . Otherwise created a succeed result. </summary> <returns>Create a fail
+    /// <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.</returns>
     public Result<TValue?> Build()
         => this.InnerBuild(this._behavior);
 
