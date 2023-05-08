@@ -68,7 +68,7 @@ public static class CodeHelper
     /// <param name="func">         The function.</param>
     /// <param name="defaultResult">The default result.</param>
     /// <returns></returns>
-    public static async Task<Result<TResult?>> CatchResultAsync<TResult>( Func<Task<TResult>> func, TResult? defaultResult = default)
+    public static async Task<Result<TResult?>> CatchResultAsync<TResult>(Func<Task<TResult>> func, TResult? defaultResult = default)
     {
         try
         {
@@ -450,7 +450,7 @@ public static class CodeHelper
             action();
             return Result.Success;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return Result.CreateFailure(ex);
         }
@@ -478,19 +478,16 @@ public static class CodeHelper
         action?.Invoke(result);
         return result;
     }
-    
+
     public static async Task<TInstance> WithAsync<TInstance>(this TInstance instance, Func<TInstance, Task>? actionAsync)
     {
         if (actionAsync != null)
+        {
             await actionAsync(instance);
+        }
+
         return instance;
     }
-
-    public static TInstance With<TInstance>(this TInstance instance, in Action? action)
-        => instance.Fluent(action);
-
-    public static TInstance With<TInstance>(this TInstance instance, in object? obj)
-        => instance.Fluent(obj);
 }
 
 public record TryWithRecord<TValue>(Result<TValue> Result);

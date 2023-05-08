@@ -212,7 +212,7 @@ public static class RichTextBoxHelper
         Check.IfArgumentNotNull(lineProcessor);
         Check.IfArgumentNotNull(wordProcessor);
 
-        var lines = text.Separate("\r\n");
+        var lines = StringHelper.Split(text, "\r\n");
         string? prevLine = null;
         foreach (var line in lines)
         {

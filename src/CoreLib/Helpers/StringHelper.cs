@@ -518,23 +518,14 @@ public static class StringHelper
     public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items)
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
-    public static IEnumerable<string> Separate(this string @this, string separator)
-    {
-        var checkpoint = 0;
-        var indexOfSeparator = @this.IndexOf(separator);
-        while (indexOfSeparator >= 0)
-        {
-            var result = @this[checkpoint..indexOfSeparator];
-            yield return result;
-            checkpoint = indexOfSeparator + separator.Length;
-            indexOfSeparator = @this.IndexOf(separator, checkpoint);
-        }
-    }
-
     [Pure]
     [return: NotNullIfNotNull(nameof(str))]
-    public static string? SeparateCamelCase(this string? str)
+    public static string? Separate(this string? str, params char[] separators)
     {
+        if (separators?.Any() is not true)
+        {
+            separators = new[] { '\0', '\n', '\r', '\t', '_', '-' };
+        }
         if (str.IsNullOrEmpty())
         {
             return str;
@@ -543,22 +534,21 @@ public static class StringHelper
         var sb = new StringBuilder();
         for (var i = 0; i < str.Length; i++)
         {
-            var result = parse(str[i]);
-            if (i > 0 && result.Separate)
+            var (isSeparator, shouldRemove) = determineSeparator(str[i], separators);
+            if (i > 0 && isSeparator)
             {
                 _ = sb.Append(' ');
             }
-            if (!result.RemoveChar)
+            if (!shouldRemove)
+            {
                 _ = sb.Append(str[i]);
+            }
         }
 
         return sb.ToString();
 
-        static (bool Separate, bool RemoveChar) parse(char c) => c switch
-        {
-            '\0' or '\n' or '\r' or '_' or '\t' or '-' => (true, true),
-            _ => (char.IsUpper(c), false)
-        };
+        static (bool IsSeparator, bool ShouldRemove) determineSeparator(char c, char[] separators)
+            => separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
     }
 
     public static string? SetPhrase(this string str, int index, string newStr, char start, char end = default)
@@ -593,6 +583,20 @@ public static class StringHelper
     public static string Space(in int count)
         => new(' ', count);
 
+    public static IEnumerable<string> Split(this string @this, string separator)
+    {
+        var checkpoint = 0;
+        var indexOfSeparator = @this.IndexOf(separator);
+        while (indexOfSeparator >= 0)
+        {
+            var result = @this[checkpoint..indexOfSeparator];
+            yield return result;
+            checkpoint = indexOfSeparator + separator.Length;
+            indexOfSeparator = @this.IndexOf(separator, checkpoint);
+        }
+    }
+
+    [Obsolete("Subject to delete", true)]
     public static IEnumerable<string> Split(this string value, int groupSize)
     {
         Check.IfArgumentNotNull(value);

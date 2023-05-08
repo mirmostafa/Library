@@ -243,7 +243,7 @@ public sealed class StringHelperTest
     [InlineData(null, null)]
     public void SeparateCamelCaseTest(string text, string expected)
     {
-        var actual = text.SeparateCamelCase();
+        var actual = text.Separate();
         Assert.Equal(expected, actual);
     }
 

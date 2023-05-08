@@ -8,6 +8,13 @@ public static class NumberHelper
 {
     private static readonly string[] _sizeSuffixes = { "", "K", "M", "G", "T", "P", "E", "Z", "Y" };
 
+
+    public static int RandomNumber(int? seed = null)
+    {
+        var rnd = seed is null ? new Random() : new Random(seed.Value);
+        return rnd.Next();
+    }
+
     public static IEnumerable<int> RandomNumbers(int count, int? seed = null)
     {
         var rnd = seed is null ? new Random() : new Random(seed.Value);

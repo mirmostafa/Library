@@ -97,16 +97,16 @@ public static class EnumHelper
             var descriptions = GetItemAttributes<LocalizedDescriptionAttribute>(value)?.ToArray();
             if (descriptions?.Any() is false)
             {
-                return value.ToString().SeparateCamelCase() ?? string.Empty;
+                return value.ToString().Separate() ?? string.Empty;
             }
 
             var description = descriptions?.FirstOrDefault(desc => cultureName.EqualsTo(desc.CultureName));
-            return description is null ? value.ToString().SeparateCamelCase() : description.Description;
+            return description is null ? value.ToString().Separate() : description.Description;
         }
 
         var descriptionAttribute = GetItemAttribute<DescriptionAttribute>(value);
         return descriptionAttribute is null
-            ? value.ToString().SeparateCamelCase()
+            ? value.ToString().Separate()
             : descriptionAttribute.Description;
     }
 

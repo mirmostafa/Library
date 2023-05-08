@@ -1,0 +1,30 @@
+﻿using BenchmarkDotNet.Attributes;
+
+namespace ConAppTest.MyBenchmarks;
+
+
+/*
+|     Method |      Mean |     Error |    StdDev | Allocated |
+|----------- |----------:|----------:|----------:|----------:|
+|      MyWay |  4.261 us | 0.0835 us | 0.1373 us |   1.36 KB |
+|    BingWay |  7.289 us | 0.1434 us | 0.2512 us |   5.27 KB |
+| ChatGptWay | 11.046 us | 0.2026 us | 0.2635 us |  13.49 KB |
+*/
+
+[MemoryDiagnoser(false)]
+public class StringSeparateByAiBenchmark : IBenchmark<StringSeparateByAiBenchmark>
+{
+    private readonly string _testCase = "The_quick_brown_fox-jumps_over_the_lazy-dog. This_sentence_is_often_used_as_a_test_for_typographers_or_designers,_as_it_contains_every_letter_of_the_English_alphabet_and_demonstrates_various_fonts_and_layouts.";
+
+    [Benchmark]
+    public void MyWay() //! Winner 🏆
+        => _ = this._testCase.Separate();
+
+    [Benchmark]
+    public void BingWay()
+        => _ = this._testCase.Separate_Bing();
+
+    [Benchmark]
+    public void ChatGptWay()
+        => _ = this._testCase.Separate_ChatGpt();
+}

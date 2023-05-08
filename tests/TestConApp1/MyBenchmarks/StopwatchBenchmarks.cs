@@ -13,10 +13,9 @@ public sealed class StopwatchBenchmarks : IBenchmark<StopwatchBenchmarks>
     public TimeSpan MyWay()
         => LibStopwatch.StartNew().Elapsed;
 
-    //! in .NET 8.0
-    //x [Benchmark]
-    //x public TimeSpan New()
-    //x     => Stopwatch.GetElapsedTime(Stopwatch.GetTimestamp());
+    [Benchmark]
+    public TimeSpan New()
+        => Stopwatch.GetElapsedTime(Stopwatch.GetTimestamp());
 
     [Benchmark]
     public TimeSpan Old()
