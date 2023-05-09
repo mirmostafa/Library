@@ -1,3 +1,1 @@
-﻿
-BenchmarkRunner.Run<StringSeparateByAiBenchmark>();
-//WriteLine("Hi");
+﻿BenchmarkRunner.Run<StringSeparateByAiBenchmark>();

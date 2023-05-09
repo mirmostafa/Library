@@ -888,6 +888,22 @@ public sealed class StringHelperTest
 
         Assert.Equal(expected, result);
     }
+
+    [Fact]
+    public void ToLower_ReturnsLowercaseStrings()
+    {
+        // Arrange
+        IEnumerable<string> strings = new List<string> { "FOO", "Bar", "BaZ" };
+
+        // Act
+        IEnumerable<string> result = strings.ToLower();
+
+        // Assert
+        Assert.Collection(result,
+            item => Assert.Equal("foo", item),
+            item => Assert.Equal("bar", item),
+            item => Assert.Equal("baz", item));
+    }
 }
 
 file class CompactDataClass : IEnumerable<object[]>
