@@ -771,5 +771,6 @@ public static class EnumerableHelper
                 { Length: 2 } => aggregator(items[0], items[1]),
                 [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
             };
-
+    public static IEnumerable<T> IfEmpty<T>(this IEnumerable<T?>? items, IEnumerable<T> defaultValues)
+        => items?.Any() is true ? items : defaultValues;
  }

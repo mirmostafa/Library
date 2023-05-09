@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Runtime.CompilerServices;
@@ -518,7 +519,6 @@ public static class StringHelper
     public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items)
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
-    [Pure]
     [return: NotNullIfNotNull(nameof(str))]
     public static string? Separate(this string? str, params char[] separators)
     {
@@ -534,12 +534,12 @@ public static class StringHelper
         var sb = new StringBuilder();
         for (var i = 0; i < str.Length; i++)
         {
-            var (isSeparator, shouldRemove) = determineSeparator(str[i], separators);
+            var (isSeparator, shouldIgnore) = determineSeparator(str[i], separators);
             if (i > 0 && isSeparator)
             {
                 _ = sb.Append(' ');
             }
-            if (!shouldRemove)
+            if (!shouldIgnore)
             {
                 _ = sb.Append(str[i]);
             }
@@ -547,7 +547,7 @@ public static class StringHelper
 
         return sb.ToString();
 
-        static (bool IsSeparator, bool ShouldRemove) determineSeparator(char c, char[] separators)
+        static (bool IsSeparator, bool ShouldIgnore) determineSeparator(char c, char[] separators)
             => separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
     }
 
