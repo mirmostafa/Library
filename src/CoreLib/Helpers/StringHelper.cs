@@ -551,6 +551,10 @@ public static class StringHelper
             => separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
     }
 
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? SeparateCamelCase(this string? value) 
+        => value.SplitCamelCase().Merge(" ");
+
     public static string? SetPhrase(this string str, int index, string newStr, char start, char end = default)
     {
         var startStr = str.Slice(0, index + 1);
