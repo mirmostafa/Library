@@ -24,5 +24,5 @@ public interface IValidator
 
 public interface IValidator<TItem>
 {
-    Result<TItem?> Validate(in TItem? item);
+    Result<TItem> Validate(in TItem item);
 }
