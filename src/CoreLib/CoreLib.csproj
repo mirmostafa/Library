@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<AssemblyName>Library.Core</AssemblyName>
 		<RootNamespace>Library</RootNamespace>
-		<Configurations>Debug;Release;</Configurations>
+		<Configurations>Debug;Release;Debug Unit Test</Configurations>
         <EnablePreviewFeatures>true</EnablePreviewFeatures>
     </PropertyGroup>
 
@@ -11,6 +11,13 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<WarningLevel>4</WarningLevel>
 		<DebugType>portable</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unit Test|AnyCPU'">
+	  <DefineConstants>DEBUG;TRACE</DefineConstants>
+	  <PlatformTarget>AnyCPU</PlatformTarget>
+	  <WarningLevel>4</WarningLevel>
+	  <DebugType>portable</DebugType>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

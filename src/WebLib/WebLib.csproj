@@ -4,6 +4,7 @@
         <Product>Library</Product>
         <AssemblyName>Library.Web</AssemblyName>
         <OutputType>Library</OutputType>
+        <Configurations>Debug;Release;Debug Unit Test</Configurations>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNet.WebApi.Core" />

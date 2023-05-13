@@ -2,6 +2,7 @@
 	<PropertyGroup>
         <AssemblyName>Library.Cqrs</AssemblyName>
         <RootNamespace>Library.Cqrs</RootNamespace>
+        <Configurations>Debug;Release;Debug Unit Test</Configurations>
     </PropertyGroup>
 
     <ItemGroup>
