@@ -35,14 +35,14 @@ public interface IAsyncReadPagingService<TViewModel, in TId>
     /// Gets all db entities asynchronously.
     /// </summary>
     /// <returns></returns>
-    Task<PagingResult<TViewModel>> GetAllAsync(PagingParams paging);
+    Task<PagingResult<TViewModel>> GetAllAsync(PagingParams paging, CancellationToken token = default);
 
     /// <summary>
     /// Gets an entity by identifier.
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    Task<TViewModel?> GetByIdAsync(TId id);
+    Task<TViewModel?> GetByIdAsync(TId id, CancellationToken token = default);
 }
 
 /// <summary>
@@ -63,14 +63,14 @@ public interface IAsyncReadService<TViewModel, in TId>
     /// Gets all <typeparamref name="TViewModel"/> s asynchronously.
     /// </summary>
     /// <returns></returns>
-    Task<IReadOnlyList<TViewModel>> GetAllAsync();
+    Task<IReadOnlyList<TViewModel>> GetAllAsync(CancellationToken token = default);
 
     /// <summary>
     /// Gets an <typeparamref name="TViewModel"/> by identifier.
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    Task<TViewModel?> GetByIdAsync(TId id);
+    Task<TViewModel?> GetByIdAsync(TId id, CancellationToken token = default);
 }
 
 /// <summary>
@@ -89,7 +89,7 @@ public interface IAsyncSaveService
     /// Saves the data asynchronously.
     /// </summary>
     /// <returns></returns>
-    Task<Result<int>> SaveChangesAsync();
+    Task<Result<int>> SaveChangesAsync(CancellationToken token = default);
 }
 
 public interface IAsyncTransactionalService
@@ -105,19 +105,6 @@ public interface IAsyncTransactionSaveService : IAsyncTransactionalService, IAsy
 {
 }
 
-///// <summary>
-///// </summary>
-///// <typeparam name="TViewModel">The type of the view model.</typeparam>
-//public interface IAsyncViewModelFiller<TViewModel>
-//{
-//    /// <summary>
-//    /// Fills the view model.
-//    /// </summary>
-//    /// <param name="model">The model.</param>
-//    /// <returns></returns>
-//    Task<TViewModel?> FillViewModelAsync(TViewModel? model);
-//}
-
 /// <summary>
 /// A standardizer for services to write data asynchronously.
 /// </summary>
@@ -130,14 +117,14 @@ public interface IAsyncWriteService<TViewModel, TId>
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns></returns>
-    Task<Result> DeleteAsync(TViewModel model, bool persist = true);
+    Task<Result> DeleteAsync(TViewModel model, bool persist = true, CancellationToken token = default);
 
     /// <summary>
     /// Inserts an entity asynchronously.
     /// </summary>
     /// <param name="model">The model.</param>
     /// <returns></returns>
-    Task<Result<TViewModel>> InsertAsync(TViewModel model, bool persist = true);
+    Task<Result<TViewModel>> InsertAsync(TViewModel model, bool persist = true, CancellationToken token = default);
 
     /// <summary>
     /// Updates an entity asynchronously.
@@ -145,7 +132,7 @@ public interface IAsyncWriteService<TViewModel, TId>
     /// <param name="id">   The identifier.</param>
     /// <param name="model">The model.</param>
     /// <returns></returns>
-    Task<Result<TViewModel>> UpdateAsync(TId id, TViewModel model, bool persist = true);
+    Task<Result<TViewModel>> UpdateAsync(TId id, TViewModel model, bool persist = true, CancellationToken token = default);
 }
 
 /// <summary>
@@ -188,27 +175,27 @@ public interface IHierarchicalDbEntityService<TDbEntity>
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
-    IAsyncEnumerable<TDbEntity> GetChildEntitiesAsync(TDbEntity entity);
+    IAsyncEnumerable<TDbEntity> GetChildEntitiesAsync(TDbEntity entity, CancellationToken token = default);
 
     /// <summary>
     /// Gets the child entities by a specific identifier asynchronously.
     /// </summary>
     /// <param name="parentId">The parent identifier.</param>
     /// <returns></returns>
-    IAsyncEnumerable<TDbEntity> GetChildEntitiesByIdAsync(long parentId);
+    IAsyncEnumerable<TDbEntity> GetChildEntitiesByIdAsync(long parentId, CancellationToken token = default);
 
     /// <summary>
     /// Gets the parent entity asynchronously.
     /// </summary>
     /// <param name="childId">The child identifier.</param>
     /// <returns></returns>
-    Task<TDbEntity?> GetParentEntityAsync(long childId);
+    Task<TDbEntity?> GetParentEntityAsync(long childId, CancellationToken token = default);
 
     /// <summary>
     /// Gets the root entities asynchronously.
     /// </summary>
     /// <returns></returns>
-    IAsyncEnumerable<TDbEntity> GetRootEntitiesAsync();
+    IAsyncEnumerable<TDbEntity> GetRootEntitiesAsync(CancellationToken token = default);
 }
 
 public interface IHierarchicalViewModelService<TViewModel>
@@ -280,13 +267,12 @@ public interface IViewModelToDbEntityConverter<in TViewModel, out TDbEntity>
 public record PagingParams(in int PageIndex = 0, in int? PageSize = null);
 
 /// <summary>
-///
 /// </summary>
 /// <typeparam name="T"></typeparam>
-/// <seealso cref="System.IEquatable&lt;Library.Interfaces.PagingResult&lt;T&gt;&gt;" />
+/// <seealso cref="System.IEquatable&lt;Library.Interfaces.PagingResult&lt;T&gt;&gt;"/>
 public record PagingResult<T>(IReadOnlyList<T> Result, in long TotalCount);
 
 public interface IAsyncCreator<TViewModel>
 {
-    Task<TViewModel> CreateAsync();
+    Task<TViewModel> CreateAsync(CancellationToken token = default);
 }
