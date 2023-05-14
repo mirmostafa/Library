@@ -4,12 +4,12 @@ namespace Library.Validations;
 
 public interface IAsyncValidator
 {
-    Task<Result> ValidateAsync();
+    Task<Result> ValidateAsync(CancellationToken token = default);
 }
 
 public interface IAsyncValidator<TItem>
 {
-    Task<Result<TItem?>> ValidateAsync(TItem? item);
+    Task<Result<TItem?>> ValidateAsync(TItem? item, CancellationToken token = default);
 }
 
 public interface IValidatable<T>
