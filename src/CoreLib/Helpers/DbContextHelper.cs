@@ -285,12 +285,12 @@ public static class DbContextHelper
     public static Task<int> SaveChangesAsync(this EntityEntry entityEntry, CancellationToken cancellationToken = default)
         => entityEntry?.Context.SaveChangesAsync(cancellationToken)!;
 
-    public static async Task<Result<int>> SaveChangesResultAsync<TDbContext>(this TDbContext dbContext)
+    public static async Task<Result<int>> SaveChangesResultAsync<TDbContext>(this TDbContext dbContext, CancellationToken cancellationToken = default)
         where TDbContext : DbContext
     {
         try
         {
-            var result = Result<int>.CreateSuccess(await dbContext.SaveChangesAsync());
+            var result = Result<int>.CreateSuccess(await dbContext.SaveChangesAsync(cancellationToken));
             return result;
         }
         catch (Exception ex)
