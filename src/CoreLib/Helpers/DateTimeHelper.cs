@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -6,46 +7,37 @@ namespace Library.Helpers;
 public static class DateTimeHelper
 {
     /// <summary>
-    ///     Deconstructs the specified datetime.
+    /// Deconstructs a DateTime object into its individual components.
     /// </summary>
-    /// <param name="dt"> The dt. </param>
-    /// <param name="year"> The year. </param>
-    /// <param name="month"> The month. </param>
-    /// <param name="day"> The day. </param>
-    /// <param name="hour"> The hour. </param>
-    /// <param name="minute"> The minute. </param>
-    /// <param name="second"> The second. </param>
-    /// <param name="millisecond"> The millisecond. </param>
+    /// <param name="dt">The DateTime object to deconstruct.</param>
+    /// <param name="year">The year component of the DateTime.</param>
+    /// <param name="month">The month component of the DateTime.</param>
+    /// <param name="day">The day component of the DateTime.</param>
+    /// <param name="hour">The hour component of the DateTime.</param>
+    /// <param name="minute">The minute component of the DateTime.</param>
+    /// <param name="second">The second component of the DateTime.</param>
+    /// <param name="millisecond">The millisecond component of the DateTime.</param>
     public static void Deconstruct(this DateTime dt,
-        out int year,
-        out int month,
-        out int day,
-        out int hour,
-        out int minute,
-        out int second,
-        out int millisecond)
-        => (year, month, day, hour, minute, second, millisecond) = (dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond);
+            out int year,
+            out int month,
+            out int day,
+            out int hour,
+            out int minute,
+            out int second,
+            out int millisecond)
+            => (year, month, day, hour, minute, second, millisecond) = (dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond);
 
     /// <summary>
-    ///     Deconstructs the specified datetime.
+    /// Deconstructs a DateTime object into its year, month, and day components.
     /// </summary>
-    /// <param name="dt"> The dt. </param>
-    /// <param name="year"> The year. </param>
-    /// <param name="month"> The month. </param>
-    /// <param name="day"> The day. </param>
     public static void Deconstruct(this DateTime dt, out int year, out int month, out int day)
-        => (year, month, day) = (dt.Year, dt.Month, dt.Day);
+            => (year, month, day) = (dt.Year, dt.Month, dt.Day);
 
     /// <summary>
-    ///     Deconstructs the specified datetime.
+    /// Deconstructs a DateTime object into its hour, minute, second, and millisecond components.
     /// </summary>
-    /// <param name="dt"> The dt. </param>
-    /// <param name="hour"> The hour. </param>
-    /// <param name="minute"> The minute. </param>
-    /// <param name="second"> The second. </param>
-    /// <param name="millisecond"> The millisecond. </param>
     public static void Deconstruct(this DateTime dt, out int hour, out int minute, out int second, out int millisecond)
-        => (hour, minute, second, millisecond) = (dt.Hour, dt.Minute, dt.Second, dt.Millisecond);
+            => (hour, minute, second, millisecond) = (dt.Hour, dt.Minute, dt.Second, dt.Millisecond);
 
     /// <summary>
     ///     Determines whether this instance start is between.
@@ -93,9 +85,15 @@ public static class DateTimeHelper
     public static bool IsValid(in string dateTime)
         => DateTime.TryParse(dateTime, out _);
 
+    /// <summary>
+    /// Checks if the given dateTime is a weekend day according to the given culture.
+    /// </summary>
+    /// <param name="dateTime">The dateTime to check.</param>
+    /// <param name="culture">The culture to use for the check. If not specified, the current culture is used.</param>
+    /// <returns>True if the given dateTime is a weekend day according to the given culture, false otherwise.</returns>
     public static bool IsWeekend([DisallowNull] this DateTime dateTime, CultureInfo? culture = null)
-            => (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(dateTime.ArgumentNotNull(nameof(dateTime)).DayOfWeek)
-                is CultureInfoHelper.WeekdayState.Weekend or CultureInfoHelper.WeekdayState.WorkdayMorning;
+        => (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(dateTime.ArgumentNotNull(nameof(dateTime)).DayOfWeek)
+            is CultureInfoHelper.WeekdayState.Weekend or CultureInfoHelper.WeekdayState.WorkdayMorning;
 
     /// <summary>
     ///     Converts to datetime.
