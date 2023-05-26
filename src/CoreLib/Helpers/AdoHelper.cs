@@ -11,16 +11,32 @@ namespace Library.Helpers;
 /// </summary>
 public static partial class AdoHelper
 {
+    /// <summary>
+    /// Checks if a SqlConnection can connect.
+    /// </summary>
+    /// <param name="conn">The SqlConnection to check.</param>
+    /// <returns>True if the SqlConnection can connect, false otherwise.</returns>
     public static bool CanConnect(this SqlConnection conn)
-        => conn.TryConnectAsync() == null;
+            => conn.TryConnectAsync() == null;
 
+    /// <summary>
+    /// Checks the connection string asynchronously and returns an exception if one occurs.
+    /// </summary>
     public static async Task<Exception?> CheckConnectionStringAsync(string connectionString)
-        => await Using(() => new SqlConnection(connectionString), x => x.TryConnectAsync());
+            => await Using(() => new SqlConnection(connectionString), x => x.TryConnectAsync());
 
+    /// <summary>
+    /// Checks the value of a column in a SqlDataReader and returns the default value if it is null.
+    /// </summary>
+    /// <param name="reader">The SqlDataReader to check.</param>
+    /// <param name="columnName">The name of the column to check.</param>
+    /// <param name="defaultValue">The default value to return if the column is null.</param>
+    /// <param name="converter">A function to convert the value of the column to the desired type.</param>
+    /// <returns>The value of the column or the default value if the column is null.</returns>
     public static T CheckDbNull<T>(this SqlDataReader reader, string columnName, T defaultValue, Func<object, T> converter)
-        => reader is null || reader.IsClosed
-                ? throw new ArgumentNullException(nameof(reader))
-                : ObjectHelper.CheckDbNull(reader[columnName], defaultValue, converter);
+        => reader is not null and { IsClosed: false }
+            ? ObjectHelper.CheckDbNull(reader[columnName], defaultValue, converter)
+            : throw new ArgumentNullException(nameof(reader));
 
     public static SqlCommand CreateCommand(this SqlConnection connection, string commandText, Action<SqlParameterCollection>? fillParams = null)
     {
@@ -482,13 +498,13 @@ public static partial class AdoHelper
     }
 
     /// <summary>
-    /// Selects the specified table.
+    /// Selects the specified column title from the given DataTable and returns the result as an IEnumerable of type T.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="table">       The table.</param>
-    /// <param name="columnTitle"> The column title.</param>
-    /// <param name="defaultValue">The default value.</param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type of the elements of the returned IEnumerable.</typeparam>
+    /// <param name="table">The DataTable from which to select the column.</param>
+    /// <param name="columnTitle">The title of the column to select.</param>
+    /// <param name="defaultValue">The default value to return if the column is empty.</param>
+    /// <returns>An IEnumerable of type T containing the selected column values.</returns>
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, params T[] defaultValue)
     {
         Check.IfArgumentNotNull(table);
@@ -498,27 +514,22 @@ public static partial class AdoHelper
     }
 
     /// <summary>
-    /// Selects the specified table.
+    /// Selects the specified column from the given DataTable and converts it to the specified type using the given converter.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="table">      The table.</param>
-    /// <param name="columnTitle">The column title.</param>
-    /// <param name="convertor">  The converter.</param>
-    /// <returns></returns>
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Converter<object, T> convertor)
-        => table is null
-            ? throw new ArgumentNullException(nameof(table))
-            : table.Select().Select(row => row[columnTitle]).Cast(convertor);
+            => table is null
+                ? throw new ArgumentNullException(nameof(table))
+                : table.Select().Select(row => row[columnTitle]).Cast(convertor);
 
     /// <summary>
-    /// Selects the specified table according to de given value .
+    /// Selects the specified column title from the DataTable and converts it to the specified type using the provided convertor.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="table">       The table.</param>
-    /// <param name="columnTitle"> The column title.</param>
-    /// <param name="convertor">   The converter.</param>
-    /// <param name="defaultValue">The default value.</param>
-    /// <returns></returns>
+    /// <typeparam name="T">The type to convert the column to.</typeparam>
+    /// <param name="table">The DataTable to select from.</param>
+    /// <param name="columnTitle">The title of the column to select.</param>
+    /// <param name="convertor">The convertor to use to convert the column.</param>
+    /// <param name="defaultValue">The default value to return if the column is empty.</param>
+    /// <returns>An IEnumerable of the specified type containing the converted column values.</returns>
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Converter<object, T> convertor, params T[] defaultValue)
     {
         Check.IfArgumentNotNull(table);
@@ -529,30 +540,46 @@ public static partial class AdoHelper
     }
 
     /// <summary>
-    /// Selects the specified reader.
+    /// Executes the provided converter function for each row in the IDataReader and returns an IEnumerable of the results.
+    /// Throws an ArgumentNullException if the IDataReader is null.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="reader">   The data reader.</param>
-    /// <param name="converter">The converter.</param>
-    /// <returns></returns>
     public static IEnumerable<T> Select<T>(this IDataReader reader, Func<IDataReader, T> converter)
-        where T : new()
-        => reader is not null
-            ? While(reader.Read, () => converter(reader))
-            : throw new ArgumentNullException(nameof(reader));
+            where T : new()
+            => reader is not null
+                ? While(reader.Read, () => converter(reader))
+                : throw new ArgumentNullException(nameof(reader));
 
+    /// <summary>
+    /// Extension method to select data from an IDataReader into an IEnumerable of type T. 
+    /// </summary>
     public static IEnumerable<T> Select<T>(this IDataReader reader)
-            where T : new() => Select(reader, () => new T());
+        where T : new() => Select(reader, () => new T());
 
+    /// <summary>
+    /// Executes the specified reader and creates a collection of objects using the specified creator function.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to create.</typeparam>
+    /// <param name="reader">The reader to execute.</param>
+    /// <param name="creator">The function used to create objects.</param>
+    /// <returns>A collection of objects created using the specified creator function.</returns>
     public static IEnumerable<T> Select<T>(this IDataReader reader, Func<T> creator)
-        => reader is null
-            ? throw new ArgumentNullException(nameof(reader))
-            : While(reader.Read, () => InnerReaderSelect(reader, creator));
+            => reader is null
+                ? throw new ArgumentNullException(nameof(reader))
+                : While(reader.Read, () => InnerReaderSelect(reader, creator));
 
+    /// <summary>
+    /// Executes a SQL query and returns the result as an IEnumerable of type T.
+    /// </summary>
+    /// <typeparam name="T">The type of the result.</typeparam>
+    /// <param name="connection">The connection to the database.</param>
+    /// <param name="sql">The SQL query to execute.</param>
+    /// <param name="rowFiller">A function to fill the result from the SqlDataReader.</param>
+    /// <param name="fillParams">An optional action to fill the SqlParameterCollection.</param>
+    /// <returns>An IEnumerable of type T.</returns>
     public static IEnumerable<T> Select<T>(this SqlConnection connection,
-            string sql,
-            Func<SqlDataReader, T> rowFiller,
-            Action<SqlParameterCollection>? fillParams = null)
+                string sql,
+                Func<SqlDataReader, T> rowFiller,
+                Action<SqlParameterCollection>? fillParams = null)
     {
         Check.IfArgumentNotNull(connection);
 
@@ -560,23 +587,31 @@ public static partial class AdoHelper
         return While(reader.Read, () => rowFiller(reader), connection.Close);
     }
 
+    /// <summary>
+    /// Executes a select command and returns the result as a DataTable.
+    /// </summary>
+    /// <param name="connection">The connection to the database.</param>
+    /// <param name="selectCommandText">The select command text.</param>
+    /// <param name="fillParam">An optional action to fill the command parameters.</param>
+    /// <param name="tableName">An optional table name for the DataTable.</param>
+    /// <returns>A DataTable containing the result of the select command.</returns>
     public static DataTable SelectDataTable(this SqlConnection connection,
-            string selectCommandText,
-            Action<SqlParameterCollection>? fillParam = null,
-            string? tableName = null)
-        => Execute(connection,
-                cmd =>
-                {
-                    var result = new DataTable(tableName);
-                    using (var adapter = new SqlDataAdapter(cmd))
+                string selectCommandText,
+                Action<SqlParameterCollection>? fillParam = null,
+                string? tableName = null)
+            => Execute(connection,
+                    cmd =>
                     {
-                        _ = adapter.Fill(result);
-                    }
+                        var result = new DataTable(tableName);
+                        using (var adapter = new SqlDataAdapter(cmd))
+                        {
+                            _ = adapter.Fill(result);
+                        }
 
-                    return result;
-                },
-                selectCommandText,
-                fillParam);
+                        return result;
+                    },
+                    selectCommandText,
+                    fillParam);
 
     /// <summary>
     /// Selects the table.
@@ -590,6 +625,11 @@ public static partial class AdoHelper
         where T : new()
         => connection.Execute(cmd => cmd.ExecuteReader(CommandBehavior.CloseConnection).Select<T>(), $"SELECT * FROM [{tableName}]");
 
+    /// <summary>
+    /// Tries to connect to a SqlConnection asynchronously.
+    /// </summary>
+    /// <param name="conn">The SqlConnection to connect to.</param>
+    /// <returns>An exception if the connection fails, otherwise null.</returns>
     public static async Task<Exception?> TryConnectAsync(this SqlConnection conn)
     {
         try

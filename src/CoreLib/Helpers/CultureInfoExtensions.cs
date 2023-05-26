@@ -31,14 +31,19 @@ public static class CultureInfoHelper
     /// <param name="ci">The CultureInfo this object.</param>
     /// <returns>The English version of the country name.</returns>
     public static string GetCountryEnglishName(this CultureInfo ci)
+    //This code is used to get the English name of a country from a CultureInfo object.
     {
+        //Split the EnglishName property of the CultureInfo object into an array of strings, removing any empty entries
         var parts = ci.EnglishName.Split(new[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
+        //If the array has fewer than two elements, return the EnglishName property
         if (parts.Length < 2)
         {
             return ci.EnglishName;
         }
 
+        //Split the second element of the array into an array of strings, removing any empty entries
         parts = parts[1].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        //Return the last element of the array, trimmed of any whitespace
         return parts[^1].Trim();
     }
 
@@ -51,58 +56,61 @@ public static class CultureInfoHelper
         => ci.EnglishName.Split(new[] { '(' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
 
     /// <summary>
-    /// Return if the passed in day of the week is a weekend.
-    ///
-    /// note: state pulled from http://en.wikipedia.org/wiki/Workweek_and_weekend
+    /// Gets the weekday state for the given culture and day of week.
     /// </summary>
-    /// <param name="ci">The CultureInfo this object.</param>
-    /// <param name="day">The Day of the week to return the stat of.</param>
-    /// <returns>The weekday/weekend state of the passed in day of the week.</returns>
+    /// <param name="ci">The culture info.</param>
+    /// <param name="day">The day of week.</param>
+    /// <returns>The weekday state.</returns>
     public static WeekdayState GetWeekdayState(this CultureInfo ci, DayOfWeek day)
-        => GetCountryAbbreviation(ci) switch
-        {
-            "DZ" // Algeria
-         or "BH" // Bahrain
-         or "BD" // Bangladesh
-         or "EG" // Egypt
-         or "IQ" // Iraq
-         or "IL" // Israel
-         or "JO" // Jordan
-         or "KW" // Kuwait
-         or "LY" // Libya
-                 // Northern Malaysia (only in the states of Kelantan, Terengganu, and Kedah)
-         or "MV" // Maldives
-         or "MR" // Mauritania
-         or "NP" // Nepal
-         or "OM" // Oman
-         or "QA" // Qatar
-         or "SA" // Saudi Arabia
-         or "SD" // Sudan
-         or "SY" // Syria
-         or "AE" // U.A.E.
-         or "YE" // Yemen
-              => day is DayOfWeek.Thursday or DayOfWeek.Friday
-                     ? WeekdayState.Weekend
-                     : WeekdayState.Workday,
-            "AF" // Afghanistan
-         or "IR" when day == DayOfWeek.Thursday // Iran
-              => WeekdayState.WorkdayMorning,
-            "IR" // Iran
-              => day == DayOfWeek.Friday ? WeekdayState.Weekend : WeekdayState.Workday,
-            "BN" // Brunei Darussalam
-              => day is DayOfWeek.Friday or DayOfWeek.Sunday
-                        ? WeekdayState.Weekend
-                        : WeekdayState.Workday,
-            "MX" // Mexico
-         or "TH" when day == DayOfWeek.Saturday // Thailand
-              => WeekdayState.WorkdayMorning,
-            "TH" // Thailand
-              => day is DayOfWeek.Saturday or DayOfWeek.Sunday
-                        ? WeekdayState.Weekend
-                        : WeekdayState.Workday,
-            _ => day is DayOfWeek.Saturday or DayOfWeek.Sunday ? WeekdayState.Weekend : WeekdayState.Workday
-        };
+            => GetCountryAbbreviation(ci) switch
+            {
+                "DZ" // Algeria
+             or "BH" // Bahrain
+             or "BD" // Bangladesh
+             or "EG" // Egypt
+             or "IQ" // Iraq
+             or "IL" // Israel
+             or "JO" // Jordan
+             or "KW" // Kuwait
+             or "LY" // Libya
+                     // Northern Malaysia (only in the states of Kelantan, Terengganu, and Kedah)
+             or "MV" // Maldives
+             or "MR" // Mauritania
+             or "NP" // Nepal
+             or "OM" // Oman
+             or "QA" // Qatar
+             or "SA" // Saudi Arabia
+             or "SD" // Sudan
+             or "SY" // Syria
+             or "AE" // U.A.E.
+             or "YE" // Yemen
+                  => day is DayOfWeek.Thursday or DayOfWeek.Friday
+                         ? WeekdayState.Weekend
+                         : WeekdayState.Workday,
+                "AF" // Afghanistan
+             or "IR" when day == DayOfWeek.Thursday // Iran
+                  => WeekdayState.WorkdayMorning,
+                "IR" // Iran
+                  => day == DayOfWeek.Friday ? WeekdayState.Weekend : WeekdayState.Workday,
+                "BN" // Brunei Darussalam
+                  => day is DayOfWeek.Friday or DayOfWeek.Sunday
+                            ? WeekdayState.Weekend
+                            : WeekdayState.Workday,
+                "MX" // Mexico
+             or "TH" when day == DayOfWeek.Saturday // Thailand
+                  => WeekdayState.WorkdayMorning,
+                "TH" // Thailand
+                  => day is DayOfWeek.Saturday or DayOfWeek.Sunday
+                            ? WeekdayState.Weekend
+                            : WeekdayState.Workday,
+                _ => day is DayOfWeek.Saturday or DayOfWeek.Sunday ? WeekdayState.Weekend : WeekdayState.Workday
+            };
 
+    /// <summary>
+    /// Gets the country abbreviation from a CultureInfo object.
+    /// </summary>
+    /// <param name="ci">The CultureInfo object.</param>
+    /// <returns>The country abbreviation.</returns>
     private static string GetCountryAbbreviation(CultureInfo ci)
-        => ci.Name.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries)[^1];
+            => ci.Name.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries)[^1];
 }
