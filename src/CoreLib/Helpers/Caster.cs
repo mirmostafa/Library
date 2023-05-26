@@ -7,56 +7,58 @@ public interface ICastable
     object? Value { get; }
 }
 
+/// <summary>
+/// Provides methods for casting objects to different types.
+/// </summary>
+
 public static class Caster
 {
+    /// <summary>
+    /// Casts the value of the object to the specified type.
+    /// </summary>
+    /// <typeparam name="T">The type to cast the value to.</typeparam>
+    /// <param name="o">The object.</param>
+    /// <returns>The value of the object cast to the specified type.</returns>
     public static T? As<T>([DisallowNull] this ICastable o) where T : class
-        => o.Value as T;
+            => o.Value as T;
 
+    /// <summary>
+    /// Creates a new Castable object from the given object.
+    /// </summary>
+    /// <param name="obj">The object to cast.</param>
+    /// <returns>A new Castable object.</returns>
     public static ICastable Cast(this object? obj)
-        => new Castable(obj);
+            => new Castable(obj);
 
-    #region Obsolete methods
-    //[Obsolete($"Please use `{nameof(Cast)}().As<T>()`, instead.", true)]
-    //public static T? CastAs<T>(this object? obj)
-    //where T : class => obj as T;
 
-    //[Obsolete($"Please use `{nameof(Cast)}().To<T>()`, instead.", true)]
-    //public static T CastTo<T>(this object? obj)
-    //    => (T)obj;
+    /// <summary>
+    /// Returns the result of a type match between the given object and the generic type T, or the default value of T if the match fails.
+    /// </summary>
+    public static T? Match<T>(object obj)
+            => obj is T result ? result : default;
 
-    //[Obsolete($"Please use `{nameof(Cast)}().ToInt<T>()`, instead.", true)]
-    //public static int CastToInt(this object? obj, int defaultValue)
-    //{
-    //    if (!int.TryParse(Convert.ToString(obj), out var result))
-    //    {
-    //        result = defaultValue;
-    //    }
-
-    //    return result;
-    //}
-
-    //[Obsolete($"Please use `{nameof(Cast)}().To<T>()`, instead.", true)]
-    //public static int CastToInt(this object obj)
-    //    => Convert.ToInt32(obj);
-
-    //[Obsolete($"Please use {nameof(Cast)}(), instead.", true)]
-    //public static long CastToLong(this object obj)
-    //    => Convert.ToInt64(obj);
-
-    //[Obsolete($"Please use `{nameof(Cast)}()`, instead.", true)]
-    //public static string? CastToString(in object? value, in string defaultValue = "")
-    //    => (value ?? defaultValue)?.ToString(); 
-    #endregion
-
-    public static T? Match<T>(object obj) => obj is T result ? result : default;
-
+    /// <summary>
+    /// Returns a collection of objects of the specified type from the given collection.
+    /// </summary>
     public static IEnumerable<T> OfType<T>(IEnumerable items)
-        => items.OfType<T>();
+           => items.OfType<T>();
 
+    /// <summary>
+    /// Casts the given object to the specified type.
+    /// </summary>
+    /// <typeparam name="T">The type to cast the object to.</typeparam>
+    /// <param name="o">The object to cast.</param>
+    /// <returns>The casted object.</returns>
     [return: NotNull]
     public static T To<T>([DisallowNull] this ICastable o)
-        => (T)o.Value!;
+            => (T)o.Value!;
 
+    /// <summary>
+    /// Converts the given object to an integer, using the given default value if the conversion fails.
+    /// </summary>
+    /// <param name="o">The object to convert.</param>
+    /// <param name="defaultValue">The default value to use if the conversion fails.</param>
+    /// <returns>The converted integer, or the default value if the conversion fails.</returns>
     public static int ToInt([DisallowNull] this ICastable o, int defaultValue)
     {
         if (!int.TryParse(Convert.ToString(o.Value), out var result))
@@ -67,12 +69,30 @@ public static class Caster
         return result;
     }
 
+    /// <summary>
+    /// Converts the given object to an integer.
+    /// </summary>
+    /// <param name="o">The object to convert.</param>
+    /// <returns>The converted integer.</returns>
     public static int ToInt([DisallowNull] this ICastable o)
-        => Convert.ToInt32(o.Value);
+            => Convert.ToInt32(o.Value);
 
+    /// <summary>
+    /// Converts the value of the specified object to a long.
+    /// </summary>
+    /// <param name="o">The object to convert.</param>
+    /// <returns>A long that represents the value of the specified object.</returns>
     public static long ToLong([DisallowNull] this ICastable o)
-        => Convert.ToInt64(o.Value);
+            => Convert.ToInt64(o.Value);
 
+    /// <summary>
+    /// Filters a sequence of items to return only those of type T.
+    /// </summary>
+    /// <typeparam name="T">The type of items to return.</typeparam>
+    /// <param name="items">The sequence of items to filter.</param>
+    /// <returns>
+    /// An <see cref="IEnumerableT"/> containing only those items of type T.
+    /// </returns>
     public static IEnumerable<T> TypeOf<T>(IEnumerable items)
     {
         foreach (var item in items)
@@ -84,8 +104,11 @@ public static class Caster
         }
     }
 
+    /// <summary>
+    /// Returns the specified type of the given object, or the default value if the object is not of the specified type.
+    /// </summary>
     public static T? TypeOf<T>(object obj)
-        => obj.GetType() == typeof(T) ? (T)obj : default;
+            => obj.GetType() == typeof(T) ? (T)obj : default;
 
     public static IEnumerable<T> WhereIs<T>(IEnumerable items)
     {
