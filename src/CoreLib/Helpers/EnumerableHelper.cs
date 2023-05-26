@@ -170,20 +170,19 @@ public static class EnumerableHelper
     public static T Aggregate<T>(this IEnumerable<T> items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
         => InnerAggregate(items.ToArray(), (x, y) => x + y!, defaultValue);
 
-    public static bool Any([NotNullWhen(true)] this IEnumerable source)
-    {
-        if (source is null)
+    public static bool Any([NotNullWhen(true)] this IEnumerable? source)
+        => source switch
         {
-            return false;
-        }
+            null => false,
+            ICollection collection => collection.Count > 0,
+            _ => source.GetEnumerator().MoveNext()
+        };
 
-        foreach (var _ in source)
-        {
-            return true;
-        }
-        return false;
-    }
-
+    /// <summary>
+    /// Get a <see cref="Span{T}"/> view over a <see cref="List{T}"/>'s data.
+    /// Items should not be added or removed from the <see cref="List{T}"/> while the <see cref="Span{T}"/> is in use.
+    /// </summary>
+    /// <param name="list">The list to get the data view over.</param>
     public static Span<TItem> AsSpan<TItem>(this List<TItem> list)
         => CollectionsMarshal.AsSpan(list);
 
@@ -491,6 +490,9 @@ public static class EnumerableHelper
     public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
         => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
 
+    public static IEnumerable<T?> IfEmpty<T>(this IEnumerable<T?>? items, [DisallowNull] IEnumerable<T?> defaultValues)
+        => items?.Any() is true ? items : defaultValues;
+
     public static IEnumerable<T> InsertImmuted<T>(this IEnumerable<T> source, int index, T item)
     {
         var items = source as T[] ?? source.ToArray();
@@ -771,6 +773,4 @@ public static class EnumerableHelper
                 { Length: 2 } => aggregator(items[0], items[1]),
                 [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
             };
-    public static IEnumerable<T> IfEmpty<T>(this IEnumerable<T?>? items, IEnumerable<T> defaultValues)
-        => items?.Any() is true ? items : defaultValues;
- }
+}

@@ -1,4 +1,6 @@
-﻿namespace UnitTests;
+﻿using System.Collections;
+
+namespace UnitTests;
 
 [Trait("Category", "Helpers")]
 public sealed class EnumerableHelperTest
@@ -66,6 +68,45 @@ public sealed class EnumerableHelperTest
         var actual = merged.SelectManyAndCompact();
         var expected = new[] { 1, 2, 3, 4, 5, 6 };
         Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void Any_ReturnsFalse_WhenSourceIsEmpty()
+    {
+        // Arrange
+        IEnumerable source = Array.Empty<int>();
+
+        // Act
+        var result = EnumerableHelper.Any(source);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void Any_ReturnsFalse_WhenSourceIsNull()
+    {
+        // Arrange
+        IEnumerable? source = null;
+
+        // Act
+        var result = EnumerableHelper.Any(source);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void Any_ReturnsTrue_WhenSourceIsNotNullAndNotEmpty()
+    {
+        // Arrange
+        IEnumerable source = new[] { 1, 2, 3 };
+
+        // Act
+        var result = EnumerableHelper.Any(source);
+
+        // Assert
+        Assert.True(result);
     }
 
     [Fact]
@@ -264,6 +305,7 @@ public sealed class EnumerableHelperTest
             }
         }
     }
+
 }
 
 [Trait("Category", "Helpers")]
