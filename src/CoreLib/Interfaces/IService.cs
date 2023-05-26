@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace Library.Interfaces;
 
 /// <summary>
-/// A standardizer for services to CRUD data asynchronously.
+/// Interface for an asynchronous CRUD service that provides read and write operations for a view model type with an ID type.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier.</typeparam>
@@ -16,7 +16,7 @@ public interface IAsyncCrudService<TViewModel, TId> : IAsyncReadService<TViewMod
 }
 
 /// <summary>
-/// A standardizer for services to CRUD data asynchronously.
+/// Represents an interface for an asynchronous CRUD service that provides read and write operations for a view model.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <seealso cref="IAsyncReadService&lt;TViewModel, TId&gt;"/>
@@ -25,51 +25,51 @@ public interface IAsyncCrudService<TViewModel> : IAsyncReadService<TViewModel>, 
 { }
 
 /// <summary>
-/// A standardizer for services to read data asynchronously which supports pagination.
+/// Interface for an asynchronous read paging service.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier.</typeparam>
 public interface IAsyncReadPagingService<TViewModel, in TId>
 {
     /// <summary>
-    /// Gets all db entities asynchronously.
+    /// Retrieves a paged result of view models asynchronously.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="paging">The paging parameters.</param>
+    /// <param name="token">The cancellation token.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task<PagingResult<TViewModel>> GetAllAsync(PagingParams paging, CancellationToken token = default);
 
     /// <summary>
-    /// Gets an entity by identifier.
+    /// Asynchronously retrieves a view model by its ID.
     /// </summary>
-    /// <param name="id">The identifier.</param>
-    /// <returns></returns>
+    /// <param name="id">The ID of the view model to retrieve.</param>
+    /// <param name="token">A cancellation token.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task<TViewModel?> GetByIdAsync(TId id, CancellationToken token = default);
 }
 
 /// <summary>
-/// A standardizer for services to read data asynchronously which supports pagination.
+/// Represents an asynchronous read paging service for a specific type of view model.
 /// </summary>
-/// <typeparam name="TViewModel">The type of the view model.</typeparam>
 public interface IAsyncReadPagingService<TViewModel> : IAsyncReadPagingService<TViewModel, long>
 { }
 
-/// <summary>
-/// A standardizer for services to read data asynchronously.
-/// </summary>
-/// <typeparam name="TViewModel">The type of the view model.</typeparam>
-/// <typeparam name="TId">The type of the identifier (long, <see cref="Guid"/>, Id, ...).</typeparam>
+
 public interface IAsyncReadService<TViewModel, in TId>
 {
     /// <summary>
-    /// Gets all <typeparamref name="TViewModel"/> s asynchronously.
+    /// Asynchronously retrieves a list of view models.
     /// </summary>
-    /// <returns></returns>
+    /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task<IReadOnlyList<TViewModel>> GetAllAsync(CancellationToken token = default);
 
     /// <summary>
-    /// Gets an <typeparamref name="TViewModel"/> by identifier.
+    /// Asynchronously retrieves a view model by its ID.
     /// </summary>
-    /// <param name="id">The identifier.</param>
-    /// <returns></returns>
+    /// <param name="id">The ID of the view model to retrieve.</param>
+    /// <param name="token">A cancellation token.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     Task<TViewModel?> GetByIdAsync(TId id, CancellationToken token = default);
 }
 
