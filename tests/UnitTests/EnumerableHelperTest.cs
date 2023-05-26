@@ -145,11 +145,11 @@ public sealed class EnumerableHelperTest
 
     [Fact]
     public void Range_ThrowsArgumentException_ForNegativeStepAndStartSmallerThanEnd()
-        => Assert.Throws<ArgumentException>(() => EnumerableHelper.Range(0, 10, -1).ToArray());
+        => Assert.Throws<Library.Exceptions.InvalidArgumentException>(() => EnumerableHelper.Range(0, 10, -1).ToArray());
 
     [Fact]
     public void Range_ThrowsArgumentException_ForPositiveStepAndStartLargerThanEnd()
-        => Assert.Throws<ArgumentException>(() => EnumerableHelper.Range(10, 0, 1).ToArray());
+        => Assert.Throws<Library.Exceptions.InvalidArgumentException>(() => EnumerableHelper.Range(10, 0, 1).ToArray());
 
     [Fact]
     public void Range_ThrowsArgumentOutOfRangeException_ForZeroStep()
@@ -165,14 +165,15 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Range_WithEndOnly_ThrowsArgumentException_ForNegativeStepAndStartSmallerThanEnd() => Assert.Throws<ArgumentException>(() => EnumerableHelper.Range(0, 10, -1).ToArray());
+    public void Range_WithEndOnly_ThrowsArgumentException_ForNegativeStepAndStartSmallerThanEnd()
+        => Assert.Throws<Library.Exceptions.InvalidArgumentException>(() => EnumerableHelper.Range(0, 10, -1).ToArray());
 
     [Fact]
-    public void Range_WithEndOnly_ThrowsArgumentException_ForPositiveStepAndStartLargerThanEnd() 
-        => Assert.Throws<ArgumentException>(() => EnumerableHelper.Range(10, 0, 1).ToArray());
+    public void Range_WithEndOnly_ThrowsArgumentException_ForPositiveStepAndStartLargerThanEnd()
+        => Assert.Throws<Library.Exceptions.InvalidArgumentException>(() => EnumerableHelper.Range(10, 0, 1).ToArray());
 
     [Fact]
-    public void Range_WithEndOnly_ThrowsArgumentOutOfRangeException_ForZeroStep() 
+    public void Range_WithEndOnly_ThrowsArgumentOutOfRangeException_ForZeroStep()
         => Assert.Throws<ArgumentOutOfRangeException>(() => EnumerableHelper.Range(0, 10, 0).ToArray());
 
     [Fact]
@@ -203,7 +204,6 @@ public sealed class EnumerableHelperTest
     [Theory]
     [InlineData(new int[] { 1, 2, 3 }, 4, new int[] { 1, 2, 3, 4 })] // Add an item to a non-null array
     [InlineData(null, 5, new int[] { 5 })] // Add an item to a null array
-
     public void TestAddImmuted(int[]? input, int item, int[] expected) =>
         // Call the static method and assert the result
         Assert.Equal(expected, input.AddImmuted(item));
@@ -211,7 +211,6 @@ public sealed class EnumerableHelperTest
     [Theory]
     [InlineData(new int[] { 1, 2, 3 }, new int[] { 1, 2, 3 })] // Convert a non-empty list to a span
     [InlineData(new int[] { }, new int[] { })] // Convert an empty list to a span
-
     public void TestAsSpan(int[] input, int[] expected)
     {
         // Create a list from the input array
