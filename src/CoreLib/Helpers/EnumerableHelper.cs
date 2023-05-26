@@ -394,8 +394,6 @@ public static class EnumerableHelper
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
             => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
 
-
-
     /// <summary>
     /// Counts the number of elements in a sequence that are not enumerated.
     /// </summary>
@@ -407,25 +405,6 @@ public static class EnumerableHelper
         (var succeed, var count) = TryCountNonEnumerated(source);
         return succeed ? count : throw new Exceptions.Validations.InvalidOperationValidationException();
     }
-    /// <summary>
-    /// Attempts to determine the number of elements in a sequence without forcing an
-    /// enumeration.
-    /// </summary>
-    /// <typeparam name="T">The type of the elements of source.</typeparam>
-    /// <param name="source">A sequence that contains elements to be counted.</param>
-    /// <returns>
-    /// <para>
-    /// true if the count of source can be determined without enumeration; otherwise,
-    /// false.
-    /// </para>
-    /// <para>
-    /// When this method returns, contains the count of source if successful, or zero
-    /// if the method failed to determine the count.
-    /// </para>
-    /// </returns>
-    public static TryMethodResult<int> TryCountNonEnumerated<T>([DisallowNull] this IEnumerable<T> source)
-        => TryMethodResult<int>.TryParseResult(source.TryGetNonEnumeratedCount(out var count), count);
-
 
     /// <summary>
     /// Returns an empty IEnumerable if the given IEnumerable is null, otherwise returns the given IEnumerable.
@@ -480,6 +459,7 @@ public static class EnumerableHelper
         //Return the items from the IEnumerable collection that are not added to the HashSet
         return items.Where(x => !buffer.Add(x));
     }
+
     /// <summary>
     /// Applies a folder function to each item in the IEnumerable and returns the result.
     /// </summary>
@@ -587,15 +567,23 @@ public static class EnumerableHelper
     /// <param name="getChildren">A function to get the children of a node.</param>
     /// <param name="rootAction">An action to perform on the root node.</param>
     /// <param name="childAction">An action to perform on each child node.</param>
+    /// <remarks>
+    /// This code is a recursive method that performs an action on each node of a tree.
+    /// It takes in a root node, a function to get the children of a node, an action to perform on the root node, and an action to perform on each child node.
+    ///</remarks>
     public static void ForEachTreeNode<T>(T root, Func<T, IEnumerable<T>>? getChildren, Action<T>? rootAction, Action<T, T>? childAction)
-                    where T : class
+                        where T : class
     {
+        //If the root node is null, return
         if (root is null)
         {
             return;
         }
 
+        //Perform the root action on the root node
         rootAction?.Invoke(root);
+
+        //For each child node, perform the child action and recursively call the method on the child node
         _ = (getChildren?.Invoke(root)
             .ForEach(c =>
             {
@@ -983,7 +971,7 @@ public static class EnumerableHelper
             => ToEnumerable(item).ToArray();
 
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull
-        => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
+            => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
 
     /// <summary>
     /// Converts a single item into an IEnumerable of that item.
@@ -991,7 +979,7 @@ public static class EnumerableHelper
     /// <param name="item">The item to convert.</param>
     /// <returns>An IEnumerable containing the item.</returns>
     public static IEnumerable<T> ToEnumerable<T>(T item)
-    //This code creates an IEnumerable of type T and returns the item passed in as an argument. 
+    //This code creates an IEnumerable of type T and returns the item passed in as an argument.
     {
         //The yield keyword is used to return the item passed in as an argument.
         yield return item;
@@ -1105,6 +1093,24 @@ public static class EnumerableHelper
     public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items)
             => ImmutableList.CreateRange(items).ToHashSet();
 
+    /// <summary>
+    /// Attempts to determine the number of elements in a sequence without forcing an
+    /// enumeration.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of source.</typeparam>
+    /// <param name="source">A sequence that contains elements to be counted.</param>
+    /// <returns>
+    /// <para>
+    /// true if the count of source can be determined without enumeration; otherwise,
+    /// false.
+    /// </para>
+    /// <para>
+    /// When this method returns, contains the count of source if successful, or zero
+    /// if the method failed to determine the count.
+    /// </para>
+    /// </returns>
+    public static TryMethodResult<int> TryCountNonEnumerated<T>([DisallowNull] this IEnumerable<T> source)
+        => TryMethodResult<int>.TryParseResult(source.TryGetNonEnumeratedCount(out var count), count);
 
     /// <summary>
     /// Asynchronously filters a sequence of values based on a predicate.
@@ -1152,10 +1158,10 @@ public static class EnumerableHelper
 
     private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
         => items switch
-            {
-                [] => defaultValue,
-                [var item] => item,
-                { Length: 2 } => aggregator(items[0], items[1]),
-                [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
-            };
+        {
+            [] => defaultValue,
+            [var item] => item,
+            { Length: 2 } => aggregator(items[0], items[1]),
+            [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
+        };
 }

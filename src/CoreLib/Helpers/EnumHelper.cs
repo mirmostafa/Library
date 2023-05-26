@@ -13,41 +13,52 @@ namespace Library.Helpers;
 public static class EnumHelper
 {
     /// <summary>
+    /// Adds a flag to the given enumeration.
     /// </summary>
-    /// <param name="enumeration"> </param>
-    /// <param name="item"> </param>
-    /// <typeparam name="TEnum"> </typeparam>
-    /// <returns> </returns>
     public static TEnum AddFlag<TEnum>(this TEnum enumeration, in TEnum item)
-        where TEnum : Enum => (TEnum)Enum.ToObject(typeof(TEnum), enumeration.Cast().ToInt() | item.Cast().ToInt());
+            where TEnum : Enum => (TEnum)Enum.ToObject(typeof(TEnum), enumeration.Cast().ToInt() | item.Cast().ToInt());
 
+    /// <summary>
+    /// Checks if the given enumeration contains the specified item.
+    /// </summary>
     public static bool Contains<TEnum>(this Enum enumeration, TEnum item)
-        where TEnum : Enum => item.Cast().ToInt() is 0
-        ? enumeration.Cast().ToInt() == 0
-        : (enumeration.Cast().ToInt() | item.Cast().ToInt()) == enumeration.Cast().ToInt();
+            where TEnum : Enum => item.Cast().ToInt() is 0
+            ? enumeration.Cast().ToInt() == 0
+            : (enumeration.Cast().ToInt() | item.Cast().ToInt()) == enumeration.Cast().ToInt();
 
     /// <summary>
+    /// Converts an enum of type TSourceEnum to an enum of type TDestinationEnum.
     /// </summary>
-    /// <param name="enumValue"> </param>
-    /// <typeparam name="TSourceEnum"> </typeparam>
-    /// <typeparam name="TDestinationEnum"> </typeparam>
-    /// <returns> </returns>
     public static TDestinationEnum Convert<TSourceEnum, TDestinationEnum>(TSourceEnum enumValue)
-        where TDestinationEnum : Enum => (TDestinationEnum)Enum.Parse(typeof(TDestinationEnum), enumValue?.ToString() ?? string.Empty);
+            where TDestinationEnum : Enum => (TDestinationEnum)Enum.Parse(typeof(TDestinationEnum), enumValue?.ToString() ?? string.Empty);
 
     /// <summary>
+    /// Converts the specified value to the specified enum type.
     /// </summary>
-    /// <param name="value"> </param>
-    /// <typeparam name="TEnum"> </typeparam>
-    /// <returns> </returns>
+    /// <typeparam name="TEnum">The type of the enum.</typeparam>
+    /// <param name="value">The value to convert.</param>
+    /// <returns>The converted enum.</returns>
     public static TEnum Convert<TEnum>(object value)
-        where TEnum : Enum => Convert<object, TEnum>(value);
+            where TEnum : Enum => Convert<object, TEnum>(value);
 
+    /// <summary>
+    /// Gets the descriptions of the given enumerable items.
+    /// </summary>
+    /// <typeparam name="TEnum">The type of the enumerable items.</typeparam>
+    /// <param name="items">The enumerable items.</param>
+    /// <returns>The descriptions of the given enumerable items.</returns>
     public static IEnumerable<string?> GetDescriptions<TEnum>(IEnumerable<TEnum> items)
-        where TEnum : Enum => items.Select(item => GetItemDescription(item));
+            where TEnum : Enum => items.Select(item => GetItemDescription(item));
 
+    /// <summary>
+    /// Gets the descriptions of the specified items in the given culture.
+    /// </summary>
+    /// <typeparam name="TEnum">The type of the items.</typeparam>
+    /// <param name="items">The items.</param>
+    /// <param name="cultureName">The culture name.</param>
+    /// <returns>The descriptions of the specified items in the given culture.</returns>
     public static IEnumerable<string?> GetDescriptions<TEnum>(IEnumerable<TEnum> items, string cultureName)
-        where TEnum : Enum => items.Select(item => GetItemDescription(item, cultureName: cultureName));
+            where TEnum : Enum => items.Select(item => GetItemDescription(item, cultureName: cultureName));
 
     /// <summary>
     /// </summary>
