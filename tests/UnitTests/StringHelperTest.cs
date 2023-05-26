@@ -39,6 +39,84 @@ public sealed class StringHelperTest
     }
 
     [Theory]
+    [InlineData("Hello", 3, ' ', false, "Hello   ")]
+    [InlineData("World", 2, '*', true, "**World")]
+    [InlineData(null, 5, '-', false, null)]
+    public void Add_ShouldAddCharactersToString(string? input, int count, char add, bool before, string? expected)
+    {
+        // Act
+        var result = input.Add(count, add, before);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void Add_ShouldPadLeft_WhenBeforeIsTrue()
+    {
+        // Arrange
+        var s = "Hello";
+
+        // Act
+        var result = s.Add(3, before: true);
+
+        // Assert
+        Assert.Equal("   Hello", result);
+    }
+
+    [Fact]
+    public void Add_ShouldPadRight_WhenBeforeIsFalse()
+    {
+        // Arrange
+        var s = "Hello";
+
+        // Act
+        var result = s.Add(3);
+
+        // Assert
+        Assert.Equal("Hello   ", result);
+    }
+
+    [Fact]
+    public void Add_ShouldReturnNull_WhenStringIsNull()
+    {
+        // Arrange
+        string? s = null;
+
+        // Act
+        var result = s.Add(3);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void Add_ShouldReturnSameString_WhenCountIsZero()
+    {
+        // Arrange
+        var s = "Hello";
+
+        // Act
+        var result = s.Add(0);
+
+        // Assert
+        Assert.Equal(s, result);
+    }
+
+    [Fact]
+    public void Add_ShouldUseSpecifiedChar_WhenAddIsProvided()
+    {
+        // Arrange
+        var s = "Hello";
+
+        // Act
+        var result = s.Add(3, add: '*');
+
+        // Assert
+        Assert.Equal("Hello***", result);
+    }
+
+    [Theory]
     [InlineData("Start", "End", "StartEnd")]
     public void AddEnd(string text, string prefix, string expected)
     {
@@ -139,6 +217,199 @@ public sealed class StringHelperTest
     }
 
     [Theory]
+    [InlineData(new string[] { "a", "b", "c" }, ",", "a,b,c")]
+    [InlineData(new string[] { "hello", "world" }, " ", "hello world")]
+    [InlineData(new string[] { "foo", "bar" }, null, "foobar")]
+    public void ConcatAll_Should_Return_Correct_String(IEnumerable<string> strings, string sep, string expected)
+    {
+        // Arrange
+
+        // Act
+        var actual = StringHelper.ConcatAll(strings, sep);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(new string[] { "a", "b", "c" }, "abc")]
+    [InlineData(new string[] { "hello", " ", "world" }, "hello world")]
+    public void ConcatStringsTest(string[] values, string expected)
+    {
+        // Arrange
+
+        // Act
+        var actual = StringHelper.ConcatStrings(values);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Contains_Mine_ReturnsTrue_WhenMatchingCaseSensitiveStringExists()
+    {
+        // Arrange
+        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
+        var str = "Banana";
+        var ignoreCase = false;
+
+        // Act
+        var result = array.Contains(str, ignoreCase);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void Contains_Mine_ReturnsTrue_WhenMatchingCaseInsensitiveStringExists()
+    {
+        // Arrange
+        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
+        string str = "banana";
+        bool ignoreCase = true;
+
+        // Act
+        bool result = array.Contains(str, ignoreCase);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void Contains_Mine_ReturnsFalse_WhenCaseSensitiveStringDoesNotExist()
+    {
+        // Arrange
+        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
+        string str = "Grape";
+        bool ignoreCase = false;
+
+        // Act
+        bool result = array.Contains(str, ignoreCase);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void Contains_Mine_ReturnsFalse_WhenCaseInsensitiveStringDoesNotExist()
+    {
+        // Arrange
+        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
+        string str = "grape";
+        bool ignoreCase = true;
+
+        // Act
+        bool result = array.Contains(str, ignoreCase);
+
+        // Assert
+        Assert.False(result);
+    }
+
+
+    [Theory]
+    [InlineData("This is a test string.", new char[] { 'x', 'y', 'z' }, false)]
+    [InlineData("This is a test string.", new char[] { 'a', 'b', 'c' }, true)]
+    [InlineData("", new char[] { 'x', 'y', 'z' }, false)]
+    [InlineData("This is a test string.", new char[] { 'T', 't', 's' }, true)]
+    public void ContainsAnyCharTest(string str, char[] chars, bool expectedResult)
+    {
+        var result = StringHelper.ContainsAny(str, chars);
+        Assert.Equal(expectedResult, result);
+    }
+
+    [Theory]
+    [InlineData("Hello", new string[] { "He", "ll", "o" }, true)]
+    [InlineData("Hello", new string[] { "he", "LL", "O" }, false)]
+    [InlineData("Hello", new string[] { "Hi", "Bye", "No" }, false)]
+    public void ContainsAnyStringArrayTest(string str, string[] array, bool expected)
+    {
+        // Arrange
+
+        // Act
+        var actual = StringHelper.ContainsAny(str, array);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("Hello", new string[] { "He", "ll", "o" }, true)]
+    [InlineData("Hello", new string[] { "he", "LL", "O" }, false)]
+    [InlineData("Hello", new string[] { "Hi", "Bye", "No" }, false)]
+    public void ContainsAnyStringsTest(string str, string[] array, bool expected)
+    {
+        // Arrange
+
+        // Act
+        var actual = StringHelper.ContainsAny(str, array.AsEnumerable());
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(new string[] { "a", "b", "c" }, "b", true, true)]
+    [InlineData(new string[] { "a", "b", "c" }, "B", false, false)]
+    [InlineData(new string[] { "a", "b", "c" }, "d", true, false)]
+    public void ContainsArrayTest(string[] array, string str, bool ignoreCase, bool expected)
+    {
+        // Arrange
+
+        // Act
+        var actual = StringHelper.Contains(array, str, ignoreCase);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("Hello", "He", true)]
+    [InlineData("Hello", "he", true)]
+    [InlineData("Hello", "Hi", false)]
+    public void ContainsOfTest(string str, string target, bool expected)
+    {
+        // Arrange
+
+        // Act
+        var actual = StringHelper.ContainsOf(str, target);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(null, "test", true, false)]
+    [InlineData("Hello", "hello", true, true)]
+    [InlineData("Hello", "hello", false, false)]
+    public void ContainsTest(string str, string value, bool ignoreCase, bool expected)
+    {
+        // Arrange
+
+        // Act
+        var actual = StringHelper.Contains(str, value, ignoreCase);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(null, null)]
+    [InlineData("", "")]
+    [InlineData("سلام", "سلام")]
+    [InlineData("يك", "یک")]
+    [InlineData("كيف حالك؟", "کیف حالک؟")]
+    public void CorrectUnicodeProblemTest(string text, string expected)
+    {
+        // Arrange Nothing to do
+
+        // Act
+        var actual = StringHelper.CorrectUnicodeProblem(text);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
     [InlineData("This is a test string.", 'i', 3, 2)]
     [InlineData("This is a test string.", 'x', 0, 0)]
     [InlineData("", 'x', 0, 0)]
@@ -220,6 +491,46 @@ public sealed class StringHelperTest
 
         // Assert
         Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("Hello ", new[] { "World" }, "Hello ")]
+    [InlineData("Hello {0}", new[] { "World" }, "Hello World")]
+    [InlineData("Hello {0}", new object[] { "World", "!" }, "Hello World")]
+    [InlineData("{0} + {1} = {2}", new object[] { 2, 3, 5 }, "2 + 3 = 5")]
+    public void Format_ShouldReturnFormattedString(string format, object[] args, string expected)
+    {
+        var result = format.Format(args);
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void Format_ShouldThrowArgumentNullException_WhenFormatIsNullEmpty()
+    {
+        string? format = null;
+        _ = Assert.Throws<ArgumentNullException>(() => format.Format(null));
+    }
+
+    [Fact]
+    public void Format_ShouldThrowArgumentNullException_WhenFormatIsNullEmptyButArgsIsNotNull()
+    {
+        // Arrange
+        string? format = null;
+        object[] args = { 1, "foo" };
+
+        // Act & Assert
+        _ = Assert.Throws<ArgumentNullException>(() => format.Format(args));
+    }
+
+    [Fact]
+    public void Format_ShouldThrowFormatException_WhenFormatIsInvalid()
+    {
+        // Arrange
+        var format = "{0} {1}"; // Missing argument for {1}
+        object[] args = { "foo" };
+
+        // Act & Assert
+        _ = Assert.Throws<FormatException>(() => format.Format(args));
     }
 
     [Theory]
@@ -327,6 +638,21 @@ public sealed class StringHelperTest
     }
 
     [Theory]
+    [InlineData(null, true)]
+    [InlineData("", true)]
+    [InlineData("Hello", false)]
+    public void IsNullOrEmptyTest(string str, bool expected)
+    {
+        // Arrange Nothing to do
+
+        // Act
+        var actual = str.IsNullOrEmpty();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
     [MemberData(nameof(IsNullOrEmptyData))]
     public void IsNullOrEmptyTrue(string? text, bool expected)
     {
@@ -391,6 +717,21 @@ public sealed class StringHelperTest
         var result = text.Repeat(count);
 
         Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void ReplaceAll_ShouldReplaceAllOccurrencesOfOldValuesWithNewValue()
+    {
+        // Arrange
+        var value = "Hello world!";
+        var oldValues = new List<string> { "o", "l" };
+        var newValue = "*";
+
+        // Act
+        var result = value.ReplaceAll(oldValues, newValue);
+
+        // Assert
+        Assert.Equal("He*** w*r*d!", result);
     }
 
     [Theory]
@@ -486,6 +827,14 @@ public sealed class StringHelperTest
         Assert.Equal(expected, actual);
     }
 
+    [Theory]
+    [InlineData("Hello world", "world", "Bing", 1, "Hello Bing")] // Replace once
+    [InlineData("Hello world", "l", "*", 2, "He**o world")] // Replace twice
+    [InlineData("Hello world", "o", "#", -1, "Hell# w#rld")] // Replace all
+    public void TestReplace2(string input, string old, string replacement, int count, string expected) =>
+        // Call the static method and assert the result
+        Assert.Equal(expected, input.Replace2(old, replacement, count));
+
     [Fact]
     public void ToLower_ReturnsLowercaseStrings()
     {
@@ -501,308 +850,6 @@ public sealed class StringHelperTest
             item => Assert.Equal("bar", item),
             item => Assert.Equal("baz", item));
     }
-
-    [Fact]
-    public void Truncate()
-    {
-        var result = LONG_TEXT.Truncate(LONG_TEXT.Length - 5);
-        Assert.Equal("There", result);
-    }
-
-    #region Generated by AI
-
-    [Theory]
-    [InlineData("Hello", 3, ' ', false, "Hello   ")]
-    [InlineData("World", 2, '*', true, "**World")]
-    [InlineData(null, 5, '-', false, null)]
-    public void Add_ShouldAddCharactersToString(string? input, int count, char add, bool before, string? expected)
-    {
-        // Act
-        var result = input.Add(count, add, before);
-
-        // Assert
-        Assert.Equal(expected, result);
-    }
-
-    [Fact]
-    public void Add_ShouldPadLeft_WhenBeforeIsTrue()
-    {
-        // Arrange
-        var s = "Hello";
-
-        // Act
-        var result = s.Add(3, before: true);
-
-        // Assert
-        Assert.Equal("   Hello", result);
-    }
-
-    [Fact]
-    public void Add_ShouldPadRight_WhenBeforeIsFalse()
-    {
-        // Arrange
-        var s = "Hello";
-
-        // Act
-        var result = s.Add(3);
-
-        // Assert
-        Assert.Equal("Hello   ", result);
-    }
-
-    [Fact]
-    public void Add_ShouldReturnNull_WhenStringIsNull()
-    {
-        // Arrange
-        string? s = null;
-
-        // Act
-        var result = s.Add(3);
-
-        // Assert
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public void Add_ShouldReturnSameString_WhenCountIsZero()
-    {
-        // Arrange
-        var s = "Hello";
-
-        // Act
-        var result = s.Add(0);
-
-        // Assert
-        Assert.Equal(s, result);
-    }
-
-    [Fact]
-    public void Add_ShouldUseSpecifiedChar_WhenAddIsProvided()
-    {
-        // Arrange
-        var s = "Hello";
-
-        // Act
-        var result = s.Add(3, add: '*');
-
-        // Assert
-        Assert.Equal("Hello***", result);
-    }
-
-    [Theory]
-    [InlineData(new string[] { "a", "b", "c" }, ",", "a,b,c")]
-    [InlineData(new string[] { "hello", "world" }, " ", "hello world")]
-    [InlineData(new string[] { "foo", "bar" }, null, "foobar")]
-
-    public void ConcatAll_Should_Return_Correct_String(IEnumerable<string> strings, string sep, string expected)
-    {
-        // Arrange
-
-        // Act
-        var actual = StringHelper.ConcatAll(strings, sep);
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData(new string[] { "a", "b", "c" }, "abc")]
-    [InlineData(new string[] { "hello", " ", "world" }, "hello world")]
-
-    public void ConcatStringsTest(string[] values, string expected)
-    {
-        // Arrange
-
-        // Act
-        var actual = StringHelper.ConcatStrings(values);
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("This is a test string.", new char[] { 'x', 'y', 'z' }, false)]
-    [InlineData("This is a test string.", new char[] { 'a', 'b', 'c' }, true)]
-    [InlineData("", new char[] { 'x', 'y', 'z' }, false)]
-    [InlineData("This is a test string.", new char[] { 'T', 't', 's' }, true)]
-    public void ContainsAnyCharTest(string str, char[] chars, bool expectedResult)
-    {
-        var result = StringHelper.ContainsAny(str, chars);
-        Assert.Equal(expectedResult, result);
-    }
-
-    [Theory]
-    [InlineData("Hello", new string[] { "He", "ll", "o" }, true)]
-    [InlineData("Hello", new string[] { "he", "LL", "O" }, false)]
-    [InlineData("Hello", new string[] { "Hi", "Bye", "No" }, false)]
-
-    public void ContainsAnyStringArrayTest(string str, string[] array, bool expected)
-    {
-        // Arrange
-
-        // Act
-        var actual = StringHelper.ContainsAny(str, array);
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("Hello", new string[] { "He", "ll", "o" }, true)]
-    [InlineData("Hello", new string[] { "he", "LL", "O" }, false)]
-    [InlineData("Hello", new string[] { "Hi", "Bye", "No" }, false)]
-
-    public void ContainsAnyStringsTest(string str, string[] array, bool expected)
-    {
-        // Arrange
-
-        // Act
-        var actual = StringHelper.ContainsAny(str, array.AsEnumerable());
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData(new string[] { "a", "b", "c" }, "b", true, true)]
-    [InlineData(new string[] { "a", "b", "c" }, "B", false, false)]
-    [InlineData(new string[] { "a", "b", "c" }, "d", true, false)]
-
-    public void ContainsArrayTest(string[] array, string str, bool ignoreCase, bool expected)
-    {
-        // Arrange
-
-        // Act
-        var actual = StringHelper.Contains(array, str, ignoreCase);
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("Hello", "He", true)]
-    [InlineData("Hello", "he", true)]
-    [InlineData("Hello", "Hi", false)]
-    public void ContainsOfTest(string str, string target, bool expected)
-    {
-        // Arrange
-
-        // Act
-        var actual = StringHelper.ContainsOf(str, target);
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData(null, "test", true, false)]
-    [InlineData("Hello", "hello", true, true)]
-    [InlineData("Hello", "hello", false, false)]
-    public void ContainsTest(string str, string value, bool ignoreCase, bool expected)
-    {
-        // Arrange
-
-        // Act
-        var actual = StringHelper.Contains(str, value, ignoreCase);
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData(null, null)]
-    [InlineData("", "")]
-    [InlineData("سلام", "سلام")]
-    [InlineData("يك", "یک")]
-    [InlineData("كيف حالك؟", "کیف حالک؟")]
-    public void CorrectUnicodeProblemTest(string text, string expected)
-    {
-        // Arrange Nothing to do
-
-        // Act
-        var actual = StringHelper.CorrectUnicodeProblem(text);
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("Hello ", new[] { "World" }, "Hello ")]
-    [InlineData("Hello {0}", new[] { "World" }, "Hello World")]
-    [InlineData("Hello {0}", new object[] { "World", "!" }, "Hello World")]
-    [InlineData("{0} + {1} = {2}", new object[] { 2, 3, 5 }, "2 + 3 = 5")]
-    public void Format_ShouldReturnFormattedString(string format, object[] args, string expected)
-    {
-        var result = format.Format(args);
-        Assert.Equal(expected, result);
-    }
-
-    [Fact]
-    public void Format_ShouldThrowArgumentNullException_WhenFormatIsNullEmpty()
-    {
-        string? format = null;
-        _ = Assert.Throws<ArgumentNullException>(() => format.Format(null));
-    }
-
-    [Fact]
-    public void Format_ShouldThrowArgumentNullException_WhenFormatIsNullEmptyButArgsIsNotNull()
-    {
-        // Arrange
-        string? format = null;
-        object[] args = { 1, "foo" };
-
-        // Act & Assert
-        _ = Assert.Throws<ArgumentNullException>(() => format.Format(args));
-    }
-
-    [Fact]
-    public void Format_ShouldThrowFormatException_WhenFormatIsInvalid()
-    {
-        // Arrange
-        var format = "{0} {1}"; // Missing argument for {1}
-        object[] args = { "foo" };
-
-        // Act & Assert
-        _ = Assert.Throws<FormatException>(() => format.Format(args));
-    }
-
-    [Theory]
-    [InlineData(null, true)]
-    [InlineData("", true)]
-    [InlineData("Hello", false)]
-    public void IsNullOrEmptyTest(string str, bool expected)
-    {
-        // Arrange Nothing to do
-
-        // Act
-        var actual = str.IsNullOrEmpty();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void ReplaceAll_ShouldReplaceAllOccurrencesOfOldValuesWithNewValue()
-    {
-        // Arrange
-        var value = "Hello world!";
-        var oldValues = new List<string> { "o", "l" };
-        var newValue = "*";
-
-        // Act
-        var result = value.ReplaceAll(oldValues, newValue);
-
-        // Assert
-        Assert.Equal("He*** w*r*d!", result);
-    }
-
-    [Theory]
-    [InlineData("Hello world", "world", "Bing", 1, "Hello Bing")] // Replace once
-    [InlineData("Hello world", "l", "*", 2, "He**o world")] // Replace twice
-    [InlineData("Hello world", "o", "#", -1, "Hell# w#rld")] // Replace all
-    public void TestReplace2(string input, string old, string replacement, int count, string expected) =>
-        // Call the static method and assert the result
-        Assert.Equal(expected, input.Replace2(old, replacement, count));
 
     [Fact]
     public void ToUnicode_ShouldReturnConvertedString_WhenStringIsNonAscii()
@@ -859,7 +906,6 @@ public sealed class StringHelperTest
     [Theory]
     [InlineData(new[] { " a ", " b ", " c " }, new[] { "a", "b", "c" })]
     [InlineData(new[] { "", " ", "\t" }, new[] { "", "", "" })]
-
     public void TrimAll_ShouldTrimAllStrings(string[] input, string[] expected)
     {
         // Arrange
@@ -898,7 +944,12 @@ public sealed class StringHelperTest
         Assert.Equal(new[] { "Hello", "World", "!" }, result);
     }
 
-    #endregion Generated by AI
+    [Fact]
+    public void Truncate()
+    {
+        var result = LONG_TEXT.Truncate(LONG_TEXT.Length - 5);
+        Assert.Equal("There", result);
+    }
 }
 
 file class CompactDataClass : IEnumerable<object[]>

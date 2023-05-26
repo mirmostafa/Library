@@ -18,7 +18,7 @@ namespace Library.Helpers;
 public static class StringHelper
 {
     /// <summary>
-    /// Adds the specified char to the string.
+    /// Adds a specified number of characters to a string, either before or after the string.
     /// </summary>
     /// <param name="s">     The s.</param>
     /// <param name="count"> The count.</param>
@@ -37,6 +37,13 @@ public static class StringHelper
     public static string AddStart(this string s, in string s1)
         => string.Concat(s1, s);
 
+    /// <summary>
+    /// Gets all indexes of a given string in another string.
+    /// </summary>
+    /// <param name="str">The string to search in.</param>
+    /// <param name="value">The string to search for.</param>
+    /// <param name="ignoreCase">Whether to ignore case when searching.</param>
+    /// <returns>An enumerable of all indexes of the given string in the other string.</returns>
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
         var buffer = ignoreCase ? str.ArgumentNotNull().ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull();
@@ -45,29 +52,36 @@ public static class StringHelper
         int currentIndex;
         while ((currentIndex = buffer.IndexOf(stat, StringComparison.Ordinal)) != -1)
         {
-            result += currentIndex;
-            yield return result;
-            result += stat.Length;
+            yield return result + currentIndex;
+            result += currentIndex + stat.Length;
             buffer = buffer[(currentIndex + stat.Length)..];
         }
     }
 
     [Pure]
     public static bool AnyCharInString(this string str, in string range)
-        => str is not null && range.Any(c => str.Contains(c.ToString()));
+        => !string.IsNullOrEmpty(str) && range.Any(str.Contains);
 
     [Pure]
     public static string ArabicCharsToPersian(this string value)
         => value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
 
+    /// <summary>
+    /// Checks if all characters in the given string are valid according to the given validation function.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CheckAllValidations(in string text, in Func<char, bool> regularValidate)
-        => text.All(regularValidate);
+            => text.All(regularValidate);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CheckAnyValidations(in string text, in Func<char, bool> regularValidate)
-        => text.Any(regularValidate);
+            => text.Any(regularValidate);
 
+    /// <summary>
+    /// Compacts an array of strings by removing any empty strings.
+    /// </summary>
+    /// <param name="strings">The strings to compact.</param>
+    /// <returns>The compacted array of strings.</returns>
     [Pure]
     [return: NotNull]
     public static string[] Compact(params string[] strings)
@@ -93,18 +107,38 @@ public static class StringHelper
     public static string ConcatStrings(this IEnumerable<string> values)
         => string.Concat(values.ToArray());
 
-    public static bool Contains(string str, in string value, bool ignoreCase = true) => str != null
-&& (ignoreCase
-                    ? str.ToLowerInvariant().Contains(value?.ToLowerInvariant())
-                    : str.Contains(value));
+    public static bool Contains(string str, in string value, bool ignoreCase = true)
+        => str?.IndexOf(value, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) >= 0;
 
-    [Pure]
     public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase)
-        => array.Any(s => s.CompareTo(str, ignoreCase) == 0);
+    {
+        foreach (string s in array)
+        {
+            if (ignoreCase)
+            {
+                if (string.Equals(s, str, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+            else
+            {
+                if (s == str)
+                    return true;
+            }
+        }
+        return false;
+    }
 
-    [Pure]
     public static bool ContainsAny(this string str, in IEnumerable<string> array)
-        => array.Any(str.Contains);
+    {
+        foreach (string item in array)
+        {
+            if (str.Contains(item))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static bool ContainsAny(this string str, IEnumerable<char> array)
         => array.Any(str.Contains);
@@ -116,7 +150,7 @@ public static class StringHelper
         => ArabicCharsToPersian(text);
 
     public static int CountOf(this string str, char c, int index = 0)
-        => str?[index..].Where(x => x == c).Count() ?? 0;
+        => str?.Skip(index).Count(x => x == c) ?? 0;
 
     [Pure]
     public static bool EndsWithAny(this string str, in IEnumerable<object> array)
@@ -144,8 +178,8 @@ public static class StringHelper
 
     public static string? FixSize(string? str, int maxLength, char gapChar = ' ')
         => str.IsNullOrEmpty()
-            ? Add(string.Empty, maxLength, gapChar)
-            : str.Length > maxLength ? str[..maxLength] : str.Add(maxLength - str.Length, gapChar);
+            ? new string(gapChar, maxLength)
+            : str.Length > maxLength ? str[..maxLength] : str.PadRight(maxLength, gapChar);
 
     [Pure]
     public static string Format(this string format, params object[] args)
@@ -256,41 +290,74 @@ public static class StringHelper
         }
     }
 
+    /// <summary>
+    /// This method checks if the given string contains any Persian characters.
+    /// </summary>
+    /// <param name="text">The string to check.</param>
+    /// <returns>True if the string contains Persian characters, false otherwise.</returns>
     [Pure]
+
     public static bool HasPersian(in string text)
         => CheckAnyValidations(text, IsPersian);
 
+    /// <summary>
+    /// Returns the given string if not null, otherwise returns the given value.
+    /// </summary>
     [Pure]
     public static string? IfNull(this string? s, in string? value)
-        => s is null ? value : s;
+        => s ?? value;
 
+    /// <summary>
+    /// Returns the given string if it is not null or empty, otherwise returns the default value.
+    /// </summary>
     [Pure]
     public static string IfNullOrEmpty(this string? str, string defaultValue)
-        => str.IsNullOrEmpty() ? defaultValue : str;
+        => string.IsNullOrEmpty(str) ? defaultValue : str;
 
+    /// <summary>
+    /// Gets the index of the specified item in the given enumerable of strings.
+    /// </summary>
+    /// <param name="items">The enumerable of strings.</param>
+    /// <param name="item">The item to search for.</param>
+    /// <param name="trimmed">Whether or not to trim the strings before comparison.</param>
+    /// <param name="ignoreCase">Whether or not to ignore case when comparing strings.</param>
+    /// <returns>The index of the item in the enumerable, or null if the item is not found.</returns>
     public static int? IndexOf([DisallowNull] this IEnumerable<string?> items, in string? item, bool trimmed = false, bool ignoreCase = true)
     {
+        // Check if the argument is not null
         Check.IfArgumentNotNull(items, nameof(items));
 
+        // Get the item and trim it if necessary
         var itm = get(item, trimmed);
+
+        // Initialize the index
         var index = 0;
+
+        // Get the enumerator
         var enumerator = items.GetEnumerator();
 
+        // Iterate through the enumerator
         while (enumerator.MoveNext())
         {
+            // Check if the current item is equal to the item
             if (equals(get(enumerator.Current, trimmed), itm, ignoreCase))
             {
+                // Return the index if the items are equal
                 return index;
             }
 
+            // Increment the index
             index++;
         }
 
+        // Return null if the item is not found
         return null;
 
+        // Get the item and trim it if necessary
         static string? get(string? current, bool trimmed)
             => trimmed ? current?.Trim() : current;
 
+        // Check if the items are equal
         static bool equals(string? current, string? item, bool ignoreCase)
             => string.Compare(current, item, ignoreCase) == 0;
     }
@@ -396,10 +463,13 @@ public static class StringHelper
             return false;
         }
 
-        var check = Convert.ToInt32(input.Slice(9, 1));
-        var sum = Enumerable.Range(0, 9)
-            .Select(x => Convert.ToInt32(input.Slice(x, 1)) * (10 - x))
-            .Sum() % 11;
+        int check = Convert.ToInt32(input[9]);
+        int sum = 0;
+        for (int i = 0; i < 9; i++)
+        {
+            sum += Convert.ToInt32(input[i]) * (10 - i);
+        }
+        sum %= 11;
 
         return sum < 2 ? check == sum : check + sum == 11;
     }
@@ -426,11 +496,12 @@ public static class StringHelper
 
     public static string Merge(string quatStart, string quatEnd, string separator, params object[] array)
     {
-        var result = array.Aggregate(string.Empty, (current, str) => current + quatStart + str + quatEnd + separator + " ").Trim();
-        return result[..^1];
+        var result = array.Aggregate(string.Empty, (current, str) => current + quatStart + str + quatEnd + separator + " ").TrimEnd();
+        return result.Substring(0, result.Length - 1);
     }
 
-    public static string Merge(string quat, string separator, params string[] array) => array.Merge(quat, separator);
+    public static string Merge(string quat, string separator, params string[] array)
+        => array.Merge(quat, separator);
 
     public static string Merge(this IEnumerable<string> array, in string separator)
         => string.Join(separator, array.ToArray());
@@ -454,7 +525,7 @@ public static class StringHelper
                 '~', '`', '!', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '{', '[', '}', ']', ':', ';', '\'', '"', '<', ',', '>', '?', '|', '\\'
         };
 
-        var arrayString = t.Split(outChar);
+        var arrayString = t.Split(outChar, StringSplitOptions.RemoveEmptyEntries);
 
         return arrayString.Aggregate(result, (current, s) => current + s);
     }
@@ -469,7 +540,14 @@ public static class StringHelper
 
     [return: NotNullIfNotNull(nameof(str))]
     public static string? Remove(this string? str, in string? value)
-        => str is null ? null : value is null ? str : str.Replace(value, "");
+    {
+        if (str is null)
+            return null;
+        else if (value is null)
+            return str;
+        else
+            return str.Replace(value, "");
+    }
 
     public static string RemoveEnd(this string str, in int count)
         => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
@@ -519,40 +597,55 @@ public static class StringHelper
     public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items)
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
+    /// <summary>
+    /// Separates a string into separate words based on the provided separators.
+    /// </summary>
+    /// <param name="str">The string to separate.</param>
+    /// <param name="separators">The separators to use.</param>
+    /// <returns>The separated string.</returns>
     [return: NotNullIfNotNull(nameof(str))]
     public static string? Separate(this string? str, params char[] separators)
     {
+        //If no separators are provided, use default separators
         if (separators?.Any() is not true)
         {
             separators = new[] { '\0', '\n', '\r', '\t', '_', '-' };
         }
+        //If the string is empty, return it
         if (str.IsNullOrEmpty())
         {
             return str;
         }
 
+        //Create a StringBuilder to store the new string
         var sb = new StringBuilder();
+        //Loop through each character in the string
         for (var i = 0; i < str.Length; i++)
         {
+            //Determine if the character is a separator and if it should be ignored
             var (isSeparator, shouldIgnore) = determineSeparator(str[i], separators);
+            //If the character is a separator and it is not the first character, add a space
             if (i > 0 && isSeparator)
             {
                 _ = sb.Append(' ');
             }
+            //If the character should not be ignored, add it to the StringBuilder
             if (!shouldIgnore)
             {
                 _ = sb.Append(str[i]);
             }
         }
 
+        //Return the new string
         return sb.ToString();
 
+        //Function to determine if the character is a separator and if it should be ignored
         static (bool IsSeparator, bool ShouldIgnore) determineSeparator(char c, char[] separators)
             => separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
     }
 
     [return: NotNullIfNotNull(nameof(value))]
-    public static string? SeparateCamelCase(this string? value) 
+    public static string? SeparateCamelCase(this string? value)
         => value.SplitCamelCase().Merge(" ");
 
     public static string? SetPhrase(this string str, int index, string newStr, char start, char end = default)

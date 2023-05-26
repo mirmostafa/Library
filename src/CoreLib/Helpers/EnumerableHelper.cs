@@ -41,7 +41,7 @@ public static class EnumerableHelper
     /// <returns></returns>
     public static IEnumerable<T> AddImmuted<T>(this IEnumerable<T>? source, T item)
     {
-        if (source is not null)
+        if (source != null)
         {
             foreach (var i in source)
             {
@@ -65,16 +65,20 @@ public static class EnumerableHelper
         var result = new TList();
         if (source?.Any() is true)
         {
-            result.AddRange(source.ToEnumerable()).Add(item);
+            _ = result.AddRange(source);
         }
-        else
-        {
-            result.Add(item);
-        }
+        result.Add(item);
 
         return result;
     }
 
+    /// <summary>
+    /// Adds a range of items to an IList.
+    /// </summary>
+    /// <typeparam name="T">The type of the items in the list.</typeparam>
+    /// <param name="list">The list to add the items to.</param>
+    /// <param name="items">The items to add to the list.</param>
+    /// <returns>The list with the added items.</returns>
     public static IList<T> AddRange<T>([DisallowNull] this IList<T> list, in IEnumerable<T> items)
     {
         if (items?.Any() is true)
@@ -87,6 +91,13 @@ public static class EnumerableHelper
         return list;
     }
 
+    /// <summary>
+    /// Adds a range of items to an ObservableCollection.
+    /// </summary>
+    /// <typeparam name="T">The type of the items in the collection.</typeparam>
+    /// <param name="list">The ObservableCollection to add the items to.</param>
+    /// <param name="items">The items to add to the collection.</param>
+    /// <returns>The ObservableCollection with the added items.</returns>
     public static ObservableCollection<T> AddRange<T>([DisallowNull] this ObservableCollection<T> list, in IEnumerable<T> items)
     {
         if (items?.Any() is true)
@@ -99,6 +110,13 @@ public static class EnumerableHelper
         return list;
     }
 
+    /// <summary>
+    /// Adds a range of items to an ICollection.
+    /// </summary>
+    /// <typeparam name="T">The type of the items in the collection.</typeparam>
+    /// <param name="list">The ICollection to add the items to.</param>
+    /// <param name="items">The items to add to the ICollection.</param>
+    /// <returns>The ICollection with the added items.</returns>
     public static ICollection<T> AddRange<T>([DisallowNull] this ICollection<T> list, in IEnumerable<T> items)
     {
         if (items?.Any() is true)
@@ -111,8 +129,16 @@ public static class EnumerableHelper
         return list;
     }
 
+    /// <summary>
+    /// Adds a range of items to the <see cref="IFluentListTFluentList, TItem"/>.
+    /// </summary>
+    /// <typeparam name="TFluentList">The type of the fluent list.</typeparam>
+    /// <typeparam name="TItem">The type of the item.</typeparam>
+    /// <param name="list">The list.</param>
+    /// <param name="items">The items to add.</param>
+    /// <returns>The list.</returns>
     public static IFluentList<TFluentList, TItem> AddRange<TFluentList, TItem>([DisallowNull] this IFluentList<TFluentList, TItem> list, IEnumerable<TItem>? items)
-        where TFluentList : IFluentList<TFluentList, TItem>
+            where TFluentList : IFluentList<TFluentList, TItem>
     {
         if (items?.Any() is true)
         {
@@ -124,6 +150,14 @@ public static class EnumerableHelper
         return list;
     }
 
+    /// <summary>
+    /// Adds a range of items to an ICollection asynchronously.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items.</typeparam>
+    /// <param name="list">The ICollection to add the items to.</param>
+    /// <param name="asyncItems">The IAsyncEnumerable of items to add.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The ICollection with the added items.</returns>
     public static async Task<ICollection<TItem>> AddRangeAsync<TItem>([DisallowNull] this ICollection<TItem> list, [DisallowNull] IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
         Check.IfArgumentNotNull(list);
@@ -136,21 +170,35 @@ public static class EnumerableHelper
         return list;
     }
 
+    /// <summary>
+    /// Adds a range of items to an existing IEnumerable in an immutable fashion.
+    /// </summary>
+    /// <typeparam name="T">The type of the items in the IEnumerable.</typeparam>
+    /// <param name="source">The source IEnumerable.</param>
+    /// <param name="items">The items to add.</param>
+    /// <returns>A new IEnumerable containing the items from the source and the items to add.</returns>
     public static IEnumerable<T> AddRangeImmuted<T>(this IEnumerable<T>? source, IEnumerable<T>? items)
     {
+        //Check if both source and items are null
         return (source, items) switch
         {
             (null, null) => Enumerable.Empty<T>(),
+            //If source is not null, return source
             (_, null) => source,
+            //If items is not null, return items
             (null, _) => items,
+            //If both source and items are not null, call addRangeImmutedIterator
             (_, _) => addRangeImmutedIterator(source, items)
         };
+        //Function to add items from both source and items
         static IEnumerable<T> addRangeImmutedIterator(IEnumerable<T> source, IEnumerable<T> items)
         {
+            //Loop through source and yield each item
             foreach (var item in source)
             {
                 yield return item;
             }
+            //Loop through items and yield each item
             foreach (var item in items)
             {
                 yield return item;
@@ -189,6 +237,12 @@ public static class EnumerableHelper
     public static Span<TItem> AsSpan<TItem>(this IEnumerable<TItem> items)
         => items is null ? default : MemoryExtensions.AsSpan(items.ToArray());
 
+    /// <summary>
+    /// Builds a read-only list from an enumerable.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the enumerable.</typeparam>
+    /// <param name="items">The enumerable to build the read-only list from.</param>
+    /// <returns>A read-only list containing the elements from the enumerable.</returns>
     public static IReadOnlyList<T> Build<T>([DisallowNull] this IEnumerable<T> items)
     {
         Check.IfArgumentNotNull(items);
@@ -197,55 +251,54 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    /// Builds a tree.
+    /// Builds a tree from a given root element and its children.
     /// </summary>
-    /// <typeparam name="TSource">The type of the site map.</typeparam>
-    /// <typeparam name="TItem">The type of the menu item.</typeparam>
-    /// <param name="rootElements">The get root elements.</param>
-    /// <param name="getNewItem">  The get new T menu item.</param>
-    /// <param name="getChildren"> The get children.</param>
-    /// <param name="addToRoots">  The add to roots.</param>
-    /// <param name="addChild">    The add to children.</param>
-    /// <exception cref="ArgumentNullException">getChildren</exception>
+    /// <typeparam name="TSource">The type of the root element.</typeparam>
+    /// <typeparam name="TItem">The type of the item to be created.</typeparam>
+    /// <param name="rootElements">The root elements.</param>
+    /// <param name="getNewItem">A function that takes a TSource and returns a TItem.</param>
+    /// <param name="getChildren">A function that takes a TSource and returns an IEnumerable of TSource.</param>
+    /// <param name="addToRoots">An action that takes a TItem.</param>
+    /// <param name="addChild">An action that takes two TItems.</param>
     public static void BuildTree<TSource, TItem>(
-        [DisallowNull] this IEnumerable<TSource> rootElements,
-        [DisallowNull] in Func<TSource, TItem> getNewItem,
-        [DisallowNull] in Func<TSource, IEnumerable<TSource>> getChildren,
-        [DisallowNull] in Action<TItem> addToRoots,
-        [DisallowNull] in Action<TItem, TItem> addChild)
+                [DisallowNull] this IEnumerable<TSource> rootElements, // rootElements is an IEnumerable of type TSource
+                [DisallowNull] in Func<TSource, TItem> getNewItem, // getNewItem is a function that takes a TSource and returns a TItem
+                [DisallowNull] in Func<TSource, IEnumerable<TSource>> getChildren, // getChildren is a function that takes a TSource and returns an IEnumerable of TSource
+                [DisallowNull] in Action<TItem> addToRoots, // addToRoots is an action that takes a TItem
+                [DisallowNull] in Action<TItem, TItem> addChild) // addChild is an action that takes two TItems
     {
-        Check.IfArgumentNotNull(rootElements);
-        Check.IfArgumentNotNull(getNewItem);
-        Check.IfArgumentNotNull(getChildren);
-        Check.IfArgumentNotNull(addToRoots);
-        Check.IfArgumentNotNull(addChild);
+        Check.IfArgumentNotNull(rootElements); // Check that rootElements is not null
+        Check.IfArgumentNotNull(getNewItem); // Check that getNewItem is not null
+        Check.IfArgumentNotNull(getChildren); // Check that getChildren is not null
+        Check.IfArgumentNotNull(addToRoots); // Check that addToRoots is not null
+        Check.IfArgumentNotNull(addChild); // Check that addChild is not null
 
-        foreach (var siteMap in rootElements)
+        foreach (var siteMap in rootElements) // Iterate through each element in rootElements
         {
-            var root = getNewItem(siteMap);
-            addToRoots(root);
-            addChildren(siteMap, root, getChildren, addChild, getNewItem);
+            var root = getNewItem(siteMap); // Get a new item from the current element in rootElements
+            addToRoots(root); // Add the new item to the roots
+            addChildren(siteMap, root, getChildren, addChild, getNewItem); // Call the addChildren function to add the children of the current element
         }
 
         static void addChildren(in TSource siteMap, in TItem parent, Func<TSource, IEnumerable<TSource>> getChildren, Action<TItem, TItem> addChild, Func<TSource, TItem> getNewItem)
         {
-            foreach (var sm in getChildren(siteMap))
+            foreach (var sm in getChildren(siteMap)) // Iterate through each element in the children of the current element
             {
-                var newChile = getNewItem(sm);
-                addChild(parent, newChile);
-                addChildren(sm, newChile, getChildren, addChild, getNewItem);
+                var newChile = getNewItem(sm); // Get a new item from the current element in the children
+                addChild(parent, newChile); // Add the new item to the parent
+                addChildren(sm, newChile, getChildren, addChild, getNewItem); // Call the addChildren function to add the children of the current element
             }
         }
     }
 
     /// <summary>
-    /// Converts all the values in a collection
+    /// Casts the elements of an IEnumerable to the specified type using the specified converter.
     /// </summary>
-    /// <typeparam name="TInput">The type of the input.</typeparam>
-    /// <typeparam name="TOutput">The type of the output.</typeparam>
-    /// <param name="input">    The input collection.</param>
-    /// <param name="converter">The converter function.</param>
-    /// <returns>An enumerable collection of the output type.</returns>
+    /// <typeparam name="TInput">The type of the elements of input.</typeparam>
+    /// <typeparam name="TOutput">The type to cast the elements of input to.</typeparam>
+    /// <param name="input">The IEnumerable to cast.</param>
+    /// <param name="converter">A Converter delegate that converts each element from one type to another.</param>
+    /// <returns>An IEnumerable that contains each element of the source sequence converted to the specified type.</returns>
     public static IEnumerable<TOutput> Cast<TInput, TOutput>(this IEnumerable<TInput> input, [DisallowNull] Converter<TInput, TOutput> converter)
     {
         if (input is null)
@@ -266,14 +319,28 @@ public static class EnumerableHelper
                  .GroupBy(x => x.Index / chunkSize)
                  .Select(x => x.Select(v => v.Value));
 
+    /// <summary>
+    /// Clears the specified collection and adds the specified item to it.
+    /// </summary>
+    /// <typeparam name="T">The type of the collection.</typeparam>
+    /// <param name="collection">The collection to clear and add to.</param>
+    /// <param name="item">The item to add to the collection.</param>
+    /// <returns>The collection with the item added.</returns>
     public static T ClearAndAdd<T>([DisallowNull] this T collection, in object? item)
-        where T : notnull, IList
+            where T : notnull, IList
     {
         collection.ArgumentNotNull().Clear();
         _ = collection.Add(item);
         return collection;
     }
 
+    /// <summary>
+    /// Clears the list and adds a range of items to it.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items.</typeparam>
+    /// <param name="list">The list to clear and add items to.</param>
+    /// <param name="items">The items to add.</param>
+    /// <returns>The list with the added items.</returns>
     public static ICollection<TItem> ClearAndAddRange<TItem>(this ICollection<TItem> list, [DisallowNull] in IEnumerable<TItem> items)
     {
         Check.IfArgumentNotNull(items);
@@ -286,12 +353,23 @@ public static class EnumerableHelper
         return list;
     }
 
+    /// <summary>
+    /// Returns an empty IEnumerable of the specified type, regardless of the input.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of source.</typeparam>
+    /// <param name="source">The IEnumerable to clear.</param>
+    /// <returns>An empty IEnumerable of the specified type.</returns>
     [return: NotNull]
     public static IEnumerable<T> ClearImmuted<T>(this IEnumerable<T>? source)
-        => Enumerable.Empty<T>();
+            => Enumerable.Empty<T>();
 
+    /// <summary>
+    /// Recursively collects all items in a collection of items that implement IParent<TItem>.
+    /// </summary>
+    /// <param name="items">The collection of items to collect.</param>
+    /// <returns>A collection of all items in the collection, including all children.</returns>
     public static IEnumerable<TItem> Collect<TItem>(IEnumerable<TItem> items)
-        where TItem : IParent<TItem>
+            where TItem : IParent<TItem>
     {
         foreach (var item in items)
         {
@@ -304,424 +382,31 @@ public static class EnumerableHelper
         }
     }
 
+    /// <summary>
+    /// Returns an IEnumerable of non-null elements from the given IEnumerable of nullable elements.
+    /// </summary>
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
-        where TSource : class => items is null
-        ? Enumerable.Empty<TSource>()
-        : items.Where(x => x is not null).Select(x => x!);
+            where TSource : class => items?.Where(x => x is not null).Select(x => x!) ?? Enumerable.Empty<TSource>();
 
+    /// <summary>
+    /// Checks if the given IEnumerable contains a key-value pair with the specified key.
+    /// </summary>
     public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
-        => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
+            => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
 
+
+
+    /// <summary>
+    /// Counts the number of elements in a sequence that are not enumerated.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of source.</typeparam>
+    /// <param name="source">The IEnumerable<T> to count.</param>
+    /// <returns>The number of elements in the sequence that are not enumerated.</returns>
     public static int CountNotEnumerated<T>(this IEnumerable<T> source)
     {
         (var succeed, var count) = TryCountNonEnumerated(source);
         return succeed ? count : throw new Exceptions.Validations.InvalidOperationValidationException();
     }
-
-    [return: NotNull]
-    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items)
-        => items is null ? Enumerable.Empty<T>() : items;
-
-    /// <summary>
-    /// Creates an empty array.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static T[] EmptyArray<T>()
-        => Array.Empty<T>();
-
-    public static bool Equal<T>(IEnumerable<T> enum1, IEnumerable<T> enum2, bool ignoreIndexes)
-        => ignoreIndexes
-            ? !enum1.ArgumentNotNull().Except(enum2).Any() && !enum2.ArgumentNotNull().Except(enum1).Any()
-            : enum1.SequenceEqual(enum2);
-
-    public static IEnumerable<T> Except<T>(this IEnumerable<T> items, Func<T, bool> exceptor)
-        => items.Where(x => !exceptor(x));
-
-    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
-        => source.Where(x => !exclude(x));
-
-    public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> items)
-    {
-        var buffer = new HashSet<T>();
-        return items.Where(x => !buffer.Add(x));
-    }
-
-    //! Not fast enough. Lost in benchmark.
-    //x public static IEnumerable<T> FindDuplicates<T>(in IEnumerable<T> items)
-    //x     => items.ArgumentNotNull(nameof(items)).GroupBy(x => x).Where(g => g.Count() > 1).Select(y => y.Key);
-
-    public static T Fold<T>(this IEnumerable<T> items, Func<(T Result, T Current), T> folder, T initialValue)
-    {
-        var result = initialValue;
-        foreach (var item in items)
-        {
-            result = folder((result, item));
-        }
-        return result;
-    }
-
-    public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
-    {
-        Check.IfArgumentNotNull(items);
-        var buffer = items;
-
-        foreach (var item in buffer)
-        {
-            action?.Invoke(item);
-            yield return item;
-        }
-    }
-
-    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        Check.IfArgumentNotNull(asyncItems);
-        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
-        {
-            yield return action(item);
-        }
-    }
-
-    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        Check.IfArgumentNotNull(asyncItems);
-        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
-        {
-            action(item);
-            yield return item;
-        }
-    }
-
-    public static IReadOnlyList<T> ForEachEager<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
-    {
-        Check.IfArgumentNotNull(items);
-        foreach (var item in items)
-        {
-            action?.Invoke(item);
-        }
-        return items.Build();
-    }
-
-    public static IEnumerable<TResult> ForEachItem<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
-    {
-        Check.IfArgumentNotNull(items);
-        Check.IfArgumentNotNull(action);
-
-        foreach (var item in items)
-        {
-            yield return action(item);
-        }
-    }
-
-    public static void ForEachParallel<TItem>(IEnumerable<TItem> items, Action<TItem> action)
-        => Parallel.ForEach(items, action);
-
-    public static void ForEachTreeNode<T>(T root, Func<T, IEnumerable<T>>? getChildren, Action<T>? rootAction, Action<T, T>? childAction)
-            where T : class
-    {
-        if (root is null)
-        {
-            return;
-        }
-
-        rootAction?.Invoke(root);
-        _ = (getChildren?.Invoke(root)
-            .ForEach(c =>
-            {
-                childAction?.Invoke(c, root);
-                ForEachTreeNode(c, getChildren, rootAction, childAction);
-            }));
-    }
-
-    public static TOutput Fork<TInput, TOutput>(this IEnumerable<Func<TInput, TOutput>> prongs, Func<IEnumerable<TOutput>, TOutput> joinFunc, TInput input)
-        => joinFunc(prongs.Select(x => x(input)));
-
-    public static IEnumerable<T> GetAll<T>([DisallowNull] Func<IEnumerable<T>> getRootElements, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
-    {
-        _ = getRootElements.ArgumentNotNull();
-        _ = getChildren.ArgumentNotNull();
-
-        var result = new List<T>();
-
-        foreach (var item in getRootElements())
-        {
-            result.Add(item);
-            findChildren(item);
-        }
-
-        return result.AsEnumerable();
-
-        void findChildren(in T item)
-        {
-            var children = getChildren(item);
-            if (children?.Any() is true)
-            {
-                foreach (var child in children)
-                {
-                    result.Add(child);
-                    findChildren(child);
-                }
-            }
-        }
-    }
-
-    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
-        => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
-
-    public static KeyValuePair<TKey, TValue> GetItemByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, in TKey key)
-    {
-        foreach (var item in source.ArgumentNotNull(nameof(source)))
-        {
-            if (item.Key?.Equals(key) is true)
-            {
-                return item;
-            }
-        }
-        throw new KeyNotFoundException(nameof(key));
-    }
-
-    public static TryMethodResult<TResult?> GetValue<TResult>([DisallowNull] this HashSet<TResult> resultSet, TResult equalValue)
-        where TResult : new()
-    {
-        var tryResult = resultSet.TryGetValue(equalValue, out var actualValue);
-        return TryMethodResult<TResult?>.TryParseResult(tryResult, actualValue);
-    }
-
-    public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
-        => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
-
-    public static IEnumerable<T?> IfEmpty<T>(this IEnumerable<T?>? items, [DisallowNull] IEnumerable<T?> defaultValues)
-        => items?.Any() is true ? items : defaultValues;
-
-    public static IEnumerable<T> InsertImmuted<T>(this IEnumerable<T> source, int index, T item)
-    {
-        var items = source as T[] ?? source.ToArray();
-        for (var i = 0; i < items.Length; i++)
-        {
-            if (i == index)
-            {
-                yield return item;
-            }
-
-            yield return items[i];
-        }
-    }
-
-    public static string MergeToString<T>(this IEnumerable<T> source)
-        => source.Aggregate(new StringBuilder(), (current, item) => current.Append(item)).ToString();
-
-    public static IEnumerable<int> Range(int start, int end, int step = 1)
-    {
-        Check.NotValid(step, x => x != 0, () => new ArgumentOutOfRangeException(nameof(step)));
-        if (step > 0 && start > end)
-        {
-            throw new InvalidArgumentException(nameof(step));
-        }
-        if (step < 0 && start < end)
-        {
-            throw new InvalidArgumentException(nameof(step));
-        }
-
-        Func<int, bool> endCondition = step > 0 ? i => i <= end : i => i >= end;
-
-        for (var i = start; endCondition(i); i += step)
-        {
-            yield return i;
-        }
-        var a = 5..10;
-    }
-
-    public static IEnumerable<int> Range(int end, int step = 1)
-        => Range(0, end, step);
-
-    [Obsolete("Subject to delete", true)]
-    public static async IAsyncEnumerable<int> RangeAsync(int start, int count)
-    {
-        await Task.Yield();
-        for (var i = 0; i < count; i++)
-        {
-            yield return start + i;
-        }
-    }
-
-    public static T? Reduce<T>(this IEnumerable<T?> items, Func<(T? Result, T? Item), T?> reducer)
-    {
-        T? result = default;
-        foreach (var item in items)
-        {
-            result = reducer((result, item));
-        }
-        return result;
-    }
-
-    public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
-    {
-        Check.IfArgumentNotNull(list);
-        _ = list.Remove(list.GetItemByKey(key));
-        return list;
-    }
-
-    public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default)
-        => defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (!item?.Equals(defaultValue)) ?? false);
-
-    public static IEnumerable<T> RemoveImmuted<T>(this IEnumerable<T>? source, T item)
-    {
-        if (source is not null)
-        {
-            foreach (var i in source)
-            {
-                if (i?.Equals(item) is not true)
-                {
-                    yield return i;
-                }
-            }
-        }
-    }
-
-    public static IEnumerable<TSource> RemoveNulls<TSource>(this IEnumerable<TSource> source)
-        where TSource : class => RemoveDefaults(source);
-
-    public static void RunAllWhile(this IEnumerable<Action> actions, Func<bool> predicate)
-    {
-        foreach (var action in actions)
-        {
-            if (!predicate())
-            {
-                break;
-            }
-
-            action();
-        }
-    }
-
-    public static IEnumerable<T> SelectAll<T>(this IEnumerable<IEnumerable<T>> values)
-    {
-        foreach (var value in values)
-        {
-            foreach (var item in value)
-            {
-                yield return item;
-            }
-        }
-    }
-
-    public static async IAsyncEnumerable<TResult> SelectAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> selectorAsync)
-    {
-        foreach (var item in source)
-        {
-            yield return await selectorAsync(item);
-        }
-    }
-
-    public static IEnumerable<T> SelectManyAndCompact<T>(this IEnumerable<IEnumerable<T>> sources)
-    {
-        if (sources is not null)
-        {
-            foreach (var item in sources.Where(items => items is not null).SelectMany(items => items))
-            {
-                yield return item;
-            }
-        }
-    }
-
-    public static IList<KeyValuePair<TKey, TValue>> SetByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
-    {
-        Check.IfArgumentNotNull(list);
-        _ = list.RemoveByKey(key);
-        list.Add(new(key, value));
-        return list;
-    }
-
-    public static Dictionary<TKey, TValue> SetByKey<TKey, TValue>([DisallowNull] this Dictionary<TKey, TValue> dic, TKey key, TValue value)
-        where TKey : notnull
-    {
-        Check.IfArgumentNotNull(dic);
-
-        if (dic.ContainsKey(key))
-        {
-            dic[key] = value;
-        }
-        else
-        {
-            dic.Add(key, value);
-        }
-
-        return dic;
-    }
-
-    public static T[] ToArray<T>(T item)
-        => ToEnumerable(item).ToArray();
-
-    public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull
-        => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
-
-    public static IEnumerable<T> ToEnumerable<T>(T item)
-    {
-        yield return item;
-    }
-
-    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
-    {
-        if (source is null)
-        {
-            yield break;
-        }
-        foreach (var item in source)
-        {
-            yield return item;
-        }
-    }
-
-    public static IEnumerable<(TKey, TValue)> ToEnumerable<TKey, TValue>(this Dictionary<TKey, TValue> source)
-        where TKey : notnull
-    {
-        if (source is null)
-        {
-            yield break;
-        }
-        foreach (var item in source)
-        {
-            yield return (item.Key, item.Value);
-        }
-    }
-
-    public static async Task<IEnumerable<TItem>> ToEnumerableAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
-    {
-        Check.IfArgumentNotNull(asyncItems);
-        var result = New<List<TItem>>();
-        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
-        {
-            result.Add(item);
-        }
-        return result;
-    }
-
-    public static async Task<List<TItem>> ToListAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
-    {
-        Check.IfArgumentNotNull(asyncItems);
-        var result = New<List<TItem>>();
-        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
-        {
-            result.Add(item);
-        }
-        return result;
-    }
-
-    [return: NotNull]
-    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default)
-        => asyncItems is null
-            ? await ToListAsync(EmptyAsyncEnumerable<TItem>.Empty, cancellationToken: cancellationToken)
-            : await WhereAsync(asyncItems, x => x is not null, cancellationToken).ToListAsync(cancellationToken: cancellationToken);
-
-    public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
-        => new(source);
-
-    public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items)
-        => items is List<T> l ? l.AsReadOnly() : new List<T>(items).AsReadOnly();
-
-    public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items)
-        => ImmutableList.CreateRange(items).ToHashSet();
-
     /// <summary>
     /// Attempts to determine the number of elements in a sequence without forcing an
     /// enumeration.
@@ -741,6 +426,694 @@ public static class EnumerableHelper
     public static TryMethodResult<int> TryCountNonEnumerated<T>([DisallowNull] this IEnumerable<T> source)
         => TryMethodResult<int>.TryParseResult(source.TryGetNonEnumeratedCount(out var count), count);
 
+
+    /// <summary>
+    /// Returns an empty IEnumerable if the given IEnumerable is null, otherwise returns the given IEnumerable.
+    /// </summary>
+    [return: NotNull]
+    public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items)
+            => items is null ? Enumerable.Empty<T>() : items;
+
+    /// <summary>
+    /// Creates an empty array.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T[] EmptyArray<T>()
+        => Array.Empty<T>();
+
+    /// <summary>
+    /// Compares two IEnumerable objects for equality.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects in the IEnumerable.</typeparam>
+    /// <param name="enum1">The first IEnumerable to compare.</param>
+    /// <param name="enum2">The second IEnumerable to compare.</param>
+    /// <param name="ignoreIndexes">Whether to ignore the order of the elements when comparing.</param>
+    /// <returns>True if the two IEnumerables are equal, false otherwise.</returns>
+    public static bool Equal<T>(IEnumerable<T> enum1, IEnumerable<T> enum2, bool ignoreIndexes)
+            => ignoreIndexes
+                ? !enum1.ArgumentNotNull().Except(enum2).Any() && !enum2.ArgumentNotNull().Except(enum1).Any()
+                : enum1.SequenceEqual(enum2);
+
+    /// <summary>
+    /// Returns a collection of elements from the input sequence that do not satisfy the specified predicate.
+    /// </summary>
+    public static IEnumerable<T> Except<T>(this IEnumerable<T> items, Func<T, bool> exceptor)
+            => items.Where(x => !exceptor(x));
+
+    /// <summary>
+    /// Returns an IEnumerable of TItem from the source IEnumerable, excluding any items that match the given exclude Func.
+    /// </summary>
+    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
+            => source.Where(x => !exclude(x));
+
+    /// <summary>
+    /// Finds the duplicates in a given IEnumerable of type T.
+    /// </summary>
+    /// <returns>
+    /// An IEnumerable of type T containing the duplicates.
+    /// </returns>
+    public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> items)
+    {
+        //Create a new HashSet to store the items
+        var buffer = new HashSet<T>();
+        //Return the items from the IEnumerable collection that are not added to the HashSet
+        return items.Where(x => !buffer.Add(x));
+    }
+    /// <summary>
+    /// Applies a folder function to each item in the IEnumerable and returns the result.
+    /// </summary>
+    /// <param name="items">The IEnumerable to fold.</param>
+    /// <param name="folder">The folder function to apply.</param>
+    /// <param name="initialValue">The initial value to use.</param>
+    /// <returns>The result of the fold.</returns>
+    public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
+    {
+        Check.IfArgumentNotNull(items);
+        var buffer = items;
+
+        foreach (var item in buffer)
+        {
+            action?.Invoke(item);
+            yield return item;
+        }
+    }
+
+    /// <summary>
+    /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and applies an action to each item.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items in the <see cref="IAsyncEnumerableTItem"/>.</typeparam>
+    /// <param name="asyncItems">The <see cref="IAsyncEnumerableTItem"/> to iterate over.</param>
+    /// <param name="action">The action to apply to each item.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>An <see cref="IAsyncEnumerableTItem"/> containing the results of applying the action to each item.</returns>
+    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(asyncItems);
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            yield return action(item);
+        }
+    }
+
+    /// <summary>
+    /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and performs an action on each item.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items in the <see cref="IAsyncEnumerableTItem"/>.</typeparam>
+    /// <param name="asyncItems">The <see cref="IAsyncEnumerableTItem"/> to iterate over.</param>
+    /// <param name="action">The action to perform on each item.</param>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to observe.</param>
+    /// <returns>The <see cref="IAsyncEnumerableTItem"/>.</returns>
+    public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(asyncItems);
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            action(item);
+            yield return item;
+        }
+    }
+
+    /// <summary>
+    /// Executes an action for each item in the given enumerable and returns a read-only list of the items.
+    /// </summary>
+    /// <typeparam name="T">The type of the items in the enumerable.</typeparam>
+    /// <param name="items">The enumerable of items.</param>
+    /// <param name="action">The action to execute for each item.</param>
+    /// <returns>A read-only list of the items.</returns>
+    public static IReadOnlyList<T> ForEachEager<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
+    {
+        Check.IfArgumentNotNull(items);
+        foreach (var item in items)
+        {
+            action?.Invoke(item);
+        }
+        return items.Build();
+    }
+
+    /// <summary>
+    /// Executes an action for each item in the IEnumerable.
+    /// </summary>
+    /// <typeparam name="T">The type of the items in the IEnumerable.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="items">The IEnumerable to iterate over.</param>
+    /// <param name="action">The action to execute for each item.</param>
+    /// <returns>An IEnumerable containing the results of the action.</returns>
+    public static IEnumerable<TResult> ForEachItem<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
+    {
+        Check.IfArgumentNotNull(items);
+        Check.IfArgumentNotNull(action);
+
+        foreach (var item in items)
+        {
+            yield return action(item);
+        }
+    }
+
+    /// <summary>
+    /// Executes the specified action for each item in the specified collection in parallel.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the item.</typeparam>
+    /// <param name="items">The collection of items.</param>
+    /// <param name="action">The action to execute for each item.</param>
+    public static void ForEachParallel<TItem>(IEnumerable<TItem> items, Action<TItem> action)
+            => Parallel.ForEach(items, action);
+
+    /// <summary>
+    /// Recursively iterates through a tree of objects, performing an action on each node.
+    /// </summary>
+    /// <typeparam name="T">The type of the tree nodes.</typeparam>
+    /// <param name="root">The root node of the tree.</param>
+    /// <param name="getChildren">A function to get the children of a node.</param>
+    /// <param name="rootAction">An action to perform on the root node.</param>
+    /// <param name="childAction">An action to perform on each child node.</param>
+    public static void ForEachTreeNode<T>(T root, Func<T, IEnumerable<T>>? getChildren, Action<T>? rootAction, Action<T, T>? childAction)
+                    where T : class
+    {
+        if (root is null)
+        {
+            return;
+        }
+
+        rootAction?.Invoke(root);
+        _ = (getChildren?.Invoke(root)
+            .ForEach(c =>
+            {
+                childAction?.Invoke(c, root);
+                ForEachTreeNode(c, getChildren, rootAction, childAction);
+            }));
+    }
+
+    /// <summary>
+    /// Executes a set of functions in parallel and combines the results using a join function.
+    /// </summary>
+    public static TOutput Fork<TInput, TOutput>(this IEnumerable<Func<TInput, TOutput>> prongs, Func<IEnumerable<TOutput>, TOutput> joinFunc, TInput input)
+            => joinFunc(prongs.Select(x => x(input)));
+
+    /// <summary>
+    /// Gets all elements from a given root element and its children using a provided function.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements.</typeparam>
+    /// <param name="getRootElements">A function to get the root elements.</param>
+    /// <param name="getChildren">A function to get the children of an element.</param>
+    /// <returns>An enumerable of all elements.</returns>
+    public static IEnumerable<T> GetAll<T>([DisallowNull] Func<IEnumerable<T>> getRootElements, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
+    {
+        // Check that the parameters are not null
+        _ = getRootElements.ArgumentNotNull();
+        _ = getChildren.ArgumentNotNull();
+
+        // Create a list to store the result
+        var result = new List<T>();
+
+        // Iterate through the root elements
+        foreach (var item in getRootElements())
+        {
+            // Add the root element to the result list
+            result.Add(item);
+            // Call the findChildren method to find the children of the root element
+            findChildren(item);
+        }
+
+        // Return the result list as an enumerable
+        return result.AsEnumerable();
+
+        // Method to find the children of an element
+        void findChildren(in T item)
+        {
+            // Get the children of the element
+            var children = getChildren(item);
+            // Check if the element has any children
+            if (children?.Any() is true)
+            {
+                // Iterate through the children
+                foreach (var child in children)
+                {
+                    // Add the child to the result list
+                    result.Add(child);
+                    // Call the findChildren method to find the children of the child
+                    findChildren(child);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the value from the given source by the specified key.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the key.</typeparam>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="source">The source.</param>
+    /// <param name="key">The key.</param>
+    /// <returns>The value.</returns>
+    public static TValue GetByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
+            => source.ArgumentNotNull(nameof(source)).Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
+
+    /// <summary>
+    /// Gets the item from the source collection by the specified key.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the key.</typeparam>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="source">The source collection.</param>
+    /// <param name="key">The key to search for.</param>
+    /// <returns>The item with the specified key.</returns>
+    public static KeyValuePair<TKey, TValue> GetItemByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, in TKey key)
+    {
+        foreach (var item in source.ArgumentNotNull())
+        {
+            if (item.Key?.Equals(key) ?? false)
+            {
+                return item;
+            }
+        }
+        throw new KeyNotFoundException(nameof(key));
+    }
+
+    /// <summary>
+    /// Tries to get a value from a HashSet and returns a TryMethodResult with the result.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="resultSet">The HashSet to search.</param>
+    /// <param name="equalValue">The value to search for.</param>
+    /// <returns>A TryMethodResult with the result.</returns>
+    public static TryMethodResult<TResult?> GetValue<TResult>([DisallowNull] this HashSet<TResult> resultSet, TResult equalValue)
+            where TResult : new()
+    {
+        var tryResult = resultSet.TryGetValue(equalValue, out var actualValue);
+        return TryMethodResult<TResult?>.TryParseResult(tryResult, actualValue);
+    }
+
+    /// <summary>
+    /// Groups the items in the given IEnumerable and returns a collection of tuples containing the item and its count.
+    /// </summary>
+    public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
+            => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
+
+    /// <summary>
+    /// Returns the given items if it is not empty, otherwise returns the default values.
+    /// </summary>
+    public static IEnumerable<T?> IfEmpty<T>(this IEnumerable<T?>? items, [DisallowNull] IEnumerable<T?> defaultValues)
+            => items?.Any() is true ? items : defaultValues;
+
+    /// <summary>
+    /// Inserts an item into an IEnumerable at a specified index.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of source.</typeparam>
+    /// <param name="source">The IEnumerable to insert into.</param>
+    /// <param name="index">The index at which to insert the item.</param>
+    /// <param name="item">The item to insert.</param>
+    /// <returns>An IEnumerable containing the inserted item.</returns>
+    public static IEnumerable<T> InsertImmuted<T>(this IEnumerable<T> source, int index, T item)
+    {
+        var items = source as T[] ?? source.ToArray();
+        for (var i = 0; i < items.Length; i++)
+        {
+            if (i == index)
+            {
+                yield return item;
+            }
+
+            yield return items[i];
+        }
+    }
+
+    /// <summary>
+    /// Merges the elements of an IEnumerable into a single string.
+    /// </summary>
+    public static string MergeToString<T>(this IEnumerable<T> source)
+            => source.Aggregate(new StringBuilder(), (current, item) => current.Append(item)).ToString();
+
+    /// <summary>
+    /// Generates a sequence of integers within a specified range.
+    /// </summary>
+    /// <param name="start">The start of the range.</param>
+    /// <param name="end">The end of the range.</param>
+    /// <param name="step">The step between each value in the range.</param>
+    /// <returns>A sequence of integers within the specified range.</returns>
+    public static IEnumerable<int> Range(int start, int end, int step = 1)
+    {
+        // Check if step is not equal to 0
+        Check.NotValid(step, x => x != 0, () => new ArgumentOutOfRangeException(nameof(step)));
+        // Throw exception if step is positive and start is greater than end
+        if (step > 0 && start > end)
+        {
+            throw new InvalidArgumentException(nameof(step));
+        }
+        // Throw exception if step is negative and start is less than end
+        if (step < 0 && start < end)
+        {
+            throw new InvalidArgumentException(nameof(step));
+        }
+
+        // Create a function to check if the end condition is met
+        Func<int, bool> endCondition = step > 0 ? i => i <= end : i => i >= end;
+
+        // Loop through the range and yield the values
+        for (var i = start; endCondition(i); i += step)
+        {
+            yield return i;
+        }
+        // Create a range from 5 to 10
+        var a = 5..10;
+    }
+
+    /// <summary>
+    /// Generates a sequence of integers from 0 to the specified end value, with a specified step.
+    /// </summary>
+    public static IEnumerable<int> Range(int end, int step = 1)
+            => Range(0, end, step);
+
+    [Obsolete("Subject to delete", true)]
+    public static async IAsyncEnumerable<int> RangeAsync(int start, int count)
+    {
+        await Task.Yield();
+        for (var i = 0; i < count; i++)
+        {
+            yield return start + i;
+        }
+    }
+
+    /// <summary>
+    /// Reduces a sequence of nullable values using the specified reducer function.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of source.</typeparam>
+    /// <param name="items">The sequence of nullable values to reduce.</param>
+    /// <param name="reducer">A function to reduce the sequence of nullable values.</param>
+    /// <returns>The reduced value.</returns>
+    public static T? Reduce<T>(this IEnumerable<T?> items, Func<(T? Result, T? Item), T?> reducer)
+    {
+        T? result = default;
+        foreach (var item in items)
+        {
+            result = reducer((result, item));
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Removes an item from the list by its key.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the key.</typeparam>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="list">The list.</param>
+    /// <param name="key">The key.</param>
+    /// <returns>The list with the item removed.</returns>
+    public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
+    {
+        Check.IfArgumentNotNull(list);
+        _ = list.Remove(list.GetItemByKey(key));
+        return list;
+    }
+
+    /// <summary>
+    /// Returns an IEnumerable of TSource that contains all elements of the source sequence that are not equal to the default value.
+    /// </summary>
+    public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default)
+            => defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (!item?.Equals(defaultValue)) ?? false);
+
+    /// <summary>
+    /// Removes the specified item from the source IEnumerable.
+    /// </summary>
+    /// <param name="source">The source IEnumerable.</param>
+    /// <param name="item">The item to remove.</param>
+    /// <returns>An IEnumerable without the specified item.</returns>
+    public static IEnumerable<T> RemoveImmuted<T>(this IEnumerable<T>? source, T item)
+    {
+        if (source is not null)
+        {
+            foreach (var i in source)
+            {
+                if (i?.Equals(item) is not true)
+                {
+                    yield return i;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Removes all null values from the given IEnumerable of type TSource.
+    /// </summary>
+    public static IEnumerable<TSource> RemoveNulls<TSource>(this IEnumerable<TSource> source)
+            where TSource : class => RemoveDefaults(source);
+
+    /// <summary>
+    /// Runs all actions in the given enumerable while the predicate returns true.
+    /// </summary>
+    /// <param name="actions">The actions to run.</param>
+    /// <param name="predicate">The predicate to check.</param>
+    /// <returns>The result of the actions.</returns>
+    public static void RunAllWhile(this IEnumerable<Action> actions, Func<bool> predicate)
+    {
+        foreach (var action in actions)
+        {
+            if (!predicate())
+            {
+                break;
+            }
+
+            action();
+        }
+    }
+
+    /// <summary>
+    /// Selects all elements from a sequence of sequences.
+    /// </summary>
+    /// <param name="values">The sequence of sequences.</param>
+    /// <returns>A sequence containing all elements of the input sequences.</returns>
+    public static IEnumerable<T> SelectAll<T>(this IEnumerable<IEnumerable<T>> values)
+    {
+        foreach (var value in values)
+        {
+            foreach (var item in value)
+            {
+                yield return item;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Asynchronously projects each element of a sequence into a new form.
+    /// </summary>
+    /// <typeparam name="TSource">The type of the elements of source.</typeparam>
+    /// <typeparam name="TResult">The type of the value returned by selectorAsync.</typeparam>
+    /// <param name="source">An IEnumerable<T> to project each element of.</param>
+    /// <param name="selectorAsync">A transform function to apply to each element.</param>
+    /// <returns>An IAsyncEnumerable<T> whose elements are the result of invoking the transform function on each element of source.</returns>
+    public static async IAsyncEnumerable<TResult> SelectAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> selectorAsync)
+    {
+        foreach (var item in source)
+        {
+            yield return await selectorAsync(item);
+        }
+    }
+
+    /// <summary>
+    /// Selects all items from a collection of collections and returns them as a single collection.
+    /// </summary>
+    /// <param name="sources">The collection of collections to select from.</param>
+    /// <returns>A single collection containing all items from the source collections.</returns>
+    public static IEnumerable<T> SelectManyAndCompact<T>(this IEnumerable<IEnumerable<T>> sources)
+    {
+        if (sources is not null)
+        {
+            foreach (var item in sources.Where(items => items is not null).SelectMany(items => items))
+            {
+                yield return item;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Sets the value of the specified key in the list.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the key.</typeparam>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="list">The list.</param>
+    /// <param name="key">The key.</param>
+    /// <param name="value">The value.</param>
+    /// <returns>The list with the specified key and value.</returns>
+    public static IList<KeyValuePair<TKey, TValue>> SetByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
+    {
+        Check.IfArgumentNotNull(list);
+        _ = list.RemoveByKey(key);
+        list.Add(new(key, value));
+        return list;
+    }
+
+    /// <summary>
+    /// Adds a key-value pair to a dictionary, or updates the value of an existing key-value pair.
+    /// </summary>
+    /// <param name="dic">The dictionary to add or update the key-value pair.</param>
+    /// <param name="key">The key of the key-value pair.</param>
+    /// <param name="value">The value of the key-value pair.</param>
+    /// <returns>The dictionary with the added or updated key-value pair.</returns>
+    public static Dictionary<TKey, TValue> SetByKey<TKey, TValue>([DisallowNull] this Dictionary<TKey, TValue> dic, TKey key, TValue value)
+                where TKey : notnull
+        //This method adds a key-value pair to a dictionary, or updates the value of an existing key-value pair.
+        //It takes a dictionary, a key, and a value as parameters.
+        //It checks if the dictionary is not null, and if the key already exists in the dictionary, it updates the value, otherwise it adds the key-value pair.
+        //It returns the dictionary.
+    {
+        Check.IfArgumentNotNull(dic);
+
+        //Check if the key already exists in the dictionary
+        if (dic.ContainsKey(key))
+        {
+            //If it does, update the value
+            dic[key] = value;
+        }
+        else
+        {
+            //Otherwise, add the key-value pair
+            dic.Add(key, value);
+        }
+
+        //Return the dictionary
+        return dic;
+    }
+
+    /// <summary>
+    /// Creates an array from a single item.
+    /// </summary>
+    /// <typeparam name="T">The type of the item.</typeparam>
+    /// <param name="item">The item to create an array from.</param>
+    /// <returns>An array containing the item.</returns>
+    public static T[] ToArray<T>(T item)
+            => ToEnumerable(item).ToArray();
+
+    public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull
+        => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
+
+    /// <summary>
+    /// Converts a single item into an IEnumerable of that item.
+    /// </summary>
+    /// <param name="item">The item to convert.</param>
+    /// <returns>An IEnumerable containing the item.</returns>
+    public static IEnumerable<T> ToEnumerable<T>(T item)
+    //This code creates an IEnumerable of type T and returns the item passed in as an argument. 
+    {
+        //The yield keyword is used to return the item passed in as an argument.
+        yield return item;
+    }
+
+    /// <summary>
+    /// Creates an IEnumerable from a given IEnumerable.
+    /// </summary>
+    /// <param name="source">The source IEnumerable.</param>
+    /// <returns>An IEnumerable.</returns>
+    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> source)
+    {
+        //Check if the source is null
+        if (source is null)
+        {
+            //If it is, return an empty IEnumerable
+            yield break;
+        }
+        //Loop through each item in the source
+        foreach (var item in source)
+        {
+            //Return each item in the source
+            yield return item;
+        }
+    }
+
+    /// <summary>
+    /// Converts a Dictionary to an IEnumerable of (TKey, TValue) tuples.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the keys in the Dictionary.</typeparam>
+    /// <typeparam name="TValue">The type of the values in the Dictionary.</typeparam>
+    /// <param name="source">The Dictionary to convert.</param>
+    /// <returns>An IEnumerable of (TKey, TValue) tuples.</returns>
+    public static IEnumerable<(TKey, TValue)> ToEnumerable<TKey, TValue>(this Dictionary<TKey, TValue> source)
+            where TKey : notnull
+    {
+        if (source is null)
+        {
+            yield break;
+        }
+        foreach (var item in source)
+        {
+            yield return (item.Key, item.Value);
+        }
+    }
+
+    /// <summary>
+    /// Converts an IAsyncEnumerable to an IEnumerable.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items in the IAsyncEnumerable.</typeparam>
+    /// <param name="asyncItems">The IAsyncEnumerable to convert.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>An IEnumerable containing the items from the IAsyncEnumerable.</returns>
+    public static async Task<IEnumerable<TItem>> ToEnumerableAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(asyncItems);
+        var result = New<List<TItem>>();
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            result.Add(item);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Converts an IAsyncEnumerable to a List.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items in the IAsyncEnumerable.</typeparam>
+    /// <param name="asyncItems">The IAsyncEnumerable to convert.</param>
+    /// <param name="cancellationToken">The CancellationToken to use for cancellation.</param>
+    /// <returns>A List containing the items from the IAsyncEnumerable.</returns>
+    public static async Task<List<TItem>> ToListAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
+    {
+        Check.IfArgumentNotNull(asyncItems);
+        var result = New<List<TItem>>();
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            result.Add(item);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Returns a list of non-null items from the given async enumerable.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items in the enumerable.</typeparam>
+    /// <param name="asyncItems">The async enumerable.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>A list of non-null items from the given async enumerable.</returns>
+    [return: NotNull]
+    public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default)
+            => asyncItems is null
+                ? await ToListAsync(EmptyAsyncEnumerable<TItem>.Empty, cancellationToken: cancellationToken)
+                : await WhereAsync(asyncItems, x => x is not null, cancellationToken).ToListAsync(cancellationToken: cancellationToken);
+
+    /// <summary>
+    /// Converts an IEnumerable of type T to an ObservableCollection of type T.
+    /// </summary>
+    public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
+            => new(source);
+
+    /// <summary>
+    /// Converts an IEnumerable to an IReadOnlyList.
+    /// </summary>
+    public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items)
+            => items is List<T> l ? l.AsReadOnly() : new List<T>(items).AsReadOnly();
+
+    /// <summary>
+    /// Converts an IEnumerable of type T to an IReadOnlySet of type T.
+    /// </summary>
+    public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items)
+            => ImmutableList.CreateRange(items).ToHashSet();
+
+
+    /// <summary>
+    /// Asynchronously filters a sequence of values based on a predicate.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the elements of the input sequence.</typeparam>
+    /// <param name="asyncItems">The sequence to filter.</param>
+    /// <param name="func">A function to test each element for a condition.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
+    /// <returns>An <see cref="IAsyncEnumerableTItem"/> that contains elements from the input sequence that satisfy the condition.</returns>
     public static async IAsyncEnumerable<TItem> WhereAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, bool>? func, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
@@ -752,21 +1125,33 @@ public static class EnumerableHelper
         }
     }
 
+    /// <summary>
+    /// Enumerates the elements of an IEnumerable with the option to cancel the operation.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements of the IEnumerable.</typeparam>
+    /// <param name="query">The IEnumerable to enumerate.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>An IEnumerable containing the elements of the source sequence.</returns>
     public static IEnumerable<T> WithCancellation<T>(this IEnumerable<T> query, CancellationToken cancellationToken = default)
     {
+        //Check if the query is null
         if (query is null)
         {
+            //If it is, return an empty sequence
             yield break;
         }
-        var enumerator = query.GetEnumerator();
+        //Get the enumerator for the query
+        using var enumerator = query.GetEnumerator();
+        //Loop through the query until the cancellation token is requested or the enumerator has no more elements
         while (!cancellationToken.IsCancellationRequested && enumerator.MoveNext())
         {
+            //Return the current element
             yield return enumerator.Current;
         }
     }
 
     private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
-            => items switch
+        => items switch
             {
                 [] => defaultValue,
                 [var item] => item,

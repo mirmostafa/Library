@@ -1,1 +1,3 @@
-﻿BenchmarkRunner.Run<StringSeparateByAiBenchmark>();
+﻿using TestConApp.MyBenchmarks;
+
+BenchmarkRunner.Run<ContainsBenchmark>();
