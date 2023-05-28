@@ -177,6 +177,15 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
         return this.InnerAddRule(validator, error);
     }
 
+    /// <summary>
+    /// Adds a rule to the validation result set.
+    /// </summary>
+    /// <typeparam name="TType">The type of the property.</typeparam>
+    /// <param name="propertyExpression">The property expression.</param>
+    /// <param name="isValid">The validation function.</param>
+    /// <param name="onError">The error function.</param>
+    /// <param name="onErrorAlternative">The alternative error function.</param>
+    /// <returns>The validation result set.</returns>
     [DebuggerStepThrough]
     [StackTraceHidden]
     private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception>? onError, Func<Exception> onErrorAlternative)
@@ -192,6 +201,12 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     private string GetPropertyName<TType>(Expression<Func<TValue, TType>> propertyExpression)
         => ObjectHelper.GetPropertyInfo(this.Value, propertyExpression).Name;
 
+    /// <summary>
+    /// Adds a rule to the validation set.
+    /// </summary>
+    /// <param name="validator">The validator function.</param>
+    /// <param name="error">The error function.</param>
+    /// <returns>The validation result set.</returns>
     [DebuggerStepThrough]
     [StackTraceHidden]
     private ValidationResultSet<TValue> InnerAddRule(Func<TValue, bool> validator, Func<Exception> error)
@@ -214,6 +229,9 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     #endregion Private methods
 }
 
+/// <summary>
+/// Enum to define the behavior when checking a condition.
+/// </summary>
 public enum CheckBehavior
 {
     GatherAll,

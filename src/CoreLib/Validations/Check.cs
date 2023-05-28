@@ -30,6 +30,11 @@ public sealed class Check
     /// </remarks>
     public static Check That => _that ??= new();
 
+    /// <summary>
+    /// Throws an exception if the specified boolean is false.
+    /// </summary>
+    /// <param name="ok">The boolean to check.</param>
+    /// <param name="getExceptionIfNot">A function to get the exception to throw if the boolean is false.</param>
     public static void If([DoesNotReturnIf(false)] bool ok, in Func<Exception> getExceptionIfNot)
     {
         if (!ok)
@@ -37,16 +42,34 @@ public sealed class Check
             Throw(getExceptionIfNot);
         }
     }
-
+    /// <summary>
+    /// Checks if the given boolean is true, and throws a new instance of the specified exception if it is false. 
+    /// </summary>
+    /// <typeparam name="TValidationException">The type of exception to throw if the boolean is false.</typeparam>
+    /// <param name="ok">The boolean to check.</param>
     public static void If<TValidationException>([DoesNotReturnIf(false)] bool ok) where TValidationException : Exception, new()
         => If(ok, () => new TValidationException());
 
+    /// <summary>
+    /// This method throws a ValidationException if the required parameter is false. 
+    /// </summary>
     public static void If([DoesNotReturnIf(false)] bool required)
         => If<ValidationException>(required);
 
+    /// <summary>
+    /// Checks if the given boolean is true and throws a ValidationException if it is false.
+    /// </summary>
+    /// <param name="required">The boolean to check.</param>
+    /// <param name="getMessage">A function to get the message for the ValidationException.</param>
     public static void If([DoesNotReturnIf(false)] bool required, Func<string> getMessage)
         => If(required, () => new ValidationException(getMessage()));
 
+    /// <summary>
+    /// Throws an ArgumentException if the given argument is less than the given minimum.
+    /// </summary>
+    /// <param name="arg">The argument to check.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <param name="argName">The name of the argument.</param>
     [return: NotNull]
     public static void IfArgumentBiggerThan(in int arg, in int min, [CallerArgumentExpression(nameof(arg))] in string? argName = null)
     {
@@ -56,10 +79,20 @@ public sealed class Check
         }
     }
 
+    /// <summary>
+    /// Checks if the given argument is not null and throws an ArgumentNullException if it is.
+    /// </summary>
+    /// <param name="obj">The object to check.</param>
+    /// <param name="argName">The name of the argument.</param>
     [return: NotNull]
     public static void IfArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => IfArgumentNotNull(obj is not null, argName!);
 
+    /// <summary>
+    /// Checks if the given argument is not null and throws an ArgumentNullException if it is.
+    /// </summary>
+    /// <param name="obj">The object to check.</param>
+    /// <param name="argName">The name of the argument.</param>
     [return: NotNull]
     public static void IfArgumentNotNull([NotNull][AllowNull] in string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => IfArgumentNotNull(!obj.IsNullOrEmpty(), argName!);
@@ -67,6 +100,9 @@ public sealed class Check
     public static void IfArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName)
         => If(isNotNull, () => new ArgumentNullException(argName));
 
+    /// <summary>
+    /// Checks if the given IEnumerable object has any items and throws an exception if it does not.
+    /// </summary>
     [return: NotNull]
     public static void IfHasAny([NotNull][AllowNull] IEnumerable? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => NotValid(obj, _ => !obj?.Any() ?? false, () => new NoItemValidationException(argName!));
@@ -79,9 +115,6 @@ public sealed class Check
             Throw(getException);
         }
     }
-
-    //public static void IfHasAny<TEnumerable>([NotNull][AllowNull] IEnumerable? obj, [DisallowNull] Func<Exception> getException)
-    //    => _ = obj.HasAny(getException);
 
     public static void IfIs<T>([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => NotValid(obj, x => x is T, () => new TypeMismatchValidationException(argName!));
@@ -142,7 +175,7 @@ public sealed class Check
         => !ok ? Result.CreateFailure(error: getExceptionIfNot()) : Result.CreateSuccess();
 
     public static Result<TValue?> MustBeArgumentNotNull<TValue>([AllowNull] TValue? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-                => Result<TValue?>.From(MustBeArgumentNotNull(obj is not null, argName!), obj);
+        => Result<TValue?>.From(MustBeArgumentNotNull(obj is not null, argName!), obj);
 
     public static Result MustBeArgumentNotNull(in bool isNotNull, [DisallowNull] string argName)
         => MustBe(isNotNull, () => new ArgumentNullException(argName));
@@ -162,6 +195,9 @@ public sealed class Check
     public static Result<T> MustBeNotNull<T>(in T instance, string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => MustBe(instance, () => !obj.IsNullOrEmpty(), () => new NullValueValidationException(argName!));
 
+    /// <summary>
+    /// Checks if the given object is not null and throws an ArgumentNullException if it is.
+    /// </summary>
     public static void NotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => NotNull(obj is not null, argName!);
 
@@ -175,15 +211,17 @@ public sealed class Check
         => If(isNotNull, () => new NullValueValidationException(argName));
 
     /// <summary>
-    /// Makes sure the specified argument is not null.
+    /// Checks if the given object is not null and throws an exception if it is.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="obj">    </param>
-    /// <param name="argName"></param>
-    /// <exception cref="ArgumentNullException"/>
     public static void NotNull([NotNull][AllowNull] object? obj, [DisallowNull] Func<Exception> getException)
         => NotValid(obj, x => x is not null, getException);
 
+    /// <summary>
+    /// Throws an exception if the given object does not pass the validation.
+    /// </summary>
+    /// <param name="obj">The object to validate.</param>
+    /// <param name="validate">The validation function.</param>
+    /// <param name="getException">The function to get the exception to throw.</param>
     public static void NotValid<T>([AllowNull] T? obj, [DisallowNull] in Func<T?, bool> validate, in Func<Exception> getException)
     {
         if (!validate(obj))

@@ -63,6 +63,7 @@ public static class CheckHelpers
         => obj.NotValid(x => x is null, () => new NullValueValidationException(getMessage(), null))!;
 
     [return: NotNull]
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public static async Task<TResult> NotNullAsync<TResult>([NotNull] this Task<TResult> task, Func<Exception> getException)
     {
         var result = await task;
@@ -70,6 +71,7 @@ public static class CheckHelpers
     }
 
     [return: NotNull]
+    [Obsolete("Use `ValidationResultSet<TValue>` instead.", true)]
     public static async Task<TResult> NotNullAsync<TResult>([NotNull] this Func<Task<TResult>> asyncFunc, Func<Exception> getException)
     {
         var result = await asyncFunc();

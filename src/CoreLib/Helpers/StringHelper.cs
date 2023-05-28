@@ -160,17 +160,21 @@ public static class StringHelper
     /// <returns>True if the string is present in the array, false otherwise.</returns>
     public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase)
     {
-        foreach (string s in array)
+        foreach (var s in array)
         {
             if (ignoreCase)
             {
                 if (string.Equals(s, str, StringComparison.OrdinalIgnoreCase))
+                {
                     return true;
+                }
             }
             else
             {
                 if (s == str)
+                {
                     return true;
+                }
             }
         }
         return false;
@@ -184,7 +188,7 @@ public static class StringHelper
     /// <returns>True if the string contains any of the strings in the array, false otherwise.</returns>
     public static bool ContainsAny(this string str, in IEnumerable<string> array)
     {
-        foreach (string item in array)
+        foreach (var item in array)
         {
             if (str.Contains(item))
             {
@@ -213,7 +217,7 @@ public static class StringHelper
     /// <returns>The converted string.</returns>
     public static string ConvertToGoogleStandardEncoding(string inputString)
     {
-        byte[] bytes = Encoding.UTF8.GetBytes(inputString);
+        var bytes = Encoding.UTF8.GetBytes(inputString);
         return Encoding.UTF8.GetString(bytes);
     }
 
@@ -754,9 +758,9 @@ public static class StringHelper
             return false;
         }
 
-        int check = Convert.ToInt32(input[9]);
-        int sum = 0;
-        for (int i = 0; i < 9; i++)
+        var check = Convert.ToInt32(input[9]);
+        var sum = 0;
+        for (var i = 0; i < 9; i++)
         {
             sum += Convert.ToInt32(input[i]) * (10 - i);
         }
@@ -801,7 +805,7 @@ public static class StringHelper
     public static string Merge(string quatStart, string quatEnd, string separator, params object[] array)
     {
         var result = array.Aggregate(string.Empty, (current, str) => current + quatStart + str + quatEnd + separator + " ").TrimEnd();
-        return result.Substring(0, result.Length - 1);
+        return result[..^1];
     }
 
     /// <summary>
@@ -870,10 +874,8 @@ public static class StringHelper
     }
 
     /// <summary>
-    /// Pluralizes the specified text.
+    /// Returns the plural form of the given string, or null if the string is null or empty.
     /// </summary>
-    /// <param name="text">The text.</param>
-    /// <returns></returns>
     public static string? Pluralize(string? text)
         => text.IsNullOrEmpty() ? null : Pluralizer.Pluralize(text);
 
@@ -884,15 +886,8 @@ public static class StringHelper
     /// <param name="value">The value to remove.</param>
     /// <returns>The string with the value removed, or null if the string is null.</returns>
     [return: NotNullIfNotNull(nameof(str))]
-    public static string? Remove(this string? str, in string? value)
-    {
-        if (str is null)
-            return null;
-        else if (value is null)
-            return str;
-        else
-            return str.Replace(value, "");
-    }
+    public static string? Remove(this string? str, in string? value) 
+        => value is null ? str : str?.Replace(value, "");
 
     /// <summary>
     /// Removes the specified number of characters from the end of the string.
@@ -1353,7 +1348,7 @@ public static class StringHelper
     /// Truncates a string to the specified length.
     /// </summary>
     public static string? Truncate(this string? value, int length)
-            => length > value?.Length ? value : value?.Substring(0, length);
+            => length > value?.Length ? value : value?[..length];
 
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.
