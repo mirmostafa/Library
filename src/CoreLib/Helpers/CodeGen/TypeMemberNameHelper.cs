@@ -8,15 +8,30 @@ public static class TypeMemberNameHelper
 {
     public static string FixVariableName(in string? memberName, bool checkNullability = true)
     {
+        //Check if the memberName is null
         if (memberName is null)
         {
+            //If checkNullability is true, throw a ValidationException
+            //Otherwise, return an empty string
             return checkNullability ? throw new ValidationException("Cannot be empty") : string.Empty;
         }
+
+        //Trim the memberName and replace spaces with underscores
         var result = memberName.Trim().Replace(" ", "_");
-        var illegarChars = new[] { "$", "!", "#", "@", "%", "^", "&", "*", "(", ")", "-", "+", "/", "\\", " " };
-        return result.ReplaceAll(illegarChars, "_");
+
+        //Create an array of illegal characters
+        var illegalChars = new[] { "$", "!", "#", "@", "%", "^", "&", "*", "(", ")", "-", "+", "/", "\\", " " };
+
+        //Replace all illegal characters with underscores
+        return result.ReplaceAll(illegalChars, "_");
     }
 
+    /// <summary>
+    /// Combines the given nameSpace and name with a dot.
+    /// </summary>
+    /// <param name="nameSpace">The namespace.</param>
+    /// <param name="name">The name.</param>
+    /// <returns>The combined name.</returns>
     public static string GetFullName(string? nameSpace, string? name)
         => CombineWithDot(nameSpace, name);
 

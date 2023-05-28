@@ -29,12 +29,13 @@ public abstract record ResultBase(in bool? Succeed = null,
 
     public override string ToString()
     {
-        var result = (this.IsSucceed ? new StringBuilder($"IsSucceed: {this.IsSucceed}") : new StringBuilder()).AppendLine();
+        var result = new StringBuilder();
+        _ = result.AppendLine($"IsSucceed: {this.IsSucceed}");
         if (!this.Message.IsNullOrEmpty())
         {
             _ = result.AppendLine(this.Message);
         }
-        if (this.Message.IsNullOrEmpty() && this.Errors?.Count() == 1)
+        else if (this.Errors?.Count() == 1)
         {
             _ = result.AppendLine(this.Errors!.First().Error?.ToString() ?? "An error occurred.");
         }
@@ -90,6 +91,14 @@ public record Result(in bool? Succeed = null,
 
     public static Result Success => _success ??= CreateSuccess();
 
+    /// <summary>
+    /// Creates a new Result object with a failure status.
+    /// </summary>
+    /// <param name="status">Optional status object.</param>
+    /// <param name="message">Optional message string.</param>
+    /// <param name="errors">Optional enumerable of (Id, Error) tuples.</param>
+    /// <param name="extraData">Optional extra data dictionary.</param>
+    /// <returns>A new Result object with a failure status.</returns>
     public static Result CreateFailure(in object? status = null, in string? message = null, in IEnumerable<(object Id, object Error)>? errors = null, in ImmutableDictionary<string, object>? extraData = null)
         => new(false, status, message, Errors: errors, extraData);
     public static Result CreateFailure(in string? message, in IEnumerable<(object Id, object Error)>? errors)
@@ -138,6 +147,9 @@ public record Result<TValue>(in TValue Value,
     private static Result<TValue?>? _failure;
     public static Result<TValue?> Failure => _failure ??= CreateFailure();
 
+    /// <summary>
+    /// Creates a new Result object with the given value, succeed, status, message, errors, and extraData.
+    /// </summary>
     public static Result<TValue> New(in TValue value,
         in bool? succeed = null,
         in object? status = null,
@@ -146,6 +158,15 @@ public record Result<TValue>(in TValue Value,
         in ImmutableDictionary<string, object>? extraData = null)
         => new(value, succeed, status, message, errors, extraData);
 
+    /// <summary>
+    /// Creates a new Result with the given parameters and a success value of false.
+    /// </summary>
+    /// <param name="value">The value of the Result.</param>
+    /// <param name="status">The status of the Result.</param>
+    /// <param name="message">The message of the Result.</param>
+    /// <param name="errors">The errors of the Result.</param>
+    /// <param name="extraData">The extra data of the Result.</param>
+    /// <returns>A new Result with the given parameters and a success value of false.</returns>
     public static Result<TValue?> CreateFailure(in TValue? value = default,
         in object? status = null,
         in string? message = null,
@@ -159,6 +180,15 @@ public record Result<TValue>(in TValue Value,
         in (object Id, object Error) error)
         => new(value, false, status, message, EnumerableHelper.ToEnumerable(error), null);
 
+    /// <summary>
+    /// Creates a new successful Result with the given value, status, message, errors and extra data.
+    /// </summary>
+    /// <param name="value">The value of the Result.</param>
+    /// <param name="status">The status of the Result.</param>
+    /// <param name="message">The message of the Result.</param>
+    /// <param name="errors">The errors of the Result.</param>
+    /// <param name="extraData">The extra data of the Result.</param>
+    /// <returns>A new successful Result.</returns>
     public static Result<TValue> CreateSuccess(in TValue value,
         in object? status = null,
         in string? message = null,
@@ -195,15 +225,31 @@ public record Result<TValue>(in TValue Value,
     public static Result<TValue?> CreateFailure(in string message, in Exception ex, in TValue? value)
         => CreateFailure(value, ex, message);
 
+    /// <summary>
+    /// Creates a Result with a failure status and an Exception.
+    /// </summary>
+    /// <param name="error">The Exception to be stored in the Result.</param>
+    /// <param name="value">The value to be stored in the Result.</param>
+    /// <returns>A Result with a failure status and an Exception.</returns>
     public static Result<TValue?> CreateFailure(in Exception error, in TValue? value = default)
         => CreateFailure(value, error, null);
 
     public static Result<TValue?> CreateFailure(in string message, in TValue value)
         => CreateFailure(value, null, message);
 
+    /// <summary>
+    /// Creates a new instance of the <see cref="Result{TValue}"/> class with the specified value.
+    /// </summary>
+    /// <param name="value">The value to set.</param>
+    /// <returns>A new instance of the <see cref="Result{TValue}"/> class with the specified value.</returns>
     public Result<TValue> WithValue(in TValue value)
         => this with { Value = value };
 
+    /// <summary>
+    /// Creates a new instance of the Result class with the specified errors.
+    /// </summary>
+    /// <param name="errors">The errors to add to the Result.</param>
+    /// <returns>A new instance of the Result class with the specified errors.</returns>
     public Result<TValue> WithError(params (object Id, object Error)[] errors)
         => this with { Errors = errors };
 

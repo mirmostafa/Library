@@ -97,6 +97,9 @@ public sealed class Check
     public static void IfArgumentNotNull([NotNull][AllowNull] in string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => IfArgumentNotNull(!obj.IsNullOrEmpty(), argName!);
 
+    /// <summary>
+    /// Checks if the argument is not null and throws an ArgumentNullException if it is.
+    /// </summary>
     public static void IfArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName)
         => If(isNotNull, () => new ArgumentNullException(argName));
 
@@ -116,6 +119,9 @@ public sealed class Check
         }
     }
 
+    /// <summary>
+    /// Checks if the specified object is of the generic type T and throws a TypeMismatchValidationException if not.
+    /// </summary>
     public static void IfIs<T>([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => NotValid(obj, x => x is T, () => new TypeMismatchValidationException(argName!));
 
