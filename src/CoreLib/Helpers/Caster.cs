@@ -28,20 +28,20 @@ public static class Caster
     /// <param name="obj">The object to cast.</param>
     /// <returns>A new Castable object.</returns>
     public static ICastable Cast(this object? obj)
-            => new Castable(obj);
+        => new Castable(obj);
 
 
     /// <summary>
     /// Returns the result of a type match between the given object and the generic type T, or the default value of T if the match fails.
     /// </summary>
     public static T? Match<T>(object obj)
-            => obj is T result ? result : default;
+        => obj is T result ? result : default;
 
     /// <summary>
     /// Returns a collection of objects of the specified type from the given collection.
     /// </summary>
     public static IEnumerable<T> OfType<T>(IEnumerable items)
-           => items.OfType<T>();
+        => items.OfType<T>();
 
     /// <summary>
     /// Casts the given object to the specified type.
@@ -51,31 +51,43 @@ public static class Caster
     /// <returns>The casted object.</returns>
     [return: NotNull]
     public static T To<T>([DisallowNull] this ICastable o)
-            => (T)o.Value!;
+        => (T)o.Value!;
+
+
 
     /// <summary>
-    /// Converts the given object to an integer, using the given default value if the conversion fails.
+    /// Converts the specified object to an integer.
     /// </summary>
     /// <param name="o">The object to convert.</param>
     /// <param name="defaultValue">The default value to use if the conversion fails.</param>
-    /// <returns>The converted integer, or the default value if the conversion fails.</returns>
-    public static int ToInt([DisallowNull] this ICastable o, int defaultValue)
+    /// <param name="formatProvider">The format provider to use for the conversion.</param>
+    /// <returns>The converted integer.</returns>
+    public static int ToInt([DisallowNull] this ICastable o, int defaultValue = default, IFormatProvider? formatProvider = null)
     {
-        if (!int.TryParse(Convert.ToString(o.Value), out var result))
+        //Check if the value of o is an integer
+        if (o.Value is int intValue)
         {
+            //If it is, return the integer value
+            return intValue;
+        }
+
+        //Check if the value of o is IConvertible
+        if (o.Value is IConvertible convertible)
+        {
+            //If it is, convert it to an integer using the format provider
+            return convertible.ToInt32(formatProvider);
+        }
+
+        //Try to parse the value of o as an integer
+        if (!int.TryParse(Convert.ToString(o.Value, formatProvider), out var result))
+        {
+            //If it fails, set the result to the default value
             result = defaultValue;
         }
 
+        //Return the result
         return result;
     }
-
-    /// <summary>
-    /// Converts the given object to an integer.
-    /// </summary>
-    /// <param name="o">The object to convert.</param>
-    /// <returns>The converted integer.</returns>
-    public static int ToInt([DisallowNull] this ICastable o)
-            => Convert.ToInt32(o.Value);
 
     /// <summary>
     /// Converts the value of the specified object to a long.

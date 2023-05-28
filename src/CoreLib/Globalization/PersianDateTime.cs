@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 
 using Library.Globalization.DataTypes;
 using Library.Interfaces;
@@ -36,7 +37,8 @@ public readonly struct PersianDateTime :
     //IConvertible<PersianDateTime, DateTime>, IConvertible<PersianDateTime, string>,
     IAdditionOperators<PersianDateTime, PersianDateTime, PersianDateTime>,
     ISubtractionOperators<PersianDateTime, PersianDateTime, PersianDateTime>,
-    IParsable<PersianDateTime>
+    IParsable<PersianDateTime>,
+    IStaticValidator<string>
 {
     #region Date/Time Elements
 
@@ -146,6 +148,18 @@ public readonly struct PersianDateTime :
     }
 
     /// <summary>
+    /// Initializes a new instance of the PersianDateTime class with the specified year, month and day
+    /// </summary>
+    /// <param name="year">The year (1 through 9999).</param>
+    /// <param name="month">The month (1 through 12).</param>
+    /// <param name="day">The day (1 through the number of days in month).</param>
+    /// <returns>A new instance of the PersianDateTime class.</returns>
+    public PersianDateTime(in int year, in int month, in int day)
+            : this(year, month, day, 0, 0, 0, 0)
+    {
+    }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="PersianDateTime" /> struct.
     /// </summary>
     /// <param name="data">The data.</param>
@@ -242,11 +256,8 @@ public readonly struct PersianDateTime :
     public static string TimeSeparator { get; set; } = CultureConstants.TIME_SEPARATOR;
 
     /// <summary>
-    /// Converts to stringformat.
+    /// Gets or sets the string format used when converting a PersianDateTime object to a string.
     /// </summary>
-    /// <value>
-    /// To string format.
-    /// </value>
     public static string ToStringFormat { get; set; } = CultureConstants.DEFAULT_DATE_TIME_PATTERN;
 
     /// <summary>
@@ -423,17 +434,19 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="dateTime">The date time.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator PersianDateTime(DateTime dateTime) => dateTime.ToPersianDateTime();
+    public static implicit operator PersianDateTime(DateTime dateTime) 
+        => dateTime.ToPersianDateTime();
 
     /// <summary>
     /// Performs an implicit conversion from <see cref="PersianDateTime"/> to <see cref="string"/>.
     /// </summary>
     /// <param name="PersianDateTime">The Persian date time.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator string(PersianDateTime PersianDateTime) => PersianDateTime.ToString();
+    public static implicit operator string(PersianDateTime PersianDateTime) 
+        => PersianDateTime.ToString();
 
     public static bool IsPersianDateTime(in string s)
-        => TryParse(s).IsSucceed;
+        => Validate(s).IsSucceed;
 
     /// <summary>
     /// Implements the operator -.
@@ -592,18 +605,13 @@ public readonly struct PersianDateTime :
     }
 
     /// <summary>
-    /// Parses the Persian.
+    /// Parses a string to a PersianDateTime object.
     /// </summary>
-    /// <param name="dateTimeString">The date time string.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentException">
-    /// not valid date - dateTimeString or not valid date - dateTimeString or not valid date -
-    /// dateTimeString or not valid date - dateTimeString or not valid date - dateTimeString or not
-    /// valid date - dateTimeString
-    /// </exception>
+    /// <param name="dateTimeString">The string to parse.</param>
+    /// <returns>A PersianDateTime object.</returns>
     public static PersianDateTime ParsePersian(in string dateTimeString)
     {
-        Check.IfArgumentNotNull(dateTimeString);
+        _ = Validate(dateTimeString).ThrowOnFail();
 
         var indexOfSpace = dateTimeString.IndexOf(" ", StringComparison.Ordinal);
         var hasDate = dateTimeString.IndexOf(DateSeparator, StringComparison.Ordinal) > 0;
@@ -671,28 +679,23 @@ public readonly struct PersianDateTime :
     }
 
     /// <summary>
-    /// Subtracts the specified Persian date time1.
+    /// Subtracts two PersianDateTime objects and returns the result.
     /// </summary>
-    /// <param name="PersianDateTime1">The Persian date time1.</param>
-    /// <param name="PersianDateTime2">The Persian date time2.</param>
-    /// <returns></returns>
     public static PersianDateTime Subtract(in PersianDateTime PersianDateTime1, in PersianDateTime PersianDateTime2)
         => PersianDateTime1 - PersianDateTime2;
 
     /// <summary>
-    /// Converts to Persian.
+    /// Converts a DateTime object to a PersianDateTime string.
     /// </summary>
-    /// <param name="dateTime">The date time.</param>
-    /// <returns></returns>
     public static string ToPersian(in DateTime dateTime)
         => new PersianDateTime(dateTime).ToString()!;
 
     /// <summary>
-    /// Tries to parse a string to PersianDateTime.
+    /// Tries to parse a string to a PersianDateTime object.
     /// </summary>
-    /// <param name="str">   The STR.</param>
-    /// <param name="result">The result.</param>
-    /// <returns></returns>
+    /// <param name="str">The string to parse.</param>
+    /// <param name="result">The parsed PersianDateTime object.</param>
+    /// <returns>True if the string was successfully parsed, false otherwise.</returns>
     public static bool TryParse(in string str, out PersianDateTime result)
     {
         try
@@ -702,73 +705,102 @@ public readonly struct PersianDateTime :
         }
         catch
         {
-            result = Now;
+            result = default;
             return false;
         }
     }
 
     /// <summary>
-    /// Tries to parses a string into a value.
+    /// Tries to parse the specified string to a PersianDateTime object.
     /// </summary>
-    /// <param name="s">The string to parse.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
-    /// <param name="result">On return, contains the result of successfully parsing <paramref name="s" /> or an undefined
-    /// value on failure.</param>
-    /// <returns>
-    ///   <c>true</c> if <paramref name="s" /> was successfully parsed; otherwise, <c>false</c>.
-    /// </returns>
+    /// <param name="str">The string to parse.</param>
+    /// <returns>A TryMethodResult containing the parsed PersianDateTime object.</returns>
     public static TryMethodResult<PersianDateTime> TryParse(in string str)
         => TryMethodResult<PersianDateTime>.TryParseResult(TryParse(str, out var result), result);
 
     /// <summary>
-    /// Tries to parses a string into a value.
+    /// Tries to parse the specified string into a PersianDateTime object.
     /// </summary>
     /// <param name="s">The string to parse.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
-    /// <param name="result">On return, contains the result of successfully parsing <paramref name="s" /> or an undefined
-    /// value on failure.</param>
-    /// <returns>
-    ///   <c>true</c> if <paramref name="s" /> was successfully parsed; otherwise, <c>false</c>.
-    /// </returns>
+    /// <param name="provider">The format provider.</param>
+    /// <param name="result">The parsed PersianDateTime object.</param>
+    /// <returns>True if the string was successfully parsed, false otherwise.</returns>
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out PersianDateTime result)
         => TryParse(s.ArgumentNotNull(), out result);
 
     /// <summary>
-    /// Adds the specified PersianDate time.
+    /// Validates a string to check if it is a valid Persian date or time.
+    /// </summary>
+    /// <param name="item">The string to validate.</param>
+    /// <returns>A Result object indicating whether the string is a valid date.</returns>
+    public static Result<string?> Validate([DisallowNull] in string? item)
+    {
+        var regex = new Regex(@"^(\d{4})\/(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])(\s([01]?\d|2[0-3]):([0-5]?\d)(:([0-5]?\d))?\s?(AM|PM)?)?$");
+        return item.Check()
+            .ArgumentNotNull()
+            .RuleFor(regex.IsMatch, () => "Not valid date")
+            .Build();
+    }
+
+    /// <summary>
+    /// Adds the specified PersianDate time to current instance.
     /// </summary>
     /// <param name="PersianDateTime">The PersianDate time.</param>
     /// <returns></returns>
     public PersianDateTime Add(in PersianDateTime PersianDateTime)
         => Add(this, PersianDateTime);
 
+    /// <summary>
+    /// Adds the specified number of days to the current PersianDateTime object.
+    /// </summary>
     public PersianDateTime AddDays(in int value)
         => this.ToDateTime().AddDays(value).ToPersianDateTime();
 
+    /// <summary>
+    /// Adds the specified number of hours to the current PersianDateTime object.
+    /// </summary>
     public PersianDateTime AddHours(in int value)
         => this.ToDateTime().AddHours(value).ToPersianDateTime();
 
+    /// <summary>
+    /// Adds the specified number of milliseconds to the current PersianDateTime object.
+    /// </summary>
     public PersianDateTime AddMilliseconds(in int value)
         => this.ToDateTime().AddMilliseconds(value).ToPersianDateTime();
 
+    /// <summary>
+    /// Adds the specified number of minutes to the current PersianDateTime object.
+    /// </summary>
     public PersianDateTime AddMinutes(in int value)
         => this.ToDateTime().AddMinutes(value).ToPersianDateTime();
 
+    /// <summary>
+    /// Adds the specified number of months to the current PersianDateTime object.
+    /// </summary>
     public PersianDateTime AddMonths(in int value)
         => this.ToDateTime().AddMonths(value).ToPersianDateTime();
 
+    /// <summary>
+    /// Adds the specified number of seconds to the current PersianDateTime object.
+    /// </summary>
     public PersianDateTime AddSeconds(in int value)
         => this.ToDateTime().AddSeconds(value).ToPersianDateTime();
 
+    /// <summary>
+    /// Adds the specified number of ticks to the current PersianDateTime object.
+    /// </summary>
     public PersianDateTime AddTocks(in long ticks)
         => this.ToDateTime().AddTicks(ticks).ToPersianDateTime();
 
+    /// <summary>
+    /// Adds the specified number of years to the current PersianDateTime object.
+    /// </summary>
     public PersianDateTime AddYears(in int value)
         => this.ToDateTime().AddYears(value).ToPersianDateTime();
 
     /// <summary>
-    /// Creates a new object that is a copy of the current instance.
+    /// Creates a new PersianDateTime object with the same values as the current PersianDateTime object.
     /// </summary>
-    /// <returns>A new object that is a copy of this instance.</returns>
     public object Clone()
         => new PersianDateTime(this.Year, this.Month, this.Day, this.Hour, this.Minute, this.Second, this.Millisecond);
 
@@ -783,6 +815,7 @@ public readonly struct PersianDateTime :
     /// has these meanings: Value Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order. Zero This instance occurs in the same position in the sort
     /// order as <paramref name="other" />. Greater than zero This instance follows <paramref name="other" /> in the sort order.
     /// </returns>
+
     public int CompareTo(PersianDateTime other)
         => DateTime.Compare(this, other);
 
@@ -916,10 +949,10 @@ public readonly struct PersianDateTime :
         => throw GetInvalidTypeCastException();
 
     /// <summary>
-    /// Converts to Persian date string.
+    /// Converts the DateTime object to a string with the specified separator.
     /// </summary>
-    /// <param name="separator">The separator.</param>
-    /// <returns></returns>
+    /// <param name="separator">The separator to use between the year, month and day.</param>
+    /// <returns>A string representation of the DateTime object.</returns>
     public string ToDateString(in string? separator = null)
     {
         var buffer = separator ?? DateSeparator;
@@ -932,9 +965,8 @@ public readonly struct PersianDateTime :
     }
 
     /// <summary>
-    /// Converts to the DateTime.
+    /// Converts the current instance to a DateTime object.
     /// </summary>
-    /// <returns></returns>
     public DateTime ToDateTime()
         => this;
 
@@ -1071,6 +1103,7 @@ public readonly struct PersianDateTime :
     ///   <see langword="true" /> if the formatting was successful; otherwise, <see langword="false" />.
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
+
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
         => throw new NotImplementedException();
 

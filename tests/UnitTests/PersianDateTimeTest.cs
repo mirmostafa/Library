@@ -1,7 +1,7 @@
 ﻿using Library.Globalization;
+using Library.Results;
 
 namespace UnitTests;
-
 
 public sealed class PersianDateTimeTest
 {
@@ -98,5 +98,54 @@ public sealed class PersianDateTimeTest
         var actual = PersianDateTime.ToPersian(DateTime.Parse("2021/10/2 15:4:3"));
 
         Assert.Equal("1400/07/10 03:04:03 PM", actual);
+    }
+
+    [Theory]
+    [InlineData("1400/07/10 03:04:03 PM")]
+    [InlineData("1400/07/10 15:04:03")]
+    [InlineData("1400/07/10 03:04:03")]
+    [InlineData("1399/07/10 03:04:03")]
+    [InlineData("1200/07/10 03:04:03")]
+    [InlineData("1000/07/10 03:04:03")]
+    [InlineData("1400/07/10")]
+    [InlineData("1400/7/9 3:4:3")]
+    [InlineData("1400/7/9 03:04")]
+    [InlineData("1500/01/01 03:04:03")]
+    public void Validate_ValidDateTime_ReturnsSuccessResult(string input)
+    {
+        // Arrange
+
+        // Act
+        Result<string> result = PersianDateTime.Validate(input);
+
+        // Assert
+        Assert.True(result);
+        Assert.Equal(input, result.Value);
+    }
+
+    [Fact]
+    public void Validate_InvalidDateTime_ReturnsFailureResult()
+    {
+        // Arrange
+        string input = "1400/07/10T03:04:03 PM"; // Invalid format
+
+        // Act
+        Result<string> result = PersianDateTime.Validate(input);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void Validate_NullInput_ReturnsFailureResult()
+    {
+        // Arrange
+        string? input = null;
+
+        // Act
+        Result<string> result = PersianDateTime.Validate(input);
+
+        // Assert
+        Assert.False(result);
     }
 }

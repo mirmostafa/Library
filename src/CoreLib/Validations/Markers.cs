@@ -26,3 +26,8 @@ public interface IValidator<TItem>
 {
     Result<TItem> Validate(in TItem item);
 }
+
+public interface IStaticValidator<TItem>
+{
+    static abstract Result<TItem?> Validate(in TItem? item);
+}

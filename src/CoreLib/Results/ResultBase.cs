@@ -145,6 +145,7 @@ public record Result<TValue>(in TValue Value,
         in IEnumerable<(object Id, object Error)>? errors = null,
         in ImmutableDictionary<string, object>? extraData = null)
         => new(value, succeed, status, message, errors, extraData);
+
     public static Result<TValue?> CreateFailure(in TValue? value = default,
         in object? status = null,
         in string? message = null,

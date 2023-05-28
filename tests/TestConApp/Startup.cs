@@ -1,3 +1,1 @@
-﻿using TestConApp.MyBenchmarks;
-
-BenchmarkRunner.Run<ContainsBenchmark>();
+﻿WriteLine();
