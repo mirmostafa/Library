@@ -122,6 +122,13 @@ public static class Caster
     public static T? TypeOf<T>(object obj)
             => obj.GetType() == typeof(T) ? (T)obj : default;
 
+    /// <summary>
+    /// Filters a sequence of items and returns only those of type T.
+    /// </summary>
+    /// <param name="items">The sequence of items to filter.</param>
+    /// <returns>
+    /// An IEnumerable of type T containing the filtered items.
+    /// </returns>
     public static IEnumerable<T> WhereIs<T>(IEnumerable items)
     {
         foreach (var item in items)
