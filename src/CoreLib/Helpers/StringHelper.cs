@@ -34,14 +34,14 @@ public static class StringHelper
     /// </summary>
     [Pure]
     public static string AddEnd(this string s, in string s1)
-            => string.Concat(s, s1);
+        => string.Concat(s, s1);
 
     /// <summary>
     /// Adds the given string to the start of the current string.
     /// </summary>
     [Pure]
     public static string AddStart(this string s, in string s1)
-            => string.Concat(s1, s);
+        => string.Concat(s1, s);
 
     /// <summary>
     /// Gets all indexes of a given string in another string.
@@ -69,28 +69,28 @@ public static class StringHelper
     /// </summary>
     [Pure]
     public static bool AnyCharInString(this string str, in string range)
-            => !string.IsNullOrEmpty(str) && range.Any(str.Contains);
+        => !string.IsNullOrEmpty(str) && range.Any(str.Contains);
 
     /// <summary>
     /// Replaces all invalid Arabic characters in the given string with their Persian equivalents.
     /// </summary>
     [Pure]
     public static string ArabicCharsToPersian(this string value)
-            => value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
+        => value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
 
     /// <summary>
     /// Checks if all characters in the given string are valid according to the given validation function.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CheckAllValidations(in string text, in Func<char, bool> regularValidate)
-            => text.All(regularValidate);
+        => text.All(regularValidate);
 
     /// <summary>
     /// Checks if any of the characters in the given string satisfy the given validation function.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CheckAnyValidations(in string text, in Func<char, bool> regularValidate)
-                => text.Any(regularValidate);
+            => text.Any(regularValidate);
 
     /// <summary>
     /// Compacts an array of strings by removing any empty strings.
@@ -110,7 +110,7 @@ public static class StringHelper
     [Pure]
     [return: NotNull]
     public static IEnumerable<string> Compact(this IEnumerable<string?>? strings)
-            => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
+        => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     /// <summary>
     /// Compares two strings and returns an integer that indicates their relative position in the sort order.
@@ -121,7 +121,7 @@ public static class StringHelper
     /// <returns>A 32-bit signed integer that indicates the lexical relationship between the two comparands.</returns>
     [Pure]
     public static int CompareTo(this string str1, in string str, bool ignoreCase = false)
-            => string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+        => string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
     /// <summary>
     /// Concatenates all strings in the given enumerable, using the given separator.
@@ -130,11 +130,11 @@ public static class StringHelper
     /// <param name="sep">The separator to use.</param>
     /// <returns>The concatenated string.</returns>
     public static string ConcatAll(IEnumerable<string> strings, string sep)
-            => (sep?.Length ?? 0) switch
-            {
-                0 => string.Concat(strings),
-                _ => string.Join(sep, strings),
-            };
+        => (sep?.Length ?? 0) switch
+        {
+            0 => string.Concat(strings),
+            _ => string.Join(sep, strings),
+        };
 
     /// <summary>
     /// Concatenates the strings in the given IEnumerable and returns the result as a string.
@@ -143,13 +143,13 @@ public static class StringHelper
     /// <returns>The concatenated string.</returns>
     [return: NotNull]
     public static string ConcatStrings(this IEnumerable<string> values)
-            => string.Concat(values.ToArray());
+        => string.Concat(values.ToArray());
 
     /// <summary>
     /// Checks if a string contains a specified value, with an optional case-insensitive comparison.
     /// </summary>
     public static bool Contains(string str, in string value, bool ignoreCase = true)
-            => str?.IndexOf(value, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) >= 0;
+        => str?.IndexOf(value, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) >= 0;
 
     /// <summary>
     /// Checks if a given string is present in an array of strings, with the option to ignore case.
@@ -202,13 +202,13 @@ public static class StringHelper
     /// Checks if a string contains any of the characters in the given array.
     /// </summary>
     public static bool ContainsAny(this string str, IEnumerable<char> array)
-            => array.Any(str.Contains);
+        => array.Any(str.Contains);
 
     /// <summary>
     /// Checks if a string contains a target string, ignoring case.
     /// </summary>
     public static bool ContainsOf(this string str, in string target)
-            => str.ToLower().Contains(target.ToLower());
+        => str.ToLower().Contains(target.ToLower());
 
     /// <summary>
     /// Converts a string to Google Standard Encoding.
@@ -225,13 +225,13 @@ public static class StringHelper
     /// Converts Arabic characters to Persian characters in a given string.
     /// </summary>
     public static string CorrectUnicodeProblem(in string text)
-            => ArabicCharsToPersian(text);
+        => ArabicCharsToPersian(text);
 
     /// <summary>
     /// Counts the number of occurrences of a specified character in a string, starting from a specified index.
     /// </summary>
     public static int CountOf(this string str, char c, int index = 0)
-            => str?.Skip(index).Count(x => x == c) ?? 0;
+        => str?.Skip(index).Count(x => x == c) ?? 0;
 
     /// <summary>
     /// Checks if the string ends with any of the items in the given array.
@@ -241,48 +241,48 @@ public static class StringHelper
     /// <returns>True if the string ends with any of the items in the array, false otherwise.</returns>
     [Pure]
     public static bool EndsWithAny(this string str, in IEnumerable<object> array)
-            => array.Any(item => item is { } o && o?.ToString() is { } s && !s.IsNullOrEmpty() && str.EndsWith(s));
+        => array.Any(item => item is { } o && o?.ToString() is { } s && !s.IsNullOrEmpty() && str.EndsWith(s));
 
     /// <summary>
     /// Checks if the given string ends with any of the strings in the given IEnumerable.
     /// </summary>
     [Pure]
     public static bool EndsWithAny(this string str, in IEnumerable<string> values)
-            => values.Compact().Any(str.EndsWith);
+        => values.Compact().Any(str.EndsWith);
 
     /// <summary>
     /// Checks if the string ends with any of the elements in the specified array.
     /// </summary>
     [Pure]
     public static bool EndsWithAny(this string str, params object[] array)
-            => str.EndsWithAny(array.AsEnumerable());
+        => str.EndsWithAny(array.AsEnumerable());
 
     /// <summary>
     /// Compares two strings and returns a boolean value indicating whether they are equal.
     /// </summary>
     [Pure]
     public static bool EqualsTo(this string str1, in string str, bool ignoreCase = true)
-            => str1.CompareTo(str, ignoreCase) == 0;
+        => str1.CompareTo(str, ignoreCase) == 0;
 
     /// <summary>
     /// Checks if the given string is equal to any of the strings in the given array, with the given ignoreCase option.
     /// </summary>
     [Pure]
     public static bool EqualsToAny(this string str1, bool ignoreCase, params string[] array)
-            => array.Any(s => str1.EqualsTo(s, ignoreCase));
+        => array.Any(s => str1.EqualsTo(s, ignoreCase));
 
     /// <summary>
     /// Checks if the given string is equal to any of the strings in the given array.
     /// </summary>
     [Pure]
     public static bool EqualsToAny(this string str1, params string[] array)
-            => array.Any(s => str1.EqualsTo(s));
+        => array.Any(s => str1.EqualsTo(s));
 
     /// <summary>
     /// Fixes the size of the given string to the specified maximum length, padding with the given gap character if necessary.
     /// </summary>
     public static string? FixSize(string? str, int maxLength, char gapChar = ' ')
-            => str.IsNullOrEmpty()
+        => str.IsNullOrEmpty()
                 ? new string(gapChar, maxLength)
                 : str.Length > maxLength ? str[..maxLength] : str.PadRight(maxLength, gapChar);
 
@@ -291,7 +291,7 @@ public static class StringHelper
     /// </summary>
     [Pure]
     public static string Format(this string format, params object[] args)
-            => string.Format(format, args);
+        => string.Format(format, args);
 
     /// <summary>
     /// Gets a sequence of key-value tuples from a string.
@@ -302,7 +302,7 @@ public static class StringHelper
     /// <returns>A sequence of key-value tuples.</returns>
     [Pure]
     public static IEnumerable<(string Key, string Value)> GetKeyValues(this string keyValueStr, char keyValueSeparator = '=', char separator = ';')
-            => keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
+        => keyValueStr.Split(separator).Select(raw => raw.Split(keyValueSeparator)).Select(keyValue => (keyValue[0], keyValue[1]));
 
     /// <summary>
     /// Gets the phrase from the given string based on the given index, start and end characters.
@@ -523,11 +523,11 @@ public static class StringHelper
 
         // Get the item and trim it if necessary
         static string? get(string? current, bool trimmed)
-            => trimmed ? current?.Trim() : current;
+        => trimmed ? current?.Trim() : current;
 
         // Check if the items are equal
         static bool equals(string? current, string? item, bool ignoreCase)
-            => string.Compare(current, item, ignoreCase) == 0;
+        => string.Compare(current, item, ignoreCase) == 0;
     }
 
     /// <summary>
@@ -568,7 +568,7 @@ public static class StringHelper
     /// </summary>
     [Pure]
     public static bool IsCommon(this char c)
-            => c == ' ';
+        => c == ' ';
 
     /// <summary>
     /// Checks if the given character is a digit or a minus key if specified.
@@ -578,14 +578,14 @@ public static class StringHelper
     /// <returns>True if the character is a digit or a minus key if specified, false otherwise.</returns>
     [Pure]
     public static bool IsDigit(this char c, in bool canAcceptMinusKey = false)
-            => (canAcceptMinusKey && c == '-') || char.IsDigit(c);
+        => (canAcceptMinusKey && c == '-') || char.IsDigit(c);
 
     /// <summary>
     /// Checks if the given character is either a digit or a control character.
     /// </summary>
     [Pure]
     public static bool IsDigitOrControl(this char key)
-            => char.IsDigit(key) || char.IsControl(key);
+        => char.IsDigit(key) || char.IsControl(key);
 
     /// <summary>
     /// Checks if the given string is empty.
@@ -594,7 +594,7 @@ public static class StringHelper
     /// <returns>True if the string is empty, false otherwise.</returns>
     [Pure]
     public static bool IsEmpty([NotNullWhen(false)] in string? s)
-            => s?.Length is 0;
+        => s?.Length is 0;
 
     /// <summary>
     /// Checks if the given character is an English letter.
@@ -603,7 +603,7 @@ public static class StringHelper
     /// <returns>True if the character is an English letter, false otherwise.</returns>
     [Pure]
     public static bool IsEnglish(this char c)
-            => c.IsCommon() || c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z');
+        => c.IsCommon() || c is (>= 'A' and <= 'Z') or (>= 'a' and <= 'z');
 
     /// <summary>
     /// Checks if the given string is in English language.
@@ -611,7 +611,7 @@ public static class StringHelper
     /// <param name="text">The string to be checked.</param>
     /// <returns>True if the string is in English, false otherwise.</returns>
     public static bool IsEnglish(this string text)
-            => CheckAllValidations(text, IsEnglish);
+        => CheckAllValidations(text, IsEnglish);
 
     /// <summary>
     /// Checks if the given string is composed of only English characters or numbers.
@@ -620,7 +620,7 @@ public static class StringHelper
     /// <param name="canAcceptMinusKey">Indicates if the minus key is accepted.</param>
     /// <returns>True if the string is composed of only English characters or numbers, false otherwise.</returns>
     public static bool IsEnglishOrNumber(this string text, bool canAcceptMinusKey = false)
-            => CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || c.IsEnglish());
+        => CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || c.IsEnglish());
 
     /// <summary>
     /// Checks if the given string is in the given range, optionally ignoring case.
@@ -630,7 +630,7 @@ public static class StringHelper
     /// <param name="range">The range of strings to check against.</param>
     /// <returns>True if the given string is in the given range, false otherwise.</returns>
     public static bool IsInRange(string? text, bool ignoreCase, params string[] range)
-            => IsInRange(text, false, ignoreCase, range);
+        => IsInRange(text, false, ignoreCase, range);
 
     /// <summary>
     /// Checks if the given text is in the given range.
@@ -641,7 +641,7 @@ public static class StringHelper
     /// <param name="range">The range to check against.</param>
     /// <returns>True if the text is in the range, false otherwise.</returns>
     public static bool IsInRange(string? text, bool trimmed, bool ignoreCase, IEnumerable<string> range)
-            => range.IndexOf(text, trimmed, ignoreCase) >= 0;
+        => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
     /// <summary>
     /// Checks if the given text is in the given range.
@@ -652,7 +652,7 @@ public static class StringHelper
     /// <param name="range">The range to check against.</param>
     /// <returns>True if the text is in the range, false otherwise.</returns>
     public static bool IsInRange(string? text, bool trimmed, bool ignoreCase, params string[] range)
-            => range.IndexOf(text, trimmed, ignoreCase) >= 0;
+        => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
     /// <summary>
     /// Checks if the given string is in the given range of strings.
@@ -661,25 +661,25 @@ public static class StringHelper
     /// <param name="range">The range of strings to check against.</param>
     /// <returns>True if the given string is in the given range, false otherwise.</returns>
     public static bool IsInRange(string? text, params string[] range)
-            => IsInRange(text, true, range);
+        => IsInRange(text, true, range);
 
     /// <summary>
     /// Checks if a character is contained in a given string.
     /// </summary>
     public static bool IsInString(this char c, in string text)
-            => text?.Contains(c.ToString()) ?? false;
+        => text?.Contains(c.ToString()) ?? false;
 
     /// <summary>
     /// Checks if a given string can be parsed to an integer.
     /// </summary>
     public static bool IsInteger(this string text)
-            => int.TryParse(text, out _);
+        => int.TryParse(text, out _);
 
     /// <summary>
     /// Checks if the given character is a letter (English or Persian).
     /// </summary>
     public static bool IsLetter(this char c)
-            => c.IsEnglish() || IsPersian(c);
+        => c.IsEnglish() || IsPersian(c);
 
     /// <summary>
     /// Checks if the given string contains only letters (English or Persian).
@@ -687,7 +687,7 @@ public static class StringHelper
     /// <param name="text">The string to check.</param>
     /// <returns>True if the given string contains only letters, false otherwise.</returns>
     public static bool IsLetterText(in string text)
-            => CheckAllValidations(text, c => c.IsEnglish() || IsPersian(c));
+        => CheckAllValidations(text, c => c.IsEnglish() || IsPersian(c));
 
     /// <summary>
     /// Checks if the given string is null or empty.
@@ -697,7 +697,7 @@ public static class StringHelper
     [StackTraceHidden]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
-            => str == null || str.Length == 0;
+        => str == null || str.Length == 0;
 
     /// <summary>
     /// Checks if the given string is a valid number.
@@ -705,13 +705,13 @@ public static class StringHelper
     /// <param name="text">The string to check.</param>
     /// <returns>True if the string is a valid number, false otherwise.</returns>
     public static bool IsNumber(in string text)
-            => float.TryParse(text, out _);
+        => float.TryParse(text, out _);
 
     /// <summary>
     /// Checks if the given character is a Persian character.
     /// </summary>
     public static bool IsPersian(char c)
-            => c.IsCommon() || PersianTools.Chars.Any(pc => pc == c) || PersianTools.SpecialChars.Any(pc => pc == c);
+        => c.IsCommon() || PersianTools.Chars.Any(pc => pc == c) || PersianTools.SpecialChars.Any(pc => pc == c);
 
     public static bool IsPersian(in string text)
         => CheckAllValidations(text, IsPersian);
@@ -720,7 +720,7 @@ public static class StringHelper
     /// Checks if the given character is a Persian digit.
     /// </summary>
     public static bool IsPersianDigit(char c)
-            => PersianTools.PersianDigits.Any(x => c == x);
+        => PersianTools.PersianDigits.Any(x => c == x);
 
     /// <summary>
     /// Checks if the given string is either a Persian character or a number.
@@ -729,13 +729,13 @@ public static class StringHelper
     /// <param name="canAcceptMinusKey">Whether or not to accept the minus key.</param>
     /// <returns>True if the given string is either a Persian character or a number, false otherwise.</returns>
     public static bool IsPersianOrNumber(in string text, bool canAcceptMinusKey)
-            => CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || IsPersian(c));
+        => CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || IsPersian(c));
 
     /// <summary>
     /// Checks if a string contains any characters with a Unicode value greater than 255.
     /// </summary>
     public static bool IsUnicode(this string str)
-            => str.Any(c => c > 255);
+        => str.Any(c => c > 255);
 
     /// <summary>
     /// Checks if the given input is a valid Iranian National Code.
@@ -812,19 +812,19 @@ public static class StringHelper
     /// Merges the specified quat, separator and array into a single string.
     /// </summary>
     public static string Merge(string quat, string separator, params string[] array)
-                => array.Merge(quat, separator);
+            => array.Merge(quat, separator);
 
     /// <summary>
     /// Merges the elements of an IEnumerable<string> into a single string, separated by the given separator.
     /// </summary>
     public static string Merge(this IEnumerable<string> array, in string separator)
-            => string.Join(separator, array.ToArray());
+        => string.Join(separator, array.ToArray());
 
     /// <summary>
     /// Merges the elements of an IEnumerable<string> into a single string, separated by the given separator.
     /// </summary>
     public static string Merge(this IEnumerable<string> array, in char separator)
-            => string.Join(separator, array.ToArray());
+        => string.Join(separator, array.ToArray());
 
     /// <summary>
     /// Merges the elements of an IEnumerable<string> array into a single string, using the specified quotation mark and separator.
@@ -844,7 +844,7 @@ public static class StringHelper
     /// <param name="statementSeparator">The separator to use between each tuple.</param>
     /// <returns>A single string containing the merged tuples.</returns>
     public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";")
-            => string.Join(statementSeparator, splitPair.Select(pair => $"{pair.Item1}{keyValueSeparator}{pair.Item2}"));
+        => string.Join(statementSeparator, splitPair.Select(pair => $"{pair.Item1}{keyValueSeparator}{pair.Item2}"));
 
     /// <summary>
     /// Removes special characters from a string and returns the result.
@@ -886,14 +886,14 @@ public static class StringHelper
     /// <param name="value">The value to remove.</param>
     /// <returns>The string with the value removed, or null if the string is null.</returns>
     [return: NotNullIfNotNull(nameof(str))]
-    public static string? Remove(this string? str, in string? value) 
+    public static string? Remove(this string? str, in string? value)
         => value is null ? str : str?.Replace(value, "");
 
     /// <summary>
     /// Removes the specified number of characters from the end of the string.
     /// </summary>
     public static string RemoveEnd(this string str, in int count)
-            => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
+        => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
 
     /// <summary>
     /// Removes the end of a string if it matches the specified value.
@@ -943,43 +943,43 @@ public static class StringHelper
     /// Replaces a specified number of occurrences of a character in a string with a new character.
     /// </summary>
     public static string Replace2(this string s, char old, in char replacement, in int count = 1)
-            => s.Replace2(old.ToString(), replacement.ToString(), count);
+        => s.Replace2(old.ToString(), replacement.ToString(), count);
 
     /// <summary>
     /// Replaces a specified number of occurrences of a string with another string.
     /// </summary>
     public static string Replace2(this string s, in string old, in string replacement, in int count = 1)
-            => new Regex(Regex.Escape(old)).Replace(s, replacement, count);
+        => new Regex(Regex.Escape(old)).Replace(s, replacement, count);
 
     /// <summary>
     /// Replaces all occurrences of a character in a string with a new character.
     /// </summary>
     public static string ReplaceAll(this string value, in IEnumerable<(char OldValue, char NewValue)> items)
-            => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     /// <summary>
     /// Replaces all occurrences of the specified old values with the specified new value in the given string.
     /// </summary>
     public static string ReplaceAll(this string value, in IEnumerable<string> oldValues, string newValue)
-            => oldValues.Aggregate(value, (current, oldValue) => current.Replace(oldValue, newValue));
+        => oldValues.Aggregate(value, (current, oldValue) => current.Replace(oldValue, newValue));
 
     /// <summary>
     /// Replaces all occurrences of the specified old values with the specified new values in the given string.
     /// </summary>
     public static string ReplaceAll(this string value, in IEnumerable<(string OldValue, string NewValue)> items)
-            => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     /// <summary>
     /// Replaces all occurrences of a character in a string with a new character.
     /// </summary>
     public static string ReplaceAll(this string value, params (char OldValue, char NewValue)[] items)
-            => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     /// <summary>
     /// Replaces all occurrences of the specified old values with the specified new values in the given string.
     /// </summary>
     public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items)
-            => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     /// <summary>
     /// Separates a string into separate words based on the provided separators.
@@ -1025,7 +1025,7 @@ public static class StringHelper
 
         //Function to determine if the character is a separator and if it should be ignored
         static (bool IsSeparator, bool ShouldIgnore) determineSeparator(char c, char[] separators)
-            => separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
+        => separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
     }
 
     /// <summary>
@@ -1035,7 +1035,7 @@ public static class StringHelper
     /// <returns>The separated string, or null if the input was null.</returns>
     [return: NotNullIfNotNull(nameof(value))]
     public static string? SeparateCamelCase(this string? value)
-            => value.SplitCamelCase().Merge(" ");
+        => value.SplitCamelCase().Merge(" ");
 
     /// <summary>
     /// Replaces a phrase in a string with a new string.
@@ -1094,7 +1094,7 @@ public static class StringHelper
     /// <param name="count">The length of the string to create.</param>
     /// <returns>A string of the given length filled with spaces.</returns>
     public static string Space(in int count)
-            => new(' ', count);
+        => new(' ', count);
 
     /// <summary>
     /// Splits a string into substrings based on a separator.
@@ -1196,7 +1196,7 @@ public static class StringHelper
     }
 
     /// <summary>
-    /// Splits a string into a sequence of key-value pairs.
+    /// Splits a string into a sequence of key-value pairs. (To be used in `ConnectionString`-like strings)
     /// </summary>
     /// <param name="str">The string to split.</param>
     /// <param name="keyValueSeparator">The separator used to separate the key and value.</param>
@@ -1210,10 +1210,10 @@ public static class StringHelper
         Check.IfArgumentNotNull(statementSeparator);
 
         // Split the string into key-value pairs
-        var keyValuePirs = str.Split(statementSeparator).Trim();
+        var keyValuePairs = str.Split(statementSeparator).Trim();
 
         // Iterate through each key-value pair
-        foreach (var keyValuePair in keyValuePirs)
+        foreach (var keyValuePair in keyValuePairs)
         {
             // Split the key-value pair into key and value
             var keyValue = keyValuePair.Split(keyValueSeparator);
@@ -1227,19 +1227,19 @@ public static class StringHelper
     /// Converts a string from SQL encoding to UTF-8 encoding.
     /// </summary>
     public static string SqlEncodingToUtf(this string obj)
-            => Encoding.UTF8.GetString(Encoding.GetEncoding(1256).GetBytes(obj));
+        => Encoding.UTF8.GetString(Encoding.GetEncoding(1256).GetBytes(obj));
 
     /// <summary>
     /// Checks if the given string starts with any of the strings in the given IEnumerable.
     /// </summary>
     public static bool StartsWithAny(this string str, in IEnumerable<string> values)
-            => values.Any(str.StartsWith);
+        => values.Any(str.StartsWith);
 
     /// <summary>
     /// Checks if a string starts with any of the given values.
     /// </summary>
     public static bool StartsWithAny(this string str, params string[] values)
-            => values.Any(str.StartsWith);
+        => values.Any(str.StartsWith);
 
     /// <summary>
     /// Converts a string to a byte array using the specified encoding.
@@ -1283,7 +1283,7 @@ public static class StringHelper
     /// Replaces all Persian digits in the given string with their English equivalents.
     /// </summary>
     public static string ToEnglishDigits(this string value)
-            => value.ReplaceAll(PersianTools.Digits.Select(n => (n.Persian, n.English)));
+        => value.ReplaceAll(PersianTools.Digits.Select(n => (n.Persian, n.English)));
 
     /// <summary>
     /// Converts a string to its hexadecimal representation.
@@ -1306,53 +1306,53 @@ public static class StringHelper
     /// Converts a collection of strings to a collection of integers.
     /// </summary>
     public static IEnumerable<int> ToInt(in IEnumerable<string> array)
-            => array.Where(str => IsNumber(str)).Select(str => str.Cast().ToInt());
+        => array.Where(str => IsNumber(str)).Select(str => str.Cast().ToInt());
 
     /// <summary>
     /// Converts a collection of strings to lowercase.
     /// </summary>
     public static IEnumerable<string> ToLower(this IEnumerable<string> strings)
-            => strings.Select(str => str.ToLower());
+        => strings.Select(str => str.ToLower());
 
     /// <summary>
     /// Replaces all English digits in the given string with their Persian equivalents.
     /// </summary>
     public static string ToPersianDigits(this string value)
-            => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
+        => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
 
     /// <summary>
     /// Converts a string to Unicode encoding.
     /// </summary>
     public static string? ToUnicode(this string? str)
-            => str is null ? null : Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
+        => str is null ? null : Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
 
     /// <summary>
     /// Trims the given IEnumerable of strings, removing any empty or null strings.
     /// </summary>
     public static IEnumerable<string> Trim(this IEnumerable<string> strings)
-            => strings.Where(item => !item.IsNullOrEmpty());
+        => strings.Where(item => !item.IsNullOrEmpty());
 
     /// <summary>
     /// Trims all strings in the given IEnumerable.
     /// </summary>
     public static IEnumerable<string> TrimAll(this IEnumerable<string> values)
-            => values.Select(t => t.Trim());
+        => values.Select(t => t.Trim());
 
     /// <summary>
     /// Trims all strings in an IEnumerable using the specified characters.
     /// </summary>
     public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars)
-            => values.Select(t => t.Trim(trimChars));
+        => values.Select(t => t.Trim(trimChars));
 
     /// <summary>
     /// Truncates a string to the specified length.
     /// </summary>
     public static string? Truncate(this string? value, int length)
-            => length > value?.Length ? value : value?[..length];
+        => length > value?.Length ? value : value?[..length];
 
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.
     /// </summary>
     public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
-            => CatchFunc(() => str.CountOf(c, index)).Fluent().WithNew(x => TryMethodResult<int>.TryParseResult(x.Exception is null, x.Result));
+        => CatchFunc(() => str.CountOf(c, index)).Fluent().WithNew(x => TryMethodResult<int>.TryParseResult(x.Exception is null, x.Result));
 }

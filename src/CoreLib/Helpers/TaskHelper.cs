@@ -2,6 +2,12 @@
 
 public static class TaskHelper
 {
+    /// <summary>
+    /// Invokes an action asynchronously.
+    /// </summary>
+    /// <param name="action">The action to invoke.</param>
+    /// <param name="scheduler">The scheduler to use for the task.</param>
+    /// <param name="token">The cancellation token to use for the task.</param>
     public static async void InvokeAsync(this Action? action, TaskScheduler? scheduler = null, CancellationToken token = default)
     {
         if (action == null)
@@ -23,7 +29,7 @@ public static class TaskHelper
     /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
     /// objects in an array have completed.
     /// </summary>
-    /// <remarks>Returns all the excpetions occurred, if any</remarks>
+    /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
     /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
@@ -34,7 +40,7 @@ public static class TaskHelper
     /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
     /// objects in an array have completed.
     /// </summary>
-    /// <remarks>Returns all the excpetions occurred, if any</remarks>
+    /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
     /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
@@ -67,7 +73,7 @@ public static class TaskHelper
     /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
     /// objects in an array have completed.
     /// </summary>
-    /// <remarks>Returns all the excpetions occurred, if any</remarks>
+    /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
     /// <returns>A task that represents the completion of all of the supplied tasks.</returns>

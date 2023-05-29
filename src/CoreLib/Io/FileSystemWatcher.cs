@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+
 using Library.DesignPatterns.Markers;
 using Library.EventsArgs;
 using Library.Interfaces;
@@ -12,6 +13,13 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
     private bool _disposedValue;
     private Thread? _thread;
 
+    /// <summary>
+    /// Constructs a new instance of the <see cref="FileSystemWatcher"/> class with the specified path, wildcard and includeSubdirectories.
+    /// </summary>
+    /// <param name="path">The path of the directory to watch.</param>
+    /// <param name="wildcard">The wildcard filter to use.</param>
+    /// <param name="includeSubdirectories">A value indicating whether to include subdirectories.</param>
+    /// <returns>A new instance of the <see cref="FileSystemWatcher"/> class.</returns>
     public FileSystemWatcher(in string path, in string? wildcard = null, in bool includeSubdirectories = false)
     {
         this._innerWatcher = (path.NotNull(), wildcard) switch
@@ -50,9 +58,24 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
 
     public event EventHandler<RenamedEventArgs>? Renamed;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the component is enabled to raise events.
+    /// </summary>
     public bool IsEnabledRaisingEvents { get => this._innerWatcher.EnableRaisingEvents; set => this._innerWatcher.EnableRaisingEvents = value; }
     public string Path => this._innerWatcher.Path;
 
+    /// <summary>
+    /// Starts a FileSystemWatcher with the given parameters and returns the FileSystemWatcher object.
+    /// </summary>
+    /// <param name="path">The path to watch.</param>
+    /// <param name="wildcard">The wildcard to use for filtering.</param>
+    /// <param name="includeSubdirectories">Whether to include subdirectories.</param>
+    /// <param name="onCreated">The action to take when a file is created.</param>
+    /// <param name="onRenamed">The action to take when a file is renamed.</param>
+    /// <param name="onChanged">The action to take when a file is changed.</param>
+    /// <param name="onDeleted">The action to take when a file is deleted.</param>
+    /// <param name="onError">The action to take when an error occurs.</param>
+    /// <returns>The FileSystemWatcher object.</returns>
     public static FileSystemWatcher Start(
         in string path, in string? wildcard = null, in bool includeSubdirectories = false,
         Action<CreatedEventArgs>? onCreated = null,
@@ -87,12 +110,19 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
         return result.Start();
     }
 
+    /// <summary>
+    /// Disposes the object and releases any associated resources.
+    /// </summary>
     public void Dispose()
     {
         this.Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Starts the FileSystemWatcher and returns it.
+    /// </summary>
+    /// <returns>The FileSystemWatcher.</returns>
     public FileSystemWatcher Start()
         => this.Restart();
 

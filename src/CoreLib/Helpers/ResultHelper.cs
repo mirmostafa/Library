@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Xml;
 using System.Xml.Serialization;
 
 using Library.Exceptions;
@@ -14,6 +13,12 @@ namespace Library.Helpers;
 [StackTraceHidden]
 public static class ResultHelper
 {
+    /// <summary>
+    /// Asynchronously awaits a task of type TResult and returns the result, breaking on failure.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="task">The task to await.</param>
+    /// <returns>The result of the task, breaking on failure.</returns>
     public static async Task<TResult> BreakOnFail<TResult>(this Task<TResult> task)
         where TResult : Result
     {
@@ -76,7 +81,7 @@ public static class ResultHelper
     }
 
     public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
-            => result == true ? next() : result;
+        => result == true ? next() : result;
 
     public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
@@ -94,15 +99,46 @@ public static class ResultHelper
         return result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
     }
 
+    /// <summary>
+    /// Throws an exception if the given Result is not successful.
+    /// </summary>
+    /// <param name="result">The Result to check.</param>
+    /// <param name="owner">The object that is throwing the exception.</param>
+    /// <param name="instruction">The instruction that is throwing the exception.</param>
+    /// <returns>The given Result.</returns>
     public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(result, owner, instruction);
 
+    /// <summary>
+    /// Throws an exception if the given result is not successful.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="result">The result to check.</param>
+    /// <param name="owner">The owner of the result.</param>
+    /// <param name="instruction">The instruction associated with the result.</param>
+    /// <returns>The given result.</returns>
     public static TResult ThrowOnFail<TResult>([DisallowNull] this TResult result, object? owner = null, string? instruction = null) where TResult : ResultBase
         => InnerThrowOnFail(result, owner, instruction);
 
+    /// <summary>
+    /// Throws an exception if the given <see cref="ResultTValue"/> is a failure.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="result">The <see cref="ResultTValue"/> to check.</param>
+    /// <param name="owner">The object that is responsible for the operation.</param>
+    /// <param name="instruction">The instruction that is responsible for the operation.</param>
+    /// <returns>The given <see cref="ResultTValue"/>.</returns>
     public static Result<TValue> ThrowOnFail<TValue>([DisallowNull] this Result<TValue> result, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(result, owner, instruction);
 
+    /// <summary>
+    /// Throws an exception if the result of the provided Task is a failure.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="resultAsync">The result to check.</param>
+    /// <param name="owner">The owner of the result.</param>
+    /// <param name="instruction">The instruction associated with the result.</param>
+    /// <returns>The result of the provided Task.</returns>
     public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(await resultAsync, owner, instruction);
 
@@ -138,7 +174,7 @@ public static class ResultHelper
 
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase
         => (result = input.ArgumentNotNull()).IsSucceed;
-    
+
     //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
     //x public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
     //x     => (result = await input).IsSucceed;

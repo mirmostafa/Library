@@ -138,6 +138,13 @@ public enum PersianMonth
     Esfand
 }
 
+/// <summary>
+/// Enum for Persian days of the week.
+/// </summary>
+/// <param name=""></param>
+/// <returns>
+/// YekShanbeh, DoShanbeh, SeShanbeh, ChaharShanbeh, PanjShanbeh, Jomeh, Shanbeh
+/// </returns>
 public enum PersianDayOfWeek
 {
     [LocalizedDescription("fa-IR", CultureConstants.YEK_SHANBE_FA)]

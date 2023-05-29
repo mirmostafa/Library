@@ -1,10 +1,15 @@
 ﻿using System.Reflection;
+
 using Library.Ioc;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Helpers;
 
+/// <summary>
+/// Provides helper methods for dependency injection.
+/// </summary>
 public static class IocHelper
 {
     public static IServiceCollection AddServices<TService>(this IServiceCollection services, Func<IServiceCollection, Type, IServiceCollection>? install)
@@ -16,6 +21,14 @@ public static class IocHelper
     public static IServiceCollection AddServices<TService>(this IServiceCollection services, IConfiguration configuration, Func<IServiceCollection, Type, IServiceCollection>? install, params Type[] serviceTyeps)
         => AddServicesByAssembly<TService>(services, install, serviceTyeps.Select(x => x.Assembly).ToArray());
 
+    /// <summary>
+    /// Adds services to the specified <see cref="IServiceCollection"/> by the specified assemblies.
+    /// </summary>
+    /// <typeparam name="TService">The type of the service.</typeparam>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to.</param>
+    /// <param name="install">The install action.</param>
+    /// <param name="assemblies">The assemblies.</param>
+    /// <returns>The <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddServicesByAssembly<TService>(this IServiceCollection services,
                                                                      Func<IServiceCollection, Type, IServiceCollection>? install,
                                                                      params Assembly[] assemblies)

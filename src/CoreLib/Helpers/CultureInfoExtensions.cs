@@ -112,5 +112,5 @@ public static class CultureInfoHelper
     /// <param name="ci">The CultureInfo object.</param>
     /// <returns>The country abbreviation.</returns>
     private static string GetCountryAbbreviation(CultureInfo ci)
-            => ci.Name.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries)[^1];
+        => ci.Name.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries)[^1];
 }

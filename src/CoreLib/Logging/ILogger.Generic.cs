@@ -2,6 +2,9 @@
 
 namespace Library.Logging;
 
+/// <summary>
+/// Interface for a generic logger
+/// </summary>
 public interface ILogger<TLogMessage>
 {
     /// <summary>

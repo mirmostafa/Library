@@ -14,6 +14,14 @@ public record Code : IEquatable<Code>
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
     protected readonly dynamic ExtraProperties = new Expando();
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Code"/> class.
+    /// </summary>
+    /// <param name="name">The name of the code.</param>
+    /// <param name="language">The language of the code.</param>
+    /// <param name="statement">The statement of the code.</param>
+    /// <param name="isPartial">A value indicating whether the code is partial.</param>
+    /// <returns>A new instance of the <see cref="Code"/> class.</returns>
     public Code(in string name, in Language language, in string statement, in bool isPartial = false)
     {
         this.Name = name.Cast().As<object>().ArgumentNotNull(nameof(name)).ToString()!;
@@ -23,8 +31,18 @@ public record Code : IEquatable<Code>
         this._FileName = null;
     }
 
-    public Code(in (string Name, Language language, string Statement, bool IsPartial) data)
-        : this(data.Name, data.language, data.Statement, data.IsPartial) { }
+    /// <summary>
+    /// Constructor for Code class with parameters.
+    /// </summary>
+    /// <param name="Name">Name of the code.</param>
+    /// <param name="Language">Language of the code.</param>
+    /// <param name="Statement">Statement of the code.</param>
+    /// <param name="IsPartial">Whether the code is partial or not.</param>
+    /// <returns>
+    /// An instance of Code class.
+    /// </returns>
+    public Code(in (string Name, Language Language, string Statement, bool IsPartial) data)
+        : this(data.Name, data.Language, data.Statement, data.IsPartial) { }
 
     public void Deconstruct(out string name, out string statement)
         => (name, statement) = (this.Name, this.Statement);

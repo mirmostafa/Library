@@ -562,7 +562,7 @@ public static class ServiceHelper
     /// This code checks if the model has an ID, and if it does, it updates the model, otherwise it inserts it.
     /// </remarks>
     public static Task<Result<TViewModel>> SaveViewModelAsync<TViewModel>(this IAsyncWrite<TViewModel, Id> service, TViewModel model, bool persist = true)
-                where TViewModel : ICanSetKey<Id>
+        where TViewModel : ICanSetKey<Id>
     {
         //Check if the model is not null and has an ID
         if (!model.ArgumentNotNull().Id.IsNullOrEmpty())
@@ -622,7 +622,7 @@ public static class ServiceHelper
     /// <param name="manipulationResultTask">The manipulation result task.</param>
     /// <returns>A Task of a Result of the Model.</returns>
     public static Task<Result<TViewModel>> ModelResult<TViewModel, TDbEntity>(this Task<Result<ManipulationResult<TViewModel, TDbEntity>>> manipulationResultTask)
-            => manipulationResultTask.ToResultAsync(x => x.Model);
+        => manipulationResultTask.ToResultAsync(x => x.Model);
 }
 
 /// <summary>

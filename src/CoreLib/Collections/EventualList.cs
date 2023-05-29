@@ -5,6 +5,7 @@ using Library.Helpers;
 
 namespace Library.Collections;
 
+[Obsolete("Subject to remove", true)]
 public sealed class EventualList<TItem> : IList<TItem>
 {
     private readonly List<TItem> _innerList = new();
@@ -62,7 +63,7 @@ public sealed class EventualList<TItem> : IList<TItem>
         => this._innerList.GetEnumerator();
 
     public int IndexOf(TItem item)
-            => this._innerList.IndexOf(item);
+        => this._innerList.IndexOf(item);
 
     public void Insert(int index, TItem item)
     {

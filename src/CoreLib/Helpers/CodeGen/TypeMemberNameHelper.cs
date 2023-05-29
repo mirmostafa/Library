@@ -35,6 +35,11 @@ public static class TypeMemberNameHelper
     public static string GetFullName(string? nameSpace, string? name)
         => CombineWithDot(nameSpace, name);
 
+    /// <summary>
+    /// Gets the name of the type from the full name.
+    /// </summary>
+    /// <param name="fullName">The full name of the type.</param>
+    /// <returns>The name of the type.</returns>
     public static string GetName(in string? fullName)
     {
         if (fullName.IsNullOrEmpty())

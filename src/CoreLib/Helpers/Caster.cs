@@ -23,7 +23,7 @@ public static class Caster
             => o.Value as T;
 
     /// <summary>
-    /// Creates a new Castable object from the given object.
+    /// The entry of casting operations.
     /// </summary>
     /// <param name="obj">The object to cast.</param>
     /// <returns>A new Castable object.</returns>

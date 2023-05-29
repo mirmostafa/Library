@@ -20,7 +20,7 @@ public static class CodeHelper
     /// </summary>
     [DoesNotReturn]
     public static void Break()
-        => BreakException.Throw();
+         => BreakException.Throw();
 
     /// <summary>
     /// Breaks code execution.

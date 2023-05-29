@@ -167,7 +167,7 @@ public static class LoggingHelper
     /// <param name="sender">The name of the caller (optional).</param>
     /// <param name="time">The time of the log (optional).</param>
     public static void Info(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
-                => container?.Logger?.Info(message, sender, time);
+        => container?.Logger?.Info(message, sender, time);
 
     /// <summary>
     /// Executes an action and logs the start, success, error and final events.

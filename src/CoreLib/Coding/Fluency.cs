@@ -22,17 +22,8 @@ public record struct Fluency<T>(T Value) : IEquatable<T>//, IConvertible<Fluency
     public static implicit operator Fluency<T>(T value)
         => new(value);
 
-    [Obsolete("Subject to remove", true)]
-    public readonly T ConvertTo()
-        => this.Value;
-
     public static Fluency<T> New(T other)
         => new(other);
-
-
-    [Obsolete("Subject to remove", true)]
-    public static T From(Fluency<T> other)
-        => other.Value;
 
     public readonly T GetValue()
         => this.Value;

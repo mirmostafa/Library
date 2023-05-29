@@ -19,10 +19,10 @@ public abstract record FileSystem
     public abstract string FullPath { get; }
 
     /// <summary>
-    /// Equalses the specified other.
+    /// Compares the FullPath of this FileSystem object to the FullPath of current instance.
     /// </summary>
-    /// <param name="other">The other.</param>
-    /// <returns></returns>
+    /// <param name="other">The other FileSystem object to compare to.</param>
+    /// <returns>True if the FullPaths of both objects are equal, false otherwise.</returns>
     public virtual bool Equals(FileSystem? other)
         => other is { } o && o.FullPath.Equals(this.FullPath);
 

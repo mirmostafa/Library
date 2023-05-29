@@ -16,24 +16,19 @@ namespace Library.Helpers.CodeGen;
 public static class CodeDomHelper
 {
     /// <summary>
-    /// Adds the constructor.
+    /// Adds a constructor to the given <see cref="CodeTypeDeclaration"/>.
     /// </summary>
-    /// <param name="c">The c.</param>
-    /// <param name="arguments">The arguments.</param>
-    /// <param name="body">The body.</param>
-    /// <param name="accessModifiers">The access modifiers.</param>
-    /// <param name="comment">The comment.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException">
-    /// nameof(c)
-    /// or
-    /// nameof(c)
-    /// </exception>
+    /// <param name="c">The <see cref="CodeTypeDeclaration"/> to add the constructor to.</param>
+    /// <param name="arguments">The arguments of the constructor.</param>
+    /// <param name="body">The body of the constructor.</param>
+    /// <param name="accessModifiers">The access modifiers of the constructor.</param>
+    /// <param name="comment">The comment of the constructor.</param>
+    /// <returns>The <see cref="CodeTypeDeclaration"/> with the added constructor.</returns>
     public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c,
-        in IEnumerable<(string Type, string Name, string DataMemberName)> arguments,
-        in string? body = null,
-        in MemberAttributes? accessModifiers = null,
-        in string? comment = null)
+            in IEnumerable<(string Type, string Name, string DataMemberName)> arguments,
+            in string? body = null,
+            in MemberAttributes? accessModifiers = null,
+            in string? comment = null)
     {
         Check.IfArgumentNotNull(arguments);
         Check.IfArgumentNotNull(c);
@@ -63,24 +58,19 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Adds the constructor.
+    /// Adds a constructor to the given <see cref="CodeTypeDeclaration"/>.
     /// </summary>
-    /// <param name="c">The c.</param>
-    /// <param name="arguments">The arguments.</param>
-    /// <param name="body">The body.</param>
-    /// <param name="accessModifiers">The access modifiers.</param>
-    /// <param name="comment">The comment.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException">
-    /// nameof(c)
-    /// or
-    /// nameof(c)
-    /// </exception>
+    /// <param name="c">The <see cref="CodeTypeDeclaration"/> to add the constructor to.</param>
+    /// <param name="arguments">The arguments of the constructor.</param>
+    /// <param name="body">The body of the constructor.</param>
+    /// <param name="accessModifiers">The access modifiers of the constructor.</param>
+    /// <param name="comment">The comment of the constructor.</param>
+    /// <returns>The <see cref="CodeTypeDeclaration"/> with the added constructor.</returns>
     public static CodeTypeDeclaration AddConstructor(this CodeTypeDeclaration c,
-        in IEnumerable<(string Type, string Name, string DataMemberName, bool IsPropery)> arguments,
-        in string? body = null,
-        in MemberAttributes? accessModifiers = null,
-        in string? comment = null)
+            in IEnumerable<(string Type, string Name, string DataMemberName, bool IsPropery)> arguments,
+            in string? body = null,
+            in MemberAttributes? accessModifiers = null,
+            in string? comment = null)
     {
         Check.IfArgumentNotNull(c);
         Check.IfArgumentNotNull(arguments);
@@ -125,17 +115,28 @@ public static class CodeDomHelper
                                                in MemberAttributes? accessModifier = null)
         => AddField(c, new(type, name, comment, accessModifier ?? MemberAttributes.Private));
 
+    /// <summary>
+    /// Adds a field to the given CodeTypeDeclaration.
+    /// </summary>
+    /// <param name="c">The CodeTypeDeclaration to add the field to.</param>
+    /// <param name="fieldInfo">The information about the field to add.</param>
+    /// <returns>The CodeTypeDeclaration with the added field.</returns>
     public static CodeTypeDeclaration AddField(this CodeTypeDeclaration c, in CodeGeneration.Models.FieldInfo fieldInfo)
     {
         Check.IfArgumentNotNull(c);
 
-        var field = NewField(fieldInfo);
-
-        _ = c.Members.Add(field);
+        c.Members.Add(NewField(fieldInfo));
         return c;
     }
 
-    public static CodeTypeDeclaration AddInterfaces(this CodeTypeDeclaration codeTypeDeclaration, in IEnumerable<string> interfaces)
+    /// <summary>
+    /// Adds the given interfaces to the given CodeTypeDeclaration.
+    /// </summary>
+    /// <param name="codeTypeDeclaration">The CodeTypeDeclaration to add the interfaces to.</param>
+    /// <param name="interfaces">The interfaces to add.</param>
+    /// <returns>The CodeTypeDeclaration with the added interfaces.</returns>
+    //This method adds interfaces to a CodeTypeDeclaration object
+    public static CodeTypeDeclaration AddInterfaces(this CodeTypeDeclaration codeTypeDeclaration, IEnumerable<string> interfaces)
     {
         Check.IfArgumentNotNull(codeTypeDeclaration);
         interfaces?.ToList().ForEach(codeTypeDeclaration.BaseTypes.Add);
@@ -474,6 +475,12 @@ public static class CodeDomHelper
         return unit;
     }
 
+    /// <summary>
+    /// Adds a summary comment to the specified CodeTypeMember.
+    /// </summary>
+    /// <param name="t">The CodeTypeMember to add the summary comment to.</param>
+    /// <param name="comment">The comment to add.</param>
+    /// <returns>The CodeTypeMember with the summary comment added.</returns>
     public static T AddSummary<T>(this T t, in string comment)
             where T : CodeTypeMember
     {
@@ -486,11 +493,11 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Generates the code.
+    /// Generates a string of C# code from a CodeCompileUnit and optional directives.
     /// </summary>
-    /// <param name="unit">The unit.</param>
-    /// <param name="directives">The directives.</param>
-    /// <returns></returns>
+    /// <param name="unit">The CodeCompileUnit to generate code from.</param>
+    /// <param name="directives">Optional directives to include in the generated code.</param>
+    /// <returns>A string of C# code.</returns>
     public static string GenerateCode(this CodeCompileUnit unit, params string[] directives)
     {
         var options = new CodeGeneratorOptions { BracingStyle = "C", BlankLinesBetweenMembers = true, VerbatimOrder = true, ElseOnClosing = false, IndentString = "    " };
@@ -506,13 +513,10 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Adds the comment.
+    /// Creates a new CodeMemberField from the given FieldInfo.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="t">The t.</param>
-    /// <param name="comment">The comment.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException">nameof(t)</exception>
+    /// <param name="fieldInfo">The FieldInfo to create the CodeMemberField from.</param>
+    /// <returns>A new CodeMemberField.</returns>
     public static CodeMemberField NewField(CodeGeneration.Models.FieldInfo fieldInfo)
     {
         var fieldName = ToFieldName(fieldInfo.Name.ArgumentNotNull(nameof(fieldInfo)));
@@ -531,15 +535,15 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Creates new method.
+    /// Creates a new CodeMemberMethod with the given parameters.
     /// </summary>
-    /// <param name="name">The name.</param>
-    /// <param name="body">The body.</param>
-    /// <param name="returnType">Type of the return.</param>
-    /// <param name="accessModifiers">The access modifiers.</param>
-    /// <param name="isPartial">if set to <c>true</c> [is partial].</param>
-    /// <param name="arguments">The arguments.</param>
-    /// <returns></returns>
+    /// <param name="name">The name of the method.</param>
+    /// <param name="body">The body of the method.</param>
+    /// <param name="returnType">The return type of the method.</param>
+    /// <param name="accessModifiers">The access modifiers of the method.</param>
+    /// <param name="isPartial">Whether the method is partial.</param>
+    /// <param name="arguments">The arguments of the method.</param>
+    /// <returns>A new CodeMemberMethod.</returns>
     public static CodeMemberMethod NewMethod(
         in string name,
         in string? body = null,
@@ -574,11 +578,11 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Creates new partialfield.
+    /// Creates a new partial field with the specified name and return type.
     /// </summary>
-    /// <param name="name">The name.</param>
-    /// <param name="returnTypeFullName">Full name of the return type.</param>
-    /// <returns></returns>
+    /// <param name="name">The name of the field.</param>
+    /// <param name="returnTypeFullName">The full name of the return type.</param>
+    /// <returns>A <see cref="CodeMemberField"/> representing the partial field.</returns>
     public static CodeMemberField NewPartialField(string name, string? returnTypeFullName)
     {
         var accessModifiers = MemberAttributes.ScopeMask;
@@ -595,11 +599,11 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Creates new partialmethodasfield.
+    /// Creates a new partial method as a field.
     /// </summary>
-    /// <param name="name">The name.</param>
-    /// <param name="returnType">Type of the return.</param>
-    /// <returns></returns>
+    /// <param name="name">The name of the method.</param>
+    /// <param name="returnType">The return type of the method.</param>
+    /// <returns>A CodeMemberField representing the partial method.</returns>
     public static CodeMemberField NewPartialMethodAsField(in string name, in Type? returnType = null)
     {
         var accessModifiers = MemberAttributes.ScopeMask;
@@ -616,11 +620,11 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Creates new partialmethodasfield.
+    /// Creates a new partial method as a field.
     /// </summary>
-    /// <param name="name">The name.</param>
-    /// <param name="returnTypeFullName">Full name of the return type.</param>
-    /// <returns></returns>
+    /// <param name="name">The name of the method.</param>
+    /// <param name="returnTypeFullName">The full name of the return type.</param>
+    /// <returns>A <see cref="CodeMemberField"/> representing the partial method.</returns>
     public static CodeMemberField NewPartialMethodAsField(string name, string? returnTypeFullName)
     {
         var accessModifiers = MemberAttributes.ScopeMask;
@@ -637,12 +641,12 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Removes the automatic generated tag.
+    /// Removes the auto-generated tag from the given code statement.
     /// </summary>
     /// <param name="codeStatement">The code statement.</param>
-    /// <returns></returns>
+    /// <returns>The code statement without the auto-generated tag.</returns>
     public static string RemoveAutoGeneratedTag(in string codeStatement)
-        => codeStatement.ArgumentNotNull(nameof(codeStatement)).Remove(@"//------------------------------------------------------------------------------
+            => codeStatement.ArgumentNotNull(nameof(codeStatement)).Remove(@"//------------------------------------------------------------------------------
 // <auto-generated>
 //     This code was generated by a tool.
 //
@@ -653,11 +657,11 @@ public static class CodeDomHelper
 ") ?? string.Empty;
 
     /// <summary>
-    /// Uses the name space.
+    /// Adds a namespace import to the given CodeNamespace.
     /// </summary>
-    /// <param name="ns">The ns.</param>
-    /// <param name="nameSpace">The name space.</param>
-    /// <returns></returns>
+    /// <param name="ns">The CodeNamespace to add the import to.</param>
+    /// <param name="nameSpace">The namespace to import.</param>
+    /// <returns>The CodeNamespace with the added import.</returns>
     public static CodeNamespace UseNameSpace(this CodeNamespace ns, in string nameSpace)
     {
         Check.IfArgumentNotNull(ns);
@@ -671,12 +675,11 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Uses the name space.
+    /// Adds the specified namespaces to the given CodeNamespace.
     /// </summary>
-    /// <param name="ns">The ns.</param>
-    /// <param name="nameSpaces">The name spaces.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException">ns</exception>
+    /// <param name="ns">The CodeNamespace to add the namespaces to.</param>
+    /// <param name="nameSpaces">The namespaces to add.</param>
+    /// <returns>The CodeNamespace with the added namespaces.</returns>
     public static CodeNamespace UseNameSpace(this CodeNamespace ns, in IEnumerable<string> nameSpaces)
     {
         foreach (var nameSpace in nameSpaces.ArgumentNotNull())
@@ -685,15 +688,4 @@ public static class CodeDomHelper
         }
         return ns;
     }
-    //public static MemberAttributes ToMemberAttributes(this AccessModifier modifier)
-    //    => modifier switch
-    //    {
-    //        AccessModifier.Private => MemberAttributes.Private,
-    //        AccessModifier.Protected => MemberAttributes.Family,
-    //        AccessModifier.Internal => MemberAttributes.Assembly,
-    //        AccessModifier.InternalProtected => MemberAttributes.FamilyAndAssembly,
-    //        AccessModifier.Public => MemberAttributes.Public,
-    //        AccessModifier.None => throw new System.NotImplementedException(),
-    //        _ => throw new System.NotImplementedException(),
-    //    };
 }

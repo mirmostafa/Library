@@ -2,6 +2,9 @@
 
 namespace Library.Logging;
 
+/// <summary>
+/// Represents a class that provides logging functionality and raises an event when logging.
+/// </summary>
 public sealed class FastLogger : FastLoggerBase<object>, ILogger, IEventualLogger
 {
     public event EventHandler<ItemActedEventArgs<object>>? Logging;

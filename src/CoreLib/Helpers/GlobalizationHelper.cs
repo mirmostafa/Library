@@ -2,8 +2,19 @@
 
 namespace Library.Helpers;
 
+/// <summary>
+/// Provides helper methods for converting between PersianDayOfWeek and DayOfWeek, and for checking if a PersianDayOfWeek is a holiday.
+/// </summary>
+/// <returns>
+/// Methods for converting between PersianDayOfWeek and DayOfWeek, and for checking if a PersianDayOfWeek is a holiday.
+/// </returns>
 public static class GlobalizationHelper
 {
+    /// <summary>
+    /// Converts a PersianDayOfWeek to a DayOfWeek.
+    /// </summary>
+    /// <param name="dow">The PersianDayOfWeek to convert.</param>
+    /// <returns>The DayOfWeek corresponding to the given PersianDayOfWeek.</returns>
     public static DayOfWeek ToDayOfWeek(this PersianDayOfWeek dow) =>
         dow switch
         {
@@ -17,6 +28,11 @@ public static class GlobalizationHelper
             _ => throw new NotImplementedException(),
         };
 
+    /// <summary>
+    /// Converts a DayOfWeek to a PersianDayOfWeek.
+    /// </summary>
+    /// <param name="dow">The DayOfWeek to convert.</param>
+    /// <returns>The PersianDayOfWeek corresponding to the given DayOfWeek.</returns>
     public static PersianDayOfWeek ToPersianDayOfWeek(this DayOfWeek dow) =>
         dow switch
         {
@@ -30,6 +46,11 @@ public static class GlobalizationHelper
             _ => throw new NotImplementedException(),
         };
 
+    /// <summary>
+    /// Checks if the given PersianDayOfWeek is a holiday.
+    /// </summary>
+    /// <param name="dow">The PersianDayOfWeek to check.</param>
+    /// <returns>True if the given PersianDayOfWeek is a holiday, false otherwise.</returns>
     public static bool IsPersianHoliday(this PersianDayOfWeek dow) =>
         dow switch
         {
