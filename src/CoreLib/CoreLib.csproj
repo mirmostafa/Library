@@ -4,6 +4,7 @@
 		<RootNamespace>Library</RootNamespace>
 		<Configurations>Debug;Release;Debug Unit Test</Configurations>
         <EnablePreviewFeatures>true</EnablePreviewFeatures>
+		<LangVersion>Preview</LangVersion>
     </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
