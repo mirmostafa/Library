@@ -1,7 +1,7 @@
 ﻿WriteLine();
 
-internal class Person(string? name, int age)
+internal class Person(string name, int? age)
 {
-    public int? Age { get; set; } = age;
-    public string? Name { get; set; } = name;
+    public int? Age { get; } = age;
+    public string Name { get; } = name;
 }
