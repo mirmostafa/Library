@@ -978,6 +978,7 @@ public static class EnumerableHelper
     /// </summary>
     /// <param name="item">The item to convert.</param>
     /// <returns>An IEnumerable containing the item.</returns>
+    [return: NotNull]
     public static IEnumerable<T> ToEnumerable<T>(T item)
     //This code creates an IEnumerable of type T and returns the item passed in as an argument.
     {

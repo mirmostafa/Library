@@ -39,8 +39,8 @@ public sealed class Database : SqlObject<Database, Server>
         return GetDatabasesCore(connectionString).FirstOrDefault(db => db.Name == name);
     }
 
-    public static async Task<Database?> GetDatabaseAsync(string connectionString, string? name = null)
-        => await Task.Run(() => GetDatabase(connectionString, name));
+    public static async Task<Database?> GetDatabaseAsync(string connectionString, string? name = null, CancellationToken cancellationToken = default)
+        => await Task.Run(() => GetDatabase(connectionString, name), cancellationToken);
 
     public static Databases GetDatabases(string connectionString)
         => GetDatabasesCore(connectionString);

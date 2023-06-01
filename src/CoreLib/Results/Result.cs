@@ -50,8 +50,7 @@ public abstract record ResultBase(in bool? Succeed = null,
     /// <returns>A string representation of the result object.</returns>
     public override string ToString()
     {
-        var result = new StringBuilder();
-        _ = result.AppendLine($"IsSucceed: {this.IsSucceed}");
+        var result = new StringBuilder().AppendLine($"IsSucceed: {this.IsSucceed}");
         if (!this.Message.IsNullOrEmpty())
         {
             _ = result.AppendLine(this.Message);

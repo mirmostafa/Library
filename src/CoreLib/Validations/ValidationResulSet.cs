@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿#nullable disable
+
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
@@ -16,27 +18,27 @@ public static class Validation
     /// </summary>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <param name="value">The value to check.</param>
-    /// <param name="argName">The name of the argument.</param>
+    /// <param name="paramName">The name of the argument.</param>
     /// <returns>The value.</returns>
     [return: NotNull]
-    public static TValue ArgumentNotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
+    public static TValue ArgumentNotNull<TValue>([NotNull] this TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null!)
         => Check(value, CheckBehavior.ThrowOnFail).ArgumentNotNull();
 
     /// <summary>
     /// The entry of validation checks
     /// </summary>
-    public static ValidationResultSet<TValue> Check<TValue>(this TValue value, CheckBehavior behavior = CheckBehavior.ReturnFirstFailure, [CallerArgumentExpression(nameof(value))] string argName = null!)
-        => new(value, behavior, argName);
+    public static ValidationResultSet<TValue> Check<TValue>(this TValue value, CheckBehavior behavior = CheckBehavior.ReturnFirstFailure, [CallerArgumentExpression(nameof(value))] string paramName = null!)
+        => new(value, behavior, paramName);
 
     /// <summary>
     /// Checks if the given value is not null and returns it. Throws an exception if the value is null.
     /// </summary>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <param name="value">The value to check.</param>
-    /// <param name="argName">The name of the argument.</param>
+    /// <param name="paramName">The name of the argument.</param>
     /// <returns>The value if it is not null.</returns>
     [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string argName = null!)
+    public static TValue NotNull<TValue>([NotNull] this TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null!)
         => Check(value, CheckBehavior.ThrowOnFail).NotNull();
 
     /// <summary>
@@ -45,10 +47,10 @@ public static class Validation
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <param name="value">The value to check.</param>
     /// <param name="onErrorMessage">The error message to throw if the value is null.</param>
-    /// <param name="argName">The name of the argument.</param>
+    /// <param name="paramName">The name of the argument.</param>
     /// <returns>The value if it is not null.</returns>
     [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string argName = null!)
+    public static TValue NotNull<TValue>([NotNull] this TValue value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string paramName = null!)
         => Check(value, CheckBehavior.ThrowOnFail).NotNull(onErrorMessage);
 
     /// <summary>
@@ -57,14 +59,14 @@ public static class Validation
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <param name="value">The value to check.</param>
     /// <param name="onError">The function to create the exception.</param>
-    /// <param name="argName">The name of the argument.</param>
+    /// <param name="paramName">The name of the argument.</param>
     /// <returns>The value if it is not null.</returns>
     [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string argName = null!)
+    public static TValue NotNull<TValue>([NotNull] this TValue value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string paramName = null!)
         => Check(value, CheckBehavior.ThrowOnFail).NotNull(onError);
 }
 
-public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
+public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
 {
     #region Fields, ctors and properties
 
@@ -90,13 +92,13 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     /// <summary>
     /// Traverses the rules and create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.
     /// </summary>
-    public Result<TValue?> Build()
+    public Result<TValue> Build()
         => this.InnerBuild(this._behavior);
 
-    public Result<TValue?> GatherToResult()
+    public Result<TValue> GatherToResult()
         => this.InnerBuild(CheckBehavior.GatherAll);
 
-    public Result<TValue?> ThrowOnFail()
+    public ValidationResultSet<TValue> ThrowOnFail()
     {
         foreach (var (isValid, onError) in this.Rules)
         {
@@ -105,16 +107,16 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
                 throw onError();
             }
         }
-        return this.ToResult();
+        return this;
     }
 
-    public Result<TValue?> ToResult()
+    public Result<TValue> ToResult()
         => new(this.Value);
 
-    private Result<TValue?> InnerBuild(CheckBehavior behavior)
+    private Result<TValue> InnerBuild(CheckBehavior behavior)
     {
         // Create a new result object with the current value
-        var result = new Result<TValue?>(this.Value);
+        var result = new Result<TValue>(this.Value);
 
         // Iterate through the rules
         foreach (var (isValid, onError) in this.Rules)
@@ -155,16 +157,16 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     /// <summary>
     /// Adds a rule to the ValidationResultSet to check if the value is not null.
     /// </summary>
-    public ValidationResultSet<TValue> ArgumentNotNull(Func<Exception>? onError = null)
+    public ValidationResultSet<TValue> ArgumentNotNull(Func<Exception> onError = null)
         => this.AddRule(x => x, _ => this.Value is not null, onError, () => new ArgumentNullException(this._valueName));
 
-    public ValidationResultSet<TValue> ArgumentOutOfRange<TProperty>(Expression<Func<TValue, TProperty?>> propertyExpression, Func<TProperty?, bool> isValid)
+    public ValidationResultSet<TValue> ArgumentOutOfRange<TProperty>(Expression<Func<TValue, TProperty>> propertyExpression, Func<TProperty, bool> isValid)
         => this.AddRule(propertyExpression, isValid, null, x => new ArgumentOutOfRangeException(x));
 
-    public ValidationResultSet<TValue> ArgumentOutOfRange(Func<TValue?, bool> isValid)
+    public ValidationResultSet<TValue> ArgumentOutOfRange(Func<TValue, bool> isValid)
         => this.AddRule(x => x, isValid, null, () => new ArgumentOutOfRangeException(this._valueName));
 
-    public ValidationResultSet<TValue> NotBiggerThan(Expression<Func<TValue, int>> propertyExpression, int max, Func<Exception>? onError = null)
+    public ValidationResultSet<TValue> NotBiggerThan(Expression<Func<TValue, int>> propertyExpression, int max, Func<Exception> onError = null)
         => this.AddRule(propertyExpression, x => !(x > max), onError, x => new ValidationException($"{x} must be bigger than {max}"));
 
     /// <summary>
@@ -173,7 +175,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     public ValidationResultSet<TValue> NotNull()
         => this.AddRule(x => x, _ => this.Value is not null, null, () => new NullValueValidationException(this._valueName));
 
-    public ValidationResultSet<TValue> NotNull(Func<Exception>? onError)
+    public ValidationResultSet<TValue> NotNull(Func<Exception> onError)
         => this.AddRule(x => x, _ => this.Value is not null, onError, () => new NullValueValidationException(this._valueName));
 
     public ValidationResultSet<TValue> NotNull(Func<string> onErrorMessage)
@@ -186,19 +188,19 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     /// <summary>
     /// Adds a rule to the validation set that checks if the specified property is not null.
     /// </summary>
-    public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object?>> propertyExpression)
+    public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object>> propertyExpression)
         => this.AddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(x));
 
-    public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object?>> propertyExpression, Func<Exception>? onError)
+    public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object>> propertyExpression, Func<Exception> onError)
         => this.AddRule(propertyExpression, x => x is not null, onError, x => new NullValueValidationException(x));
 
-    public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object>> propertyExpression, Func<string>? onErrorMessage)
+    public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object>> propertyExpression, Func<string> onErrorMessage)
         => this.AddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
 
-    public ValidationResultSet<TValue> NotNullOrEmpty(Expression<Func<TValue, string?>> propertyExpression, Func<Exception>? onError = null)
+    public ValidationResultSet<TValue> NotNullOrEmpty(Expression<Func<TValue, string>> propertyExpression, Func<Exception> onError = null)
         => this.AddRule(propertyExpression, x => !string.IsNullOrEmpty(x), onError, x => new NullValueValidationException(x));
 
-    public ValidationResultSet<TValue> NotNullOrEmpty(Expression<Func<TValue, string?>> propertyExpression, Func<string> onErrorMessage)
+    public ValidationResultSet<TValue> NotNullOrEmpty(Expression<Func<TValue, string>> propertyExpression, Func<string> onErrorMessage)
         => this.AddRule(propertyExpression, x => !string.IsNullOrEmpty(x), null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
 
     public ValidationResultSet<TValue> RuleFor(Func<TValue, bool> isValid, Func<Exception> onError)
@@ -235,7 +237,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     /// <param name="onError">The error function.</param>
     /// <param name="onErrorAlternative">The alternative error function.</param>
     /// <returns>The validation result set.</returns>
-    private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception>? onError, Func<string, Exception> onErrorAlternative)
+    private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<string, Exception> onErrorAlternative)
     {
         bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
         var error = onError ?? this.GetOnError(propertyExpression, onErrorAlternative);
@@ -253,7 +255,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     /// <returns>The validation result set.</returns>
     [DebuggerStepThrough]
     [StackTraceHidden]
-    private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception>? onError, Func<Exception> onErrorAlternative)
+    private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<Exception> onErrorAlternative)
     {
         var error = onError ?? onErrorAlternative;
         bool validator(TValue x) => isValid(Invoke(propertyExpression, x));

@@ -20,14 +20,14 @@ public static class ResultHelper
     /// <param name="task">The task to await.</param>
     /// <returns>The result of the task, breaking on failure.</returns>
     public static async Task<TResult> BreakOnFail<TResult>(this Task<TResult> task)
-        where TResult : Result
+        where TResult : ResultBase
     {
         var result = await task;
         return result.BreakOnFail();
     }
 
     public static TResult BreakOnFail<TResult>(this TResult result)
-        where TResult : Result
+        where TResult : ResultBase
     {
         if (!result)
         {
@@ -173,7 +173,7 @@ public static class ResultHelper
     }
 
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase
-        => (result = input.ArgumentNotNull()).IsSucceed;
+        => (result = input).IsSucceed;
 
     //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
     //x public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
