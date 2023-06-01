@@ -111,8 +111,6 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
     public Result<TValue?> ToResult()
         => new(this.Value);
 
-    // Rewritten code with comments
-
     private Result<TValue?> InnerBuild(CheckBehavior behavior)
     {
         // Create a new result object with the current value
@@ -124,10 +122,10 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue?>>
             // Check if the value is not valid
             if (!isValid(this.Value))
             {
-                // Depending on the behavior, take the appropriate action
+                // Depending on the behavior parameter, take the appropriate action
                 switch (behavior)
                 {
-                    // Gather all errors
+                    // Combine all errors
                     case CheckBehavior.GatherAll:
                         result += Result<TValue>.CreateFailure(onError(), this.Value);
                         break;
