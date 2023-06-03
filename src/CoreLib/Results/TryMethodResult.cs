@@ -1,8 +1,10 @@
 ﻿using System.Collections.Immutable;
 
+using Library.Results;
+
 namespace Library.Results;
 
-public sealed record TryMethodResult<TValue>(in TValue? Value,
+public sealed class TryMethodResult<TValue>(in TValue? Value,
                                              in bool? Succeed = null,
                                              in object? Status = null,
                                              in string? Message = null,

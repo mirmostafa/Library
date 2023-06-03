@@ -4,7 +4,7 @@ using System.Diagnostics;
 using Library.Interfaces;
 using Library.Validations;
 
-namespace Library.Results;
+namespace Library.Results.Expired;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public abstract record ResultBase(in bool? Succeed = null,
