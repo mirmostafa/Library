@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using Library.Interfaces;
 using Library.Validations;
 
-namespace Library.Results;
+namespace Library.Results.Unresolvable;
 
 public class Result(in bool? succeed = null,
                      in object? status = null,
