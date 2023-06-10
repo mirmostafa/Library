@@ -1165,4 +1165,7 @@ public static class EnumerableHelper
             { Length: 2 } => aggregator(items[0], items[1]),
             [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
         };
+
+    public static bool Any<T>(this IList<T> list)
+        => list.Count != 0;
 }

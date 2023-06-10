@@ -4,44 +4,38 @@ namespace Library.Threading;
 
 public sealed class AsyncLock : IAsyncLock, IDisposable
 {
-    private readonly SemaphoreSlim _Lock;
+    private readonly SemaphoreSlim _lock = new(1);
 
-    public AsyncLock()
-    {
-        this._Lock = new SemaphoreSlim(1);
-        this.Id = Guid.NewGuid();
-    }
-
-    public Guid Id { get; }
+    public Guid Id { get; } = Guid.NewGuid();
 
     public void Dispose()
-        => this._Lock.Dispose();
+        => this._lock.Dispose();
 
     public async Task LockAsync(Func<Task> action)
     {
         Check.IfArgumentNotNull(action, nameof(action));
-        await this._Lock.WaitAsync();
+        await this._lock.WaitAsync();
         try
         {
             await action();
         }
         finally
         {
-            _ = this._Lock.Release();
+            _ = this._lock.Release();
         }
     }
 
     public async Task<TResult> LockAsync<TResult>(Func<Task<TResult>> action)
     {
         Check.IfArgumentNotNull(action, nameof(action));
-        await this._Lock.WaitAsync();
+        await this._lock.WaitAsync();
         try
         {
             return await action();
         }
         finally
         {
-            _ = this._Lock.Release();
+            _ = this._lock.Release();
         }
     }
 }

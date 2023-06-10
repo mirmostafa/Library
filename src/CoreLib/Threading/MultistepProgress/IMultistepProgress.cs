@@ -49,7 +49,7 @@ public readonly record struct ProgressData(in int? Max = null, in int? Current =
         => new(value.Max, value.Current, value.Description);
     public static implicit operator ProgressData(in string description)
         => new(default, default, description);
-    
+
     [return: NotNullIfNotNull(nameof(data.Description))]
     public static implicit operator string?(in ProgressData data)
         => data.ToString();

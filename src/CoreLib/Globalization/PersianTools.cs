@@ -1,6 +1,8 @@
 ﻿using System.Globalization;
+
 using Library.Globalization.DataTypes;
 using Library.Validations;
+
 using static Library.Globalization.CultureConstants;
 
 namespace Library.Globalization;
@@ -10,6 +12,7 @@ public static class PersianTools
     #region Fields
 
     public static readonly IEnumerable<char> Chars = "ضصثقفغعهخحجچپسیبلاتنمکگظطزرذدئوژآ";
+
     public static readonly (char Persian, char Arabic)[] InvalidArabicCharPairs = new[]
     {
             ('ک','ﮎ'),
@@ -23,16 +26,17 @@ public static class PersianTools
             ('ه','ۀ'),
             ('و','ؤ')
         };
+
     public static readonly IEnumerable<char> SeparatorsChars = new[] { ',', DECIMAL_SEPARATOR };
     public static readonly IEnumerable<char> SpecialChars = "ًٌٍريال،؛َُِّۀةيؤإأء";
     private static readonly PersianCalendar _persianCalendar = new();
 
-    #endregion
+    #endregion Fields
 
     /// <summary>
-    ///     Gets the persian digits.
+    ///     Gets the Persian digits.
     /// </summary>
-    /// <value> The persian digits. </value>
+    /// <value> The Persian digits. </value>
     public static IEnumerable<(char English, char Persian)> Digits
     {
         get
@@ -156,7 +160,7 @@ public static class PersianTools
     /// <summary>
     ///     Gets the parts.
     /// </summary>
-    /// <param name="persianDate"> The persian date. </param>
+    /// <param name="persianDate"> The Persian date. </param>
     /// <returns> </returns>
     public static (int year, int month, int day) GetParts(in string persianDate)
     {
@@ -185,7 +189,7 @@ public static class PersianTools
     }
 
     /// <summary>
-    ///     Gets the persian date parts.
+    ///     Gets the Persian date parts.
     /// </summary>
     /// <param name="date"> The date. </param>
     /// <returns> </returns>
@@ -193,7 +197,7 @@ public static class PersianTools
         => (GetPersianYear(date), GetPersianMonth(date), GetPersianDayOfMonth(date));
 
     /// <summary>
-    ///     Gets the persian day of month.
+    ///     Gets the Persian day of month.
     /// </summary>
     /// <param name="dateTime"> The date time. </param>
     /// <returns> </returns>
@@ -201,7 +205,7 @@ public static class PersianTools
         => _persianCalendar.GetDayOfMonth(dateTime);
 
     /// <summary>
-    ///     Gets the persian days count in month.
+    ///     Gets the Persian days count in month.
     /// </summary>
     /// <param name="year"> The year. </param>
     /// <param name="month"> The month. </param>
@@ -210,7 +214,7 @@ public static class PersianTools
         => _persianCalendar.GetDaysInMonth(year, month);
 
     /// <summary>
-    ///     Gets the persian first day of month.
+    ///     Gets the Persian first day of month.
     /// </summary>
     /// <param name="current"> The current. </param>
     /// <returns> </returns>
@@ -225,7 +229,7 @@ public static class PersianTools
     }
 
     /// <summary>
-    ///     Gets the persian month.
+    ///     Gets the Persian month.
     /// </summary>
     /// <param name="dateTime"> The date time. </param>
     /// <returns> </returns>
@@ -233,7 +237,7 @@ public static class PersianTools
         => _persianCalendar.GetMonth(dateTime);
 
     /// <summary>
-    ///     Gets the persian year.
+    ///     Gets the Persian year.
     /// </summary>
     /// <param name="dateTime"> The date time. </param>
     /// <returns> </returns>
@@ -241,9 +245,31 @@ public static class PersianTools
         => _persianCalendar.GetYear(dateTime);
 
     /// <summary>
-    ///     Re-formats the persian string.
+    ///     Converts to persian string.
     /// </summary>
-    /// <param name="persianDate"> The persian date. </param>
+    /// <param name="year"> The year. </param>
+    /// <param name="month"> The month. </param>
+    /// <param name="day"> The day. </param>
+    /// <param name="hour"> The hour. </param>
+    /// <param name="minute"> The minute. </param>
+    /// <param name="second"> The second. </param>
+    /// <param name="format"> The format. </param>
+    /// <param name="language"> The language. </param>
+    /// <returns> </returns>
+    public static string PersianDateToPersianString(int? year,
+        int? month,
+        int? day,
+        int? hour = 0,
+        int? minute = 0,
+        int? second = 0,
+        in string format = DEFAULT_DATE_TIME_PATTERN,
+        in Language language = Language.Persian)
+        => Reformat(year, month, day, hour, minute, second, format, language);
+
+    /// <summary>
+    ///     Re-formats the Persian string.
+    /// </summary>
+    /// <param name="persianDate"> The Persian date. </param>
     /// <returns> </returns>
     public static string ReformatPersian(string persianDate)
     {
@@ -254,7 +280,7 @@ public static class PersianTools
     /// <summary>
     ///     Converts to datetime.
     /// </summary>
-    /// <param name="persianDateText"> The persian date text. </param>
+    /// <param name="persianDateText"> The Persian date text. </param>
     /// <returns> </returns>
     public static DateTime ToDateTime(in string persianDateText)
     {
@@ -309,28 +335,6 @@ public static class PersianTools
     /// <returns> </returns>
     public static PersianDayOfWeek ToPersianDayOfWeek(this DayOfWeek dow)
         => (PersianDayOfWeek)dow;
-
-    /// <summary>
-    ///     Converts to persian string.
-    /// </summary>
-    /// <param name="year"> The year. </param>
-    /// <param name="month"> The month. </param>
-    /// <param name="day"> The day. </param>
-    /// <param name="hour"> The hour. </param>
-    /// <param name="minute"> The minute. </param>
-    /// <param name="second"> The second. </param>
-    /// <param name="format"> The format. </param>
-    /// <param name="language"> The language. </param>
-    /// <returns> </returns>
-    public static string PersianDateToPersianString(int? year,
-        int? month,
-        int? day,
-        int? hour = 0,
-        int? minute = 0,
-        int? second = 0,
-        in string format = DEFAULT_DATE_TIME_PATTERN,
-        in Language language = Language.Persian)
-        => Reformat(year, month, day, hour, minute, second, format, language);
 
     public static string ToPersianString(this DayOfWeek dow) => dow switch
     {

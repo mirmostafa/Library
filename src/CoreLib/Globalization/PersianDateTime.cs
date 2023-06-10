@@ -6,7 +6,6 @@ using System.Text.RegularExpressions;
 using Library.Globalization.DataTypes;
 using Library.Interfaces;
 using Library.Results;
-using Library.Results;
 using Library.Validations;
 
 namespace Library.Globalization;
@@ -435,7 +434,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="dateTime">The date time.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator PersianDateTime(DateTime dateTime) 
+    public static implicit operator PersianDateTime(DateTime dateTime)
         => dateTime.ToPersianDateTime();
 
     /// <summary>
@@ -443,7 +442,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="PersianDateTime">The Persian date time.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator string(PersianDateTime PersianDateTime) 
+    public static implicit operator string(PersianDateTime PersianDateTime)
         => PersianDateTime.ToString();
 
     public static bool IsPersianDateTime(in string s)

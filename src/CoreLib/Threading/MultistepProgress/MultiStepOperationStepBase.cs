@@ -1,13 +1,19 @@
-﻿using Library;
-
-using Library.Threading.MultistepProgress;
-
-namespace Library.Threading.MultistepProgress;
+﻿namespace Library.Threading.MultistepProgress;
 
 public abstract class MultiStepOperationStepBase : IMultiStepOperationStep
 {
     protected MultiStepOperationStepBase(MultiStepOperation operation, string? description = null, int priorityId = -1)
         => this.InitializeComponents(operation, description, priorityId);
+
+    public string? Description { get; private set; }
+
+    public MultiStepOperation Operation { get; private set; }
+
+    public int PriorityId { get; private set; }
+
+    public Action<MultiStepOperation> Step { get; set; }
+
+    protected abstract void OnStep(MultiStepOperation op);
 
     private void InitializeComponents(MultiStepOperation operation, string? description, int priorityId)
     {
@@ -16,11 +22,4 @@ public abstract class MultiStepOperationStepBase : IMultiStepOperationStep
         this.Description = description;
         this.PriorityId = priorityId;
     }
-
-    protected abstract void OnStep(MultiStepOperation op);
-
-    public Action<MultiStepOperation> Step { get; set; }
-    public MultiStepOperation Operation { get; private set; }
-    public string? Description { get; private set; }
-    public int PriorityId { get; private set; }
 }

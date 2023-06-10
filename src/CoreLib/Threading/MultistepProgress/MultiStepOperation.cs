@@ -1,12 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-using Library;
 using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
-
-
-using Library.Threading.MultistepProgress;
 using Library.Validations;
 
 namespace Library.Threading.MultistepProgress;
@@ -24,8 +20,6 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
     private double _mainStepIndex;
     private long _mainStepsCount;
     private TaskScheduler? _scheduler;
-
-    //private TaskScheduler _scheduler;
 
     public event EventHandler? CurrentOperationCanceled;
 

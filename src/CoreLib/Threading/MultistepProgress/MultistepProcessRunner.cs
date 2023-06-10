@@ -2,10 +2,10 @@
 
 public sealed class MultistepProcessRunner<TState>
 {
+    private readonly object? _owner;
     private readonly IMultistepProcess _reporter;
     private readonly List<StepInfo<TState>> _steps = new();
     private readonly IMultistepProcess _subReporter;
-    private readonly object? _owner;
     private int _current;
     private int _max;
     private TState _state;

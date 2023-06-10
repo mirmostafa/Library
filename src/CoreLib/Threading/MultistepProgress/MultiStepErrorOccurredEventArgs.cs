@@ -1,14 +1,11 @@
-﻿using Library;
-using Library.Logging;
+﻿using Library.Logging;
 
 namespace Library.Threading.MultistepProgress;
 
-public sealed class MultiStepErrorOccurredEventArgs : LogEventArgs
+public sealed class MultiStepErrorOccurredEventArgs(Exception exception, object? log) : LogEventArgs(log ?? new(), string.Empty)
 {
-    public Exception Exception { get; }
+    public Exception Exception { get; } = exception;
 
-    public MultiStepErrorOccurredEventArgs(Exception exception, object? log)
-        : base(log ?? new(), string.Empty) => this.Exception = exception;
-
-    public override string? ToString() => this.Exception?.GetBaseException().Message ?? base.ToString();
+    public override string? ToString() 
+        => this.Exception?.GetBaseException().Message ?? base.ToString();
 }

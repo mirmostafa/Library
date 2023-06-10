@@ -1,4 +1,5 @@
 ﻿namespace Library.Extensions.Options;
+
 public interface IOptions
 { }
 

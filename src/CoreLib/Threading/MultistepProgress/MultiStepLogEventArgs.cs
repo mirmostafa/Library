@@ -1,13 +1,9 @@
-﻿using Library;
-using Library.Logging;
+﻿using Library.Logging;
 
 namespace Library.Threading.MultistepProgress;
 
 public sealed class MultiStepLogEventArgs : LogEventArgs
 {
-    public double Step { get; private set; }
-    public double Max { get; private set; }
-
     public MultiStepLogEventArgs(
         double step,
         object? log = null,
@@ -21,4 +17,7 @@ public sealed class MultiStepLogEventArgs : LogEventArgs
         this.Sender = sender;
         this.Max = max;
     }
+
+    public double Max { get; private set; }
+    public double Step { get; private set; }
 }

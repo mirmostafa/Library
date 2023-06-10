@@ -4,11 +4,11 @@ using Library.Validations;
 
 namespace Library.Threading.MultistepProgress;
 
-public sealed class TaskRunner<TArg> : ILoggerContainer
+public sealed class TaskRunner<TArg>(ILogger? logger = null, string? name = null, CancellationToken? cancellationToken = default) : ILoggerContainer
 {
-    private readonly CancellationToken? _cancellationToken;
-    private readonly string _name;
-    private readonly List<Func<TArg?, Task<TArg?>>> _taskList;
+    private readonly CancellationToken? _cancellationToken = cancellationToken;
+    private readonly string _name = name ?? Guid.NewGuid().ToString();
+    private readonly List<Func<TArg?, Task<TArg?>>> _taskList = new();
     private bool _continueOnException;
     private bool _isRunning;
     private Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)>? _onCancellationRequested;
@@ -19,15 +19,7 @@ public sealed class TaskRunner<TArg> : ILoggerContainer
     private Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)>? _onStepping;
     private Func<Task<TArg?>> _startWith = null!;
 
-    public TaskRunner(ILogger? logger = null, string? name = null, CancellationToken? cancellationToken = default)
-    {
-        this._taskList = new();
-        this._cancellationToken = cancellationToken;
-        this.Logger = logger ?? ILogger.Empty;
-        this._name = name;
-    }
-
-    public ILogger Logger { get; }
+    public ILogger Logger { get; } = logger ?? ILogger.Empty;
 
     public static TaskRunner<TArg> New(ILogger? logger = null, string? name = null, CancellationToken? cancellationToken = default)
         => new(logger, name, cancellationToken);
@@ -39,7 +31,8 @@ public sealed class TaskRunner<TArg> : ILoggerContainer
         return this;
     }
 
-    public string GetName() => this._name;
+    public string GetName() 
+        => this._name;
 
     public TaskRunner<TArg> OnCancellationRequested(Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)> handler)
     {
@@ -129,7 +122,7 @@ public sealed class TaskRunner<TArg> : ILoggerContainer
         static bool checkCancellationRequested(CancellationToken? token)
             => token is not null and { CanBeCanceled: true } and { IsCancellationRequested: true };
 
-        static Result<TArg> fail(TArg? arg, Exception ex)
+        static Result<TArg?> fail(TArg? arg, Exception ex)
             => Result<TArg>.CreateFailure(value: arg, error: ex);
     }
 
