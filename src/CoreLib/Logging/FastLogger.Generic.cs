@@ -18,12 +18,8 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
     private Action<LogRecord<TLogMessage>> _traceAction = null!;
     private Action<LogRecord<TLogMessage>> _warnAction = null!;
 
-    protected FastLoggerBase()
-    {
-        this._logAction = this.Log;
-        this.IsEnabled = true;
-        this.LogLevel = LogLevel.Normal;
-    }
+    public FastLoggerBase() 
+        => this._logAction = this.Log;
 
     public bool IsEnabled
     {

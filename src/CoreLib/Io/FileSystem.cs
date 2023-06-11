@@ -34,7 +34,7 @@ public abstract record FileSystem
         => this.FullPath.GetHashCode();
 
     /// <summary>
-    /// Performs an implicit conversion from <see cref="Library.IO.FileSystem"/> to <see cref="string"/>.
+    /// Performs an implicit conversion from <see cref="FileSystem"/> to <see cref="string"/>.
     /// </summary>
     /// <param name="fileSystem">The file system.</param>
     /// <returns>
@@ -45,16 +45,9 @@ public abstract record FileSystem
 }
 
 [Immutable]
-public sealed record Drive : FileSystem
+public sealed record Drive([DisallowNull] in SysDriveInfo driveInfo) : FileSystem
 {
-    private readonly SysDriveInfo _sysDriveInfo;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Drive"/> class.
-    /// </summary>
-    /// <param name="driveInfo">The drive information.</param>
-    public Drive([DisallowNull] in SysDriveInfo driveInfo)
-        => this._sysDriveInfo = driveInfo;
+    private readonly SysDriveInfo _sysDriveInfo = driveInfo;
 
     /// <summary>
     /// Performs an explicit conversion from <see cref="SysDriveInfo?"/> to <see cref="Drive?"/>.
@@ -79,7 +72,6 @@ public sealed record Drive : FileSystem
     /// Gets the drives.
     /// </summary>
     /// <returns></returns>
-    [return: NotNull]
     public static IEnumerable<Drive> GetDrives()
         => SysDriveInfo.GetDrives().Select(FromSystemIoDriveInfo);
 
@@ -87,7 +79,6 @@ public sealed record Drive : FileSystem
     /// Gets the root folder.
     /// </summary>
     /// <returns></returns>
-    [return: NotNull]
     public Folder GetRootFolder()
         => new(this.FullPath);
     /// <summary>
@@ -105,7 +96,7 @@ public sealed record Drive : FileSystem
         => new(driveInfo);
 
     /// <summary>
-    /// Converts to <see cref="System.IO.DriveInfo"/>.
+    /// Converts to <see cref="SysDriveInfo"/>.
     /// </summary>
     /// <returns></returns>
     [return: NotNull]
@@ -114,9 +105,9 @@ public sealed record Drive : FileSystem
 }
 
 [Immutable]
-public sealed record Folder : FileSystem
+public sealed record Folder([DisallowNull] SysFolderInfo directory) : FileSystem
 {
-    private readonly SysFolderInfo _sysFolder;
+    private readonly SysFolderInfo _sysFolder = directory;
 
     public override string FullPath => this._sysFolder.FullName;
 
@@ -128,13 +119,6 @@ public sealed record Folder : FileSystem
         : this(new SysFolderInfo(fullPath))
     {
     }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Folder"/> class.
-    /// </summary>
-    /// <param name="directory">The directory.</param>
-    public Folder([DisallowNull] SysFolderInfo directory)
-        => this._sysFolder = directory;
 
     /// <summary>
     /// Gets the folders.
@@ -187,7 +171,7 @@ public sealed record Folder : FileSystem
         => this._sysFolder.GetFiles().Select(x => new File(x));
 
     /// <summary>
-    /// Performs an explicit conversion from <see cref="System.IO.DirectoryInfo?"/> to <see cref="Library.IO.Folder?"/>.
+    /// Performs an explicit conversion from <see cref="SysFolderInfo?"/> to <see cref="Folder?"/>.
     /// </summary>
     /// <param name="driveInfo">The drive information.</param>
     /// <returns>
@@ -196,7 +180,7 @@ public sealed record Folder : FileSystem
     public static explicit operator Folder?(SysFolderInfo? driveInfo)
         => driveInfo is null ? null : new(driveInfo.FullName);
     /// <summary>
-    /// Performs an explicit conversion from <see cref="Library.IO.Folder?"/> to <see cref="System.IO.DirectoryInfo?"/>.
+    /// Performs an explicit conversion from <see cref="Folder?"/> to <see cref="SysFolderInfo?"/>.
     /// </summary>
     /// <param name="folder">The folder.</param>
     /// <returns>

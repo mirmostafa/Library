@@ -1,21 +1,14 @@
 ﻿namespace Library.Logging;
 
-public class LogEventArgs : EventArgs
+public class LogEventArgs(object log, object? moreInfo = null, LogLevel level = LogLevel.Info) : EventArgs
 {
-    public LogEventArgs(object log, object? moreInfo = null, LogLevel level = LogLevel.Info)
-    {
-        this.Log = log;
-        this.MoreInfo = moreInfo;
-        this.Level = level;
-    }
+    public LogLevel Level { get; set; } = level;
 
-    public LogLevel Level { get; set; }
-
-    public object Log { get; set; }
+    public object Log { get; set; } = log;
 
     public string? MemberName { get; set; }
 
-    public object? MoreInfo { get; set; }
+    public object? MoreInfo { get; set; } = moreInfo;
 
     public object? Sender { get; set; }
 

@@ -5,5 +5,4 @@
 /// </summary>
 public interface IEventualLogger : IEventualLogger<object>, ILogger
 {
-
 }
