@@ -8,7 +8,8 @@ public sealed class EmptyDisposable : IDisposable, IEmpty<EmptyDisposable>
     private bool _disposedValue;
     public static EmptyDisposable Empty => _empty ??= NewEmpty();
 
-    public static EmptyDisposable NewEmpty() => new();
+    public static EmptyDisposable NewEmpty()
+        => new();
 
     public void Dispose()
     {

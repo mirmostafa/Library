@@ -128,12 +128,12 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
     }
 
-    public static TryMethodResult<IpAddress> TryParse([DisallowNull] in string ip)
+    public static TryMethodResult<IpAddress?> TryParse([DisallowNull] in string ip)
     {
         Check.IfArgumentNotNull(ip);
         try
         {
-            return TryMethodResult<IpAddress>.CreateSuccess(new IpAddress(ip));
+            return TryMethodResult<IpAddress>.CreateSuccess(new IpAddress(ip))!;
         }
         catch (Exception ex)
         {

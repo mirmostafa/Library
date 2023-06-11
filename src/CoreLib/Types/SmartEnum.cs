@@ -1,19 +1,14 @@
 ﻿using System.Diagnostics;
 
-using Library.Helpers;
-
 namespace Library.Types;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-public abstract class SmartEnum<TSmartEnum, TId> : IEquatable<TSmartEnum>
+public abstract class SmartEnum<TSmartEnum, TId>(TId id, string? friendlyName) : IEquatable<TSmartEnum>
     where TSmartEnum : SmartEnum<TSmartEnum, TId>
     where TId : notnull
 {
-    public SmartEnum(TId id, string? friendlyName)
-        => (this.Id, this.FriendlyName) = (id, friendlyName);
-
-    public string? FriendlyName { get; }
-    public TId Id { get; }
+    public string? FriendlyName { get; } = friendlyName;
+    public TId Id { get; } = id;
 
     public static TSmartEnum? ById(TId id)
         => GetEnumItems().Where(x => x.Id?.Equals(id) ?? id is null).SingleOrDefault();

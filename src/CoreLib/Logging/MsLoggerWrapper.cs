@@ -4,9 +4,9 @@ namespace Library.Logging;
 
 public sealed class MsLoggerWrapper : FastLoggerBase<string>, ILogger
 {
-    private readonly Microsoft.Extensions.Logging.ILogger _logger;
+    private readonly IMsLogger _logger;
 
-    public MsLoggerWrapper(Microsoft.Extensions.Logging.ILogger logger) => this._logger = logger;
+    public MsLoggerWrapper(IMsLogger logger) => this._logger = logger;
 
     public void Log([DisallowNull] object message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
         => base.Log(message?.ToString()!, level, sender, time, stackTrace);

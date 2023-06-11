@@ -4,19 +4,16 @@ using Library.Validations;
 
 namespace Library.Net;
 
-public sealed class RemoteFile
+public sealed class RemoteFile([DisallowNull] Uri fileUri)
 {
     public RemoteFile([DisallowNull] string fullPath)
         : this(new Uri(fullPath))
     {
     }
 
-    public RemoteFile([DisallowNull] Uri fileUri)
-        => this.FileUri = fileUri.Check().ArgumentNotNull();
+    public Uri FileUri { get; } = fileUri.Check().ArgumentNotNull();
 
-    public Uri FileUri { get; }
-
-    public static Task<long> GetFileSizeAsync(string filePath) 
+    public static Task<long> GetFileSizeAsync(string filePath)
         => GetFileSizeAsync(new Uri(filePath));
 
     public static async Task<long> GetFileSizeAsync(Uri fileUrl)

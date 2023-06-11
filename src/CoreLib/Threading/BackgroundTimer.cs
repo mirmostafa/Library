@@ -33,7 +33,7 @@ public sealed class BackgroundTimer : ILoggerContainer
 
     public Action Action { get; }
     public TimeSpan Interval { get; }
-    ILogger ILoggerContainer.Logger => _Logger;
+    ILogger ILoggerContainer.Logger => this._Logger;
     public string? Name { get; }
 
     public static BackgroundTimer New([DisallowNull] in Action action, [DisallowNull] in TimeSpan interval, string? name = null, CancellationTokenSource? cancellationSource = null)
@@ -66,11 +66,6 @@ public sealed class BackgroundTimer : ILoggerContainer
                 using var timer = new PeriodicTimer(this.Interval);
                 while (this._cancellationSource.IsCancellationRequested || await timer.WaitForNextTickAsync(this._cancellationSource.Token))
                 {
-                    if (this._cancellationSource.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
                     lock (this)
                     {
                         try

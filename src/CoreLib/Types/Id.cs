@@ -16,7 +16,7 @@ namespace Library.Types;
 
 [Immutable]
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-public readonly struct Id :
+public readonly struct Id(IdType value) :
     ISpanFormattable, IFormattable, ISerializable, ICloneable, IComparable,
     IEquatable<IdType>, IComparable<Id>, IComparable<IdType>,
     IConvertible<IdType>, IEmpty<Id>, IEquatable<Id>
@@ -28,13 +28,6 @@ public readonly struct Id :
         : this(GetDefaultValue()) { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Id"/> struct.
-    /// </summary>
-    /// <param name="value">The value.</param>
-    public Id(IdType value)
-        => this.Value = value;
-
-    /// <summary>
     /// Gets an empty instance of current class.
     /// </summary>
     /// <value>An empty instance.</value>
@@ -44,7 +37,7 @@ public readonly struct Id :
     /// Gets the unique identifier.
     /// </summary>
     /// <value>The unique identifier.</value>
-    public IdType Value { get; }
+    public IdType Value { get; } = value;
 
     /// <summary>
     /// Creates a new Id the by the specific identifier.

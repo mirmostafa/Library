@@ -25,10 +25,6 @@ internal sealed class MultistepProcess : IMultistepProcess
 
     public event EventHandler<ItemActedEventArgs<ProgressData>>? Reported;
 
-    public MultistepProcess()
-    {
-    }
-
     public void End(in ProgressData? progress)
         => this.Ended?.Invoke(this, new(progress));
 

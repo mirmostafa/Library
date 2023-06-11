@@ -2,15 +2,12 @@
 
 namespace Library.Net;
 
-public sealed class Nic
+public sealed class Nic(NetworkInterface networkInterface)
 {
     private long _bytesReceivedLast;
     private long _bytesSentLast;
 
-    public Nic(NetworkInterface networkInterface)
-        => this.NetworkInterface = networkInterface;
-
-    public NetworkInterface NetworkInterface { get; private set; }
+    public NetworkInterface NetworkInterface { get; private set; } = networkInterface;
 
     public static IEnumerable<NetworkInterface> GetAllNetworkInterfaceCards()
         => NetworkInterface.GetAllNetworkInterfaces();

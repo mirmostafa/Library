@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace Library.Mapping;
+﻿namespace Library.Mapping;
 
 public interface IMapper
 {

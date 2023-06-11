@@ -1,21 +1,20 @@
 ﻿using Library.Extensions.Options;
-using Library.Helpers;
 using Library.Validations;
 
 using Microsoft.Extensions.Logging;
 
 namespace Library.Logging;
 
-public sealed class MsLoggerMessageWrapperOptions : IOptions { }
+public sealed class MsLoggerMessageWrapperOptions : IOptions
+{ }
 
-public abstract class MsLoggerMessageWrapperBase<TMsLoggerMessageWapper> : IConfigurable<TMsLoggerMessageWapper, MsLoggerMessageWrapperOptions>
-    where TMsLoggerMessageWapper : MsLoggerMessageWrapperBase<TMsLoggerMessageWapper>
+public abstract class MsLoggerMessageWrapperBase<TMsLoggerMessageWrapper> : IConfigurable<TMsLoggerMessageWrapper, MsLoggerMessageWrapperOptions>
+    where TMsLoggerMessageWrapper : MsLoggerMessageWrapperBase<TMsLoggerMessageWrapper>
 {
-    protected readonly IMsLogger _logger;
-
-    protected readonly Action<IMsLogger, string, Exception?> _info;
     protected readonly Action<IMsLogger, string, Exception?> _debug;
     protected readonly Action<IMsLogger, string, Exception?> _error;
+    protected readonly Action<IMsLogger, string, Exception?> _info;
+    protected readonly IMsLogger _logger;
     protected readonly Action<IMsLogger, string, Exception?> _warning;
 
     protected MsLoggerMessageWrapperBase(IMsLogger logger, string name, int eventId)
@@ -29,10 +28,10 @@ public abstract class MsLoggerMessageWrapperBase<TMsLoggerMessageWapper> : IConf
 
     private MsLoggerMessageWrapperOptions Options { get; } = new();
 
-    public TMsLoggerMessageWapper Configure(Action<MsLoggerMessageWrapperOptions> configure)
+    public TMsLoggerMessageWrapper Configure(Action<MsLoggerMessageWrapperOptions> configure)
     {
         configure.ArgumentNotNull()(this.Options);
-        return this.Cast().As<TMsLoggerMessageWapper>()!;
+        return this.Cast().As<TMsLoggerMessageWrapper>()!;
     }
 
     public virtual void Debug(string log) => this._debug(this._logger, log, null);

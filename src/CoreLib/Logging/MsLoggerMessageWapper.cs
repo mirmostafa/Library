@@ -2,16 +2,20 @@
 
 namespace Library.Logging;
 
-public interface IMsLoggerMessageWapper
+public interface IMsLoggerMessageWrapper
 {
     void Debug(string log);
+
     void Error(string log, Exception? exception = null);
+
     void Info(string log);
+
     void Warn(string log);
 }
-public sealed class MsLoggerMessageWapper : MsLoggerMessageWrapperBase<MsLoggerMessageWapper>, IMsLoggerMessageWapper
+
+public sealed class MsLoggerMessageWrapper : MsLoggerMessageWrapperBase<MsLoggerMessageWrapper>, IMsLoggerMessageWrapper
 {
-    public MsLoggerMessageWapper(Microsoft.Extensions.Logging.ILogger logger, string? name = null, int? eventId = null)
+    public MsLoggerMessageWrapper(IMsLogger logger, string? name = null, int? eventId = null)
         : base(logger, name ?? CodeHelper.GetCallerMethodName() ?? Assembly.GetExecutingAssembly().GetName().Name ?? string.Empty, eventId ?? 0)
     {
     }
