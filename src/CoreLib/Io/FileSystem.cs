@@ -47,7 +47,7 @@ public abstract record FileSystem
 [Immutable]
 public sealed record Drive([DisallowNull] in SysDriveInfo driveInfo) : FileSystem
 {
-    private readonly SysDriveInfo _sysDriveInfo = driveInfo;
+    private readonly SysDriveInfo _sysDriveInfo = driveInfo.ArgumentNotNull();
 
     /// <summary>
     /// Performs an explicit conversion from <see cref="SysDriveInfo?"/> to <see cref="Drive?"/>.
@@ -107,7 +107,7 @@ public sealed record Drive([DisallowNull] in SysDriveInfo driveInfo) : FileSyste
 [Immutable]
 public sealed record Folder([DisallowNull] SysFolderInfo directory) : FileSystem
 {
-    private readonly SysFolderInfo _sysFolder = directory;
+    private readonly SysFolderInfo _sysFolder = directory.ArgumentNotNull();
 
     public override string FullPath => this._sysFolder.FullName;
 
@@ -191,16 +191,9 @@ public sealed record Folder([DisallowNull] SysFolderInfo directory) : FileSystem
 }
 
 [Immutable]
-public sealed record File : FileSystem
+public sealed record File(SysFileInfo sysFileInfo) : FileSystem
 {
-    private readonly SysFileInfo _sysFileInfo;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="File"/> class.
-    /// </summary>
-    /// <param name="sysFileInfo">The system file information.</param>
-    public File(SysFileInfo sysFileInfo)
-        => this._sysFileInfo = sysFileInfo;
+    private readonly SysFileInfo _sysFileInfo = sysFileInfo;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="File"/> class.

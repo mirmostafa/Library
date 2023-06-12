@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 
-using Library.DesignPatterns.Markers;
 using Library.EventsArgs;
 using Library.Interfaces;
 using Library.Validations;
@@ -12,6 +11,16 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
     private readonly System.IO.FileSystemWatcher _innerWatcher;
     private bool _disposedValue;
     private Thread? _thread;
+
+    public event EventHandler<ChangedEventArgs>? Changed;
+
+    public event EventHandler<CreatedEventArgs>? Created;
+
+    public event EventHandler<DeletedEventArgs>? Deleted;
+
+    public event EventHandler<ErrorEventArgs>? Error;
+
+    public event EventHandler<RenamedEventArgs>? Renamed;
 
     /// <summary>
     /// Constructs a new instance of the <see cref="FileSystemWatcher"/> class with the specified path, wildcard and includeSubdirectories.
@@ -48,21 +57,15 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
         this._innerWatcher.EndInit();
     }
 
-    public event EventHandler<ChangedEventArgs>? Changed;
-
-    public event EventHandler<CreatedEventArgs>? Created;
-
-    public event EventHandler<DeletedEventArgs>? Deleted;
-
-    public event EventHandler<ErrorEventArgs>? Error;
-
-    public event EventHandler<RenamedEventArgs>? Renamed;
-
     /// <summary>
     /// Gets or sets a value indicating whether the component is enabled to raise events.
     /// </summary>
     public bool IsEnabledRaisingEvents { get => this._innerWatcher.EnableRaisingEvents; set => this._innerWatcher.EnableRaisingEvents = value; }
+
     public string Path => this._innerWatcher.Path;
+
+    public static FileSystemWatcher New(in string path, in string? wildcard = null, in bool includeSubdirectories = false)
+            => new(path, wildcard, includeSubdirectories);
 
     /// <summary>
     /// Starts a FileSystemWatcher with the given parameters and returns the FileSystemWatcher object.
@@ -85,7 +88,7 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
         Action<ErrorEventArgs>? onError = null
         )
     {
-        var result = new FileSystemWatcher(path, wildcard, includeSubdirectories);
+        var result = New(path, wildcard, includeSubdirectories);
 
         if (onChanged is not null)
         {
@@ -119,24 +122,40 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
         GC.SuppressFinalize(this);
     }
 
+    public FileSystemWatcher OnChanged(EventHandler<ChangedEventArgs> handler)
+    {
+        this.Changed -= handler;
+        this.Changed += handler;
+        return this;
+    }
+
+    public FileSystemWatcher OnCreated(EventHandler<CreatedEventArgs> handler)
+    {
+        this.Created -= handler;
+        this.Created += handler;
+        return this;
+    }
+
+    public FileSystemWatcher OnDeleted(EventHandler<DeletedEventArgs> handler)
+    {
+        this.Deleted -= handler;
+        this.Deleted += handler;
+        return this;
+    }
+
+    public FileSystemWatcher OnRenamed(EventHandler<RenamedEventArgs> handler)
+    {
+        this.Renamed -= handler;
+        this.Renamed += handler;
+        return this;
+    }
+
     /// <summary>
     /// Starts the FileSystemWatcher and returns it.
     /// </summary>
     /// <returns>The FileSystemWatcher.</returns>
     public FileSystemWatcher Start()
         => this.Restart();
-
-    private void Dispose(bool disposing)
-    {
-        if (!this._disposedValue)
-        {
-            if (disposing && this._innerWatcher is not null)
-            {
-                this._innerWatcher.Dispose();
-            }
-            this._disposedValue = true;
-        }
-    }
 
     private void _innerWatcher_Changed(object sender, FileSystemEventArgs e)
         => this.OnEventRaised(() => this.Changed?.Invoke(this, new(new(e.FullPath, e.Name))));
@@ -159,10 +178,26 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
     private void _innerWatcher_Renamed(object sender, System.IO.RenamedEventArgs e)
         => this.OnEventRaised(() => this.Renamed?.Invoke(this, new RenamedEventArgs(new(e.FullPath, e.OldName ?? e.OldFullPath, e.Name ?? e.FullPath))));
 
+    private void Dispose(bool disposing)
+    {
+        if (!this._disposedValue)
+        {
+            if (disposing && this._innerWatcher is not null)
+            {
+                if (this._thread?.IsAlive ?? false)
+                {
+                    //x Catch(() => _thread?.Abort());
+                }
+                this._innerWatcher.Dispose();
+            }
+            this._disposedValue = true;
+        }
+    }
+
     private void OnEventRaised(Action action)
     {
         action();
-        if (this._disposedValue)
+        if (!this._disposedValue)
         {
             _ = this.Restart();
         }
