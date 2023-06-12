@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 
-using Library.Helpers;
-
 namespace Library.CodeGeneration.Models;
 
 public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>
@@ -28,14 +26,18 @@ public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>
     public IEnumerator<Language> GetEnumerator()
     {
         var me = this;
-        return this.GetType().GetFields().Where(x => x.FieldType == typeof(Language)).Select(x => x.Cast().To<System.Reflection.FieldInfo>().GetValue(me).Cast().To<Language>()).GetEnumerator();
+        return this.GetType()
+            .GetFields()
+            .Where(x => x.FieldType == typeof(Language))
+            .Select(x => x.Cast().To<System.Reflection.FieldInfo>().GetValue(me).Cast().To<Language>())
+            .GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
         => this.GetEnumerator();
 
     public override int GetHashCode()
-                    => base.GetHashCode();
+        => base.GetHashCode();
 
     public override string? ToString()
         => base.ToString();

@@ -1,6 +1,6 @@
 ﻿namespace Library.CodeGeneration.Models;
 
-public enum InhertaceKind
+public enum InheritanceKind
 {
     None,
     Abstract,
