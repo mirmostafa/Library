@@ -236,8 +236,10 @@ public static class LoggingHelper
     /// <param name="logRecord">The LogRecord object to be reformatted.</param>
     /// <param name="format">The format string to be used for reformatting.</param>
     /// <returns>A string containing the reformatted LogRecord.</returns>
-    public static string Reformat<TMessage>(this LogRecord<TMessage> logRecord, string? format = LogFormat.FORMAT_DEFAULT)
+    [return: NotNull]
+    public static string Reformat<TMessage>(this LogRecord<TMessage> logRecord, in string? format = null)
     {
+        var f = format ?? logRecord.Format;
         if (logRecord is null)
         {
             return string.Empty;
@@ -249,19 +251,24 @@ public static class LoggingHelper
             { } msg => msg.ToString() ?? string.Empty,
             _ => string.Empty,
         };
-        return message.IsNullOrEmpty() ? string.Empty : (format?.ReplaceAll(
-            (LogFormat.LONG_DATE, (logRecord.Time ?? DateTime.Now).ToLocalString().Add(1) ?? string.Empty),
-            (LogFormat.SHORT_TIME, (logRecord.Time ?? DateTime.Now).ToShortTimeString() ?? string.Empty),
-            (LogFormat.LEVEL, logRecord.Level.ToString().Add(1) ?? string.Empty),
-            (LogFormat.MESSAGE, message ?? string.Empty),
-            (LogFormat.NEW_LINE, Environment.NewLine),
-            (LogFormat.SENDER, (logRecord.Sender?.ToString() ?? string.Empty).Add(1, before: true) ?? string.Empty),
-            (LogFormat.STACK_TRACE, (logRecord.StackTrace?.ToString() ?? string.Empty).Add(1) ?? string.Empty))
-            .Replace("  ", " ")) ?? string.Empty;
+        var result = message.IsNullOrEmpty()
+            ? string.Empty
+            : f.IsNullOrEmpty()
+                ? message
+                : f.ReplaceAll(
+                    (LogFormat.LONG_DATE, (logRecord.Time ?? DateTime.Now).ToLocalString()),
+                    (LogFormat.SHORT_TIME, (logRecord.Time ?? DateTime.Now).ToShortTimeString()),
+                    (LogFormat.LEVEL, logRecord.Level.ToString()),
+                    (LogFormat.MESSAGE, message ?? string.Empty),
+                    (LogFormat.NEW_LINE, Environment.NewLine),
+                    (LogFormat.SENDER, logRecord.Sender?.ToString() ?? string.Empty),
+                    (LogFormat.STACK_TRACE, logRecord.StackTrace?.ToString() ?? string.Empty))
+                    .Replace("  ", " ");
+        return result;
     }
 
     /// <summary>
-    /// Reformats the given log object using the specified format. 
+    /// Reformats the given log object using the specified format.
     /// </summary>
     /// <typeparam name="TMessage">The type of the log object.</typeparam>
     /// <param name="logObject">The log object to reformat.</param>
@@ -271,7 +278,7 @@ public static class LoggingHelper
             => InnerPatternMatching(logObject, format);
 
     /// <summary>
-    /// Reformats the given log object using the specified format. 
+    /// Reformats the given log object using the specified format.
     /// If no format is specified, the default format is used.
     /// </summary>
     public static string Reformat(object logObject, string? format = LogFormat.FORMAT_DEFAULT)

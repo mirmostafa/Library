@@ -1,4 +1,6 @@
-﻿WriteLine();
+﻿using TestConApp;
+
+Obsoletes.WatchHardDisk();
 
 internal class Person(string name, int? age)
 {

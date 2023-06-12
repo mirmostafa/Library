@@ -26,6 +26,7 @@ public static class StringHelper
     /// <param name="before">if set to <c>true</c> [before].</param>
     /// <returns></returns>
     [Pure]
+    [return: NotNullIfNotNull(nameof(s))]
     public static string? Add(this string? s, in int count, char add = ' ', bool before = false)
         => count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 

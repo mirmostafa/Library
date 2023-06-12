@@ -10,17 +10,6 @@ namespace UnitTests;
 public sealed class CodeHelperTest
 {
     [Fact]
-    public void CodeBlockLoggerTest()
-    {
-        var number = 5;
-        VsOutputLogger logger = new();
-        using (CodeBlockLogger.New(logger, "~~~~Get add 6 to a number…", "~~~~~Got."))
-        {
-            number += 6;
-        }
-    }
-
-    [Fact]
     public async void LibStopwatchTest1()
     {
         var stopwatch = new LibStopwatch();

@@ -1,19 +1,17 @@
-﻿#pragma warning disable IDE0051 // Remove unused private members
-using System.Numerics;
+﻿using System.Numerics;
 
 using Library.CodeGeneration.v2.Front;
 using Library.CodeGeneration.v2.Front.HtmlGeneration;
-using Library.DesignPatterns;
 using Library.DesignPatterns.StateMachine;
-using Library.Helpers;
 using Library.IO;
+using Library.Logging;
 
-using Microsoft.Extensions.Logging;
-
-namespace ConAppTest;
+namespace TestConApp;
 
 internal partial class Obsoletes
 {
+    private static readonly ILogger _logger = ConsoleServices.Logger;
+
     public static void HtmlCodeGenerationTest()
     {
         var div = new DivElement()
@@ -35,8 +33,8 @@ internal partial class Obsoletes
         WriteLine(div.ToHtml());
     }
 
-    private static IEnumerable<TResult> SimdActor<T1, T2, TResult>(
-        IEnumerable<T1> left, IEnumerable<T2> right, Func<Vector<T1>, Vector<T2>, Vector<TResult>> actor, long count)
+    public static IEnumerable<TResult> SimdActor<T1, T2, TResult>(
+            IEnumerable<T1> left, IEnumerable<T2> right, Func<Vector<T1>, Vector<T2>, Vector<TResult>> actor, long count)
         where T1 : struct
         where T2 : struct
         where TResult : struct
@@ -54,7 +52,7 @@ internal partial class Obsoletes
         return result;
     }
 
-    private static async Task StateMachineTest()
+    public static async Task StateMachineTest()
     {
         _ = await StateMachineManager.Dispatch(
                         () => Task.FromResult((0, MoveDirection.Foreword)),
@@ -98,23 +96,22 @@ internal partial class Obsoletes
         }
     }
 
-    private static void WatchHardDisk()
+    public static void WatchHardDisk()
     {
         Thread.Sleep(50);
-        var watchers = Drive.GetDrives().Select(getWatcher).ForEach(x => WriteLine($"Watching {x.Path}")).ToList();
+        var watchers = Drive.GetDrives().Select(watch).ForEach(x => WriteLine($"Watching {x.Path}")).ToList();
         WriteLine("Ready");
-        _ = ReadKey();
+
+        While(() => ReadKey().Key != ConsoleKey.X);
         WriteLine("Closing...");
         _ = watchers.ForEachEager(x => x.Dispose());
 
-        static Library.IO.FileSystemWatcher getWatcher(Drive drive)
-            => Library.IO.FileSystemWatcher.Start(drive, includeSubdirectories: true,
-                onChanged: e => _logger.Log($"{e.Item.FullName} changed."),
-                onCreated: e => _logger.Log($"{e.Item.FullName} created."),
-                onDeleted: e => _logger.Log($"{e.Item.FullName} deleted."),
-                onRenamed: e => _logger.Log($"in {e.Item.FullPath} : {e.Item.OldName} renamed to {e.Item.NewName}."));
+        static Library.IO.FileSystemWatcher watch(Drive drive)
+            => Library.IO.FileSystemWatcher.New(drive, includeSubdirectories: true)
+                .OnCreated((_, e) => _logger.Log($"{e.Item.FullName} created.", format: LogFormat.FORMAT_SHORT))
+                .OnChanged((_, e) => _logger.Log($"{e.Item.FullName} changed.", format: LogFormat.FORMAT_SHORT))
+                .OnRenamed((_, e) => _logger.Log($"in {e.Item.FullPath} : {e.Item.OldName} renamed to {e.Item.NewName}.", format: LogFormat.FORMAT_SHORT))
+                .OnDeleted((_, e) => _logger.Log($"{e.Item.FullName} deleted.", format: LogFormat.FORMAT_SHORT))
+                .Start();
     }
-
-    private static readonly Library.Logging.ILogger _logger = ConsoleServices.Logger;
 }
-#pragma warning restore IDE0051 // Remove unused private members

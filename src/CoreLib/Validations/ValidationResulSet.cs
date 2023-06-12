@@ -11,6 +11,8 @@ using Library.Results;
 
 namespace Library.Validations;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class Validation
 {
     /// <summary>
@@ -22,7 +24,7 @@ public static class Validation
     /// <returns>The value.</returns>
     [return: NotNull]
     public static TValue ArgumentNotNull<TValue>([NotNull] this TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null!)
-        => Check(value, CheckBehavior.ThrowOnFail).ArgumentNotNull();
+        => Check(value, CheckBehavior.ThrowOnFail, paramName).ArgumentNotNull();
 
     /// <summary>
     /// The entry of validation checks
@@ -66,6 +68,8 @@ public static class Validation
         => Check(value, CheckBehavior.ThrowOnFail).NotNull(onError);
 }
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
 {
     #region Fields, ctors and properties

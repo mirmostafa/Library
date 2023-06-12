@@ -73,7 +73,7 @@ public sealed class ValidationResultSetTest
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
             .NotBiggerThan(x => x.Age, 20)
-            .ThrowOnFail();
+            .Build();
         arg = check;
         Assert.True(check);
         

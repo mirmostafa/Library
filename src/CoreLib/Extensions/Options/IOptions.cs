@@ -3,9 +3,9 @@
 public interface IOptions
 { }
 
-public interface IConfigurable<TConfigurable, TOptions>
-    where TConfigurable : IConfigurable<TConfigurable, TOptions>
+public interface IConfigurable<TSelf, TOptions>
+    where TSelf : IConfigurable<TSelf, TOptions>
     where TOptions : IOptions
 {
-    TConfigurable Configure(Action<TOptions> configure);
+    TSelf Configure(Action<TOptions> configure);
 }
