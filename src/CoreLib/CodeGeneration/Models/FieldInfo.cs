@@ -9,4 +9,3 @@ public record struct FieldInfo(
         in MemberAttributes? AccessModifier = null,
         in bool IsReadOnly = false,
         in bool IsPartial = false) : IMemberInfo, ISupportPartial;
-

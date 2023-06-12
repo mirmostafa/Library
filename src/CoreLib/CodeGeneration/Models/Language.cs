@@ -2,14 +2,11 @@
 
 namespace Library.CodeGeneration.Models;
 
-public readonly struct Language : IEquatable<Language>
+public readonly struct Language(in string name, in string? fileExtension = null) : IEquatable<Language>
 {
-    public Language(in string name, in string? fileExtension = null)
-        => (this.Name, this.FileExtension) = (name.Check(CheckBehavior.ThrowOnFail).ArgumentNotNull(), fileExtension);
+    public string? FileExtension { get; init; } = fileExtension;
 
-    public string? FileExtension { get; init; }
-
-    public string Name { get; init; }
+    public string Name { get; init; } = name.ArgumentNotNull();
 
     public static bool operator !=(Language left, Language right) => !(left == right);
 

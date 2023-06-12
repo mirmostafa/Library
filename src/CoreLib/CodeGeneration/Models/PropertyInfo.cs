@@ -2,50 +2,39 @@
 
 namespace Library.CodeGeneration.Models;
 
-public struct PropertyInfo : IMemberInfo, IEquatable<PropertyInfo>
+public struct PropertyInfo(
+    in string type,
+    in string name,
+    in MemberAttributes? accessModifier = null,
+    in PropertyAccessor? getter = null,
+    in PropertyAccessor? setter = null) : IMemberInfo, IEquatable<PropertyInfo>
 {
-    public PropertyInfo(
-        in string type,
-        in string name,
-        in MemberAttributes? accessModifier = null,
-        in PropertyAccessor? getter = null,
-        in PropertyAccessor? setter = null)
-    {
-        this.Name = name;
-        this.Type = type;
-        this.AccessModifier = accessModifier;
-        this.Getter = getter;
-        this.Setter = setter;
-        this.HasBackingField = false;
-        this.Value = null;
-        this.Comment = null;
-        this.InitCode = null;
-        this.IsNullable = false;
-        this.BackingFieldName = null;
-        this.ShouldCreateBackingField = null;
-    }
-
-    public MemberAttributes? AccessModifier { get; init; }
-    public string Type { get; init; }
-    public bool IsNullable { get; init; }
-    public string Name { get; init; }
-    public object? Value { get; set; }
-
+    public MemberAttributes? AccessModifier { get; init; } = accessModifier;
     public List<string> Attributes { get; } = new List<string>();
-    public PropertyAccessor? Setter { get; init; }
-    public PropertyAccessor? Getter { get; init; }
-    public string? InitCode { get; init; }
+    public string? BackingFieldName { get; init; } = null;
+    public string? Comment { get; init; } = null;
+    public PropertyAccessor? Getter { get; init; } = getter;
+    public bool HasBackingField { get; init; } = false;
+    public string? InitCode { get; init; } = null;
+    public bool IsNullable { get; init; } = false;
+    public string Name { get; init; } = name;
+    public PropertyAccessor? Setter { get; init; } = setter;
+    public bool? ShouldCreateBackingField { get; init; } = null;
+    public string Type { get; init; } = type;
+    public object? Value { get; set; } = null;
 
-    public bool HasBackingField { get; init; }
-    public string? BackingFieldName { get; init; }
-    public bool? ShouldCreateBackingField { get; init; }
+    public static bool operator !=(PropertyInfo left, PropertyInfo right)
+        => !(left == right);
 
-    public string? Comment { get; init; }
+    public static bool operator ==(PropertyInfo left, PropertyInfo right)
+        => left.Equals(right);
 
-    public override bool Equals(object? obj) => obj is PropertyInfo info && this.Equals(info);
-    public bool Equals(PropertyInfo other) => this.Name == other.Name;
-    public override int GetHashCode() => HashCode.Combine(this.Name);
+    public override bool Equals(object? obj)
+        => obj is PropertyInfo info && this.Equals(info);
 
-    public static bool operator ==(PropertyInfo left, PropertyInfo right) => left.Equals(right);
-    public static bool operator !=(PropertyInfo left, PropertyInfo right) => !(left == right);
+    public readonly bool Equals(PropertyInfo other)
+        => this.Name == other.Name;
+
+    public override int GetHashCode()
+        => HashCode.Combine(this.Name);
 }
