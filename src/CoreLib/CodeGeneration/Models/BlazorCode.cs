@@ -9,7 +9,7 @@ public sealed record BlazorCode : Code
     public List<TypePath> Injects => this.ExtraProperties.Injects ??= new List<TypePath>();
     public TypePath? Inherit { get => this.ExtraProperties.Inherit; set => this.ExtraProperties.Inherit = value; }
 
-    public BlazorCode SetInherite(TypePath? inherit)
+    public BlazorCode SetInherit(TypePath? inherit)
         => this.Fluent(x => x.Inherit = inherit);
     public BlazorCode AddUsingNameSpace(params string[] nameSpaces)
         => this.Fluent(() => this.Usings.AddRange(nameSpaces));
@@ -29,5 +29,5 @@ public sealed record BlazorCode : Code
     }
 
     public BlazorCode(BlazorCode original) : base(original)
-        => this.AddUsingNameSpace(original.Usings).AddInjection(original.Injects).SetInherite(original.Inherit);
+        => this.AddUsingNameSpace(original.Usings).AddInjection(original.Injects).SetInherit(original.Inherit);
 }
