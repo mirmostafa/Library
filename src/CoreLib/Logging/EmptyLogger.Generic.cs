@@ -10,6 +10,6 @@ public class EmptyLogger<TMessage> : ILogger<TMessage>
 
     public LogLevel LogLevel { get; set; } = LogLevel.None;
 
-    public void Log(TMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
+    public void Log(TMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = LogFormat.FORMAT_DEFAULT)
     { }
 }

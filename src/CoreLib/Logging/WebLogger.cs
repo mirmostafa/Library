@@ -18,8 +18,8 @@ public class WebLogger(ILogger mainLogger) : IMsLogger, ILogger<string>
     bool IMsLogger.IsEnabled(MsLogLevel logLevel)
         => this._mainLogger.IsEnabled;
 
-    public void Log(string message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
-        => this._mainLogger.Log(message, level, sender, time, stackTrace);
+    public void Log(string message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = LogFormat.FORMAT_DEFAULT)
+        => this._mainLogger.Log(message, level, sender, time, stackTrace, format);
 
     public void Log<TState>(MsLogLevel logLevel,
                             EventId eventId,

@@ -3,7 +3,7 @@
 public readonly struct LogFormat
 {
     public const string FORMAT_DEFAULT = $"{LONG_DATE}|{LEVEL}|{SENDER}|{MESSAGE}";
-    public const string FORMAT_SHORT = $"{SHORT_TIME}|{SENDER}|{MESSAGE}";
+    public const string FORMAT_SHORT = $"{SHORT_TIME}|{MESSAGE}";
     public const string LEVEL = "level";
     public const string LONG_DATE = "longDate";
     public const string MESSAGE = "message";

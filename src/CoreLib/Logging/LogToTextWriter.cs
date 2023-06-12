@@ -10,11 +10,11 @@ public sealed class LogToTextWriter<TLogMessage>([DisallowNull] TextWriter write
     public bool IsEnabled { get; set; }
     public LogLevel LogLevel { get; set; }
 
-    public void Log(TLogMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
+    public void Log(TLogMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = LogFormat.FORMAT_DEFAULT)
     {
         if (this.IsEnabled && message != null && level.MeetsLevel(this.LogLevel))
         {
-            this._writer.WriteLine(this._formatter(new LogRecord(message, level, sender, time, stackTrace)));
+            this._writer.WriteLine(this._formatter(new LogRecord(message, level, sender, time, stackTrace, format)));
         }
     }
 }
