@@ -1,20 +1,31 @@
 ﻿using Library.EventsArgs;
+using Library.Extensions.Options;
 
 namespace Library.Logging;
 
-public sealed class FormattedStringFastLogger(string? format = null) : FastLoggerBase<object>, ILogger
+public sealed class FormattedStringFastLogger : FastLoggerBase<object>, IConfigurableLogger<FormattedStringFastLogger, FormattedStringFastLogger.Options>
 {
-    private string? _format = format ?? LogFormat.FORMAT_DEFAULT;
+    private readonly Options _options = new();
 
     public event EventHandler<ItemActedEventArgs<string>>? Logged;
 
-    public string Format { get => this._format.IfNullOrEmpty(LogFormat.FORMAT_DEFAULT); set => this._format = value; }
+    public FormattedStringFastLogger Configure(Action<Options> configure)
+    {
+        configure(this._options);
+        return this;
+    }
 
     protected override void OnLogging(LogRecord<object> logRecord)
     {
         if (logRecord is not null)
         {
-            Logged?.Invoke(this, new(logRecord.Reformat(this._format)));
+            var log = !logRecord.Format.IsNullOrEmpty() ? logRecord : logRecord with { Format = this._options.LogFormat };
+            Logged?.Invoke(this, new(log.Reformat()));
         }
+    }
+
+    public class Options : IOptions
+    {
+        public string LogFormat { get; set; } = Logging.LogFormat.FORMAT_DEFAULT;
     }
 }
