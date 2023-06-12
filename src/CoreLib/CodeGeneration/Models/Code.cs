@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 
-using Library.DesignPatterns.Markers;
 using Library.Dynamic;
 using Library.Validations;
 
@@ -9,27 +8,10 @@ namespace Library.CodeGeneration.Models;
 //[Fluent]
 //[Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public record Code : IEquatable<Code>
+public record Code(in string name, in Language language, in string statement, in bool isPartial = false) : IEquatable<Code>
 {
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
     protected readonly dynamic ExtraProperties = new Expando();
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Code"/> class.
-    /// </summary>
-    /// <param name="name">The name of the code.</param>
-    /// <param name="language">The language of the code.</param>
-    /// <param name="statement">The statement of the code.</param>
-    /// <param name="isPartial">A value indicating whether the code is partial.</param>
-    /// <returns>A new instance of the <see cref="Code"/> class.</returns>
-    public Code(in string name, in Language language, in string statement, in bool isPartial = false)
-    {
-        this.Name = name.Cast().As<object>().ArgumentNotNull(nameof(name)).ToString()!;
-        this.Statement = statement.Cast().As<object>().ArgumentNotNull(nameof(statement)).ToString()!;
-        this.Language = language;
-        this.IsPartial = isPartial;
-        this._FileName = null;
-    }
 
     /// <summary>
     /// Constructor for Code class with parameters.
@@ -59,11 +41,11 @@ public record Code : IEquatable<Code>
     private static string GenerateFileName(string name, Language language, bool isPartial)
         => Path.ChangeExtension(isPartial ? $"{name}.partial.tmp" : name, language.FileExtension);
 
-    private string? _FileName { get; init; }
-    public string Name { get; }
-    public string Statement { get; init; }
-    public Language Language { get; }
-    public bool IsPartial { get; }
+    private string? _FileName { get; init; } = null;
+    public string Name { get; } = name.ArgumentNotNull().ToString();
+    public string Statement { get; init; } = statement.ArgumentNotNull().ToString();
+    public Language Language { get; } = language;
+    public bool IsPartial { get; } = isPartial;
     public string FileName => this._FileName.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial));
 
     public override int GetHashCode()

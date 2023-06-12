@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 using Library.Collections;
 using Library.DesignPatterns.Markers;
@@ -24,7 +23,10 @@ public sealed class Codes : ReadOnlyCollection<Code?>, IIndexable<string, Code?>
 
     public IEnumerable<Code> this[Language language] => this.Where(x => x?.Language == language).Compact();
 
-    public static Codes operator +(Codes c1, Codes c2) 
+    public static Codes New()
+        => new();
+
+    public static Codes operator +(Codes c1, Codes c2)
         => new(c1.AsEnumerable().AddRangeImmuted(c2.AsEnumerable()));
 
     public Codes Add(Code code)
@@ -39,7 +41,4 @@ public sealed class Codes : ReadOnlyCollection<Code?>, IIndexable<string, Code?>
         }
         return result;
     }
-
-    public static Codes New()
-        => new();
 }
