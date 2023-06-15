@@ -18,13 +18,13 @@ public static partial class SqlStatementBuilder
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, params (string Column, object Value)[] columnsValue)
     {
         _ = nameof(statement).ArgumentNotNull(nameof(statement));
-        _ = columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value)).Build();
+        _ = columnsValue.ForEach(cv => statement.Set(cv.Column, cv.Value)).Build();
         return statement;
     }
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, IEnumerable<(string Column, object Value)> columnsValue)
     {
         _ = nameof(statement).ArgumentNotNull(nameof(statement));
-        _ = columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value));
+        _ = columnsValue.ForEach(cv => statement.Set(cv.Column, cv.Value));
         return statement;
     }
 

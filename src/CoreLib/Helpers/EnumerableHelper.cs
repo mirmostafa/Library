@@ -539,7 +539,7 @@ public static class EnumerableHelper
     /// <param name="items">The IEnumerable to iterate over.</param>
     /// <param name="action">The action to execute for each item.</param>
     /// <returns>An IEnumerable containing the results of the action.</returns>
-    public static IEnumerable<TResult> ForEachItem<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
+    public static IEnumerable<TResult> ForEach<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
     {
         Check.IfArgumentNotNull(items);
         Check.IfArgumentNotNull(action);

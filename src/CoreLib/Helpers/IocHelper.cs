@@ -34,10 +34,10 @@ public static class IocHelper
                                                                      params Assembly[] assemblies)
     {
         install ??= ServiceCollectionServiceExtensions.AddTransient;
-        _ = assemblies.ForEachItem(assembly => assembly.DefinedTypes
+        _ = assemblies.ForEach(assembly => assembly.DefinedTypes
                                                    .Where(x => typeof(TService).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
                                                    .Cast(x => x.AsType())
-                                                   .ForEachItem(x => install(services, x))
+                                                   .ForEach(x => install(services, x))
                                                    .Build())
                       .Build();
         return services;
@@ -48,13 +48,14 @@ public static class IocHelper
                                                                      params Assembly[] assemblies)
         where TInstaller : ILibServiceInstaller
     {
-        _ = assemblies.ForEachItem(assembly => assembly.DefinedTypes
+        _ = assemblies.ForEach(assembly => assembly.DefinedTypes
                                                .Where(x => typeof(TInstaller).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
                                                .Select(Activator.CreateInstance)
                                                .Cast<TInstaller>()
                                                .Exclude(x => x.Order == int.MinValue)
                                                .OrderBy(x => x.Order ?? int.MaxValue)
-                                               .ForEach(x => x.Install()));
+                                               .ForEach(x => x.Install()))
+                      .Build();
         return services;
     }
 }

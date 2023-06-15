@@ -350,7 +350,7 @@ public static class ControlHelper
             case Key.Space:
                 {
                     var items = multiSelector.SelectedItems.Cast<dynamic>().ToArray();
-                    _ = items.ForEachItem(instance => instance.IsChecked = items.Any(o => !o.IsChecked));
+                    _ = items.ForEach(instance => instance.IsChecked = items.Any(o => !o.IsChecked));
                     break;
                 }
 
