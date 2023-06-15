@@ -34,28 +34,25 @@ public static class IocHelper
                                                                      params Assembly[] assemblies)
     {
         install ??= ServiceCollectionServiceExtensions.AddTransient;
-        _ = assemblies.ForEach(assembly => assembly.DefinedTypes
+        _ = assemblies.Compact().ForEachEager(assembly => assembly.DefinedTypes
                                                    .Where(x => typeof(TService).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
                                                    .Cast(x => x.AsType())
-                                                   .ForEach(x => install(services, x))
-                                                   .Build())
-                      .Build();
+                                                   .ForEachEager(x => install(services, x)));
         return services;
     }
 
     public static IServiceCollection InstallServiceByAssembly<TInstaller>(this IServiceCollection services,
                                                                      IConfiguration configuration,
                                                                      params Assembly[] assemblies)
-        where TInstaller : ILibServiceInstaller
+        where TInstaller : IServiceInstaller
     {
-        _ = assemblies.ForEach(assembly => assembly.DefinedTypes
+        _ = assemblies.Compact().ForEachEager(assembly => assembly.DefinedTypes
                                                .Where(x => typeof(TInstaller).IsAssignableFrom(x) && !x.IsInterface && !x.IsAbstract)
                                                .Select(Activator.CreateInstance)
                                                .Cast<TInstaller>()
                                                .Exclude(x => x.Order == int.MinValue)
                                                .OrderBy(x => x.Order ?? int.MaxValue)
-                                               .ForEach(x => x.Install()))
-                      .Build();
+                                               .ForEachEager(x => x.Install()));
         return services;
     }
 }

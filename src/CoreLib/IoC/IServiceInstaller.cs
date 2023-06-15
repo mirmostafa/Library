@@ -1,6 +1,6 @@
 ﻿namespace Library.Ioc;
 
-public interface ILibServiceInstaller
+public interface IServiceInstaller
 {
     int? Order { get; set; }
 

@@ -1,7 +1,11 @@
-﻿using Library.Data.Markers;
+﻿using System;
+
+using Library.Data.Markers;
 using Library.Mapping;
 
 using UnitTests.Models;
+
+using Xunit;
 
 namespace UnitTests;
 
@@ -43,4 +47,9 @@ public sealed class MapperTest
     }
 }
 
+file record Person(string Name, int Age);
+file class PersonMapper
+{
+
+}
 file record StudentRecord(string Name, int Age, string? Major) : IEntity;

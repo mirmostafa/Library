@@ -11,40 +11,47 @@ namespace Library.Mapping;
 public sealed class Mapper : IMapper
 {
     [return: MaybeNull]
-    public TDestination Map<TSource, TDestination>(in TSource source, in TDestination destination)
+    public TDestination Map<TDestination>(in object source, in TDestination destination)
         where TDestination : class
     {
-        if (source is null)
+        if (source == null)
         {
             return null;
         }
+
         Check.IfArgumentNotNull(destination);
-
-        return source switch
+        var props = typeof(TDestination).GetProperties();
+        var result = destination;
+        foreach (var prop in props)
         {
-            //IConvertible <TSource, TDestination> convertible => (TDestination)convertible,
-            IConvertible<TDestination> convertible => convertible.Convert(),
-            _ => toDst(source, destination)
-        };
-
-        static TDestination toDst(TSource source, TDestination destination)
-        {
-            var props = typeof(TDestination).GetProperties();
-            var result = destination;
-            foreach (var prop in props)
-            {
-                Copy(source, result, prop);
-            }
-
-            return result;
+            Copy(source, result, prop);
         }
+
+        return result;
     }
+
+    public TDestination? Map<TDestination>(in IConvertible<TDestination> source)
+        where TDestination : class
+        => source?.Convert();
 
     public TDestination Map<TDestination>(in object source) where TDestination : class, new()
         => this.Map(source, new TDestination())!;
 
-    public TDestination? MapExcept<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> except)
-                        where TDestination : class
+    public TDestination Map<TSelf, TDestination, TMapper>(TSelf source)
+        where TMapper : IMappable<TSelf, TDestination>, new()
+        where TDestination : class, new()
+    {
+        var mapper = new TMapper();
+        var converter = new ConvertMapperToConverter<TSelf, TDestination, TMapper>(source, mapper);
+        return this.Map<TDestination>(converter);
+    }
+
+    public TDestination? Map<TSource, TDestination>(in TSource source, in TDestination destination)
+        where TDestination : class
+        => throw new NotImplementedException();
+
+    public TDestination? MapExcept<TDestination>(in object source, in TDestination destination, in Func<TDestination, object> except)
+                                where TDestination : class
     {
         if (source is null)
         {
@@ -65,7 +72,7 @@ public sealed class Mapper : IMapper
         return result;
     }
 
-    public TDestination MapExcept<TSource, TDestination>(in TSource source, in Func<TDestination, object> except)
+    public TDestination MapExcept<TDestination>(in object source, in Func<TDestination, object> except)
         where TDestination : class, new()
     {
         Check.IfArgumentNotNull(source);
@@ -85,8 +92,12 @@ public sealed class Mapper : IMapper
         return result;
     }
 
-    public TDestination? MapOnly<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> onlyProps)
-        where TDestination : class
+    public TDestination MapExcept<TSource, TDestination>(in TSource source, in Func<TDestination, object> except) where TDestination : class, new() => throw new NotImplementedException();
+
+    public TDestination? MapExcept<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> except) where TDestination : class => throw new NotImplementedException();
+
+    public TDestination? MapOnly<TDestination>(in object source, in TDestination destination, in Func<TDestination, object> onlyProps)
+                where TDestination : class
     {
         if (source is null)
         {
@@ -108,8 +119,10 @@ public sealed class Mapper : IMapper
         return result;
     }
 
-    internal static void Copy<TSource, TDestination>(TSource source, TDestination destination, PropertyInfo dstProp)
-        where TDestination : class
+    public TDestination? MapOnly<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> onlyProps) where TDestination : class => throw new NotImplementedException();
+
+    internal static void Copy<TDestination>(object source, TDestination destination, PropertyInfo dstProp)
+            where TDestination : class
     {
         var mapping = dstProp.GetCustomAttribute<MappingAttribute>()?.MapFrom;
         var name = (mapping is { } info) && (info.SourceClassName is null || info.SourceClassName == typeof(TDestination).Name)
