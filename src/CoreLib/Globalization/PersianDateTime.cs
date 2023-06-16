@@ -14,20 +14,20 @@ namespace Library.Globalization;
 /// <summary>
 ///
 /// </summary>
-/// <seealso cref="System.IComparable" />
-/// <seealso cref="System.IComparable&lt;System.DateTime&gt;" />
-/// <seealso cref="System.IConvertible" />
-/// <seealso cref="System.IEquatable&lt;System.DateTime&gt;" />
-/// <seealso cref="System.ISpanFormattable" />
-/// <seealso cref="System.IFormattable" />
-/// <seealso cref="System.Runtime.Serialization.ISerializable" />
-/// <seealso cref="System.ICloneable" />
-/// <seealso cref="System.IComparable&lt;Library.Globalization.PersianDateTime&gt;" />
-/// <seealso cref="System.IEquatable&lt;Library.Globalization.PersianDateTime&gt;" />
-/// <seealso cref="Library.Interfaces.IConvertible&lt;Library.Globalization.PersianDateTime, System.DateTime&gt;" />
-/// <seealso cref="Library.Interfaces.IConvertible&lt;Library.Globalization.PersianDateTime, string&gt;" />
-/// <seealso cref="Library.Interfaces.IAdditionOperators&lt;Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime&gt;" />
-/// <seealso cref="Library.Interfaces.ISubtractionOperators&lt;Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime, Library.Globalization.PersianDateTime&gt;" />
+/// <seealso cref="IComparable" />
+/// <seealso cref="IComparable&lt;DateTime&gt;" />
+/// <seealso cref="IConvertible" />
+/// <seealso cref="IEquatable&lt;DateTime&gt;" />
+/// <seealso cref="ISpanFormattable" />
+/// <seealso cref="IFormattable" />
+/// <seealso cref="ISerializable" />
+/// <seealso cref="ICloneable" />
+/// <seealso cref="IComparable&lt;PersianDateTime&gt;" />
+/// <seealso cref="IEquatable&lt;PersianDateTime&gt;" />
+/// <seealso cref="Interfaces.IConvertible&lt;PersianDateTime, DateTime&gt;" />
+/// <seealso cref="Interfaces.IConvertible&lt;PersianDateTime, string&gt;" />
+/// <seealso cref="IAdditionOperators&lt;PersianDateTime, PersianDateTime, PersianDateTime&gt;" />
+/// <seealso cref="ISubtractionOperators&lt;PersianDateTime, PersianDateTime, PersianDateTime&gt;" />
 /// <seealso cref="IParsable&lt;PersianDateTime&gt;" />
 [Serializable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
@@ -308,10 +308,10 @@ public readonly struct PersianDateTime :
     }
 
     /// <summary>
-    /// Gets the persian month name abbrs in persian.
+    /// Gets the Persian month name abbrs in Persian.
     /// </summary>
     /// <value>
-    /// The persian month name abbrs in persian.
+    /// The Persian month name abbrs in persian.
     /// </value>
     internal static IEnumerable<string> PersianMonthNameAbbrsInPersian
     {
