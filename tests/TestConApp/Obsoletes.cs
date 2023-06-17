@@ -98,7 +98,6 @@ internal partial class Obsoletes
 
     public static void WatchHardDisk()
     {
-        Thread.Sleep(50);
         var watchers = Drive.GetDrives().Select(watch).ForEach(x => WriteLine($"Watching {x.Path}")).ToList();
         WriteLine("Ready");
 

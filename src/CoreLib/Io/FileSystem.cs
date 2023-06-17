@@ -47,6 +47,12 @@ public abstract record FileSystem
 [Immutable]
 public sealed record Drive([DisallowNull] in SysDriveInfo driveInfo) : FileSystem
 {
+    public Drive(string driveName)
+        :this(new SysDriveInfo(driveName))
+    {
+        
+    }
+
     private readonly SysDriveInfo _sysDriveInfo = driveInfo.ArgumentNotNull();
 
     /// <summary>
