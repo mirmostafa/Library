@@ -14,7 +14,7 @@ public interface IAdditionOperators<in TSelf, in TOther, out TResult>
     /// <summary>
     /// Adds two values together to compute their sum.
     /// </summary>
-    /// <param name="left"> The value to which <paramref name="right"/> is added.</param>
+    /// <param name="left">The value to which <paramref name="right"/> is added.</param>
     /// <param name="right">The value which is added to <paramref name="left"/>.</param>
     /// <returns>The sum of <paramref name="left"/> and <paramref name="right"/>.</returns>
     static abstract TResult operator +(TSelf left, TOther right);
@@ -33,7 +33,7 @@ public interface IParsable<TSelf>
     /// <summary>
     /// Parses a string into a value.
     /// </summary>
-    /// <param name="s">       The string to parse.</param>
+    /// <param name="s">The string to parse.</param>
     /// <param name="provider">
     /// An object that provides culture-specific formatting information about <paramref name="s"/>.
     /// </param>
@@ -48,7 +48,7 @@ public interface IParsable<TSelf>
     /// <summary>
     /// Tries to parses a string into a value.
     /// </summary>
-    /// <param name="s">       The string to parse.</param>
+    /// <param name="s">The string to parse.</param>
     /// <param name="provider">
     /// An object that provides culture-specific formatting information about <paramref name="s"/>.
     /// </param>
@@ -75,7 +75,7 @@ public interface ISubtractionOperators<in TSelf, in TOther, out TResult>
     /// <summary>
     /// Subtracts two values to compute their difference.
     /// </summary>
-    /// <param name="left"> The value from which <paramref name="right"/> is subtracted.</param>
+    /// <param name="left">The value from which <paramref name="right"/> is subtracted.</param>
     /// <param name="right">The value which is subtracted from <paramref name="left"/>.</param>
     /// <returns>The difference of <paramref name="right"/> subtracted from <paramref name="left"/>.</returns>
     static abstract TResult operator -(TSelf left, TOther right);

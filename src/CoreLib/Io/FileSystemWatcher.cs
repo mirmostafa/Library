@@ -78,7 +78,7 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
         this._innerWatcher.EndInit();
         this._waitForChanged = () =>
         {
-            while (!this._cancellationToken.IsCancellationRequested)
+            while (!this._disposedValue && !this._cancellationToken.IsCancellationRequested)
             {
                 var a = this._innerWatcher.WaitForChanged(WatcherChangeTypes.All);
             }
@@ -113,16 +113,14 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
     /// <param name="onChanged">The action to take when a file is changed.</param>
     /// <param name="onDeleted">The action to take when a file is deleted.</param>
     /// <param name="onError">The action to take when an error occurs.</param>
-    /// <returns>
-    /// The FileSystemWatcher object.
-    /// </returns>
+    /// <returns>The FileSystemWatcher object.</returns>
     public static FileSystemWatcher Start(
         in string path, in string? wildcard = null, in bool includeSubdirectories = false,
         Action<CreatedEventArgs>? onCreated = null,
         Action<RenamedEventArgs>? onRenamed = null,
         Action<ChangedEventArgs>? onChanged = null,
         Action<DeletedEventArgs>? onDeleted = null,
-        Action<ErrorEventArgs>? onError = null, 
+        Action<ErrorEventArgs>? onError = null,
         CancellationToken cancellationToken = default
         )
     {
@@ -194,13 +192,15 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
     /// <returns>The FileSystemWatcher.</returns>
     public FileSystemWatcher Start() => this.Fluent<FileSystemWatcher>(() =>
     {
+        _ = this.ThrowIfDisposed(this._disposedValue);
         if (this._watcherTask.Status is not TaskStatus.Running or TaskStatus.WaitingToRun)
         {
             this._watcherTask.Start();
         }
     });
 
-    private void _innerWatcher_Changed(object sender, FileSystemEventArgs e) => this.Changed?.Invoke(this, new(new(e.FullPath, e.Name)));
+    private void _innerWatcher_Changed(object sender, FileSystemEventArgs e)
+        => this.Changed?.Invoke(this, new(new(e.FullPath, e.Name)));
 
     private void _innerWatcher_Created(object sender, FileSystemEventArgs e)
         => this.Created?.Invoke(this, new(new(e.FullPath, e.Name)));

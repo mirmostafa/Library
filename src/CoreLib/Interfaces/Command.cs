@@ -19,4 +19,3 @@ public interface ICommand<out TResult>
 {
     TResult Execute();
 }
-

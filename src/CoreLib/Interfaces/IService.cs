@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 namespace Library.Interfaces;
 
 /// <summary>
-/// Interface for an asynchronous CRUD service that provides read and write operations for a view model type with an ID type.
+/// Interface for an asynchronous CRUD service that provides read and write operations for a view
+/// model type with an ID type.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TId">The type of the identifier.</typeparam>
@@ -16,13 +17,15 @@ public interface IAsyncCrud<TViewModel, TId> : IAsyncRead<TViewModel, TId>, IAsy
 }
 
 /// <summary>
-/// Represents an interface for an asynchronous CRUD service that provides read and write operations for a view model.
+/// Represents an interface for an asynchronous CRUD service that provides read and write operations
+/// for a view model.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <seealso cref="IAsyncRead&lt;TViewModel, TId&gt;"/>
 /// <seealso cref="IAsyncWrite&lt;TViewModel, TId&gt;"/>
 public interface IAsyncCrud<TViewModel> : IAsyncRead<TViewModel>, IAsyncWrite<TViewModel>
-{ }
+{
+}
 
 /// <summary>
 /// Interface for an asynchronous read paging service.
@@ -59,7 +62,9 @@ public interface IAsyncRead<TViewModel, in TId>
     /// <summary>
     /// Asynchronously retrieves a list of view models.
     /// </summary>
-    /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+    /// <param name="token">
+    /// A cancellation token that can be used by other objects or threads to receive notice of cancellation.
+    /// </param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task<IReadOnlyList<TViewModel>> GetAllAsync(CancellationToken token = default);
 
@@ -125,7 +130,7 @@ public interface IAsyncWrite<TViewModel, TId>
     /// <summary>
     /// Updates an entity asynchronously.
     /// </summary>
-    /// <param name="id">   The identifier.</param>
+    /// <param name="id">The identifier.</param>
     /// <param name="model">The model.</param>
     /// <returns></returns>
     Task<Result<TViewModel>> UpdateAsync(TId id, TViewModel model, bool persist = true, CancellationToken token = default);

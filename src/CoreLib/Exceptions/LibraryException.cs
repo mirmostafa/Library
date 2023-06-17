@@ -4,7 +4,7 @@ using Library.Windows;
 namespace Library.Exceptions;
 
 [Serializable]
-public sealed class LibraryException : LibraryExceptionBase, IThrowableException<LibraryException>
+public sealed class LibraryException : LibraryExceptionBase, IThrowsException<LibraryException>
 {
     public LibraryException()
     {

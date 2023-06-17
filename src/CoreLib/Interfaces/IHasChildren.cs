@@ -10,8 +10,6 @@ public interface IParent<TChild>
     /// <summary>
     /// Gets the children.
     /// </summary>
-    /// <value>
-    /// The children.
-    /// </value>
+    /// <value>The children.</value>
     IList<TChild> Children { get; }
 }
