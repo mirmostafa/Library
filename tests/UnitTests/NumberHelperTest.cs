@@ -99,4 +99,25 @@ public class NumberHelperTest
         // Assert
         Assert.Equal(expected, result);
     }
+
+    [Theory]
+    [InlineData(5, 1, 10, true)]
+    [InlineData(0, -10, 10, true)]
+    [InlineData(100, 0, 200, true)]
+    [InlineData(0, 0, 200, true)]
+    [InlineData(200, 0, 200, true)]
+    [InlineData(-5, 1, 10, false)]
+    [InlineData(-100, 0, 200, false)]
+    [InlineData(15, 1, 10, false)]
+    [InlineData(1000, 0, 200, false)]
+    public void IsBetween_NumberInRange_ReturnsTrue(int num, int min, int max, bool expected)
+    {
+        // Arrange
+
+        // Act
+        bool result = num.IsBetween(min, max);
+
+        // Assert
+        Assert.Equal(result, expected);
+    }
 }

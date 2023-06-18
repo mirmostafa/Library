@@ -40,7 +40,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         var current = start;
         while (current.CompareTo(end) == -1)
         {
-            yield return current = current.GetNext();
+            yield return current = current.Add(1);
         }
     }
 
@@ -163,13 +163,44 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
 
     public static Result Validate(in string ip)
         => ip.ArgumentNotNull().Split('.').Check()
-             .RuleFor(x => x.Length != 4, () => "Parameter cannot be cast to IpAddress")
-             .RuleFor(x => x.Any(seg => !seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")
-             .RuleFor(x => x.Any(seg => !seg.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.Length == 4, () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.All(seg => seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.All(seg => seg.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
              .Build();
 
     public static IpAddress With(in IpAddress ip)
             => new(ip.ToString());
+
+    public IpAddress Add(int i)
+    {
+        var segments = this._segments.Copy();
+        segments[3] += i;
+        if (isOut(segments[3]))
+        {
+            segments[2] += i;
+            segments[3] = 0;
+        }
+        if (isOut(segments[2]))
+        {
+            segments[1] += i;
+            segments[2] = 0;
+        }
+        if (isOut(segments[1]))
+        {
+            segments[0] += i;
+            segments[1] = 0;
+        }
+        if (isOut(segments[0]))
+        {
+            segments[0] = i > 0
+                ? (segments[1] = segments[2] = segments[3] = 0)
+                : (segments[1] = segments[2] = segments[3] = 255);
+        }
+
+        return new(Merge(segments));
+
+        static bool isOut(int i) => !i.IsBetween(0, 255);
+    }
 
     /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer
@@ -280,6 +311,15 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     public override string ToString()
         => Merge(this._segments);
 
+    /// <summary>
+    /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+    /// </summary>
+    /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.</returns>
+    /// <filterpriority>2</filterpriority>
+    [return: NotNull]
+    public string ToString(string format)
+        => Merge(this._segments);
+
     public bool TryResolve(out string? computerName)
     {
         try
@@ -294,36 +334,9 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
     }
 
-    private static string Merge(in int[] segments)
-        => $"{segments[0]:000}.{segments[1]:000}.{segments[2]:000}.{segments[3]:000}";
+    private static string Merge(in int[] segments, string format = "0")
+        => $"{segments[0].ToString(format)}.{segments[1].ToString(format)}.{segments[2].ToString(format)}.{segments[3].ToString(format)}";
 
     private static int[] Split(in string ip)
         => ip.Split('.').Select(s => s.Cast().ToInt()).ToArray();
-
-    private IpAddress GetNext()
-    {
-        var segments = this._segments.Copy();
-        segments[3]++;
-        if (segments[3] > 255)
-        {
-            segments[2]++;
-            segments[3] = 0;
-        }
-        if (segments[2] > 255)
-        {
-            segments[1]++;
-            segments[2] = 0;
-        }
-        if (segments[1] > 255)
-        {
-            segments[0]++;
-            segments[1] = 0;
-        }
-        if (segments[0] > 255)
-        {
-            segments[0] = segments[1] = segments[2] = segments[3] = 0;
-        }
-
-        return new(Merge(segments));
-    }
 }
