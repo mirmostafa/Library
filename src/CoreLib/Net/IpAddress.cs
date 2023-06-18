@@ -1,4 +1,5 @@
-﻿using System.Net.NetworkInformation;
+﻿using System.Collections.Immutable;
+using System.Net.NetworkInformation;
 
 using Library.DesignPatterns.Markers;
 using Library.Interfaces;
@@ -13,7 +14,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     public static readonly IpAddress MaxValue = new Lazy<IpAddress>(() => Parse("255.255.255.255")).Value;
     public static readonly IpAddress MinValue = new Lazy<IpAddress>(() => Parse("0.0.0.0")).Value;
 
-    private readonly int[] _segments;
+    private readonly ImmutableArray<int> _segments;
 
     private IpAddress([DisallowNull] in string ip)
     {
@@ -22,6 +23,9 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     }
 
     public int this[in int index] => this._segments[index];
+
+    public static IpAddress Add(in IpAddress left, in IpAddress right)
+        => new(Merge(AddIpSegments(left._segments, right._segments)));
 
     public static string Format(in string ip)
     {
@@ -40,7 +44,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         var current = start;
         while (current.CompareTo(end) == -1)
         {
-            yield return current = current.GetNext();
+            yield return current = current.Add(1);
         }
     }
 
@@ -58,14 +62,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         => !Equals(left, right);
 
     public static IpAddress operator +(IpAddress left, IpAddress right)
-    {
-        var segments = new int[3];
-        for (var i = 0; i < 3; i++)
-        {
-            segments[i] = left._segments[i] + right._segments[i];
-        }
-        return new(Merge(segments));
-    }
+        => Add(left, right);
 
     public static bool operator <(in IpAddress left, IpAddress right)
         => left is null ? right is not null : left.CompareTo(right) < 0;
@@ -111,7 +108,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         return System.Net.Dns.GetHostEntry(ip).HostName;
     }
 
-    public static int[] Split(in IpAddress ipAddress)
+    public static IEnumerable<int> Split(in IpAddress ipAddress)
         => ipAddress._segments;
 
     public static bool TryParse([DisallowNull] in string ip, out IpAddress? result)
@@ -163,13 +160,19 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
 
     public static Result Validate(in string ip)
         => ip.ArgumentNotNull().Split('.').Check()
-             .RuleFor(x => x.Length != 4, () => "Parameter cannot be cast to IpAddress")
-             .RuleFor(x => x.Any(seg => !seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")
-             .RuleFor(x => x.Any(seg => !seg.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.Length == 4, () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.All(seg => seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.All(seg => seg.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
              .Build();
 
     public static IpAddress With(in IpAddress ip)
-            => new(ip.ToString());
+        => new(ip.ToString());
+
+    public IpAddress Add(int i)
+        => new(Merge(AddNumberToSegmentArray(this._segments, i)));
+
+    public IpAddress Add(in IpAddress ip)
+        => Add(this, ip);
 
     /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer
@@ -280,6 +283,15 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     public override string ToString()
         => Merge(this._segments);
 
+    /// <summary>
+    /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+    /// </summary>
+    /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.</returns>
+    /// <filterpriority>2</filterpriority>
+    [return: NotNull]
+    public string ToString(string format)
+        => Merge(this._segments);
+
     public bool TryResolve(out string? computerName)
     {
         try
@@ -294,36 +306,41 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
     }
 
-    private static string Merge(in int[] segments)
-        => $"{segments[0]:000}.{segments[1]:000}.{segments[2]:000}.{segments[3]:000}";
-
-    private static int[] Split(in string ip)
-        => ip.Split('.').Select(s => s.Cast().ToInt()).ToArray();
-
-    private IpAddress GetNext()
+    private static ImmutableArray<int> AddIpSegments(ImmutableArray<int> segment1, ImmutableArray<int> segment2)
     {
-        var segments = this._segments.Copy();
-        segments[3]++;
-        if (segments[3] > 255)
+        var result = new int[4];
+        var carry = 0;
+
+        for (var i = 3; i >= 0; i--)
         {
-            segments[2]++;
-            segments[3] = 0;
-        }
-        if (segments[2] > 255)
-        {
-            segments[1]++;
-            segments[2] = 0;
-        }
-        if (segments[1] > 255)
-        {
-            segments[0]++;
-            segments[1] = 0;
-        }
-        if (segments[0] > 255)
-        {
-            segments[0] = segments[1] = segments[2] = segments[3] = 0;
+            var sum = segment1[i] + segment2[i] + carry;
+            result[i] = sum % 256;
+            carry = sum / 256;
         }
 
-        return new(Merge(segments));
+        return result.ToImmutableArray();
     }
+
+    private static ImmutableArray<int> AddNumberToSegmentArray(ImmutableArray<int> segment, int number)
+    {
+        var result = segment.ToArray();
+        result[0] += number / 256 / 256 / 256 % 256;
+        result[1] += number / 256 / 256 % 256;
+        result[2] += number / 256 % 256;
+        result[3] += number % 256;
+
+        for (var i = 3; i > 0; i--)
+        {
+            result[i - 1] += segment[i] / 256;
+            result[i] %= 256;
+        }
+
+        return result.ToImmutableArray();
+    }
+
+    private static string Merge(in ImmutableArray<int> segments, string format = "0")
+        => $"{segments[0].ToString(format)}.{segments[1].ToString(format)}.{segments[2].ToString(format)}.{segments[3].ToString(format)}";
+
+    private static ImmutableArray<int> Split(in string ip)
+        => ip.Split('.').Select(s => s.Cast().ToInt()).ToImmutableArray();
 }

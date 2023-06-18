@@ -12,7 +12,7 @@ public static class NumberHelper
     /// Checks if a given integer is between two other integers.
     /// </summary>
     public static bool IsBetween(this int num, in int min, in int max)
-        => num > min && num <= max;
+        => num >= min && num <= max;
 
     /// <summary>
     /// Checks if a given number is a prime number.

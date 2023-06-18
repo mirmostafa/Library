@@ -89,6 +89,33 @@ public static class Caster
         return result;
     }
 
+    public static byte ToByte([DisallowNull] this ICastable o, byte defaultValue = default, IFormatProvider? formatProvider = null)
+    {
+        //Check if the value of o is an integer
+        if (o.Value is byte intValue)
+        {
+            //If it is, return the integer value
+            return intValue;
+        }
+
+        //Check if the value of o is IConvertible
+        if (o.Value is IConvertible convertible)
+        {
+            //If it is, convert it to an integer using the format provider
+            return convertible.ToByte(formatProvider);
+        }
+
+        //Try to parse the value of o as an integer
+        if (!byte.TryParse(Convert.ToString(o.Value, formatProvider), out var result))
+        {
+            //If it fails, set the result to the default value
+            result = defaultValue;
+        }
+
+        //Return the result
+        return result;
+    }
+
     /// <summary>
     /// Converts the value of the specified object to a long.
     /// </summary>

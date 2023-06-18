@@ -982,7 +982,14 @@ public static class EnumerableHelper
     /// <param name="item">The item to create an array from.</param>
     /// <returns>An array containing the item.</returns>
     public static T[] ToArray<T>(T item)
-            => ToEnumerable(item).ToArray();
+        => ToEnumerable(item).ToArray();
+
+    public static ImmutableArray<T> ToImmutableArray<T>(IEnumerable<T> items)
+    {
+        var builder = ImmutableArray.CreateBuilder<T>();
+        builder.AddRange(items);
+        return builder.ToImmutable();
+    }
 
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull
             => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -1180,4 +1187,12 @@ public static class EnumerableHelper
             { Length: 2 } => aggregator(items[0], items[1]),
             [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
         };
+    public static T[] InitializeItems<T>(this T[] items, T defaultItem)
+    {
+        for (var index = 0; index < items.Length; index++)
+        {
+            items[index] = defaultItem;
+            }
+        return items;
+    }
 }
