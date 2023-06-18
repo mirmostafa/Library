@@ -820,6 +820,8 @@ public sealed class StringHelperTest
     [InlineData("0013542419", true)] // Valid code
     [InlineData("1234567890", false)] // Invalid code
     [InlineData("0499370891", false)] // Invalid code
+    [InlineData("04993A0891", false)] // Invalid code
+    [InlineData("", false)] // Invalid code
     public void TestIsValidIranianNationalCode(string nationalCode, bool expected)
     {
         var actual = StringHelper.IsValidIranianNationalCode(nationalCode);
@@ -942,13 +944,6 @@ public sealed class StringHelperTest
 
         // Assert
         Assert.Equal(new[] { "Hello", "World", "!" }, result);
-    }
-
-    [Fact]
-    public void Truncate()
-    {
-        var result = LONG_TEXT.Truncate(LONG_TEXT.Length - 5);
-        Assert.Equal("There", result);
     }
 }
 

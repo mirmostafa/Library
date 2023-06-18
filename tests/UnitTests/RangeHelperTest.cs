@@ -16,4 +16,11 @@ public sealed class RangeHelperTest
         }
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public void Syntax()
+    {
+        IEnumerable<int> range = (100..1000).AsEnumerable();
+        Assert.True(range.Any());
+    }
 }

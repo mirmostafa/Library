@@ -20,9 +20,9 @@ public static class StringHelper
     /// <summary>
     /// Adds a specified number of characters to a string, either before or after the string.
     /// </summary>
-    /// <param name="s">     The s.</param>
-    /// <param name="count"> The count.</param>
-    /// <param name="add">   The add.</param>
+    /// <param name="s">The s.</param>
+    /// <param name="count">The count.</param>
+    /// <param name="add">The add.</param>
     /// <param name="before">if set to <c>true</c> [before].</param>
     /// <returns></returns>
     [Pure]
@@ -104,7 +104,8 @@ public static class StringHelper
         => strings.Where(item => !item.IsNullOrEmpty()).ToArray();
 
     /// <summary>
-    /// Filters out null or empty strings from the given IEnumerable and returns a new IEnumerable with only non-null and non-empty strings.
+    /// Filters out null or empty strings from the given IEnumerable and returns a new IEnumerable
+    /// with only non-null and non-empty strings.
     /// </summary>
     /// <param name="strings">The IEnumerable of strings to filter.</param>
     /// <returns>A new IEnumerable with only non-null and non-empty strings.</returns>
@@ -114,12 +115,15 @@ public static class StringHelper
         => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     /// <summary>
-    /// Compares two strings and returns an integer that indicates their relative position in the sort order.
+    /// Compares two strings and returns an integer that indicates their relative position in the
+    /// sort order.
     /// </summary>
     /// <param name="str1">The first string to compare.</param>
     /// <param name="str">The second string to compare.</param>
     /// <param name="ignoreCase">A Boolean value indicating a case-sensitive or insensitive comparison.</param>
-    /// <returns>A 32-bit signed integer that indicates the lexical relationship between the two comparands.</returns>
+    /// <returns>
+    /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
+    /// </returns>
     [Pure]
     public static int CompareTo(this string str1, in string str, bool ignoreCase = false)
         => string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
@@ -229,7 +233,8 @@ public static class StringHelper
         => ArabicCharsToPersian(text);
 
     /// <summary>
-    /// Counts the number of occurrences of a specified character in a string, starting from a specified index.
+    /// Counts the number of occurrences of a specified character in a string, starting from a
+    /// specified index.
     /// </summary>
     public static int CountOf(this string str, char c, int index = 0)
         => str?.Skip(index).Count(x => x == c) ?? 0;
@@ -266,7 +271,8 @@ public static class StringHelper
         => str1.CompareTo(str, ignoreCase) == 0;
 
     /// <summary>
-    /// Checks if the given string is equal to any of the strings in the given array, with the given ignoreCase option.
+    /// Checks if the given string is equal to any of the strings in the given array, with the given
+    /// ignoreCase option.
     /// </summary>
     [Pure]
     public static bool EqualsToAny(this string str1, bool ignoreCase, params string[] array)
@@ -280,7 +286,8 @@ public static class StringHelper
         => array.Any(s => str1.EqualsTo(s));
 
     /// <summary>
-    /// Fixes the size of the given string to the specified maximum length, padding with the given gap character if necessary.
+    /// Fixes the size of the given string to the specified maximum length, padding with the given
+    /// gap character if necessary.
     /// </summary>
     public static string? FixSize(string? str, int maxLength, char gapChar = ' ')
         => str.IsNullOrEmpty()
@@ -619,7 +626,9 @@ public static class StringHelper
     /// </summary>
     /// <param name="text">The string to be checked.</param>
     /// <param name="canAcceptMinusKey">Indicates if the minus key is accepted.</param>
-    /// <returns>True if the string is composed of only English characters or numbers, false otherwise.</returns>
+    /// <returns>
+    /// True if the string is composed of only English characters or numbers, false otherwise.
+    /// </returns>
     public static bool IsEnglishOrNumber(this string text, bool canAcceptMinusKey = false)
         => CheckAllValidations(text, c => c.IsDigit(canAcceptMinusKey) || c.IsEnglish());
 
@@ -744,30 +753,32 @@ public static class StringHelper
     /// <param name="input">The input string to be checked.</param>
     /// <returns>True if the input is a valid Iranian National Code, false otherwise.</returns>
     /// <remarks>
-    /// This code checks if a given string is a valid Iranian National Code.
-    /// It first checks if the input string is 10 digits long using a regular expression.
-    /// It then calculates the sum of the first 9 digits multiplied by their respective weights (10-i).
-    /// The sum is then divided by 11 and the remainder is compared to the last digit of the input string.
-    /// If the remainder is less than 2, the last digit must be equal to the remainder.
-    /// Otherwise, the last digit must be equal to 11 minus the remainder.
-    /// If both conditions are met, the input string is a valid Iranian National Code.
+    /// This code checks if a given string is a valid Iranian National Code. It first checks if the
+    /// input string is 10 digits long using a regular expression. It then calculates the sum of the
+    /// first 9 digits multiplied by their respective weights (10-i). The sum is then divided by 11
+    /// and the remainder is compared to the last digit of the input string. If the remainder is
+    /// less than 2, the last digit must be equal to the remainder. Otherwise, the last digit must
+    /// be equal to 11 minus the remainder. If both conditions are met, the input string is a valid
+    /// Iranian National Code.
     /// </remarks>
-    public static bool IsValidIranianNationalCode(string input)
+    public static bool IsValidIranianNationalCode(string nationalCode)
     {
-        if (!Regex.IsMatch(input, @"^\d{10}$"))
+        if (nationalCode.IsNullOrEmpty())
         {
             return false;
         }
 
-        var check = Convert.ToInt32(input[9]);
-        var sum = 0;
-        for (var i = 0; i < 9; i++)
+        if (!Regex.IsMatch(nationalCode, @"^\d{10}$"))
         {
-            sum += Convert.ToInt32(input[i]) * (10 - i);
+            return false;
         }
-        sum %= 11;
 
-        return sum < 2 ? check == sum : check + sum == 11;
+        var check = int.Parse(nationalCode[9].ToString());
+        var sum = Enumerable.Range(0, 9)
+            .Select(x => int.Parse(nationalCode[x].ToString()) * (10 - x))
+            .Sum() % 11;
+
+        return (sum < 2 && check == sum) || (sum >= 2 && check + sum == 11);
     }
 
     /// <summary>
@@ -815,33 +826,32 @@ public static class StringHelper
     public static string Merge(string quat, string separator, params string[] array)
             => array.Merge(quat, separator);
 
-    /// <summary>
-    /// Merges the elements of an IEnumerable<string> into a single string, separated by the given separator.
-    /// </summary>
+    /// <summary> Merges the elements of an IEnumerable<string> into a single string, separated by
+    /// the given separator. </summary>
     public static string Merge(this IEnumerable<string> array, in string separator)
         => string.Join(separator, array.ToArray());
 
-    /// <summary>
-    /// Merges the elements of an IEnumerable<string> into a single string, separated by the given separator.
-    /// </summary>
+    /// <summary> Merges the elements of an IEnumerable<string> into a single string, separated by
+    /// the given separator. </summary>
     public static string Merge(this IEnumerable<string> array, in char separator)
         => string.Join(separator, array.ToArray());
 
-    /// <summary>
-    /// Merges the elements of an IEnumerable<string> array into a single string, using the specified quotation mark and separator.
-    /// </summary>
-    /// <param name="array">The array of strings to be merged.</param>
-    /// <param name="quat">The quotation mark to be used.</param>
-    /// <param name="separator">The separator to be used.</param>
-    /// <returns>A string containing the merged elements of the array.</returns>
+    /// <summary> Merges the elements of an IEnumerable<string> array into a single string, using
+    /// the specified quotation mark and separator. </summary> <param name="array">The array of
+    /// strings to be merged.</param> <param name="quat">The quotation mark to be used.</param>
+    /// <param name="separator">The separator to be used.</param> <returns>A string containing the
+    /// merged elements of the array.</returns>
     public static string Merge(this IEnumerable<string> array, string quat, string separator)
         => array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator}").TrimEnd(separator.ToCharArray())[..^1];
 
     /// <summary>
-    /// Merges a collection of tuples into a single string, separated by a key-value separator and statement separator.
+    /// Merges a collection of tuples into a single string, separated by a key-value separator and
+    /// statement separator.
     /// </summary>
     /// <param name="splitPair">The collection of tuples to merge.</param>
-    /// <param name="keyValueSeparator">The separator to use between the key and value of each tuple.</param>
+    /// <param name="keyValueSeparator">
+    /// The separator to use between the key and value of each tuple.
+    /// </param>
     /// <param name="statementSeparator">The separator to use between each tuple.</param>
     /// <returns>A single string containing the merged tuples.</returns>
     public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";")
@@ -853,11 +863,12 @@ public static class StringHelper
     /// <param name="text">The string to be processed.</param>
     /// <returns>A string with all special characters removed.</returns>
     /// <remarks>
-    /// This code takes a string as an input and returns a string with all special characters removed.
-    /// It first calls the CorrectUnicodeProblem() method to correct any Unicode problems in the string.
-    /// It then creates an array of special characters to be removed from the string.
-    /// It then splits the string into an array of strings, removing any empty entries.
-    /// Finally, it uses the Aggregate() method to combine the strings in the array into a single string and returns the result.
+    /// This code takes a string as an input and returns a string with all special characters
+    /// removed. It first calls the CorrectUnicodeProblem() method to correct any Unicode problems
+    /// in the string. It then creates an array of special characters to be removed from the string.
+    /// It then splits the string into an array of strings, removing any empty entries. Finally, it
+    /// uses the Aggregate() method to combine the strings in the array into a single string and
+    /// returns the result.
     /// </remarks>
     public static string PatternPolicy(in string text)
     {
@@ -959,13 +970,15 @@ public static class StringHelper
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     /// <summary>
-    /// Replaces all occurrences of the specified old values with the specified new value in the given string.
+    /// Replaces all occurrences of the specified old values with the specified new value in the
+    /// given string.
     /// </summary>
     public static string ReplaceAll(this string value, in IEnumerable<string> oldValues, string newValue)
         => oldValues.Aggregate(value, (current, oldValue) => current.Replace(oldValue, newValue));
 
     /// <summary>
-    /// Replaces all occurrences of the specified old values with the specified new values in the given string.
+    /// Replaces all occurrences of the specified old values with the specified new values in the
+    /// given string.
     /// </summary>
     public static string ReplaceAll(this string value, in IEnumerable<(string OldValue, string NewValue)> items)
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
@@ -977,7 +990,8 @@ public static class StringHelper
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     /// <summary>
-    /// Replaces all occurrences of the specified old values with the specified new values in the given string.
+    /// Replaces all occurrences of the specified old values with the specified new values in the
+    /// given string.
     /// </summary>
     public static string ReplaceAll(this string value, params (string OldValue, string NewValue)[] items)
         => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
@@ -1074,15 +1088,17 @@ public static class StringHelper
     /// </summary>
     /// <param name="s">The string to slice.</param>
     /// <param name="start">The start index of the slice.</param>
-    /// <param name="length">The length of the slice. If not specified, the slice will extend to the end of the string.</param>
+    /// <param name="length">
+    /// The length of the slice. If not specified, the slice will extend to the end of the string.
+    /// </param>
     /// <returns>A new string from the sliced span.</returns>
     public static string Slice(this string s, in int start, in int? length = null)
     {
         // Create a read-only span of characters from the string
         ReadOnlySpan<char> span = s;
 
-        // If a length is specified, slice the span from the start index to the length
-        // Otherwise, slice the span from the start index to the end of the string
+        // If a length is specified, slice the span from the start index to the length Otherwise,
+        // slice the span from the start index to the end of the string
         var slice = length is { } l ? span.Slice(start, l) : span[start..];
 
         // Return a new string from the sliced span
@@ -1257,10 +1273,13 @@ public static class StringHelper
     }
 
     /// <summary>
-    /// Converts a string to a cultural number based on the specified language and corrects Persian characters if needed.
+    /// Converts a string to a cultural number based on the specified language and corrects Persian
+    /// characters if needed.
     /// </summary>
     /// <param name="value">The string to convert.</param>
-    /// <param name="correctPersianChars">A boolean value indicating whether Persian characters should be corrected.</param>
+    /// <param name="correctPersianChars">
+    /// A boolean value indicating whether Persian characters should be corrected.
+    /// </param>
     /// <param name="toLanguage">The language to convert the string to.</param>
     /// <returns>The converted string.</returns>
     public static string ToCulturalNumber(this string value, in bool correctPersianChars, in Language toLanguage)
@@ -1344,12 +1363,6 @@ public static class StringHelper
     /// </summary>
     public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars)
         => values.Select(t => t.Trim(trimChars));
-
-    /// <summary>
-    /// Truncates a string to the specified length.
-    /// </summary>
-    public static string? Truncate(this string? value, int length)
-        => length > value?.Length ? value : value?[..length];
 
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.

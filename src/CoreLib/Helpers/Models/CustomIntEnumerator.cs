@@ -2,7 +2,7 @@
 
 namespace Library.Helpers.Models;
 
-public sealed class CustomIntEnumerator : IEnumerator<int>
+internal sealed class CustomIntEnumerator : IEnumerator<int>
 {
     private readonly int _end;
     private readonly Func<CustomIntEnumerator, bool> _moveNext;

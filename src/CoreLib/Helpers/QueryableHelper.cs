@@ -11,13 +11,13 @@ namespace Library.Helpers;
 public static class QueryableHelper
 {
     /// <summary>
-    /// Retrieves the first element of a sequence, or a default value if the sequence contains no elements. 
+    /// Retrieves the first element of a sequence, or a default value if the sequence contains no elements.
     /// </summary>
     /// <param name="query">The sequence to return the first element of.</param>
     /// <param name="asyncLock">The async lock.</param>
     /// <returns>
-    /// A task that represents the asynchronous operation. 
-    /// The task result contains the first element in the sequence, or default(TResult) if the sequence contains no elements.
+    /// A task that represents the asynchronous operation. The task result contains the first
+    /// element in the sequence, or default(TResult) if the sequence contains no elements.
     /// </returns>
     public static Task<TResult?> FirstOrDefaultLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock)
     {

@@ -115,5 +115,5 @@ public static class FluencyHelper
         => func is null ? instance : Fluency<TResult>.New(func(instance.Value));
 
     public static Fluency<TResult> WithNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
-            => action(instance);
+        => action(instance);
 }

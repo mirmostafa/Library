@@ -3,7 +3,6 @@
 using Library.DesignPatterns.Markers;
 using Library.Interfaces;
 using Library.Results;
-using Library.Results;
 using Library.Validations;
 
 namespace Library.Net;
@@ -11,15 +10,18 @@ namespace Library.Net;
 [Immutable]
 public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, IParsable<IpAddress>, IAdditionOperators<IpAddress, IpAddress, IpAddress>
 {
-    private readonly int[] _parts;
+    public static readonly IpAddress MaxValue = new Lazy<IpAddress>(() => Parse("255.255.255.255")).Value;
+    public static readonly IpAddress MinValue = new Lazy<IpAddress>(() => Parse("0.0.0.0")).Value;
+
+    private readonly int[] _segments;
 
     private IpAddress([DisallowNull] in string ip)
     {
         _ = Validate(ip).ThrowOnFail();
-        this._parts = Split(ip);
+        this._segments = Split(ip);
     }
 
-    public int this[in int index] => this._parts[index];
+    public int this[in int index] => this._segments[index];
 
     public static string Format(in string ip)
     {
@@ -28,7 +30,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     }
 
     public static IpAddress? GetCurrentIp()
-            => Dns.GetHostIpAddress();
+        => Dns.GetHostIpAddress();
 
     public static IpAddress GetLocalHost()
         => Parse("127.0.0.1");
@@ -39,7 +41,6 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         while (current.CompareTo(end) == -1)
         {
             yield return current = current.GetNext();
-            ;
         }
     }
 
@@ -58,16 +59,16 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
 
     public static IpAddress operator +(IpAddress left, IpAddress right)
     {
-        var parts = new int[3];
+        var segments = new int[3];
         for (var i = 0; i < 3; i++)
         {
-            parts[i] = left._parts[i] + right._parts[i];
+            segments[i] = left._segments[i] + right._segments[i];
         }
-        return new(Merge(parts));
+        return new(Merge(segments));
     }
 
     public static bool operator <(in IpAddress left, IpAddress right)
-            => left is null ? right is not null : left.CompareTo(right) < 0;
+        => left is null ? right is not null : left.CompareTo(right) < 0;
 
     public static bool operator <=(in IpAddress left, IpAddress right)
         => left is null || left.CompareTo(right) <= 0;
@@ -111,7 +112,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     }
 
     public static int[] Split(in IpAddress ipAddress)
-        => ipAddress._parts;
+        => ipAddress._segments;
 
     public static bool TryParse([DisallowNull] in string ip, out IpAddress? result)
     {
@@ -161,32 +162,55 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     }
 
     public static Result Validate(in string ip)
-        => ip.ArgumentNotNull().Split('.').Check(CheckBehavior.GatherAll)
+        => ip.ArgumentNotNull().Split('.').Check()
              .RuleFor(x => x.Length != 4, () => "Parameter cannot be cast to IpAddress")
-             .RuleFor(x => x.Any(part => !part.IsInteger()), () => "Parameter cannot be cast to IpAddress")
-             .RuleFor(x => x.Any(part => !part.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.Any(seg => !seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.Any(seg => !seg.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
              .Build();
 
+    public static IpAddress With(in IpAddress ip)
+            => new(ip.ToString());
+
     /// <summary>
-    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// Compares the current instance with another object of the same type and returns an integer
+    /// that indicates whether the current instance precedes, follows, or occurs in the same
+    /// position in the sort order as the other object.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>
     /// <returns>
-    /// A value that indicates the relative order of the objects being compared. The return value has these meanings:
-    /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="other" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="other" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="other" /> in the sort order.</description></item></list>
+    /// A value that indicates the relative order of the objects being compared. The return value
+    /// has these meanings:
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term>
+    /// <description>Meaning</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description>This instance precedes <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description>
+    /// This instance occurs in the same position in the sort order as <paramref name="other"/>.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description>This instance follows <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// </list>
     /// </returns>
     public int CompareTo(IpAddress? other)
-        => other is null ? -1 : Merge(this._parts).Replace(".", "").Cast().ToLong().CompareTo(Merge(other._parts).Replace(".", "").Cast().ToLong());
+        => other is null ? -1 : Merge(this._segments).Replace(".", "").Cast().ToLong().CompareTo(Merge(other._segments).Replace(".", "").Cast().ToLong());
 
     /// <summary>
-    ///     Indicates whether the current object is equal to another object of the same type.
+    /// Indicates whether the current object is equal to another object of the same type.
     /// </summary>
     /// <returns>
-    ///     true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.
+    /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
     /// </returns>
-    /// <param name="other">
-    ///     An object to compare with this object.
-    /// </param>
+    /// <param name="other">An object to compare with this object.</param>
     public bool Equals(IpAddress? other)
     {
         if (other is null)
@@ -207,62 +231,30 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         => this.ToString().Equals(ip, StringComparison.Ordinal);
 
     /// <summary>
-    ///     Determines whether the specified <see cref="T:System.Object" /> is equal to the current
-    ///     <see cref="T:System.Object" />.
+    /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
     /// </summary>
     /// <returns>
-    ///     true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />;
-    ///     otherwise, false.
+    /// true if the specified <see cref="T:System.Object"/> is equal to the current <see
+    /// cref="T:System.Object"/>; otherwise, false.
     /// </returns>
-    /// <param name="obj">
-    ///     The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Object" />.
-    /// </param>
+    /// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>.</param>
     /// <exception cref="T:System.NullReferenceException">
-    ///     The <paramref name="obj" /> parameter is null.
+    /// The <paramref name="obj"/> parameter is null.
     /// </exception>
     /// <filterpriority>2</filterpriority>
     public override bool Equals(object? obj)
         => obj is IpAddress ip && this.Equals(ip);
 
     public string Format()
-        => Merge(this._parts);
+        => Merge(this._segments);
 
     /// <summary>
-    ///     Serves as a hash function for a particular type.
+    /// Serves as a hash function for a particular type.
     /// </summary>
-    /// <returns>
-    ///     A hash code for the current <see cref="T:System.Object" />.
-    /// </returns>
+    /// <returns>A hash code for the current <see cref="T:System.Object"/>.</returns>
     /// <filterpriority>2</filterpriority>
     public override int GetHashCode()
-        => this._parts.GetHashCode();
-
-    public IpAddress GetNext()
-    {
-        var result = FromIp(this);
-        result._parts[3]++;
-        if (result._parts[3] == 256)
-        {
-            result._parts[2]++;
-            result._parts[3] = 0;
-        }
-        if (result._parts[2] == 256)
-        {
-            result._parts[1]++;
-            result._parts[2] = 0;
-        }
-        if (result._parts[1] == 256)
-        {
-            result._parts[0]++;
-            result._parts[1] = 0;
-        }
-        if (result._parts[0] == 256)
-        {
-            result._parts[0] = result._parts[1] = result._parts[2] = result._parts[3] = 0;
-        }
-
-        return result;
-    }
+        => this._segments.GetHashCode();
 
     public bool IsBetween(in IEnumerable<IpAddress> ipAddresses)
         => ipAddresses.Any(ip => ip.Equals(this));
@@ -280,15 +272,13 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         => Resolve(this.ToString());
 
     /// <summary>
-    ///     Returns a <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.
+    /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
     /// </summary>
-    /// <returns>
-    ///     A <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.
-    /// </returns>
+    /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.</returns>
     /// <filterpriority>2</filterpriority>
     [return: NotNull]
     public override string ToString()
-        => Merge(this._parts);
+        => Merge(this._segments);
 
     public bool TryResolve(out string? computerName)
     {
@@ -304,12 +294,36 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
     }
 
-    private static IpAddress FromIp(in IpAddress ip)
-            => new(ip.ToString());
-
-    private static string Merge(in int[] parts)
-        => $"{parts[0]:000}.{parts[1]:000}.{parts[2]:000}.{parts[3]:000}";
+    private static string Merge(in int[] segments)
+        => $"{segments[0]:000}.{segments[1]:000}.{segments[2]:000}.{segments[3]:000}";
 
     private static int[] Split(in string ip)
         => ip.Split('.').Select(s => s.Cast().ToInt()).ToArray();
+
+    private IpAddress GetNext()
+    {
+        var segments = this._segments.Copy();
+        segments[3]++;
+        if (segments[3] > 255)
+        {
+            segments[2]++;
+            segments[3] = 0;
+        }
+        if (segments[2] > 255)
+        {
+            segments[1]++;
+            segments[2] = 0;
+        }
+        if (segments[1] > 255)
+        {
+            segments[0]++;
+            segments[1] = 0;
+        }
+        if (segments[0] > 255)
+        {
+            segments[0] = segments[1] = segments[2] = segments[3] = 0;
+        }
+
+        return new(Merge(segments));
+    }
 }

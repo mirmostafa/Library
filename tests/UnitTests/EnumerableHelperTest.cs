@@ -122,6 +122,71 @@ public sealed class EnumerableHelperTest
         Assert.Equal(items.Count, result.Count);
     }
 
+    [Theory]
+    [InlineData(new[] { 1, 2, 3 })]
+    public void Copy_ArrayWithElements_ReturnsCopyOfArray<T>(T[] array)
+    {
+        // Arrange
+
+        // Act
+        var result = array.Copy();
+
+        // Assert
+        Assert.Equal(array, result);
+        Assert.NotSame(array, result);
+    }
+
+    [Theory]
+    [InlineData(new int[0])]
+    public void Copy_EmptyArray_ReturnsEmptyArray<T>(T[] array)
+    {
+        // Arrange
+
+        // Act
+        var result = array.Copy();
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Theory]
+    [InlineData(new string[] { "a", "b", "c" }, new string[] { "a", "b", "c" }, true)]
+    [InlineData(new string[] { "a", "b", "c" }, new string[] { "a", "b" }, false)]
+    [InlineData(new int[] { 10, 20, 30 }, new int[] { 10, 20, 30 }, true)]
+    [InlineData(new int[] { 10, 20, 30 }, new int[] { 10, 20 }, false)]
+    public void Copy_StringArray_CompareCopiedArrays<T>(T[] source, T[] destination, bool expected)
+    {
+        // Arrange
+
+        // Act
+        var result = source.Copy();
+
+        // Assert
+        Assert.NotSame(source, result);
+        if (expected)
+        {
+            Assert.Equal(destination, result);
+        }
+        else
+        {
+            Assert.NotEqual(destination, result);
+        }
+    }
+
+    [Fact]
+    public void Copy_StringArray_ReturnsCopyOfStringArray()
+    {
+        // Arrange
+        var array = new[] { "foo", "bar", "baz" };
+
+        // Act
+        var result = array.Copy();
+
+        // Assert
+        Assert.Equal(array, result);
+        Assert.NotSame(array, result);
+    }
+
     [Fact]
     public void CountNotEnumeratedTest()
         => Assert.Equal(6, this._names.CountNotEnumerated());
@@ -305,7 +370,6 @@ public sealed class EnumerableHelperTest
             }
         }
     }
-
 }
 
 [Trait("Category", "Helpers")]

@@ -125,7 +125,7 @@ public static class CodeDomHelper
     {
         Check.IfArgumentNotNull(c);
 
-        c.Members.Add(NewField(fieldInfo));
+        _ = c.Members.Add(NewField(fieldInfo));
         return c;
     }
 
@@ -275,10 +275,10 @@ public static class CodeDomHelper
         const int INDENT_SIZE = 4;
         var nullableSign = propertyInfo.IsNullable ? "?" : "";
 
-        var inednt = new string(' ', INDENT_SIZE);
-        var signatue = $"{inednt}public {propertyInfo.Type}{nullableSign} {ToPropName(propertyInfo.Name.Trim())}";
-        var getterStatement = $"{inednt}{inednt}";
-        var setterStatement = $"{inednt}{inednt}";
+        var indent = new string(' ', INDENT_SIZE);
+        var signature = $"{indent}public {propertyInfo.Type}{nullableSign} {ToPropName(propertyInfo.Name.Trim())}";
+        var getterStatement = $"{indent}{indent}";
+        var setterStatement = $"{indent}{indent}";
         var g = pi.Getter ?? new(true, false);
         var s = pi.Setter ?? new(true, false);
         if (g.Has)
@@ -304,13 +304,13 @@ public static class CodeDomHelper
                 {
                     var buffer = new StringBuilder(getterStatement);
                     getterStatement = buffer.AppendLine()
-                                            .Append($"{inednt}{inednt}")
+                                            .Append($"{indent}{indent}")
                                             .Append('{')
                                             .AppendLine()
-                                            .Append($"{inednt}{inednt}{inednt}")
+                                            .Append($"{indent}{indent}{indent}")
                                             .Append(g.Code)
                                             .AppendLine()
-                                            .Append($"{inednt}{inednt}")
+                                            .Append($"{indent}{indent}")
                                             .Append('}').ToString();
                 }
             }
@@ -337,17 +337,17 @@ public static class CodeDomHelper
             else
             {
                 setterStatement = $"{setterStatement}set";
-                setterStatement = $"{setterStatement}{Environment.NewLine}{inednt}{inednt}{{";
+                setterStatement = $"{setterStatement}{Environment.NewLine}{indent}{indent}{{";
                 if (pi.HasBackingField)
                 {
                     var bf = pi.BackingFieldName ?? ToFieldName(pi.Name);
-                    setterStatement = $"{setterStatement}{Environment.NewLine}{inednt}{inednt}{inednt}this.{bf} = value;";
+                    setterStatement = $"{setterStatement}{Environment.NewLine}{indent}{indent}{indent}this.{bf} = value;";
                 }
-                setterStatement = $"{setterStatement}{Environment.NewLine}{inednt}{inednt}{inednt}{s.Code}";
-                setterStatement = $"{setterStatement}{Environment.NewLine}{inednt}{inednt}}}";
+                setterStatement = $"{setterStatement}{Environment.NewLine}{indent}{indent}{indent}{s.Code}";
+                setterStatement = $"{setterStatement}{Environment.NewLine}{indent}{indent}}}";
             }
         }
-        var statement = $"{signatue}{Environment.NewLine}{inednt}{{{Environment.NewLine}{getterStatement}{Environment.NewLine}{setterStatement}{Environment.NewLine}{inednt}}}";
+        var statement = $"{signature}{Environment.NewLine}{indent}{{{Environment.NewLine}{getterStatement}{Environment.NewLine}{setterStatement}{Environment.NewLine}{indent}}}";
         if (!pi.InitCode.IsNullOrEmpty())
         {
             statement = $"{statement} = {pi.InitCode}";

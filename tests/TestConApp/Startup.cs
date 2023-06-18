@@ -1,9 +1,7 @@
-﻿using TestConApp;
+﻿using Library.Net;
 
-Obsoletes.WatchHardDisk();
-
-file class Person(string name, int? age)
+var ip = IpAddress.MinValue;
+while (ip < IpAddress.MaxValue)
 {
-    public int? Age { get; } = age;
-    public string Name { get; } = name;
+    //Console.WriteLine(ip = ip.nex);
 }

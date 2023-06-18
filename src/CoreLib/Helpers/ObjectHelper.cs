@@ -20,9 +20,9 @@ public static class ObjectHelper
     /// Checks the database null.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="o">           The o.</param>
+    /// <param name="o">The o.</param>
     /// <param name="defaultValue">The default value.</param>
-    /// <param name="converter">   The converter.</param>
+    /// <param name="converter">The converter.</param>
     /// <returns></returns>
     public static T CheckDbNull<T>(in object? o, in T defaultValue, in Func<object, T> converter)
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
@@ -36,7 +36,7 @@ public static class ObjectHelper
     /// Generates the lazy singleton instance.
     /// </summary>
     /// <typeparam name="TSingleton">The type of the singleton.</typeparam>
-    /// <param name="createInstance">    The create instance.</param>
+    /// <param name="createInstance">The create instance.</param>
     /// <param name="initializeInstance">The initialize instance.</param>
     /// <returns></returns>
     public static Lazy<TSingleton> GenerateLazySingletonInstance<TSingleton>(
@@ -49,7 +49,7 @@ public static class ObjectHelper
     /// Generates a singleton instance of a class (Must be cached by the owner class).
     /// </summary>
     /// <typeparam name="TSingleton">The type of class which is being instantiated.</typeparam>
-    /// <param name="createInstance">    A delegate to be used for getting an instance of</param>
+    /// <param name="createInstance">A delegate to be used for getting an instance of</param>
     /// <param name="initializeInstance">The instance initializer.</param>
     /// <returns></returns>
     /// <exception cref="SingletonException">
@@ -108,9 +108,9 @@ public static class ObjectHelper
     /// Gets the attribute.
     /// </summary>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
-    /// <param name="value">       The value.</param>
+    /// <param name="value">The value.</param>
     /// <param name="defaultValue">The default value.</param>
-    /// <param name="inherited">   if set to <c>true</c> [inherited].</param>
+    /// <param name="inherited">if set to <c>true</c> [inherited].</param>
     /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(in object value,
         in TAttribute? defaultValue = null,
@@ -137,9 +137,9 @@ public static class ObjectHelper
     /// Gets the attribute.
     /// </summary>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
-    /// <param name="type">        The type.</param>
+    /// <param name="type">The type.</param>
     /// <param name="defaultValue">The default value.</param>
-    /// <param name="inherited">   if set to <c>true</c> [inherited].</param>
+    /// <param name="inherited">if set to <c>true</c> [inherited].</param>
     /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(in Type type,
         in TAttribute? defaultValue = null,
@@ -156,7 +156,7 @@ public static class ObjectHelper
     /// <typeparam name="TType">The type of the type.</typeparam>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
     /// <param name="defaultValue">The default value.</param>
-    /// <param name="inherited">   if set to <c>true</c> [inherited].</param>
+    /// <param name="inherited">if set to <c>true</c> [inherited].</param>
     /// <returns></returns>
     public static TAttribute? GetAttribute<TType, TAttribute>(in TAttribute? defaultValue, in bool inherited)
         where TAttribute : Attribute
@@ -176,7 +176,7 @@ public static class ObjectHelper
     /// Gets the attribute.
     /// </summary>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
-    /// <param name="value">    The value.</param>
+    /// <param name="value">The value.</param>
     /// <param name="inherited">if set to <c>true</c> [inherited].</param>
     /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(in object value, in bool inherited)
@@ -195,7 +195,7 @@ public static class ObjectHelper
     /// Gets the field.
     /// </summary>
     /// <typeparam name="TFieldType">The type of the field type.</typeparam>
-    /// <param name="obj">      The object.</param>
+    /// <param name="obj">The object.</param>
     /// <param name="fieldName">Name of the field.</param>
     /// <returns></returns>
     public static TFieldType GetField<TFieldType>(in object? obj, string fieldName)
@@ -237,8 +237,8 @@ public static class ObjectHelper
     /// Gets the method.
     /// </summary>
     /// <typeparam name="TDelegate">The type of the delegate.</typeparam>
-    /// <param name="objType">     Type of the object.</param>
-    /// <param name="name">        The name.</param>
+    /// <param name="objType">Type of the object.</param>
+    /// <param name="name">The name.</param>
     /// <param name="bindingFlags">The binding flags.</param>
     /// <returns></returns>
     public static TDelegate? GetMethod<TDelegate>(in Type objType,
@@ -256,8 +256,8 @@ public static class ObjectHelper
     /// Gets the property.
     /// </summary>
     /// <typeparam name="TPropertyType">The type of the property type.</typeparam>
-    /// <param name="obj">           The object.</param>
-    /// <param name="propName">      Name of the property.</param>
+    /// <param name="obj">The object.</param>
+    /// <param name="propName">Name of the property.</param>
     /// <param name="eventNoDefault">The event no default.</param>
     /// <returns></returns>
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, string propName, in int eventNoDefault)
@@ -278,13 +278,10 @@ public static class ObjectHelper
     public static PropertyInfo? GetProp<TDeclaringType>(string propName)
         => typeof(TDeclaringType).GetProperty(propName);
 
-    /// <summary>
-    /// Gets the value of a property of a given object.
-    /// </summary>
-    /// <typeparam name="TPropertyType">The type of the property.</typeparam>
-    /// <param name="obj">The object.</param>
-    /// <param name="propName">The name of the property.</param>
-    /// <param name="searchPrivates">Whether to search 
+    /// <summary> Gets the value of a property of a given object. </summary> <typeparam
+    /// name="TPropertyType">The type of the property.</typeparam> <param name="obj">The
+    /// object.</param> <param name="propName">The name of the property.</param> <param
+    /// name="searchPrivates">Whether to search
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, [DisallowNull] string propName, bool searchPrivates = false)
     {
         var type = obj.ArgumentNotNull().GetType();
@@ -374,10 +371,16 @@ public static class ObjectHelper
         => o is null or DBNull;
 
     /// <summary>
-    /// Determines whether an instance of a specified type can be assigned to a variable
-    ///     of the current type.
+    /// Checks if a given struct is equal to its default value.
     /// </summary>
-    /// <param name="obj"> The object.</param>
+    public static bool IsDefault<TStruct>(this TStruct @struct) where TStruct : struct
+        => @struct.Equals(default(TStruct));
+
+    /// <summary>
+    /// Determines whether an instance of a specified type can be assigned to a variable of the
+    /// current type.
+    /// </summary>
+    /// <param name="obj">The object.</param>
     /// <param name="type">The type.</param>
     /// <returns>
     /// <c>true</c> if [is inherited or implemented] [the specified object]; otherwise, <c>false</c>.
@@ -392,12 +395,6 @@ public static class ObjectHelper
     /// <returns><c>true</c> if the specified value is null; otherwise, <c>false</c>.</returns>
     public static bool IsNull([NotNullWhen(false)] in object? value)
         => value is null;
-
-    /// <summary>
-    /// Checks if a given struct is equal to its default value.
-    /// </summary>
-    public static bool IsDefault<TStruct>(this TStruct @struct) where TStruct : struct
-        => @struct.Equals(default(TStruct));
 
     /// <summary>
     /// Checks if the given Guid is null or empty.
@@ -421,9 +418,9 @@ public static class ObjectHelper
     /// Search deeply for specific objects
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="roots">      The roots.</param>
+    /// <param name="roots">The roots.</param>
     /// <param name="getChildren">The get children.</param>
-    /// <param name="isTarget">   The is target.</param>
+    /// <param name="isTarget">The is target.</param>
     /// <returns>The objects</returns>
     public static IEnumerable<T> RecursiveSearchFor<T>(IEnumerable<T> roots, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
     {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Library.Exceptions.Validations;
 using Library.Globalization;
 
 using Xunit;
@@ -32,6 +33,6 @@ public sealed class CommonHelperTest
         string input = "invalid_date_string";
 
         // Act & Assert
-        Assert.Throws<FormatException>(() => input.Parse<PersianDateTime>());
+        Assert.Throws<ValidationException>(() => input.Parse<PersianDateTime>());
     }
 }

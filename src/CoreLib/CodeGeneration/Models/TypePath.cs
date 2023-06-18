@@ -76,7 +76,8 @@ public readonly struct TypePath : IEquatable<TypePath>
         return dotLastIndex == -1 ? ((string? Name, string? NameSpace))(typePath, null) : ((string? Name, string? NameSpace))(typePath[(dotLastIndex + 1)..], typePath[..dotLastIndex]);
     }
 
-    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null) => string.IsNullOrEmpty(nameSpace)
+    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null)
+        => nameSpace.IsNullOrEmpty()
             ? SplitTypePath(name)
             : nameSpace!.EndsWith(".") ? SplitTypePath($"{nameSpace}{name}") : SplitTypePath($"{nameSpace}.{name}");
 
