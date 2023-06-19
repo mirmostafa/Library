@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using System.Net.NetworkInformation;
 
+using Library.Collections;
 using Library.DesignPatterns.Markers;
 using Library.Interfaces;
 using Library.Results;
@@ -9,47 +10,35 @@ using Library.Validations;
 namespace Library.Net;
 
 [Immutable]
-public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, IParsable<IpAddress>, IAdditionOperators<IpAddress, IpAddress, IpAddress>
+[Serializable]
+public sealed class IpAddress :
+    IComparable<IpAddress>, IEquatable<IpAddress>, IParsable<IpAddress>,
+    IAdditionOperators<IpAddress, IpAddress, IpAddress>,
+    IMinMaxValue<IpAddress>
 {
-    public static readonly IpAddress MaxValue = new Lazy<IpAddress>(() => Parse("255.255.255.255")).Value;
-    public static readonly IpAddress MinValue = new Lazy<IpAddress>(() => Parse("0.0.0.0")).Value;
+    public static readonly IpAddress MaxValue = Parse("255.255.255.255");
+    public static readonly IpAddress MinValue = Parse("0.0.0.0");
 
     private readonly ImmutableArray<int> _segments;
 
-    private IpAddress([DisallowNull] in string ip)
-    {
-        _ = Validate(ip).ThrowOnFail();
-        this._segments = Split(ip);
-    }
+    public IpAddress([DisallowNull] in string ip)
+        => this._segments = Validate(ip).ThrowOnFail().GetValue()!.Split('.').Select(s => s.Cast().ToInt()).ToImmutableArray();
 
+    static IpAddress IMinMaxValue<IpAddress>.MaxValue => MaxValue;
+    static IpAddress IMinMaxValue<IpAddress>.MinValue => MinValue;
     public int this[in int index] => this._segments[index];
 
-    public static IpAddress Add(in IpAddress left, in IpAddress right)
-        => new(Merge(AddIpSegments(left._segments, right._segments)));
-
-    public static string Format(in string ip)
-    {
-        _ = Validate(ip).ThrowOnFail();
-        return Merge(Split(ip));
-    }
-
-    public static IpAddress? GetCurrentIp()
+    public static IpAddress GetCurrentIp()
         => Dns.GetHostIpAddress();
 
     public static IpAddress GetLocalHost()
         => Parse("127.0.0.1");
 
     public static IEnumerable<IpAddress> GetRange(IpAddress start, IpAddress end)
-    {
-        var current = start;
-        while (current.CompareTo(end) == -1)
-        {
-            yield return current = current.Add(1);
-        }
-    }
+        => Enumerable<IpAddress>.New(x => (x < end, x.Add(1)), () => start);
 
     public static IEnumerable<IpAddress> GetRange(string start, string end)
-        => GetRange(new IpAddress(start.ArgumentNotNull()), new IpAddress(end.ArgumentNotNull()));
+        => GetRange(new IpAddress(start), new IpAddress(end));
 
     [return: NotNullIfNotNull(nameof(ipAddress))]
     public static implicit operator string?(in IpAddress? ipAddress)
@@ -62,7 +51,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         => !Equals(left, right);
 
     public static IpAddress operator +(IpAddress left, IpAddress right)
-        => Add(left, right);
+        => left.Add(right);
 
     public static bool operator <(in IpAddress left, IpAddress right)
         => left is null ? right is not null : left.CompareTo(right) < 0;
@@ -101,22 +90,11 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         return ping.Send(hostNameOrAddress);
     }
 
-    [return: NotNull]
-    public static string Resolve([DisallowNull] in string ip)
-    {
-        _ = Validate(ip).ThrowOnFail();
-        return System.Net.Dns.GetHostEntry(ip).HostName;
-    }
-
-    public static IEnumerable<int> Split(in IpAddress ipAddress)
-        => ipAddress._segments;
-
     public static bool TryParse([DisallowNull] in string ip, out IpAddress? result)
     {
-        Check.IfArgumentNotNull(ip);
         try
         {
-            result = new IpAddress(ip);
+            result = Parse(ip);
             return true;
         }
         catch
@@ -158,21 +136,18 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
     }
 
-    public static Result Validate(in string ip)
+    public static Result<string?> Validate(in string ip)
         => ip.ArgumentNotNull().Split('.').Check()
              .RuleFor(x => x.Length == 4, () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.All(seg => seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.All(seg => seg.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
-             .Build();
-
-    public static IpAddress With(in IpAddress ip)
-        => new(ip.ToString());
+             .Build().WithValue(ip);
 
     public IpAddress Add(int i)
         => new(Merge(AddNumberToSegmentArray(this._segments, i)));
 
     public IpAddress Add(in IpAddress ip)
-        => Add(this, ip);
+        => new(Merge(AddIpAddressSegmentArray(this._segments, ip._segments)));
 
     /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer
@@ -259,9 +234,6 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     public override int GetHashCode()
         => this._segments.GetHashCode();
 
-    public bool IsBetween(in IEnumerable<IpAddress> ipAddresses)
-        => ipAddresses.Any(ip => ip.Equals(this));
-
     public bool IsInRange(in IpAddress min, in IpAddress max)
         => this.CompareTo(min.ArgumentNotNull()) < 0 || this.CompareTo(max.ArgumentNotNull()) > 0;
 
@@ -271,8 +243,9 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     public PingReply Ping()
         => Ping(this.ToString());
 
+    [return: NotNull]
     public string Resolve()
-        => Resolve(this.ToString());
+        => System.Net.Dns.GetHostEntry(this).HostName;
 
     /// <summary>
     /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
@@ -290,7 +263,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     /// <filterpriority>2</filterpriority>
     [return: NotNull]
     public string ToString(string format)
-        => Merge(this._segments);
+        => Merge(this._segments, format);
 
     public bool TryResolve(out string? computerName)
     {
@@ -306,7 +279,7 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
     }
 
-    private static ImmutableArray<int> AddIpSegments(ImmutableArray<int> segment1, ImmutableArray<int> segment2)
+    private static ImmutableArray<int> AddIpAddressSegmentArray(ImmutableArray<int> segment1, ImmutableArray<int> segment2)
     {
         var result = new int[4];
         var carry = 0;
@@ -340,7 +313,4 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
 
     private static string Merge(in ImmutableArray<int> segments, string format = "0")
         => $"{segments[0].ToString(format)}.{segments[1].ToString(format)}.{segments[2].ToString(format)}.{segments[3].ToString(format)}";
-
-    private static ImmutableArray<int> Split(in string ip)
-        => ip.Split('.').Select(s => s.Cast().ToInt()).ToImmutableArray();
 }

@@ -1,8 +1,10 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
+using Library.DesignPatterns.Markers;
 using Library.Globalization.DataTypes;
 using Library.Interfaces;
 using Library.Results;
@@ -12,32 +14,33 @@ namespace Library.Globalization;
 
 // Created: 85/5/4
 /// <summary>
-///
 /// </summary>
-/// <seealso cref="IComparable" />
-/// <seealso cref="IComparable&lt;DateTime&gt;" />
-/// <seealso cref="IConvertible" />
-/// <seealso cref="IEquatable&lt;DateTime&gt;" />
-/// <seealso cref="ISpanFormattable" />
-/// <seealso cref="IFormattable" />
-/// <seealso cref="ISerializable" />
-/// <seealso cref="ICloneable" />
-/// <seealso cref="IComparable&lt;PersianDateTime&gt;" />
-/// <seealso cref="IEquatable&lt;PersianDateTime&gt;" />
-/// <seealso cref="Interfaces.IConvertible&lt;PersianDateTime, DateTime&gt;" />
-/// <seealso cref="Interfaces.IConvertible&lt;PersianDateTime, string&gt;" />
-/// <seealso cref="IAdditionOperators&lt;PersianDateTime, PersianDateTime, PersianDateTime&gt;" />
-/// <seealso cref="ISubtractionOperators&lt;PersianDateTime, PersianDateTime, PersianDateTime&gt;" />
-/// <seealso cref="IParsable&lt;PersianDateTime&gt;" />
+/// <seealso cref="IComparable"/>
+/// <seealso cref="IComparable&lt;DateTime&gt;"/>
+/// <seealso cref="IConvertible"/>
+/// <seealso cref="IEquatable&lt;DateTime&gt;"/>
+/// <seealso cref="ISpanFormattable"/>
+/// <seealso cref="IFormattable"/>
+/// <seealso cref="ISerializable"/>
+/// <seealso cref="ICloneable"/>
+/// <seealso cref="IComparable&lt;PersianDateTime&gt;"/>
+/// <seealso cref="IEquatable&lt;PersianDateTime&gt;"/>
+/// <seealso cref="Interfaces.IConvertible&lt;PersianDateTime, DateTime&gt;"/>
+/// <seealso cref="Interfaces.IConvertible&lt;PersianDateTime, string&gt;"/>
+/// <seealso cref="IAdditionOperators&lt;PersianDateTime, PersianDateTime, PersianDateTime&gt;"/>
+/// <seealso cref="ISubtractionOperators&lt;PersianDateTime, PersianDateTime, PersianDateTime&gt;"/>
+/// <seealso cref="IParsable&lt;PersianDateTime&gt;"/>
+[Immutable]
+[StructLayout(LayoutKind.Auto)]
 [Serializable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 public readonly struct PersianDateTime :
-    IComparable, IComparable<DateTime>, IConvertible, IEquatable<DateTime>, ISpanFormattable, IFormattable, ISerializable, ICloneable,
-    IComparable<PersianDateTime>, IEquatable<PersianDateTime>,
-    //IConvertible<PersianDateTime, DateTime>, IConvertible<PersianDateTime, string>,
+    IComparable, IComparable<PersianDateTime>, IComparable<DateTime>, IConvertible, IEquatable<DateTime>, ISpanFormattable, IFormattable, ISerializable, ICloneable,
+    IEquatable<PersianDateTime>,
     IAdditionOperators<PersianDateTime, PersianDateTime, PersianDateTime>,
     ISubtractionOperators<PersianDateTime, PersianDateTime, PersianDateTime>,
     IParsable<PersianDateTime>,
+    IMinMaxValue<PersianDateTime>,
     IStaticValidator<string>
 {
     #region Date/Time Elements
@@ -100,8 +103,16 @@ public readonly struct PersianDateTime :
 
     internal static PersianCalendar PersianCalendar = new();
     internal readonly PersianDateTimeData Data;
+    public static readonly PersianDateTime MaxValue = DateTime.MaxValue;
+    public static readonly PersianDateTime MinValue = DateTime.MaxValue;
 
     #endregion Fields
+
+    /// <inheritdoc cref="IMinMaxValue{TSelf}.MinValue"/>
+    static PersianDateTime IMinMaxValue<PersianDateTime>.MinValue => MinValue;
+
+    /// <inheritdoc cref="IMinMaxValue{TSelf}.MaxValue"/>
+    static PersianDateTime IMinMaxValue<PersianDateTime>.MaxValue => MaxValue;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PersianDateTime"/> struct.
@@ -125,12 +136,12 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Initializes a new instance of the <see cref="PersianDateTime"/> struct.
     /// </summary>
-    /// <param name="year">       The year.</param>
-    /// <param name="month">      The month.</param>
-    /// <param name="day">        The day.</param>
-    /// <param name="hour">       The hour.</param>
-    /// <param name="minute">     The minute.</param>
-    /// <param name="second">     The second.</param>
+    /// <param name="year">The year.</param>
+    /// <param name="month">The month.</param>
+    /// <param name="day">The day.</param>
+    /// <param name="hour">The hour.</param>
+    /// <param name="minute">The minute.</param>
+    /// <param name="second">The second.</param>
     /// <param name="millisecond"></param>
     public PersianDateTime(in int year, in int month, in int day, in int hour, in int minute, in int second, in double millisecond)
     {
@@ -160,7 +171,7 @@ public readonly struct PersianDateTime :
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="PersianDateTime" /> struct.
+    /// Initializes a new instance of the <see cref="PersianDateTime"/> struct.
     /// </summary>
     /// <param name="data">The data.</param>
     private PersianDateTime(in PersianDateTimeData data)
@@ -242,17 +253,13 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Gets or sets the short date pattern.
     /// </summary>
-    /// <value>
-    /// The short date pattern.
-    /// </value>
+    /// <value>The short date pattern.</value>
     public static string ShortDatePattern { get; set; } = CultureConstants.SHORT_DATE_PATTERN;
 
     /// <summary>
     /// Gets or sets the time separator.
     /// </summary>
-    /// <value>
-    /// The time separator.
-    /// </value>
+    /// <value>The time separator.</value>
     public static string TimeSeparator { get; set; } = CultureConstants.TIME_SEPARATOR;
 
     /// <summary>
@@ -270,17 +277,13 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Gets a value indicating whether this date is holiday.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if this instance is holiday; otherwise, <c>false</c>.
-    /// </value>
+    /// <value><c>true</c> if this instance is holiday; otherwise, <c>false</c>.</value>
     public bool IsHoliday => this.DayOfWeek.IsPersianHoliday();
 
     /// <summary>
     /// Gets a value indicating whether this instance is initiated.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if this instance is initiated; otherwise, <c>false</c>.
-    /// </value>
+    /// <value><c>true</c> if this instance is initiated; otherwise, <c>false</c>.</value>
     public bool IsInitiated { get; }
 
     /// <summary>
@@ -310,9 +313,7 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Gets the Persian month name abbrs in Persian.
     /// </summary>
-    /// <value>
-    /// The Persian month name abbrs in persian.
-    /// </value>
+    /// <value>The Persian month name abbrs in persian.</value>
     internal static IEnumerable<string> PersianMonthNameAbbrsInPersian
     {
         get
@@ -373,9 +374,7 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Gets the debugger display.
     /// </summary>
-    /// <value>
-    /// The debugger display.
-    /// </value>
+    /// <value>The debugger display.</value>
     [DebuggerBrowsable(DebuggerBrowsableState.Never)]
     private string? DebuggerDisplay => this.ToString();
 
@@ -486,7 +485,7 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Implements the operator &lt;.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator <(in PersianDateTime left, in PersianDateTime right)
@@ -497,9 +496,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
-    /// <returns>
-    /// The result of the operator.
-    /// </returns>
+    /// <returns>The result of the operator.</returns>
     public static bool operator <(in PersianDateTime left, in DateTime right)
         => left.CompareTo(right) < 0;
 
@@ -508,9 +505,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
-    /// <returns>
-    /// The result of the operator.
-    /// </returns>
+    /// <returns>The result of the operator.</returns>
     public static bool operator <=(in PersianDateTime left, in PersianDateTime right)
         => left.CompareTo(right) <= 0;
 
@@ -519,9 +514,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
-    /// <returns>
-    /// The result of the operator.
-    /// </returns>
+    /// <returns>The result of the operator.</returns>
     public static bool operator <=(in PersianDateTime left, in DateTime right)
         => left.CompareTo(right) <= 0;
 
@@ -537,7 +530,7 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Implements the operator &gt;.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator >(in PersianDateTime left, in PersianDateTime right)
@@ -548,16 +541,14 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
-    /// <returns>
-    /// The result of the operator.
-    /// </returns>
+    /// <returns>The result of the operator.</returns>
     public static bool operator >(in PersianDateTime left, in DateTime right)
         => left.CompareTo(right) > 0;
 
     /// <summary>
     /// Implements the operator &gt;=.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator >=(in PersianDateTime left, in PersianDateTime right)
@@ -568,9 +559,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
-    /// <returns>
-    /// The result of the operator.
-    /// </returns>
+    /// <returns>The result of the operator.</returns>
     public static bool operator >=(in PersianDateTime left, in DateTime right)
         => left.CompareTo(right) >= 0;
 
@@ -578,10 +567,10 @@ public readonly struct PersianDateTime :
     /// Parses a string into a value.
     /// </summary>
     /// <param name="s">The string to parse.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information about <paramref name="s" />.</param>
-    /// <returns>
-    /// The result of parsing <paramref name="s" />.
-    /// </returns>
+    /// <param name="provider">
+    /// An object that provides culture-specific formatting information about <paramref name="s"/>.
+    /// </param>
+    /// <returns>The result of parsing <paramref name="s"/>.</returns>
     static PersianDateTime IParsable<PersianDateTime>.Parse(string s, IFormatProvider? provider)
         => s;
 
@@ -812,31 +801,77 @@ public readonly struct PersianDateTime :
     /// <param name="other">An object to compare with this instance.</param>
     /// <returns>
     /// A value that indicates the relative order of the objects being compared. The return value
-    /// has these meanings: Value Meaning Less than zero This instance precedes <paramref name="other" /> in the sort order. Zero This instance occurs in the same position in the sort
-    /// order as <paramref name="other" />. Greater than zero This instance follows <paramref name="other" /> in the sort order.
+    /// has these meanings: Value Meaning Less than zero This instance precedes <paramref
+    /// name="other"/> in the sort order. Zero This instance occurs in the same position in the sort
+    /// order as <paramref name="other"/>. Greater than zero This instance follows <paramref
+    /// name="other"/> in the sort order.
     /// </returns>
 
     public int CompareTo(PersianDateTime other)
         => DateTime.Compare(this, other);
 
     /// <summary>
-    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// Compares the current instance with another object of the same type and returns an integer
+    /// that indicates whether the current instance precedes, follows, or occurs in the same
+    /// position in the sort order as the other object.
     /// </summary>
     /// <param name="obj">An object to compare with this instance.</param>
     /// <returns>
-    /// A value that indicates the relative order of the objects being compared. The return value has these meanings:
-    /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="obj" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="obj" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="obj" /> in the sort order.</description></item></list>
+    /// A value that indicates the relative order of the objects being compared. The return value
+    /// has these meanings:
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term>
+    /// <description>Meaning</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description>This instance precedes <paramref name="obj"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description>
+    /// This instance occurs in the same position in the sort order as <paramref name="obj"/>.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description>This instance follows <paramref name="obj"/> in the sort order.</description>
+    /// </item>
+    /// </list>
     /// </returns>
     public int CompareTo(object? obj)
         => obj is PersianDateTime pdt ? this.CompareTo(pdt) : 1;
 
     /// <summary>
-    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// Compares the current instance with another object of the same type and returns an integer
+    /// that indicates whether the current instance precedes, follows, or occurs in the same
+    /// position in the sort order as the other object.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>
     /// <returns>
-    /// A value that indicates the relative order of the objects being compared. The return value has these meanings:
-    /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="other" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="other" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="other" /> in the sort order.</description></item></list>
+    /// A value that indicates the relative order of the objects being compared. The return value
+    /// has these meanings:
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term>
+    /// <description>Meaning</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description>This instance precedes <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description>
+    /// This instance occurs in the same position in the sort order as <paramref name="other"/>.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description>This instance follows <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// </list>
     /// </returns>
     public int CompareTo(DateTime other)
         => ((PersianDateTime)other).CompareTo(this);
@@ -847,9 +882,9 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Deconstructs this instance.
     /// </summary>
-    /// <param name="hour">       The hour.</param>
-    /// <param name="minute">     The minute.</param>
-    /// <param name="second">     The second.</param>
+    /// <param name="hour">The hour.</param>
+    /// <param name="minute">The minute.</param>
+    /// <param name="second">The second.</param>
     /// <param name="millisecond">The millisecond.</param>
     public void Deconstruct(out int hour, out int minute, out int second, out double millisecond)
     {
@@ -862,9 +897,9 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Deconstructs this instance.
     /// </summary>
-    /// <param name="year"> The year.</param>
+    /// <param name="year">The year.</param>
     /// <param name="month">The month.</param>
-    /// <param name="day">  The day.</param>
+    /// <param name="day">The day.</param>
     public void Deconstruct(out int year, out int month, out int day)
     {
         year = this.Year;
@@ -875,12 +910,12 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Deconstructs this instance.
     /// </summary>
-    /// <param name="year">       The year.</param>
-    /// <param name="month">      The month.</param>
-    /// <param name="day">        The day.</param>
-    /// <param name="hour">       The hour.</param>
-    /// <param name="minute">     The minute.</param>
-    /// <param name="second">     The second.</param>
+    /// <param name="year">The year.</param>
+    /// <param name="month">The month.</param>
+    /// <param name="day">The day.</param>
+    /// <param name="hour">The hour.</param>
+    /// <param name="minute">The minute.</param>
+    /// <param name="second">The second.</param>
     /// <param name="millisecond">The millisecond.</param>
     public void Deconstruct(out int year, out int month, out int day, out int hour, out int minute, out int second, out double millisecond)
     {
@@ -908,7 +943,8 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="other">An object to compare with this object.</param>
     /// <returns>
-    ///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if the current object is equal to the <paramref name="other"/>
+    /// parameter; otherwise, <see langword="false"/>.
     /// </returns>
     public bool Equals(PersianDateTime other)
         => this.CompareTo(other) == 0;
@@ -918,7 +954,8 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="other">An object to compare with this object.</param>
     /// <returns>
-    ///   <see langword="true" /> if the current object is equal to the <paramref name="other" /> parameter; otherwise, <see langword="false" />.
+    /// <see langword="true"/> if the current object is equal to the <paramref name="other"/>
+    /// parameter; otherwise, <see langword="false"/>.
     /// </returns>
     public bool Equals(DateTime other)
         => ((PersianDateTime)other).Equals(this);
@@ -1048,9 +1085,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="format">The format.</param>
     /// <param name="formatProvider">The format provider.</param>
-    /// <returns>
-    /// A <see cref="string" /> that represents this instance.
-    /// </returns>
+    /// <returns>A <see cref="string"/> that represents this instance.</returns>
     /// <exception cref="NotImplementedException"></exception>
     public string ToString(string? format, IFormatProvider? formatProvider)
         => throw new NotImplementedException();
@@ -1059,9 +1094,7 @@ public readonly struct PersianDateTime :
     /// Converts to string.
     /// </summary>
     /// <param name="provider">The provider.</param>
-    /// <returns>
-    /// A <see cref="string" /> that represents this instance.
-    /// </returns>
+    /// <returns>A <see cref="string"/> that represents this instance.</returns>
     string IConvertible.ToString(IFormatProvider? provider)
         => throw GetInvalidTypeCastException();
 
@@ -1095,13 +1128,20 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Tries to format the value of the current instance into the provided span of characters.
     /// </summary>
-    /// <param name="destination">When this method returns, this instance's value formatted as a span of characters.</param>
-    /// <param name="charsWritten">When this method returns, the number of characters that were written in <paramref name="destination" />.</param>
-    /// <param name="format">A span containing the characters that represent a standard or custom format string that defines the acceptable format for <paramref name="destination" />.</param>
-    /// <param name="provider">An optional object that supplies culture-specific formatting information for <paramref name="destination" />.</param>
-    /// <returns>
-    ///   <see langword="true" /> if the formatting was successful; otherwise, <see langword="false" />.
-    /// </returns>
+    /// <param name="destination">
+    /// When this method returns, this instance's value formatted as a span of characters.
+    /// </param>
+    /// <param name="charsWritten">
+    /// When this method returns, the number of characters that were written in <paramref name="destination"/>.
+    /// </param>
+    /// <param name="format">
+    /// A span containing the characters that represent a standard or custom format string that
+    /// defines the acceptable format for <paramref name="destination"/>.
+    /// </param>
+    /// <param name="provider">
+    /// An optional object that supplies culture-specific formatting information for <paramref name="destination"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the formatting was successful; otherwise, <see langword="false"/>.</returns>
     /// <exception cref="NotImplementedException"></exception>
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)

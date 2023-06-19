@@ -88,3 +88,21 @@ public interface ISubtractionOperators<in TSelf, in TOther, out TResult>
 //{
 //    static abstract TResult operator |(TSelf left, TOther right);
 //}
+
+/// <summary>
+/// Defines a mechanism for getting the minimum and maximum value of a type.
+/// </summary>
+/// <typeparam name="TSelf">The type that implements this interface.</typeparam>
+public interface IMinMaxValue<TSelf>
+    where TSelf : IMinMaxValue<TSelf>?
+{
+    /// <summary>
+    /// Gets the maximum value of the current type.
+    /// </summary>
+    static abstract TSelf MaxValue { get; }
+
+    /// <summary>
+    /// Gets the minimum value of the current type.
+    /// </summary>
+    static abstract TSelf MinValue { get; }
+}

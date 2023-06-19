@@ -4,7 +4,7 @@ namespace Library.Helpers.ConsoleHelper;
 
 public static class ConsoleHelper
 {
-    public static T DumpLine<T>( T t)
+    public static T DumpLine<T>(T t)
     {
         if (t == null)
         {
@@ -31,21 +31,18 @@ public static class ConsoleHelper
         return t;
     }
 
-    public static T WriteLine<T>(T t)
+    public static T WriteLine<T>(this T t)
     {
-        if (t is not string)
+        if (t is IEnumerable items and not string)
         {
-            if (t is IEnumerable items)
+            foreach (var item in items)
             {
-                foreach (var item in items)
-                {
-                    _ = WriteLine(item);
-                }
-                return t;
+                _ = WriteLine(item);
             }
+            return t;
         }
 
-        System.Console.WriteLine(t);
+        Console.WriteLine(t);
         return t;
     }
 }
