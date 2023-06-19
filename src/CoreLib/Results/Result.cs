@@ -233,6 +233,9 @@ public record Result<TValue>(in TValue Value,
         in ImmutableDictionary<string, object>? extraData = null)
         => new(value, succeed, status, message, errors, extraData);
 
+    public Result<TNewValue?> WithValue<TNewValue>(TNewValue? newValue)
+        => Result<TNewValue?>.New(newValue, this.Succeed, this.Status, this.Message, this.Errors, this.ExtraData);
+
     /// <summary>
     /// Creates a new Result with the given parameters and a success value of false.
     /// </summary>
@@ -292,11 +295,9 @@ public record Result<TValue>(in TValue Value,
     public static implicit operator TValue(Result<TValue> result)
         => result.Value;
 
-    /// <summary>
-    /// Combines multiple Result<TValue> objects into a single Result<TValue> object.
-    /// </summary>
-    /// <param name="results">The Result<TValue> objects to combine.</param>
-    /// <returns>A single Result<TValue> object containing the combined results.</returns>
+    /// <summary> Combines multiple Result<TValue> objects into a single Result<TValue> object.
+    /// </summary> <param name="results">The Result<TValue> objects to combine.</param> <returns>A
+    /// single Result<TValue> object containing the combined results.</returns>
     public static Result<TValue> Combine(params Result<TValue>[] results)
     {
         var data = ResultBase.Combine(results);
@@ -307,9 +308,7 @@ public record Result<TValue>(in TValue Value,
     public void Deconstruct(out bool isSucceed, out TValue Value)
         => (isSucceed, Value) = (this.IsSucceed, this.Value);
 
-    /// <summary>
-    /// Converts a Result<TValue> to a Result.
-    /// </summary>
+    /// <summary> Converts a Result<TValue> to a Result. </summary>
     public Result ToResult(in Result<TValue> result)
         => result;
     public static Result<TValue> From(in Result result, in TValue value)
@@ -341,7 +340,9 @@ public record Result<TValue>(in TValue Value,
     /// Creates a new instance of the <see cref="Result{TValue}"/> class with the specified value.
     /// </summary>
     /// <param name="value">The value to set.</param>
-    /// <returns>A new instance of the <see cref="Result{TValue}"/> class with the specified value.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="Result{TValue}"/> class with the specified value.
+    /// </returns>
     public Result<TValue> WithValue(in TValue value)
         => this with { Value = value };
 
