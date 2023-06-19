@@ -35,6 +35,7 @@ public sealed class Enumerator<TItem>(Func<TItem, (bool isOk, TItem next)> tryGe
 
         if (this._isFirst)
         {
+            TItem? next;
             if (getInitialValue != null)
             {
                 next = getInitialValue();
@@ -44,6 +45,7 @@ public sealed class Enumerator<TItem>(Func<TItem, (bool isOk, TItem next)> tryGe
                 (isOk, next) = tryGetNext(this._current);
             }
 
+            this._current = next;
             this._isFirst = false;
         }
         else
@@ -51,9 +53,9 @@ public sealed class Enumerator<TItem>(Func<TItem, (bool isOk, TItem next)> tryGe
             (isOk, next) = tryGetNext(this._current);
         }
 
-        if (isOk)
-        {
-            this._current = next;
+            if (isOk)
+            {
+                this._current = next;
             return true;
         }
 
