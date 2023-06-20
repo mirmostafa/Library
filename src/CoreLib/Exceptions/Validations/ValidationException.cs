@@ -1,7 +1,9 @@
-﻿namespace Library.Exceptions.Validations;
+﻿using Library.Interfaces;
+
+namespace Library.Exceptions.Validations;
 
 [Serializable]
-public sealed class ValidationException : ValidationExceptionBase
+public sealed class ValidationException : ValidationExceptionBase, IThrowsException<ValidationException>
 {
     public ValidationException()
     {

@@ -191,15 +191,15 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
     public void EndCurrentOperation(object? description = null, bool succeed = true)
         => CurrentOperationEnded?.Invoke(this, new MultiStepEndedLogEventArgs(description, succeed, this.IsCancellationRequested));
 
-    public void RunCurrentSteps(IEnumerable<Action> actions, string? currentOperationDescriptiondescription = null, TimeSpan timeout = default)
-        => this.RunCurrentSteps(actions.ToDictionary<Action, Action, string?>(action => action, action => null), currentOperationDescriptiondescription, timeout);
+    public void RunCurrentSteps(IEnumerable<Action> actions, string? currentOperationDescription = null, TimeSpan timeout = default)
+        => this.RunCurrentSteps(actions.ToDictionary<Action, Action, string?>(action => action, action => null), currentOperationDescription, timeout);
 
-    public void RunCurrentSteps(IEnumerable<KeyValuePair<Action, string?>> actions, string? currentOperationDescriptiondescription = null,
+    public void RunCurrentSteps(IEnumerable<KeyValuePair<Action, string?>> actions, string? currentOperationDescription = null,
         TimeSpan timeout = default)
     {
         var steps = actions.Select(action => new Action(() => this.DoSteps(action.Key, action.Value, timeout))).ToList();
 
-        this.ResetCurrentOperation(currentOperationDescriptiondescription);
+        this.ResetCurrentOperation(currentOperationDescription);
         this.SetCurrentStepsCount(steps.Count);
         steps.RunAllWhile(() => !this.IsCancellationRequested);
         this.EndCurrentOperation();
@@ -315,7 +315,6 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
 
     protected void CancelCurrentOperation() => this.CurrentOperationCanceled?.Invoke(this, EventArgs.Empty);
 
-    //this.Log(description);
     protected virtual void CurrentOperationIncreasing(string? description = null, object? moreInfo = null)
     {
         this.CurrentStepIndex++;
@@ -444,9 +443,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
         this.MainStepIndex = 0;
     }
 
-    private sealed class MultiStepOperationImpl : MultiStepOperation
+    private sealed class MultiStepOperationImpl(MultiStepOperationStepCollection steps) : MultiStepOperation(steps)
     {
-        public MultiStepOperationImpl(MultiStepOperationStepCollection steps)
-            : base(steps) { }
     }
 }

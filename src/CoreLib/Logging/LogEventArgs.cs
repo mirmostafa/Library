@@ -1,6 +1,6 @@
 ﻿namespace Library.Logging;
 
-public class LogEventArgs(object log, object? moreInfo = null, LogLevel level = LogLevel.Info) : EventArgs
+public class LogEventArgs(object log, object? moreInfo = null, LogLevel level = LogLevel.Info, object? sender = null) : EventArgs
 {
     public LogLevel Level { get; set; } = level;
 
@@ -10,7 +10,7 @@ public class LogEventArgs(object log, object? moreInfo = null, LogLevel level = 
 
     public object? MoreInfo { get; set; } = moreInfo;
 
-    public object? Sender { get; set; }
+    public object? Sender { get; set; } = sender;
 
     public string? SourceFilePath { get; set; }
 
