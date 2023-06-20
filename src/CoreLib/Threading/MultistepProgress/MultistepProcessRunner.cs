@@ -1,22 +1,14 @@
 ﻿namespace Library.Threading.MultistepProgress;
 
-public sealed class MultistepProcessRunner<TState>
+public sealed class MultistepProcessRunner<TState>(in TState state, in IMultistepProcess reporter, IMultistepProcess? subReporter = null, object? owner = null)
 {
-    private readonly object? _owner;
-    private readonly IMultistepProcess _reporter;
+    private readonly object? _owner = owner;
+    private readonly IMultistepProcess _reporter = reporter;
     private readonly List<StepInfo<TState>> _steps = new();
-    private readonly IMultistepProcess _subReporter;
+    private readonly IMultistepProcess _subReporter = subReporter ?? IMultistepProcess.New();
     private int _current;
     private int _max;
-    private TState _state;
-
-    public MultistepProcessRunner(in TState state, in IMultistepProcess reporter, IMultistepProcess? subReporter = null, object? owner = null)
-    {
-        this._reporter = reporter;
-        this._subReporter = subReporter ?? IMultistepProcess.New();
-        this._owner = owner;
-        this._state = state;
-    }
+    private TState _state = state;
 
     public IEnumerable<StepInfo<TState>> Steps => this._steps;
 
@@ -56,11 +48,11 @@ public sealed class MultistepProcessRunner<TState>
         }, description, progressCount));
 
     public MultistepProcessRunner<TState> AddStep(Action<TState> action, in string? description, int progressCount = 1)
-            => this.AddStep(new StepInfo<TState>(e =>
-            {
-                action(e.State);
-                return Task.FromResult(e.State);
-            }, description, progressCount));
+        => this.AddStep(new StepInfo<TState>(e =>
+        {
+            action(e.State);
+            return Task.FromResult(e.State);
+        }, description, progressCount));
 
     public async Task<TState> RunAsync(CancellationToken? cancellationToken = default)
     {

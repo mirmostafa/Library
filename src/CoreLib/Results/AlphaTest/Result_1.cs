@@ -12,10 +12,10 @@ public class Result(in bool? succeed = null,
                      in string? message = null,
                      in IEnumerable<(object Id, object Error)>? errors = null,
                      in ImmutableDictionary<string, object>? extraData = null)
-    : ResultBase(succeed, status, message, errors, extraData)
-    , IEmpty<Result>
-    , IAdditionOperators<Result, Result, Result>
-    , IEquatable<Result>
+    : ResultBase(succeed, status, message, errors, extraData), 
+    IEmpty<Result>, 
+    IAdditionOperators<Result, Result, Result>, 
+    IEquatable<Result>
 {
     private static Result? _empty;
     private static Result? _fail;
@@ -98,7 +98,7 @@ public class Result(in bool? succeed = null,
         => new(true, status, message);
 
     public static explicit operator Result(bool b)
-            => b ? Success : Failure;
+        => b ? Success : Failure;
 
     /// <summary>
     /// Creates a new empty Result object.
@@ -116,7 +116,8 @@ public class Result(in bool? succeed = null,
     public bool Equals(Result? other)
         => throw new NotImplementedException();
 
-    public override bool Equals(object? obj) => this.Equals(obj as Result);
+    public override bool Equals(object? obj) 
+        => this.Equals(obj as Result);
 
     /// <summary>
     /// Serves as the default hash function.
@@ -125,7 +126,8 @@ public class Result(in bool? succeed = null,
     /// The hash code for the current instance.
     /// </returns>
     /// <exception cref="NotImplementedException"></exception>
-    public override int GetHashCode() => throw new NotImplementedException();
+    public override int GetHashCode() 
+        => throw new NotImplementedException();
 }
 
 public class Result<TValue>(in TValue value,
@@ -134,9 +136,9 @@ public class Result<TValue>(in TValue value,
     in string? message = null,
     in IEnumerable<(object Id, object Error)>? errors = null,
     in ImmutableDictionary<string, object>? extraData = null)
-    : ResultBase(succeed, status, message, errors, extraData)
-    , IAdditionOperators<Result<TValue>, ResultBase, Result<TValue>>
-    , IEquatable<Result<TValue>>
+    : ResultBase(succeed, status, message, errors, extraData) , 
+    IAdditionOperators<Result<TValue>, ResultBase, Result<TValue>>, 
+    IEquatable<Result<TValue>>
 {
     private static Result<TValue?>? _failure;
 
@@ -210,7 +212,7 @@ public class Result<TValue>(in TValue value,
         => CreateFailure(value, error, null);
 
     public static Result<TValue?> CreateFailure(in string message, in TValue value)
-            => CreateFailure(value, null, message);
+        => CreateFailure(value, null, message);
 
     /// <summary>
     /// Creates a new successful Result with the given value, status, message, errors and extra data.
@@ -229,13 +231,13 @@ public class Result<TValue>(in TValue value,
         => new(value, true, status, message, errors, extraData);
 
     public static Result<TValue> From(in Result result, in TValue value)
-            => new(value, result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+        => new(value, result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
 
     public static implicit operator Result(Result<TValue> result)
-            => new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+        => new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
 
     public static implicit operator TValue(Result<TValue> result)
-            => result.Value;
+        => result.Value;
 
     /// <summary>
     /// Creates a new Result object with the given value, succeed, status, message, errors, and extraData.
@@ -258,11 +260,14 @@ public class Result<TValue>(in TValue value,
     public void Deconstruct(out bool isSucceed, out TValue Value)
         => (isSucceed, Value) = (this.IsSucceed, this.Value);
 
-    public bool Equals(Result<TValue>? other) => throw new NotImplementedException();
+    public bool Equals(Result<TValue>? other) 
+        => throw new NotImplementedException();
 
-    public override bool Equals(object? obj) => this.Equals(obj as Result<TValue>);
+    public override bool Equals(object? obj) 
+        => this.Equals(obj as Result<TValue>);
 
-    public override int GetHashCode() => throw new NotImplementedException();
+    public override int GetHashCode() 
+        => throw new NotImplementedException();
 
     /// <summary>
     /// Gets the value of the current instance.
@@ -363,7 +368,8 @@ public abstract class ResultBase(in bool? succeed = null,
     public virtual bool Equals(ResultBase? other)
         => other is not null && this.Status == other.Status;
 
-    public override bool Equals(object? obj) => this.Equals(obj as ResultBase);
+    public override bool Equals(object? obj) 
+        => this.Equals(obj as ResultBase);
 
     /// <summary>
     /// Serves as the default hash function.

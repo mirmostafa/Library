@@ -398,5 +398,7 @@ public readonly struct Id(IdType value) :
     /// <returns></returns>
     private string GetDebuggerDisplay()
         => this.ToString();
-    public IdType Convert() => throw new NotImplementedException();
+    
+    public IdType Convert() 
+        => throw new NotImplementedException();
 }

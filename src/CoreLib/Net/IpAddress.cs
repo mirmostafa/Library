@@ -35,7 +35,7 @@ public sealed class IpAddress :
         => Parse("127.0.0.1");
 
     public static IEnumerable<IpAddress> GetRange(IpAddress start, IpAddress end)
-        => Enumerable<IpAddress>.New(x => (x < end, x.Add(1)), () => start);
+        => LazyEnumerable<IpAddress>.New(x => (x < end, x.Add(1)), () => start);
 
     public static IEnumerable<IpAddress> GetRange(string start, string end)
         => GetRange(new IpAddress(start), new IpAddress(end));

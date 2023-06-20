@@ -4,7 +4,7 @@ using Library.DesignPatterns.Markers;
 
 namespace Library.Collections;
 
-public sealed class Enumerator<TItem>(Func<TItem, (bool isOk, TItem next)> tryGetNext, Func<TItem>? getInitialValue = default, Action? onDispose = null) : IEnumerator<TItem>
+internal sealed class Enumerator<TItem>(Func<TItem, (bool isOk, TItem next)> tryGetNext, Func<TItem>? getInitialValue = default, Action? onDispose = null) : IEnumerator<TItem>
 {
     private TItem _current = default!;
     private bool _isFirst = true;
@@ -35,7 +35,6 @@ public sealed class Enumerator<TItem>(Func<TItem, (bool isOk, TItem next)> tryGe
 
         if (this._isFirst)
         {
-            TItem? next;
             if (getInitialValue != null)
             {
                 next = getInitialValue();
@@ -53,9 +52,9 @@ public sealed class Enumerator<TItem>(Func<TItem, (bool isOk, TItem next)> tryGe
             (isOk, next) = tryGetNext(this._current);
         }
 
-            if (isOk)
-            {
-                this._current = next;
+        if (isOk)
+        {
+            this._current = next;
             return true;
         }
 
@@ -70,10 +69,10 @@ public sealed class Enumerator<TItem>(Func<TItem, (bool isOk, TItem next)> tryGe
 }
 
 [Immutable]
-public sealed class Enumerable<TItem>(IEnumerator<TItem> enumerator) : IEnumerable<TItem>
+public sealed class LazyEnumerable<TItem>(IEnumerator<TItem> enumerator) : IEnumerable<TItem>
 {
     public static IEnumerable<TItem> New(Func<TItem, (bool isOk, TItem next)> tryGetNext, Func<TItem>? getInitialValue = default, Action? onDispose = null)
-        => new Enumerable<TItem>(new Enumerator<TItem>(tryGetNext, getInitialValue, onDispose));
+        => new LazyEnumerable<TItem>(new Enumerator<TItem>(tryGetNext, getInitialValue, onDispose));
 
     public IEnumerator<TItem> GetEnumerator()
         => enumerator;

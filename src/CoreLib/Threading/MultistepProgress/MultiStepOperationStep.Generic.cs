@@ -6,11 +6,7 @@ public sealed class MultiStepOperationStep<TArgument> : MultiStepOperationStepBa
         : base(operation, description, priorityId) => this.Action2 = action;
 
     public MultiStepOperationStep(MultiStepOperation operation, Action<TArgument> action, TArgument argument, string? description = null, int priorityId = -1)
-        : base(operation, description, priorityId)
-    {
-        this.Argument = argument;
-        this.Action = action;
-    }
+        : base(operation, description, priorityId) => (this.Argument, this.Action) = (argument, action);
 
     public TArgument Argument { get; set; }
     private Action<TArgument> Action { get; }

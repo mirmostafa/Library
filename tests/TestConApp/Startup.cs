@@ -1,6 +1,21 @@
-﻿using Library.Net;
+﻿Fibonacci(20).Distinct().WriteLine();
 
+static IEnumerable<long> Fibonacci(long count)
+{
+    return FibonacciRecursiveIterator(count, 0L, 1L);
 
-var localIp = IpAddress.GetLocalHost();
-IpAddress.GetRange(localIp, localIp.Add(50)).WriteLine();
+    static IEnumerable<long> FibonacciRecursiveIterator(long count, long a, long b)
+    {
+        if (count <= 0)
+        {
+            yield break;
+        }
 
+        yield return a;
+
+        foreach (var number in FibonacciRecursiveIterator(count - 1, b, a + b))
+        {
+            yield return number;
+        }
+    }
+}

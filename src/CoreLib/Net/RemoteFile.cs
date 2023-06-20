@@ -11,7 +11,7 @@ public sealed class RemoteFile([DisallowNull] Uri fileUri)
     {
     }
 
-    public Uri FileUri { get; } = fileUri.Check().ArgumentNotNull();
+    public Uri FileUri { get; } = fileUri.ArgumentNotNull();
 
     public static Task<long> GetFileSizeAsync(string filePath)
         => GetFileSizeAsync(new Uri(filePath));

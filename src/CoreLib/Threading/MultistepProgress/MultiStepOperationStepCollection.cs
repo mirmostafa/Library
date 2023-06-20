@@ -5,7 +5,7 @@ namespace Library.Threading.MultistepProgress;
 public sealed class MultiStepOperationStepCollection : Collection<IMultiStepOperationStep>
 {
     public MultiStepOperationStepCollection(IEnumerable<IMultiStepOperationStep> steps)
-        : base(new List<IMultiStepOperationStep>(steps)) { }
+        : base(steps.ToList()) { }
 
     public MultiStepOperationStepCollection()
     { }
