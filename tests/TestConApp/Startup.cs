@@ -1,4 +1,4 @@
-﻿Fibonacci(20).Distinct().WriteLine();
+﻿Fibonacci(2000).Distinct().WriteLine();
 
 static IEnumerable<long> Fibonacci(long count)
 {
