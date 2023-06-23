@@ -1,7 +1,7 @@
 namespace Library.DesignPatterns.Creational;
 
 /// <summary>
-///     Generic Singleton Interface
+/// Generic Singleton Interface
 /// </summary>
 /// <typeparam name="TSingleton">The type of the singleton.</typeparam>
 public interface ISingleton<TSingleton>

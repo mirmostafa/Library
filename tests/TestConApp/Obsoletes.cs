@@ -12,6 +12,26 @@ internal partial class Obsoletes
 {
     private static readonly ILogger _logger = ConsoleServices.Logger;
 
+    public static IEnumerable<long> Fibonacci(long count)
+    {
+        return FibonacciRecursiveIterator(count, 0L, 1L);
+
+        static IEnumerable<long> FibonacciRecursiveIterator(long count, long a, long b)
+        {
+            if (count <= 0)
+            {
+                yield break;
+            }
+
+            yield return a;
+
+            foreach (var number in FibonacciRecursiveIterator(count - 1, b, a + b))
+            {
+                yield return number;
+            }
+        }
+    }
+
     public static void HtmlCodeGenerationTest()
     {
         var div = new DivElement()
@@ -55,7 +75,7 @@ internal partial class Obsoletes
     public static async Task StateMachineTest()
     {
         _ = await StateMachineManager.Dispatch(
-                        () => Task.FromResult((0, MoveDirection.Foreword)),
+                        () => Task.FromResult((0, MoveDirection.Forward)),
                         flow => Task.FromResult(move(flow)),
                         flow => Task.FromResult(move(flow)),
                         display,
@@ -71,12 +91,12 @@ internal partial class Obsoletes
             {
                 case ConsoleKey.UpArrow:
                     flow.Current++;
-                    direction = MoveDirection.Foreword;
+                    direction = MoveDirection.Forward;
                     break;
 
                 case ConsoleKey.DownArrow:
                     flow.Current--;
-                    direction = MoveDirection.Backword;
+                    direction = MoveDirection.Backward;
                     break;
 
                 default:

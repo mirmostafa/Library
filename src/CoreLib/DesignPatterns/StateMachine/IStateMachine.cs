@@ -2,8 +2,8 @@
 
 public enum MoveDirection
 {
-    Foreword,
-    Backword,
+    Forward,
+    Backward,
     Ended
 }
 

@@ -34,8 +34,8 @@ public static class StateMachineManager
             
             return flow.Direction switch
             {
-                MoveDirection.Foreword => await moveAsync(await moveNext((flow.State, history))),
-                MoveDirection.Backword => await moveAsync(await moveBack((flow.State, history))),
+                MoveDirection.Forward => await moveAsync(await moveNext((flow.State, history))),
+                MoveDirection.Backward => await moveAsync(await moveBack((flow.State, history))),
                 _ => throw new ArgumentOutOfRangeException(nameof(flow), flow.Direction, $"{nameof(flow.Direction)} is out of range.")
             };
         }

@@ -1,7 +1,7 @@
 namespace Library.DesignPatterns.Creational;
 
 /// <summary>
-///     A Singleton using an StaticAllocator used just to simplify the inheritance syntax.
+/// A Singleton using an StaticAllocator used just to simplify the inheritance syntax.
 /// </summary>
 public class Singleton<T> : ISingleton<T>
     where T : class, ISingleton<T>
@@ -9,15 +9,13 @@ public class Singleton<T> : ISingleton<T>
     private static readonly Lazy<T> _instance = ObjectHelper.GenerateLazySingletonInstance(initializeInstance: InitializeInstance);
 
     /// <summary>
-    ///     The instance initializer
+    /// Gets the instance.
     /// </summary>
-    protected static Action<T> InitializeInstance;
+    /// <value>The instance.</value>
+    public static T Instance => _instance.Value;
 
     /// <summary>
-    ///     Gets the instance.
+    /// The instance initializer
     /// </summary>
-    /// <value>
-    ///     The instance.
-    /// </value>
-    public static T Instance => _instance.Value;
+    protected static Action<T>? InitializeInstance { get; set; }
 }

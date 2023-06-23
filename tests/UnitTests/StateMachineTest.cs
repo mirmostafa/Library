@@ -16,7 +16,7 @@ public sealed class StateMachineTest
     public async Task StateMachineFullTest()
     {
         _ = await StateMachineManager.Dispatch(
-                        () => Task.FromResult((0, MoveDirection.Foreword)),
+                        () => Task.FromResult((0, MoveDirection.Forward)),
                         flow => Task.FromResult(move(flow)),
                         flow => Task.FromResult(move(flow)),
                         display,
@@ -32,12 +32,12 @@ public sealed class StateMachineTest
             {
                 case 1:
                     flow.Current++;
-                    direction = MoveDirection.Foreword;
+                    direction = MoveDirection.Forward;
                     break;
 
                 case 2:
                     flow.Current--;
-                    direction = MoveDirection.Backword;
+                    direction = MoveDirection.Backward;
                     break;
 
                 default:

@@ -69,7 +69,8 @@ public static class CodeHelper
     }
 
     /// <summary>
-    /// Executes a function asynchronously and returns a Result object with the result of the function or an error message.
+    /// Executes a function asynchronously and returns a Result object with the result of the
+    /// function or an error message.
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="func">The function to execute.</param>
@@ -103,14 +104,12 @@ public static class CodeHelper
         return [DebuggerStepThrough] () => func(create());
     }
 
-    /// <summary>
-    /// Compose a Func<Result<TResult1>> and a Func<TResult1, Result<TResult2>> into a Func<Result<TResult2>>.
-    /// </summary>
-    /// <typeparam name="TResult1">The type of the first result.</typeparam>
-    /// <typeparam name="TResult2">The type of the second result.</typeparam>
-    /// <param name="create">The Func<Result<TResult1>> to compose.</param>
-    /// <param name="func">The Func<TResult1, Result<TResult2>> to compose.</param>
-    /// <param name="onFail">The Func<Result<TResult1>, Result<TResult2>> to invoke if the first result is a failure.</param>
+    /// <summary> Compose a Func<Result<TResult1>> and a Func<TResult1, Result<TResult2>> into a
+    /// Func<Result<TResult2>>. </summary> <typeparam name="TResult1">The type of the first
+    /// result.</typeparam> <typeparam name="TResult2">The type of the second result.</typeparam>
+    /// <param name="create">The Func<Result<TResult1>> to compose.</param> <param name="func">The
+    /// Func<TResult1, Result<TResult2>> to compose.</param> <param name="onFail">The
+    /// Func<Result<TResult1>, Result<TResult2>> to invoke if the first result is a failure.</param>
     /// <returns>A Func<Result<TResult2>> composed of the two functions.</returns>
     public static Func<Result<TResult2>> Compose<TResult1, TResult2>([DisallowNull] this Func<Result<TResult1>> create, Func<TResult1, Result<TResult2>> func, Func<Result<TResult1>, Result<TResult2>>? onFail = null)
     {
@@ -265,18 +264,14 @@ public static class CodeHelper
         };
     }
 
-    /// <summary>
-    /// Compose a Func<TResult1> with a Func<TResult1, TResult2> and an Action<TArg> and a Func<TResult1, TArg>
-    /// </summary>
-    /// <typeparam name="TResult1">The type of the result of the first Func</typeparam>
-    /// <typeparam name="TResult2">The type of the result of the second Func</typeparam>
-    /// <typeparam name="TArg">The type of the argument of the Action</typeparam>
-    /// <param name="create">The first Func</param>
-    /// <param name="func">The second Func</param>
-    /// <param name="action">The Action</param>
-    /// <param name="getArg">The Func to get the argument of the Action</param>
-    /// <returns>A Func<TResult2></returns>
-    /// <exception cref="ArgumentNullException">Thrown when create is null</exception>
+    /// <summary> Compose a Func<TResult1> with a Func<TResult1, TResult2> and an Action<TArg> and a
+    /// Func<TResult1, TArg> </summary> <typeparam name="TResult1">The type of the result of the
+    /// first Func</typeparam> <typeparam name="TResult2">The type of the result of the second
+    /// Func</typeparam> <typeparam name="TArg">The type of the argument of the Action</typeparam>
+    /// <param name="create">The first Func</param> <param name="func">The second Func</param>
+    /// <param name="action">The Action</param> <param name="getArg">The Func to get the argument of
+    /// the Action</param> <returns>A Func<TResult2></returns> <exception
+    /// cref="ArgumentNullException">Thrown when create is null</exception>
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TResult2> func, Action<TArg> action, Func<TResult1, TArg> getArg)
     {
         Check.IfArgumentNotNull(create);
@@ -294,7 +289,7 @@ public static class CodeHelper
     /// </summary>
     /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
     /// <param name="disposable">The disposable.</param>
-    /// <param name="action">    The action.</param>
+    /// <param name="action">The action.</param>
     public static void Dispose<TDisposable>(in TDisposable disposable, in Action<TDisposable>? action = null) where TDisposable : IDisposable
         => Dispose(disposable, action);
 
@@ -304,7 +299,7 @@ public static class CodeHelper
     /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="disposable">The disposable.</param>
-    /// <param name="action">    The action.</param>
+    /// <param name="action">The action.</param>
     /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TDisposable, TResult> action) where TDisposable : IDisposable
         => Dispose(disposable, action);
@@ -315,7 +310,7 @@ public static class CodeHelper
     /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="disposable">The disposable.</param>
-    /// <param name="result">    The result.</param>
+    /// <param name="result">The result.</param>
     /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in TResult result) where TDisposable : IDisposable
         => Dispose(disposable, result);
@@ -326,7 +321,7 @@ public static class CodeHelper
     /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="disposable">The disposable.</param>
-    /// <param name="action">    The action.</param>
+    /// <param name="action">The action.</param>
     /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(in TDisposable disposable, in Func<TResult> action) where TDisposable : IDisposable
         => Dispose(disposable, action);
@@ -336,7 +331,7 @@ public static class CodeHelper
     /// </summary>
     /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
     /// <param name="disposable">The disposable.</param>
-    /// <param name="action">    The action.</param>
+    /// <param name="action">The action.</param>
     public static void Dispose<TDisposable>(this TDisposable disposable, in Action<TDisposable>? action = null)
         where TDisposable : IDisposable
     {
@@ -356,7 +351,7 @@ public static class CodeHelper
     /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="disposable">The disposable.</param>
-    /// <param name="action">    The action.</param>
+    /// <param name="action">The action.</param>
     /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TDisposable, TResult> action)
         where TDisposable : IDisposable
@@ -377,7 +372,7 @@ public static class CodeHelper
     /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="disposable">The disposable.</param>
-    /// <param name="result">    The result.</param>
+    /// <param name="result">The result.</param>
     /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in TResult result)
         where TDisposable : IDisposable
@@ -398,7 +393,7 @@ public static class CodeHelper
     /// <typeparam name="TDisposable">The type of the disposable.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="disposable">The disposable.</param>
-    /// <param name="action">    The action.</param>
+    /// <param name="action">The action.</param>
     /// <returns></returns>
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TResult> action)
         where TDisposable : IDisposable
@@ -425,7 +420,9 @@ public static class CodeHelper
     /// Gets the caller method from the stack trace.
     /// </summary>
     /// <param name="index">The index of the stack frame.</param>
-    /// <param name="parsePrevIfNull">Whether to parse the previous frame if the current one is null.</param>
+    /// <param name="parsePrevIfNull">
+    /// Whether to parse the previous frame if the current one is null.
+    /// </param>
     /// <returns>The method base of the caller.</returns>
     public static MethodBase? GetCallerMethod(in int index, bool parsePrevIfNull)
     {
@@ -433,7 +430,8 @@ public static class CodeHelper
         var stackTrace = new StackTrace(true);
         // Set the index to the parameter passed in
         var i = index;
-        // If the frame at the index is not null, or parsePrevIfNull is false, return the method at the index
+        // If the frame at the index is not null, or parsePrevIfNull is false, return the method at
+        // the index
         if (stackTrace.GetFrame(i) is not null || parsePrevIfNull is false)
         {
             return stackTrace.GetFrame(i)?.GetMethod();
@@ -484,7 +482,7 @@ public static class CodeHelper
     /// <typeparam name="TArg">The type of the argument.</typeparam>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="func">The function.</param>
-    /// <param name="arg"> The argument.</param>
+    /// <param name="arg">The argument.</param>
     /// <returns></returns>
     public static Func<TResult> GetFunc<TArg, TResult>(Func<TArg, TResult> func, TArg arg)
         => () => func(arg);
@@ -586,7 +584,7 @@ public static class CodeHelper
         Check.IfArgumentNotNull(action);
         try
         {
-            return Result<TValue>.CreateFailure(action());
+            return Result<TValue>.CreateSuccess(action())!;
         }
         catch (Exception ex)
         {
@@ -632,4 +630,4 @@ public static class CodeHelper
     }
 }
 
-public record TryWithRecord<TValue>(Result<TValue> Result);
+//x public record TryWithRecord<TValue>(Result<TValue> Result);

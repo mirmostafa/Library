@@ -24,10 +24,10 @@ public sealed class ObservableObject<TValue>
         }
     }
 
-    protected ItemActingEventArgs<TValue?> OnChanging(ItemActingEventArgs<TValue?> e)
+    private ItemActingEventArgs<TValue?> OnChanging(ItemActingEventArgs<TValue?> e)
         => e.Fluent(() => Changing?.Invoke(this, e));
 
-    protected void OnChanged(ItemActedEventArgs<TValue?> e)
+    private void OnChanged(ItemActedEventArgs<TValue?> e)
         => Changed?.Invoke(this, e);
 }
 

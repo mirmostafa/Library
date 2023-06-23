@@ -3,9 +3,9 @@ using Library.Exceptions;
 namespace Library.DesignPatterns.Creational.Exceptions;
 
 /// <summary>
-///     Singleton Exception
+/// Singleton Exception
 /// </summary>
-/// <seealso cref="HanyCo.Mes20.Infra.Exceptions.LibraryExceptionBase" />
+/// <seealso cref="Library.Exceptions.LibraryExceptionBase"/>
 [Serializable]
 public sealed class SingletonException : LibraryExceptionBase
 {

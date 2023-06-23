@@ -5,9 +5,9 @@ namespace Library.DesignPatterns.Behavioral.Observation;
 public sealed record RegisterObservable(in IPropertyChangeRepositoryNotifier Observable, in Type PropertyType, in string PropertyName);
 public sealed record RegisterObserver(in IObserver Observer, in string? PropertyType, Action<NotifyPropertyChanged> PropertyChanged, in string? PropertyName = null, in Type? TypeOfObserable = null);
 
-public interface IPropertyChangeRepositoryNotifier : IChangeNotifierProperty
+public interface IObservableRepository
 {
-    void RegisterOnRepository(in IObservableRepository repository);
+    void Add(in RegisterObservable observable);
 }
 
 public interface IObserver
@@ -15,9 +15,9 @@ public interface IObserver
     void RegisterOnRepository(in IObserverRepository repository);
 }
 
-public interface IObservableRepository
+public interface IPropertyChangeRepositoryNotifier : IChangeNotifierProperty
 {
-    void Add(in RegisterObservable observable);
+    void RegisterOnRepository(in IObservableRepository repository);
 }
 
 public interface IObserverRepository

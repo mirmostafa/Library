@@ -6,19 +6,29 @@ namespace Library.DesignPatterns.Behavioral.Observation;
 
 public sealed class ObservationRepository : IObservableRepository, IObserverRepository
 {
-    private readonly List<RegisterObserver> _Observers = new();
-    private readonly List<RegisterObservable> _Observables = new();
+    private readonly List<RegisterObservable> _observables = new();
+    private readonly List<RegisterObserver> _observers = new();
+
+    public void Add(in RegisterObservable observable)
+    {
+        this._observables.Add(observable.ArgumentNotNull(nameof(observable)));
+        observable.Observable.Changed += this.Subject_PropertyChanged;
+    }
+
+    public void Add(in RegisterObserver observer)
+        => this._observers.Add(observer);
 
     private void Subject_PropertyChanged(object? sender, ItemActedEventArgs<NotifyPropertyChanged> e)
     {
+        Check.IfArgumentNotNull(e?.Item);
         if (e?.Item is null)
         {
             throw new ArgumentNullException(nameof(e));
         }
 
-        foreach (var (observer, propertyType, onPropertyChanged, propertyName, typeOfObserable) in this._Observers)
+        foreach (var (observer, propertyType, onPropertyChanged, propertyName, typeOfObservable) in this._observers)
         {
-            if (typeOfObserable is not null && typeOfObserable != e.Item.Sender?.GetType())
+            if (typeOfObservable is not null && typeOfObservable != e.Item.Sender?.GetType())
             {
                 continue;
             }
@@ -34,12 +44,4 @@ public sealed class ObservationRepository : IObservableRepository, IObserverRepo
             onPropertyChanged?.Invoke(e.Item);
         }
     }
-
-    public void Add(in RegisterObservable observable)
-    {
-        this._Observables.Add(observable.ArgumentNotNull(nameof(observable)));
-        observable.Observable.Changed += this.Subject_PropertyChanged;
-    }
-    public void Add(in RegisterObserver observer)
-        => this._Observers.Add(observer);
 }

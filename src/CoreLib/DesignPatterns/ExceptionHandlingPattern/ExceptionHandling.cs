@@ -1,62 +1,57 @@
 using System.Diagnostics;
+
 using Library.EventsArgs;
 
 namespace Library.DesignPatterns.ExceptionHandlingPattern;
 
 /// <summary>
-///     ExceptionHandling Pattern
+/// ExceptionHandling Pattern
 /// </summary>
 /// <typeparam name="TException">The type of the exception.</typeparam>
-public abstract class ExceptionHandling<TException>
+public abstract class ExceptionHandling<TException>()
     where TException : Exception
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ExceptionHandling{TException}" /> class.
+    /// Occurs when [exception occurred].
+    /// </summary>
+    public event EventHandler<ExceptionOccurredEventArgs<TException>>? ExceptionOccurred;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ExceptionHandling{TException}"/> class.
     /// </summary>
     /// <param name="exceptionOccurredHandler">The exception occurred handler.</param>
     public ExceptionHandling(EventHandler<ExceptionOccurredEventArgs<TException>> exceptionOccurredHandler)
         : this() => this.ExceptionOccurred += exceptionOccurredHandler;
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ExceptionHandling{TException}" /> class.
+    /// Gets a value indicating whether this instance has exception.
     /// </summary>
-    public ExceptionHandling() { }
-
-    /// <summary>
-    ///     Gets the last exception.
-    /// </summary>
-    /// <value>
-    ///     The last exception.
-    /// </value>
-    public TException? LastException { get; private set; }
-
-    /// <summary>
-    ///     Gets a value indicating whether this instance has exception.
-    /// </summary>
-    /// <value>
-    ///     <c>true</c> if this instance has exception; otherwise, <c>false</c>.
-    /// </value>
+    /// <value><c>true</c> if this instance has exception; otherwise, <c>false</c>.</value>
     public bool HasException => this.LastException is not null;
 
     /// <summary>
-    ///     Gets or sets a value indicating whether [raise exceptions].
+    /// Gets the last exception.
     /// </summary>
-    /// <value>
-    ///     <c>true</c> if [raise exceptions]; otherwise, <c>false</c>.
-    /// </value>
+    /// <value>The last exception.</value>
+    public TException? LastException { get; private set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether [raise exceptions].
+    /// </summary>
+    /// <value><c>true</c> if [raise exceptions]; otherwise, <c>false</c>.</value>
     public bool RaiseExceptions { get; set; }
 
     private object? Sender { get; set; }
 
     /// <summary>
-    ///     Handles the exception.
+    /// Handles the exception.
     /// </summary>
     /// <param name="ex">The ex.</param>
     internal void HandleException(TException ex)
         => this.HandleException(this.Sender, ex);
 
     /// <summary>
-    ///     Handles the exception.
+    /// Handles the exception.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="ex">The ex.</param>
@@ -64,7 +59,7 @@ public abstract class ExceptionHandling<TException>
         => this.HandleException(sender, ex, string.Empty);
 
     /// <summary>
-    ///     Handles the exception.
+    /// Handles the exception.
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="ex">The ex.</param>
@@ -83,31 +78,26 @@ public abstract class ExceptionHandling<TException>
     }
 
     /// <summary>
-    ///     Resets this instance.
+    /// Resets this instance.
     /// </summary>
     internal void Reset()
         => this.LastException = null;
 
     /// <summary>
-    ///     Sets the sender.
+    /// Sets the sender.
     /// </summary>
     /// <param name="sender">The sender.</param>
     internal void SetSender(object sender)
         => this.Sender = sender;
-
-    /// <summary>
-    ///     Occurs when [exception occurred].
-    /// </summary>
-    public event EventHandler<ExceptionOccurredEventArgs<TException>>? ExceptionOccurred;
 }
 
 /// <summary>
-///     Exception Handling Pattern
+/// Exception Handling Pattern
 /// </summary>
 public sealed class ExceptionHandling : ExceptionHandling<Exception>
 {
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ExceptionHandling" /> class.
+    /// Initializes a new instance of the <see cref="ExceptionHandling"/> class.
     /// </summary>
     /// <param name="exceptionOccurredHandler">The exception occurred handler.</param>
     public ExceptionHandling(EventHandler<ExceptionOccurredEventArgs<Exception>> exceptionOccurredHandler)
@@ -116,7 +106,8 @@ public sealed class ExceptionHandling : ExceptionHandling<Exception>
     }
 
     /// <summary>
-    ///     Initializes a new instance of the <see cref="ExceptionHandling" /> class.
+    /// Initializes a new instance of the <see cref="ExceptionHandling"/> class.
     /// </summary>
-    public ExceptionHandling() { }
+    public ExceptionHandling()
+    { }
 }
