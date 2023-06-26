@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using Library.Collections;
-using Library.Exceptions;
 using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
@@ -79,7 +78,19 @@ public static class EnumerableHelper
     /// <param name="list">The list to add the items to.</param>
     /// <param name="items">The items to add to the list.</param>
     /// <returns>The list with the added items.</returns>
-    public static IList<T> AddRange<T>([DisallowNull] this IList<T> list, in IEnumerable<T> items)
+    //public static IList<T> AddRange<T>([DisallowNull] this IList<T> list, in IEnumerable<T> items)
+    //{
+    //    if (items?.Any() is true)
+    //    {
+    //        foreach (var item in items)
+    //        {
+    //            list.Add(item);
+    //        }
+    //    }
+    //    return list;
+    //}
+    public static TList AddRange<TList, TItem>([DisallowNull] this TList list, in IEnumerable<TItem> items)
+        where TList : ICollection<TItem>
     {
         if (items?.Any() is true)
         {
@@ -421,6 +432,17 @@ public static class EnumerableHelper
     public static IEnumerable<T> DefaultIfEmpty<T>(IEnumerable<T>? items)
             => items is null ? Enumerable.Empty<T>() : items;
 
+    public static Dictionary<TKey, TValue> DictionaryFromKeys<TKey, TValue>(IEnumerable<TKey> keys, TValue? defaultValue = default)
+                where TKey : notnull
+    {
+        var result = new Dictionary<TKey, TValue>();
+        foreach (var key in keys)
+        {
+            result.Add(key, default!);
+        }
+        return result;
+    }
+
     /// <summary>
     /// Creates an empty array.
     /// </summary>
@@ -711,6 +733,27 @@ public static class EnumerableHelper
     public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
             => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
 
+    public static TEnumerable IfEach<TEnumerable, TItem>(this TEnumerable source, Func<TItem, bool> condition, Action<TItem> trueness, Action<TItem> falseness)
+            where TEnumerable : IEnumerable<TItem>
+    {
+        Check.IfArgumentNotNull(source);
+        Check.IfArgumentNotNull(condition);
+
+        foreach (var item in source)
+        {
+            if (condition(item))
+            {
+                trueness?.Invoke(item);
+            }
+            else
+            {
+                falseness?.Invoke(item);
+            }
+        }
+
+        return source;
+    }
+
     /// <summary>
     /// Returns the given items if it is not empty, otherwise returns the default values.
     /// </summary>
@@ -776,6 +819,34 @@ public static class EnumerableHelper
         var result = list[i];
         list.RemoveAt(i);
         return result;
+    }
+
+    public static Result<TValue?> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key)
+        where TKey : notnull
+    {
+        Check.IfArgumentNotNull(dic);
+
+        var result = dic.TryGetValue(key);
+        if (result)
+        {
+            _ = dic.Remove(key);
+        }
+
+        return result;
+    }
+
+    public static Result<KeyValuePair<TKey, TValue>> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic)
+        where TKey : notnull
+    {
+        Check.IfArgumentNotNull(dic);
+
+        var result = dic.LastOrDefault();
+        if (!result.IsDefault())
+        {
+            _ = dic.Remove(result.Key);
+            return Result<KeyValuePair<TKey, TValue>>.CreateSuccess(result);
+        }
+        return Result<KeyValuePair<TKey, TValue>>.CreateFailure();
     }
 
     /// <summary>
@@ -1152,6 +1223,21 @@ public static class EnumerableHelper
     /// </returns>
     public static TryMethodResult<int> TryCountNonEnumerated<T>([DisallowNull] this IEnumerable<T> source)
         => TryMethodResult<int>.TryParseResult(source.TryGetNonEnumeratedCount(out var count), count);
+
+    public static TryMethodResult<TValue> TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key) where TKey : notnull
+        => TryMethodResult<TValue>.TryParseResult(dic.TryGetValue(key, out var value), value);
+
+    public static Dictionary<TKey, TValue> Update<TKey, TValue>(this Dictionary<TKey, TValue> src, Dictionary<TKey, TValue> dst)
+        where TKey : notnull
+    {
+        var a = src.Keys;
+        Check.IfArgumentNotNull(dst);
+        _ = src.IfEach<Dictionary<TKey, TValue>, KeyValuePair<TKey, TValue>>(
+            x => dst.ContainsKey(x.Key)
+            , x => dst[x.Key] = x.Value
+            , x => dst.Add(x.Key, x.Value));
+        return dst;
+    }
 
     /// <summary>
     /// Asynchronously filters a sequence of values based on a predicate.
