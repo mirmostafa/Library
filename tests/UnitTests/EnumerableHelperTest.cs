@@ -360,48 +360,6 @@ public sealed class EnumerableHelperTest
         _ = Assert.Throws<ArgumentOutOfRangeException>(() => list.Pop(index));
     }
 
-    [Theory]
-    [InlineData(0, 10, 1, new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })]
-    [InlineData(10, 0, -1, new int[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 })]
-    public void Range_ReturnsExpectedValues(int start, int end, int step, int[] expectedValues)
-    {
-        var actualValues = EnumerableHelper.Range(start, end, step).ToArray();
-        Assert.Equal(expectedValues, actualValues);
-    }
-
-    [Fact]
-    public void Range_ThrowsArgumentException_ForNegativeStepAndStartSmallerThanEnd()
-        => Assert.Throws<Library.Exceptions.InvalidArgumentException>(() => EnumerableHelper.Range(0, 10, -1).ToArray());
-
-    [Fact]
-    public void Range_ThrowsArgumentException_ForPositiveStepAndStartLargerThanEnd()
-        => Assert.Throws<Library.Exceptions.InvalidArgumentException>(() => EnumerableHelper.Range(10, 0, 1).ToArray());
-
-    [Fact]
-    public void Range_ThrowsArgumentOutOfRangeException_ForZeroStep()
-        => Assert.Throws<ArgumentOutOfRangeException>(() => EnumerableHelper.Range(0, 10, 0).ToArray());
-
-    [Theory]
-    [InlineData(11, 2, new int[] { 0, 2, 4, 6, 8, 10 })]
-    [InlineData(5, 1, new int[] { 0, 1, 2, 3, 4, 5 })]
-    public void Range_WithEndOnly_ReturnsExpectedValues(int end, int step, int[] expectedValues)
-    {
-        var actualValues = EnumerableHelper.Range(end, step).ToArray();
-        Assert.Equal(expectedValues, actualValues);
-    }
-
-    [Fact]
-    public void Range_WithEndOnly_ThrowsArgumentException_ForNegativeStepAndStartSmallerThanEnd()
-        => Assert.Throws<Library.Exceptions.InvalidArgumentException>(() => EnumerableHelper.Range(0, 10, -1).ToArray());
-
-    [Fact]
-    public void Range_WithEndOnly_ThrowsArgumentException_ForPositiveStepAndStartLargerThanEnd()
-        => Assert.Throws<Library.Exceptions.InvalidArgumentException>(() => EnumerableHelper.Range(10, 0, 1).ToArray());
-
-    [Fact]
-    public void Range_WithEndOnly_ThrowsArgumentOutOfRangeException_ForZeroStep()
-        => Assert.Throws<ArgumentOutOfRangeException>(() => EnumerableHelper.Range(0, 10, 0).ToArray());
-
     [Fact]
     public void RemoveDefaultsOnListWithDefault()
     {

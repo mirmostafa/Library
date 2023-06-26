@@ -779,56 +779,6 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    /// Generates a sequence of integers within a specified range.
-    /// </summary>
-    /// <param name="start">The start of the range.</param>
-    /// <param name="end">The end of the range.</param>
-    /// <param name="step">The step between each value in the range.</param>
-    /// <returns>A sequence of integers within the specified range.</returns>
-    public static IEnumerable<int> Range(int start, int end, int step = 1)
-    {
-        // Check if step is not equal to 0
-        Check.NotValid(step, x => x != 0, () => new ArgumentOutOfRangeException(nameof(step)));
-        // Throw exception if step is positive and start is greater than end
-        if (step > 0 && start > end)
-        {
-            throw new InvalidArgumentException(nameof(step));
-        }
-        // Throw exception if step is negative and start is less than end
-        if (step < 0 && start < end)
-        {
-            throw new InvalidArgumentException(nameof(step));
-        }
-
-        // Create a function to check if the end condition is met
-        Func<int, bool> endCondition = step > 0 ? i => i <= end : i => i >= end;
-
-        // Loop through the range and yield the values
-        for (var i = start; endCondition(i); i += step)
-        {
-            yield return i;
-        }
-        // Create a range from 5 to 10
-        var a = 5..10;
-    }
-
-    /// <summary>
-    /// Generates a sequence of integers from 0 to the specified end value, with a specified step.
-    /// </summary>
-    public static IEnumerable<int> Range(int end, int step = 1)
-            => Range(0, end, step);
-
-    [Obsolete("Subject to delete", true)]
-    public static async IAsyncEnumerable<int> RangeAsync(int start, int count)
-    {
-        await Task.Yield();
-        for (var i = 0; i < count; i++)
-        {
-            yield return start + i;
-        }
-    }
-
-    /// <summary>
     /// Reduces a sequence of nullable values using the specified reducer function.
     /// </summary>
     /// <typeparam name="T">The type of the elements of source.</typeparam>

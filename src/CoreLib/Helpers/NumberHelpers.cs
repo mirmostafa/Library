@@ -1,7 +1,9 @@
 ﻿using System.Collections.Immutable;
 
 using Library.Collections;
+using Library.Exceptions;
 using Library.Globalization;
+using Library.Validations;
 
 namespace Library.Helpers;
 
@@ -66,14 +68,59 @@ public static class NumberHelper
     /// <param name="min">The minimum value of the random numbers.</param>
     /// <param name="max">The maximum value of the random numbers.</param>
     /// <returns>A sequence of random numbers within the specified range.</returns>
-    public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null) 
+    public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null)
         => Enumerable.Range(0, count).Select(_ => getRandomizerMethod(min, max)());
-
-    public static IEnumerable<int> Range(int start, int stop, int step = 1)
-        => LazyEnumerable<int>.New(x => (x < stop, x += step), () => start);
 
     public static IEnumerable<int> Range(int stop)
         => LazyEnumerable<int>.New(x => (x < stop, ++x));
+
+    /// <summary>
+    /// Generates a sequence of integers within a specified range.
+    /// </summary>
+    /// <param name="start">The start of the range.</param>
+    /// <param name="end">The end of the range.</param>
+    /// <param name="step">The step between each value in the range.</param>
+    /// <returns>A sequence of integers within the specified range.</returns>
+    public static IEnumerable<int> Range(int start, int end, int step = 1)
+    {
+        // Check if step is not equal to 0
+        Check.NotValid(step, x => x != 0, () => new ArgumentOutOfRangeException(nameof(step)));
+        // Throw exception if step is positive and start is greater than end
+        if (step > 0 && start > end)
+        {
+            throw new InvalidArgumentException(nameof(step));
+        }
+        // Throw exception if step is negative and start is less than end
+        if (step < 0 && start < end)
+        {
+            throw new InvalidArgumentException(nameof(step));
+        }
+
+        // Create a function to check if the end condition is met
+        Func<int, bool> endCondition = step > 0 ? i => i <= end : i => i >= end;
+
+        // Loop through the range and yield the values
+        for (var i = start; endCondition(i); i += step)
+        {
+            yield return i;
+        }
+    }
+
+    /// <summary>
+    /// Generates a sequence of integers from 0 to the specified end value, with a specified step.
+    /// </summary>
+    public static IEnumerable<int> Range(int end, int step = 1)
+        => Range(0, end, step);
+
+    [Obsolete("Subject to delete", true)]
+    public static async IAsyncEnumerable<int> RangeAsync(int start, int count)
+    {
+        await Task.Yield();
+        for (var i = 0; i < count; i++)
+        {
+            yield return start + i;
+        }
+    }
 
     /// <summary>
     /// Converts an integer to its Persian equivalent.
