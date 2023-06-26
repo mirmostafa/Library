@@ -4,7 +4,7 @@ public record struct DataColumnBindingInfo(string? Title, object? BindingPathOrE
 {
     string? IDataColumnBindingInfo.BindingPathOrElement { get; }
 
-    public void Deconstruct(out string? title, out object? bindingPathOrElement) =>
+    public readonly void Deconstruct(out string? title, out object? bindingPathOrElement) =>
         (title, bindingPathOrElement) = (this.Title, this.BindingPathOrElement);
 
     public static implicit operator (string? Title, object? BindingPathOrElement)(DataColumnBindingInfo value)

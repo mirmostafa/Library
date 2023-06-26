@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 
+using Library.Collections;
 using Library.Globalization;
 
 namespace Library.Helpers;
@@ -52,7 +53,8 @@ public static class NumberHelper
     }
 
     /// <summary>
-    /// Generates a random number between the given min and max values. If no min or max values are provided, the default min and max values are used.
+    /// Generates a random number between the given min and max values. If no min or max values are
+    /// provided, the default min and max values are used.
     /// </summary>
     public static int RandomNumber(int? min = null, int? max = null)
         => getRandomizerMethod(min, max)();
@@ -64,11 +66,14 @@ public static class NumberHelper
     /// <param name="min">The minimum value of the random numbers.</param>
     /// <param name="max">The maximum value of the random numbers.</param>
     /// <returns>A sequence of random numbers within the specified range.</returns>
-    public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null)
-    {
-        var random = getRandomizerMethod(min, max);
-        return Enumerable.Range(0, count).Select(_ => random());
-    }
+    public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null) 
+        => Enumerable.Range(0, count).Select(_ => getRandomizerMethod(min, max)());
+
+    public static IEnumerable<int> Range(int start, int stop, int step = 1)
+        => LazyEnumerable<int>.New(x => (x < stop, x += step), () => start);
+
+    public static IEnumerable<int> Range(int stop)
+        => LazyEnumerable<int>.New(x => (x < stop, ++x));
 
     /// <summary>
     /// Converts an integer to its Persian equivalent.
@@ -95,11 +100,11 @@ public static class NumberHelper
     /// <param name="decimalPlaces">The number of decimal places to use (defaults to 1).</param>
     /// <returns>A string with the converted value and the corresponding size suffix.</returns>
     public static string ToStandardMetricScale(this long value, int measure = 1000, int decimalPlaces = 1)
-    //This code converts a long value to a standard metric scale. 
-    //It takes in two parameters, measure and decimalPlaces, which are set to 1000 and 1 respectively by default. 
-    //It first checks if the value is negative, and if so, it calls the same function with the negative value. 
-    //If the measure is 1, it returns the value as a string. 
-    //Otherwise, it divides the value by the measure and increments the index until the rounded value is less than the measure. 
+    //This code converts a long value to a standard metric scale.
+    //It takes in two parameters, measure and decimalPlaces, which are set to 1000 and 1 respectively by default.
+    //It first checks if the value is negative, and if so, it calls the same function with the negative value.
+    //If the measure is 1, it returns the value as a string.
+    //Otherwise, it divides the value by the measure and increments the index until the rounded value is less than the measure.
     //Finally, it returns a string with the value and the corresponding size suffix.
     {
         //If the value is less than 0, convert it to a positive value and call the ToStandardMetricScale function with the positive value, measure, and decimalPlaces as parameters.

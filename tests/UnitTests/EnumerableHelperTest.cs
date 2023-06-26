@@ -240,6 +240,126 @@ public sealed class EnumerableHelperTest
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void IsSame_ReturnsFalseForDifferentCollections()
+    {
+        // Arrange
+        var items1 = new List<int> { 1, 2, 3 };
+        var items2 = new List<int> { 1, 2, 4 };
+
+        // Act
+        var result = items1.IsSame(items2);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsSame_ReturnsFalseForOneNullCollection()
+    {
+        // Arrange
+        var items1 = new List<int> { 1, 2, 3 };
+        List<int>? items2 = null;
+
+        // Act
+        var result = items1.IsSame(items2);
+
+        // Assert
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void IsSame_ReturnsTrueForEqualCollections()
+    {
+        // Arrange
+        var items1 = new List<int> { 1, 2, 3 };
+        var items2 = new List<int> { 1, 2, 3 };
+
+        // Act
+        var result = items1.IsSame(items2);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void IsSame_ReturnsTrueForNullCollections()
+    {
+        // Arrange
+        List<int>? items1 = null;
+        List<int>? items2 = null;
+
+        // Act
+        var result = items1.IsSame(items2);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Theory]
+    [InlineData(new[] { 1, 2, 3, 4, 5 }, -1, 5, new[] { 1, 2, 3, 4 })]
+    [InlineData(new[] { 1, 2, 3, 4, 5 }, -3, 3, new[] { 1, 2, 4, 5 })]
+    [InlineData(new[] { "A", "B", "C" }, -2, "B", new[] { "A", "C" })]
+    public void Pop_RemovesAndReturnsElementAtSpecifiedIndex_NegativeIndex<T>(T[] input, int index, T expected, T[] remaining)
+    {
+        // Arrange
+        var list = new List<T>(input);
+
+        // Act
+        var result = list.Pop(index);
+
+        // Assert
+        Assert.Equal(expected, result);
+        Assert.Equal(remaining.Length, list.Count);
+        Assert.Equal(remaining, list);
+    }
+
+    [Theory]
+    [InlineData(new[] { 1, 2, 3, 4, 5 }, 2, 3, new[] { 1, 2, 4, 5 })]
+    [InlineData(new[] { "A", "B", "C" }, 1, "B", new[] { "A", "C" })]
+    public void Pop_RemovesAndReturnsElementAtSpecifiedIndex_PositiveIndex<T>(T[] input, int index, T expected, T[] remaining)
+    {
+        // Arrange
+        var list = new List<T>(input);
+
+        // Act
+        var result = list.Pop(index);
+
+        // Assert
+        Assert.Equal(expected, result);
+        Assert.Equal(remaining.Length, list.Count);
+        Assert.Equal(remaining, list);
+    }
+
+    [Theory]
+    [InlineData(new[] { 1, 2, 3, 4, 5 }, 5, new[] { 1, 2, 3, 4 })]
+    [InlineData(new[] { "A", "B", "C" }, "C", new[] { "A", "B" })]
+    public void Pop_RemovesAndReturnsLastElement<T>(T[] input, T expected, T[] remaining)
+    {
+        // Arrange
+        var list = new List<T>(input);
+
+        // Act
+        var result = list.Pop();
+
+        // Assert
+        Assert.Equal(expected, result);
+        Assert.Equal(remaining.Length, list.Count);
+        Assert.Equal(remaining, list);
+    }
+
+    [Theory]
+    [InlineData(new[] { 1, 2, 3, 4, 5 }, 10)]
+    [InlineData(new[] { "A", "B", "C" }, 5)]
+    public void Pop_RemovesAndReturnsLastElement_WhenIndexIsGreaterThanListLength<T>(T[] input, int index)
+    {
+        // Arrange
+        var list = new List<T>(input);
+
+        // Act
+        _ = Assert.Throws<ArgumentOutOfRangeException>(() => list.Pop(index));
+    }
+
     [Theory]
     [InlineData(0, 10, 1, new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })]
     [InlineData(10, 0, -1, new int[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 })]
@@ -283,6 +403,48 @@ public sealed class EnumerableHelperTest
         => Assert.Throws<ArgumentOutOfRangeException>(() => EnumerableHelper.Range(0, 10, 0).ToArray());
 
     [Fact]
+    public void RemoveDefaultsOnListWithDefault()
+    {
+        // Arrange
+        var list = new List<int> { 1, 2, 0, 3 };
+        var expected = new List<int> { 1, 2, 3 };
+
+        // Act
+        var actual = list.RemoveDefaults();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void RemoveDefaultsOnListWithNull()
+    {
+        // Arrange
+        var list = new List<string?> { "a", "b", null, "c" };
+        var expected = new List<string?> { "a", "b", "c" };
+
+        // Act
+        var actual = list.RemoveDefaults();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void RemoveDefaultsWithCustomValue()
+    {
+        // Arrange
+        var list = new List<int> { 1, 2, -1, 3 };
+        var expected = new List<int> { 1, 2, 3 };
+
+        // Act
+        var actual = list.RemoveDefaults(-1);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
     public void RunAllWhile_Test()
     {
         // Arrange
@@ -305,6 +467,76 @@ public sealed class EnumerableHelperTest
 
         // Assert
         Assert.Equal(2, counter);
+    }
+
+    [Fact]
+    public void Slice_EndIndex()
+    {
+        // Assign
+        var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
+        var expected = new[] { "Dad", "Mom", "Me" };
+
+        // Act
+        var actual = myFamily.Slice(end: 3);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Slice_Full()
+    {
+        // Assign
+        var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
+        var expected = new[] { "Mom", "Sister 1" };
+
+        // Act
+        var actual = myFamily.Slice(1, 3, 2);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Slice_ReverseArray()
+    {
+        // Assign
+        var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
+        var expected = new[] { "Sister 3", "Sister 2", "Sister 1", "Me", "Mom", "Dad" };
+
+        // Act
+        var actual = myFamily.Slice(steps: -1);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Slice_FullCopyArray()
+    {
+        // Assign
+        var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
+        var expected = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
+
+        // Act
+        var actual = myFamily.Slice();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Slice_StartIndex()
+    {
+        // Assign
+        var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
+        var expected = new[] { "Sister 1", "Sister 2", "Sister 3" };
+
+        // Act
+        var actual = myFamily.Slice(start: 3);
+
+        // Assert
+        Assert.Equal(expected, actual);
     }
 
     [Theory]
@@ -370,51 +602,43 @@ public sealed class EnumerableHelperTest
             }
         }
     }
-}
 
-[Trait("Category", "Helpers")]
-[Collection("RemoveDefaultsTest")]
-public sealed class RemoveDefaultsTest
-{
     [Fact]
-    public void TestRemoveDefaultsOnListWithDefault()
+    public void IndexesOf_ReturnsCorrectIndexes()
     {
         // Arrange
-        var list = new List<int> { 1, 2, 0, 3 };
-        var expected = new List<int> { 1, 2, 3 };
+        var items = new List<int> { 1, 2, 3, 2, 4, 2 };
 
         // Act
-        var actual = list.RemoveDefaults();
+        var result = items.IndexesOf(2);
 
         // Assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(new[] { 1, 3, 5 }, result);
     }
 
     [Fact]
-    public void TestRemoveDefaultsOnListWithNull()
+    public void IndexesOf_ReturnsEmptyForNonexistentItem()
     {
         // Arrange
-        var list = new List<string?> { "a", "b", null, "c" };
-        var expected = new List<string?> { "a", "b", "c" };
+        var items = new List<int> { 1, 2, 3, 4 };
 
         // Act
-        var actual = list.RemoveDefaults();
+        var result = items.IndexesOf(5);
 
         // Assert
-        Assert.Equal(expected, actual);
+        Assert.Empty(result);
     }
 
     [Fact]
-    public void TestRemoveDefaultsWithCustomValue()
+    public void IndexesOf_ReturnsCorrectIndexesForNullItem()
     {
         // Arrange
-        var list = new List<int> { 1, 2, -1, 3 };
-        var expected = new List<int> { 1, 2, 3 };
+        var items = new List<string?> { "hello", null, "world", null, null };
 
         // Act
-        var actual = list.RemoveDefaults(-1);
+        var result = items.IndexesOf(null);
 
         // Assert
-        Assert.Equal(expected, actual);
+        Assert.Equal(new[] { 1, 3, 4 }, result);
     }
 }

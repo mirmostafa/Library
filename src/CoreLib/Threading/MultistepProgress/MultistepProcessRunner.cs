@@ -60,6 +60,7 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IMultiste
         var stepList = this.Steps.ToList();
         this._max = stepList.Select(x => x.ProgressCount).Sum();
         this._current = 0;
+        LibLogger.DebugStartingAction();
         foreach (var step in stepList)
         {
             if (isCancellationRequested())
@@ -69,8 +70,10 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IMultiste
 
             this._reporter.Report(this._max, this._current += step.ProgressCount, step.Description, this._owner);
             this._state = await step.AsyncAction((this._state, this._subReporter));
+            LibLogger.Debug($"{nameof(MultistepProcessRunner<TState>)} - [{this._current} of {this._max}]");
         }
         this._reporter.End();
+        LibLogger.DebugEndedAction();
         return this._state;
     }
 }

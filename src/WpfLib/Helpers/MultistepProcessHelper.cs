@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Library.EventsArgs;
+﻿using Library.EventsArgs;
 using Library.Threading.MultistepProgress;
-using Library.Wpf.Dialogs;
 
 namespace Library.Wpf.Helpers;
+
 public static class MultistepProcessHelper
 {
     public static void ShowProgress(this IMultistepProcess process, in string caption,
         in string instruction,
         in string footerText,
-        bool isCancallable = false,
+        bool isCancellable = false,
         bool runInTask = false,
         in CancellationToken cancellationToken = default)
     {
-        dispose(process);
+        reset(process);
 
         process.Reported += process_Reported;
         process.Ended += process_Ended;
@@ -26,12 +20,10 @@ public static class MultistepProcessHelper
         void process_Reported(object? sender, ItemActedEventArgs<ProgressData> e)
         {
         }
-        void process_Ended(object? sender, ItemActedEventArgs<ProgressData?> e)
-        {
-            dispose((IMultistepProcess)sender!);
-        }
+        void process_Ended(object? sender, ItemActedEventArgs<ProgressData?> e) 
+            => reset((IMultistepProcess)sender!);
 
-        void dispose(IMultistepProcess process)
+        void reset(IMultistepProcess process)
         {
             process.Reported -= process_Reported;
             process.Ended -= process_Ended;

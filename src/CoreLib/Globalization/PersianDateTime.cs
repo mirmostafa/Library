@@ -193,7 +193,7 @@ public readonly struct PersianDateTime :
     /// <summary>
     /// Gets or Sets the date separator.
     /// </summary>
-    public static string DateSeparator { get; set; } = CultureConstants.DATE_SEPARATOR;
+    public static string DateSeparator { get; } = CultureConstants.DATE_SEPARATOR;
 
     /// <summary>
     /// Gets the days of week names.
@@ -254,18 +254,18 @@ public readonly struct PersianDateTime :
     /// Gets or sets the short date pattern.
     /// </summary>
     /// <value>The short date pattern.</value>
-    public static string ShortDatePattern { get; set; } = CultureConstants.SHORT_DATE_PATTERN;
+    public static string ShortDatePattern { get; } = CultureConstants.SHORT_DATE_PATTERN;
 
     /// <summary>
     /// Gets or sets the time separator.
     /// </summary>
     /// <value>The time separator.</value>
-    public static string TimeSeparator { get; set; } = CultureConstants.TIME_SEPARATOR;
+    public static string TimeSeparator { get; } = CultureConstants.TIME_SEPARATOR;
 
     /// <summary>
     /// Gets or sets the string format used when converting a PersianDateTime object to a string.
     /// </summary>
-    public static string ToStringFormat { get; set; } = CultureConstants.DEFAULT_DATE_TIME_PATTERN;
+    public static string ToStringFormat { get; } = CultureConstants.DEFAULT_DATE_TIME_PATTERN;
 
     /// <summary>
     /// Gets a System.DateTime object that is set to the current date and time on this computer,

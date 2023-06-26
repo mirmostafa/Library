@@ -29,8 +29,7 @@ public sealed class FunctionalTest
         // Act
         var actual = CatchResult(() => five / zero);
 
-        // Assert
-        // Assert
+        // Assert Assert
         Assert.False(actual);
         _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Status);
     }
@@ -46,8 +45,7 @@ public sealed class FunctionalTest
         // Act
         var actual = CatchResult(act);
 
-        // Assert
-        // Assert
+        // Assert Assert
         Assert.False(actual);
         _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Status);
     }
@@ -91,7 +89,7 @@ public sealed class FunctionalTest
         Task<int> act() => Task.Run(() => _ = five + zero);
 
         // Act
-        var actual =await CatchResultAsync(act);
+        var actual = await CatchResultAsync(act);
 
         // Assert
         Assert.True(actual);
@@ -244,6 +242,26 @@ public sealed class FunctionalTest
         _ = booleanTest.IfFalse(Methods.Empty);
 
         Assert.Equal("false", falseResult);
+    }
+
+    [Fact]
+    public void ItemsAction()
+    {
+        var actual = 0;
+        var expected = 55;
+        var items = NumberHelper.Range(10).Fluent().Items<IEnumerable<int>, int>(x => actual += x).GetValue().ToArray();
+        Assert.True(items.Length == 10);
+        Assert.Equal(expected, actual);
+    }
+    [Fact]
+    public void ItemsFunc()
+    {
+        var actual = 0;
+        var expected = 55;
+        var items = NumberHelper.Range(10).Fluent().Items<IEnumerable<int>, int>(x => actual += x, x => x.ToArray()).GetValue();
+
+        Assert.True(items.Count() == 10);
+        Assert.Equal(expected, actual);
     }
 
     [Fact]

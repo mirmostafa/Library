@@ -1,12 +1,11 @@
 ﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 using Library.Validations;
 
 namespace Library.Helpers;
 
-[DebuggerStepThrough]
-[StackTraceHidden]
+//[DebuggerStepThrough]
+//[StackTraceHidden]
 public static class FluencyHelper
 {
     public static async Task<TInstance> Async<TInstance>(this Fluency<TInstance> instance, Func<Task> funcAsync)
@@ -16,7 +15,7 @@ public static class FluencyHelper
     }
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance o)
-            => new(o);
+        => new(o);
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action? action)
     {
@@ -96,8 +95,33 @@ public static class FluencyHelper
         return @this;
     }
 
+    public static Fluency<TList> Items<TList, TItem>(this Fluency<TList> list, in Action<TItem> action)
+        where TList : IEnumerable<TItem>
+    {
+        foreach (var item in list.Value)
+        {
+            action(item);
+        }
+        return list;
+    }
+
+    public static Fluency<TList> Items<TList, TItem>(this Fluency<TList> list, in Func<TItem, TItem> action, Func<IEnumerable<TItem>, TList> convert) 
+        where TList : IEnumerable<TItem>
+    {
+        //return new Fluency<TList>(convert(iterate(list.Value, action)));
+        return new Fluency<TList>(convert(list.Value.Select(action)));
+
+        static IEnumerable<TItem> iterate(IEnumerable<TItem> items, Func<TItem, TItem> action)
+        {
+            foreach (var item in items)
+            {
+                yield return action(item);
+            }
+        }
+    }
+
     public static (TInstance Instance, TResult Result) Result<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TResult> func)
-        => (instance.Value, func.Invoke());
+                => (instance.Value, func.Invoke());
 
     public static Fluency<TInstance> With<TInstance>(this Fluency<TInstance> instance, in Action action)
     {
