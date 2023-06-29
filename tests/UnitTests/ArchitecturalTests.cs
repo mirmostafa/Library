@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 
 using Library.DesignPatterns.Markers;
 
@@ -12,7 +13,7 @@ public sealed class ArchitecturalTests
     public ArchitecturalTests()
     {
         var defaultPredicate = (Type x) => x.Namespace?.StartsWith("System.") is not true;
-        
+
         var coreLibAsm = typeof(CoreLibModule).Assembly;
         var codeLibTypes = coreLibAsm.GetTypes().Where(defaultPredicate);
 
@@ -28,21 +29,12 @@ public sealed class ArchitecturalTests
         _libraryTypes = new(codeLibTypes, cqrsLibTypes, webLibTypes, wpfLibTypes);
     }
 
-    [Fact]
-    public void HelpersMustBeStatic()
-    {
-        var types = _libraryTypes.CoreLibTypes;
-        var helpers = types.Where(x => IsInNameSpace(x, "Library.Helpers")).Except(x => IsInNameSpace(x, "Library.Helpers.Model"));
-        var notSealed = helpers.Where(x => x.IsClass).Where(x => !x.IsSealed);
-        Assert.True(!notSealed.Any());
-    }
-
-    [Fact(Skip ="Not always is required.")]
+    [Fact(Skip = "Not always is required.")]
     public void EveryClassMustBeAbstractOrSealedOrStatic()
     {
         var types = GetAllTypes().ToArray();
-        var notOkTypes = types.Where(x => x is not null and { IsClass: true} and { IsAbstract:false} and { IsSealed:false}).ToArray();
-        if(notOkTypes.Length == 0)
+        var notOkTypes = types.Where(x => x is not null and { IsClass: true } and { IsAbstract: false } and { IsSealed: false }).ToArray();
+        if (notOkTypes.Length == 0)
         {
             return;
         }
@@ -50,27 +42,6 @@ public sealed class ArchitecturalTests
         foreach (var notOkType in notOkTypes)
         {
             _ = result.AppendLine($"Type: `{notOkType}`");
-        }
-        Assert.Fail(result.ToString());
-    }
-
-    [Fact]
-    public void ImmutableShouldBeImmutable()
-    {
-        var props = GetAllTypes()
-                    .Where(ObjectHelper.HasAttribute<ImmutableAttribute>)
-                    .SelectMany(t => t.GetProperties())
-                    .Where(x => x.SetMethod is { } m and { IsPublic: true });
-
-        if (!props.Any())
-        {
-            return;
-        }
-
-        var result = new StringBuilder("The following classes are marked as Immutable but they have muted properties.");
-        foreach (var prop in props)
-        {
-            _ = result.AppendLine($"Type: `{prop.DeclaringType}`. Property: {prop}");
         }
         Assert.Fail(result.ToString());
     }
@@ -97,25 +68,70 @@ public sealed class ArchitecturalTests
         Assert.Fail(result.ToString());
     }
 
-    private static IEnumerable<Type> GetAllTypes()
+    [Fact]
+    public void HelpersMustBeStatic()
     {
-        foreach (var type in _libraryTypes.CoreLibTypes)
-        {
-            yield return type;
-        }
-        foreach (var type in _libraryTypes.CqrsLibTypes)
-        {
-            yield return type;
-        }
-        foreach (var type in _libraryTypes.WebLibTypes)
-        {
-            yield return type;
-        }
-        foreach (var type in _libraryTypes.WpfLibTypes)
-        {
-            yield return type;
-        }
+        var types = _libraryTypes.CoreLibTypes;
+        var helpers = types.Where(x => IsInNameSpace(x, "Library.Helpers")).Except(x => IsInNameSpace(x, "Library.Helpers.Model"));
+        var notSealed = helpers.Where(x => x.IsClass).Where(x => !x.IsSealed);
+        Assert.True(!notSealed.Any());
     }
+
+    [Fact]
+    public void ImmutableShouldBeImmutable()
+    {
+        var mutableProperties = getMutableProperties(GetAllTypes());
+
+        if (!mutableProperties.Any())
+        {
+            return;
+        }
+
+        var result = new StringBuilder("The following classes are marked as Immutable but they have muted properties.");
+        foreach (var prop in mutableProperties)
+        {
+            _ = result.AppendLine($"Type: `{prop.DeclaringType}`. Property: {prop}");
+        }
+        Assert.Fail(result.ToString());
+
+        static IEnumerable<System.Reflection.PropertyInfo> getMutableProperties(IEnumerable<Type> types)
+            => types
+                .Where(ObjectHelper.HasAttribute<ImmutableAttribute>)
+                .SelectMany(t => t.GetProperties())
+                .Where(x => x.SetMethod is { } and { IsPublic: true });
+    }
+
+    [Fact]
+    public void ImmutableShouldBeImmutable_DeepLookIn()
+    {
+        var immutableTypes = getImmutableTypes(GetAllTypes());
+        var mutableProperties = getMutableProperties(immutableTypes);
+        if (mutableProperties.Any())
+        {
+            // Fail
+            return;
+        }
+        var properties = getLibraryTypeProperties(immutableTypes);
+        var mutableTypeProperties = getMutableTypeProperties(properties);
+        foreach (var property in mutableTypeProperties)
+        {
+            // Fail
+            return;
+        }
+
+        IEnumerable<Type> getImmutableTypes(IEnumerable<Type> enumerable) => throw new NotImplementedException();
+        IEnumerable<PropertyInfo> getMutableProperties(IEnumerable<Type> immutableTypes) => throw new NotImplementedException();
+        IEnumerable<PropertyInfo> getLibraryTypeProperties(IEnumerable<Type> immutableTypes) => throw new NotImplementedException();
+        IEnumerable<PropertyInfo> getMutableTypeProperties(IEnumerable<PropertyInfo> properties) => throw new NotImplementedException();
+    }
+
+    private static IEnumerable<Type> GetAllTypes()
+        => EnumerableHelper.Merge(
+            _libraryTypes.CoreLibTypes,
+            _libraryTypes.CqrsLibTypes,
+            _libraryTypes.WebLibTypes,
+            _libraryTypes.WpfLibTypes
+            );
 
     private static bool IsInNameSpace(Type type, string ns)
         => type?.Namespace?.StartsWith(ns) is true;

@@ -477,6 +477,9 @@ public static class EnumerableHelper
     public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
             => source.Where(x => !exclude(x));
 
+    public static IEnumerable<TSource> Filter<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+            => source.Where(predicate);
+
     /// <summary>
     /// Finds the duplicates in a given IEnumerable of type T.
     /// </summary>
@@ -804,8 +807,22 @@ public static class EnumerableHelper
         }
     }
 
-    public static bool IsSame<T>(this IEnumerable<T>? items1, IEnumerable<T>? items2) => (items1 == null && items2 == null)
-|| (items1 != null && items2 != null && (items1.Equals(items2) || items1.SequenceEqual(items2)));
+    public static bool IsSame<T>(this IEnumerable<T>? items1, IEnumerable<T>? items2)
+        => (items1 == null && items2 == null) || (items1 != null && items2 != null && (items1.Equals(items2) || items1.SequenceEqual(items2)));
+
+    public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> mapper)
+        => source.Select(mapper);
+
+    public static IEnumerable<T> Merge<T>(params IEnumerable<T>[] enumerables)
+    {
+        foreach (var enumerable in enumerables)
+        {
+            foreach (var item in enumerable)
+            {
+                yield return item;
+            }
+        }
+    }
 
     /// <summary>
     /// Merges the elements of an IEnumerable into a single string.
@@ -1285,6 +1302,20 @@ public static class EnumerableHelper
         {
             //Return the current element
             yield return enumerator.Current;
+        }
+    }
+
+    public static IEnumerable<IEnumerable<T>> Zip<T>(params IEnumerable<T>[] value)
+    {
+        var buffer = new List<T>();
+        foreach (var topLayer in value)
+        {
+            foreach (var innerLayer in topLayer)
+            {
+                buffer.Add(innerLayer);
+            }
+            yield return buffer;
+            buffer.Clear();
         }
     }
 

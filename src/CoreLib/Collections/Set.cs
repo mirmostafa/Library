@@ -1,8 +1,33 @@
 ﻿using System.Collections;
 
+using Library.DesignPatterns.Markers;
+
 namespace Library.Collections;
 
-public sealed class Set<TItem> : IList<TItem>, IIndexable<TItem>
+[Fluent]
+public interface IFluentSet<TItem, TSelf> : IIndexable<TItem>
+{
+    TSelf Add(TItem item);
+
+    TSelf Clear();
+
+    bool Contains(TItem item);
+
+    TSelf Copy();
+
+    TSelf CopyTo(TItem[] array, int arrayIndex);
+
+    IEnumerator<TItem> GetEnumerator();
+
+    TSelf Insert(int index, TItem item);
+
+    bool Remove(TItem item);
+
+    TSelf RemoveAt(int index);
+}
+
+[Fluent]
+public sealed class Set<TItem> : IList<TItem>, IFluentSet<TItem, Set<TItem>>
 {
     private readonly List<TItem> _items = new();
 
@@ -13,11 +38,13 @@ public sealed class Set<TItem> : IList<TItem>, IIndexable<TItem>
     public Set(IEnumerable<TItem> items)
         => this.AddRange(items);
 
-    public int Count => this._items.Count;
+    int ICollection<TItem>.Count => this._items.Count;
 
-    public bool IsReadOnly => ((ICollection<TItem>)this._items).IsReadOnly;
+    bool ICollection<TItem>.IsReadOnly => ((ICollection<TItem>)this._items).IsReadOnly;
 
-    public TItem this[int index]
+    public TItem this[int index] => this._items[0];
+
+    TItem IList<TItem>.this[int index]
     {
         get => this._items[0];
         set
@@ -29,15 +56,15 @@ public sealed class Set<TItem> : IList<TItem>, IIndexable<TItem>
         }
     }
 
-    public static Set<TItem> operator &(Set<TItem> set1, Set<TItem> set2) 
+    public static Set<TItem> operator &(Set<TItem> set1, Set<TItem> set2)
         => new Set<TItem>()
-            .AddRange(set1.Where(set2.Contains))
-            .AddRange(set2.Where(set1.Contains));
+            .AddRange(set1.Where(((ICollection<TItem>)set2).Contains))
+            .AddRange(set2.Where(((ICollection<TItem>)set1).Contains));
 
     public static Set<TItem> operator |(Set<TItem> set1, Set<TItem> set2)
-            => new Set<TItem>(set1).AddRange(set2);
+        => new Set<TItem>(set1).AddRange(set2);
 
-    public void Add(TItem item)
+    void ICollection<TItem>.Add(TItem item)
     {
         if (!this._items.Contains(item))
         {
@@ -45,17 +72,29 @@ public sealed class Set<TItem> : IList<TItem>, IIndexable<TItem>
         }
     }
 
-    public void Clear()
+    public Set<TItem> Add(TItem item)
+        => this.Do(x => x.Add(item));
+
+    void ICollection<TItem>.Clear()
         => this._items.Clear();
 
-    public bool Contains(TItem item)
+    public Set<TItem> Clear()
+        => this.Do(x => x.Clear());
+
+    bool ICollection<TItem>.Contains(TItem item)
         => this._items.Contains(item);
+
+    public bool Contains(TItem item)
+        => this.Do(x => x.Contains(item));
 
     public Set<TItem> Copy()
         => new(this);
 
-    public void CopyTo(TItem[] array, int arrayIndex)
-            => this._items.CopyTo(array, arrayIndex);
+    void ICollection<TItem>.CopyTo(TItem[] array, int arrayIndex)
+        => this._items.CopyTo(array, arrayIndex);
+
+    public Set<TItem> CopyTo(TItem[] array, int arrayIndex)
+        => this.Do(x => x.CopyTo(array, arrayIndex));
 
     public IEnumerator<TItem> GetEnumerator()
         => this._items.GetEnumerator();
@@ -63,10 +102,10 @@ public sealed class Set<TItem> : IList<TItem>, IIndexable<TItem>
     IEnumerator IEnumerable.GetEnumerator()
         => this._items.GetEnumerator();
 
-    public int IndexOf(TItem item)
+    int IList<TItem>.IndexOf(TItem item)
         => this._items.IndexOf(item);
 
-    public void Insert(int index, TItem item)
+    void IList<TItem>.Insert(int index, TItem item)
     {
         if (!this._items.Contains(item))
         {
@@ -74,9 +113,36 @@ public sealed class Set<TItem> : IList<TItem>, IIndexable<TItem>
         }
     }
 
-    public bool Remove(TItem item)
+    public Set<TItem> Insert(int index, TItem item)
+        => this.Do(x => x.Insert(index, item));
+
+    bool ICollection<TItem>.Remove(TItem item)
         => this._items.Remove(item);
 
-    public void RemoveAt(int index)
+    public bool Remove(TItem item)
+        => this.Do(x => x.Remove(item));
+
+    void IList<TItem>.RemoveAt(int index)
         => this._items.RemoveAt(index);
+
+    public Set<TItem> RemoveAt(int index)
+        => this.Do(x => x.RemoveAt(index));
+
+    private Set<TItem> Do(Action<ICollection<TItem>> action)
+    {
+        action(this);
+        return this;
+    }
+
+    private Set<TItem> Do(Action<IList<TItem>> action)
+    {
+        action(this);
+        return this;
+    }
+
+    private TResult Do<TResult>(Func<ICollection<TItem>, TResult> action)
+        => action(this);
+
+    private TResult Do<TResult>(Func<IList<TItem>, TResult> action)
+        => action(this);
 }
