@@ -111,17 +111,20 @@ public sealed class ArchitecturalTests
             // Fail
             return;
         }
-        var properties = getLibraryTypeProperties(immutableTypes);
-        var mutableTypeProperties = getMutableTypeProperties(properties);
+        var libProps = getLibraryTypeProperties(immutableTypes);
+        var mutableTypeProperties = getMutableTypeProperties(libProps);
         foreach (var property in mutableTypeProperties)
         {
             // Fail
             return;
         }
 
-        IEnumerable<Type> getImmutableTypes(IEnumerable<Type> enumerable) => throw new NotImplementedException();
-        IEnumerable<PropertyInfo> getMutableProperties(IEnumerable<Type> immutableTypes) => throw new NotImplementedException();
-        IEnumerable<PropertyInfo> getLibraryTypeProperties(IEnumerable<Type> immutableTypes) => throw new NotImplementedException();
+        IEnumerable<Type> getImmutableTypes(IEnumerable<Type> types) 
+            => types.Where(ObjectHelper.HasAttribute<ImmutableAttribute>);
+        IEnumerable<PropertyInfo> getMutableProperties(IEnumerable<Type> types)
+            => types.SelectMany(t => t.GetProperties()).Where(x => x.SetMethod is { } and { IsPublic: true });
+        IEnumerable<PropertyInfo> getLibraryTypeProperties(IEnumerable<Type> types) 
+            => throw new NotImplementedException();
         IEnumerable<PropertyInfo> getMutableTypeProperties(IEnumerable<PropertyInfo> properties) => throw new NotImplementedException();
     }
 
