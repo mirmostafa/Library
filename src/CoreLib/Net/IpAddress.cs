@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Net.NetworkInformation;
 
-using Library.Collections;
 using Library.DesignPatterns.Markers;
 using Library.Interfaces;
 using Library.Results;
@@ -35,7 +34,14 @@ public sealed class IpAddress :
         => Parse("127.0.0.1");
 
     public static IEnumerable<IpAddress> GetRange(IpAddress start, IpAddress end)
-        => LazyEnumerable<IpAddress>.New(x => (x < end, x.Add(1)), () => start);
+    {
+        var x = start;
+        while (x < end)
+        {
+            yield return x;
+            x = x.Add(1);
+        }
+    }
 
     public static IEnumerable<IpAddress> GetRange(string start, string end)
         => GetRange(new IpAddress(start), new IpAddress(end));

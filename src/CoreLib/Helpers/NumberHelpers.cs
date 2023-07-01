@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 
-using Library.Collections;
 using Library.Exceptions;
 using Library.Globalization;
 using Library.Validations;
@@ -72,7 +71,14 @@ public static class NumberHelper
         => Enumerable.Range(0, count).Select(_ => getRandomizerMethod(min, max)());
 
     public static IEnumerable<int> Range(int stop)
-        => LazyEnumerable<int>.New(x => (x < stop, ++x));
+    //=> LazyEnumerable<int>.New(x => (x < stop, ++x));
+    {
+        var x = 0;
+        while (x < stop)
+        {
+            yield return ++x;
+        }
+    }
 
     /// <summary>
     /// Generates a sequence of integers within a specified range.
