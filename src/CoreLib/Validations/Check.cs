@@ -84,7 +84,6 @@ public sealed class Check
     /// </summary>
     /// <param name="obj">The object to check.</param>
     /// <param name="argName">The name of the argument.</param>
-    [return: NotNull]
     public static void IfArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => IfArgumentNotNull(obj is not null, argName!);
 

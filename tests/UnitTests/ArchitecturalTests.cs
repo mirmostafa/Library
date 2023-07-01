@@ -94,38 +94,42 @@ public sealed class ArchitecturalTests
         }
         Assert.Fail(result.ToString());
 
-        static IEnumerable<System.Reflection.PropertyInfo> getMutableProperties(IEnumerable<Type> types)
+        static IEnumerable<PropertyInfo> getMutableProperties(IEnumerable<Type> types)
             => types
                 .Where(ObjectHelper.HasAttribute<ImmutableAttribute>)
                 .SelectMany(t => t.GetProperties())
-                .Where(x => x.SetMethod is { } and { IsPublic: true });
+                .Where(x => (x.SetMethod?.IsPublic ?? false) && !x.IsSetMethodInit());
     }
 
     [Fact]
     public void ImmutableShouldBeImmutable_DeepLookIn()
     {
         var immutableTypes = getImmutableTypes(GetAllTypes());
-        var mutableProperties = getMutableProperties(immutableTypes);
+        var allProps = getAllPropertiesInTypes(immutableTypes);
+        var mutableProperties = getMutableProperties(allProps);
         if (mutableProperties.Any())
         {
-            // Fail
+            Assert.Fail("Found some mutable properties in immutable types");
             return;
         }
-        var libProps = getLibraryTypeProperties(immutableTypes);
+        var libProps = getLibraryTypeProperties(allProps);
         var mutableTypeProperties = getMutableTypeProperties(libProps);
         foreach (var property in mutableTypeProperties)
         {
-            // Fail
+            Assert.Fail("Found some immutable properties which have mutable library types.");
             return;
         }
 
-        IEnumerable<Type> getImmutableTypes(IEnumerable<Type> types) 
+        IEnumerable<Type> getImmutableTypes(IEnumerable<Type> types)
             => types.Where(ObjectHelper.HasAttribute<ImmutableAttribute>);
-        IEnumerable<PropertyInfo> getMutableProperties(IEnumerable<Type> types)
-            => types.SelectMany(t => t.GetProperties()).Where(x => x.SetMethod is { } and { IsPublic: true });
-        IEnumerable<PropertyInfo> getLibraryTypeProperties(IEnumerable<Type> types) 
-            => throw new NotImplementedException();
-        IEnumerable<PropertyInfo> getMutableTypeProperties(IEnumerable<PropertyInfo> properties) => throw new NotImplementedException();
+        IEnumerable<PropertyInfo> getAllPropertiesInTypes(IEnumerable<Type> types)
+            => types.SelectMany(t => t.GetProperties());
+        IEnumerable<PropertyInfo> getMutableProperties(IEnumerable<PropertyInfo> properties)
+            => properties.Where(x => (x.SetMethod?.IsPublic ?? false) && !x.IsSetMethodInit());
+        IEnumerable<PropertyInfo> getLibraryTypeProperties(IEnumerable<PropertyInfo> properties)
+            => properties.Where(x => x.PropertyType?.Namespace?.StartsWith("Library") ?? false);
+        IEnumerable<PropertyInfo> getMutableTypeProperties(IEnumerable<PropertyInfo> properties)
+            => properties.Where(x => (x.PropertyType?.IsClass ?? false) && !ObjectHelper.HasAttribute<ImmutableAttribute>(x.PropertyType));
     }
 
     private static IEnumerable<Type> GetAllTypes()

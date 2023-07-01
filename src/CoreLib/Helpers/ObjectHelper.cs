@@ -467,4 +467,10 @@ public static class ObjectHelper
         var property = obj?.GetType().GetProperty(propertyName);
         property?.SetValue(obj, value, null);
     }
+
+    public static bool IsSetMethodInit([DisallowNull] this PropertyInfo propertyInfo)
+    {
+        Check.IfArgumentNotNull(propertyInfo?.SetMethod);
+        return propertyInfo.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit));
+    }
 }
