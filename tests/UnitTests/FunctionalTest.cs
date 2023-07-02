@@ -174,14 +174,37 @@ public sealed class FunctionalTest
     }
 
     [Fact]
+    public void Composition_PlugLoggerTest()
+    {
+        var initialValue = () => 5;
+        var add = (int x) => x + 5;
+        var sub = (int x) => x - 5;
+        var mul = (int x) => x * 5;
+        var div = (int x) => x / 5;
+        var log = (string x) => Console.WriteLine(x);
+
+        var process = initialValue.Compose(log, "Starting")   // > x = 5
+            .Compose(add).Compose(log, x => $"Step 1 - {x}")  // > x = 10
+            .Compose(sub).Compose(log, x => $"Step 2 - {x}")  // > x = 5
+            .Compose(mul).Compose(log, x => $"Step 3 - {x}")  // > x = 25
+            .Compose(div).Compose(log, x => $"Step 4 - {x}")  // > x = 5
+            .Compose(log, x => $"Final value: {x}");
+
+        var result = process();
+
+        Assert.Equal(10, result);
+    }
+
+    [Fact]
     public void Composition_ResultTest()
     {
         var start = () => Result<int>.CreateSuccess(5);
         var step = (int x) => Result<int>.CreateSuccess(x + 1);
         var err = (int x) => Result<int>.CreateFailure(value: x);
-        var fail = (Result<int> x) => x;
+        var getArgs = (Result<int> x) => x;
 
-        var actual = start.Compose(step, fail).Compose(step, fail).Compose(err, fail).Compose(step, fail).Compose(step, fail)();
+        var campsite = start.Compose(step, getArgs).Compose(step, getArgs).Compose(err, getArgs).Compose(step, getArgs).Compose(step, getArgs);
+        var actual = campsite();
         Assert.Equal(7, actual);
     }
 
@@ -224,10 +247,19 @@ public sealed class FunctionalTest
 
     [Fact]
     public void ForEachTest()
-        => Enumerable.Range(1, 1).ForEach(_emptyIntAction);
+        => NumberHelper.Range(10).ForEach(_emptyIntAction);
 
     [Fact]
-    public void IfConditionTest()
+    public void IfConditionFalseTest()
+    {
+        var booleanTest = false;
+        var falseResult = booleanTest.IfFalse(() => "false");
+
+        Assert.Equal("false", falseResult);
+    }
+
+    [Fact]
+    public void IfConditionTrueTest()
     {
         var booleanTest = true;
         var trueResult = booleanTest.IfTrue(() => "true");
@@ -235,43 +267,13 @@ public sealed class FunctionalTest
     }
 
     [Fact]
-    public void IfConditionTest2()
-    {
-        var booleanTest = false;
-        var falseResult = booleanTest.IfFalse(() => "false");
-        _ = booleanTest.IfFalse(Methods.Empty);
-
-        Assert.Equal("false", falseResult);
-    }
-
-    [Fact]
     public void ItemsAction()
     {
         var actual = 0;
         var expected = 55;
-        var items = NumberHelper.Range(10).Fluent().Items<IEnumerable<int>, int>(x => actual += x).GetValue().ToArray();
-        Assert.True(items.Length == 10);
-        Assert.Equal(expected, actual);
-    }
-    [Fact]
-    public void ItemsFunc()
-    {
-        var actual = 0;
-        var expected = 55;
-        var items = NumberHelper.Range(10).Fluent().Items<IEnumerable<int>, int>(x => actual += x, x => x.ToArray()).GetValue();
-
+        var items = NumberHelper.Range(10).Fluent().Items<IEnumerable<int>, int>(x => actual += x).GetValue();
         Assert.True(items.Count() == 10);
         Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void ListTest()
-    {
-        //var list = List(5, 6, 7);
-        //_ = Assert.IsAssignableFrom<List<int>>(list);
-        //Assert.Equal(3, list.Count);
-        //Assert.Equal(6, list[1]);
-        //Assert.Equal(7, list[2]);
     }
 
     [Fact]

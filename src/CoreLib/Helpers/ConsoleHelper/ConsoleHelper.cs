@@ -1,9 +1,29 @@
 ﻿using System.Collections;
 
+using Library.Extensions.Options;
+using Library.Logging;
+using Library.Validations;
+
 namespace Library.Helpers.ConsoleHelper;
 
 public static class ConsoleHelper
 {
+    public static void Configure(Action<ConsoleHelperOptions>? configurator = null)
+    {
+        LibLogger.Info("Configuring...", nameof(ConsoleHelper));
+        var options = new ConsoleHelperOptions();
+        configurator?.Invoke(options);
+        if (options.RedirectConsoleOut)
+        {
+            Console.SetOut(new ConsoleTextWriter(Console.Out));
+        }
+        if (options.RedirectLibLogger)
+        {
+            LibLogger.AddConsole(format:$"{LogFormat.MESSAGE}");
+        }
+        LibLogger.Info("Configured.", nameof(ConsoleHelper));
+    }
+
     public static T DumpLine<T>(T t)
     {
         if (t == null)
@@ -45,4 +65,43 @@ public static class ConsoleHelper
         Console.WriteLine(t);
         return t;
     }
+
+    private sealed class ConsoleTextWriter([DisallowNull] TextWriter consoleOut) : TextWriter
+    {
+        public override Encoding Encoding { get; } = consoleOut.ArgumentNotNull().Encoding;
+
+        public override void WriteLine()
+            => this.InnerWrite();
+
+        public override void WriteLine(string? text)
+            => this.InnerWrite(text);
+
+        private void InnerWrite(string? text = null)
+        {
+            if (text == null)
+            {
+                consoleOut.WriteLine();
+            }
+            else
+            {
+                consoleOut.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {text}");
+            }
+        }
+    }
+}
+
+public sealed class ConsoleHelperOptions : IOptions
+{
+    internal ConsoleHelperOptions()
+    {
+    }
+
+    internal bool RedirectConsoleOut { get; set; } = true;
+    internal bool RedirectLibLogger { get; set; } = true;
+
+    public ConsoleHelperOptions SetRedirectConsoleOut(bool redirectConsoleOut = true)
+        => this.With(x => x.RedirectConsoleOut = redirectConsoleOut);
+
+    public ConsoleHelperOptions SetRedirectLibLogger(bool redirectLibLogger = true)
+        => this.With(x => x.RedirectLibLogger = redirectLibLogger);
 }

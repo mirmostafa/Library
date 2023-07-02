@@ -89,15 +89,24 @@ public static class CodeHelper
         }
     }
 
+    public static Func<TResult2> Compose<TArgs, TResult2>(TArgs args, Func<TArgs, TResult2> func)
+    {
+        var create = () => args;
+        Check.IfArgumentNotNull(create);
+        Check.IfArgumentNotNull(func);
+        return [DebuggerStepThrough] () => func(create());
+    }
+
+
     /// <summary>
     /// Combines two functions into one.
     /// </summary>
-    /// <typeparam name="TResult1">The type of the first function's return value.</typeparam>
+    /// <typeparam name="TArgs">The type of the first function's return value.</typeparam>
     /// <typeparam name="TResult2">The type of the second function's return value.</typeparam>
     /// <param name="create">The first function.</param>
     /// <param name="func">The second function.</param>
     /// <returns>A function that combines the two functions.</returns>
-    public static Func<TResult2> Compose<TResult1, TResult2>([DisallowNull] this Func<TResult1> create, Func<TResult1, TResult2> func)
+    public static Func<TResult2> Compose<TArgs, TResult2>([DisallowNull] this Func<TArgs> create, Func<TArgs, TResult2> func)
     {
         Check.IfArgumentNotNull(create);
         Check.IfArgumentNotNull(func);
@@ -105,13 +114,13 @@ public static class CodeHelper
     }
 
     /// <summary> Compose a Func<Result<TResult1>> and a Func<TResult1, Result<TResult2>> into a
-    /// Func<Result<TResult2>>. </summary> <typeparam name="TResult1">The type of the first
+    /// Func<Result<TResult2>>. </summary> <typeparam name="TArgs">The type of the first
     /// result.</typeparam> <typeparam name="TResult2">The type of the second result.</typeparam>
     /// <param name="create">The Func<Result<TResult1>> to compose.</param> <param name="func">The
     /// Func<TResult1, Result<TResult2>> to compose.</param> <param name="onFail">The
     /// Func<Result<TResult1>, Result<TResult2>> to invoke if the first result is a failure.</param>
     /// <returns>A Func<Result<TResult2>> composed of the two functions.</returns>
-    public static Func<Result<TResult2>> Compose<TResult1, TResult2>([DisallowNull] this Func<Result<TResult1>> create, Func<TResult1, Result<TResult2>> func, Func<Result<TResult1>, Result<TResult2>>? onFail = null)
+    public static Func<Result<TResult2>> Compose<TArgs, TResult2>([DisallowNull] this Func<Result<TArgs>> create, Func<TArgs, Result<TResult2>> func, Func<Result<TArgs>, Result<TResult2>>? onFail = null)
     {
         Check.IfArgumentNotNull(create);
         Check.IfArgumentNotNull(func);
@@ -127,14 +136,14 @@ public static class CodeHelper
     /// <summary>
     /// Compose a function with a given argument.
     /// </summary>
-    /// <typeparam name="TResult1">The type of the result of the first function.</typeparam>
+    /// <typeparam name="TArgs">The type of the result of the first function.</typeparam>
     /// <typeparam name="TResult2">The type of the result of the composed function.</typeparam>
     /// <typeparam name="TArg">The type of the argument of the composed function.</typeparam>
     /// <param name="create">The first function.</param>
     /// <param name="func">The composed function.</param>
     /// <param name="arg">The argument of the composed function.</param>
     /// <returns>The composed function.</returns>
-    public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TArg, TResult2> func, TArg arg)
+    public static Func<TResult2> Compose<TArgs, TResult2, TArg>([DisallowNull] this Func<TArgs> create, Func<TArgs, TArg, TResult2> func, TArg arg)
     {
         Check.IfArgumentNotNull(create);
         Check.IfArgumentNotNull(func);
@@ -206,19 +215,19 @@ public static class CodeHelper
     /// <summary>
     /// Compose a Func with an Action and a Func to get the argument for the Action.
     /// </summary>
-    /// <typeparam name="TResult1">The type of the result of the Func.</typeparam>
-    /// <typeparam name="TArg">The type of the argument for the Action.</typeparam>
+    /// <typeparam name="TArgs">The type of the result of the Func.</typeparam>
+    /// <typeparam name="TResult">The type of the argument for the Action.</typeparam>
     /// <param name="create">The Func to compose.</param>
     /// <param name="action">The Action to compose.</param>
-    /// <param name="getArg">The Func to get the argument for the Action.</param>
+    /// <param name="getResult">The Func to get the argument for the Action.</param>
     /// <returns>A composed Func.</returns>
-    public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TArg> action, Func<TResult1, TArg> getArg)
+    public static Func<TArgs> Compose<TArgs, TResult>([DisallowNull] this Func<TArgs> create, Action<TResult> action, Func<TArgs, TResult> getResult)
     {
         Check.IfArgumentNotNull(create);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
-            action?.Invoke(getArg(result));
+            action?.Invoke(getResult(result));
             return result;
         };
     }

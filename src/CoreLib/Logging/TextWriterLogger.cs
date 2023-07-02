@@ -4,6 +4,8 @@ namespace Library.Logging;
 
 public sealed class TextWriterLogger : FastLoggerBase<string>, ILogger
 {
+    private string? _defaultFormat;
+
     public TextWriterLogger(IEnumerable<TextWriter> writers)
         => this.Writers.AddRange(ToAction(writers.ArgumentNotNull().Compact()));
 
@@ -30,8 +32,11 @@ public sealed class TextWriterLogger : FastLoggerBase<string>, ILogger
         return this;
     }
 
-    public void Log(object message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = LogFormat.FORMAT_DEFAULT)
-        => base.Log(message?.ToString() ?? string.Empty, level, sender, time, stackTrace, format);
+    public void Log(object message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = null)
+        => base.Log(message?.ToString() ?? string.Empty, level, sender, time, stackTrace, format ?? this._defaultFormat);
+
+    public TextWriterLogger SetDefaultFormat(string? format)
+        => this.With(x => x._defaultFormat = format);
 
     protected override void OnLogging(LogRecord<string> logRecord)
     {

@@ -34,7 +34,7 @@ public abstract class LoggersBase<TMessage>(IEnumerable<ILogger<TMessage>> logge
     public new void CopyTo(ILogger<TMessage>[] array, int arrayIndex)
         => base.CopyTo(array, arrayIndex);
 
-    public void Log([DisallowNull] TMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = LogFormat.FORMAT_DEFAULT)
+    public void Log([DisallowNull] TMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = null)
     {
         if (!this.IsEnabled || !level.MeetsLevel(this.LogLevel))
         {
