@@ -83,7 +83,7 @@ public sealed class IpAddress :
     public static PingReply Ping(in string hostNameOrAddress, TimeSpan timeout)
     {
         Check.IfArgumentNotNull(hostNameOrAddress);
-
+        LibLogger.Debug($"Ping {hostNameOrAddress}");
         using var ping = new Ping();
         return ping.Send(hostNameOrAddress, timeout.TotalMilliseconds.Cast().ToInt());
     }
@@ -91,13 +91,18 @@ public sealed class IpAddress :
     public static PingReply Ping(in string hostNameOrAddress)
     {
         Check.IfArgumentNotNull(hostNameOrAddress);
-
+        LibLogger.Debug($"Ping {hostNameOrAddress}");
         using var ping = new Ping();
         return ping.Send(hostNameOrAddress);
     }
 
-    public static bool TryParse([DisallowNull] in string ip, out IpAddress? result)
+    public static bool TryParse([DisallowNull] in string ip, [MaybeNullWhen(false)] out IpAddress? result)
     {
+        if (ip.IsNullOrEmpty())
+        {
+            result = default;
+            return false;
+        }
         try
         {
             result = Parse(ip);
@@ -105,14 +110,13 @@ public sealed class IpAddress :
         }
         catch
         {
-            result = null;
+            result = default;
             return false;
         }
     }
 
     public static TryMethodResult<IpAddress?> TryParse([DisallowNull] in string ip)
     {
-        Check.IfArgumentNotNull(ip);
         try
         {
             return TryMethodResult<IpAddress>.CreateSuccess(new IpAddress(ip))!;
@@ -143,7 +147,7 @@ public sealed class IpAddress :
     }
 
     public static Result<string?> Validate(in string ip)
-        => ip.ArgumentNotNull().Split('.').Check()
+        => ip.ArgumentNotNull().Split('.').Compact().Check()
              .RuleFor(x => x.Length == 4, () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.All(seg => seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.All(seg => seg.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")

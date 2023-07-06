@@ -251,6 +251,16 @@ public static class EnumerableHelper
     public static Span<TItem> AsSpan<TItem>(this IEnumerable<TItem> items)
         => items is null ? default : MemoryExtensions.AsSpan(items.ToArray());
 
+#if NET8_0_OR_GREATER
+    [Obsolete("Use `AsImmutableArray` instead.", true)]
+#endif
+    public static ImmutableArray<TItem> AsImmutableArrayUnsafe<TItem>(this TItem[] itemArray)
+        => Unsafe.As<TItem[], ImmutableArray<TItem>>(ref itemArray);
+#if NET8_0_OR_GREATER
+    public static ImmutableArray<TItem> AsImmutableArray<TItem>(this TItem[] itemArray)
+        => ImmutableCollectionsMarshal.AsImmutableArray(itemArray);
+#endif
+
     /// <summary>
     /// Builds a read-only list from an enumerable.
     /// </summary>

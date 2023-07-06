@@ -10,7 +10,7 @@ public static class ConsoleHelper
 {
     public static void Configure(Action<ConsoleHelperOptions>? configurator = null)
     {
-        LibLogger.Info("Configuring...", nameof(ConsoleHelper));
+        LibLogger.Debug("Configuring...", nameof(ConsoleHelper));
         var options = new ConsoleHelperOptions();
         configurator?.Invoke(options);
         if (options.RedirectConsoleOut)
@@ -21,7 +21,7 @@ public static class ConsoleHelper
         {
             LibLogger.AddConsole(format:$"{LogFormat.MESSAGE}");
         }
-        LibLogger.Info("Configured.", nameof(ConsoleHelper));
+        LibLogger.Debug("Configured.", nameof(ConsoleHelper));
     }
 
     public static T DumpLine<T>(T t)

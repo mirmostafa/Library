@@ -1227,7 +1227,7 @@ public static class StringHelper
         Check.IfArgumentNotNull(statementSeparator);
 
         // Split the string into key-value pairs
-        var keyValuePairs = str.Split(statementSeparator).Trim();
+        var keyValuePairs = str.Split(statementSeparator).Compact();
 
         // Iterate through each key-value pair
         foreach (var keyValuePair in keyValuePairs)
@@ -1345,12 +1345,6 @@ public static class StringHelper
     /// </summary>
     public static string? ToUnicode(this string? str)
         => str is null ? null : Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
-
-    /// <summary>
-    /// Trims the given IEnumerable of strings, removing any empty or null strings.
-    /// </summary>
-    public static IEnumerable<string> Trim(this IEnumerable<string> strings)
-        => strings.Where(item => !item.IsNullOrEmpty());
 
     /// <summary>
     /// Trims all strings in the given IEnumerable.
