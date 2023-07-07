@@ -1343,8 +1343,8 @@ public static class StringHelper
     /// <summary>
     /// Converts a string to Unicode encoding.
     /// </summary>
-    public static string? ToUnicode(this string? str)
-        => str is null ? null : Encoding.Unicode.GetString(Encoding.Unicode.GetBytes(str));
+    public static string? ToUnicode(this string? str, Encoding? current = null)
+        => str is null ? null : Encoding.Unicode.GetString((current ?? Encoding.Unicode).GetBytes(str));
 
     /// <summary>
     /// Trims all strings in the given IEnumerable.
