@@ -148,7 +148,7 @@ public sealed class IpAddress :
 
     public static Result<string?> Validate(in string ip)
         => ip.ArgumentNotNull().Split('.').Compact().Check()
-             .RuleFor(x => x.Length == 4, () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.Count() == 4, () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.All(seg => seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.All(seg => seg.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
              .Build().WithValue(ip);

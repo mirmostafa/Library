@@ -539,6 +539,11 @@ public static class EnumerableHelper
             yield return action(item);
         }
     }
+    //public static (TItems Items, IEnumerable<TResult> Results) ForEach<TItems, TItem, TResult>([DisallowNull] this TItems items, [DisallowNull] Func<TItem, TResult> action)
+    //    where TItems: IEnumerable<TItem>
+    //{
+    //    return (items, items.ForEach(action));
+    //}
 
     /// <summary>
     /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and applies an action to

@@ -11,7 +11,7 @@ public static class MsLoggerMessageHelper
         = LoggerMessage.Define<string>(MsLogLevel.Error, new EventId(1, nameof(Error)), "{Log}");
 
     private static readonly Action<IMsLogger, string, Exception?> _info
-                = LoggerMessage.Define<string>(MsLogLevel.Information, new EventId(1, nameof(Info)), "{Log}");
+        = LoggerMessage.Define<string>(MsLogLevel.Information, new EventId(1, nameof(Info)), "{Log}");
 
     private static readonly Action<IMsLogger, string, Exception?> _warning
         = LoggerMessage.Define<string>(MsLogLevel.Warning, new EventId(1, nameof(Warn)), "{Log}");
@@ -23,7 +23,7 @@ public static class MsLoggerMessageHelper
         => _error(logger, log, exception);
 
     public static void Info(this IMsLogger logger, string log)
-                => _info(logger, log, null);
+        => _info(logger, log, null);
 
     public static void Warn(this IMsLogger logger, string log)
         => _warning(logger, log, null);

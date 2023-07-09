@@ -15,17 +15,13 @@ public interface ILogger<TLogMessage>
     /// <summary>
     /// Gets or sets a value indicating whether this instance is enabled.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if this instance is enabled; otherwise, <c>false</c>.
-    /// </value>
+    /// <value><c>true</c> if this instance is enabled; otherwise, <c>false</c>.</value>
     bool IsEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets the log level.
     /// </summary>
-    /// <value>
-    /// The log level.
-    /// </value>
+    /// <value>The log level.</value>
     LogLevel LogLevel { get; set; }
 
     /// <summary>
@@ -85,7 +81,7 @@ public interface ILogger<TLogMessage>
         => this.Log(message, LogLevel.Trace, sender: sender ?? CodeHelper.GetCallerMethod(), time ?? DateTime.Now, stackTrace);
 
     /// <summary>
-    /// logs the specified message with LogLevel.Warning.
+    /// Logs the specified message with LogLevel.Warning.
     /// </summary>
     /// <param name="message">The message.</param>
     /// <param name="sender">The sender.</param>

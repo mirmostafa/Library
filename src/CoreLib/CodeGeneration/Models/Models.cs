@@ -16,6 +16,9 @@ public readonly struct GenerateCodeResult(in Code? main, in Code? partial)
 {
     public Code? Main { get; } = main;
     public Code? Partial { get; } = partial;
+
+    public void Deconstruct(out Code? main, out Code? partial)
+        => (main, partial) = (this.Main, this.Partial);
 }
 
 [Immutable]
