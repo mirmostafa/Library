@@ -49,10 +49,10 @@ public readonly record struct ProgressData(in int? Max = null, in int? Current =
     [return: NotNullIfNotNull(nameof(data.Description))]
     public static implicit operator string?(in ProgressData data)
         => data.ToString();
+
     public void Deconstruct(out string? description, out int? max, out int? current)
         => (description, max, current) = (this.Description, this.Max, this.Current);
 
-    [ExcludeFromCodeCoverage]
     public override string? ToString()
         => this.Description;
 }

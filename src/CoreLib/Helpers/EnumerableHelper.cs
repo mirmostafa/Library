@@ -109,9 +109,10 @@ public static class EnumerableHelper
     /// <param name="list">The ObservableCollection to add the items to.</param>
     /// <param name="items">The items to add to the collection.</param>
     /// <returns>The ObservableCollection with the added items.</returns>
-    public static ObservableCollection<T> AddRange<T>([DisallowNull] this ObservableCollection<T> list, in IEnumerable<T> items)
+    [return: NotNullIfNotNull(nameof(list))]
+    public static ObservableCollection<T>? AddRange<T>(this ObservableCollection<T>? list, in IEnumerable<T>? items)
     {
-        if (items?.Any() is true)
+        if (list != null && items?.Any() is true)
         {
             foreach (var item in items)
             {

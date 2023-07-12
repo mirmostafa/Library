@@ -346,8 +346,8 @@ public static class ObjectHelper
             : propInfo;
     }
 
-    public static bool HasAttribute<TType, TAttribute>() where TAttribute : Attribute
-            => HasAttribute<TAttribute>(typeof(Type));
+    public static bool HasAttribute<TType, TAttribute>(bool inherit) 
+        where TAttribute : Attribute => HasAttribute<TAttribute>(typeof(Type), inherit);
 
     /// <summary>
     /// Checks if the given type has an attribute of type TAttribute.
@@ -355,12 +355,8 @@ public static class ObjectHelper
     /// <typeparam name="TAttribute">The type of attribute to check for.</typeparam>
     /// <param name="type">The type to check.</param>
     /// <returns>True if the type has an attribute of type TAttribute, false otherwise.</returns>
-    public static bool HasAttribute<TAttribute>(Type type)
-        where TAttribute : Attribute
-    {
-        var attributes = type.GetCustomAttributes(typeof(TAttribute), false);
-        return attributes.Length > 0;
-    }
+    public static bool HasAttribute<TAttribute>(Type type, bool inherit)
+        where TAttribute : Attribute => type.GetCustomAttribute<TAttribute>(inherit) != null;
 
     /// <summary>
     /// Determines whether [is database null] [the specified o].
@@ -388,6 +384,9 @@ public static class ObjectHelper
     public static bool IsInheritedOrImplemented(in object? obj, [DisallowNull] in Type type)
         => obj != null && type.ArgumentNotNull().IsAssignableFrom(obj.GetType());
 
+    public static bool IsInheritedOrImplemented<T>(in object? obj)
+        => IsInheritedOrImplemented(obj, typeof(T));
+
     /// <summary>
     /// Determines whether the specified value is null.
     /// </summary>
@@ -411,8 +410,14 @@ public static class ObjectHelper
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
         => id == Guid.Empty;
 
+    public static bool IsSetMethodInit([DisallowNull] this PropertyInfo propertyInfo)
+    {
+        Check.IfArgumentNotNull(propertyInfo?.SetMethod);
+        return propertyInfo.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit));
+    }
+
     public static dynamic props(this object o)
-        => _propsExpando.GetOrCreateValue(o);
+            => _propsExpando.GetOrCreateValue(o);
 
     /// <summary>
     /// Search deeply for specific objects
@@ -466,11 +471,5 @@ public static class ObjectHelper
     {
         var property = obj?.GetType().GetProperty(propertyName);
         property?.SetValue(obj, value, null);
-    }
-
-    public static bool IsSetMethodInit([DisallowNull] this PropertyInfo propertyInfo)
-    {
-        Check.IfArgumentNotNull(propertyInfo?.SetMethod);
-        return propertyInfo.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit));
     }
 }

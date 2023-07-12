@@ -1,153 +1,188 @@
-﻿using Library.Logging;
+﻿using Library.DesignPatterns.Markers;
+using Library.Exceptions;
 using Library.Results;
 using Library.Validations;
 
 namespace Library.Threading.MultistepProgress;
 
-public sealed class TaskRunner<TArg>(ILogger? logger = null, string? name = null, CancellationToken? cancellationToken = default) : ILoggerContainer
+[Fluent]
+public sealed class TaskRunner<TArg>
 {
-    private readonly CancellationToken? _cancellationToken = cancellationToken;
-    private readonly string _name = name ?? Guid.NewGuid().ToString();
-    private readonly List<Func<TArg?, Task<TArg?>>> _taskList = new();
-    private bool _continueOnException;
+    private readonly List<Func<TArg, CancellationToken, Task<TArg>>> _funcList = new();
+    private readonly Func<CancellationToken, Task<TArg>> _start;
     private bool _isRunning;
-    private Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)>? _onCancellationRequested;
-    private Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount, Result<TArg?>)>? _onEnded;
-    private Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount, Exception exception)>? _onExceptionOccurred;
-    private Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)>? _onStarting;
-    private Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)>? _onStepped;
-    private Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)>? _onStepping;
-    private Func<Task<TArg?>> _startWith = null!;
+    private Action<Result<TArg?>>? _onEnded;
 
-    public ILogger Logger { get; } = logger ?? ILogger.Empty;
-
-    public static TaskRunner<TArg> New(ILogger? logger = null, string? name = null, CancellationToken? cancellationToken = default)
-        => new(logger, name, cancellationToken);
-
-    public TaskRunner<TArg?> ContinueOnException(bool continueOnException = true)
+    private TaskRunner([DisallowNull] Func<CancellationToken, Task<TArg>> start, IEnumerable<Func<TArg, CancellationToken, Task<TArg>>>? funcs = null)
     {
-        _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
-        this._continueOnException = continueOnException;
-        return this;
-    }
-
-    public string GetName() 
-        => this._name;
-
-    public TaskRunner<TArg> OnCancellationRequested(Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)> handler)
-    {
-        _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
-        this._onCancellationRequested = handler;
-        return this;
-    }
-
-    public TaskRunner<TArg> OnEnded(Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount, Result<TArg?>)> handler)
-    {
-        _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
-        this._onEnded = handler;
-        return this;
-    }
-
-    public TaskRunner<TArg> OnExceptionOccurred(Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount, Exception exception)> handler)
-    {
-        _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
-        this._onExceptionOccurred = handler;
-        return this;
-    }
-
-    public TaskRunner<TArg> OnStarting(Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)> handler)
-    {
-        _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
-        this._onStarting = handler;
-        return this;
-    }
-
-    public TaskRunner<TArg> OnStepped(Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)> handler)
-    {
-        _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
-        this._onStepped = handler;
-        return this;
-    }
-
-    public TaskRunner<TArg> OnStepping(Action<(TaskRunner<TArg> TaskRunner, int TaskIndex, int TaskCount)> handler)
-    {
-        _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
-        this._onStepping = handler;
-        return this;
-    }
-
-    public async Task<Result<TArg?>> RunAsync()
-    {
-        _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
-
-        var count = this._taskList.Count + 1;
-        var index = 0;
-        var token = this._cancellationToken;
-        Result<TArg?> result = null!;
-
-        this._isRunning = true;
-        this._onStarting?.Invoke((this, 0, count));
-        var arg = await this._startWith();
-        for (; index < this._taskList.Count; index++)
+        Check.IfArgumentNotNull(start);
+        this._start = start;
+        if (funcs?.Any() ?? false)
         {
-            if (checkCancellationRequested(token))
-            {
-                this._onCancellationRequested?.Invoke((this, index, count));
-                result = fail(arg, new OperationCanceledException());
-                break;
-            }
-            var task = this._taskList[index];
-            try
-            {
-                this._onStepping?.Invoke((this, index, count));
-                arg = await task(arg);
-                this._onStepped?.Invoke((this, index, count));
-            }
-            catch (Exception ex)
-            {
-                this._onExceptionOccurred?.Invoke((this, index, count, ex));
-                if (!this._continueOnException)
-                {
-                    result = fail(arg, ex);
-                    break;
-                }
-            }
+            this._funcList.AddRange(funcs);
         }
-        this._isRunning = false;
-        result ??= Result<TArg?>.CreateSuccess(arg);
-        this._onEnded?.Invoke((this, index, count, result));
-        this._isRunning = false;
+    }
+
+    public static TaskRunner<TArg> StartWith(Func<CancellationToken, Task<TArg>> start) =>
+        new(start);
+
+    public static TaskRunner<TArg> StartWith(Func<Task<TArg>> start) =>
+        StartWith(c => start());
+
+    public static TaskRunner<TArg> StartWith(Func<TArg> start) =>
+        StartWith(c => Task.FromResult(start()));
+
+    public static TaskRunner<TArg> StartWith(TArg state) =>
+        StartWith(c => Task.FromResult(state));
+
+    public TaskRunner<TArg> OnEnded(Action<Result<TArg?>>? action) =>
+        this.Fluent(this._onEnded = action);
+
+    public async Task<Result<TArg?>> RunAsync(CancellationToken token = default)
+    {
+        this._isRunning = true;
+        TArg? state = default;
+        Result<TArg?> result = default!;
+        try
+        {
+            state = await this._start(token);
+            foreach (var func in this._funcList.Compact())
+            {
+                if (token.IsCancellationRequested)
+                {
+                    Throw<OperationCancelException>();
+                }
+
+                state = await func(state, token);
+            }
+            result = Result<TArg?>.CreateSuccess(state);
+        }
+        catch (Exception ex)
+        {
+            result = Result<TArg?>.CreateFailure(ex, state);
+        }
+        finally
+        {
+            this._isRunning = false;
+            this._onEnded?.Invoke(result);
+        }
         return result;
-
-        static bool checkCancellationRequested(CancellationToken? token)
-            => token is not null and { CanBeCanceled: true } and { IsCancellationRequested: true };
-
-        static Result<TArg?> fail(TArg? arg, Exception ex)
-            => Result<TArg>.CreateFailure(value: arg, error: ex);
     }
 
-    public TaskRunner<TArg?> StartWith(TArg? arg)
-        => this.StartWith(() => Task.FromResult(arg));
-
-    public TaskRunner<TArg?> StartWith(Func<TArg?> action)
-        => this.StartWith(action.ToAsync());
-
-    public TaskRunner<TArg?> StartWith(Func<Task<TArg?>> getArg)
+    public TaskRunner<TArg> Then([DisallowNull] Func<TArg, CancellationToken, Task<TArg>> func)
     {
-        _ = Check.MustBe(!this._isRunning).ThrowOnFail(this);
-        this._startWith = getArg;
+        Check.If(this._isRunning, () => new CommonException());
+        Check.IfArgumentNotNull(func);
+        this._funcList.Add(func);
         return this;
     }
 
-    public TaskRunner<TArg?> Then(Func<TArg?, Task<TArg?>> task)
+    public TaskRunner<TArg> Then(Func<TArg, Task<TArg>> func) =>
+        this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, _) => func(x)));
+
+    public TaskRunner<TArg> Then(Func<TArg, Task> func) =>
+        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, _) =>
+        {
+            await func(x);
+            return x;
+        }));
+
+    public TaskRunner<TArg> Then(Func<Task> func) =>
+        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, _) =>
+        {
+            await func();
+            return x;
+        }));
+
+    public TaskRunner<TArg> Then(Action<TArg> func) =>
+        this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, t) =>
+        {
+            func(x);
+            return Task.FromResult(x);
+        }));
+
+    public TaskRunner<TArg> Then(Action func) =>
+        this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, t) =>
+        {
+            func();
+            return Task.FromResult(x);
+        }));
+}
+
+public sealed class TaskRunner
+{
+    private readonly List<Func<CancellationToken, Task>> _funcList = new();
+    private readonly Func<CancellationToken, Task> _start;
+    private bool _isRunning;
+    private Action<Result>? _onEnded;
+
+    private TaskRunner([DisallowNull] Func<CancellationToken, Task> start, IEnumerable<Func<CancellationToken, Task>>? funcs = null)
     {
-        this._taskList.Add(task);
+        Check.IfArgumentNotNull(start);
+        this._start = start;
+        if (funcs?.Any() ?? false)
+        {
+            this._funcList.AddRange(funcs);
+        }
+    }
+
+    public static TaskRunner StartWith(Func<CancellationToken, Task> start) =>
+        new(start);
+
+    public static TaskRunner StartWith(Func<Task> start) =>
+        StartWith(c => start());
+
+    public static TaskRunner StartWith(Action start) =>
+        StartWith(c => start.ToAsync(c));
+
+    public TaskRunner OnEnded(Action<Result>? action) =>
+        this.Fluent(this._onEnded = action);
+
+    public async Task<Result> RunAsync(CancellationToken token = default)
+    {
+        this._isRunning = true;
+        Result result = default!;
+        try
+        {
+            await this._start(token);
+            foreach (var func in this._funcList.Compact())
+            {
+                if (token.IsCancellationRequested)
+                {
+                    Throw<OperationCancelException>();
+                }
+
+                await func(token);
+            }
+            result = Result.CreateSuccess();
+        }
+        catch (Exception ex)
+        {
+            result = Result.CreateFailure(ex);
+        }
+        finally
+        {
+            this._isRunning = false;
+            this._onEnded?.Invoke(result);
+        }
+        return result;
+    }
+
+    public TaskRunner Then([DisallowNull] Func<CancellationToken, Task> func)
+    {
+        Check.If(this._isRunning, () => new CommonException());
+        Check.IfArgumentNotNull(func);
+        this._funcList.Add(func);
         return this;
     }
 
-    public TaskRunner<TArg?> Then(Func<TArg?, TArg?> action)
-        => this.Then(action.ToAsync());
+    public TaskRunner Then(Func<Task> func) =>
+        this.Then(new Func<CancellationToken, Task>(_ => func()));
 
-    public override string? ToString()
-        => this._name.IsNullOrEmpty() ? base.ToString() : this._name;
+    public TaskRunner Then(Action func) =>
+        this.Then(new Func<CancellationToken, Task>(t =>
+        {
+            func();
+            return Task.CompletedTask;
+        }));
 }

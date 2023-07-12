@@ -6,10 +6,10 @@ using Library.Validations;
 
 namespace Library.CodeGeneration.Models;
 
-//[Fluent]
+[Fluent]
 [Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public class Code(in string name, in Language language, in string statement, in bool isPartial = false) : IEquatable<Code>
+public class Code(in string name, in Language language, in string statement, in bool isPartial = false, in string? fileName = null) : IEquatable<Code>
 {
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
     protected readonly dynamic ExtraProperties = new Expando();
@@ -25,8 +25,11 @@ public class Code(in string name, in Language language, in string statement, in 
     public Code(in (string Name, Language Language, string Statement, bool IsPartial) data)
         : this(data.Name, data.Language, data.Statement, data.IsPartial) { }
 
+    public Code(in (string Name, Language Language, string Statement, bool IsPartial, string? FileName) data)
+        : this(data.Name, data.Language, data.Statement, data.IsPartial, data.FileName) { }
+
     protected Code(Code original)
-        : this(original.Name, original.Language, original.Statement, original.IsPartial)
+        : this(original.Name, original.Language, original.Statement, original.IsPartial, original.FileName)
     {
     }
 
@@ -40,13 +43,13 @@ public class Code(in string name, in Language language, in string statement, in 
 
     public string Statement { get; init; } = statement.ArgumentNotNull().ToString();
 
-    private string? _FileName { get; init; } = null;
+    private string? _FileName { get; init; } = fileName;
 
     public static implicit operator Code(in (string Name, Language language, string Statement, bool IsPartial) codeData)
         => new(codeData);
 
     public static implicit operator Code(in (string Name, Language language, string Statement, bool IsPartial, string FileName) codeData)
-        => new(codeData.Name, codeData.language, codeData.Statement, codeData.IsPartial) { _FileName = codeData.FileName };
+        => new(codeData.Name, codeData.language, codeData.Statement, codeData.IsPartial, codeData.FileName);
 
     public static implicit operator string(in Code code)
         => code.Statement;
@@ -57,20 +60,11 @@ public class Code(in string name, in Language language, in string statement, in 
     public static bool operator ==(Code left, string code)
         => left.Equals(code);
 
-    public static Code ToCode(in (string Name, Language language, string Statement, bool IsPartial) codeData)
-        => codeData;
-
-    public static Code ToCode(in string name, in Language language, in string statement, in bool isPartial)
-        => new(name, language, statement, isPartial);
-
     public static Code ToCode(in string name, in Language language, in string statement, in bool isPartial, in string? fileName)
-        => new(name, language, statement, isPartial) { _FileName = fileName };
+        => new(name, language, statement, isPartial, fileName);
 
     public void Deconstruct(out string name, out string statement)
-                                                                => (name, statement) = (this.Name, this.Statement);
-
-    public void Deconstruct(out string name, out Language language, out string statement)
-        => (name, language, statement) = (this.Name, this.Language, this.Statement);
+        => (name, statement) = (this.Name, this.Statement);
 
     public void Deconstruct(out string name, out string statement, out bool isPartial)
         => (name, statement, isPartial) = (this.Name, this.Statement, this.IsPartial);
@@ -78,8 +72,11 @@ public class Code(in string name, in Language language, in string statement, in 
     public void Deconstruct(out string name, out Language language, out string statement, out bool isPartial)
        => (name, language, statement, isPartial) = (this.Name, this.Language, this.Statement, this.IsPartial);
 
+    public void Deconstruct(out string name, out Language language, out string statement, out bool isPartial, out string fileName)
+       => (name, language, statement, isPartial, fileName) = (this.Name, this.Language, this.Statement, this.IsPartial, this.FileName);
+
     public virtual bool Equals(Code? other)
-        => this.Name == other?.Name;
+        => this.GetHashCode() == other?.GetHashCode();
 
     public bool Equals(string name)
         => this.Name == name;
@@ -88,10 +85,13 @@ public class Code(in string name, in Language language, in string statement, in 
         => this.Equals(obj as Code);
 
     public override int GetHashCode()
-        => (this.Name?.GetHashCode() ?? 0) * 45;
+        => HashCode.Combine(this.Name, this.Language);
 
     public override string ToString()
         => this.Name;
+
+    public Code WithStatement([DisallowNull]string statement)
+        => new(this) { Statement = statement };
 
     private static string GenerateFileName(string name, Language language, bool isPartial)
         => Path.ChangeExtension(isPartial ? $"{name}.partial.tmp" : name, language.FileExtension);

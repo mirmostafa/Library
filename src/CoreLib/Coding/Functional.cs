@@ -389,17 +389,20 @@ public static class Functional
     /// Throws a new instance of the specified exception type.
     /// </summary>
     [DoesNotReturn]
+    [DebuggerHidden]
+    [StackTraceHidden]
+    [DebuggerStepThrough]
     public static void Throw<TException>() where TException : Exception, new()
         => ExceptionDispatchInfo.Throw(new TException());
 
     /// <summary>
     /// Throws the specified exception.
     /// </summary>
-    /// <typeparam name="T">The type of the return value.</typeparam>
+    /// <typeparam name="TFakeResult">The type of the return value.</typeparam>
     /// <param name="exception">The exception to throw.</param>
     /// <returns>This method does not return.</returns>
     [DoesNotReturn]
-    public static T Throw<T>(in Exception exception)
+    public static TFakeResult Throw<TFakeResult>(in Exception exception)
         => throw exception;
 
     /// <summary>
