@@ -1,4 +1,6 @@
-﻿using Library.DesignPatterns.Markers;
+﻿using System.Diagnostics;
+
+using Library.DesignPatterns.Markers;
 using Library.Exceptions;
 using Library.Results;
 using Library.Validations;
@@ -6,6 +8,8 @@ using Library.Validations;
 namespace Library.Threading.MultistepProgress;
 
 [Fluent]
+[DebuggerStepThrough]
+[StackTraceHidden]
 public sealed class TaskRunner<TArg>
 {
     private readonly List<Func<TArg, CancellationToken, Task<TArg>>> _funcList = new();
@@ -109,6 +113,9 @@ public sealed class TaskRunner<TArg>
         }));
 }
 
+[Fluent]
+[DebuggerStepThrough]
+[StackTraceHidden]
 public sealed class TaskRunner
 {
     private readonly List<Func<CancellationToken, Task>> _funcList = new();
@@ -180,7 +187,7 @@ public sealed class TaskRunner
         this.Then(new Func<CancellationToken, Task>(_ => func()));
 
     public TaskRunner Then(Action func) =>
-        this.Then(new Func<CancellationToken, Task>(t =>
+        this.Then(new Func<CancellationToken, Task>([DebuggerStepThrough] (_) =>
         {
             func();
             return Task.CompletedTask;

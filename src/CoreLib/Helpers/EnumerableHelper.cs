@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -11,6 +12,8 @@ using Library.Validations;
 
 namespace Library.Helpers;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class EnumerableHelper
 {
     /// <summary>
@@ -414,17 +417,19 @@ public static class EnumerableHelper
     /// <summary>
     /// Returns an IEnumerable of non-null elements from the given IEnumerable of nullable elements.
     /// </summary>
-    public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items)
-            where TSource : class => items?.Where(x => x is not null).Select(x => x!) ?? Enumerable.Empty<TSource>();
+    public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items) where TSource : class =>
+        items?
+             .Where([DebuggerStepThrough] (x) => x is not null)
+             .Select([DebuggerStepThrough] (x) => x!) ?? Enumerable.Empty<TSource>();
 
     /// <summary>
     /// Checks if the given IEnumerable contains a key-value pair with the specified key.
     /// </summary>
-    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
-            => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
+    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key) =>
+        source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
 
-    public static T[] Copy<T>(this T[] array)
-                    => array.ToEnumerable().ToArray();
+    public static T[] Copy<T>(this T[] array) =>
+        array.ToEnumerable().ToArray();
 
     /// <summary> Counts the number of elements in a sequence that are not enumerated. </summary>
     /// <typeparam name="T">The type of the elements of source.</typeparam> <param name="source">The
@@ -1065,16 +1070,18 @@ public static class EnumerableHelper
     public static IEnumerable<T> Slice<T>(this IEnumerable<T> items, int start = 0, int end = 0, int steps = 0)
     {
         var index = 0;
-        var empty = () => { };
-        var getTrue = () => true;
+        void empty()
+        {
+        }
+        bool getTrue() => true;
         var incIndex = steps switch
         {
-            0 or 1 => empty,
+            0 or 1 => (Action)empty,
             < 1 => () => index--,
             _ => () => index++,
         };
-        var resIndex = steps is 0 or 1 ? empty : () => { index = 0; };
-        var shouldReturn = steps is 0 or 1 ? getTrue : () => index == 0 || steps == index;
+        var resIndex = steps is 0 or 1 ? (Action)empty : () => { index = 0; };
+        var shouldReturn = steps is 0 or 1 ? (Func<bool>)getTrue : () => index == 0 || steps == index;
         var buffer = items.AsEnumerable();
         if (steps < 0)
         {

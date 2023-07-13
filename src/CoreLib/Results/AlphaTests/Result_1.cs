@@ -5,16 +5,16 @@ using System.Runtime.CompilerServices;
 using Library.Interfaces;
 using Library.Validations;
 
-namespace Library.Results.Unresolvable;
+namespace Library.AlphaTests;
 
 public class Result(in bool? succeed = null,
                      in object? status = null,
                      in string? message = null,
                      in IEnumerable<(object Id, object Error)>? errors = null,
                      in ImmutableDictionary<string, object>? extraData = null)
-    : ResultBase(succeed, status, message, errors, extraData), 
-    IEmpty<Result>, 
-    IAdditionOperators<Result, Result, Result>, 
+    : ResultBase(succeed, status, message, errors, extraData),
+    IEmpty<Result>,
+    IAdditionOperators<Result, Result, Result>,
     IEquatable<Result>
 {
     private static Result? _empty;
@@ -116,17 +116,15 @@ public class Result(in bool? succeed = null,
     public bool Equals(Result? other)
         => throw new NotImplementedException();
 
-    public override bool Equals(object? obj) 
+    public override bool Equals(object? obj)
         => this.Equals(obj as Result);
 
     /// <summary>
     /// Serves as the default hash function.
     /// </summary>
-    /// <returns>
-    /// The hash code for the current instance.
-    /// </returns>
+    /// <returns>The hash code for the current instance.</returns>
     /// <exception cref="NotImplementedException"></exception>
-    public override int GetHashCode() 
+    public override int GetHashCode()
         => throw new NotImplementedException();
 }
 
@@ -136,8 +134,8 @@ public class Result<TValue>(in TValue value,
     in string? message = null,
     in IEnumerable<(object Id, object Error)>? errors = null,
     in ImmutableDictionary<string, object>? extraData = null)
-    : ResultBase(succeed, status, message, errors, extraData) , 
-    IAdditionOperators<Result<TValue>, ResultBase, Result<TValue>>, 
+    : ResultBase(succeed, status, message, errors, extraData),
+    IAdditionOperators<Result<TValue>, ResultBase, Result<TValue>>,
     IEquatable<Result<TValue>>
 {
     private static Result<TValue?>? _failure;
@@ -150,11 +148,9 @@ public class Result<TValue>(in TValue value,
 
     public TValue Value { get; } = value;
 
-    /// <summary>
-    /// Combines multiple Result<TValue> objects into a single Result<TValue> object.
-    /// </summary>
-    /// <param name="results">The Result<TValue> objects to combine.</param>
-    /// <returns>A single Result<TValue> object containing the combined results.</returns>
+    /// <summary> Combines multiple Result<TValue> objects into a single Result<TValue> object.
+    /// </summary> <param name="results">The Result<TValue> objects to combine.</param> <returns>A
+    /// single Result<TValue> object containing the combined results.</returns>
     public static Result<TValue> Combine(params Result<TValue>[] results)
     {
         var data = ResultBase.Combine(results);
@@ -260,13 +256,13 @@ public class Result<TValue>(in TValue value,
     public void Deconstruct(out bool isSucceed, out TValue Value)
         => (isSucceed, Value) = (this.IsSucceed, this.Value);
 
-    public bool Equals(Result<TValue>? other) 
+    public bool Equals(Result<TValue>? other)
         => throw new NotImplementedException();
 
-    public override bool Equals(object? obj) 
+    public override bool Equals(object? obj)
         => this.Equals(obj as Result<TValue>);
 
-    public override int GetHashCode() 
+    public override int GetHashCode()
         => throw new NotImplementedException();
 
     /// <summary>
@@ -282,9 +278,7 @@ public class Result<TValue>(in TValue value,
     public Task<Result<TValue>> ToAsync()
         => Task.FromResult(this);
 
-    /// <summary>
-    /// Converts a Result<TValue> to a Result.
-    /// </summary>
+    /// <summary> Converts a Result<TValue> to a Result. </summary>
     public Result ToResult(in Result<TValue> result)
         => result;
 
@@ -300,7 +294,9 @@ public class Result<TValue>(in TValue value,
     /// Creates a new instance of the <see cref="Result{TValue}"/> class with the specified value.
     /// </summary>
     /// <param name="value">The value to set.</param>
-    /// <returns>A new instance of the <see cref="Result{TValue}"/> class with the specified value.</returns>
+    /// <returns>
+    /// A new instance of the <see cref="Result{TValue}"/> class with the specified value.
+    /// </returns>
     public Result<TValue> WithValue(in TValue value)
         => this.With(() => this.Value);
 }
@@ -314,12 +310,8 @@ public abstract class ResultBase(in bool? succeed = null,
     : ICloneable
 {
     protected ResultBase(ResultBase original)
+        : this(original.Succeed, original.Status, original.Message, original.Errors, original.ExtraData)
     {
-        this.Succeed = original.Succeed;
-        this.Status = original.Status;
-        this.Message = original.Message;
-        this.Errors = original.Errors;
-        this.ExtraData = original.ExtraData;
     }
 
     public IEnumerable<(object Id, object Error)>? Errors { get; init; } = errors;
@@ -368,7 +360,7 @@ public abstract class ResultBase(in bool? succeed = null,
     public virtual bool Equals(ResultBase? other)
         => other is not null && this.Status == other.Status;
 
-    public override bool Equals(object? obj) 
+    public override bool Equals(object? obj)
         => this.Equals(obj as ResultBase);
 
     /// <summary>

@@ -81,7 +81,7 @@ public static class CheckHelpers
     public static T ThrowIfDisposed<T>(this T @this, [DoesNotReturnIf(true)] bool disposed)
         where T : IDisposable
     {
-        Check.If(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
+        Check.If(disposed, () => new ObjectDisposedException(@this?.GetType().Name));
         return @this;
     }
 

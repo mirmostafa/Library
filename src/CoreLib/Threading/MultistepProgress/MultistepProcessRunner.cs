@@ -1,5 +1,12 @@
-﻿namespace Library.Threading.MultistepProgress;
+﻿using System.Diagnostics;
 
+using Library.DesignPatterns.Markers;
+
+namespace Library.Threading.MultistepProgress;
+
+[Fluent]
+[DebuggerStepThrough]
+[StackTraceHidden]
 public sealed class MultistepProcessRunner<TState>(in TState state, in IMultistepProcess reporter, IMultistepProcess? subReporter = null, object? owner = null)
 {
     private readonly object? _owner = owner;

@@ -33,11 +33,11 @@ public sealed class Check
     /// <summary>
     /// Throws an exception if the specified boolean is false.
     /// </summary>
-    /// <param name="ok">The boolean to check.</param>
+    /// <param name="notOk">The boolean to check.</param>
     /// <param name="getExceptionIfNot">A function to get the exception to throw if the boolean is false.</param>
-    public static void If([DoesNotReturnIf(false)] bool ok, in Func<Exception> getExceptionIfNot)
+    public static void If([DoesNotReturnIf(false)] bool notOk, in Func<Exception> getExceptionIfNot)
     {
-        if (!ok)
+        if (notOk)
         {
             Throw(getExceptionIfNot);
         }
@@ -85,7 +85,7 @@ public sealed class Check
     /// <param name="obj">The object to check.</param>
     /// <param name="argName">The name of the argument.</param>
     public static void IfArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-        => IfArgumentNotNull(obj is not null, argName!);
+        => IfArgumentNotNull(obj is null, argName!);
 
     /// <summary>
     /// Checks if the given argument is not null and throws an ArgumentNullException if it is.

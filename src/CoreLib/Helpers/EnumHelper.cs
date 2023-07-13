@@ -115,7 +115,7 @@ public static class EnumHelper
             string cultureName = "en-US")
     {
         Check.IfArgumentNotNull(value);
-        Check.If(!string.IsNullOrEmpty(cultureName), () => new ArgumentException($"'{nameof(cultureName)}' cannot be null or empty", nameof(cultureName)));
+        Check.If(string.IsNullOrEmpty(cultureName), () => new ArgumentException($"'{nameof(cultureName)}' cannot be null or empty", nameof(cultureName)));
 
         if (localized)
         {
