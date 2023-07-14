@@ -19,22 +19,20 @@ public sealed class Check
     private Check()
     { }
 
-    /// <summary>
-    /// Gets the singleton instance of the <see cref="Check"/> functionality.
-    /// </summary>
-    /// <remarks>
-    /// Users can use this to plug-in custom assertions through C# extension methods.
-    /// For instance, the signature of a custom assertion provider could be "public static
-    /// void IsOfType<T>(this Assert assert, object obj)" Users could then use a syntax
-    /// similar to the default assertions which in this case is "Assert.That.IsOfType<Dog>(animal);"
-    /// </remarks>
+    /// <summary> Gets the singleton instance of the <see cref="Check"/> functionality. </summary>
+    /// <remarks> Users can use this to plug-in custom assertions through C# extension methods. For
+    /// instance, the signature of a custom assertion provider could be "public static void
+    /// IsOfType<T>(this Assert assert, object obj)" Users could then use a syntax similar to the
+    /// default assertions which in this case is "Assert.That.IsOfType<Dog>(animal);" </remarks>
     public static Check That => _that ??= new();
 
     /// <summary>
     /// Throws an exception if the specified boolean is false.
     /// </summary>
     /// <param name="notOk">The boolean to check.</param>
-    /// <param name="getExceptionIfNot">A function to get the exception to throw if the boolean is false.</param>
+    /// <param name="getExceptionIfNot">
+    /// A function to get the exception to throw if the boolean is false.
+    /// </param>
     public static void If([DoesNotReturnIf(false)] bool notOk, in Func<Exception> getExceptionIfNot)
     {
         if (notOk)
@@ -42,16 +40,20 @@ public sealed class Check
             Throw(getExceptionIfNot);
         }
     }
+
     /// <summary>
-    /// Checks if the given boolean is true, and throws a new instance of the specified exception if it is false. 
+    /// Checks if the given boolean is true, and throws a new instance of the specified exception if
+    /// it is false.
     /// </summary>
-    /// <typeparam name="TValidationException">The type of exception to throw if the boolean is false.</typeparam>
+    /// <typeparam name="TValidationException">
+    /// The type of exception to throw if the boolean is false.
+    /// </typeparam>
     /// <param name="ok">The boolean to check.</param>
     public static void If<TValidationException>([DoesNotReturnIf(false)] bool ok) where TValidationException : Exception, new()
         => If(ok, () => new TValidationException());
 
     /// <summary>
-    /// This method throws a ValidationException if the required parameter is false. 
+    /// This method throws a ValidationException if the required parameter is false.
     /// </summary>
     public static void If([DoesNotReturnIf(false)] bool required)
         => If<ValidationException>(required);
@@ -92,15 +94,14 @@ public sealed class Check
     /// </summary>
     /// <param name="obj">The object to check.</param>
     /// <param name="argName">The name of the argument.</param>
-    [return: NotNull]
     public static void IfArgumentNotNull([NotNull][AllowNull] in string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-        => IfArgumentNotNull(!obj.IsNullOrEmpty(), argName!);
+        => IfArgumentNotNull(obj.IsNullOrEmpty(), argName!);
 
     /// <summary>
     /// Checks if the argument is not null and throws an ArgumentNullException if it is.
     /// </summary>
-    public static void IfArgumentNotNull([DoesNotReturnIf(false)] bool isNotNull, [DisallowNull] string argName)
-        => If(isNotNull, () => new ArgumentNullException(argName));
+    public static void IfArgumentNotNull([DoesNotReturnIf(false)] bool isNull, [DisallowNull] string argName)
+        => If(isNull, () => new ArgumentNullException(argName));
 
     /// <summary>
     /// Checks if the given IEnumerable object has any items and throws an exception if it does not.
@@ -119,7 +120,8 @@ public sealed class Check
     }
 
     /// <summary>
-    /// Checks if the specified object is of the generic type T and throws a TypeMismatchValidationException if not.
+    /// Checks if the specified object is of the generic type T and throws a
+    /// TypeMismatchValidationException if not.
     /// </summary>
     public static void IfIs<T>([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
         => NotValid(obj, x => x is T, () => new TypeMismatchValidationException(argName!));

@@ -41,7 +41,7 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IMultiste
         => this.AddStep(new StepInfo<TState>(asyncAction, description, progressCount));
 
     public MultistepProcessRunner<TState> AddStep(Func<TState, Task> action, in string? description, int progressCount = 1)
-        => this.AddStep(new StepInfo<TState>(async e =>
+        => this.AddStep(new StepInfo<TState>([DebuggerStepThrough] async (e) =>
         {
             await action(e.State);
             return e.State;
@@ -61,16 +61,15 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IMultiste
             return Task.FromResult(e.State);
         }, description, progressCount));
 
-    public async Task<TState> RunAsync(CancellationToken? cancellationToken = default)
+    public async Task<TState> RunAsync(CancellationToken cancellationToken = default)
     {
-        Func<bool> isCancellationRequested = cancellationToken != null ? () => cancellationToken.Value.IsCancellationRequested : () => false;
         var stepList = this.Steps.ToList();
         this._max = stepList.Select(x => x.ProgressCount).Sum();
         this._current = 0;
         LibLogger.DebugStartingAction();
         foreach (var step in stepList)
         {
-            if (isCancellationRequested())
+            if (cancellationToken.IsCancellationRequested)
             {
                 break;
             }
