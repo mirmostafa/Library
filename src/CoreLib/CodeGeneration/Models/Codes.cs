@@ -8,7 +8,7 @@ namespace Library.CodeGeneration.Models;
 
 [Fluent]
 [Immutable]
-public sealed class Codes : ReadOnlyCollection<Code?>, IAdditionOperators<Codes, Codes, Codes>, IIndexable<string, Code?>, IIndexable<Language, IEnumerable<Code>>, IEnumerable<Code?>//, IImmutableList<Code>
+public sealed class Codes : ReadOnlyCollection<Code?>, IAdditionOperators<Codes, Codes, Codes>, IEmpty<Codes>, IIndexable<string, Code?>, IIndexable<Language, IEnumerable<Code>>, IEnumerable<Code?>//, IImmutableList<Code>
 {
     public Codes(IEnumerable<Code?> items)
         : base(items.ToList())
@@ -20,6 +20,7 @@ public sealed class Codes : ReadOnlyCollection<Code?>, IAdditionOperators<Codes,
     {
     }
 
+    public static Codes Empty { get; } = NewEmpty();
     public Code? this[string name] => this.FirstOrDefault(x => x?.Name == name);
 
     public IEnumerable<Code> this[Language language] => this.Where(x => x?.Language == language).Compact();
@@ -27,8 +28,10 @@ public sealed class Codes : ReadOnlyCollection<Code?>, IAdditionOperators<Codes,
     public static Codes New()
         => new();
 
+    public static Codes NewEmpty() => new();
+
     public static Codes operator +(Codes c1, Codes c2)
-        => new(c1.AsEnumerable().AddRangeImmuted(c2.AsEnumerable()));
+            => new(c1.AsEnumerable().AddRangeImmuted(c2.AsEnumerable()));
 
     public Codes Add(Code code)
         => new(this.AddImmuted(code));
