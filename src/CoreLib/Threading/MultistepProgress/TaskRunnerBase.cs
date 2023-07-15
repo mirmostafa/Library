@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 
 using Library.DesignPatterns.Markers;
-using Library.Exceptions;
 using Library.Results;
 
 namespace Library.Threading.MultistepProgress;
 
-[DebuggerStepThrough, Fluent, StackTraceHidden]
+[Fluent]
+[DebuggerStepThrough, StackTraceHidden]
 public abstract class TaskRunnerBase<TSelf, TResult>
     where TSelf : TaskRunnerBase<TSelf, TResult>
     where TResult : ResultBase

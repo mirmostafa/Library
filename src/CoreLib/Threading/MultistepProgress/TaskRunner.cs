@@ -1,15 +1,16 @@
 ﻿using System.Diagnostics;
 
-using Library.DesignPatterns.Markers;
 using Library.Exceptions;
 using Library.Results;
 using Library.Validations;
 
 namespace Library.Threading.MultistepProgress;
 
-[Fluent]
-[DebuggerStepThrough]
-[StackTraceHidden]
+
+
+
+
+
 public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
 {
     private readonly List<Func<CancellationToken, Task>> _funcList = new();

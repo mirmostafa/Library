@@ -431,6 +431,14 @@ public static class EnumerableHelper
     public static T[] Copy<T>(this T[] array) =>
         array.ToEnumerable().ToArray();
 
+    public static ImmutableArray<T> CopyImmutable<T>(this T[] array) =>
+        array.ToEnumerable().ToImmutableArray();
+
+    public static List<T> Copy<T>(this IList<T> array) =>
+        array.ToEnumerable().ToList();
+    public static ImmutableList<T> CopyImmutable<T>(this IList<T> array) =>
+        array.ToEnumerable().ToImmutableList();
+
     /// <summary> Counts the number of elements in a sequence that are not enumerated. </summary>
     /// <typeparam name="T">The type of the elements of source.</typeparam> <param name="source">The
     /// IEnumerable<T> to count.</param> <returns>The number of elements in the sequence that are

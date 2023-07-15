@@ -1,23 +1,23 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Threading;
 
 using Library.DesignPatterns.Markers;
 
 namespace Library.Threading.MultistepProgress;
 
 [Fluent]
-[DebuggerStepThrough]
-[StackTraceHidden]
 public sealed class MultistepProcessRunner<TState>(in TState state, in IMultistepProcess reporter, IMultistepProcess? subReporter = null, object? owner = null)
 {
     private readonly object? _owner = owner;
     private readonly IMultistepProcess _reporter = reporter;
-    private readonly List<StepInfo<TState>> _steps = new();
+    private readonly List<StepInfo<TState>> _stepsList = new();
     private readonly IMultistepProcess _subReporter = subReporter ?? IMultistepProcess.New();
     private int _current;
     private int _max;
     private TState _state = state;
 
-    public IEnumerable<StepInfo<TState>> Steps => this._steps;
+    public IEnumerable<StepInfo<TState>> Steps => this._stepsList;
 
     public static MultistepProcessRunner<TState> New(in TState state, in IMultistepProcess reporter, in IMultistepProcess? subReporter = null, object? owner = null)
         => new(state, reporter, subReporter, owner);
@@ -27,23 +27,23 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IMultiste
 
     public MultistepProcessRunner<TState> AddStep(params StepInfo<TState>[] step)
     {
-        this._steps.AddRange(step);
+        this._stepsList.AddRange(step);
         return this;
     }
 
     public MultistepProcessRunner<TState> AddStep(in IEnumerable<StepInfo<TState>> steps)
         => this.AddStep(steps.ToArray());
 
-    public MultistepProcessRunner<TState> AddStep(Func<(TState State, IMultistepProcess SubProgress), TState> action, string? description, int progressCount)
+    public MultistepProcessRunner<TState> AddStep(Func<(TState State, IMultistepProcess SubProgress, CancellationToken cancellationToken), TState> action, string? description, int progressCount)
         => this.AddStep(new StepInfo<TState>(e => Task.FromResult(action(e)), description, progressCount));
 
-    public MultistepProcessRunner<TState> AddStep(in Func<(TState State, IMultistepProcess SubProgress), Task<TState>> asyncAction, in string? description, in int progressCount)
+    public MultistepProcessRunner<TState> AddStep(in Func<(TState State, IMultistepProcess SubProgress, CancellationToken cancellationToken), Task<TState>> asyncAction, in string? description, in int progressCount)
         => this.AddStep(new StepInfo<TState>(asyncAction, description, progressCount));
 
-    public MultistepProcessRunner<TState> AddStep(Func<TState, Task> action, in string? description, int progressCount = 1)
+    public MultistepProcessRunner<TState> AddStep(Func<TState, CancellationToken, Task> action, in string? description, int progressCount = 1)
         => this.AddStep(new StepInfo<TState>([DebuggerStepThrough] async (e) =>
         {
-            await action(e.State);
+            await action(e.State, e.cancellationToken);
             return e.State;
         }, description, progressCount));
 
@@ -63,23 +63,27 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IMultiste
 
     public async Task<TState> RunAsync(CancellationToken cancellationToken = default)
     {
-        var stepList = this.Steps.ToList();
-        this._max = stepList.Select(x => x.ProgressCount).Sum();
+        var steps = this._stepsList.ToImmutableArray();
+        this._max = steps.Select(x => x.ProgressCount).Sum();
         this._current = 0;
+
         LibLogger.DebugStartingAction();
-        foreach (var step in stepList)
+
+        var enumerator = steps.GetEnumerator();
+        while (!cancellationToken.IsCancellationRequested && enumerator.MoveNext())
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                break;
-            }
+            var step = enumerator.Current;
 
             this._reporter.Report(this._max, this._current += step.ProgressCount, step.Description, this._owner);
-            this._state = await step.AsyncAction((this._state, this._subReporter));
             LibLogger.Debug($"{nameof(MultistepProcessRunner<TState>)} - [{this._current} of {this._max}]");
+
+            var arg = (this._state, this._subReporter, cancellationToken);
+            this._state = await step.AsyncAction(arg);
         }
+
         this._reporter.End();
         LibLogger.DebugEndedAction();
+
         return this._state;
     }
 }

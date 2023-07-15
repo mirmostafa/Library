@@ -33,7 +33,7 @@ internal sealed class MultistepProcess : IMultistepProcess
 }
 
 public record struct StepInfo<TState>(
-    in Func<(TState State, IMultistepProcess SubProgress), Task<TState>> AsyncAction,
+    in Func<(TState State, IMultistepProcess SubProgress, CancellationToken cancellationToken), Task<TState>> AsyncAction,
     in string? Description,
     in int ProgressCount);
 

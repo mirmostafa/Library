@@ -1,15 +1,9 @@
-﻿using System.Diagnostics;
-
-using Library.DesignPatterns.Markers;
-using Library.Exceptions;
+﻿using Library.Exceptions;
 using Library.Results;
 using Library.Validations;
 
 namespace Library.Threading.MultistepProgress;
 
-[Fluent]
-[DebuggerStepThrough]
-[StackTraceHidden]
 public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<TArg?>>
 {
     private readonly List<Func<TArg, CancellationToken, Task<TArg>>> _funcList = new();
@@ -48,10 +42,10 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
             return x;
         }));
 
-    public TaskRunner<TArg> Then(Func<TArg?, Task<TArg>> func) =>
+    public TaskRunner<TArg> Then(Func<TArg, Task<TArg>> func) =>
         this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, _) => func(x)));
 
-    public TaskRunner<TArg> Then(Func<TArg?, Task> func) =>
+    public TaskRunner<TArg> Then(Func<TArg, Task> func) =>
         this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, _) =>
         {
             await func(x);
@@ -62,6 +56,13 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
         this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, _) =>
         {
             await func();
+            return x;
+        }));
+
+    public TaskRunner<TArg> Then(Func<CancellationToken, Task> func) =>
+        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, t) =>
+        {
+            await func(t);
             return x;
         }));
 

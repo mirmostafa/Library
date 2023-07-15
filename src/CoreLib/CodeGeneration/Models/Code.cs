@@ -107,4 +107,7 @@ public static class CodeStatementHelpers
 
     public static Codes ToCodes(this IEnumerable<Code> codes)
         => new(codes);
+    
+    public static Codes ToCodes(this IEnumerable<Codes> codes)
+        => new(codes.SelectAll());
 }
