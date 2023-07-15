@@ -2,12 +2,13 @@
 
 using Library.Collections;
 using Library.DesignPatterns.Markers;
+using Library.Interfaces;
 
 namespace Library.CodeGeneration.Models;
 
 [Fluent]
 [Immutable]
-public sealed class Codes : ReadOnlyCollection<Code?>, IIndexable<string, Code?>, IIndexable<Language, IEnumerable<Code>>, IEnumerable<Code?>//, IImmutableList<Code>
+public sealed class Codes : ReadOnlyCollection<Code?>, IAdditionOperators<Codes, Codes, Codes>, IIndexable<string, Code?>, IIndexable<Language, IEnumerable<Code>>, IEnumerable<Code?>//, IImmutableList<Code>
 {
     public Codes(IEnumerable<Code?> items)
         : base(items.ToList())

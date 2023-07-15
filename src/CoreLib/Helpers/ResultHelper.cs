@@ -3,9 +3,9 @@ using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 using Library.Exceptions;
+using Library.Interfaces;
 using Library.Logging;
 using Library.Results;
-using Library.Validations;
 
 namespace Library.Helpers;
 
@@ -63,6 +63,12 @@ public static class ResultHelper
 
         return result;
     }
+
+    public static Result<TValue> Merge<TValue>(this IEnumerable<Result<TValue>> results, Func<TValue, TValue, TValue> add) =>
+        Result<TValue>.Combine(results, add);
+
+    public static Result<TValue> Merge<TValue>(this IEnumerable<Result<TValue>> results) where TValue : IAdditionOperators<TValue, TValue, TValue> =>
+        Result<TValue>.Combine(results, (x1, x2) => x1 + x2);
 
     public static TResult OnDone<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {

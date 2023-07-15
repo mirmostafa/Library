@@ -853,12 +853,6 @@ public static class EnumerableHelper
         }
     }
 
-    /// <summary>
-    /// Merges the elements of an IEnumerable into a single string.
-    /// </summary>
-    public static string MergeToString<T>(this IEnumerable<T> source)
-        => source.Aggregate(new StringBuilder(), (current, item) => current.Append(item)).ToString();
-
     public static T Pop<T>(this IList<T> list, int index = -1)
     {
         var i = index >= 0 ? index : list.Count + index;

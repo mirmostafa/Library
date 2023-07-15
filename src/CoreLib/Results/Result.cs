@@ -298,10 +298,17 @@ public record Result<TValue>(in TValue Value,
     /// <summary> Combines multiple Result<TValue> objects into a single Result<TValue> object.
     /// </summary> <param name="results">The Result<TValue> objects to combine.</param> <returns>A
     /// single Result<TValue> object containing the combined results.</returns>
-    public static Result<TValue> Combine(params Result<TValue>[] results)
+    public static Result<TValue> Combine(IEnumerable<Result<TValue>> results, Func<TValue, TValue, TValue> add)
     {
-        var data = ResultBase.Combine(results);
-        var result = new Result<TValue>(results.Last().Value, data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
+        var resultArray = results.ToArray();
+        var data = ResultBase.Combine(resultArray);
+        var valueArray = results.Select(x => x.Value).ToArray();
+        var value = valueArray[0];
+        foreach (var v in valueArray.Skip(1))
+        {
+            value = add(value, v);
+        }
+        var result = new Result<TValue>(value, data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
         return result;
     }
 
