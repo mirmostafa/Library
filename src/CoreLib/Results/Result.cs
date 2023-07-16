@@ -84,16 +84,26 @@ public abstract record ResultBase(in bool? Succeed = null,
         var status = results.LastOrDefault(x => x.Status is not null)?.Status;
         var message = results.LastOrDefault(x => !x.Message.IsNullOrEmpty())?.Message;
         var errors = results.SelectMany(x => EnumerableHelper.DefaultIfEmpty(x?.Errors));
-        var extraData = results.SelectMany(x => EnumerableHelper.DefaultIfEmpty(x.ExtraData)).ToImmutableDictionary();
-
         var statusBuffer = results.Where(x => x.Status is not null).Select(x => x.Status).ToList();
         if (statusBuffer.Count > 1)
         {
             errors = errors.AddRangeImmuted(statusBuffer.Select(x => ((object)null!, x!)));
             status = null;
         }
+        var extraData = combineExtraData(results);
 
-        return (isSucceed, status, message, errors, extraData);
+        return (isSucceed, status, message, errors, extraData.ToImmutableDictionary());
+
+        static IEnumerable<KeyValuePair<string, object>> combineExtraData(ResultBase[] results)
+        {
+            var lastData = results
+                .Where(x => x?.ExtraData is not null)
+                .SelectMany(x => x.ExtraData!)
+                .Where(item => !item.IsDefault() && !item.Key.IsNullOrEmpty() && item.Value is not null);
+            return !lastData.Any()
+                ? results.Select(x => new KeyValuePair<string, object>("Previous Rsult", x))
+                : lastData;
+        }
     }
 }
 
@@ -298,11 +308,13 @@ public record Result<TValue>(in TValue Value,
     /// <summary> Combines multiple Result<TValue> objects into a single Result<TValue> object.
     /// </summary> <param name="results">The Result<TValue> objects to combine.</param> <returns>A
     /// single Result<TValue> object containing the combined results.</returns>
-    public static Result<TValue> Combine(IEnumerable<Result<TValue>> results, Func<TValue, TValue, TValue> add)
+    public static Result<TValue> Combine(IEnumerable<Result<TValue>> results, Func<TValue, TValue, TValue> add) =>
+        Combine(add, results.ToArray());
+
+    public static Result<TValue> Combine(Func<TValue, TValue, TValue> add, params Result<TValue>[] resultArray)
     {
-        var resultArray = results.ToArray();
         var data = ResultBase.Combine(resultArray);
-        var valueArray = results.Select(x => x.Value).ToArray();
+        var valueArray = resultArray.Select(x => x.Value).ToArray();
         var value = valueArray[0];
         foreach (var v in valueArray.Skip(1))
         {
@@ -312,12 +324,15 @@ public record Result<TValue>(in TValue Value,
         return result;
     }
 
-    public void Deconstruct(out bool isSucceed, out TValue Value)
-        => (isSucceed, Value) = (this.IsSucceed, this.Value);
+    public Result<TValue> Add(Result<TValue> item, Func<TValue, TValue, TValue> add) =>
+        Result<TValue>.Combine(add, item);
+
+    public void Deconstruct(out bool isSucceed, out TValue Value) =>
+        (isSucceed, Value) = (this.IsSucceed, this.Value);
 
     /// <summary> Converts a Result<TValue> to a Result. </summary>
-    public Result ToResult(in Result<TValue> result)
-        => result;
+    public Result ToResult(in Result<TValue> result) =>
+        result;
     public static Result<TValue> From(in Result result, in TValue value)
         => new(value, result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
 

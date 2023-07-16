@@ -16,7 +16,8 @@ namespace Library.Validations;
 public static class Validation
 {
     /// <summary>
-    /// Checks that the specified value is not null and returns it. Throws an exception if the value is null.
+    /// Checks that the specified value is not null and returns it. Throws an exception if the value
+    /// is null.
     /// </summary>
     /// <typeparam name="TValue">The type of the value.</typeparam>
     /// <param name="value">The value to check.</param>
@@ -90,12 +91,14 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
 
     #region Public methods
 
-    public static implicit operator TValue(ValidationResultSet<TValue> source)
-        => source.Value;
+    public static implicit operator Result<TValue>(ValidationResultSet<TValue> source) =>
+        source.Build();
 
-    /// <summary>
-    /// Traverses the rules and create a fail <code>Result<TValue></code>, at first broken rule . Otherwise created a succeed result.
-    /// </summary>
+    public static implicit operator TValue(ValidationResultSet<TValue> source) =>
+        source.Value;
+
+    /// <summary> Traverses the rules and create a fail <code>Result<TValue></code>, at first broken
+    /// rule . Otherwise created a succeed result. </summary>
     public Result<TValue> Build()
         => this.InnerBuild(this._behavior);
 
@@ -161,6 +164,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     /// <summary>
     /// Adds a rule to the ValidationResultSet to check if the value is not null.
     /// </summary>
+    [MemberNotNull(nameof(Value))]
     public ValidationResultSet<TValue> ArgumentNotNull(Func<Exception> onError = null)
         => this.AddRule(x => x, _ => this.Value is not null, onError, () => new ArgumentNullException(this._valueName));
 
