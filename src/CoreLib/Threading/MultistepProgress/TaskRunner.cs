@@ -70,4 +70,7 @@ public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
         }
         return Result.CreateSuccess();
     }
+
+    public static TaskRunner<TState> StartWith<TState>(TState state)
+        => TaskRunner<TState>.StartWith(state);
 }
