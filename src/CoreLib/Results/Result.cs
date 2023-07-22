@@ -23,26 +23,26 @@ public abstract record ResultBase(in bool? Succeed = null,
     /// </summary>
     public virtual bool IsFailure => !this.IsSucceed;
 
-    public void Deconstruct(out bool isSucceed, out string message)
-        => (isSucceed, message) = (this.IsSucceed, this.Message?.ToString() ?? string.Empty);
+    public void Deconstruct(out bool isSucceed, out string message) =>
+        (isSucceed, message) = (this.IsSucceed, this.Message?.ToString() ?? string.Empty);
 
     /// <summary>
     /// Indicates whether the current object is equal to another object of the same type.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>
     /// <returns>A value that indicates the relative order of the objects being compared.</returns>
-    public virtual bool Equals(ResultBase? other)
-        => other is not null && this.Status == other.Status;
+    public virtual bool Equals(ResultBase? other) =>
+        other is not null && this.Status == other.Status;
 
     /// <summary>
     /// Serves as the default hash function.
     /// </summary>
     /// <returns>The hash code for the current instance.</returns>
-    public override int GetHashCode()
-        => HashCode.Combine(this.Status, this.Message);
+    public override int GetHashCode() =>
+        HashCode.Combine(this.Status, this.Message);
 
-    public static implicit operator bool(ResultBase result)
-        => result.NotNull().IsSucceed;
+    public static implicit operator bool(ResultBase result) =>
+        result.NotNull().IsSucceed;
 
     /// <summary>
     /// Generates a string representation of the result object.
@@ -94,7 +94,7 @@ public abstract record ResultBase(in bool? Succeed = null,
 
         return (isSucceed, status, message, errors, extraData.ToImmutableDictionary());
 
-        static IEnumerable<KeyValuePair<string, object>> combineExtraData(ResultBase[] results)
+        static IEnumerable<KeyValuePair<string, object>> combineExtraData(in ResultBase[] results)
         {
             var lastData = results
                 .Where(x => x?.ExtraData is not null)
