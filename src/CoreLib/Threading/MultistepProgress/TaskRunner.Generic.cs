@@ -90,7 +90,7 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
         {
             if (token.IsCancellationRequested)
             {
-                Throw<OperationCancelException>();
+                return Result<TArg?>.CreateFailure(new OperationCanceledException(token), state);
             }
 
             state = await func(state, token);
