@@ -6,11 +6,6 @@ using Library.Validations;
 
 namespace Library.Threading.MultistepProgress;
 
-
-
-
-
-
 public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
 {
     private readonly List<Func<CancellationToken, Task>> _funcList = new();
@@ -35,6 +30,10 @@ public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
     public static TaskRunner StartWith(Action start) =>
         StartWith(c => start.ToAsync(c));
 
+    // Auxiliary method
+    public static TaskRunner<TState> StartWith<TState>(TState state) =>
+        TaskRunner<TState>.StartWith(state);
+
     public TaskRunner Then([DisallowNull] Func<CancellationToken, Task> func)
     {
         Check.If(this.IsRunning, () => new CommonException());
@@ -56,21 +55,18 @@ public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
     protected override Result GetErrorResult(Exception exception) =>
         Result.CreateFailure(exception);
 
-    protected override async Task<Result> OnRuningAsync(CancellationToken token)
+    protected override async Task<Result> OnRunningAsync(CancellationToken token)
     {
         await this._start(token);
         foreach (var func in this._funcList.Compact())
         {
             if (token.IsCancellationRequested)
             {
-                Throw<OperationCancelException>();
+                return Result.CreateFailure(new OperationCanceledException(token));
             }
 
             await func(token);
         }
         return Result.CreateSuccess();
     }
-
-    public static TaskRunner<TState> StartWith<TState>(TState state)
-        => TaskRunner<TState>.StartWith(state);
 }

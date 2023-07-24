@@ -42,16 +42,16 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
     }
 
     public void Debug(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._debugAction(new(message, LogLevel.Debug, ProcessSender(sender, LogLevel.Debug), time));
+        => this._debugAction?.Invoke(new(message, LogLevel.Debug, ProcessSender(sender, LogLevel.Debug), time));
 
     public void Error(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._errorAction(new(message, LogLevel.Error, ProcessSender(sender, LogLevel.Error), time));
+        => this._errorAction?.Invoke(new(message, LogLevel.Error, ProcessSender(sender, LogLevel.Error), time));
 
     public void Fatal(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._fatalAction(new(message, LogLevel.Fatal, ProcessSender(sender, LogLevel.Fatal), time));
+        => this._fatalAction?.Invoke(new(message, LogLevel.Fatal, ProcessSender(sender, LogLevel.Fatal), time));
 
     public void Info(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._infoAction(new(message, LogLevel.Info, ProcessSender(sender, LogLevel.Info), time));
+        => this._infoAction?.Invoke(new(message, LogLevel.Info, ProcessSender(sender, LogLevel.Info), time));
 
     public void Log(TLogMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = LogFormat.FORMAT_DEFAULT)
         => this.Log(new(message, level, ProcessSender(sender, level), time, stackTrace, format));
@@ -69,10 +69,10 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
     //x public void Log([DisallowNull] TLogMessage message, LogLevel level = LogLevel.Info, [CallerMemberName] object? sender = null, DateTime? time = null, string? stackTrace = null) => throw new NotImplementedException();
 
     public void Trace(TLogMessage message, object? sender = null, DateTime? time = null, string? stackTrace = null)
-            => this._traceAction(new(message, LogLevel.Trace, ProcessSender(sender, LogLevel.Trace), time, stackTrace));
+            => this._traceAction?.Invoke(new(message, LogLevel.Trace, ProcessSender(sender, LogLevel.Trace), time, stackTrace));
 
     public void Warn(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._warnAction(new(message, LogLevel.Warning, ProcessSender(sender, LogLevel.Warning), time));
+        => this._warnAction?.Invoke(new(message, LogLevel.Warning, ProcessSender(sender, LogLevel.Warning), time));
 
     protected abstract void OnLogging(LogRecord<TLogMessage> logRecord);
 

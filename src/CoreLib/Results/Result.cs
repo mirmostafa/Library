@@ -101,7 +101,7 @@ public abstract record ResultBase(in bool? Succeed = null,
                 .SelectMany(x => x.ExtraData!)
                 .Where(item => !item.IsDefault() && !item.Key.IsNullOrEmpty() && item.Value is not null);
             return !lastData.Any()
-                ? results.Select(x => new KeyValuePair<string, object>("Previous Rsult", x))
+                ? results.Select(x => new KeyValuePair<string, object>("Previous Result", x))
                 : lastData;
         }
     }

@@ -15,7 +15,10 @@ using System.Windows.Threading;
 
 using Library.ComponentModel;
 using Library.Data.Models;
+using Library.Wpf.Bases;
 using Library.Wpf.Windows;
+
+using WinRT;
 
 namespace Library.Wpf.Helpers;
 
@@ -37,13 +40,13 @@ public static class ControlHelper
         items.Filter = predicate;
     }
 
-    public static THeaderedItemsControl BindDataContext<THeaderedItemsControl>(this THeaderedItemsControl itemsControl, object datacontext, string? header = null)
+    public static THeaderedItemsControl BindDataContext<THeaderedItemsControl>(this THeaderedItemsControl itemsControl, object dataContext, string? header = null)
                 where THeaderedItemsControl : HeaderedItemsControl
     {
         Check.IfArgumentNotNull(itemsControl);
 
-        itemsControl.DataContext = datacontext;
-        itemsControl.Header = header ?? datacontext?.ToString();
+        itemsControl.DataContext = dataContext;
+        itemsControl.Header = header ?? dataContext?.ToString();
         return itemsControl;
     }
 
@@ -71,17 +74,17 @@ public static class ControlHelper
         return selector;
     }
 
-    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath)
+    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemberPath)
         where TSelector : Selector
     {
-        BindItemsSourceInner(selector, items, displayMemebrPath);
+        BindItemsSourceInner(selector, items, displayMemberPath);
         return selector;
     }
 
-    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath, int? selectedIndex)
+    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemberPath, int? selectedIndex)
         where TSelector : Selector
     {
-        BindItemsSourceInner(selector, items, displayMemebrPath);
+        BindItemsSourceInner(selector, items, displayMemberPath);
 
         if (selectedIndex is not null)
         {
@@ -90,10 +93,10 @@ public static class ControlHelper
         return selector;
     }
 
-    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemebrPath, object? selectedValue)
+    public static TSelector BindItemsSource<TSelector>(this TSelector selector, IEnumerable? items, string? displayMemberPath, object? selectedValue)
         where TSelector : Selector
     {
-        BindItemsSourceInner(selector, items, displayMemebrPath);
+        BindItemsSourceInner(selector, items, displayMemberPath);
 
         if (selectedValue is not null)
         {
@@ -104,7 +107,7 @@ public static class ControlHelper
 
     public static Selector BindItemsSourceToEnum<TEnum>(this Selector selector, TEnum? selectedItem = null) where TEnum : struct => BindItemsSource(selector, Enum.GetValues(typeof(TEnum)), null, selectedItem);
 
-    public static TreeViewItem BindNewItem(object datacontext, string? header = null) => new TreeViewItem().BindDataContext(datacontext, header);
+    public static TreeViewItem BindNewItem(object dataContext, string? header = null) => new TreeViewItem().BindDataContext(dataContext, header);
 
     public static TreeViewItem BindNewItems(this TreeViewItem parentItem, IEnumerable items)
     {
@@ -174,16 +177,16 @@ public static class ControlHelper
         return cell;
     }
 
-    public static IEnumerable<TControl> GetChildren<TControl>(this Visual visual, bool loopThrouth = true)
-        where TControl : class => visual.ArgumentNotNull(nameof(visual)).GetChildren(loopThrouth).OfType<TControl>();
+    public static IEnumerable<TControl> GetChildren<TControl>(this Visual visual, bool loopThrough = true)
+        where TControl : class => visual.ArgumentNotNull(nameof(visual)).GetChildren(loopThrough).OfType<TControl>();
 
-    public static IEnumerable<Visual> GetChildren(this Visual visual, bool loopThrouth = true)
+    public static IEnumerable<Visual> GetChildren(this Visual visual, bool loopThrough = true)
     {
         var result = new List<Visual>();
         EnumerableHelper.ForEachTreeNode(visual,
             c =>
             {
-                return !loopThrouth && !Equals(c, visual)
+                return !loopThrough && !Equals(c, visual)
                     ? Enumerable.Empty<Visual>()
                     : c is not TabItem tabItem
                         ? Enumerable.Range(0, VisualTreeHelper.GetChildrenCount(c)).Select(i => (Visual)VisualTreeHelper.GetChild(c, i))
@@ -303,6 +306,9 @@ public static class ControlHelper
         return textRange.Text;
     }
 
+    public static TViewModel? GetViewModelByDataContext<TViewModel>(this Page page, Func<TViewModel?>? getDefaultViewModel = null)
+        where TViewModel : class => page.DataContext is TViewModel viewModel ? viewModel : (getDefaultViewModel?.Invoke() ?? default);
+
     public static T? GetVisualChild<T>(this Visual parent) where T : Visual
     {
         var numVisuals = VisualTreeHelper.GetChildrenCount(parent);
@@ -364,21 +370,22 @@ public static class ControlHelper
         var children = parent.GetChildren();
         foreach (var child in children)
         {
-            if (child is IInitialzable initialzable)
+            if (child is IInitialzable initializable)
             {
-                initialzable.Initialize();
+                initializable.Initialize();
             }
             InitializeChildren(child);
         }
     }
+
     public static async Task InitializeChildrenAsync(Visual parent)
     {
         var children = parent.GetChildren();
         foreach (var child in children)
         {
-            if (child is IAsyncInitialzable initialzable)
+            if (child is IAsyncInitialzable initializable)
             {
-                await initialzable.InitializeAsync();
+                await initializable.InitializeAsync();
             }
             InitializeChildren(child);
         }
@@ -391,8 +398,8 @@ public static class ControlHelper
     public static void PerformClick(this Button button)
     {
         var peer = new ButtonAutomationPeer(button);
-        var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-        invokeProv?.Invoke();
+        var invokeProvider = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+        invokeProvider?.Invoke();
     }
 
     public static void Rebind(this DependencyObject target, in DependencyProperty dependencyProperty)
@@ -440,10 +447,10 @@ public static class ControlHelper
     public static void Refresh(this UIElement uiElement)
         => uiElement?.Dispatcher.Invoke(DispatcherPriority.Render, Methods.Empty);
 
-    public static IEnumerable<dynamic>? RetieveCheckedItems(this MultiSelector dg)
+    public static IEnumerable<dynamic>? RetrieveCheckedItems(this MultiSelector dg)
         => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.Cast().As<dynamic>()).Compact();
 
-    public static IEnumerable<TItem>? RetieveCheckedItems<TItem>(this MultiSelector dg)
+    public static IEnumerable<TItem>? RetrieveCheckedItems<TItem>(this MultiSelector dg)
         => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.Cast().To<TItem>());
 
     public static TResult RunCodeBlock<TResult>(this FrameworkElement element, [DisallowNull] in Func<TResult> action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true)
@@ -498,6 +505,13 @@ public static class ControlHelper
     public static void RunInControlThread(this DispatcherObject control, in Action action)
         => control?.Dispatcher.Invoke(action);
 
+    public static TPage SetIsViewModelChanged<TPage>(this TPage page, bool isViewModelChanged)
+        where TPage : IStatefulPage
+    {
+        page.IsViewModelChanged = isViewModelChanged;
+        return page;
+    }
+
     public static bool SetProperty<TValue>(
         this INotifyPropertyChanged item,
         ref TValue field,
@@ -537,8 +551,37 @@ public static class ControlHelper
         Animations.AnimateDouble(pb, RangeBase.ValueProperty, pb.Value, step, 100);
     }
 
-    public static bool? ShowDialog<TWindow>(this Window owner)
-        where TWindow : Window, new() => owner.ShowDialog(() => new TWindow(), out var window);
+    public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, PropertyChangedEventHandler? viewModel_PropertyChanged = null)
+        where TPage : LibPageBase, IStatefulPage
+        where TViewModel : class, INotifyPropertyChanged
+    {
+        var old = page.DataContext.Cast().As<TViewModel>();
+        if (old == value)
+        {
+            return page;
+        }
+        if (old != null && viewModel_PropertyChanged != null)
+        {
+            old.PropertyChanged -= viewModel_PropertyChanged;
+        }
+
+        page.DataContext = value;
+        if (value != null)
+        {
+            if (viewModel_PropertyChanged != null)
+            {
+                value.PropertyChanged += viewModel_PropertyChanged;
+            }
+            else
+            {
+                value.PropertyChanged += (_, __) => page.SetIsViewModelChanged(true);
+            }
+        }
+        return page.SetIsViewModelChanged(false);
+    }
+
+    public static bool? ShowDialog<TWindow>(this Window owner) where TWindow : Window, new()
+        => owner.ShowDialog(() => new TWindow(), out var window);
 
     public static (bool? Result, TWindow Window) ShowDialog<TWindow>(this Window owner, Func<TWindow> creator)
         where TWindow : Window
@@ -557,27 +600,19 @@ public static class ControlHelper
         return window.ShowDialog();
     }
 
-    public static bool? ShowDialog<TWindow>(this Window owner, out TWindow window)
-        where TWindow : Window, new() => owner.ShowDialog(() => new TWindow(), out window);
+    public static bool? ShowDialog<TWindow>(this Window owner, out TWindow window) where TWindow : Window, new()
+        => owner.ShowDialog(() => new TWindow(), out window);
 
-    private static void BindItemsSourceInner<TSelector>(TSelector selector, IEnumerable? items, string? displayMemebrPath)
+    private static void BindItemsSourceInner<TSelector>(TSelector selector, IEnumerable? items, string? displayMemberPath)
         where TSelector : Selector
     {
         Check.IfArgumentNotNull(selector);
 
         selector.ItemsSource = null;
         selector.ItemsSource = items;
-        if (displayMemebrPath is not null)
+        if (displayMemberPath is not null)
         {
-            selector.DisplayMemberPath = displayMemebrPath;
+            selector.DisplayMemberPath = displayMemberPath;
         }
     }
-    
-    public static TStatefulPage SetIsViewModelChanged<TStatefulPage>(this TStatefulPage page, bool isViewModelChanged)
-        where TStatefulPage : IStatefulPage
-    {
-        page.IsViewModelChanged = isViewModelChanged;
-        return page;
-    }
-
 }

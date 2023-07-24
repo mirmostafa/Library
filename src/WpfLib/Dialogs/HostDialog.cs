@@ -60,8 +60,8 @@ public sealed class HostDialog
 
     /// <summary>
     /// Sets the validation. <br/> If set, the dialog will use it. <br/> Else if not, the dialog
-    /// will try to cast the page to <see cref="Library.Validations.IValidator"/> interfaces
-    /// family. <br/> Otherwise no validation will be applied.
+    /// will try to cast the page to <see cref="Library.Validations.IValidator"/> interfaces family.
+    /// <br/> Otherwise no validation will be applied.
     /// </summary>
     /// <param name="onValidation">The OnValidation function.</param>
     public HostDialog SetValidation(Func<LibPageBase, Result> onValidation)

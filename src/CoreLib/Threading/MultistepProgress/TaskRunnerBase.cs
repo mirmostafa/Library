@@ -31,7 +31,7 @@ public abstract class TaskRunnerBase<TSelf, TResult>
         try
         {
             this.IsRunning = true;
-            result = await this.OnRuningAsync(token);
+            result = await this.OnRunningAsync(token);
         }
         catch (Exception ex)
         {
@@ -48,8 +48,8 @@ public abstract class TaskRunnerBase<TSelf, TResult>
 
     protected abstract TResult GetErrorResult(Exception exception);
 
-    protected abstract Task<TResult> OnRuningAsync(CancellationToken token);
+    protected abstract Task<TResult> OnRunningAsync(CancellationToken token);
 
-    private TSelf Me() =>
+    protected virtual TSelf Me() =>
         (TSelf)this;
 }

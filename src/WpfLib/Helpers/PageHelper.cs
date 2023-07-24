@@ -18,7 +18,7 @@ public static class PageHelper
                 TaskDialogResult.Cancel or TaskDialogResult.Close => Result.Failure,
                 TaskDialogResult.Yes => await page.SaveAsync(),
                 TaskDialogResult.No => Result.Success,
-                _ => Result.Success
+                _ => Result.Failure
             }
             : Result.Success;
 }

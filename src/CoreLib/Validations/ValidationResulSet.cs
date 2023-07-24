@@ -266,7 +266,7 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     private ValidationResultSet<TValue> AddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<Exception> onErrorAlternative)
     {
         var error = onError ?? onErrorAlternative;
-        bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
+        [DebuggerStepThrough] bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
         return this.InnerAddRule(validator, error);
     }
 

@@ -49,8 +49,8 @@ public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuild
     public static ConnectionStringBuilder Create(string connectionString)
         => new(connectionString);
 
-    public static Result<ConnectionStringBuilder> Validate(string connectionString)
-        => Create(connectionString).Validate();
+    public static Result<ConnectionStringBuilder> Validate(string? connectionString)
+        => Create(connectionString.ArgumentNotNull()).Validate();
 
     public ConnectionStringBuilder ApplicationName(string value)
         => this.Fluent(() => this._builder.ApplicationName = value);

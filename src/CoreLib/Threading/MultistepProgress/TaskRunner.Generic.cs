@@ -9,11 +9,8 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
     private readonly List<Func<TArg, CancellationToken, Task<TArg>>> _funcList = new();
     private readonly Func<CancellationToken, Task<TArg>> _start;
 
-    private TaskRunner([DisallowNull] Func<CancellationToken, Task<TArg>> start)
-    {
-        Check.IfArgumentNotNull(start);
-        this._start = start;
-    }
+    private TaskRunner([DisallowNull] Func<CancellationToken, Task<TArg>> start) =>
+        this._start = start.ArgumentNotNull();
 
     public static TaskRunner<TArg> StartWith(Func<CancellationToken, Task<TArg>> start) =>
         new(start);
@@ -83,7 +80,7 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
     protected override Result<TArg?> GetErrorResult(Exception exception) =>
         Result<TArg?>.CreateFailure(exception);
 
-    protected override async Task<Result<TArg?>> OnRuningAsync(CancellationToken token)
+    protected override async Task<Result<TArg?>> OnRunningAsync(CancellationToken token)
     {
         var state = await this._start(token);
         foreach (var func in this._funcList.Compact())
