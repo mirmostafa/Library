@@ -2,7 +2,6 @@
 
 namespace UnitTests;
 
-
 [Trait("Category", "Code Helpers")]
 public sealed class TaskRunnerTest
 {
@@ -13,13 +12,13 @@ public sealed class TaskRunnerTest
     [InlineData(-5, 5, 5)]
     public async void SimpleTest1(int initialValue, int steps, int expected)
     {
-        var add5 = (int x) => x + steps;
-        var init = () => initialValue;
-        var actual = await TaskRunner<int>.New()
-            .StartWith(init)
+        var actual = await TaskRunner<int>.StartWith(init)
             .Then(add5)
             .Then(add5)
             .RunAsync();
         Assert.Equal(expected, actual);
+
+        int add5(int x) => x + steps;
+        int init() => initialValue;
     }
 }

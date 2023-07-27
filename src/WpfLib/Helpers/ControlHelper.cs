@@ -18,7 +18,11 @@ using Library.Data.Models;
 using Library.Wpf.Bases;
 using Library.Wpf.Windows;
 
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+
 using WinRT;
+
+using Key = System.Windows.Input.Key;
 
 namespace Library.Wpf.Helpers;
 
@@ -551,6 +555,16 @@ public static class ControlHelper
         Animations.AnimateDouble(pb, RangeBase.ValueProperty, pb.Value, step, 100);
     }
 
+    public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, Action viewModel_PropertyChanged)
+        where TPage : LibPageBase, IStatefulPage
+        where TViewModel : class, INotifyPropertyChanged =>
+        SetViewModelByDataContext(page, value, (_, _) => viewModel_PropertyChanged?.Invoke());
+
+    public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, Action<string?> viewModel_PropertyChanged)
+        where TPage : LibPageBase, IStatefulPage
+        where TViewModel : class, INotifyPropertyChanged =>
+        SetViewModelByDataContext(page, value, (_, e) => viewModel_PropertyChanged?.Invoke(e.PropertyName));
+
     public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, PropertyChangedEventHandler? viewModel_PropertyChanged = null)
         where TPage : LibPageBase, IStatefulPage
         where TViewModel : class, INotifyPropertyChanged
@@ -560,6 +574,7 @@ public static class ControlHelper
         {
             return page;
         }
+
         if (old != null && viewModel_PropertyChanged != null)
         {
             old.PropertyChanged -= viewModel_PropertyChanged;
@@ -574,7 +589,13 @@ public static class ControlHelper
             }
             else
             {
-                value.PropertyChanged += (_, __) => page.SetIsViewModelChanged(true);
+                value.PropertyChanged += (_, __) =>
+                {
+                    if (page is { } and { IsUnloaded: false })
+                    {
+                        _ = page.SetIsViewModelChanged(true);
+                    }
+                };
             }
         }
         return page.SetIsViewModelChanged(false);

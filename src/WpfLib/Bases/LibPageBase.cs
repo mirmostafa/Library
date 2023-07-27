@@ -15,22 +15,23 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
     public event EventHandler? BindingData;
 
     public LibPageBase()
-        => this.Loaded += this.LibPage_LoadedAsync;
+    {
+        this.Loaded += this.LibPage_LoadedAsync;
+        this.Unloaded += (_, __) => this.IsUnloaded = true;
+    }
+
+    public bool IsUnloaded { get; private set; }
 
     /// <summary>
     /// Gets the command manager.
     /// </summary>
-    /// <value>
-    /// The command manager.
-    /// </value>
+    /// <value>The command manager.</value>
     protected CommandController CommandManager => this._commandManager ??= new(this);
 
     /// <summary>
     /// Gets a value indicating whether this <see cref="LibPage"/> is initializing.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if initializing; otherwise, <c>false</c>.
-    /// </value>
+    /// <value><c>true</c> if initializing; otherwise, <c>false</c>.</value>
     protected bool Initializing { get; private set; }
 
     /// <summary>

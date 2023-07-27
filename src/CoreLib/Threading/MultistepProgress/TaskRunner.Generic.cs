@@ -70,6 +70,9 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
             return Task.FromResult(x);
         }));
 
+    public TaskRunner<TArg> Then(Func<TArg, TArg> func) =>
+        this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, t) => Task.FromResult(func(x))));
+
     public TaskRunner<TArg> Then(Action func) =>
         this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, t) =>
         {

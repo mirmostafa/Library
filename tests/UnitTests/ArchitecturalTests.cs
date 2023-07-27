@@ -12,7 +12,7 @@ public sealed class ArchitecturalTests
 
     public ArchitecturalTests()
     {
-        var defaultPredicate = (Type x) => x.Namespace?.StartsWith("System.") is not true;
+        static bool defaultPredicate(Type x) => x.Namespace?.StartsWith("System.") is not true;
 
         var coreLibAsm = typeof(CoreLibModule).Assembly;
         var codeLibTypes = coreLibAsm.GetTypes().Where(defaultPredicate);

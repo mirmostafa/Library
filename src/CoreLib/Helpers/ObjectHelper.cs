@@ -359,6 +359,15 @@ public static class ObjectHelper
         where TAttribute : Attribute => type.GetCustomAttribute<TAttribute>(inherit) != null;
 
     /// <summary>
+    /// Checks if the given type has an attribute of type TAttribute.
+    /// </summary>
+    /// <typeparam name="TAttribute">The type of attribute to check for.</typeparam>
+    /// <param name="type">The type to check.</param>
+    /// <returns>True if the type has an attribute of type TAttribute, false otherwise.</returns>
+    public static bool HasAttribute<TAttribute>(Type type)
+        where TAttribute : Attribute => type.GetCustomAttribute<TAttribute>() != null;
+
+    /// <summary>
     /// Determines whether [is database null] [the specified o].
     /// </summary>
     /// <param name="o">The o.</param>
