@@ -82,8 +82,8 @@ public record Result<TValue>(in TValue Value,
         in ImmutableDictionary<string, object>? extraData = null)
         => new(value, true, status, message, errors, extraData);
 
-    public static implicit operator Result(Result<TValue> result)
-        => new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+    public static implicit operator Result(Result<TValue> result) =>
+        new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
 
     public static Result<TValue> operator +(Result<TValue> left, ResultBase right)
     {
@@ -92,8 +92,8 @@ public record Result<TValue>(in TValue Value,
         return result;
     }
 
-    public static implicit operator TValue(Result<TValue> result)
-        => result.Value;
+    public static implicit operator TValue(Result<TValue> result) =>
+        result.Value;
 
     /// <summary> Combines multiple Result<TValue> objects into a single Result<TValue> object.
     /// </summary> <param name="results">The Result<TValue> objects to combine.</param> <returns>A
@@ -117,8 +117,8 @@ public record Result<TValue>(in TValue Value,
     public Result<TValue> Add(Result<TValue> item, Func<TValue, TValue, TValue> add) =>
         Result<TValue>.Combine(add, item);
 
-    public void Deconstruct(out bool isSucceed, out TValue Value) =>
-        (isSucceed, Value) = (this.IsSucceed, this.Value);
+    public void Deconstruct(out bool IsSucceed, out TValue Value) =>
+        (IsSucceed, Value) = (this.IsSucceed, this.Value);
 
     /// <summary> Converts a Result<TValue> to a Result. </summary>
     public Result ToResult(in Result<TValue> result) =>

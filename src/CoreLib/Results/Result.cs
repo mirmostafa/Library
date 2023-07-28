@@ -4,7 +4,7 @@ using Library.Interfaces;
 
 namespace Library.Results;
 
-public record Result(in bool? Succeed = null,
+public sealed record Result(in bool? Succeed = null,
                      in object? Status = null,
                      in string? Message = null,
                      in IEnumerable<(object Id, object Error)>? Errors = null,

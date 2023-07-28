@@ -16,16 +16,6 @@ namespace Library.Coding;
 public static class Functional
 {
     /// <summary>
-    /// Executes an asynchronous action and returns a Task object that represents the asynchronous operation.
-    /// </summary>
-    /// <typeparam name="TResult">The type of the result of the asynchronous operation.</typeparam>
-    /// <param name="action">The asynchronous action to execute.</param>
-    /// <param name="cancellationToken">A CancellationToken to observe while waiting for the task to complete.</param>
-    /// <returns>A Task object that represents the asynchronous operation.</returns>
-    public static Task<TResult> Async<TResult>(Func<TResult> action, CancellationToken cancellationToken = default)
-        => Task.Run(action, cancellationToken);
-
-    /// <summary>
     /// Executes the specified try method and catches any exceptions that occur.
     /// </summary>
     /// <param name="tryMethod">The try method.</param>
@@ -69,32 +59,6 @@ public static class Functional
     public static void Catch(in Action action, in ExceptionHandling exceptionHandling)
         => Catch(action, handling: exceptionHandling);
 
-    public static TResult? Catch<TResult, TException>(Func<TResult> action)
-        where TException : Exception
-    {
-        try
-        {
-            return action.ArgumentNotNull(nameof(action))();
-        }
-        catch (TException)
-        {
-            return default;
-        }
-    }
-
-    public static async Task<Exception?> CatchAsync(Action action)
-    {
-        try
-        {
-            await Task.Factory.StartNew(action);
-            return null;
-        }
-        catch (Exception ex)
-        {
-            return ex;
-        }
-    }
-
     public static async Task<Result> CatchAsync(Func<Task> action)
     {
         try
@@ -117,49 +81,6 @@ public static class Functional
         catch (Exception ex)
         {
             return Result<TResult?>.CreateFailure(error: ex);
-        }
-    }
-
-    /// <summary>
-    /// Executes the specified try action and catches any exceptions that occur.
-    /// </summary>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="tryAction">The try action.</param>
-    /// <param name="catchAction">The catch action.</param>
-    /// <param name="finallyAction">The finally action.</param>
-    /// <param name="handling">The exception handling.</param>
-    /// <param name="throwException">if set to <c>true</c> [throw exception].</param>
-    /// <returns>
-    /// A tuple containing the result and the exception.
-    /// </returns>
-    public static (TResult? Result, Exception? Exception) CatchFunc<TResult>(
-        in Func<TResult> tryAction,
-        in Func<Exception, TResult>? catchAction = null,
-        in Action? finallyAction = null,
-        in ExceptionHandling? handling = null,
-        bool throwException = false)
-    {
-        Check.IfArgumentNotNull(tryAction, nameof(tryAction));
-
-        handling?.Reset();
-        try
-        {
-            return (tryAction(), null);
-        }
-        catch (Exception ex)
-        {
-            var result = catchAction is not null ? catchAction(ex) : default;
-            handling?.HandleException(ex);
-            if (throwException)
-            {
-                throw;
-            }
-
-            return (result, ex);
-        }
-        finally
-        {
-            finallyAction?.Invoke();
         }
     }
 
@@ -188,7 +109,10 @@ public static class Functional
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="action">The action to execute.</param>
     /// <param name="defaultValue">The default value to return if an exception is thrown.</param>
-    /// <returns>A tuple containing the result of the action or the default value and the exception if one was thrown.</returns>
+    /// <returns>
+    /// A tuple containing the result of the action or the default value and the exception if one
+    /// was thrown.
+    /// </returns>
     public static (TResult Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> action, in TResult defaultValue)
     {
         Check.IfArgumentNotNull(action);
@@ -207,9 +131,9 @@ public static class Functional
     {
         try
         {
-            return action.ArgumentNotNull(nameof(action))();
+            return action.ArgumentNotNull()();
         }
-        catch (TException ex) when (predicate.ArgumentNotNull(nameof(predicate))(ex))
+        catch (TException ex) when (predicate.ArgumentNotNull()(ex))
         {
             return default;
         }
@@ -248,7 +172,9 @@ public static class Functional
     }
 
     /// <summary>
-    /// Simulated <code>for</code> keyword.
+    /// Simulated
+    /// <code>for</code>
+    /// keyword.
     /// </summary>
     /// <typeparam name="Item">The type of the items in the IEnumerable.</typeparam>
     /// <param name="items">The IEnumerable of items.</param>
@@ -282,7 +208,7 @@ public static class Functional
             }
         }
         //If the items are not null, loop through the items and execute the action
-        else
+        else if (items is not null)
         {
             var enumerator = items.GetEnumerator();
             var index = 0;

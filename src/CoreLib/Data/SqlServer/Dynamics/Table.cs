@@ -1,5 +1,4 @@
-﻿
-using System.Collections;
+﻿using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -157,7 +156,7 @@ public sealed class Table : SqlObject<Table, Database>, IEnumerable
 
     public IEnumerable<Row> Select(params string[] columns)
     {
-        if (columns.Length == 0)
+        if (!columns.Any())
         {
             columns = this.Columns.Select(c => c.Name).ToArray();
         }

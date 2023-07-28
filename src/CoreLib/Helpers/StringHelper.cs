@@ -17,6 +17,7 @@ namespace Library.Helpers;
 /// </summary>
 public static class StringHelper
 {
+    static readonly char[] _standardSeparators = new[] { '\0', '\n', '\r', '\t', '_', '-' };
     /// <summary>
     /// Adds a specified number of characters to a string, either before or after the string.
     /// </summary>
@@ -1008,7 +1009,7 @@ public static class StringHelper
         //If no separators are provided, use default separators
         if (separators?.Any() is not true)
         {
-            separators = new[] { '\0', '\n', '\r', '\t', '_', '-' };
+            separators = _standardSeparators;
         }
         //If the string is empty, return it
         if (str.IsNullOrEmpty())

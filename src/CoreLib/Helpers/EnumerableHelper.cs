@@ -241,8 +241,12 @@ public static class EnumerableHelper
             _ => source.GetEnumerator().MoveNext()
         };
 
-    public static bool Any<T>(this IList<T> list)
-            => list.Count != 0;
+    public static bool Any<T>(this IList<T> source) =>
+        source.Count != 0;
+    public static bool Any<T>(this T[] source) =>
+        source.Length != 0;
+    public static bool Any<T>(this ICollection source) =>
+        source.Count != 0;
 
     /// <summary>
     /// Get a <see cref="Span{T}"/> view over a <see cref="List{T}"/>'s data. Items should not be
@@ -394,8 +398,8 @@ public static class EnumerableHelper
     /// <param name="source">The IEnumerable to clear.</param>
     /// <returns>An empty IEnumerable of the specified type.</returns>
     [return: NotNull]
-    public static IEnumerable<T> ClearImmuted<T>(this IEnumerable<T>? source)
-            => Enumerable.Empty<T>();
+    public static IEnumerable<T> ClearImmuted<T>(this IEnumerable<T>? source) =>
+        Enumerable.Empty<T>();
 
     /// <summary> Recursively collects all items in a collection of items that implement
     /// IParent<TItem>. </summary> <param name="items">The collection of items to collect.</param>
@@ -446,7 +450,7 @@ public static class EnumerableHelper
     public static int CountNotEnumerated<T>(this IEnumerable<T> source)
     {
         (var succeed, var count) = TryCountNonEnumerated(source);
-        return succeed ? count : throw new Exceptions.Validations.InvalidOperationValidationException();
+        return succeed ? count : Exceptions.Validations.InvalidOperationValidationException.Throw<int>();
     }
 
     /// <summary>

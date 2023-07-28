@@ -1,9 +1,13 @@
-﻿using Library.Interfaces;
+﻿using System.Diagnostics;
+
+using Library.Interfaces;
+
+using CurrenntException = Library.Exceptions.LibraryException;
 
 namespace Library.Exceptions;
 
 [Serializable]
-public sealed class NoItemSelectedException : LibraryExceptionBase, IThrowsException<NoItemSelectedException>, IThrowableException
+public sealed class NoItemSelectedException : LibraryExceptionBase, IThrowableException
 {
     public NoItemSelectedException()
         : this("No item selected.")
@@ -26,14 +30,30 @@ public sealed class NoItemSelectedException : LibraryExceptionBase, IThrowsExcep
     }
 
     [DoesNotReturn]
-    public static void Throw()
-        => throw new NoItemSelectedException();
+    [StackTraceHidden]
+    [DebuggerStepThrough]
+    public static void Throw() =>
+         throw new CurrenntException();
 
     [DoesNotReturn]
-    public static void Throw(string message)
-        => throw new NoItemSelectedException(message);
+    [StackTraceHidden]
+    [DebuggerStepThrough]
+    public static void Throw(string message) =>
+        throw new CurrenntException(message);
 
     [DoesNotReturn]
-    public static void Throw(string? message, Exception? innerException)
-        => throw new NoItemSelectedException(message, innerException);
+    [StackTraceHidden]
+    [DebuggerStepThrough]
+    public static void Throw(string message, Exception innerException) =>
+        throw new CurrenntException(message, innerException);
+
+    [StackTraceHidden]
+    [DebuggerStepThrough]
+    public static void ThrowIfNotValid([DoesNotReturnIf(false)] bool condition, string message)
+    {
+        if (condition)
+        {
+            Throw(message);
+        }
+    }
 }

@@ -1,9 +1,13 @@
-﻿using Library.Interfaces;
+﻿using System.Diagnostics;
+
+using Library.Interfaces;
+
+using CurrenntException = Library.Exceptions.Validations.ValidationException;
 
 namespace Library.Exceptions.Validations;
 
 [Serializable]
-public sealed class ValidationException : ValidationExceptionBase, IThrowsException<ValidationException>
+public sealed class ValidationException : ValidationExceptionBase, IThrowableException
 {
     public ValidationException()
     {
@@ -32,6 +36,33 @@ public sealed class ValidationException : ValidationExceptionBase, IThrowsExcept
 
     private ValidationException(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext)
     {
+    }
 
+    [DoesNotReturn]
+    [StackTraceHidden]
+    [DebuggerStepThrough]
+    public static void Throw() =>
+        throw new CurrenntException();
+
+    [DoesNotReturn]
+    [StackTraceHidden]
+    [DebuggerStepThrough]
+    public static void Throw(string message) =>
+        throw new CurrenntException(message);
+
+    [DoesNotReturn]
+    [StackTraceHidden]
+    [DebuggerStepThrough]
+    public static void Throw(string message, Exception innerException) =>
+        throw new CurrenntException(message, innerException);
+
+    [StackTraceHidden]
+    [DebuggerStepThrough]
+    public static void ThrowIfNotValid([DoesNotReturnIf(false)] bool condition, string message)
+    {
+        if (condition)
+        {
+            Throw(message);
+        }
     }
 }

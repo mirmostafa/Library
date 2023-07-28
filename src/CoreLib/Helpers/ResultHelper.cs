@@ -49,8 +49,12 @@ public static class ResultHelper
         return InnerCheck(result, condition, errorMessage, errorId);
     }
 
+    public static Result<TValue> Combine<TValue>(this IEnumerable<Result<TValue>> results)
+        where TValue : IAdditionOperators<TValue, TValue, TValue> =>
+        Result<TValue>.Combine((x, y) => x + y, results.ToArray());
+
     public static TResult LogDebug<TResult>(this TResult result, ILogger logger, [CallerMemberName] object? sender = null, DateTime? time = null)
-        where TResult : ResultBase
+            where TResult : ResultBase
     {
         if (result.IsSucceed)
         {

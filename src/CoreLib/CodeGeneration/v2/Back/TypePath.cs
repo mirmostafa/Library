@@ -17,7 +17,7 @@ public readonly struct TypePath : IEquatable<TypePath>
                 return string.Empty;
             }
             var result = this.NameSpace.IsNullOrEmpty() ? this.Name : $"{this.NameSpace}.{this.Name}";
-            if (this.GenericTypes.Count != 0)
+            if (this.GenericTypes.Any())
             {
                 result = $"{result}<{StringHelper.Merge(this.GenericTypes.Select(x => x.FullPath), ',')}>";
             }

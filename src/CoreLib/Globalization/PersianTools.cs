@@ -27,7 +27,7 @@ public static class PersianTools
             ('و','ؤ')
         };
 
-    public static readonly IEnumerable<char> SeparatorsChars = new[] { ',', DECIMAL_SEPARATOR };
+    public static readonly char[] SeparatorsChars = new[] { ',', DECIMAL_SEPARATOR };
     public static readonly IEnumerable<char> SpecialChars = "ًٌٍريال،؛َُِّۀةيؤإأء";
     private static readonly PersianCalendar _persianCalendar = new();
 

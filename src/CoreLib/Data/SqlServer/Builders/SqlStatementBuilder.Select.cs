@@ -22,7 +22,7 @@ public static partial class SqlStatementBuilder
     {
         Check.IfArgumentNotNull(statement?.TableName);
         var result = new StringBuilder("SELECT");
-        if (statement.Columns.Count != 0)
+        if (statement.Columns.Any())
         {
             foreach (var column in statement.Columns)
             {
