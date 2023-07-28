@@ -286,7 +286,7 @@ public static class ObjectHelper
     {
         var type = obj.ArgumentNotNull().GetType();
         var properties = type.GetProperties();
-        if (!properties.Any())
+        if (properties.Length == 0)
         {
             properties = type.GetProperties(searchPrivates
                 ? BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic

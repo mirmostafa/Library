@@ -33,7 +33,7 @@ public partial class DataCrudGridView : UserControl
 
         bool initializeColumns()
         {
-            if (this.DataGrid.Columns.Any())
+            if (this.DataGrid.Columns.Count != 0)
             {
                 return true;
             }
@@ -87,7 +87,7 @@ public partial class DataCrudGridView : UserControl
             return;
         }
 
-        if (!this.DataGrid.SelectedItems.Any())
+        if (this.DataGrid.SelectedItems.Count == 0)
         {
             throw new Exceptions.Validations.NoItemValidationException("New item selected.");
         }

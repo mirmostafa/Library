@@ -1,6 +1,5 @@
 ﻿using Library.Data.SqlServer;
 using Library.Data.SqlServer.Builders.Bases;
-using Library.DesignPatterns.Markers;
 using Library.Validations;
 
 namespace Library.Data.SqlServer;
@@ -23,7 +22,7 @@ public static partial class SqlStatementBuilder
     {
         Check.IfArgumentNotNull(statement?.TableName);
         var result = new StringBuilder("SELECT");
-        if (statement.Columns.Any())
+        if (statement.Columns.Count != 0)
         {
             foreach (var column in statement.Columns)
             {

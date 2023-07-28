@@ -6,7 +6,7 @@ public static class BooleanHelper
     /// Checks if any of the boolean values in the given array is true.
     /// </summary>
     public static bool Any(params bool[] bools)
-            => bools.Any();
+            => bools.Length != 0;
     /// <summary>
     /// Checks if a boolean condition is true.
     /// </summary>

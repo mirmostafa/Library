@@ -208,7 +208,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
     public Task Start()
     {
         this.InitializeMainOperationSteps();
-        if (!this._steps.Any())
+        if (this._steps.Count == 0)
         {
             throw new Exception();
         }
@@ -221,7 +221,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
         this.OnMainOperationStarted(new MultiStepStartedLogEventArgs(this.MainStepsCount));
         Task task;
         this._scheduler = Task.Factory.Scheduler;
-        if (noPriorities.Any())
+        if (noPriorities.Count != 0)
         {
             task = Task.Run(() =>
             {

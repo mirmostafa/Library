@@ -167,7 +167,7 @@ public static partial class AdoHelper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="connection">The connection.</param>
-    /// <param name="query">     The query.</param>
+    /// <param name="query">The query.</param>
     /// <param name="fillParams">The fill parameters.</param>
     /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
@@ -347,7 +347,7 @@ public static partial class AdoHelper
     /// Returns the first row data in specific column of the specified table.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="table">      The table.</param>
+    /// <param name="table">The table.</param>
     /// <param name="columnTitle">The column title.</param>
     /// <returns></returns>
     public static T? FirstCol<T>(this DataTable table, string columnTitle)
@@ -356,7 +356,7 @@ public static partial class AdoHelper
     /// <summary>
     /// Returns the first row data in specific column of the specified table in string format.
     /// </summary>
-    /// <param name="table">      The table.</param>
+    /// <param name="table">The table.</param>
     /// <param name="columnTitle">The column title.</param>
     /// <returns></returns>
     public static string? FirstCol(this DataTable table, string columnTitle)
@@ -366,8 +366,8 @@ public static partial class AdoHelper
     /// Returns the first row data in specific column of the specified table.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="table">       The table.</param>
-    /// <param name="columnTitle"> The column title.</param>
+    /// <param name="table">The table.</param>
+    /// <param name="columnTitle">The column title.</param>
     /// <param name="defaultValue">The default value.</param>
     /// <returns></returns>
     public static T FirstCol<T>(this DataTable table, string columnTitle, T defaultValue)
@@ -377,9 +377,9 @@ public static partial class AdoHelper
     /// Returns the first row data in specific column of the specified table.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="table">      The table.</param>
+    /// <param name="table">The table.</param>
     /// <param name="columnTitle">The column title.</param>
-    /// <param name="convertor">  The converter.</param>
+    /// <param name="convertor">The converter.</param>
     /// <returns></returns>
     public static T FirstCol<T>(this DataTable table, string columnTitle, Converter<object, T> convertor)
         => table.Select(columnTitle, convertor).First();
@@ -388,9 +388,9 @@ public static partial class AdoHelper
     /// first the specified table according to de given value.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="table">       The table.</param>
-    /// <param name="columnTitle"> The column title.</param>
-    /// <param name="convertor">   The converter.</param>
+    /// <param name="table">The table.</param>
+    /// <param name="columnTitle">The column title.</param>
+    /// <param name="convertor">The converter.</param>
     /// <param name="defaultValue">The default value.</param>
     /// <returns></returns>
     public static T FirstCol<T>(this DataTable table, string columnTitle, Converter<object, T> convertor, T defaultValue)
@@ -400,7 +400,7 @@ public static partial class AdoHelper
     /// Gets the column data.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="rows">      The rows.</param>
+    /// <param name="rows">The rows.</param>
     /// <param name="columnName">Name of the column.</param>
     /// <returns></returns>
     public static IEnumerable<T?> GetColumnData<T>(this DataRowCollection rows, string columnName)
@@ -411,7 +411,7 @@ public static partial class AdoHelper
     /// Gets the column data.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="rows">       The rows.</param>
+    /// <param name="rows">The rows.</param>
     /// <param name="columnIndex">Index of the column.</param>
     /// <returns></returns>
     public static IEnumerable<T?> GetColumnData<T>(this DataRowCollection rows, int columnIndex = 0)
@@ -437,7 +437,7 @@ public static partial class AdoHelper
     /// Determines whether the specified column in given row is null or empty.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="row">        The row.</param>
+    /// <param name="row">The row.</param>
     /// <param name="columnTitle">The column title.</param>
     /// <returns><c>true</c> if the column is null or empty; otherwise, <c>false</c> .</returns>
     public static bool IsNullOrEmpty<T>(this DataRow row, string columnTitle)
@@ -446,7 +446,7 @@ public static partial class AdoHelper
     /// <summary>
     /// Determines whether the specified column in given row is null or empty.
     /// </summary>
-    /// <param name="row">        The row.</param>
+    /// <param name="row">The row.</param>
     /// <param name="columnTitle">The column title.</param>
     /// <returns><c>true</c> if the column is null or empty; otherwise, <c>false</c> .</returns>
     public static bool IsNullOrEmpty(this DataRow row, string columnTitle)
@@ -459,10 +459,10 @@ public static partial class AdoHelper
     /// Selects the specified table.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="table">      The table.</param>
+    /// <param name="table">The table.</param>
     /// <param name="columnTitle">The column title.</param>
-    /// <param name="convertor">  The converter.</param>
-    /// <param name="predicate">  The predicate.</param>
+    /// <param name="convertor">The converter.</param>
+    /// <param name="predicate">The predicate.</param>
     /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Func<object, T> convertor, Predicate<object> predicate)
@@ -498,7 +498,8 @@ public static partial class AdoHelper
     }
 
     /// <summary>
-    /// Selects the specified column title from the given DataTable and returns the result as an IEnumerable of type T.
+    /// Selects the specified column title from the given DataTable and returns the result as an
+    /// IEnumerable of type T.
     /// </summary>
     /// <typeparam name="T">The type of the elements of the returned IEnumerable.</typeparam>
     /// <param name="table">The DataTable from which to select the column.</param>
@@ -510,11 +511,12 @@ public static partial class AdoHelper
         Check.IfArgumentNotNull(table);
 
         var result = table.Select().Select(row => row[columnTitle]).ToList();
-        return result.Any() ? result.Cast<T>() : defaultValue;
+        return result.Count != 0 ? result.Cast<T>() : defaultValue;
     }
 
     /// <summary>
-    /// Selects the specified column from the given DataTable and converts it to the specified type using the given converter.
+    /// Selects the specified column from the given DataTable and converts it to the specified type
+    /// using the given converter.
     /// </summary>
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Converter<object, T> convertor)
             => table is null
@@ -522,7 +524,8 @@ public static partial class AdoHelper
                 : table.Select().Select(row => row[columnTitle]).Cast(convertor);
 
     /// <summary>
-    /// Selects the specified column title from the DataTable and converts it to the specified type using the provided convertor.
+    /// Selects the specified column title from the DataTable and converts it to the specified type
+    /// using the provided convertor.
     /// </summary>
     /// <typeparam name="T">The type to convert the column to.</typeparam>
     /// <param name="table">The DataTable to select from.</param>
@@ -536,12 +539,12 @@ public static partial class AdoHelper
 
         var buffer = table.Select().Select(row => row[columnTitle]).Cast(convertor);
         var result = buffer as T[] ?? buffer.ToArray();
-        return result.Any() ? result : defaultValue;
+        return result.Length != 0 ? result : defaultValue;
     }
 
     /// <summary>
-    /// Executes the provided converter function for each row in the IDataReader and returns an IEnumerable of the results.
-    /// Throws an ArgumentNullException if the IDataReader is null.
+    /// Executes the provided converter function for each row in the IDataReader and returns an
+    /// IEnumerable of the results. Throws an ArgumentNullException if the IDataReader is null.
     /// </summary>
     public static IEnumerable<T> Select<T>(this IDataReader reader, Func<IDataReader, T> converter)
             where T : new()
@@ -550,13 +553,14 @@ public static partial class AdoHelper
                 : throw new ArgumentNullException(nameof(reader));
 
     /// <summary>
-    /// Extension method to select data from an IDataReader into an IEnumerable of type T. 
+    /// Extension method to select data from an IDataReader into an IEnumerable of type T.
     /// </summary>
     public static IEnumerable<T> Select<T>(this IDataReader reader)
         where T : new() => Select(reader, () => new T());
 
     /// <summary>
-    /// Executes the specified reader and creates a collection of objects using the specified creator function.
+    /// Executes the specified reader and creates a collection of objects using the specified
+    /// creator function.
     /// </summary>
     /// <typeparam name="T">The type of the objects to create.</typeparam>
     /// <param name="reader">The reader to execute.</param>
@@ -618,7 +622,7 @@ public static partial class AdoHelper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="connection">The connection.</param>
-    /// <param name="tableName"> Name of the table.</param>
+    /// <param name="tableName">Name of the table.</param>
     /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
     public static IEnumerable<T> SelectTable<T>(SqlConnection connection, string tableName)

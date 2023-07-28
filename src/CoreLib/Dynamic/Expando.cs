@@ -77,7 +77,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     protected virtual void FillByProperties(SerializationInfo info, StreamingContext context)
     {
-        if (info is not null && this.Properties.Any())
+        if (info is not null && this.Properties.Count != 0)
         {
             foreach (var (key, value) in this.Properties)
             {

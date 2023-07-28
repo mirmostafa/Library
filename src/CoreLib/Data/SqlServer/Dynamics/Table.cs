@@ -1,12 +1,9 @@
-﻿#nullable enable
-
+﻿
 using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 
 using Library.Data.SqlServer.Dynamics.Collections;
-using Library.Helpers;
 
 using static Library.Data.SqlServer.SqlStatementBuilder;
 
@@ -21,8 +18,7 @@ public sealed class Table : SqlObject<Table, Database>, IEnumerable
     {
     }
 
-    public Row this[int index] => this.Rows.ElementAt(index);
-    public Columns Columns { get => this._columns ??= this.GetColumns(); set => _columns = value; }
+    public Columns Columns { get => this._columns ??= this.GetColumns(); set => this._columns = value; }
     public DateTime CreateDate { get; set; }
     public long Id { get; set; }
     public DateTime ModifyDate { get; set; }
@@ -38,6 +34,8 @@ public sealed class Table : SqlObject<Table, Database>, IEnumerable
             }
         }
     }
+
+    public Row this[int index] => this.Rows.ElementAt(index);
 
     public static Tables? GetByConnectionString(string connectionstring) => Database.GetDatabase(connectionstring)?.Tables;
 
@@ -159,7 +157,7 @@ public sealed class Table : SqlObject<Table, Database>, IEnumerable
 
     public IEnumerable<Row> Select(params string[] columns)
     {
-        if (!columns.Any())
+        if (columns.Length == 0)
         {
             columns = this.Columns.Select(c => c.Name).ToArray();
         }
@@ -217,16 +215,19 @@ public sealed class Table : SqlObject<Table, Database>, IEnumerable
                 });
             }
 
-            _ = reader.NextResult(); while (reader.Read())
+            _ = reader.NextResult();
+            while (reader.Read())
             {
                 columns.First(c => c.Name ==
             reader.Field("column_name", Convert.ToString)).IsIdentity = true;
             }
 
-            _ = reader.NextResult(); while (reader.Read())
+            _ = reader.NextResult();
+            while (reader.Read())
             {
                 var column = columns.First(c => c.Name ==
-            reader.Field("ParentColumn", Convert.ToString)); column.IsForeignKey = true;
+            reader.Field("ParentColumn", Convert.ToString));
+                column.IsForeignKey = true;
                 column.ForeignKeyInfo = new ForeignKeyInfo
                 {
                     ReferencedColumn =
@@ -249,50 +250,32 @@ public sealed class Table : SqlObject<Table, Database>, IEnumerable
     //    var query = new[] { qColumns, qIdentities, qForeignKeys }.Merge("; ");
     //    var columns = new List<Column>();
 
-    //    var stopwatch = Stopwatch.StartNew();
-    //    byReader(helper, query, columns);
-    //    stopwatch.Stop();
-    //    var t2 = stopwatch.Elapsed;
+    // var stopwatch = Stopwatch.StartNew(); byReader(helper, query, columns); stopwatch.Stop(); var
+    // t2 = stopwatch.Elapsed;
 
-    //    stopwatch.Restart();
-    //    byAdapter(helper, qColumns, qIdentities, qForeignKeys);
-    //    stopwatch.Stop();
-    //    var t1 = stopwatch.Elapsed;
+    // stopwatch.Restart(); byAdapter(helper, qColumns, qIdentities, qForeignKeys);
+    // stopwatch.Stop(); var t1 = stopwatch.Elapsed;
 
-    //    var faster = t2 > t1 ? "Adapter" : "Reader";
-    //    return new Columns(columns);
+    // var faster = t2 > t1 ? "Adapter" : "Reader"; return new Columns(columns);
 
-    //    static void byAdapter(Sql helper, string qColumns, string qIdentities, string qForeignKeys)
-    //    {
-    //        var tables = helper.FillDataTables(qColumns, qIdentities, qForeignKeys).ToArray();
-    //        var tColumns = tables[0];
-    //        var tIdentities = tables[1];
-    //        var tForeignKeys = tables[2];
-    //    }
+    // static void byAdapter(Sql helper, string qColumns, string qIdentities, string qForeignKeys) {
+    // var tables = helper.FillDataTables(qColumns, qIdentities, qForeignKeys).ToArray(); var
+    // tColumns = tables[0]; var tIdentities = tables[1]; var tForeignKeys = tables[2]; }
 
-    //    static void byReader(Sql helper, string query, List<Column> columns)
-    //    {
-    //        using (var reader = helper.ExecuteReader(query))
-    //        {
-    //            while (reader.Read())
-    //            {
-    //                columns.Add(new Column(null, reader.Field("name", Convert.ToString), null)
-    //                {
-    //                    CollationName = reader.Field("collation_name", Convert.ToString),
-    //                    IsNullable = reader.Field("is_nullable", str => str.ToString().EqualsTo("1")),
-    //                    MaxLength = reader.Field("max_length", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
-    //                    Precision = reader.Field("precision", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
-    //                    Position = reader.Field("column_id", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
-    //                    DataType = reader.Field("system_type", Convert.ToString),
-    //                    UniqueId = string.Concat(reader["object_id"].ToLong().ToString("000000000000"), reader["column_id"].ToInt().ToString("000")).ToLong(),
-    //                });
-    //            }
+    // static void byReader(Sql helper, string query, List<Column> columns) { using (var reader =
+    // helper.ExecuteReader(query)) { while (reader.Read()) { columns.Add(new Column(null,
+    // reader.Field("name", Convert.ToString), null) { CollationName =
+    // reader.Field("collation_name", Convert.ToString), IsNullable = reader.Field("is_nullable",
+    // str => str.ToString().EqualsTo("1")), MaxLength = reader.Field("max_length", v =>
+    // DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)), Precision = reader.Field("precision", v =>
+    // DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)), Position = reader.Field("column_id", v =>
+    // DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)), DataType = reader.Field("system_type",
+    // Convert.ToString), UniqueId =
+    // string.Concat(reader["object_id"].ToLong().ToString("000000000000"),
+    // reader["column_id"].ToInt().ToString("000")).ToLong(), }); }
 
-    //            _ = reader.NextResult();
-    //            while (reader.Read())
-    //            {
-    //                columns.First(c => c.Name == reader.Field("column_name", Convert.ToString)).IsIdentity = true;
-    //            }
+    // _ = reader.NextResult(); while (reader.Read()) { columns.First(c => c.Name ==
+    // reader.Field("column_name", Convert.ToString)).IsIdentity = true; }
 
     //            _ = reader.NextResult();
     //            while (reader.Read())

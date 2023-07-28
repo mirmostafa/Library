@@ -17,7 +17,7 @@ public readonly struct TypePath : IEquatable<TypePath>
                 return string.Empty;
             }
             var result = this.NameSpace.IsNullOrEmpty() ? this.Name : $"{this.NameSpace}.{this.Name}";
-            if (this.GenericTypes.Any())
+            if (this.GenericTypes.Count != 0)
             {
                 result = $"{result}<{StringHelper.Merge(this.GenericTypes.Select(x => x.FullPath), ',')}>";
             }
@@ -76,14 +76,14 @@ public readonly struct TypePath : IEquatable<TypePath>
         return dotLastIndex == -1 ? ((string? Name, string? NameSpace))(typePath, null) : ((string? Name, string? NameSpace))(typePath[(dotLastIndex + 1)..], typePath[..dotLastIndex]);
     }
 
-    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null) 
+    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null)
         => string.IsNullOrEmpty(nameSpace)
             ? SplitTypePath(name)
             : nameSpace.EndsWith(".") ? SplitTypePath($"{nameSpace}{name}") : SplitTypePath($"{nameSpace}.{name}");
 
     public TypePath AddGenericType(TypePath typePath)
     {
-        this.GenericTypes.Add(typePath);
+        _ = this.GenericTypes.Add(typePath);
         return this;
     }
 

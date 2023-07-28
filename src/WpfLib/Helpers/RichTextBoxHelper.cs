@@ -102,7 +102,7 @@ public static class RichTextBoxHelper
                     inlines.Add(new Run(" "));
                 }
 
-                return (inlines.Any(), inlines);
+                return (inlines.Count != 0, inlines);
 
                 static bool processKeywordRules((string[] Keys, Brush Brush)[] keyWordRules, string curr, List<Inline> inlines)
                 {
