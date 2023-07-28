@@ -2,18 +2,6 @@
 
 namespace Library.Interfaces;
 
-//public interface IThrowsException<TSelfException>
-//    where TSelfException : Exception, IException, new()
-//{
-//    [DoesNotReturn]
-//    static void Throw()
-//        => throw new TSelfException();
-
-//    [DoesNotReturn]
-//    static void Throw(string message)
-//        => throw Activator.CreateInstance(typeof(TSelfException), message)!.Cast().To<Exception>();
-//}
-
 public interface IThrowableException
 {
     [DoesNotReturn]
