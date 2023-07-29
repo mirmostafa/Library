@@ -12,6 +12,8 @@ public abstract record ResultBase(in bool? Succeed = null,
     in IEnumerable<(object Id, object Error)>? Errors = null,
     in ImmutableDictionary<string, object>? ExtraData = null)
 {
+    private readonly IEnumerable<(object Id, object Error)>? _error;
+
     /// <summary>
     /// Checks if the operation was successful by checking the Succeed flag, Status and Errors.
     /// </summary>
