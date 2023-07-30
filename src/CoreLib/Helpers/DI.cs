@@ -22,9 +22,10 @@ public static class DI
     /// <exception cref="LibraryException">Thrown when DI is not initiated.</exception>
     /// <exception cref="ObjectNotFoundException">Thrown when unable to resolve service for the specified type.</exception>
     [DebuggerStepThrough]
+    [return: NotNull]
     public static T GetService<T>()
     {
-        Check.If(_serviceProvider is null, () => new LibraryException($"{nameof(DI)} not initiated."));
+        _serviceProvider.NotNull(() => new LibraryException($"{nameof(DI)} not initiated."));
 
         LibLogger.Debug($"Requested service: {typeof(T)}", typeof(DI));
         var result = _serviceProvider.GetService<T>().NotNull(() => new ObjectNotFoundException($"Unable to resolve service for type {typeof(T)}."));

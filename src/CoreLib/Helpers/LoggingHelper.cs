@@ -133,7 +133,7 @@ public static class LoggingHelper
     /// <param name="logger">The logger.</param>
     /// <param name="reporter">The reporter.</param>
     /// <returns>The logger.</returns>
-    public static TLogger HandleReporterEvents<TLogger>(this TLogger logger, IMultistepProcess reporter)
+    public static TLogger HandleReporterEvents<TLogger>(this TLogger logger, IProgressReport reporter)
             where TLogger : ILogger
     {
         reporter.Reported -= Reporter_Reported;

@@ -5,17 +5,21 @@ using Library.Validations;
 namespace Library.Results;
 
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
-public abstract class ResultBase(in bool? succeed = null,
+public abstract class ResultBase(
+    in bool? succeed = null,
     in object? status = null,
     in string? message = null,
     in IEnumerable<(object Id, object Error)>? errors = null,
     in IEnumerable<(string, object)>? extraData = null)
 {
     private readonly IEnumerable<(object Id, object Error)>? _error;
+
     private IEnumerable<(object Id, object Error)>? _errors = errors;
+
     private IEnumerable<(string, object)>? _extraData = extraData;
 
     public IEnumerable<(object Id, object Error)> Errors { get => this._errors ??= Enumerable.Empty<(object, object)>(); init => this._errors = value; }
+
     public IEnumerable<(string Id, object Data)> ExtraData => this._extraData ??= Enumerable.Empty<(string, object)>();
 
     /// <summary>
@@ -29,14 +33,13 @@ public abstract class ResultBase(in bool? succeed = null,
     public virtual bool IsSucceed => this.Succeed ?? ((this.Status is null or 0 or 200) && (!this.Errors?.Any() ?? true));
 
     public string? Message { get; set; } = message;
+
     public object? Status { get; set; } = status;
+
     public bool? Succeed { get; set; } = succeed;
 
     public static implicit operator bool(ResultBase result) =>
         result.NotNull().IsSucceed;
-
-    public void Deconstruct(out bool isSucceed, out string message) =>
-            (isSucceed, message) = (this.IsSucceed, this.Message?.ToString() ?? string.Empty);
 
     /// <summary>
     /// Indicates whether the current object is equal to another object of the same type.
@@ -113,5 +116,5 @@ public abstract class ResultBase(in bool? succeed = null,
     }
 
     private string GetDebuggerDisplay() =>
-            this.ToString();
+        this.ToString();
 }

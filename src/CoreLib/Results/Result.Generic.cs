@@ -2,7 +2,8 @@
 
 namespace Library.Results;
 
-public class Result<TValue>(TValue value,
+public class Result<TValue>(
+    TValue value,
     in bool? succeed = null,
     in object? status = null,
     in string? message = null,
@@ -14,8 +15,8 @@ public class Result<TValue>(TValue value,
 {
     private static Result<TValue?>? _failure;
 
-    public Result(Result<TValue> original)
-            : this(original.Value, original.Succeed, original.Status, original.Message, original.Errors, original.ExtraData)
+    public Result(ResultBase original, TValue value)
+        : this(value, original.Succeed, original.Status, original.Message, original.Errors, original.ExtraData)
     {
     }
 
@@ -25,7 +26,7 @@ public class Result<TValue>(TValue value,
     /// <returns>A Result object representing a failed operation.</returns>
     public static Result<TValue?> Failure => _failure ??= CreateFailure();
 
-    public TValue Value => value;
+    public TValue Value { get; init; } = value;
 
     /// <summary> Combines multiple Result<TValue> objects into a single Result<TValue> object.
     /// </summary> <param name="results">The Result<TValue> objects to combine.</param> <returns>A
@@ -101,11 +102,11 @@ public class Result<TValue>(TValue value,
     /// <param name="error">The Exception to be stored in the Result.</param>
     /// <param name="value">The value to be stored in the Result.</param>
     /// <returns>A Result with a failure status and an Exception.</returns>
-    public static Result<TValue> CreateFailure(in Exception error, in TValue value)
-        => CreateFailure(value, error, null)!;
+    public static Result<TValue> CreateFailure(in Exception error, in TValue value) =>
+        CreateFailure(value, error, null)!;
 
-    public static Result<TValue?> CreateFailure(in string message, in TValue value)
-            => CreateFailure(value, null, message);
+    public static Result<TValue?> CreateFailure(in string message, in TValue value) =>
+        CreateFailure(value, null, message);
 
     /// <summary>
     /// Creates a new successful Result with the given value, status, message, errors and extra data.
@@ -120,17 +121,17 @@ public class Result<TValue>(TValue value,
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null)
-        => new(value, true, status, message, errors, extraData);
+        in IEnumerable<(string Id, object Data)>? extraData = null) =>
+        new(value, true, status, message, errors, extraData);
 
-    public static Result<TValue> From(in Result result, in TValue value)
-            => new(value, result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+    public static Result<TValue> From(in Result result, in TValue value) =>
+        new(value, result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
 
     public static implicit operator Result(Result<TValue> result) =>
-            new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+        new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
 
     public static implicit operator TValue(Result<TValue> result) =>
-            result.Value;
+        result.Value;
 
     /// <summary>
     /// Creates a new Result object with the given value, succeed, status, message, errors, and extraData.
@@ -140,8 +141,8 @@ public class Result<TValue>(TValue value,
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null)
-        => new(value, succeed, status, message, errors, extraData);
+        in IEnumerable<(string Id, object Data)>? extraData = null) =>
+        new(value, succeed, status, message, errors, extraData);
 
     public static Result<TValue> operator +(Result<TValue> left, ResultBase right)
     {
@@ -153,9 +154,6 @@ public class Result<TValue>(TValue value,
     public Result<TValue> Add(Result<TValue> item, Func<TValue, TValue, TValue> add) =>
         Result<TValue>.Combine(add, item);
 
-    public void Deconstruct(out bool IsSucceed, out TValue Value) =>
-        (IsSucceed, Value) = (this.IsSucceed, this.Value);
-
     public bool Equals(Result<TValue>? other) => throw new NotImplementedException();
 
     public override bool Equals(object? obj) => this.Equals(obj as Result<TValue>);
@@ -166,29 +164,16 @@ public class Result<TValue>(TValue value,
     /// Gets the value of the current instance.
     /// </summary>
     /// <returns>The value of the current instance.</returns>
-    public TValue GetValue()
-        => this.Value;
+    public TValue GetValue() =>
+        this.Value;
 
     /// <summary>
     /// Converts the current Result object to an asynchronous Task.
     /// </summary>
-    public Task<Result<TValue>> ToAsync()
-        => Task.FromResult(this);
+    public Task<Result<TValue>> ToAsync() =>
+        Task.FromResult(this);
 
     /// <summary> Converts a Result<TValue> to a Result. </summary>
     public Result ToResult(in Result<TValue> result) =>
         result;
-
-    public Result<TNewValue?> WithValue<TNewValue>(TNewValue? newValue) =>
-        Result<TNewValue?>.New(newValue, this.Succeed, this.Status, this.Message, this.Errors, this.ExtraData);
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="Result{TValue}"/> class with the specified value.
-    /// </summary>
-    /// <param name="value">The value to set.</param>
-    /// <returns>
-    /// A new instance of the <see cref="Result{TValue}"/> class with the specified value.
-    /// </returns>
-    public Result<TValue> WithValue(in TValue value)
-        => this.WithValue(value);
 }

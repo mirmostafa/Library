@@ -7,19 +7,19 @@ using Library.Results;
 namespace Library.Threading.MultistepProgress;
 
 [Fluent]
-public sealed class MultistepProcessRunner<TState>(in TState state, in IMultistepProcess reporter, IMultistepProcess? subReporter = null, object? owner = null)
+public sealed class MultistepProcessRunner<TState>(in TState state, in IProgressReport reporter, IProgressReport? subReporter = null, object? owner = null)
 {
     private readonly object? _owner = owner;
-    private readonly IMultistepProcess _reporter = reporter;
+    private readonly IProgressReport _reporter = reporter;
     private readonly List<StepInfo<TState>> _stepsList = new();
-    private readonly IMultistepProcess _subReporter = subReporter ?? IMultistepProcess.New();
+    private readonly IProgressReport _subReporter = subReporter ?? IProgressReport.New();
     private int _current;
     private int _max;
     private TState _state = state;
 
     public IEnumerable<StepInfo<TState>> Steps => this._stepsList;
 
-    public static MultistepProcessRunner<TState> New(in TState state, in IMultistepProcess reporter, in IMultistepProcess? subReporter = null, object? owner = null)
+    public static MultistepProcessRunner<TState> New(in TState state, in IProgressReport reporter, in IProgressReport? subReporter = null, object? owner = null)
         => new(state, reporter, subReporter, owner);
 
     public MultistepProcessRunner<TState> AddStep(in StepInfo<TState> step)
@@ -34,10 +34,10 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IMultiste
     public MultistepProcessRunner<TState> AddStep(in IEnumerable<StepInfo<TState>> steps)
         => this.AddStep(steps.ToArray());
 
-    public MultistepProcessRunner<TState> AddStep(Func<(TState State, IMultistepProcess SubProgress, CancellationToken cancellationToken), TState> action, string? description, int progressCount)
+    public MultistepProcessRunner<TState> AddStep(Func<(TState State, IProgressReport SubProgress, CancellationToken cancellationToken), TState> action, string? description, int progressCount)
         => this.AddStep(new StepInfo<TState>(e => Task.FromResult(action(e)), description, progressCount));
 
-    public MultistepProcessRunner<TState> AddStep(in Func<(TState State, IMultistepProcess SubProgress, CancellationToken cancellationToken), Task<TState>> asyncAction, in string? description, in int progressCount)
+    public MultistepProcessRunner<TState> AddStep(in Func<(TState State, IProgressReport SubProgress, CancellationToken cancellationToken), Task<TState>> asyncAction, in string? description, in int progressCount)
         => this.AddStep(new StepInfo<TState>(asyncAction, description, progressCount));
 
     public MultistepProcessRunner<TState> AddStep(Func<TState, CancellationToken, Task> action, in string? description, int progressCount = 1)

@@ -2,38 +2,38 @@
 
 namespace Library.Threading.MultistepProgress;
 
-public interface IMultistepProcess
+public interface IProgressReport
 {
     event EventHandler<ItemActedEventArgs<ProgressData?>>? Ended;
 
     event EventHandler<ItemActedEventArgs<ProgressData>>? Reported;
 
-    static IMultistepProcess New()
-        => new MultistepProcess();
+    static IProgressReport New() =>
+        new ProgressReport();
 
     void End(in ProgressData? description = null);
 
     void Report(in ProgressData description);
 
-    void Report(int max, int current, in string? description, in object? sender = null)
-        => this.Report(new(max, current, description, sender));
+    void Report(int max, int current, in string? description, in object? sender = null) =>
+        this.Report(new(max, current, description, sender));
 }
 
-internal sealed class MultistepProcess : IMultistepProcess
+internal sealed class ProgressReport : IProgressReport
 {
     public event EventHandler<ItemActedEventArgs<ProgressData?>>? Ended;
 
     public event EventHandler<ItemActedEventArgs<ProgressData>>? Reported;
 
-    public void End(in ProgressData? progress)
-        => this.Ended?.Invoke(this, new(progress));
+    public void End(in ProgressData? progress) =>
+        this.Ended?.Invoke(this, new(progress));
 
     public void Report(in ProgressData progress)
         => this.Reported?.Invoke(this, new(progress));
 }
 
 public record struct StepInfo<TState>(
-    in Func<(TState State, IMultistepProcess SubProgress, CancellationToken cancellationToken), Task<TState>> AsyncAction,
+    in Func<(TState State, IProgressReport SubProgress, CancellationToken cancellationToken), Task<TState>> AsyncAction,
     in string? Description,
     in int ProgressCount);
 

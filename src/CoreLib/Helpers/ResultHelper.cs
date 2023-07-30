@@ -6,6 +6,7 @@ using Library.Exceptions;
 using Library.Interfaces;
 using Library.Logging;
 using Library.Results;
+using Library.Validations;
 
 namespace Library.Helpers;
 
@@ -181,14 +182,27 @@ public static class ResultHelper
     /// </summary>
     /// <param name="errors">The errors to add to the Result.</param>
     /// <returns>A new instance of the Result class with the specified errors.</returns>
-    public static Result WithError(this ResultBase result, params (object Id, object Error)[] errors)
-        => new(result) { Errors = errors };
+    public static Result WithError(this ResultBase result, params (object Id, object Error)[] errors) =>
+        new(result) { Errors = errors };
 
-    public static Result WithError(this ResultBase result, IEnumerable<(object Id, object Error)> errors)
-        => result.WithError(errors.ToArray());
+    public static Result WithError(this ResultBase result, IEnumerable<(object Id, object Error)> errors) =>
+        result.WithError(errors.ToArray());
 
-    public static Result WithSucceed(this ResultBase result, bool? succeed)
-        => new(result) { Succeed = succeed };
+    public static Result WithSucceed(this ResultBase result, bool? succeed) =>
+        new(result) { Succeed = succeed };
+
+    public static Result<TNewValue?> WithValue<TNewValue>(this ResultBase result, in TNewValue? newValue) =>
+        new(result, newValue);
+
+    /// <summary>
+    /// Creates a new instance of the <see cref="Result{TValue}"/> class with the specified value.
+    /// </summary>
+    /// <param name="value">The value to set.</param>
+    /// <returns>
+    /// A new instance of the <see cref="Result{TValue}"/> class with the specified value.
+    /// </returns>
+    public static Result<TValue> WithValue<TValue>(this Result<TValue> result, in TValue value)
+        => new(result, value);
 
     private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
         where TResult : ResultBase
@@ -209,4 +223,11 @@ public static class ResultHelper
         Throw(exception);
         return result;
     }
+
+    public static void Deconstruct(this Result result, out bool isSucceed, out string message) =>
+        (isSucceed, message) = (result.IsSucceed, result.Message?.ToString() ?? string.Empty);
+    
+    public static void Deconstruct<TValue>(this Result<TValue> result, out bool IsSucceed, out TValue Value) =>
+        (IsSucceed, Value) = (result.IsSucceed, result.Value);
+
 }

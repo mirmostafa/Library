@@ -449,7 +449,11 @@ public static class ControlHelper
     }
 
     public static void Refresh(this UIElement uiElement)
-        => uiElement?.Dispatcher.Invoke(DispatcherPriority.Render, Methods.Empty);
+    {
+        //uiElement?.Dispatcher.Invoke(Methods.Empty, DispatcherPriority.Render);
+        uiElement?.UpdateLayout(); 
+        uiElement?.InvalidateVisual();
+    }
 
     public static IEnumerable<dynamic>? RetrieveCheckedItems(this MultiSelector dg)
         => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.Cast().As<dynamic>()).Compact();
