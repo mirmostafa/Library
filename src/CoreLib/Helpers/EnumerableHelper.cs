@@ -512,14 +512,18 @@ public static class EnumerableHelper
     /// Finds the duplicates in a given IEnumerable of type T.
     /// </summary>
     /// <returns>An IEnumerable of type T containing the duplicates.</returns>
-    public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> items)
-    {
-        //Create a new HashSet to store the items
-        var buffer = new HashSet<T>();
-        //Return the items from the IEnumerable collection that are not added to the HashSet
-        return items.Where(x => !buffer.Add(x));
-    }
+    //public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> items)
+    //{
+    //    //Create a new HashSet to store the items
+    //    var buffer = new HashSet<T>();
+    //    //Return the items from the IEnumerable collection that are not added to the HashSet
+    //    return items.Where(x => !buffer.Add(x));
+    //}
 
+    public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> source) =>
+        source.GroupBy(x => x).Where(g => g.Any()).Select(g => g.Key);
+    public static bool HasDuplicates<T>(this IEnumerable<T> source) =>
+        source.GroupBy(x => x).Any(g => g.Any());
     /// <summary>
     /// Applies a folder function to each item in the IEnumerable and returns the result.
     /// </summary>

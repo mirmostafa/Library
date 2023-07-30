@@ -36,19 +36,6 @@ public static class ResultHelper
         return result;
     }
 
-    public static TResult Check<TResult>([DisallowNull] this TResult result, [DisallowNull] in Func<bool> predicate, in object? errorMessage, object? errorId = null) where TResult : ResultBase
-        => InnerCheck(result, predicate(), errorMessage, errorId);
-
-    public static TResult Check<TResult>([DisallowNull] this TResult result, bool condition, in object? errorMessage, object? errorId = null) where TResult : ResultBase
-        => InnerCheck(result, condition, errorMessage, errorId);
-
-    public static TResult Check<TResult>([DisallowNull] this TResult result, [DisallowNull] in Func<(bool Condition, object? ErrorMessage)> getErrorInfo, object? errorId = null)
-        where TResult : ResultBase
-    {
-        var (condition, errorMessage) = getErrorInfo();
-        return InnerCheck(result, condition, errorMessage, errorId);
-    }
-
     public static Result<TValue> Combine<TValue>(this IEnumerable<Result<TValue>> results)
         where TValue : IAdditionOperators<TValue, TValue, TValue> =>
         Result<TValue>.Combine((x, y) => x + y, results.ToArray());
@@ -189,14 +176,19 @@ public static class ResultHelper
     //x public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
     //x     => (result = await input).IsSucceed;
 
-    private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object? errorId)
-            where TResult : ResultBase => condition
-            ? (result with
-            {
-                Succeed = null,
-                Errors = EnumerableHelper.ToEnumerable((errorId, errorMessage ?? string.Empty))
-            })
-            : result;
+    /// <summary>
+    /// Creates a new instance of the Result class with the specified errors.
+    /// </summary>
+    /// <param name="errors">The errors to add to the Result.</param>
+    /// <returns>A new instance of the Result class with the specified errors.</returns>
+    public static Result WithError(this ResultBase result, params (object Id, object Error)[] errors)
+        => new(result) { Errors = errors };
+
+    public static Result WithError(this ResultBase result, IEnumerable<(object Id, object Error)> errors)
+        => result.WithError(errors.ToArray());
+
+    public static Result WithSucceed(this ResultBase result, bool? succeed)
+        => new(result) { Succeed = succeed };
 
     private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
         where TResult : ResultBase

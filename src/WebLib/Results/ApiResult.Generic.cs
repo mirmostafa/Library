@@ -4,7 +4,7 @@ using Library.Validations;
 
 namespace Library.Web.Results;
 
-public record ApiResult<T> : ApiResult, IApiResult<T>
+public class ApiResult<T> : ApiResult, IApiResult<T>
 {
     public ApiResult(int? httpStatusCode = null, string? message = null, T? value = default)
         : base(httpStatusCode, message) => this.Value = value;

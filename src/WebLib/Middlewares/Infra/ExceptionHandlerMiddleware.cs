@@ -78,7 +78,7 @@ public sealed class ExceptionHandlerMiddleware : IInfraMiddleware
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
-        ApiResult result = new(false, status, message, ExtraData: extra.ToImmutableDictionary());
+        ApiResult result = new(false, status, message, ExtraData: extra.Select(x => (x.Key, x.Value)));
         var json = JsonSerializer.Serialize(result, jsonOptions);
 
         context.Response.ContentType = "application/problem+json";

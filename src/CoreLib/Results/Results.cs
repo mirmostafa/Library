@@ -1,15 +1,14 @@
-﻿using System.Collections.Immutable;
-
-using Library.Interfaces;
+﻿using Library.Interfaces;
 
 namespace Library.Results;
 
-public sealed record Result(in bool? Succeed = null,
-                     in object? Status = null,
-                     in string? Message = null,
-                     in IEnumerable<(object Id, object Error)>? Errors = null,
-                     in ImmutableDictionary<string, object>? ExtraData = null)
-    : ResultBase(Succeed, Status, Message, Errors, ExtraData)
+public sealed class Result(
+    in bool? succeed = null,
+    in object? status = null,
+    in string? message = null,
+    in IEnumerable<(object Id, object Error)>? errors = null,
+    in IEnumerable<(string Id, object Data)>? extraData = null)
+    : ResultBase(succeed, status, message, errors, extraData)
     , IEmpty<Result>
     , IAdditionOperators<Result, Result, Result>
     , IEquatable<Result>
@@ -17,6 +16,11 @@ public sealed record Result(in bool? Succeed = null,
     private static Result? _empty;
     private static Result? _fail;
     private static Result? _success;
+
+    public Result(Result origin)
+        : this(origin.Succeed, origin.Status, origin.Message, origin.Errors, origin.ExtraData)
+    {
+    }
 
     /// <summary>
     /// Gets an empty result.
@@ -37,6 +41,18 @@ public sealed record Result(in bool? Succeed = null,
     public static Result Success => _success ??= CreateSuccess();
 
     /// <summary>
+    /// Combines multiple Result objects into a single Result object.
+    /// </summary>
+    /// <param name="results">The Result objects to combine.</param>
+    /// <returns>A single Result object containing the combined data.</returns>
+    public static Result Combine(params Result[] results)
+    {
+        var data = ResultBase.Combine(results);
+        var result = new Result(data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
+        return result;
+    }
+
+    /// <summary>
     /// Creates a new Result object with a failure status.
     /// </summary>
     /// <param name="status">Optional status object.</param>
@@ -44,8 +60,8 @@ public sealed record Result(in bool? Succeed = null,
     /// <param name="errors">Optional enumerable of (Id, Error) tuples.</param>
     /// <param name="extraData">Optional extra data dictionary.</param>
     /// <returns>A new Result object with a failure status.</returns>
-    public static Result CreateFailure(in object? status = null, in string? message = null, in IEnumerable<(object Id, object Error)>? errors = null, in ImmutableDictionary<string, object>? extraData = null) =>
-        new(false, status, message, Errors: errors, extraData);
+    public static Result CreateFailure(in object? status = null, in string? message = null, in IEnumerable<(object Id, object Error)>? errors = null, in IEnumerable<(string Id, object Data)>? extraData = null) =>
+        new(false, status, message, errors: errors, extraData);
 
     /// <summary>
     /// Creates a new Result object with a failure status and the specified message and errors.
@@ -54,32 +70,7 @@ public sealed record Result(in bool? Succeed = null,
     /// <param name="errors">The errors associated with the failure.</param>
     /// <returns>A new Result object with a failure status and the specified message and errors.</returns>
     public static Result CreateFailure(in string? message, in IEnumerable<(object Id, object Error)>? errors) =>
-        new(false, null, message, Errors: errors);
-
-    /// <summary>
-    /// Creates a new Result object with a success status.
-    /// </summary>
-    /// <param name="status">Optional status object.</param>
-    /// <param name="message">Optional message string.</param>
-    /// <returns>A new Result object with a success status.</returns>
-    public static Result CreateSuccess(in object? status = null, in string? message = null) =>
-        new(true, status, message);
-
-    /// <summary>
-    /// Creates a new empty Result object.
-    /// </summary>
-    public static Result NewEmpty() =>
-        new();
-
-    public static explicit operator Result(bool b) =>
-        b ? Success : Failure;
-
-    public static Result operator +(Result left, Result right)
-    {
-        var total = Combine(left, right);
-        var result = new Result(total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
-        return result;
-    }
+        new(false, null, message, errors: errors);
 
     /// <summary>
     /// Creates a new Result object with a failure status and the specified message and error.
@@ -99,14 +90,33 @@ public sealed record Result(in bool? Succeed = null,
         CreateFailure(error, null);
 
     /// <summary>
-    /// Combines multiple Result objects into a single Result object.
+    /// Creates a new Result object with a success status.
     /// </summary>
-    /// <param name="results">The Result objects to combine.</param>
-    /// <returns>A single Result object containing the combined data.</returns>
-    public static Result Combine(params Result[] results)
+    /// <param name="status">Optional status object.</param>
+    /// <param name="message">Optional message string.</param>
+    /// <returns>A new Result object with a success status.</returns>
+    public static Result CreateSuccess(in object? status = null, in string? message = null) =>
+        new(true, status, message);
+
+    public static explicit operator Result(bool b) =>
+            b ? Success : Failure;
+
+    /// <summary>
+    /// Creates a new empty Result object.
+    /// </summary>
+    public static Result NewEmpty() =>
+        new();
+
+    public static Result operator +(Result left, Result right)
     {
-        var data = ResultBase.Combine(results);
-        var result = new Result(data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
+        var total = Combine(left, right);
+        var result = new Result(total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
         return result;
     }
+
+    public bool Equals(Result? other) => throw new NotImplementedException();
+
+    public override bool Equals(object? obj) => this.Equals(obj as Result);
+
+    public override int GetHashCode() => throw new NotImplementedException();
 }

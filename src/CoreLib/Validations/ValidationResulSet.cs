@@ -164,7 +164,6 @@ public sealed class ValidationResultSet<TValue> : IBuilder<Result<TValue>>
     /// <summary>
     /// Adds a rule to the ValidationResultSet to check if the value is not null.
     /// </summary>
-    [MemberNotNull(nameof(Value))]
     public ValidationResultSet<TValue> ArgumentNotNull(Func<Exception> onError = null)
         => this.AddRule(x => x, _ => this.Value is not null, onError, () => new ArgumentNullException(this._valueName));
 
