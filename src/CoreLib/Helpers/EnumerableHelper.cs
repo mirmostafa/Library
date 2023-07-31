@@ -241,10 +241,13 @@ public static class EnumerableHelper
             _ => source.GetEnumerator().MoveNext()
         };
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this IList<T> source) =>
         source.Count != 0;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this T[] source) =>
         source.Length != 0;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this ICollection source) =>
         source.Count != 0;
 

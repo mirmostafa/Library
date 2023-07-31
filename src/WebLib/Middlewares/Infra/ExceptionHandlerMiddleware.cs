@@ -1,32 +1,24 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Text.Json;
 
 using Library.Exceptions;
-using Library.Results;
 using Library.Web.Middlewares.Markers;
 using Library.Web.Results;
 
 namespace Library.Web.Middlewares.Infra;
 
 [MonitoringMiddleware]
-public sealed class ExceptionHandlerMiddleware : IInfraMiddleware
+public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger) : IInfraMiddleware
 {
-    private readonly RequestDelegate _Next;
-    private readonly ILogger<ExceptionHandlerMiddleware> _Logger;
-
-    public ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
-    {
-        this._Next = next;
-        this._Logger = logger;
-    }
+    private readonly ILogger<ExceptionHandlerMiddleware> _logger = logger;
+    private readonly RequestDelegate _next = next;
 
     public async Task Invoke(HttpContext context)
     {
         try
         {
-            await this._Next(context);
+            await this._next(context);
         }
         catch (Exception ex)
         {
@@ -36,9 +28,7 @@ public sealed class ExceptionHandlerMiddleware : IInfraMiddleware
 
     private async Task HandleException(HttpContext context, Exception exception)
     {
-#if DEBUG
         Debugger.Break();
-#endif
         //! Should always exist, but best to be safe!
         if (exception is null)
         {
@@ -72,7 +62,9 @@ public sealed class ExceptionHandlerMiddleware : IInfraMiddleware
                     extra.Add("traceId", traceId);
                 }
             }
-            this._Logger.LogError($"Exception Handler Middleware Report: Error Message: '{message}'{Environment.NewLine}Status Code: {status}");
+            //this._Logger.LogError($"Exception Handler Middleware Report: Error Message: '{message}'{Environment.NewLine}Status Code: {status}");
+            this._logger.LogError("Exception Handler Middleware Report: Error Message: '{message}'{Environment.NewLine}Status Code: {status}"
+                , message, Environment.NewLine, status);
         }
         var jsonOptions = new JsonSerializerOptions
         {

@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 
 using Library.CodeGeneration.v2.Front;
 using Library.CodeGeneration.v2.Front.HtmlGeneration;
@@ -11,6 +12,8 @@ namespace TestConApp;
 internal partial class Obsoletes
 {
     private static readonly ILogger _logger = ConsoleServices.Logger;
+
+    public static void ConstantExpectedTest([ConstantExpected(Max = 10)] int a) => Console.WriteLine(a);
 
     public static IEnumerable<long> Fibonacci(long count)
     {
