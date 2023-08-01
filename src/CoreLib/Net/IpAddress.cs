@@ -10,7 +10,7 @@ namespace Library.Net;
 
 [Immutable]
 [Serializable]
-public sealed class IpAddress :
+public sealed class IpAddress([DisallowNull] in string ip) :
     IComparable<IpAddress>, IEquatable<IpAddress>, IParsable<IpAddress>,
     IAdditionOperators<IpAddress, IpAddress, IpAddress>,
     IMinMaxValue<IpAddress>
@@ -18,10 +18,7 @@ public sealed class IpAddress :
     public static readonly IpAddress MaxValue = Parse("255.255.255.255");
     public static readonly IpAddress MinValue = Parse("0.0.0.0");
 
-    private readonly ImmutableArray<int> _segments;
-
-    public IpAddress([DisallowNull] in string ip)
-        => this._segments = Validate(ip).ThrowOnFail().GetValue()!.Split('.').Select(s => s.Cast().ToInt()).ToImmutableArray();
+    private readonly ImmutableArray<int> _segments = Validate(ip).ThrowOnFail().GetValue()!.Split('.').Select(s => s.Cast().ToInt()).ToImmutableArray();
 
     static IpAddress IMinMaxValue<IpAddress>.MaxValue => MaxValue;
     static IpAddress IMinMaxValue<IpAddress>.MinValue => MinValue;
@@ -146,7 +143,7 @@ public sealed class IpAddress :
         }
     }
 
-    public static Result<string?> Validate(in string ip)
+    public static Result<string?> Validate([NotNull] in string? ip)
         => ip.ArgumentNotNull().Split('.').Compact().Check()
              .RuleFor(x => x.Count() == 4, () => "Parameter cannot be cast to IpAddress")
              .RuleFor(x => x.All(seg => seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")

@@ -164,6 +164,7 @@ public class Result<TValue>(
     /// Gets the value of the current instance.
     /// </summary>
     /// <returns>The value of the current instance.</returns>
+    [return: NotNullIfNotNull(nameof(Value))]
     public TValue GetValue() =>
         this.Value;
 

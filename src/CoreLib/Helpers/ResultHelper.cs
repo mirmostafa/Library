@@ -168,13 +168,6 @@ public static class ResultHelper
         return Result<TValue1>.From(result, value1);
     }
 
-    public static Result<string> ToText(this Result<Stream> result)
-    {
-        var stream = result.Value;
-        using var reader = new StreamReader(stream);
-        return new(reader.ReadToEnd());
-    }
-
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase
         => (result = input).IsSucceed;
 
