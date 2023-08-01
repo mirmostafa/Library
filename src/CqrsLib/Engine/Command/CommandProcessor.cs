@@ -16,7 +16,7 @@ internal sealed class CommandProcessor : ICommandProcessor
 #endif
     public Task<TCommandResult> ExecuteAsync<Parameters, TCommandResult>(Parameters parameters)
     {
-        Check.IfArgumentNotNull(parameters);
+        Check.MustBeArgumentNotNull(parameters);
 
         var handlerType = typeof(ICommandHandler<,>).MakeGenericType(parameters.GetType(), typeof(TCommandResult));
         dynamic handler = this._container.ResolveKeyed("2", handlerType);

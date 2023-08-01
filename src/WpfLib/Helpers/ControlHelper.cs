@@ -30,7 +30,7 @@ public static class ControlHelper
 {
     public static DataGrid AddColumns(this DataGrid dataGrid, IEnumerable<IDataColumnBindingInfo> dataColumns)
     {
-        Check.IfArgumentNotNull(dataGrid);
+        Check.MustBeArgumentNotNull(dataGrid);
         _ = dataColumns.ToDataGridColumn().ForEach(dataGrid.Columns.Add).Build();
         return dataGrid;
     }
@@ -47,7 +47,7 @@ public static class ControlHelper
     public static THeaderedItemsControl BindDataContext<THeaderedItemsControl>(this THeaderedItemsControl itemsControl, object dataContext, string? header = null)
                 where THeaderedItemsControl : HeaderedItemsControl
     {
-        Check.IfArgumentNotNull(itemsControl);
+        Check.MustBeArgumentNotNull(itemsControl);
 
         itemsControl.DataContext = dataContext;
         itemsControl.Header = header ?? dataContext?.ToString();
@@ -57,7 +57,7 @@ public static class ControlHelper
     public static TItemsControl BindItems<TItemsControl>(this TItemsControl itemsControl, IEnumerable? items)
         where TItemsControl : ItemsControl
     {
-        Check.IfArgumentNotNull(itemsControl);
+        Check.MustBeArgumentNotNull(itemsControl);
 
         itemsControl.ItemsSource = null;
         itemsControl.Items.Clear();
@@ -115,7 +115,7 @@ public static class ControlHelper
 
     public static TreeViewItem BindNewItems(this TreeViewItem parentItem, IEnumerable items)
     {
-        Check.IfArgumentNotNull(parentItem);
+        Check.MustBeArgumentNotNull(parentItem);
         if (items is not null)
         {
             foreach (var item in items)
@@ -141,7 +141,7 @@ public static class ControlHelper
 
     public static void ExpandAll(this TreeViewItem item, bool isExpanded = true)
     {
-        Check.IfArgumentNotNull(item);
+        Check.MustBeArgumentNotNull(item);
 
         var parent = item;
         do
@@ -158,7 +158,7 @@ public static class ControlHelper
 
     public static DataGridCell? GetCell(this DataGrid grid, int row, int column)
     {
-        Check.IfArgumentNotNull(grid);
+        Check.MustBeArgumentNotNull(grid);
         var rowContainer = grid.GetRow(row);
         if (rowContainer is null)
         {
@@ -275,7 +275,7 @@ public static class ControlHelper
 
     public static DataGridRow GetRow(this DataGrid grid, int index)
     {
-        Check.IfArgumentNotNull(grid);
+        Check.MustBeArgumentNotNull(grid);
 
         var row = (DataGridRow)grid.ItemContainerGenerator.ContainerFromIndex(index);
         if (row is not null)
@@ -304,7 +304,7 @@ public static class ControlHelper
 
     public static string GetText([DisallowNull] this RichTextBox rtb)
     {
-        Check.IfArgumentNotNull(rtb);
+        Check.MustBeArgumentNotNull(rtb);
 
         var textRange = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
         return textRange.Text;
@@ -339,9 +339,9 @@ public static class ControlHelper
 
     public static void HandleKeyDown(this MultiSelector multiSelector, KeyEventArgs e)
     {
-        Check.IfArgumentNotNull(multiSelector);
+        Check.MustBeArgumentNotNull(multiSelector);
 
-        Check.IfArgumentNotNull(e);
+        Check.MustBeArgumentNotNull(e);
 
         switch (e.Key)
         {
@@ -417,7 +417,7 @@ public static class ControlHelper
 
     public static void RebindDataContext([DisallowNull] this FrameworkElement element, object? dataContext)
     {
-        Check.IfArgumentNotNull(element);
+        Check.MustBeArgumentNotNull(element);
 
         element.DataContext = null;
         element.DataContext = dataContext;
@@ -428,7 +428,7 @@ public static class ControlHelper
 
     public static ItemsControl RebindItemsSource(this ItemsControl control, in IEnumerable items)
     {
-        Check.IfArgumentNotNull(control);
+        Check.MustBeArgumentNotNull(control);
 
         control.Rebind(ItemsControl.ItemsSourceProperty);
         control.ItemsSource = null;
@@ -438,7 +438,7 @@ public static class ControlHelper
 
     public static void RebindItemsSource(this TreeView control)
     {
-        Check.IfArgumentNotNull(control);
+        Check.MustBeArgumentNotNull(control);
 
         control.Rebind(ItemsControl.ItemsSourceProperty);
         var selectedItem = control.SelectedItem;
@@ -463,10 +463,10 @@ public static class ControlHelper
 
     public static TResult RunCodeBlock<TResult>(this FrameworkElement element, [DisallowNull] in Func<TResult> action, [DisallowNull] in ILogger logger, in string? start, in string? end = null, in string? error = null, bool changeMousePointer = true)
     {
-        Check.IfArgumentNotNull(action);
-        Check.IfArgumentNotNull(element);
-        Check.IfArgumentNotNull(logger);
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(element);
+        Check.MustBeArgumentNotNull(logger);
+        Check.MustBeArgumentNotNull(action);
 
         var cursor = element.Cursor;
         try
@@ -554,7 +554,7 @@ public static class ControlHelper
 
     public static void SetValue(this RangeBase pb, double step)
     {
-        Check.IfArgumentNotNull(pb);
+        Check.MustBeArgumentNotNull(pb);
 
         Animations.AnimateDouble(pb, RangeBase.ValueProperty, pb.Value, step, 100);
     }
@@ -618,7 +618,7 @@ public static class ControlHelper
     public static bool? ShowDialog<TWindow>(this Window owner, Func<TWindow> creator, out TWindow window)
         where TWindow : Window
     {
-        Check.IfArgumentNotNull(creator);
+        Check.MustBeArgumentNotNull(creator);
 
         window = creator();
         window.Owner = owner;
@@ -631,7 +631,7 @@ public static class ControlHelper
     private static void BindItemsSourceInner<TSelector>(TSelector selector, IEnumerable? items, string? displayMemberPath)
         where TSelector : Selector
     {
-        Check.IfArgumentNotNull(selector);
+        Check.MustBeArgumentNotNull(selector);
 
         selector.ItemsSource = null;
         selector.ItemsSource = items;

@@ -12,7 +12,7 @@ public static class TaskHelper
     /// <param name="token">The cancellation token to use for the task.</param>
     public static async void InvokeAsync(this Action action, TaskScheduler? scheduler = null, CancellationToken token = default)
     {
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
 
         if (scheduler != null)
         {

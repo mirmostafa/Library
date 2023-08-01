@@ -13,7 +13,7 @@ public sealed class AsyncLock : IAsyncLock, IDisposable
 
     public async Task LockAsync(Func<Task> action)
     {
-        Check.IfArgumentNotNull(action, nameof(action));
+        Check.MustBeArgumentNotNull(action, nameof(action));
         await this._lock.WaitAsync();
         try
         {
@@ -27,7 +27,7 @@ public sealed class AsyncLock : IAsyncLock, IDisposable
 
     public async Task<TResult> LockAsync<TResult>(Func<Task<TResult>> action)
     {
-        Check.IfArgumentNotNull(action, nameof(action));
+        Check.MustBeArgumentNotNull(action, nameof(action));
         await this._lock.WaitAsync();
         try
         {

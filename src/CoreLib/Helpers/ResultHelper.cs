@@ -6,7 +6,6 @@ using Library.Exceptions;
 using Library.Interfaces;
 using Library.Logging;
 using Library.Results;
-using Library.Validations;
 
 namespace Library.Helpers;
 
@@ -41,8 +40,14 @@ public static class ResultHelper
         where TValue : IAdditionOperators<TValue, TValue, TValue> =>
         Result<TValue>.Combine((x, y) => x + y, results.ToArray());
 
+    public static void Deconstruct(this Result result, out bool isSucceed, out string message) =>
+        (isSucceed, message) = (result.IsSucceed, result.Message?.ToString() ?? string.Empty);
+
+    public static void Deconstruct<TValue>(this Result<TValue> result, out bool IsSucceed, out TValue Value) =>
+        (IsSucceed, Value) = (result.IsSucceed, result.Value);
+
     public static TResult LogDebug<TResult>(this TResult result, ILogger logger, [CallerMemberName] object? sender = null, DateTime? time = null)
-            where TResult : ResultBase
+                    where TResult : ResultBase
     {
         if (result.IsSucceed)
         {
@@ -93,7 +98,7 @@ public static class ResultHelper
 
     public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath)
     {
-        Validations.Check.IfArgumentNotNull(filePath);
+        Validations.Check.MustBeArgumentNotNull(filePath);
         return result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
     }
 
@@ -148,7 +153,7 @@ public static class ResultHelper
 
     public static Result<Stream> ToFile(this Result<Stream> result, string filePath, FileMode fileMode = FileMode.Create)
     {
-        Validations.Check.IfArgumentNotNull(filePath);
+        Validations.Check.MustBeArgumentNotNull(filePath);
         var stream = result.Value;
         using var fileStream = new FileStream(filePath, fileMode, FileAccess.Write);
         stream.CopyTo(fileStream);
@@ -207,7 +212,7 @@ public static class ResultHelper
     private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
         where TResult : ResultBase
     {
-        Validations.Check.IfArgumentNotNull(result);
+        Validations.Check.MustBeArgumentNotNull(result);
         if (result.IsSucceed)
         {
             return result;
@@ -223,11 +228,4 @@ public static class ResultHelper
         Throw(exception);
         return result;
     }
-
-    public static void Deconstruct(this Result result, out bool isSucceed, out string message) =>
-        (isSucceed, message) = (result.IsSucceed, result.Message?.ToString() ?? string.Empty);
-    
-    public static void Deconstruct<TValue>(this Result<TValue> result, out bool IsSucceed, out TValue Value) =>
-        (IsSucceed, Value) = (result.IsSucceed, result.Value);
-
 }

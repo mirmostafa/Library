@@ -11,11 +11,14 @@ public static class NotifyPropertyChangedHelper
     /// <param name="o">The object to handle property changes for.</param>
     /// <param name="propertyChangedHandler">The PropertyChangedEventHandler to use.</param>
     /// <returns>The object with the PropertyChangedEventHandler attached.</returns>
-    public static TNotifyPropertyChanged HandlePropertyChanges<TNotifyPropertyChanged>(this TNotifyPropertyChanged o, in PropertyChangedEventHandler? propertyChangedHandler)
+    public static TNotifyPropertyChanged HandlePropertyChanges<TNotifyPropertyChanged>(this TNotifyPropertyChanged? o, in PropertyChangedEventHandler? propertyChangedHandler)
         where TNotifyPropertyChanged : INotifyPropertyChanged
     {
-        o.PropertyChanged -= propertyChangedHandler;
-        o.PropertyChanged += propertyChangedHandler;
+        if (o != null)
+        {
+            o.PropertyChanged -= propertyChangedHandler;
+            o.PropertyChanged += propertyChangedHandler;
+        }
         return o;
     }
 }

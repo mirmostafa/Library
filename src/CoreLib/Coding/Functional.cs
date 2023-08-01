@@ -92,7 +92,7 @@ public static class Functional
     /// <returns>A tuple containing the result or an exception.</returns>
     public static (TResult? Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> action)
     {
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
         try
         {
             return (action(), null);
@@ -115,7 +115,7 @@ public static class Functional
     /// </returns>
     public static (TResult Result, Exception? Exception) CatchFunc<TResult>(in Func<TResult> action, in TResult defaultValue)
     {
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
         try
         {
             return (action(), null);
@@ -375,8 +375,8 @@ public static class Functional
 
     public static IEnumerable<TResult> While<TResult>(Func<bool> predicate, Func<TResult> action, Action? onIterationDone = null)
     {
-        Check.IfArgumentNotNull(predicate);
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(predicate);
+        Check.MustBeArgumentNotNull(action);
 
         while (predicate())
         {
@@ -388,7 +388,7 @@ public static class Functional
 
     public static void While(in Func<bool> predicate, in Action? action = null)
     {
-        Check.IfArgumentNotNull(predicate);
+        Check.MustBeArgumentNotNull(predicate);
 
         while (predicate())
         {

@@ -16,6 +16,9 @@ public static class ObjectHelper
 {
     private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
 
+    public static TOutput? As<TOutput>(this object? o) where TOutput : class =>
+        o as TOutput;
+
     /// <summary>
     /// Checks the database null.
     /// </summary>
@@ -346,7 +349,7 @@ public static class ObjectHelper
             : propInfo;
     }
 
-    public static bool HasAttribute<TType, TAttribute>(bool inherit) 
+    public static bool HasAttribute<TType, TAttribute>(bool inherit)
         where TAttribute : Attribute => HasAttribute<TAttribute>(typeof(Type), inherit);
 
     /// <summary>
@@ -421,7 +424,7 @@ public static class ObjectHelper
 
     public static bool IsSetMethodInit([DisallowNull] this PropertyInfo propertyInfo)
     {
-        Check.IfArgumentNotNull(propertyInfo?.SetMethod);
+        Check.MustBeArgumentNotNull(propertyInfo?.SetMethod);
         return propertyInfo.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit));
     }
 
@@ -472,7 +475,7 @@ public static class ObjectHelper
 
     public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
     {
-        Check.IfArgumentNotNull(obj);
+        Check.MustBeArgumentNotNull(obj);
         obj.GetType().GetField(fieldName)?.SetValue(obj, value);
     }
 
@@ -481,4 +484,7 @@ public static class ObjectHelper
         var property = obj?.GetType().GetProperty(propertyName);
         property?.SetValue(obj, value, null);
     }
+
+    public static TOutput To<TOutput>(this object o) => 
+        (TOutput)o;
 }

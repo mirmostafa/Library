@@ -40,8 +40,8 @@ public static partial class AdoHelper
 
     public static SqlCommand CreateCommand(this SqlConnection connection, string commandText, Action<SqlParameterCollection>? fillParams = null)
     {
-        Check.IfArgumentNotNull(connection);
-        Check.IfArgumentNotNull(commandText);
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(commandText);
 
         var result = connection.CreateCommand();
         result.CommandText = commandText;
@@ -71,8 +71,8 @@ public static partial class AdoHelper
 
     public static TResult EnsureClosed<TResult>(this SqlConnection connection, Func<SqlConnection, TResult> action, bool openConnection = false)
     {
-        Check.IfArgumentNotNull(connection);
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(action);
 
         try
         {
@@ -93,8 +93,8 @@ public static partial class AdoHelper
             Func<SqlConnection, Task<TResult>> actionAsync,
             bool openConnection = false)
     {
-        Check.IfArgumentNotNull(connection);
-        Check.IfArgumentNotNull(actionAsync);
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(actionAsync);
 
         try
         {
@@ -115,8 +115,8 @@ public static partial class AdoHelper
             Func<SqlConnection, Task> actionAsync,
             bool openConnection = false)
     {
-        Check.IfArgumentNotNull(connection);
-        Check.IfArgumentNotNull(actionAsync);
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(actionAsync);
 
         try
         {
@@ -138,9 +138,9 @@ public static partial class AdoHelper
             string sql,
             Action<SqlParameterCollection>? fillParams = null)
     {
-        Check.IfArgumentNotNull(connection);
-        Check.IfArgumentNotNull(execute);
-        Check.IfArgumentNotNull(sql);
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(execute);
+        Check.MustBeArgumentNotNull(sql);
 
         using var command = connection.CreateCommand(sql, fillParams);
         return connection.EnsureClosed(conn => execute(command), true);
@@ -151,9 +151,9 @@ public static partial class AdoHelper
             string sql,
             Action<SqlParameterCollection>? fillParams = null)
     {
-        Check.IfArgumentNotNull(connection);
-        Check.IfArgumentNotNull(executeAsync);
-        Check.IfArgumentNotNull(sql);
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(executeAsync);
+        Check.MustBeArgumentNotNull(sql);
 
         using var command = connection.CreateCommand(sql, fillParams);
         return await connection.EnsureClosedAsync(conn => executeAsync(command), true);
@@ -224,7 +224,7 @@ public static partial class AdoHelper
             Action<SqlParameterCollection>? fillParams = null,
             Action<string>? logger = null)
     {
-        Check.IfArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(connection);
 
         object? result = null;
         using (var cmd = connection.CreateCommand())
@@ -274,8 +274,8 @@ public static partial class AdoHelper
 
     public static void ExecuteTransactional(this SqlConnection connection, Action<SqlTransaction>? executionBlock)
     {
-        Check.IfArgumentNotNull(connection);
-        Check.IfArgumentNotNull(executionBlock);
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(executionBlock);
 
         var leaveOpen = connection.State == ConnectionState.Open;
         if (!leaveOpen)
@@ -305,23 +305,23 @@ public static partial class AdoHelper
 
     public static T Field<T>(this IDataReader reader, string columnName, Converter<object, T> converter)
     {
-        Check.IfArgumentNotNull(columnName);
-        Check.IfArgumentNotNull(converter);
-        Check.IfArgumentNotNull(reader);
+        Check.MustBeArgumentNotNull(columnName);
+        Check.MustBeArgumentNotNull(converter);
+        Check.MustBeArgumentNotNull(reader);
 
         return converter(reader[columnName]);
     }
 
     public static T? Field<T>(this DataRow row, string columnName, Converter<object?, T?>? converter)
     {
-        Check.IfArgumentNotNull(row);
-        Check.IfArgumentNotNull(columnName);
+        Check.MustBeArgumentNotNull(row);
+        Check.MustBeArgumentNotNull(columnName);
         return converter is not null ? converter(row.Field<object>(columnName)) : row.Field<T>(columnName);
     }
 
     public static DataSet FillDataSet(this SqlConnection connection, string sql)
     {
-        Check.IfArgumentNotNull(sql);
+        Check.MustBeArgumentNotNull(sql);
 
         var result = new DataSet();
         using (var da = new SqlDataAdapter(sql, connection))
@@ -478,7 +478,7 @@ public static partial class AdoHelper
     public static IEnumerable<T> Select<T>(this DataTable table)
         where T : new()
     {
-        Check.IfArgumentNotNull(table);
+        Check.MustBeArgumentNotNull(table);
 
         var type = typeof(T);
         var properties = type.GetProperties();
@@ -508,7 +508,7 @@ public static partial class AdoHelper
     /// <returns>An IEnumerable of type T containing the selected column values.</returns>
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, params T[] defaultValue)
     {
-        Check.IfArgumentNotNull(table);
+        Check.MustBeArgumentNotNull(table);
 
         var result = table.Select().Select(row => row[columnTitle]).ToList();
         return result.Count != 0 ? result.Cast<T>() : defaultValue;
@@ -535,7 +535,7 @@ public static partial class AdoHelper
     /// <returns>An IEnumerable of the specified type containing the converted column values.</returns>
     public static IEnumerable<T> Select<T>(this DataTable table, string columnTitle, Converter<object, T> convertor, params T[] defaultValue)
     {
-        Check.IfArgumentNotNull(table);
+        Check.MustBeArgumentNotNull(table);
 
         var buffer = table.Select().Select(row => row[columnTitle]).Cast(convertor);
         var result = buffer as T[] ?? buffer.ToArray();
@@ -585,7 +585,7 @@ public static partial class AdoHelper
                 Func<SqlDataReader, T> rowFiller,
                 Action<SqlParameterCollection>? fillParams = null)
     {
-        Check.IfArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(connection);
 
         var reader = ExecuteReader(connection, sql, fillParams, CommandBehavior.CloseConnection);
         return While(reader.Read, () => rowFiller(reader), connection.Close);

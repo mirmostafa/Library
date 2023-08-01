@@ -38,7 +38,7 @@ public static class ValidatorHelper
     public static Result<TValue> CheckAll<TValue>(TValue input, params Func<TValue, Result<TValue>>[] validators)
     {
         var validatorList = validators.ToList();
-        Check.IfHasAny(validatorList);
+        Check.MustHaveAny(validatorList);
         var result = validatorList.First()(input);
 
         foreach (var validator in validators.Skip(1))

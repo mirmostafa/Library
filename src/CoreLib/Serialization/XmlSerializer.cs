@@ -27,7 +27,7 @@ public static class XmlSerializer
     /// <param name="indent">if set to <c>true</c> [indent].</param>
     public static void SerializeFile<T>(T? o, [DisallowNull] string path, bool indent = true)
     {
-        Check.IfArgumentNotNull(path);
+        Check.MustBeArgumentNotNull(path);
         var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
         using var writer = new StreamWriter(path);
         using var xmlWriter = System.Xml.XmlWriter.Create(writer, new System.Xml.XmlWriterSettings { Indent = indent });

@@ -37,7 +37,7 @@ public static class LoggingHelper
                 string end, // end is a string parameter
                 string? exceptionFormat = null) where TLogger : ILogger // TLogger is a generic type parameter that must implement the ILogger interface
     {
-        Check.IfArgumentNotNull(action); // checks if the action parameter is not null
+        Check.MustBeArgumentNotNull(action); // checks if the action parameter is not null
         try
         {
             await action(); // awaits the action to be completed
@@ -85,7 +85,7 @@ public static class LoggingHelper
                 string end, // end is a string that will be logged if it is not empty
                 string? exceptionFormat = null) where TLogger : ILogger // exceptionFormat is an optional string that will be used to format the exception message if it is not empty
     {
-        Check.IfArgumentNotNull(action); // check if the action argument is not null
+        Check.MustBeArgumentNotNull(action); // check if the action argument is not null
         try
         {
             if (!start.IsNullOrEmpty()) // check if the start string is not empty
@@ -188,7 +188,7 @@ public static class LoggingHelper
             Action<TLogger>? onFinal = null)
             where TLogger : ILogger
     {
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
         try
         {
             onStart?.Invoke(logger);

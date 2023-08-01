@@ -366,7 +366,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         bool showOkButton = true,
         bool enableOkButtonOnDone = true)
     {
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
         var isCancellationRequested = false;
         var isBackgroundWorking = false;
 
@@ -858,8 +858,8 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         bool enableOkButtonOnDone = true,
         bool runIterationAsParallel = false)
     {
-        Check.IfArgumentNotNull(items);
-        Check.IfArgumentNotNull(onIterating);
+        Check.MustBeArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(onIterating);
         Action<TaskDialog, Func<bool>, Func<bool>> action = runIterationAsParallel
             ? ((dlg, isCancelled, isInBackground) =>
             {
@@ -952,8 +952,8 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         bool enableOkButtonOnDone = true,
         bool runIterationAsParallel = false)
     {
-        Check.IfArgumentNotNull(items);
-        Check.IfArgumentNotNull(onIterating);
+        Check.MustBeArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(onIterating);
         Action<TaskDialog, Func<bool>, Func<bool>> action = runIterationAsParallel
             ? ((dlg, isCancelled, isInBackground) =>
             {

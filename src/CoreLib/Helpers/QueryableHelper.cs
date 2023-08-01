@@ -21,8 +21,8 @@ public static class QueryableHelper
     /// </returns>
     public static Task<TResult?> FirstOrDefaultLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock)
     {
-        Check.IfArgumentNotNull(query);
-        Check.IfArgumentNotNull(asyncLock);
+        Check.MustBeArgumentNotNull(query);
+        Check.MustBeArgumentNotNull(asyncLock);
         return asyncLock.LockAsync(async () => await query.FirstOrDefaultAsync());
     }
 
@@ -55,7 +55,7 @@ public static class QueryableHelper
     /// <returns>An IAsyncEnumerable containing the elements of the IQueryable.</returns>
     public static async IAsyncEnumerable<TSource> ToEnumerableAsync<TSource>(this IQueryable<TSource> query, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(query);
+        Check.MustBeArgumentNotNull(query);
         await foreach (var item in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
         {
             yield return item;
@@ -85,7 +85,7 @@ public static class QueryableHelper
             return new(dbNoPagingResult, total);
         }
 
-        Check.IfArgumentBiggerThan(paging.PageIndex, 0);
+        Check.MustBe(paging.PageIndex >= 0, () => new ArgumentOutOfRangeException(nameof(paging)));
 
         var skip = paging.PageIndex * paging.PageSize.Value;
         var take = paging.PageSize.Value;

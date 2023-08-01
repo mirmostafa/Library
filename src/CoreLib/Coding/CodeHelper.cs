@@ -36,7 +36,7 @@ public static class CodeHelper
     /// <returns>A Result object indicating success or failure.</returns>
     public static Result CatchResult([DisallowNull] in Action action)
     {
-        Check.IfArgumentNotNull(action, nameof(action));
+        Check.MustBeArgumentNotNull(action, nameof(action));
         try
         {
             action();
@@ -57,7 +57,7 @@ public static class CodeHelper
     /// <returns>A <see cref="ResultTResult"/>.</returns>
     public static Result<TResult> CatchResult<TResult>([DisallowNull] in Func<TResult> action, TResult? defaultResult = default)
     {
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
         try
         {
             return Result<TResult>.CreateSuccess(action());
@@ -92,8 +92,8 @@ public static class CodeHelper
     public static Func<TResult2> Compose<TArgs, TResult2>(TArgs args, Func<TArgs, TResult2> func)
     {
         var create = () => args;
-        Check.IfArgumentNotNull(create);
-        Check.IfArgumentNotNull(func);
+        Check.MustBeArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(func);
         return [DebuggerStepThrough] () => func(create());
     }
 
@@ -108,8 +108,8 @@ public static class CodeHelper
     /// <returns>A function that combines the two functions.</returns>
     public static Func<TResult2> Compose<TArgs, TResult2>([DisallowNull] this Func<TArgs> create, Func<TArgs, TResult2> func)
     {
-        Check.IfArgumentNotNull(create);
-        Check.IfArgumentNotNull(func);
+        Check.MustBeArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(func);
         return [DebuggerStepThrough] () => func(create());
     }
 
@@ -122,8 +122,8 @@ public static class CodeHelper
     /// <returns>A Func<Result<TResult2>> composed of the two functions.</returns>
     public static Func<Result<TResult2>> Compose<TArgs, TResult2>([DisallowNull] this Func<Result<TArgs>> create, Func<TArgs, Result<TResult2>> func, Func<Result<TArgs>, Result<TResult2>>? onFail = null)
     {
-        Check.IfArgumentNotNull(create);
-        Check.IfArgumentNotNull(func);
+        Check.MustBeArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(func);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
@@ -145,8 +145,8 @@ public static class CodeHelper
     /// <returns>The composed function.</returns>
     public static Func<TResult2> Compose<TArgs, TResult2, TArg>([DisallowNull] this Func<TArgs> create, Func<TArgs, TArg, TResult2> func, TArg arg)
     {
-        Check.IfArgumentNotNull(create);
-        Check.IfArgumentNotNull(func);
+        Check.MustBeArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(func);
         return [DebuggerStepThrough] () => func(create(), arg);
     }
 
@@ -163,8 +163,8 @@ public static class CodeHelper
     /// <returns>A function that combines the two functions and the action.</returns>
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TResult2> func, Action<TArg> action, TArg arg)
     {
-        Check.IfArgumentNotNull(create);
-        Check.IfArgumentNotNull(func);
+        Check.MustBeArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(func);
         return [DebuggerStepThrough] () =>
         {
             action?.Invoke(arg);
@@ -183,7 +183,7 @@ public static class CodeHelper
     /// <returns>A new function that composes the given function with the action.</returns>
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TResult1, TArg> action, TArg arg)
     {
-        Check.IfArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(create);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
@@ -203,7 +203,7 @@ public static class CodeHelper
     /// <returns>A combined function.</returns>
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TArg> action, TArg arg)
     {
-        Check.IfArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(create);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
@@ -223,7 +223,7 @@ public static class CodeHelper
     /// <returns>A composed Func.</returns>
     public static Func<TArgs> Compose<TArgs, TResult>([DisallowNull] this Func<TArgs> create, Action<TResult> action, Func<TArgs, TResult> getResult)
     {
-        Check.IfArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(create);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
@@ -243,7 +243,7 @@ public static class CodeHelper
     /// <returns>The composed function.</returns>
     public static Func<TResult1> Compose<TResult1, TArg>([DisallowNull] this Func<TResult1> create, Action<TResult1, TArg> action, Func<TResult1, TArg> getArg)
     {
-        Check.IfArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(create);
         return [DebuggerStepThrough] () =>
         {
             var result = create();
@@ -264,8 +264,8 @@ public static class CodeHelper
     /// <returns>A new function that composes the two functions.</returns>
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TArg, TResult2> func, Func<TResult1, TArg> getArg)
     {
-        Check.IfArgumentNotNull(create);
-        Check.IfArgumentNotNull(func);
+        Check.MustBeArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(func);
         return [DebuggerStepThrough] () =>
         {
             var start = create();
@@ -283,8 +283,8 @@ public static class CodeHelper
     /// cref="ArgumentNullException">Thrown when create is null</exception>
     public static Func<TResult2> Compose<TResult1, TResult2, TArg>([DisallowNull] this Func<TResult1> create, Func<TResult1, TResult2> func, Action<TArg> action, Func<TResult1, TArg> getArg)
     {
-        Check.IfArgumentNotNull(create);
-        Check.IfArgumentNotNull(func);
+        Check.MustBeArgumentNotNull(create);
+        Check.MustBeArgumentNotNull(func);
         return [DebuggerStepThrough] () =>
         {
             var start = create();
@@ -541,7 +541,7 @@ public static class CodeHelper
     /// <returns>The result of the action.</returns>
     public static TResult ThrowOnError<TResult>(in Func<TResult> action, Func<Exception, Exception>? getException = null)
     {
-        Check.IfArgumentNotNull(action, nameof(action));
+        Check.MustBeArgumentNotNull(action, nameof(action));
         try
         {
             return action();
@@ -570,7 +570,7 @@ public static class CodeHelper
     /// <returns>A Result object indicating success or failure.</returns>
     public static Result TryInvoke(this Action action)
     {
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
         try
         {
             action();
@@ -590,7 +590,7 @@ public static class CodeHelper
     /// <returns>A <see cref="ResultTValue"/>.</returns>
     public static Result<TValue?> TryInvoke<TValue>(this Func<TValue> action)
     {
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
         try
         {
             return Result<TValue>.CreateSuccess(action())!;

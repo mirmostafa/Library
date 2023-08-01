@@ -13,7 +13,7 @@ public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
 
     private TaskRunner([DisallowNull] Func<CancellationToken, Task> start, IEnumerable<Func<CancellationToken, Task>>? funcs = null)
     {
-        Check.IfArgumentNotNull(start);
+        Check.MustBeArgumentNotNull(start);
         this._start = start;
         if (funcs?.Any() ?? false)
         {
@@ -36,8 +36,8 @@ public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
 
     public TaskRunner Then([DisallowNull] Func<CancellationToken, Task> func)
     {
-        Check.If(this.IsRunning, () => new CommonException());
-        Check.IfArgumentNotNull(func);
+        Check.MustBe<CommonException>(!this.IsRunning);
+        Check.MustBeArgumentNotNull(func);
         this._funcList.Add(func);
         return this;
     }

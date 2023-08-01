@@ -9,7 +9,7 @@ public static class AuthorizationHelper
 {
     public static AuthorizationOptions AddCrudRequirementPolicies([DisallowNull] this AuthorizationOptions options)
     {
-        Check.IfArgumentNotNull(options);
+        Check.MustBeArgumentNotNull(options);
         foreach (var claim in LibCrudClaims.GetClaims())
         {
             options.AddPolicy(claim.Type, policy => policy.Requirements.Add(new ClaimRequirement(claim)));
@@ -19,8 +19,8 @@ public static class AuthorizationHelper
 
     public static AuthorizationOptions AddPolicies([DisallowNull] this AuthorizationOptions options, params (string Name, Action<AuthorizationPolicyBuilder> ConfigurePolicy)[] policies)
     {
-        Check.IfArgumentNotNull(options);
-        Check.IfArgumentNotNull(policies);
+        Check.MustBeArgumentNotNull(options);
+        Check.MustBeArgumentNotNull(policies);
 
         foreach (var (name, configurePolicy) in policies)
         {

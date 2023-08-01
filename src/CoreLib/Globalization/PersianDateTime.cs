@@ -184,7 +184,7 @@ public readonly struct PersianDateTime :
     /// <param name="context">The context.</param>
     private PersianDateTime(in SerializationInfo info, in StreamingContext context)
     {
-        Check.IfArgumentNotNull(info);
+        Check.MustBeArgumentNotNull(info);
 
         this.Data = (PersianDateTimeData)info.GetValue("Data", typeof(PersianDateTimeData))!;
         this.IsInitiated = true;
@@ -398,8 +398,8 @@ public readonly struct PersianDateTime :
     /// </exception>
     public static int Compare(in string PersianDateTime1, in string PersianDateTime2)
     {
-        Check.If(!TryParse(PersianDateTime1, out var p1), () => new InvalidCastException($"cannot cast {nameof(PersianDateTime1)} to PersianDateTime"));
-        Check.If(!TryParse(PersianDateTime2, out var p2), () => new InvalidCastException($"cannot cast {nameof(PersianDateTime2)} to PersianDateTime"));
+        var p1 = ParsePersian(PersianDateTime1);
+        var p2 = ParsePersian(PersianDateTime2);
 
         return p1.CompareTo(p2);
     }
@@ -589,7 +589,7 @@ public readonly struct PersianDateTime :
     /// <returns></returns>
     public static PersianDateTime ParseEnglish(in string dateTimeString)
     {
-        Check.IfArgumentNotNull(dateTimeString);
+        Check.MustBeArgumentNotNull(dateTimeString);
         return DateTime.Parse(dateTimeString, CultureInfo.CurrentCulture).ToPersianDateTime();
     }
 
@@ -1062,7 +1062,7 @@ public readonly struct PersianDateTime :
             return this.ToString();
         }
 
-        Check.IfArgumentNotNull(format);
+        Check.MustBeArgumentNotNull(format);
         var buffer = format;
         var isPm = this.Hour > 12;
         var tmpHrs = isPm ? this.Hour - 12 : this.Hour;

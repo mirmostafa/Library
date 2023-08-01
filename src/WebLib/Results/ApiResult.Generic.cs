@@ -20,7 +20,7 @@ public class ApiResult<T> : ApiResult, IApiResult<T>
     {
         get
         {
-            Check.If(this.IsSucceed);
+            Check.MustBe(this.IsSucceed);
 
             return this._value;
         }

@@ -16,7 +16,7 @@ internal sealed class QueryProcessor : IQueryProcessor
 #endif
     public Task<TResult> ExecuteAsync<TResult>(IQuery<TResult> query)
     {
-        Check.IfArgumentNotNull(query);
+        Check.MustBeArgumentNotNull(query);
 
         var handlerType = typeof(IQueryHandler<,>).MakeGenericType(query.GetType(), typeof(TResult));
         dynamic handler = this._container.ResolveKeyed("1", handlerType);

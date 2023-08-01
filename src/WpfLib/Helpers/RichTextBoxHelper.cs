@@ -208,9 +208,9 @@ public static class RichTextBoxHelper
             Func<(string CurrentLine, string? PrevLine), (bool Found, IEnumerable<Inline>? Inline)?> lineProcessor,
         Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor)
     {
-        Check.IfArgumentNotNull(text);
-        Check.IfArgumentNotNull(lineProcessor);
-        Check.IfArgumentNotNull(wordProcessor);
+        Check.MustBeArgumentNotNull(text);
+        Check.MustBeArgumentNotNull(lineProcessor);
+        Check.MustBeArgumentNotNull(wordProcessor);
 
         var lines = StringHelper.Split(text, "\r\n");
         string? prevLine = null;

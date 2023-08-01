@@ -29,7 +29,7 @@ public sealed class Database : SqlObject<Database, Server>
 
     public static Database? GetDatabase(in string connectionString, string? name = null)
     {
-        Check.IfArgumentNotNull(connectionString);
+        Check.MustBeArgumentNotNull(connectionString);
         if (name.IsNullOrEmpty())
         {
             name = new SqlConnectionStringBuilder(connectionString).InitialCatalog;
@@ -68,7 +68,7 @@ public sealed class Database : SqlObject<Database, Server>
 
     private static IEnumerable<Database> GatherDatabases(string connectionString, string databases)
     {
-        Check.IfArgumentNotNull(connectionString);
+        Check.MustBeArgumentNotNull(connectionString);
 
         var builder = new SqlConnectionStringBuilder(connectionString);
         var rows = GetDataRows(connectionString, databases);
