@@ -17,7 +17,8 @@ namespace Library.Helpers;
 /// </summary>
 public static class StringHelper
 {
-    static readonly char[] _standardSeparators = new[] { '\0', '\n', '\r', '\t', '_', '-' };
+    private static readonly char[] _standardSeparators = new[] { '\0', '\n', '\r', '\t', '_', '-' };
+
     /// <summary>
     /// Adds a specified number of characters to a string, either before or after the string.
     /// </summary>
@@ -502,7 +503,7 @@ public static class StringHelper
     public static int? IndexOf([DisallowNull] this IEnumerable<string?> items, in string? item, bool trimmed = false, bool ignoreCase = true)
     {
         // Check if the argument is not null
-        Check.IfArgumentNotNull(items, nameof(items));
+        Check.MustBeArgumentNotNull(items, nameof(items));
 
         // Get the item and trim it if necessary
         var itm = get(item, trimmed);
@@ -539,40 +540,6 @@ public static class StringHelper
         => string.Compare(current, item, ignoreCase) == 0;
     }
 
-    /// <summary>
-    /// Initializes a string with the given count and a function to initialize each character.
-    /// </summary>
-    /// <param name="count">The number of characters to initialize.</param>
-    /// <param name="initializer">The function to initialize each character.</param>
-    /// <returns>The initialized string.</returns>
-    public static string Initialize(int count, Func<int, string> initializer)
-    {
-        //Check if the input is non-negative
-        _ = Check.MustBe(() => count >= 0, () => new ArgumentException("Input must be non-negative string", nameof(count))).ThrowOnFail();
-
-        //Create a StringBuilder with the given count
-        var res = new StringBuilder(count);
-
-        //Initialize the loop variables
-        var i = 0;
-        var num = checked(count - 1);
-
-        //Loop through the count and append the result of the initializer function to the StringBuilder
-        if (num >= i)
-        {
-            do
-            {
-                _ = res.Append(initializer.Invoke(i));
-                i++;
-            }
-            while (i != num + 1);
-        }
-
-        //Return the result as a string
-        return res.ToString();
-    }
-
-    /// <summary>
     /// Checks if the given character is a common character.
     /// </summary>
     [Pure]
@@ -789,7 +756,7 @@ public static class StringHelper
     /// <param name="action">The action to perform on each character.</param>
     public static void Iterate(this string str, [DisallowNull] Action<char> action)
     {
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(action);
         if (str.IsNullOrEmpty())
         {
             return;
@@ -946,11 +913,8 @@ public static class StringHelper
     /// <param name="text">The string to be repeated.</param>
     /// <param name="count">The number of times to repeat the string.</param>
     /// <returns>A string containing the repeated text.</returns>
-    public static string Repeat(this string text, in int count)
-    {
-        Check.IfArgumentBiggerThan(count, 0);
-        return string.Concat(Enumerable.Repeat(text, count));
-    }
+    public static string Repeat(this string text, in int count) =>
+        string.Concat(Enumerable.Repeat(text, count));
 
     /// <summary>
     /// Replaces a specified number of occurrences of a character in a string with a new character.
@@ -1143,7 +1107,7 @@ public static class StringHelper
     [Obsolete("Subject to delete", true)]
     public static IEnumerable<string> Split(this string value, int groupSize)
     {
-        Check.IfArgumentNotNull(value);
+        Check.MustBeArgumentNotNull(value);
 
         for (var x = 0; x < value.Length; x += groupSize)
         {
@@ -1223,9 +1187,9 @@ public static class StringHelper
     public static IEnumerable<(string Key, string Value)> SplitPair([DisallowNull] string str, [DisallowNull] string keyValueSeparator = "=", [DisallowNull] string statementSeparator = ";")
     {
         // Check if the arguments are not null
-        Check.IfArgumentNotNull(str);
-        Check.IfArgumentNotNull(keyValueSeparator);
-        Check.IfArgumentNotNull(statementSeparator);
+        Check.MustBeArgumentNotNull(str);
+        Check.MustBeArgumentNotNull(keyValueSeparator);
+        Check.MustBeArgumentNotNull(statementSeparator);
 
         // Split the string into key-value pairs
         var keyValuePairs = str.Split(statementSeparator).Compact();
@@ -1267,8 +1231,8 @@ public static class StringHelper
     /// <returns>A byte array containing the converted string.</returns>
     public static byte[] ToBytes([DisallowNull] this string value, [DisallowNull] in Encoding encoding)
     {
-        Check.IfArgumentNotNull(value);
-        Check.IfArgumentNotNull(encoding);
+        Check.MustBeArgumentNotNull(value);
+        Check.MustBeArgumentNotNull(encoding);
 
         return encoding.GetBytes(value);
     }

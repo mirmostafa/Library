@@ -29,7 +29,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
         get => this.Properties.TryGetValue(propName, out var value) ? value : null;
         set
         {
-            Check.IfArgumentNotNull(propName);
+            Check.MustBeArgumentNotNull(propName);
 
             if (this.Properties.ContainsKey(propName))
             {
@@ -53,7 +53,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        Check.IfArgumentNotNull(info, nameof(info));
+        Check.MustBeArgumentNotNull(info, nameof(info));
 
         this.FillByProperties(info, context);
     }

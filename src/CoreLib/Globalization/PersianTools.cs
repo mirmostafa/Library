@@ -350,8 +350,8 @@ public static class PersianTools
 
     private static string Reformat(int? year, int? month, int? day, int? hour, int? minute, int? second, string format, Language language)
     {
-        Check.IfArgumentNotNull(format, nameof(format));
-        Check.NotValid(language, l => !Enum.IsDefined(typeof(Language), language), () => new ArgumentOutOfRangeException(nameof(language)));
+        Check.MustBeArgumentNotNull(format);
+        Check.MustBe(Enum.IsDefined(typeof(Language), language), () => new ArgumentOutOfRangeException(nameof(language)));
 
         (var y, var m, var d) = PersianDateTime.Now;
         year ??= y;

@@ -38,11 +38,11 @@ public static class ServiceHelper
                 where TViewModel : IHasKey<long?>
     {
         // Check if model and dbContext are not null
-        if (!Check.TryMustBeArgumentNotNull(model?.Id, out var res1))
+        if (!Check.TryIfArgumentIsNull(model?.Id, out var res1))
         {
             return res1;
         }
-        if (!Check.TryMustBeArgumentNotNull(dbContext, out var res2))
+        if (!Check.TryIfArgumentIsNull(dbContext, out var res2))
         {
             return res2;
         }
@@ -357,15 +357,15 @@ public static class ServiceHelper
                 where TId : notnull
     {
         //! Check that all arguments are not null
-        if (Check.TryMustBeArgumentNotNull(model, out var res1))
+        if (Check.TryIfArgumentIsNull(model, out var res1))
         {
             return getResult(res1);
         }
-        if (Check.TryMustBeArgumentNotNull(manipulate, out var res2))
+        if (Check.TryIfArgumentIsNull(manipulate, out var res2))
         {
             return getResult(res2);
         }
-        if (Check.TryMustBeArgumentNotNull(convertToEntity, out var res3))
+        if (Check.TryIfArgumentIsNull(convertToEntity, out var res3))
         {
             return getResult(res3);
         }

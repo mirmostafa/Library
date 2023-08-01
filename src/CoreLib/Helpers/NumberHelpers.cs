@@ -89,7 +89,7 @@ public static class NumberHelper
     public static IEnumerable<int> Range(int start, int end, int step = 1)
     {
         // Check if step is not equal to 0
-        Check.NotValid(step, x => x != 0, () => new ArgumentOutOfRangeException(nameof(step)));
+        Check.MustBe(step != 0, () => new ArgumentOutOfRangeException(nameof(step)));
         // Throw exception if step is positive and start is greater than end
         if (step > 0 && start > end)
         {

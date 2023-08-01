@@ -8,8 +8,8 @@ public static class Animations
 {
     public static void AnimateDouble([DisallowNull] FrameworkElement element, [DisallowNull] string propertyPath, double from, double to, int duration = 350)
     {
-        Check.IfArgumentNotNull(element);
-        Check.IfArgumentNotNull(propertyPath);
+        Check.MustBeArgumentNotNull(element);
+        Check.MustBeArgumentNotNull(propertyPath);
 
         var animation = new DoubleAnimation(from, to, new Duration(TimeSpan.FromMilliseconds(duration)));
         var storyboard = new Storyboard();
@@ -23,7 +23,7 @@ public static class Animations
 
     public static void AnimateDouble(FrameworkElement element, DependencyProperty prop, double from, double to, int duration = 350, bool autoReverse = false)
     {
-        Check.IfArgumentNotNull(element);
+        Check.MustBeArgumentNotNull(element);
         var animation = new DoubleAnimation(from, to, new Duration(TimeSpan.FromMilliseconds(duration)));
         var storyboard = new Storyboard { AutoReverse = autoReverse };
         storyboard.Children.Add(animation);
@@ -64,7 +64,7 @@ public static class Animations
 
     public static void SkewOut(FrameworkElement element, int duration = 350)
     {
-        Check.IfArgumentNotNull(element);
+        Check.MustBeArgumentNotNull(element);
         var animation = new DoubleAnimation(0, 90, new Duration(TimeSpan.FromMilliseconds(duration)));
         element.RenderTransform = new SkewTransform(0, 0);
         Storyboard.SetTargetName(animation, element.Name);
@@ -78,7 +78,7 @@ public static class Animations
 
     private static void InnerMove(Action<DoubleAnimation, FrameworkElement> animate, FrameworkElement element, int fromValue = 5000, int toValue = 0, int duration = 350)
     {
-        Check.IfArgumentNotNull(element);
+        Check.MustBeArgumentNotNull(element);
 
         var animation = new DoubleAnimation(fromValue, toValue, new Duration(TimeSpan.FromMilliseconds(duration))) { DecelerationRatio = 0.65 };
         element.RenderTransform = new TranslateTransform(0, 0);

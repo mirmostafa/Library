@@ -19,7 +19,7 @@ public sealed class Mapper : IMapper
             return null;
         }
 
-        Check.IfArgumentNotNull(destination);
+        Check.MustBeArgumentNotNull(destination);
         var props = typeof(TDestination).GetProperties();
         var result = destination;
         foreach (var prop in props)
@@ -57,7 +57,7 @@ public sealed class Mapper : IMapper
         {
             return null;
         }
-        Check.IfArgumentNotNull(source);
+        Check.MustBeArgumentNotNull(source);
         var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
         var props = typeof(TDestination).GetProperties();
         var result = destination;
@@ -75,7 +75,7 @@ public sealed class Mapper : IMapper
     public TDestination MapExcept<TDestination>(in object source, in Func<TDestination, object> except)
         where TDestination : class, new()
     {
-        Check.IfArgumentNotNull(source);
+        Check.MustBeArgumentNotNull(source);
         var destination = new TDestination();
 
         var exceptProps = except(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
@@ -103,7 +103,7 @@ public sealed class Mapper : IMapper
         {
             return null;
         }
-        Check.IfArgumentNotNull(destination);
+        Check.MustBeArgumentNotNull(destination);
 
         var justProps = onlyProps(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
         var dstProps = typeof(TDestination).GetProperties();

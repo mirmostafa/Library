@@ -40,7 +40,7 @@ public static class ExceptionHelper
         {
             return string.Empty;
         }
-        Check.IfArgumentNotNull(exceptionFormatter, nameof(exceptionFormatter));
+        Check.MustBeArgumentNotNull(exceptionFormatter, nameof(exceptionFormatter));
         var result = new StringBuilder();
         var buffer = exception;
         while (buffer is not null)

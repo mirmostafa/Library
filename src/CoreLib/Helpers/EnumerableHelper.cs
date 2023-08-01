@@ -29,7 +29,7 @@ public static class EnumerableHelper
     public static TDic Add<TDic, TKey, TValue>([DisallowNull] this TDic dic, in TKey key, in TValue value)
         where TDic : IList<KeyValuePair<TKey, TValue>>
     {
-        Check.IfArgumentNotNull(dic);
+        Check.MustBeArgumentNotNull(dic);
         dic.Add(new(key, value));
         return dic;
     }
@@ -175,8 +175,8 @@ public static class EnumerableHelper
     /// <returns>The ICollection with the added items.</returns>
     public static async Task<ICollection<TItem>> AddRangeAsync<TItem>([DisallowNull] this ICollection<TItem> list, [DisallowNull] IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(list);
-        Check.IfArgumentNotNull(asyncItems);
+        Check.MustBeArgumentNotNull(list);
+        Check.MustBeArgumentNotNull(asyncItems);
 
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
@@ -280,7 +280,7 @@ public static class EnumerableHelper
     /// <returns>A read-only list containing the elements from the enumerable.</returns>
     public static IReadOnlyList<T> Build<T>([DisallowNull] this IEnumerable<T> items)
     {
-        Check.IfArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(items);
 
         return Array.AsReadOnly(items.ToArray());
     }
@@ -304,11 +304,11 @@ public static class EnumerableHelper
                 [DisallowNull] in Action<TItem> addToRoots, // addToRoots is an action that takes a TItem
                 [DisallowNull] in Action<TItem, TItem> addChild) // addChild is an action that takes two TItems
     {
-        Check.IfArgumentNotNull(rootElements); // Check that rootElements is not null
-        Check.IfArgumentNotNull(getNewItem); // Check that getNewItem is not null
-        Check.IfArgumentNotNull(getChildren); // Check that getChildren is not null
-        Check.IfArgumentNotNull(addToRoots); // Check that addToRoots is not null
-        Check.IfArgumentNotNull(addChild); // Check that addChild is not null
+        Check.MustBeArgumentNotNull(rootElements); // Check that rootElements is not null
+        Check.MustBeArgumentNotNull(getNewItem); // Check that getNewItem is not null
+        Check.MustBeArgumentNotNull(getChildren); // Check that getChildren is not null
+        Check.MustBeArgumentNotNull(addToRoots); // Check that addToRoots is not null
+        Check.MustBeArgumentNotNull(addChild); // Check that addChild is not null
 
         foreach (var siteMap in rootElements) // Iterate through each element in rootElements
         {
@@ -346,7 +346,7 @@ public static class EnumerableHelper
         {
             yield break;
         }
-        Check.IfArgumentNotNull(converter);
+        Check.MustBeArgumentNotNull(converter);
 
         foreach (var item in input)
         {
@@ -384,7 +384,7 @@ public static class EnumerableHelper
     /// <returns>The list with the added items.</returns>
     public static ICollection<TItem> ClearAndAddRange<TItem>(this ICollection<TItem> list, [DisallowNull] in IEnumerable<TItem> items)
     {
-        Check.IfArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(items);
 
         list.Clear();
         foreach (var item in items)
@@ -536,7 +536,7 @@ public static class EnumerableHelper
     /// <returns>The result of the fold.</returns>
     public static IEnumerable<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
-        Check.IfArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(items);
         var buffer = items;
 
         foreach (var item in buffer)
@@ -556,8 +556,8 @@ public static class EnumerableHelper
     /// <returns>An IEnumerable containing the results of the action.</returns>
     public static IEnumerable<TResult> ForEach<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
     {
-        Check.IfArgumentNotNull(items);
-        Check.IfArgumentNotNull(action);
+        Check.MustBeArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(action);
 
         foreach (var item in items)
         {
@@ -585,7 +585,7 @@ public static class EnumerableHelper
     /// </returns>
     public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems);
+        Check.MustBeArgumentNotNull(asyncItems);
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             yield return action(item);
@@ -603,7 +603,7 @@ public static class EnumerableHelper
     /// <returns>The <see cref="IAsyncEnumerableTItem"/>.</returns>
     public static async IAsyncEnumerable<TItem> ForEachAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems);
+        Check.MustBeArgumentNotNull(asyncItems);
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             action(item);
@@ -620,7 +620,7 @@ public static class EnumerableHelper
     /// <returns>A read-only list of the items.</returns>
     public static IReadOnlyList<T> ForEachEager<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
-        Check.IfArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(items);
         foreach (var item in items)
         {
             action?.Invoke(item);
@@ -779,8 +779,8 @@ public static class EnumerableHelper
     public static TEnumerable IfEach<TEnumerable, TItem>(this TEnumerable source, Func<TItem, bool> condition, Action<TItem> trueness, Action<TItem> falseness)
             where TEnumerable : IEnumerable<TItem>
     {
-        Check.IfArgumentNotNull(source);
-        Check.IfArgumentNotNull(condition);
+        Check.MustBeArgumentNotNull(source);
+        Check.MustBeArgumentNotNull(condition);
 
         foreach (var item in source)
         {
@@ -875,7 +875,7 @@ public static class EnumerableHelper
     public static Result<TValue?> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key)
         where TKey : notnull
     {
-        Check.IfArgumentNotNull(dic);
+        Check.MustBeArgumentNotNull(dic);
 
         var result = dic.TryGetValue(key);
         if (result)
@@ -889,7 +889,7 @@ public static class EnumerableHelper
     public static Result<KeyValuePair<TKey, TValue>> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic)
         where TKey : notnull
     {
-        Check.IfArgumentNotNull(dic);
+        Check.MustBeArgumentNotNull(dic);
 
         var result = dic.LastOrDefault();
         if (!result.IsDefault())
@@ -927,7 +927,7 @@ public static class EnumerableHelper
     /// <returns>The list with the item removed.</returns>
     public static IList<KeyValuePair<TKey, TValue>> RemoveByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key)
     {
-        Check.IfArgumentNotNull(list);
+        Check.MustBeArgumentNotNull(list);
         _ = list.Remove(list.GetItemByKey(key));
         return list;
     }
@@ -1042,7 +1042,7 @@ public static class EnumerableHelper
     /// <returns>The list with the specified key and value.</returns>
     public static IList<KeyValuePair<TKey, TValue>> SetByKey<TKey, TValue>([DisallowNull] this IList<KeyValuePair<TKey, TValue>> list, in TKey key, in TValue value)
     {
-        Check.IfArgumentNotNull(list);
+        Check.MustBeArgumentNotNull(list);
         _ = list.RemoveByKey(key);
         list.Add(new(key, value));
         return list;
@@ -1062,7 +1062,7 @@ public static class EnumerableHelper
         //It checks if the dictionary is not null, and if the key already exists in the dictionary, it updates the value, otherwise it adds the key-value pair.
         //It returns the dictionary.
     {
-        Check.IfArgumentNotNull(dic);
+        Check.MustBeArgumentNotNull(dic);
 
         //Check if the key already exists in the dictionary
         if (dic.ContainsKey(key))
@@ -1197,7 +1197,7 @@ public static class EnumerableHelper
     /// <returns>An IEnumerable containing the items from the IAsyncEnumerable.</returns>
     public static async Task<IEnumerable<TItem>> ToEnumerableAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems);
+        Check.MustBeArgumentNotNull(asyncItems);
         var result = New<List<TItem>>();
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
@@ -1222,7 +1222,7 @@ public static class EnumerableHelper
     /// <returns>A List containing the items from the IAsyncEnumerable.</returns>
     public static async Task<List<TItem>> ToListAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, CancellationToken cancellationToken = default)
     {
-        Check.IfArgumentNotNull(asyncItems);
+        Check.MustBeArgumentNotNull(asyncItems);
         var result = New<List<TItem>>();
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
@@ -1284,7 +1284,7 @@ public static class EnumerableHelper
         where TKey : notnull
     {
         var a = src.Keys;
-        Check.IfArgumentNotNull(dst);
+        Check.MustBeArgumentNotNull(dst);
         _ = src.IfEach<Dictionary<TKey, TValue>, KeyValuePair<TKey, TValue>>(
             x => dst.ContainsKey(x.Key)
             , x => dst[x.Key] = x.Value

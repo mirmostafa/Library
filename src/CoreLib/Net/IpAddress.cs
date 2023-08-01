@@ -82,7 +82,7 @@ public sealed class IpAddress :
 
     public static PingReply Ping(in string hostNameOrAddress, TimeSpan timeout)
     {
-        Check.IfArgumentNotNull(hostNameOrAddress);
+        Check.MustBeArgumentNotNull(hostNameOrAddress);
         LibLogger.Debug($"Ping {hostNameOrAddress}");
         using var ping = new Ping();
         return ping.Send(hostNameOrAddress, timeout.TotalMilliseconds.Cast().ToInt());
@@ -90,7 +90,7 @@ public sealed class IpAddress :
 
     public static PingReply Ping(in string hostNameOrAddress)
     {
-        Check.IfArgumentNotNull(hostNameOrAddress);
+        Check.MustBeArgumentNotNull(hostNameOrAddress);
         LibLogger.Debug($"Ping {hostNameOrAddress}");
         using var ping = new Ping();
         return ping.Send(hostNameOrAddress);

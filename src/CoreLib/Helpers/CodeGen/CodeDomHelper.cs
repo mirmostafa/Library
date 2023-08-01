@@ -30,8 +30,8 @@ public static class CodeDomHelper
             in MemberAttributes? accessModifiers = null,
             in string? comment = null)
     {
-        Check.IfArgumentNotNull(arguments);
-        Check.IfArgumentNotNull(c);
+        Check.MustBeArgumentNotNull(arguments);
+        Check.MustBeArgumentNotNull(c);
         var constructor = new CodeConstructor
         {
             Attributes = accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final
@@ -72,8 +72,8 @@ public static class CodeDomHelper
             in MemberAttributes? accessModifiers = null,
             in string? comment = null)
     {
-        Check.IfArgumentNotNull(c);
-        Check.IfArgumentNotNull(arguments);
+        Check.MustBeArgumentNotNull(c);
+        Check.MustBeArgumentNotNull(arguments);
         var constructor = new CodeConstructor
         {
             Attributes = accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final
@@ -123,7 +123,7 @@ public static class CodeDomHelper
     /// <returns>The CodeTypeDeclaration with the added field.</returns>
     public static CodeTypeDeclaration AddField(this CodeTypeDeclaration c, in CodeGeneration.Models.FieldInfo fieldInfo)
     {
-        Check.IfArgumentNotNull(c);
+        Check.MustBeArgumentNotNull(c);
 
         _ = c.Members.Add(NewField(fieldInfo));
         return c;
@@ -138,7 +138,7 @@ public static class CodeDomHelper
     //This method adds interfaces to a CodeTypeDeclaration object
     public static CodeTypeDeclaration AddInterfaces(this CodeTypeDeclaration codeTypeDeclaration, IEnumerable<string> interfaces)
     {
-        Check.IfArgumentNotNull(codeTypeDeclaration);
+        Check.MustBeArgumentNotNull(codeTypeDeclaration);
         interfaces?.ToList().ForEach(codeTypeDeclaration.BaseTypes.Add);
         return codeTypeDeclaration;
     }
@@ -162,7 +162,7 @@ public static class CodeDomHelper
         in MemberAttributes? accessModifiers = null,
         bool isPartial = false, params MethodArgument[] arguments)
     {
-        Check.IfArgumentNotNull(c);
+        Check.MustBeArgumentNotNull(c);
         _ = c.Members.Add(NewMethod(name, body, returnType, accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final, isPartial, arguments));
         return c;
     }
@@ -177,7 +177,7 @@ public static class CodeDomHelper
     /// <returns></returns>
     public static CodeTypeDeclaration AddNewClass(this CodeNamespace ns, in string className, in IEnumerable<string>? baseTypes = null, bool isPartial = false)
     {
-        Check.IfArgumentNotNull(ns);
+        Check.MustBeArgumentNotNull(ns);
 
         CodeTypeDeclaration? result = new(className)
         {
@@ -203,7 +203,7 @@ public static class CodeDomHelper
     /// <returns></returns>
     public static CodeNamespace AddNewNameSpace(this CodeCompileUnit unit, in string? nameSpace = null)
     {
-        Check.IfArgumentNotNull(unit);
+        Check.MustBeArgumentNotNull(unit);
 
         CodeNamespace? result = nameSpace is null ? new() : new(nameSpace);
         _ = unit.Namespaces.Add(result);
@@ -220,7 +220,7 @@ public static class CodeDomHelper
     /// <exception cref="ArgumentNullException">nameof(c)</exception>
     public static CodeTypeDeclaration AddPartialMethod(this CodeTypeDeclaration c, in string name, in Type? returnType = null)
     {
-        Check.IfArgumentNotNull(c);
+        Check.MustBeArgumentNotNull(c);
         var method = NewPartialMethodAsField(name, returnType);
         _ = c.Members.Add(method);
         return c;
@@ -484,7 +484,7 @@ public static class CodeDomHelper
     public static T AddSummary<T>(this T t, in string comment)
             where T : CodeTypeMember
     {
-        Check.IfArgumentNotNull(t);
+        Check.MustBeArgumentNotNull(t);
 
         _ = t.Comments.Add(new CodeCommentStatement("<summary>", true));
         _ = t.Comments.Add(new CodeCommentStatement(comment, true));
@@ -552,7 +552,7 @@ public static class CodeDomHelper
         in bool isPartial = false,
         params MethodArgument[] arguments)
     {
-        Check.IfArgumentNotNull(name);
+        Check.MustBeArgumentNotNull(name);
         var method = new CodeMemberMethod
         {
             Attributes = isPartial ? MemberAttributes.ScopeMask : (accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final),
@@ -664,7 +664,7 @@ public static class CodeDomHelper
     /// <returns>The CodeNamespace with the added import.</returns>
     public static CodeNamespace UseNameSpace(this CodeNamespace ns, in string nameSpace)
     {
-        Check.IfArgumentNotNull(ns);
+        Check.MustBeArgumentNotNull(ns);
 
         if (!nameSpace.IsNullOrEmpty())
         {

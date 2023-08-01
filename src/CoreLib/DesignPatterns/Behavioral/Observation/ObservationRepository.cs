@@ -20,7 +20,7 @@ public sealed class ObservationRepository : IObservableRepository, IObserverRepo
 
     private void Subject_PropertyChanged(object? sender, ItemActedEventArgs<NotifyPropertyChanged> e)
     {
-        Check.IfArgumentNotNull(e?.Item);
+        Check.MustBeArgumentNotNull(e?.Item);
         if (e?.Item is null)
         {
             throw new ArgumentNullException(nameof(e));

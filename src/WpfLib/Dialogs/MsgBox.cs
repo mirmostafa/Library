@@ -25,7 +25,7 @@
 
         public static void Error(Exception exception, string? text = null, string? caption = null, Window? owner = null)
         {
-            Check.IfArgumentNotNull(exception);
+            Check.MustBeArgumentNotNull(exception);
             _ = Show($"{text}{Environment.NewLine}{exception.GetBaseException().Message}",
                      caption,
                      MessageBoxButton.OK,

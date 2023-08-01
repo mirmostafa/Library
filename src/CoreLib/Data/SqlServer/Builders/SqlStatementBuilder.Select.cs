@@ -20,7 +20,7 @@ public static partial class SqlStatementBuilder
 
     public static string Build([DisallowNull] this ISelectStatement statement, string indent = "    ")
     {
-        Check.IfArgumentNotNull(statement?.TableName);
+        Check.MustBeArgumentNotNull(statement?.TableName);
         var result = new StringBuilder("SELECT");
         if (statement.Columns.Any())
         {
@@ -41,7 +41,7 @@ public static partial class SqlStatementBuilder
         }
         if (statement.OrderByDirection != OrderByDirection.None)
         {
-            Check.IfArgumentNotNull(statement.OrderByColumn);
+            Check.MustBeArgumentNotNull(statement.OrderByColumn);
             _ = AddClause($"ORDER BY {AddBrackets(statement.OrderByColumn)}", indent, result);
             _ = result.Append(statement.OrderByDirection switch
             {
@@ -65,7 +65,7 @@ public static partial class SqlStatementBuilder
 
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
     {
-        Check.IfArgumentNotNull(statement, nameof(statement));
+        Check.MustBeArgumentNotNull(statement, nameof(statement));
         statement.Columns.Clear();
         return statement.AddColumns(columns);
     }
