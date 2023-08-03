@@ -45,11 +45,11 @@ public sealed class CodeHelperTest
         var an_fun = () => 5 / divedBy;
 
         // Act
-        var actual_an_act = an_act.TryInvoke();
-        var actual_an_fun = an_fun.TryInvoke();
-        var actual_local_act = ToAction(local_act).TryInvoke();
-        var actual_local_fun = ToFunc(local_fun).TryInvoke();
-        var exceptedExceptionType = typeof(System.DivideByZeroException);
+        var actual_an_act =CatchResult(an_act);
+        var actual_an_fun = CatchResult(an_fun);
+        var actual_local_act = CatchResult(ToAction(local_act));
+        var actual_local_fun = CatchResult(ToFunc(local_fun));
+        var exceptedExceptionType = typeof(DivideByZeroException);
         var expectedMessage = "Attempted to divide by zero.";
 
         // Assert
@@ -78,10 +78,10 @@ public sealed class CodeHelperTest
         var an_fun = () => 5 / divedBy;
 
         // Act
-        var actual_an_act = an_act.TryInvoke();
-        var actual_an_fun = an_fun.TryInvoke();
-        var actual_local_act = ToAction(local_act).TryInvoke();
-        var actual_local_fun = ToFunc(local_fun).TryInvoke();
+        var actual_an_act = CatchResult(an_act);
+        var actual_an_fun = CatchResult(an_fun);
+        var actual_local_act = CatchResult(ToAction(local_act));
+        var actual_local_fun = CatchResult(ToFunc(local_fun));
 
         // Assert
         Assert.NotNull(actual_an_act);

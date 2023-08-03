@@ -16,7 +16,7 @@ public abstract class MiddlewareBase
     [System.Diagnostics.DebuggerStepThrough]
     public async Task Invoke(HttpContext httpContext)
     {
-        CodeHelper.CatchResult(async () => await initialize(httpContext));
+        await CodeHelper.CatchResultAsync(() => initialize(httpContext));
         await executing(httpContext);
         await executed(httpContext);
         return;

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.Serialization;
 
 using Library.Exceptions;
 using Library.Results;
@@ -36,7 +35,7 @@ public static class CodeHelper
     /// <returns>A Result object indicating success or failure.</returns>
     public static Result CatchResult([DisallowNull] in Action action)
     {
-        Check.MustBeArgumentNotNull(action, nameof(action));
+        Check.MustBeArgumentNotNull(action);
         try
         {
             action();
@@ -89,6 +88,19 @@ public static class CodeHelper
         }
     }
 
+    public static async Task<Result> CatchResultAsync(Func<Task> func)
+    {
+        try
+        {
+            await func();
+            return Result.Success;
+        }
+        catch (Exception ex)
+        {
+            return Result.CreateFailure(ex);
+        }
+    }
+
     public static Func<TResult2> Compose<TArgs, TResult2>(TArgs args, Func<TArgs, TResult2> func)
     {
         var create = () => args;
@@ -96,7 +108,6 @@ public static class CodeHelper
         Check.MustBeArgumentNotNull(func);
         return [DebuggerStepThrough] () => func(create());
     }
-
 
     /// <summary>
     /// Combines two functions into one.
@@ -475,17 +486,6 @@ public static class CodeHelper
         => GetCallerMethod();
 
     /// <summary>
-    /// Creates a delegate of type TDelegate from the method name of type TType.
-    /// </summary>
-    /// <typeparam name="TType">The type of the method.</typeparam>
-    /// <typeparam name="TDelegate">The type of the delegate.</typeparam>
-    /// <param name="methodName">The name of the method.</param>
-    /// <returns>A delegate of type TDelegate.</returns>
-    public static TDelegate GetDelegate<TType, TDelegate>(in string methodName)
-            => (TDelegate)(ISerializable)Delegate.CreateDelegate(typeof(TDelegate),
-                typeof(TType).GetMethod(methodName) ?? Throw<MethodInfo>(new Exceptions.InvalidOperationException()));
-
-    /// <summary>
     /// Gets the function.
     /// </summary>
     /// <typeparam name="TArg">The type of the argument.</typeparam>
@@ -541,7 +541,7 @@ public static class CodeHelper
     /// <returns>The result of the action.</returns>
     public static TResult ThrowOnError<TResult>(in Func<TResult> action, Func<Exception, Exception>? getException = null)
     {
-        Check.MustBeArgumentNotNull(action, nameof(action));
+        Check.MustBeArgumentNotNull(action);
         try
         {
             return action();
@@ -562,44 +562,6 @@ public static class CodeHelper
     /// </summary>
     public static Task ToVoidAsync<TValue>(this Task<TValue> task)
         => task;
-
-    /// <summary>
-    /// Tries to invoke the given action and returns a Result object indicating success or failure.
-    /// </summary>
-    /// <param name="action">The action to invoke.</param>
-    /// <returns>A Result object indicating success or failure.</returns>
-    public static Result TryInvoke(this Action action)
-    {
-        Check.MustBeArgumentNotNull(action);
-        try
-        {
-            action();
-            return Result.Success;
-        }
-        catch (Exception ex)
-        {
-            return Result.CreateFailure(ex);
-        }
-    }
-
-    /// <summary>
-    /// Tries to invoke the specified action and returns a <see cref="ResultTValue"/>.
-    /// </summary>
-    /// <typeparam name="TValue">The type of the value.</typeparam>
-    /// <param name="action">The action.</param>
-    /// <returns>A <see cref="ResultTValue"/>.</returns>
-    public static Result<TValue?> TryInvoke<TValue>(this Func<TValue> action)
-    {
-        Check.MustBeArgumentNotNull(action);
-        try
-        {
-            return Result<TValue>.CreateSuccess(action())!;
-        }
-        catch (Exception ex)
-        {
-            return Result<TValue>.CreateFailure(ex);
-        }
-    }
 
     /// <summary>
     /// Invokes an action on an instance and returns the instance.
@@ -638,5 +600,3 @@ public static class CodeHelper
         return instance;
     }
 }
-
-//x public record TryWithRecord<TValue>(Result<TValue> Result);
