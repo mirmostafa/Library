@@ -27,6 +27,7 @@ public sealed class Check
 
     public static Result If(in bool notOk, in Func<string> getErrorMessage) =>
         notOk ? Result.CreateFailure(message: getErrorMessage()) : Result.CreateSuccess();
+
     public static Result If(in bool notOk) =>
         notOk ? Result.Failure : Result.Success;
 
@@ -53,6 +54,7 @@ public sealed class Check
             Throw(getExceptionIfNot);
         }
     }
+
     public static void MustBe([DoesNotReturnIf(false)] bool ok, in Func<string> getMessageIfNot)
     {
         if (!ok)
@@ -94,6 +96,15 @@ public sealed class Check
     public static void MustBeArgumentNotNull([NotNull][AllowNull] in string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
         MustBe(!obj.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
+    public static void MustBeNotNull([NotNull][AllowNull] object? obj, Func<string> getMessage) =>
+            MustBe(obj is not null, () => new NullValueValidationException(getMessage(), null));
+
+    /// <summary>
+    /// Checks if the given object is not null and throws an exception if it is.
+    /// </summary>
+    public static void MustBeNotNull([NotNull][AllowNull] object? obj, [DisallowNull] Func<Exception> getException) =>
+        MustBe(obj is not null, getException);
+
     /// <summary>
     /// Checks if the given IEnumerable object has any items and throws an exception if it does not.
     /// </summary>
@@ -104,18 +115,6 @@ public sealed class Check
     /// <summary>
     /// Checks if the given object is not null and throws an ArgumentNullException if it is.
     /// </summary>
-    public static void NotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
+    public static void MutBeNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
         MustBe(obj is not null, () => new NullValueValidationException(argName!));
-
-    public static void NotNull([NotNull][AllowNull] object? obj, Func<string> getMessage) =>
-        MustBe(obj is not null, () => new NullValueValidationException(getMessage(), null));
-
-    /// <summary>
-    /// Checks if the given object is not null and throws an exception if it is.
-    /// </summary>
-    public static void NotNull([NotNull][AllowNull] object? obj, [DisallowNull] Func<Exception> getException) =>
-        MustBe(obj is not null, getException);
-
-    public static bool TryIfArgumentIsNull<TValue>([AllowNull][NotNullWhen(true)] TValue? obj, out Result<TValue?> result, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
-        IfArgumentIsNull(obj, argName).TryParse(out result);
 }

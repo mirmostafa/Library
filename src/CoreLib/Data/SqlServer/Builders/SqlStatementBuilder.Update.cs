@@ -7,8 +7,8 @@ public static partial class SqlStatementBuilder
 {
     public static string Build([DisallowNull] this IUpdateStatement statement, string indent = "    ")
     {
-        Check.NotNull(statement?.TableName);
-        Check.MustHaveAny(statement.ColumnsValue);
+        Check.MutBeNotNull(statement?.TableName);
+        Check.MustBe(statement.ColumnsValue?.Count > 0);
 
         var result = new StringBuilder($"Update {AddBrackets(statement.TableName)}");
         _ = AddClause($"SET ({statement.ColumnsValue.Select(cv => AddBrackets(cv.Key)).Merge(", ")})", indent, result);

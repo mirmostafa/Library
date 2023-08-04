@@ -560,8 +560,8 @@ public static class CodeHelper
     /// <summary>
     /// Extension method to convert a Task of type TValue to a Task of type Void.
     /// </summary>
-    public static Task ToVoidAsync<TValue>(this Task<TValue> task)
-        => task;
+    public static Task ToVoidAsync<TValue>(this Task<TValue> task)=> 
+        task;
 
     /// <summary>
     /// Invokes an action on an instance and returns the instance.
@@ -569,8 +569,8 @@ public static class CodeHelper
     /// <param name="instance">The instance to invoke the action on.</param>
     /// <param name="action">The action to invoke.</param>
     /// <returns>The instance.</returns>
-    public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action)
-        => instance.Fluent(action);
+    public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action)=> 
+        instance.Fluent(action);
 
     /// <summary>
     /// Executes an action on a task instance and returns the result.
@@ -583,20 +583,5 @@ public static class CodeHelper
         var result = await instanceAsync;
         action?.Invoke(result);
         return result;
-    }
-
-    /// <summary>
-    /// Executes an asynchronous action on an instance of type TInstance and returns the instance.
-    /// </summary>
-    /// <param name="actionAsync">The asynchronous action to execute.</param>
-    /// <returns>The instance of type TInstance.</returns>
-    public static async Task<TInstance> WithAsync<TInstance>(this TInstance instance, Func<TInstance, Task>? actionAsync)
-    {
-        if (actionAsync != null)
-        {
-            await actionAsync(instance);
-        }
-
-        return instance;
     }
 }

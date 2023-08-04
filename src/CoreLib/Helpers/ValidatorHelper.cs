@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 
-using Library.Results;
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -20,31 +19,9 @@ public static class ValidatorHelper
         => validator.Validate(item).ThrowOnFail();
 
     /// <summary>
-    /// Asynchronously checks the validity of an item using the specified validator and throws an exception if the validation fails.
+    /// Asynchronously checks the validity of an item using the specified validator and throws an
+    /// exception if the validation fails.
     /// </summary>
     public static async Task<TItem> CheckValidatorAsync<TItem>([DisallowNull] this IAsyncValidator<TItem> validator, TItem item)
         => await validator.ValidateAsync(item).ThrowOnFailAsync();
-
-    public static Result<TInput> CheckAll<TInput>([DisallowNull] this IEnumerable<Func<TInput, Result<TInput>>> validators, in TInput input)
-        => CheckAll(input, validators.ToArray());
-
-    /// <summary>
-    /// Checks the input against a list of validators and returns the result.
-    /// </summary>
-    /// <typeparam name="TValue">The type of the value.</typeparam>
-    /// <param name="input">The input to check.</param>
-    /// <param name="validators">The list of validators to check against.</param>
-    /// <returns>The result of the validation.</returns>
-    public static Result<TValue> CheckAll<TValue>(TValue input, params Func<TValue, Result<TValue>>[] validators)
-    {
-        var validatorList = validators.ToList();
-        Check.MustHaveAny(validatorList);
-        var result = validatorList.First()(input);
-
-        foreach (var validator in validators.Skip(1))
-        {
-            result += validator(input);
-        }
-        return result;
-    }
 }

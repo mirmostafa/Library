@@ -8,7 +8,7 @@ public partial class SqlStatementBuilder
 {
     public static string Build([DisallowNull] this IDeleteStatement statement, string indent = "    ")
     {
-        Check.NotNull(statement.TableName, nameof(statement.TableName));
+        Check.MutBeNotNull(statement.TableName, nameof(statement.TableName));
         var result = new StringBuilder($"DELETE FROM {AddBrackets(statement.TableName)}");
         if (!statement.WhereClause.IsNullOrEmpty())
         {
