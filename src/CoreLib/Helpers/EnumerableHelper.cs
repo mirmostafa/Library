@@ -523,10 +523,21 @@ public static class EnumerableHelper
     //    return items.Where(x => !buffer.Add(x));
     //}
 
-    public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> source) =>
-        source.GroupBy(x => x).Where(g => g.Any()).Select(g => g.Key);
-    public static bool HasDuplicates<T>(this IEnumerable<T> source) =>
-        source.GroupBy(x => x).Any(g => g.Any());
+    public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> source)
+    {
+        var buffer = new HashSet<T>();
+        foreach (var item in source)
+        {
+            if (!buffer.Add(item))
+            {
+                yield return item;
+            }
+        }
+    }
+    
+    public static bool HasDuplicates<T>(this IEnumerable<T> source) => 
+        FindDuplicates(source).Any();
+
     /// <summary>
     /// Applies a folder function to each item in the IEnumerable and returns the result.
     /// </summary>

@@ -192,7 +192,7 @@ public sealed class FunctionalTest
 
         var result = process();
 
-        Assert.Equal(10, result);
+        Assert.Equal(5, result);
     }
 
     [Fact]

@@ -12,8 +12,6 @@ public sealed class CheckValidationTest
     private readonly Array _array_null = null;
     private readonly Array _array_sample1_null = new string[1];
     private readonly Array _array_sample1_sample = new string[1] { "Hi" };
-    private readonly object _object_null = null;
-    private readonly object _object_sample1 = new();
     private readonly string _string_null = null;
     private readonly string _string_sample1 = "Hi";
 
@@ -31,11 +29,11 @@ public sealed class CheckValidationTest
 
     [Fact]
     public void IfHasAnyEmpty()
-        => Assert.Throws<ValidationException>(() => Check.MustHaveAny(this._array_empty));
+        => Assert.Throws<NoItemValidationException>(() => Check.MustHaveAny(this._array_empty));
 
     [Fact]
     public void IfHasAnyNull()
-        => Assert.Throws<ValidationException>(() => Check.MustHaveAny(this._array_null));
+        => Assert.Throws<NoItemValidationException>(() => Check.MustHaveAny(this._array_null));
 
     [Fact]
     public void IfHasAnyPure()
@@ -47,7 +45,7 @@ public sealed class CheckValidationTest
 
     [Fact]
     public void IfMessageFalseTest()
-        => Assert.Throws<ValidationException>(() => Check.If(false, () => this._string_sample1));
+        => Assert.Throws<ValidationException>(() => Check.MustBe(false, () => this._string_sample1));
 
     [Fact]
     public void IfMessageTrueTest()
@@ -99,7 +97,8 @@ public sealed class CheckValidationTest
     [Fact]
     public void MustBeFalse()
     {
-        var result = Check.If(false, () => new ValidationException());
+        string? a = null;
+        var result = Check.If(a is null, () => new ValidationException());
         Assert.False(result);
         _ = Assert.IsType<ValidationException>(result.Status);
     }
@@ -107,14 +106,16 @@ public sealed class CheckValidationTest
     [Fact]
     public void MustBeFalseMessage()
     {
-        var result = Check.If(false, () => this._string_sample1);
+        var a = 5;
+        var result = Check.If(a == 5, () => this._string_sample1);
         Assert.False(result);
     }
 
     [Fact]
     public void MustBeFalseTest()
     {
-        var result = Check.If(false);
+        var notOk = true;
+        var result = Check.If(notOk);
         Assert.False(result);
     }
 }

@@ -2,7 +2,7 @@
 
 using Library.Interfaces;
 
-using CurrenntException = Library.Exceptions.LibraryException;
+using CurrenntException = Library.Exceptions.NoItemSelectedException;
 
 namespace Library.Exceptions;
 
