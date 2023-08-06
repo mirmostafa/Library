@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
-using Library.DesignPatterns.Markers;
 using Library.Exceptions;
 using Library.Exceptions.Validations;
 using Library.Results;
@@ -28,10 +27,27 @@ public static class Validation
         InnerCheck(value, CheckBehavior.ThrowOnFail, paramName).ArgumentNotNull();
 
     /// <summary>
+    /// Adds a rule to the ValidationResultSet to check if the value is not null.
+    /// </summary>
+    public static ValidationResultSet<TValue> ArgumentNotNull<TValue>(this ValidationResultSet<TValue> vrs, Func<Exception> onError = null) =>
+        vrs.InnerAddRule(x => x, _ => vrs.Value is not null, onError, () => new ArgumentNullException(vrs._valueName));
+
+    /// <summary> Traverses the rules and create a fail <code>Result<TValue></code>, at first broken
+    /// rule . Otherwise created a succeed result. </summary>
+    public static Result<TValue> Build<TValue>(this ValidationResultSet<TValue> vrs) =>
+        InnerBuild(in vrs.Behavior, vrs.Value, vrs.Rules);
+
+    /// <summary>
     /// The entry of validation checks
     /// </summary>
     public static ValidationResultSet<TValue> Check<TValue>(this TValue value, CheckBehavior behavior = CheckBehavior.ReturnFirstFailure, [CallerArgumentExpression(nameof(value))] string paramName = null!) =>
         InnerCheck(value, behavior, paramName);
+
+    public static Result<TValue> GatherToResult<TValue>(this ValidationResultSet<TValue> vrs) =>
+            InnerBuild(CheckBehavior.GatherAll, vrs.Value, vrs.Rules);
+
+    public static Result<TValue> GetFirstFailure<TValue>(this ValidationResultSet<TValue> vrs) =>
+            InnerBuild(CheckBehavior.ReturnFirstFailure, vrs.Value, vrs.Rules);
 
     /// <summary>
     /// Checks if the given value is not null and returns it. Throws an exception if the value is null.
@@ -68,88 +84,45 @@ public static class Validation
     public static TValue NotNull<TValue>([NotNull] this TValue value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string paramName = null) =>
         InnerDefaultCheck(value).NotNull(onError);
 
-    private static ValidationResultSet<TValue> InnerCheck<TValue>(TValue value, CheckBehavior behavior, string paramName) =>
-        new(value, behavior, paramName);
+    /// <summary>
+    /// Adds a rule to the ValidationResultSet to check if the value is not null.
+    /// </summary>
+    public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs) =>
+        vrs.InnerAddRule(x => x, _ => vrs.Value is not null, null, () => new NullValueValidationException(vrs._valueName));
 
-    private static ValidationResultSet<TValue> InnerDefaultCheck<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null) =>
-        InnerCheck(value, CheckBehavior.ThrowOnFail, paramName);
-}
+    public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Func<Exception> onError) =>
+vrs.InnerAddRule(x => x, _ => vrs.Value is not null, onError, () => new NullValueValidationException(vrs._valueName));
 
-[DebuggerStepThrough]
-[StackTraceHidden]
-public sealed class ValidationResultSet<TValue>(TValue value, CheckBehavior behavior, string valueName) : IBuilder<Result<TValue>>
+    public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Func<string> onErrorMessage) =>
+vrs.InnerAddRule(x => x, _ => vrs.Value is not null, null, () =>
 {
-    private readonly CheckBehavior _behavior = behavior;
-    private readonly List<(Func<TValue, bool> IsValid, Func<Exception> OnError)> _rules = new();
-    private readonly string _valueName = valueName;
-
-    public IEnumerable<(Func<TValue, bool> IsValid, Func<Exception> OnError)> Rules
-        => this._rules.ToEnumerable();
-
-    public TValue Value { get; } = value;
-
-    public static implicit operator Result<TValue>(ValidationResultSet<TValue> source) =>
-        source.Build();
-
-    public static implicit operator TValue(ValidationResultSet<TValue> source) =>
-        source.Value;
-
-    /// <summary>
-    /// Adds a rule to the ValidationResultSet to check if the value is not null.
-    /// </summary>
-    public ValidationResultSet<TValue> ArgumentNotNull(Func<Exception> onError = null) =>
-        this.InnerAddRule(x => x, _ => this.Value is not null, onError, () => new ArgumentNullException(this._valueName));
-
-    /// <summary> Traverses the rules and create a fail <code>Result<TValue></code>, at first broken
-    /// rule . Otherwise created a succeed result. </summary>
-    public Result<TValue> Build() =>
-        InnerBuild(in this._behavior, this.Value, this.Rules);
-
-    public Result<TValue> GatherToResult() =>
-        InnerBuild(CheckBehavior.GatherAll, this.Value, this.Rules);
-
-    public Result<TValue> GetFirstFailure() =>
-        InnerBuild(CheckBehavior.ReturnFirstFailure, this.Value, this.Rules);
-
-    /// <summary>
-    /// Adds a rule to the ValidationResultSet to check if the value is not null.
-    /// </summary>
-    public ValidationResultSet<TValue> NotNull() =>
-        this.InnerAddRule(x => x, _ => this.Value is not null, null, () => new NullValueValidationException(this._valueName));
-
-    public ValidationResultSet<TValue> NotNull(Func<Exception> onError) =>
-        this.InnerAddRule(x => x, _ => this.Value is not null, onError, () => new NullValueValidationException(this._valueName));
-
-    public ValidationResultSet<TValue> NotNull(Func<string> onErrorMessage) =>
-        this.InnerAddRule(x => x, _ => this.Value is not null, null, () =>
-        {
-            var message = onErrorMessage?.Invoke();
-            return message.IsNullOrEmpty() ? new NullValueValidationException(this._valueName) : new NullValueValidationException(message, null);
-        });
+    var message = onErrorMessage?.Invoke();
+    return message.IsNullOrEmpty() ? new NullValueValidationException(vrs._valueName) : new NullValueValidationException(message, null);
+});
 
     /// <summary>
     /// Adds a rule to the validation set that checks if the specified property is not null.
     /// </summary>
-    public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object>> propertyExpression) =>
-        this.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(x));
+    public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, object>> propertyExpression) =>
+        vrs.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(x));
 
-    public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object>> propertyExpression, Func<Exception> onError) =>
-        this.InnerAddRule(propertyExpression, x => x is not null, onError, x => new NullValueValidationException(x));
+    public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, object>> propertyExpression, Func<Exception> onError) =>
+vrs.InnerAddRule(propertyExpression, x => x is not null, onError, x => new NullValueValidationException(x));
 
-    public ValidationResultSet<TValue> NotNull(Expression<Func<TValue, object>> propertyExpression, Func<string> onErrorMessage) =>
-        this.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
+    public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, object>> propertyExpression, Func<string> onErrorMessage) =>
+vrs.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
 
-    public ValidationResultSet<TValue> NotNullOrEmpty(Expression<Func<TValue, string>> propertyExpression, Func<Exception> onError = null) =>
-        this.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), onError, x => new NullValueValidationException(x));
+    public static ValidationResultSet<TValue> NotNullOrEmpty<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, string>> propertyExpression, Func<Exception> onError = null) =>
+vrs.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), onError, x => new NullValueValidationException(x));
 
-    public ValidationResultSet<TValue> NotNullOrEmpty(Expression<Func<TValue, string>> propertyExpression, Func<string> onErrorMessage) =>
-        this.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
+    public static ValidationResultSet<TValue> NotNullOrEmpty<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, string>> propertyExpression, Func<string> onErrorMessage) =>
+vrs.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
 
-    public ValidationResultSet<TValue> RuleFor(Func<TValue, bool> isValid, Func<Exception> onError) =>
-        this.InnerAddRule(isValid, onError);
+    public static ValidationResultSet<TValue> RuleFor<TValue>(this ValidationResultSet<TValue> vrs, Func<TValue, bool> isValid, Func<Exception> onError) =>
+vrs.InnerAddRule(isValid, onError);
 
-    public ValidationResultSet<TValue> RuleFor((Func<TValue, bool> IsValid, Func<Exception> OnError) rule) =>
-        this.InnerAddRule(rule.IsValid, rule.OnError);
+    public static ValidationResultSet<TValue> RuleFor<TValue>(this ValidationResultSet<TValue> vrs, (Func<TValue, bool> IsValid, Func<Exception> OnError) rule) =>
+vrs.InnerAddRule(rule.IsValid, rule.OnError);
 
     /// <summary>
     /// Adds a rule to the validation set with a custom error message.
@@ -157,16 +130,80 @@ public sealed class ValidationResultSet<TValue>(TValue value, CheckBehavior beha
     /// <param name="isValid">The validation rule.</param>
     /// <param name="onErrorMessage">The error message to be returned if the rule fails.</param>
     /// <returns>The validation result set.</returns>
-    public ValidationResultSet<TValue> RuleFor(Func<TValue, bool> isValid, Func<string> onErrorMessage) =>
-        this.InnerAddRule(isValid, () => new ValidationException(onErrorMessage()));
+    public static ValidationResultSet<TValue> RuleFor<TValue>(this ValidationResultSet<TValue> vrs, Func<TValue, bool> isValid, Func<string> onErrorMessage) =>
+        vrs.InnerAddRule(isValid, () => new ValidationException(onErrorMessage()));
 
-    public ValidationResultSet<TValue> RuleFor((Func<TValue, bool> IsValid, Func<string> OnErrorMessage) rule) =>
-        this.InnerAddRule(rule.IsValid, () => new ValidationException(rule.OnErrorMessage()));
+    public static ValidationResultSet<TValue> RuleFor<TValue>(this ValidationResultSet<TValue> vrs, (Func<TValue, bool> IsValid, Func<string> OnErrorMessage) rule) =>
+vrs.InnerAddRule(rule.IsValid, () => new ValidationException(rule.OnErrorMessage()));
 
-    public ValidationResultSet<TValue> ThrowOnFail() =>
-        this.Fluent(InnerBuild(CheckBehavior.ThrowOnFail, this.Value, this.Rules));
+    public static ValidationResultSet<TValue> ThrowOnFail<TValue>(this ValidationResultSet<TValue> vrs) =>
+vrs.Fluent(InnerBuild(CheckBehavior.ThrowOnFail, vrs.Value, vrs.Rules));
 
-    private static Result<TValue> InnerBuild(in CheckBehavior behavior, in TValue value, in IEnumerable<(Func<TValue, bool> IsValid, Func<Exception> OnError)> rules)
+    private static Func<Exception> GetOnError<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<string, Exception> onError) =>
+                                                        () => onError(ObjectHelper.GetPropertyInfo(vrs.Value, propertyExpression).Name);
+
+    /// <summary>
+    /// Adds a rule to the validation result set.
+    /// </summary>
+    /// <typeparam name="TType">The type of the property.</typeparam>
+    /// <param name="propertyExpression">The property expression.</param>
+    /// <param name="isValid">The validation function.</param>
+    /// <param name="onError">The error function.</param>
+    /// <param name="onErrorAlternative">The alternative error function.</param>
+    /// <returns>The validation result set.</returns>
+    [DebuggerStepThrough]
+    [StackTraceHidden]
+    private static ValidationResultSet<TValue> InnerAddRule<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<Exception> onErrorAlternative)
+    {
+        [DebuggerStepThrough] bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
+        var error = onError ?? onErrorAlternative;
+        return InnerAddRule(vrs, validator, error);
+    }
+
+    /// <summary>
+    /// Adds a rule to the validation set.
+    /// </summary>
+    /// <param name="validator">The validator function.</param>
+    /// <param name="error">The error function.</param>
+    /// <returns>The validation result set.</returns>
+    [DebuggerStepThrough]
+    [StackTraceHidden]
+    private static ValidationResultSet<TValue> InnerAddRule<TValue>(this ValidationResultSet<TValue> vrs, Func<TValue, bool> validator, Func<Exception> error)
+    {
+        if (vrs.Behavior == CheckBehavior.ThrowOnFail)
+        {
+            if (!validator(vrs.Value))
+            {
+                Throw(error);
+            }
+        }
+        else
+        {
+            vrs.RuleList.Add((validator, error));
+        }
+
+        return vrs;
+    }
+
+    /// <summary>
+    /// Adds a rule to the validation result set.
+    /// </summary>
+    /// <typeparam name="TType">The type of the property.</typeparam>
+    /// <param name="propertyExpression">The expression of the property.</param>
+    /// <param name="isValid">The validation function.</param>
+    /// <param name="onError">The error function.</param>
+    /// <param name="onErrorAlternative">The alternative error function.</param>
+    /// <returns>The validation result set.</returns>
+    [DebuggerStepThrough]
+    [StackTraceHidden]
+    private static ValidationResultSet<TValue> InnerAddRule<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<string, Exception> onErrorAlternative)
+    {
+        [DebuggerStepThrough] bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
+        var error = onError ?? vrs.GetOnError(propertyExpression, onErrorAlternative);
+        return vrs.InnerAddRule(validator, error);
+    }
+
+    private static Result<TValue> InnerBuild<TValue>(in CheckBehavior behavior, in TValue value, in IEnumerable<(Func<TValue, bool> IsValid, Func<Exception> OnError)> rules)
     {
         // Create a new result object with the current value
         var result = new Result<TValue>(value);
@@ -203,72 +240,33 @@ public sealed class ValidationResultSet<TValue>(TValue value, CheckBehavior beha
         return result;
     }
 
-    private static TType Invoke<TType>(Expression<Func<TValue, TType>> propertyExpression, TValue value) =>
+    private static ValidationResultSet<TValue> InnerCheck<TValue>(TValue value, CheckBehavior behavior, string paramName) =>
+        new(value, behavior, paramName);
+
+    private static ValidationResultSet<TValue> InnerDefaultCheck<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null) =>
+        InnerCheck(value, CheckBehavior.ThrowOnFail, paramName);
+
+    private static TType Invoke<TValue, TType>(Expression<Func<TValue, TType>> propertyExpression, TValue value) =>
         propertyExpression.Compile().Invoke(value);
+}
 
-    private Func<Exception> GetOnError<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<string, Exception> onError) =>
-        () => onError(ObjectHelper.GetPropertyInfo(this.Value, propertyExpression).Name);
+[DebuggerStepThrough]
+[StackTraceHidden]
+public sealed class ValidationResultSet<TValue>(TValue value, CheckBehavior behavior, string valueName)
+{
+    internal readonly CheckBehavior Behavior = behavior;
+    internal readonly List<(Func<TValue, bool> IsValid, Func<Exception> OnError)> RuleList = new();
+    internal readonly string _valueName = valueName;
 
-    /// <summary>
-    /// Adds a rule to the validation result set.
-    /// </summary>
-    /// <typeparam name="TType">The type of the property.</typeparam>
-    /// <param name="propertyExpression">The expression of the property.</param>
-    /// <param name="isValid">The validation function.</param>
-    /// <param name="onError">The error function.</param>
-    /// <param name="onErrorAlternative">The alternative error function.</param>
-    /// <returns>The validation result set.</returns>
-    [DebuggerStepThrough]
-    [StackTraceHidden]
-    private ValidationResultSet<TValue> InnerAddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<string, Exception> onErrorAlternative)
-    {
-        [DebuggerStepThrough] bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
-        var error = onError ?? this.GetOnError(propertyExpression, onErrorAlternative);
-        return this.InnerAddRule(validator, error);
-    }
+    public IEnumerable<(Func<TValue, bool> IsValid, Func<Exception> OnError)> Rules => this.RuleList.ToEnumerable();
 
-    /// <summary>
-    /// Adds a rule to the validation result set.
-    /// </summary>
-    /// <typeparam name="TType">The type of the property.</typeparam>
-    /// <param name="propertyExpression">The property expression.</param>
-    /// <param name="isValid">The validation function.</param>
-    /// <param name="onError">The error function.</param>
-    /// <param name="onErrorAlternative">The alternative error function.</param>
-    /// <returns>The validation result set.</returns>
-    [DebuggerStepThrough]
-    [StackTraceHidden]
-    private ValidationResultSet<TValue> InnerAddRule<TType>(Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<Exception> onErrorAlternative)
-    {
-        [DebuggerStepThrough] bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
-        var error = onError ?? onErrorAlternative;
-        return this.InnerAddRule(validator, error);
-    }
+    public TValue Value { get; } = value;
 
-    /// <summary>
-    /// Adds a rule to the validation set.
-    /// </summary>
-    /// <param name="validator">The validator function.</param>
-    /// <param name="error">The error function.</param>
-    /// <returns>The validation result set.</returns>
-    [DebuggerStepThrough]
-    [StackTraceHidden]
-    private ValidationResultSet<TValue> InnerAddRule(Func<TValue, bool> validator, Func<Exception> error)
-    {
-        if (this._behavior == CheckBehavior.ThrowOnFail)
-        {
-            if (!validator(this.Value))
-            {
-                Throw(error);
-            }
-        }
-        else
-        {
-            this._rules.Add((validator, error));
-        }
+    public static implicit operator Result<TValue>(ValidationResultSet<TValue> source) =>
+        source.Build();
 
-        return this;
-    }
+    public static implicit operator TValue(ValidationResultSet<TValue> source) =>
+        source.Value;
 }
 
 /// <summary>
