@@ -1,11 +1,14 @@
 ﻿#nullable disable
 
+using System.ComponentModel;
 using System.Diagnostics;
 
 using Library.Results;
 
 namespace Library.Validations;
 
+[Browsable(false)]
+[EditorBrowsable(EditorBrowsableState.Never)]
 [DebuggerStepThrough]
 [StackTraceHidden]
 public sealed class ValidationResultSet<TValue>(TValue value, CheckBehavior behavior, string valueName)
