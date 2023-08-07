@@ -44,7 +44,7 @@ public sealed class ActionScope : IDisposable
 
     public void End(string message = ENDING_MESSAGE)
     {
-        _ = this.ThrowIfDisposed(this._isEnded);
+        Check.ThrowIfDisposed(this, this._isEnded);
 
         _ = this.Prompt(message);
         this._isEnded = true;

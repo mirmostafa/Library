@@ -74,7 +74,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator !=.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator !=(Id left, Id right)
@@ -83,7 +83,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator !=.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator !=(Id left, IdType right)
@@ -92,7 +92,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator &lt;.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator <(Id left, Id right)
@@ -101,7 +101,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator &lt;.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator <(Id left, IdType right)
@@ -110,7 +110,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator &lt;=.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator <=(Id left, Id right)
@@ -119,7 +119,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator &lt;=.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator <=(Id left, IdType right)
@@ -128,7 +128,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator ==.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator ==(Id left, Id right)
@@ -137,7 +137,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator ==.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator ==(Id left, IdType right)
@@ -146,7 +146,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator &gt;.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator >(Id left, Id right)
@@ -155,7 +155,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator &gt;.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator >(Id left, IdType right)
@@ -164,7 +164,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator &gt;=.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator >=(Id left, Id right)
@@ -173,7 +173,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Implements the operator &gt;=.
     /// </summary>
-    /// <param name="left"> The left.</param>
+    /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
     public static bool operator >=(Id left, IdType right)
@@ -286,6 +286,9 @@ public readonly struct Id(IdType value) :
     public int CompareTo(IdType other)
         => this.Value.CompareTo(other);
 
+    public IdType Convert()
+            => throw new NotImplementedException();
+
     /// <summary>
     /// Indicates whether the current object is equal to another object of the same type.
     /// </summary>
@@ -334,7 +337,7 @@ public readonly struct Id(IdType value) :
     /// Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo"/> with the data
     /// needed to serialize the target object.
     /// </summary>
-    /// <param name="info">   
+    /// <param name="info">
     /// The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> to populate with data.
     /// </param>
     /// <param name="context">
@@ -347,7 +350,7 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Converts to string.
     /// </summary>
-    /// <param name="format">        The format.</param>
+    /// <param name="format">The format.</param>
     /// <param name="formatProvider">The format provider.</param>
     /// <returns>A <see cref="string"/> that represents this instance.</returns>
     /// <exception cref="NotImplementedException"></exception>
@@ -364,17 +367,17 @@ public readonly struct Id(IdType value) :
     /// <summary>
     /// Tries to format the value of the current instance into the provided span of characters.
     /// </summary>
-    /// <param name="destination"> 
+    /// <param name="destination">
     /// When this method returns, this instance's value formatted as a span of characters.
     /// </param>
     /// <param name="charsWritten">
     /// When this method returns, the number of characters that were written in <paramref name="destination"/>.
     /// </param>
-    /// <param name="format">      
+    /// <param name="format">
     /// A span containing the characters that represent a standard or custom format string that
     /// defines the acceptable format for <paramref name="destination"/>.
     /// </param>
-    /// <param name="provider">    
+    /// <param name="provider">
     /// An optional object that supplies culture-specific formatting information for <paramref name="destination"/>.
     /// </param>
     /// <returns><see langword="true"/> if the formatting was successful; otherwise, <see langword="false"/>.</returns>
@@ -398,7 +401,4 @@ public readonly struct Id(IdType value) :
     /// <returns></returns>
     private string GetDebuggerDisplay()
         => this.ToString();
-    
-    public IdType Convert() 
-        => throw new NotImplementedException();
 }

@@ -12,7 +12,7 @@ namespace Library.Validations;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
-public static class Validation
+public static class ValidationExtensions
 {
     /// <summary>
     /// Checks that the specified value is not null and returns it. Throws an exception if the value
@@ -29,6 +29,7 @@ public static class Validation
     /// <summary>
     /// Adds a rule to the ValidationResultSet to check if the value is not null.
     /// </summary>
+    [MemberNotNull(nameof(ValidationResultSet<TValue>.Value))]
     public static ValidationResultSet<TValue> ArgumentNotNull<TValue>(this ValidationResultSet<TValue> vrs, Func<Exception> onError = null) =>
         vrs.InnerAddRule(x => x, _ => vrs.Value is not null, onError, () => new ArgumentNullException(vrs._valueName));
 
@@ -134,13 +135,13 @@ vrs.InnerAddRule(rule.IsValid, rule.OnError);
         vrs.InnerAddRule(isValid, () => new ValidationException(onErrorMessage()));
 
     public static ValidationResultSet<TValue> RuleFor<TValue>(this ValidationResultSet<TValue> vrs, (Func<TValue, bool> IsValid, Func<string> OnErrorMessage) rule) =>
-vrs.InnerAddRule(rule.IsValid, () => new ValidationException(rule.OnErrorMessage()));
+        vrs.InnerAddRule(rule.IsValid, () => new ValidationException(rule.OnErrorMessage()));
 
     public static ValidationResultSet<TValue> ThrowOnFail<TValue>(this ValidationResultSet<TValue> vrs) =>
-vrs.Fluent(InnerBuild(CheckBehavior.ThrowOnFail, vrs.Value, vrs.Rules));
+        vrs.Fluent(InnerBuild(CheckBehavior.ThrowOnFail, vrs.Value, vrs.Rules));
 
     private static Func<Exception> GetOnError<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<string, Exception> onError) =>
-                                                        () => onError(ObjectHelper.GetPropertyInfo(vrs.Value, propertyExpression).Name);
+        () => onError(ObjectHelper.GetPropertyInfo(vrs.Value, propertyExpression).Name);
 
     /// <summary>
     /// Adds a rule to the validation result set.

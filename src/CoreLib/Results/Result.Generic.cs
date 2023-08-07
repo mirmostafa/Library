@@ -10,7 +10,7 @@ public class Result<TValue>(
     in IEnumerable<(object Id, object Error)>? errors = null,
     in IEnumerable<(string Id, object Data)>? extraData = null)
     : ResultBase(succeed, status, message, errors, extraData)
-    , IAdditionOperators<Result<TValue>, ResultBase, Result<TValue>>
+    , IAdditionOperators<Result<TValue>, Result, Result<TValue>>
     , IEquatable<Result<TValue>>
 {
     private static Result<TValue?>? _failure;
@@ -60,8 +60,8 @@ public class Result<TValue>(
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null)
-        => new(value, false, status, message, errors, extraData);
+        in IEnumerable<(string Id, object Data)>? extraData = null) =>
+        new(value, false, status, message, errors, extraData);
 
     /// <summary>
     /// Creates a new Result with the given value, status, message, and error.
@@ -74,8 +74,8 @@ public class Result<TValue>(
     public static Result<TValue?> CreateFailure(in TValue? value,
         in object? status,
         in string? message,
-        in (object Id, object Error) error)
-        => new(value, false, status, message, EnumerableHelper.ToEnumerable(error), null);
+        in (object Id, object Error) error) =>
+        new(value, false, status, message, EnumerableHelper.ToEnumerable(error), null);
 
     /// <summary>
     /// Creates a failure result with the specified message, exception and value.
@@ -144,11 +144,16 @@ public class Result<TValue>(
         in IEnumerable<(string Id, object Data)>? extraData = null) =>
         new(value, succeed, status, message, errors, extraData);
 
-    public static Result<TValue> operator +(Result<TValue> left, ResultBase right)
+    //public static Result<TValue> operator +(Result<TValue> left, ResultBase right)
+    //{
+    //    var total = Combine(left, right);
+    //    return new Result<TValue>(left.Value, total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
+    //}
+
+    public static Result<TValue> operator +(Result<TValue> left, Result right)
     {
         var total = Combine(left, right);
-        var result = new Result<TValue>(left.Value, total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
-        return result;
+        return new Result<TValue>(left.Value, total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
     }
 
     public Result<TValue> Add(Result<TValue> item, Func<TValue, TValue, TValue> add) =>
@@ -156,7 +161,8 @@ public class Result<TValue>(
 
     public bool Equals(Result<TValue>? other) => throw new NotImplementedException();
 
-    public override bool Equals(object? obj) => this.Equals(obj as Result<TValue>);
+    public override bool Equals(object? obj) =>
+        this.Equals(obj as Result<TValue>);
 
     public override int GetHashCode() => throw new NotImplementedException();
 

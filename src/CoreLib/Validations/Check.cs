@@ -34,11 +34,11 @@ public sealed class Check
     public static Result If(in bool notOk, in Func<Exception> getErrorMessage) =>
         notOk ? Result.CreateFailure(getErrorMessage()) : Result.CreateSuccess();
 
-    public static Result<TValue> If<TValue>(in bool notOk, TValue value, in Func<Exception> getErrorMessage) =>
+    public static Result<TValue> If<TValue>(TValue value, in bool notOk, in Func<Exception> getErrorMessage) =>
         notOk ? Result<TValue>.CreateFailure(getErrorMessage(), value) : Result<TValue>.CreateSuccess(value);
 
     public static Result<TValue> IfArgumentIsNull<TValue>(TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
-        If(obj is null, obj, () => new NullValueValidationException(argName!));
+        If(obj, obj is null, () => new NullValueValidationException(argName!));
 
     /// <summary>
     /// Throws an exception if the specified boolean is false.
@@ -55,13 +55,8 @@ public sealed class Check
         }
     }
 
-    public static void MustBe([DoesNotReturnIf(false)] bool ok, in Func<string> getMessageIfNot)
-    {
-        if (!ok)
-        {
-            Throw(new ValidationException(getMessageIfNot()));
-        }
-    }
+    public static void MustBe([DoesNotReturnIf(false)] bool ok, Func<string> getMessageIfNot) =>
+        MustBe(ok, ()=> new ValidationException(getMessageIfNot()));
 
     /// <summary>
     /// Checks if the given boolean is true, and throws a new instance of the specified exception if
@@ -97,7 +92,7 @@ public sealed class Check
         MustBe(!obj.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
     public static void MustBeNotNull([NotNull][AllowNull] object? obj, Func<string> getMessage) =>
-            MustBe(obj is not null, () => new NullValueValidationException(getMessage(), null));
+        MustBe(obj is not null, () => new NullValueValidationException(getMessage(), null));
 
     /// <summary>
     /// Checks if the given object is not null and throws an exception if it is.
@@ -109,12 +104,15 @@ public sealed class Check
     /// Checks if the given IEnumerable object has any items and throws an exception if it does not.
     /// </summary>
     [return: NotNull]
-    public static void MustHaveAny([NotNull][AllowNull] IEnumerable? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null)
-        => MustBe(obj?.Any() ?? false, () => new NoItemValidationException(argName!));
+    public static void MustHaveAny([NotNull][AllowNull] IEnumerable? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
+        MustBe(obj?.Any() ?? false, () => new NoItemValidationException(argName!));
 
     /// <summary>
     /// Checks if the given object is not null and throws an ArgumentNullException if it is.
     /// </summary>
     public static void MutBeNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
         MustBe(obj is not null, () => new NullValueValidationException(argName!));
+
+    public static void ThrowIfDisposed<T>(T @this, [DoesNotReturnIf(true)] bool disposed) where T : IDisposable =>
+        MustBe(!disposed, () => new ObjectDisposedException(@this?.GetType().Name));
 }

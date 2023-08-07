@@ -189,7 +189,7 @@ public static class ResultHelper
     public static Result WithSucceed(this ResultBase result, bool? succeed) =>
         new(result) { Succeed = succeed };
 
-    public static Result<TNewValue?> WithValue<TNewValue>(this ResultBase result, in TNewValue? newValue) =>
+    public static Result<TNewValue> WithValue<TNewValue>(this ResultBase result, in TNewValue newValue) =>
         new(result, newValue);
 
     /// <summary>

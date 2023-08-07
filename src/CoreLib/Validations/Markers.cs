@@ -2,12 +2,14 @@
 
 namespace Library.Validations;
 
-public interface IAsyncValidator
+public interface IAsyncValidatable
 {
     /// <summary>
     /// Asynchronously validates the current state of the object.
     /// </summary>
-    /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+    /// <param name="token">
+    /// A cancellation token that can be used by other objects or threads to receive notice of cancellation.
+    /// </param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task<Result> ValidateAsync(CancellationToken token = default);
 }
@@ -31,7 +33,7 @@ public interface IValidatable<T>
     Result<T> Validate();
 }
 
-public interface IValidator
+public interface IValidatable
 {
     /// <summary>
     /// Validates the current state and returns a Result object.

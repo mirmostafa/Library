@@ -3,7 +3,8 @@
 namespace Library.Collections;
 
 /// <summary>
-/// Represents a list of tasks that can be cancelled and provides methods to run, wait for, and dispose of tasks.
+/// Represents a list of tasks that can be cancelled and provides methods to run, wait for, and
+/// dispose of tasks.
 /// </summary>
 public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnumerable<Task>
 {
@@ -90,5 +91,8 @@ public sealed class TaskList : FluentListBase<Task, TaskList>, IDisposable, IEnu
     }
 
     private TaskList This()
-        => this.ThrowIfDisposed(this._disposedValue);
+    {
+        Check.ThrowIfDisposed(this, this._disposedValue);
+        return this;
+    }
 }

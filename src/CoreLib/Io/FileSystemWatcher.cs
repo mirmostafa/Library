@@ -192,7 +192,7 @@ public sealed class FileSystemWatcher : IDisposable, ISupportSilence
     /// <returns>The FileSystemWatcher.</returns>
     public FileSystemWatcher Start() => this.Fluent<FileSystemWatcher>(() =>
     {
-        _ = this.ThrowIfDisposed(this._disposedValue);
+        Check.ThrowIfDisposed(this, this._disposedValue);
         if (this._watcherTask.Status is not TaskStatus.Running or TaskStatus.WaitingToRun)
         {
             this._watcherTask.Start();

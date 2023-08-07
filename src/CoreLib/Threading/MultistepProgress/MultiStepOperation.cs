@@ -423,7 +423,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
 
     private void Dispose(bool disposing)
     {
-        _ = this.ThrowIfDisposed(this._isDisposed);
+        Check.ThrowIfDisposed(this, this._isDisposed);
 
         if (!disposing)
         {
