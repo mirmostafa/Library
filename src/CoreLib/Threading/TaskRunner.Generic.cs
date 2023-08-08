@@ -2,7 +2,7 @@
 using Library.Results;
 using Library.Validations;
 
-namespace Library.Threading.MultistepProgress;
+namespace Library.Threading;
 
 public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<TArg?>>
 {
@@ -26,8 +26,8 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
 
     public TaskRunner<TArg> Then([DisallowNull] Func<TArg, CancellationToken, Task<TArg>> func)
     {
-        Check.MustBe(!this.IsRunning, () => new CommonException());
-        Check.MustBeArgumentNotNull(func);
+        Checker.MustBe(!this.IsRunning, () => new CommonException());
+        Checker.MustBeArgumentNotNull(func);
         this._funcList.Add(func);
         return this;
     }

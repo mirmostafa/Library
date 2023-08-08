@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 using Library.DesignPatterns.Markers;
 using Library.Results;
@@ -67,7 +66,7 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IProgress
     {
         if (cancellationToken.IsCancellationRequested)
         {
-            return Result<TState>.CreateFailure(_state, new OperationCanceledException(cancellationToken))!;
+            return Result<TState>.CreateFailure(this._state, new OperationCanceledException(cancellationToken))!;
         }
         this.CheckOperationRunning();
 
@@ -108,6 +107,6 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IProgress
         }
     }
 
-    private void CheckOperationRunning() 
+    private void CheckOperationRunning()
         => Check.MustBe(!this._isRunning, () => new Exceptions.InvalidOperationException("Process is running"));
 }

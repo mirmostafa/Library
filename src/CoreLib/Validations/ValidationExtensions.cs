@@ -45,10 +45,10 @@ public static class ValidationExtensions
         InnerCheck(value, behavior, paramName);
 
     public static Result<TValue> GatherToResult<TValue>(this ValidationResultSet<TValue> vrs) =>
-            InnerBuild(CheckBehavior.GatherAll, vrs.Value, vrs.Rules);
+        InnerBuild(CheckBehavior.GatherAll, vrs.Value, vrs.Rules);
 
     public static Result<TValue> GetFirstFailure<TValue>(this ValidationResultSet<TValue> vrs) =>
-            InnerBuild(CheckBehavior.ReturnFirstFailure, vrs.Value, vrs.Rules);
+        InnerBuild(CheckBehavior.ReturnFirstFailure, vrs.Value, vrs.Rules);
 
     /// <summary>
     /// Checks if the given value is not null and returns it. Throws an exception if the value is null.
@@ -92,14 +92,14 @@ public static class ValidationExtensions
         vrs.InnerAddRule(x => x, _ => vrs.Value is not null, null, () => new NullValueValidationException(vrs._valueName));
 
     public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Func<Exception> onError) =>
-vrs.InnerAddRule(x => x, _ => vrs.Value is not null, onError, () => new NullValueValidationException(vrs._valueName));
+        vrs.InnerAddRule(x => x, _ => vrs.Value is not null, onError, () => new NullValueValidationException(vrs._valueName));
 
     public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Func<string> onErrorMessage) =>
-vrs.InnerAddRule(x => x, _ => vrs.Value is not null, null, () =>
-{
-    var message = onErrorMessage?.Invoke();
-    return message.IsNullOrEmpty() ? new NullValueValidationException(vrs._valueName) : new NullValueValidationException(message, null);
-});
+        vrs.InnerAddRule(x => x, _ => vrs.Value is not null, null, () =>
+        {
+            var message = onErrorMessage?.Invoke();
+            return message.IsNullOrEmpty() ? new NullValueValidationException(vrs._valueName) : new NullValueValidationException(message, null);
+        });
 
     /// <summary>
     /// Adds a rule to the validation set that checks if the specified property is not null.
@@ -108,22 +108,22 @@ vrs.InnerAddRule(x => x, _ => vrs.Value is not null, null, () =>
         vrs.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(x));
 
     public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, object>> propertyExpression, Func<Exception> onError) =>
-vrs.InnerAddRule(propertyExpression, x => x is not null, onError, x => new NullValueValidationException(x));
+        vrs.InnerAddRule(propertyExpression, x => x is not null, onError, x => new NullValueValidationException(x));
 
     public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, object>> propertyExpression, Func<string> onErrorMessage) =>
-vrs.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
+        vrs.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
 
     public static ValidationResultSet<TValue> NotNullOrEmpty<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, string>> propertyExpression, Func<Exception> onError = null) =>
-vrs.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), onError, x => new NullValueValidationException(x));
+        vrs.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), onError, x => new NullValueValidationException(x));
 
     public static ValidationResultSet<TValue> NotNullOrEmpty<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, string>> propertyExpression, Func<string> onErrorMessage) =>
-vrs.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
+        vrs.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
 
     public static ValidationResultSet<TValue> RuleFor<TValue>(this ValidationResultSet<TValue> vrs, Func<TValue, bool> isValid, Func<Exception> onError) =>
-vrs.InnerAddRule(isValid, onError);
+        vrs.InnerAddRule(isValid, onError);
 
     public static ValidationResultSet<TValue> RuleFor<TValue>(this ValidationResultSet<TValue> vrs, (Func<TValue, bool> IsValid, Func<Exception> OnError) rule) =>
-vrs.InnerAddRule(rule.IsValid, rule.OnError);
+        vrs.InnerAddRule(rule.IsValid, rule.OnError);
 
     /// <summary>
     /// Adds a rule to the validation set with a custom error message.
@@ -171,6 +171,9 @@ vrs.InnerAddRule(rule.IsValid, rule.OnError);
     [StackTraceHidden]
     private static ValidationResultSet<TValue> InnerAddRule<TValue>(this ValidationResultSet<TValue> vrs, Func<TValue, bool> validator, Func<Exception> error)
     {
+        Checker.MustBeArgumentNotNull(vrs);
+        Checker.MustBeArgumentNotNull(validator);
+
         if (vrs.Behavior == CheckBehavior.ThrowOnFail)
         {
             if (!validator(vrs.Value))
@@ -199,14 +202,31 @@ vrs.InnerAddRule(rule.IsValid, rule.OnError);
     [StackTraceHidden]
     private static ValidationResultSet<TValue> InnerAddRule<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<string, Exception> onErrorAlternative)
     {
+        Checker.MustBeArgumentNotNull(vrs);
+        Checker.MustBeArgumentNotNull(propertyExpression);
+        Checker.MustBeArgumentNotNull(isValid);
+
         [DebuggerStepThrough] bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
-        var error = onError ?? vrs.GetOnError(propertyExpression, onErrorAlternative);
-        return vrs.InnerAddRule(validator, error);
+        var error = onError ?? vrs.GetOnError(propertyExpression, onErrorAlternative.ArgumentNotNull());
+        return InnerAddRule(vrs, validator, error);
     }
 
+    /// <summary>
+    /// Builds the result based on the specified behavior, value, and validation rules.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the value being validated.</typeparam>
+    /// <param name="behavior">The behavior mode for validation.</param>
+    /// <param name="value">The value to be validated.</param>
+    /// <param name="rules">
+    /// A collection of validation rules, each consisting of a validation function and an error handler.
+    /// </param>
+    /// <returns>The result of the validation based on the specified behavior.</returns>
     private static Result<TValue> InnerBuild<TValue>(in CheckBehavior behavior, in TValue value, in IEnumerable<(Func<TValue, bool> IsValid, Func<Exception> OnError)> rules)
     {
-        // Create a new result object with the current value
+        // Ensure that there is at least one validation rule
+        Checker.MustHaveAny(rules);
+
+        // Initialize the result with the provided value
         var result = new Result<TValue>(value);
 
         // Iterate through the rules
@@ -215,21 +235,28 @@ vrs.InnerAddRule(rule.IsValid, rule.OnError);
             // Check if the value is not valid
             if (!isValid(value))
             {
+                // Ensure that the error handler function is not null
+                Checker.MustBeNotNull(onError);
+
                 // Depending on the behavior parameter, take the appropriate action
+                var errorResult = Result<TValue>.CreateFailure(onError(), value);
                 switch (behavior)
                 {
                     // Combine all errors
                     case CheckBehavior.GatherAll:
-                        result += Result<TValue>.CreateFailure(onError(), value);
+                        result += errorResult;
                         break;
 
-                    // Return the first failure
+                    // Return the result with the first error and stop checking
                     case CheckBehavior.ReturnFirstFailure:
-                        return Result<TValue>.CreateFailure(onError(), value);
+                        return errorResult;
 
-                    // Throw an exception on failure
+                    /// Throw an exception on failure. It is verified in the method
+                    /// <see cref="InnerAddRule{TValue}(ValidationResultSet{TValue}, Func{TValue, bool}, Func{Exception})"/>
+                    /// .
                     case CheckBehavior.ThrowOnFail:
-                        return Result<TValue>.CreateFailure(onError(), value).ThrowOnFail();
+                        // Create a failure result and throw an exception
+                        return errorResult.ThrowOnFail();
 
                     // Throw an exception if an unsupported behavior is encountered
                     default:
@@ -237,7 +264,7 @@ vrs.InnerAddRule(rule.IsValid, rule.OnError);
                 }
             }
         }
-        // Return the result
+        // Return the final result after all validations
         return result;
     }
 

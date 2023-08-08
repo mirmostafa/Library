@@ -91,6 +91,9 @@ public sealed class Check
     public static void MustBeArgumentNotNull([NotNull][AllowNull] in string? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
         MustBe(!obj.IsNullOrEmpty(), () => new ArgumentNullException(argName));
 
+    public static void MustBeNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
+        MustBe(obj is not null, () => new NullValueValidationException(argName!));
+
     public static void MustBeNotNull([NotNull][AllowNull] object? obj, Func<string> getMessage) =>
         MustBe(obj is not null, () => new NullValueValidationException(getMessage(), null));
 

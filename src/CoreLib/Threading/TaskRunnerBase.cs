@@ -3,7 +3,7 @@
 using Library.DesignPatterns.Markers;
 using Library.Results;
 
-namespace Library.Threading.MultistepProgress;
+namespace Library.Threading;
 
 [Fluent]
 [DebuggerStepThrough, StackTraceHidden]

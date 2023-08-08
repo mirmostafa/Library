@@ -5,6 +5,7 @@ global using Library.Helpers;
 global using static Library.Coding.Functional;
 global using IMsLogger = Microsoft.Extensions.Logging.ILogger;
 global using MsLogLevel = Microsoft.Extensions.Logging.LogLevel;
+global using Checker = Library.Validations.Check;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Library.Wpf")]

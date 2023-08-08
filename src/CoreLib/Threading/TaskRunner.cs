@@ -2,9 +2,8 @@
 
 using Library.Exceptions;
 using Library.Results;
-using Library.Validations;
 
-namespace Library.Threading.MultistepProgress;
+namespace Library.Threading;
 
 public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
 {
@@ -13,7 +12,7 @@ public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
 
     private TaskRunner([DisallowNull] Func<CancellationToken, Task> start, IEnumerable<Func<CancellationToken, Task>>? funcs = null)
     {
-        Check.MustBeArgumentNotNull(start);
+        Checker.MustBeArgumentNotNull(start);
         this._start = start;
         if (funcs?.Any() ?? false)
         {
@@ -36,8 +35,8 @@ public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
 
     public TaskRunner Then([DisallowNull] Func<CancellationToken, Task> func)
     {
-        Check.MustBe<CommonException>(!this.IsRunning);
-        Check.MustBeArgumentNotNull(func);
+        Checker.MustBe<CommonException>(!this.IsRunning);
+        Checker.MustBeArgumentNotNull(func);
         this._funcList.Add(func);
         return this;
     }
