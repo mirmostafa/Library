@@ -151,16 +151,6 @@ public static class ResultHelper
     public static Task<TResult> ToAsync<TResult>(this TResult result) where TResult : ResultBase
         => Task.FromResult(result);
 
-    public static Result<Stream> ToFile(this Result<Stream> result, string filePath, FileMode fileMode = FileMode.Create)
-    {
-        Validations.Check.MustBeArgumentNotNull(filePath);
-        var stream = result.Value;
-        using var fileStream = new FileStream(filePath, fileMode, FileAccess.Write);
-        stream.CopyTo(fileStream);
-
-        return result;
-    }
-
     public static async Task<Result<TValue1>> ToResultAsync<TValue, TValue1>(this Task<Result<TValue>> resultTask, Func<TValue, TValue1> getNewValue)
     {
         var result = await resultTask;
@@ -168,8 +158,8 @@ public static class ResultHelper
         return Result<TValue1>.From(result, value1);
     }
 
-    public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase
-        => (result = input).IsSucceed;
+    public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase =>
+        (result = input).IsSucceed;
 
     //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
     //x public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
@@ -199,13 +189,13 @@ public static class ResultHelper
     /// <returns>
     /// A new instance of the <see cref="Result{TValue}"/> class with the specified value.
     /// </returns>
-    public static Result<TValue> WithValue<TValue>(this Result<TValue> result, in TValue value)
-        => new(result, value);
+    public static Result<TValue> WithValue<TValue>(this Result<TValue> result, in TValue value) =>
+        new(result, value);
 
     private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
         where TResult : ResultBase
     {
-        Validations.Check.MustBeArgumentNotNull(result);
+        Checker.MustBeArgumentNotNull(result);
         if (result.IsSucceed)
         {
             return result;
@@ -218,7 +208,6 @@ public static class ResultHelper
                 Exception ex => ex.With(x => x.Source = owner?.ToString()),
                 _ => new CommonException(result.ToString(), instruction ?? result.Message, owner: owner)
             };
-        Throw(exception);
-        return result;
+        throw exception;
     }
 }

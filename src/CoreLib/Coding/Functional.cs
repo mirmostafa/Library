@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Runtime.ExceptionServices;
 
 using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Results;
@@ -319,7 +318,7 @@ public static class Functional
     [StackTraceHidden]
     [DebuggerStepThrough]
     public static void Throw<TException>() where TException : Exception, new()
-        => ExceptionDispatchInfo.Throw(new TException());
+        => throw new TException();
 
     /// <summary>
     /// Throws the specified exception.
@@ -328,30 +327,30 @@ public static class Functional
     /// <param name="exception">The exception to throw.</param>
     /// <returns>This method does not return.</returns>
     [DoesNotReturn]
-    public static TFakeResult Throw<TFakeResult>(in Exception exception)
-        => throw exception;
+    public static TFakeResult Throw<TFakeResult>(in Exception exception) =>
+        throw exception;
 
     /// <summary>
     /// Throws the specified exception.
     /// </summary>
     /// <param name="exception">The exception to throw.</param>
     [DoesNotReturn]
-    public static void Throw(in Exception exception)
-        => ExceptionDispatchInfo.Throw(exception);
+    public static void Throw(in Exception exception) =>
+        throw exception;
 
     /// <summary>
     /// Throws an exception using the provided function.
     /// </summary>
     [DoesNotReturn]
-    public static T Throw<T>(in Func<Exception> getException)
-        => throw getException();
+    public static T Throw<T>(in Func<Exception> getException) =>
+        throw getException();
 
     /// <summary>
     /// Throws an exception using the provided Func.
     /// </summary>
     [DoesNotReturn]
-    public static void Throw(in Func<Exception> getException)
-        => ExceptionDispatchInfo.Throw(getException());
+    public static void Throw(in Func<Exception> getException) =>
+        throw getException();
 
     public static Action ToAction(Action action)
         => action;

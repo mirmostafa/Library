@@ -534,8 +534,8 @@ public static class EnumerableHelper
             }
         }
     }
-    
-    public static bool HasDuplicates<T>(this IEnumerable<T> source) => 
+
+    public static bool HasDuplicates<T>(this IEnumerable<T> source) =>
         FindDuplicates(source).Any();
 
     /// <summary>
@@ -1366,12 +1366,23 @@ public static class EnumerableHelper
         }
     }
 
-    private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
-        => items switch
+    private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!) =>
+        items switch
         {
             [] => defaultValue,
             [var item] => item,
             { Length: 2 } => aggregator(items[0], items[1]),
             [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
         };
+
+    public static IEnumerable<U> CastIf<T, U>(this IEnumerable<T> source)
+    {
+        foreach (var item in source)
+        {
+            if (item is U u)
+            {
+                yield return u;
+            }
+        }
+    }
 }

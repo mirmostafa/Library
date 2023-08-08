@@ -13,6 +13,7 @@ public abstract class TaskRunnerBase<TSelf, TResult>
 {
     private Action<TResult>? _onEnded;
     private Action<Exception>? _onException;
+    private bool _isRunning;
 
     public bool IsRunning { get; private set; }
 
