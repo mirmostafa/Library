@@ -44,17 +44,17 @@ public sealed class IpAddress([DisallowNull] in string ip) :
         => GetRange(new IpAddress(start), new IpAddress(end));
 
     [return: NotNullIfNotNull(nameof(ipAddress))]
-    public static implicit operator string?(in IpAddress? ipAddress)
-        => ipAddress?.ToString();
+    public static implicit operator string?(in IpAddress? ipAddress) =>
+        ipAddress?.ToString();
 
-    public static bool IsValid(in string ip)
-        => Validate(ip).IsSucceed;
+    public static bool IsValid(in string ip) =>
+        Validate(ip).IsSucceed;
 
-    public static bool operator !=(in IpAddress left, IpAddress right)
-        => !Equals(left, right);
+    public static bool operator !=(in IpAddress left, IpAddress right) =>
+        !Equals(left, right);
 
-    public static IpAddress operator +(IpAddress left, IpAddress right)
-        => left.Add(right);
+    public static IpAddress operator +(IpAddress left, IpAddress right) =>
+        left.Add(right);
 
     public static bool operator <(in IpAddress left, IpAddress right)
         => left is null ? right is not null : left.CompareTo(right) < 0;

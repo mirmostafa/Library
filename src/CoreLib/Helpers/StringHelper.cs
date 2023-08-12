@@ -29,15 +29,15 @@ public static class StringHelper
     /// <returns></returns>
     [Pure]
     [return: NotNullIfNotNull(nameof(s))]
-    public static string? Add(this string? s, in int count, char add = ' ', bool before = false)
-        => count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
+    public static string? Add(this string? s, in int count, char add = ' ', bool before = false) =>
+        count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 
     /// <summary>
     /// Adds the given string to the end of the current string.
     /// </summary>
     [Pure]
-    public static string AddEnd(this string s, in string s1)
-        => string.Concat(s, s1);
+    public static string AddEnd(this string s, in string s1) =>
+        string.Concat(s, s1);
 
     /// <summary>
     /// Adds the given string to the start of the current string.
@@ -71,29 +71,30 @@ public static class StringHelper
     /// Checks if any character in the given string is present in the given range.
     /// </summary>
     [Pure]
-    public static bool AnyCharInString(this string str, in string range)
-        => !string.IsNullOrEmpty(str) && range.Any(str.Contains);
+    public static bool AnyCharInString(this string str, in string range) =>
+        !string.IsNullOrEmpty(str) && range.Any(str.Contains);
 
     /// <summary>
     /// Replaces all invalid Arabic characters in the given string with their Persian equivalents.
     /// </summary>
     [Pure]
-    public static string ArabicCharsToPersian(this string value)
-        => value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string ArabicCharsToPersian(this string value) =>
+        value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
 
     /// <summary>
     /// Checks if all characters in the given string are valid according to the given validation function.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CheckAllValidations(in string text, in Func<char, bool> regularValidate)
-        => text.All(regularValidate);
+    public static bool CheckAllValidations(in string text, in Func<char, bool> regularValidate) =>
+        text.All(regularValidate);
 
     /// <summary>
     /// Checks if any of the characters in the given string satisfy the given validation function.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CheckAnyValidations(in string text, in Func<char, bool> regularValidate)
-            => text.Any(regularValidate);
+    public static bool CheckAnyValidations(in string text, in Func<char, bool> regularValidate) =>
+        text.Any(regularValidate);
 
     /// <summary>
     /// Compacts an array of strings by removing any empty strings.
@@ -102,8 +103,8 @@ public static class StringHelper
     /// <returns>The compacted array of strings.</returns>
     [Pure]
     [return: NotNull]
-    public static string[] Compact(params string[] strings)
-        => strings.Where(item => !item.IsNullOrEmpty()).ToArray();
+    public static string[] Compact(params string[] strings) =>
+        strings.Where(item => !item.IsNullOrEmpty()).ToArray();
 
     /// <summary>
     /// Filters out null or empty strings from the given IEnumerable and returns a new IEnumerable
@@ -113,8 +114,8 @@ public static class StringHelper
     /// <returns>A new IEnumerable with only non-null and non-empty strings.</returns>
     [Pure]
     [return: NotNull]
-    public static IEnumerable<string> Compact(this IEnumerable<string?>? strings)
-        => (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
+    public static IEnumerable<string> Compact(this IEnumerable<string?>? strings) =>
+        (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     /// <summary>
     /// Compares two strings and returns an integer that indicates their relative position in the
@@ -149,8 +150,8 @@ public static class StringHelper
     /// <param name="values">The strings to concatenate.</param>
     /// <returns>The concatenated string.</returns>
     [return: NotNull]
-    public static string ConcatStrings(this IEnumerable<string> values)
-        => string.Concat(values.ToArray());
+    public static string ConcatStrings(this IEnumerable<string> values) =>
+        string.Concat(values.ToArray());
 
     /// <summary>
     /// Checks if a string contains a specified value, with an optional case-insensitive comparison.
@@ -215,7 +216,7 @@ public static class StringHelper
     /// Checks if a string contains a target string, ignoring case.
     /// </summary>
     public static bool ContainsOf(this string str, in string target)
-        => str.ToLower().Contains(target.ToLower());
+        => str.Contains(target.ToLower(), StringComparison.CurrentCultureIgnoreCase);
 
     /// <summary>
     /// Converts a string to Google Standard Encoding.
@@ -231,8 +232,8 @@ public static class StringHelper
     /// <summary>
     /// Converts Arabic characters to Persian characters in a given string.
     /// </summary>
-    public static string CorrectUnicodeProblem(in string text)
-        => ArabicCharsToPersian(text);
+    public static string CorrectUnicodeProblem(in string text) =>
+        ArabicCharsToPersian(text);
 
     /// <summary>
     /// Counts the number of occurrences of a specified character in a string, starting from a
@@ -291,7 +292,8 @@ public static class StringHelper
     /// Fixes the size of the given string to the specified maximum length, padding with the given
     /// gap character if necessary.
     /// </summary>
-    public static string? FixSize(string? str, int maxLength, char gapChar = ' ')
+    [return: NotNull]
+    public static string FixSize(in string? str, int maxLength, char gapChar = ' ')
         => str.IsNullOrEmpty()
                 ? new string(gapChar, maxLength)
                 : str.Length > maxLength ? str[..maxLength] : str.PadRight(maxLength, gapChar);
@@ -445,7 +447,7 @@ public static class StringHelper
     /// <param name="str">The string to group.</param>
     /// <param name="separator">The separator character.</param>
     /// <returns>An enumerable of strings grouped by the separator character.</returns>
-    public static IEnumerable<string> GroupBy(this string str, char separator)
+    public static IEnumerable<string> GroupBy(string str, char separator)
     {
         // Create a new StringBuilder object
         StringBuilder buffer = new();
@@ -675,9 +677,6 @@ public static class StringHelper
     [DebuggerStepThrough]
     [StackTraceHidden]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    ///<remarks>
-    ///<see cref="https://www.dotnetperls.com/aggressiveinlining"/>
-    ///</remarks>
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
         => str == null || str.Length == 0;
 
@@ -781,8 +780,8 @@ public static class StringHelper
     /// <summary>
     /// Merges the given strings with the given separator and parameters.
     /// </summary>
-    /// <param name="quatStart">The start of the quatation.</param>
-    /// <param name="quatEnd">The end of the quatation.</param>
+    /// <param name="quatStart">The start of the quotation.</param>
+    /// <param name="quatEnd">The end of the quotation.</param>
     /// <param name="separator">The separator to use.</param>
     /// <param name="array">The array of objects to merge.</param>
     /// <returns>The merged string.</returns>
@@ -1242,39 +1241,6 @@ public static class StringHelper
     }
 
     /// <summary>
-    /// Converts a string to a cultural number based on the specified language and corrects Persian
-    /// characters if needed.
-    /// </summary>
-    /// <param name="value">The string to convert.</param>
-    /// <param name="correctPersianChars">
-    /// A boolean value indicating whether Persian characters should be corrected.
-    /// </param>
-    /// <param name="toLanguage">The language to convert the string to.</param>
-    /// <returns>The converted string.</returns>
-    public static string ToCulturalNumber(this string value, in bool correctPersianChars, in Language toLanguage)
-    {
-        value = toLanguage switch
-        {
-            Language.Persian => value.ToPersianDigits(),
-            Language.English => value.ToEnglishDigits(),
-            _ => value
-        };
-
-        if (correctPersianChars)
-        {
-            value = value.ArabicCharsToPersian();
-        }
-
-        return value;
-    }
-
-    /// <summary>
-    /// Replaces all Persian digits in the given string with their English equivalents.
-    /// </summary>
-    public static string ToEnglishDigits(this string value)
-        => value.ReplaceAll(PersianTools.Digits.Select(n => (n.Persian, n.English)));
-
-    /// <summary>
     /// Converts a string to its hexadecimal representation.
     /// </summary>
     /// <param name="str">The string to convert.</param>
@@ -1302,12 +1268,6 @@ public static class StringHelper
     /// </summary>
     public static IEnumerable<string> ToLower(this IEnumerable<string> strings)
         => strings.Select(str => str.ToLower());
-
-    /// <summary>
-    /// Replaces all English digits in the given string with their Persian equivalents.
-    /// </summary>
-    public static string ToPersianDigits(this string value)
-        => value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
 
     /// <summary>
     /// Converts a string to Unicode encoding.

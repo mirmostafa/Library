@@ -128,6 +128,32 @@ public static class NumberHelper
     }
 
     /// <summary>
+    /// Converts a string to a cultural number based on the specified language and corrects Persian
+    /// characters if needed.
+    /// </summary>
+    /// <param name="value">The string to convert.</param>
+    /// <param name="correctPersianChars">
+    /// A boolean value indicating whether Persian characters should be corrected.
+    /// </param>
+    /// <param name="toLanguage">The language to convert the string to.</param>
+    /// <returns>The converted string.</returns>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string ToCulturalNumber(in string value, in Language toLanguage) =>
+        toLanguage switch
+        {
+            Language.Persian => ToPersianDigits(value),
+            Language.English => ToEnglishDigits(value),
+            _ => value
+        };
+
+    /// <summary>
+    /// Replaces all Persian digits in the given string with their English equivalents.
+    /// </summary>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string ToEnglishDigits(this string value) =>
+        value.ReplaceAll(PersianTools.Digits.Select(n => (n.Persian, n.English)));
+
+    /// <summary>
     /// Converts an integer to its Persian equivalent.
     /// </summary>
     /// <param name="number">The number to convert.</param>
@@ -143,6 +169,19 @@ public static class NumberHelper
         }
         return result;
     }
+
+    /// <summary>
+    /// Replaces all English digits in the given string with their Persian equivalents.
+    /// </summary>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string ToPersianDigits(in string value) =>
+        value.ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
+
+    /// <summary>
+    /// Replaces all English digits in the given string with their Persian equivalents.
+    /// </summary>
+    public static string ToPersianDigits(in int value) =>
+        value.ToString().ReplaceAll(PersianTools.Digits.Select(n => (n.English, n.Persian)));
 
     /// <summary>
     /// Converts a long value to a standard metric scale.

@@ -245,7 +245,7 @@ public static class PersianTools
         => _persianCalendar.GetYear(dateTime);
 
     /// <summary>
-    ///     Converts to persian string.
+    ///     Converts to Persian string.
     /// </summary>
     /// <param name="year"> The year. </param>
     /// <param name="month"> The month. </param>
@@ -289,9 +289,9 @@ public static class PersianTools
     }
 
     /// <summary>
-    ///     Converts persian number to english number.
+    ///     Converts Persian number to English number.
     /// </summary>
-    /// <param name="persianNumber">The persian number.</param>
+    /// <param name="persianNumber">The Persian number.</param>
     /// <returns></returns>
     public static string ToEnglishNumber(in string persianNumber)
     {
@@ -308,14 +308,15 @@ public static class PersianTools
     }
 
     /// <summary>
-    ///     Translates to persian.
+    ///     Translates to Persian.
     /// </summary>
     /// <param name="day"> The day. </param>
     /// <returns> </returns>
-    public static string ToPersian(DayOfWeek day) => PersianDateTime.PersianWeekDays.FirstOrDefault(d => d.Day == day).Name;
+    public static string ToPersian(DayOfWeek day) => 
+        PersianDateTime.PersianWeekDays.FirstOrDefault(d => d.Day == day).Name;
 
     /// <summary>
-    ///     Converts datetime to persian date.
+    ///     Converts datetime to Persian date.
     /// </summary>
     /// <param name="date"> The date. </param>
     /// <returns> </returns>
@@ -329,7 +330,7 @@ public static class PersianTools
         => new(dateTime);
 
     /// <summary>
-    ///     Converts to persian day of week.
+    ///     Converts to Persian day of week.
     /// </summary>
     /// <param name="dow"> The dow. </param>
     /// <returns> </returns>
