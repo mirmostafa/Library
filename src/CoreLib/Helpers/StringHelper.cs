@@ -532,16 +532,17 @@ public static class StringHelper
         return null;
 
         // Get the item and trim it if necessary
-        static string? get(string? current, bool trimmed)
-        => trimmed ? current?.Trim() : current;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static string? get(string? current, bool trimmed) =>
+            trimmed ? current?.Trim() : current;
 
         // Check if the items are equal
-        static bool equals(string? current, string? item, bool ignoreCase)
-        => string.Compare(current, item, ignoreCase) == 0;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static bool equals(string? current, string? item, bool ignoreCase) =>
+            string.Compare(current, item, ignoreCase) == 0;
     }
 
-    /// Checks if the given character is a common character.
-    /// </summary>
+    /// Checks if the given character is a common character. </summary>
     [Pure]
     public static bool IsCommon(this char c)
         => c == ' ';
@@ -674,6 +675,9 @@ public static class StringHelper
     [DebuggerStepThrough]
     [StackTraceHidden]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    ///<remarks>
+    ///<see cref="https://www.dotnetperls.com/aggressiveinlining"/>
+    ///</remarks>
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
         => str == null || str.Length == 0;
 
