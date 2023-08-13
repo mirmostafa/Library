@@ -113,7 +113,7 @@ public static class EnumerableHelper
     /// <param name="items">The items to add to the collection.</param>
     /// <returns>The ObservableCollection with the added items.</returns>
     [return: NotNullIfNotNull(nameof(list))]
-    public static ObservableCollection<T>? AddRange<T>(this ObservableCollection<T>? list, in IEnumerable<T>? items)
+    public static ObservableCollection<T>? AddRange<T>(this ObservableCollection<T>? list, in IEnumerable<T> items)
     {
         if (list != null && items?.Any() is true)
         {

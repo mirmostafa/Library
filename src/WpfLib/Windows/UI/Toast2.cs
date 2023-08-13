@@ -1,17 +1,18 @@
-﻿using Library.Wpf.Dialogs;
-
-using Microsoft.Toolkit.Uwp.Notifications;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace Library.Wpf.Windows.UI;
 
 /// <summary>
-///
 /// </summary>
 /// <remarks>
-/// If your app has an uninstaller, in your uninstaller you should call ToastNotificationManagerCompat.Uninstall();. If your app is a "portable app" without an installer, consider calling this method upon app exit unless you have notifications that are meant to persist after your app is closed.
-/// The uninstall method will clean up any scheduled and current notifications, remove any associated registry values, and remove any associated temporary files that were created by the library.
+/// If your app has an uninstaller, in your uninstaller you should call
+/// ToastNotificationManagerCompat.Uninstall();. If your app is a "portable app" without an
+/// installer, consider calling this method upon app exit unless you have notifications that are
+/// meant to persist after your app is closed. The uninstall method will clean up any scheduled and
+/// current notifications, remove any associated registry values, and remove any associated
+/// temporary files that were created by the library.
 /// </remarks>
-/// <seealso cref="IDisposable" />
+/// <seealso cref="IDisposable"/>
 public sealed class Toast2 : IDisposable
 {
     private readonly ToastContentBuilder _builder = new();
@@ -37,28 +38,6 @@ public sealed class Toast2 : IDisposable
     public static Toast2 New()
                 => new();
 
-    public static void Test()
-    {
-        var toast = new Toast2();
-
-        toast
-            .AddText("Andrew sent you a picture")
-    //.AddText("Check this out, The Enchantments in Washington!")
-
-    .AddInlineImage(@"D:\icon-128x128.png")
-    .AddAppLogoOverride(@"D:\image-outline-filled.png")
-
-    .AddInputTextBox("ReplyTextBox", placeHolderContent: "Type a response")
-
-    .AddButton("ReplyTextBox", "Reply", _ => MsgBox2.Show("Reply"))
-
-    .AddButton("Like", _ => MsgBox2.Show("Like"))
-
-    .AddButton("View", _ => MsgBox2.Show("View"))
-
-    .Show(TimeSpan.FromSeconds(20));
-    }
-
     public Toast2 AddAppLogoOverride(Uri logoUri, bool circlized = false)
         => this.Do(b => b.AddAppLogoOverride(logoUri, circlized ? ToastGenericAppLogoCrop.Circle : ToastGenericAppLogoCrop.Default));
 
@@ -69,18 +48,30 @@ public sealed class Toast2 : IDisposable
     /// Add a button to the current toast.
     /// </summary>
     /// <param name="content">Text to display on the button.</param>
-    /// <param name="arguments">App-defined string of arguments that the app can later retrieve once it is activated when the user clicks the button.</param>
+    /// <param name="arguments">
+    /// App-defined string of arguments that the app can later retrieve once it is activated when
+    /// the user clicks the button.
+    /// </param>
     /// <returns>The current instance of <see cref="Toast2"/></returns>
     public Toast2 AddButton(string text, Action<Button> onClick, string? id = null)
         => this.AddButton(new(text, onClick, id));
 
     /// <summary>
-    /// Add an button to the toast that will be display to the right of the input text box, achieving a quick reply scenario.
+    /// Add an button to the toast that will be display to the right of the input text box,
+    /// achieving a quick reply scenario.
     /// </summary>
-    /// <param name="textBoxId">ID of an existing <see cref="ToastTextBox"/> in order to have this button display to the right of the input, achieving a quick reply scenario.</param>
+    /// <param name="textBoxId">
+    /// ID of an existing <see cref="ToastTextBox"/> in order to have this button display to the
+    /// right of the input, achieving a quick reply scenario.
+    /// </param>
     /// <param name="content">Text to display on the button.</param>
-    /// <param name="activationType">Type of activation this button will use when clicked. Defaults to Foreground.</param>
-    /// <param name="arguments">App-defined string of arguments that the app can later retrieve once it is activated when the user clicks the button.</param>
+    /// <param name="activationType">
+    /// Type of activation this button will use when clicked. Defaults to Foreground.
+    /// </param>
+    /// <param name="arguments">
+    /// App-defined string of arguments that the app can later retrieve once it is activated when
+    /// the user clicks the button.
+    /// </param>
     /// <returns>The current instance of <see cref="Toast2"/></returns>
     public Toast2 AddButton(string textBoxId, string text, Action<Button> onClick, string? id = null)
         => this.AddButton(new(text, onClick, id));
@@ -104,8 +95,12 @@ public sealed class Toast2 : IDisposable
     /// <summary>
     /// Add an input text box that the user can type into.
     /// </summary>
-    /// <param name="id">Required ID property so that developers can retrieve user input once the app is activated.</param>
-    /// <param name="placeHolderContent">Placeholder text to be displayed on the text box when the user hasn't typed any text yet.</param>
+    /// <param name="id">
+    /// Required ID property so that developers can retrieve user input once the app is activated.
+    /// </param>
+    /// <param name="placeHolderContent">
+    /// Placeholder text to be displayed on the text box when the user hasn't typed any text yet.
+    /// </param>
     /// <param name="title">Title text to display above the text box.</param>
     /// <returns>The current instance of <see cref="Toast2"/></returns>
     public Toast2 AddInputTextBox(string id, string? placeHolderContent = default, string? title = default)
@@ -125,13 +120,6 @@ public sealed class Toast2 : IDisposable
         this.Dispose(disposing: true);
         GC.SuppressFinalize(this);
     }
-
-    /// <summary>
-    /// Resets this instance.
-    /// </summary>
-    /// <returns></returns>
-    public Toast2 Reset()
-        => New();
 
     public Toast2 SetOnNotificationActivated(Action<string> onActivated)
     {
@@ -168,7 +156,6 @@ public sealed class Toast2 : IDisposable
 
     private Toast2 Do(Action<ToastContentBuilder> action)
     {
-        this.Validate();
         action(this._builder);
         return this;
     }
@@ -202,10 +189,6 @@ public sealed class Toast2 : IDisposable
         ////        _ = MessageBox.Show("Toast activated. Args: " + e.Argument);
         ////    });
         ////}
-    }
-
-    private void Validate()
-    {
     }
 
     public record Button(string Text, Action<Button> OnClick, string? Id = null)

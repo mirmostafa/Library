@@ -28,10 +28,11 @@ public sealed class Codes : ReadOnlyCollection<Code?>, IAdditionOperators<Codes,
     public static Codes New()
         => new();
 
-    public static Codes NewEmpty() => new();
+    public static Codes NewEmpty()
+        => new();
 
     public static Codes operator +(Codes c1, Codes c2)
-            => new(c1.AsEnumerable().AddRangeImmuted(c2.AsEnumerable()));
+        => new(c1.AsEnumerable().AddRangeImmuted(c2.AsEnumerable()));
 
     public Codes Add(Code code)
         => new(this.AddImmuted(code));

@@ -18,15 +18,15 @@ public static class CodeHelper
     /// Breaks code execution.
     /// </summary>
     [DoesNotReturn]
-    public static void Break()
-         => BreakException.Throw();
+    public static void Break() =>
+        BreakException.Throw();
 
     /// <summary>
     /// Breaks code execution.
     /// </summary>
     [DoesNotReturn]
-    public static T Break<T>()
-        => throw new BreakException();
+    public static T Break<T>() =>
+        throw new BreakException();
 
     /// <summary>
     /// Executes the given action and returns a Result object indicating success or failure.
@@ -560,7 +560,7 @@ public static class CodeHelper
     /// <summary>
     /// Extension method to convert a Task of type TValue to a Task of type Void.
     /// </summary>
-    public static Task ToVoidAsync<TValue>(this Task<TValue> task)=> 
+    public static Task ToVoidAsync<TValue>(this Task<TValue> task) =>
         task;
 
     /// <summary>
@@ -569,7 +569,7 @@ public static class CodeHelper
     /// <param name="instance">The instance to invoke the action on.</param>
     /// <param name="action">The action to invoke.</param>
     /// <returns>The instance.</returns>
-    public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action)=> 
+    public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action) =>
         instance.Fluent(action);
 
     /// <summary>

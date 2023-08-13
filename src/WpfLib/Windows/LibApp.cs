@@ -11,31 +11,24 @@ namespace Library.Wpf.Windows;
 
 public abstract class LibApp : Bases.ApplicationBase
 {
+    private static FastLogger? _logger;
+
     protected LibApp()
     {
-        SetupLogger();
-        SetupServices();
+        this.Logger = new FastLogger();
+        LibLogger.AddLogger(this.Logger);
+
+        var services = new ServiceCollection();
+        this.ConfigureServices(services);
+        var result = services.BuildServiceProvider();
+        DI.Initialize(result);
+
         AppLogger.Debug("Application constructed.");
-        return;
-
-        void SetupServices()
-        {
-            var services = new ServiceCollection();
-            this.ConfigureServices(services);
-            var result = services.BuildServiceProvider();
-            DI.Initialize(result);
-        }
-
-        void SetupLogger()
-        {
-            this.Logger = new FastLogger();
-            LibLogger.AddLogger(this.Logger);
-        }
     }
 
     public static string? ApplicationTitle => ApplicationHelper.ApplicationTitle ?? Current?.MainWindow?.Title;
 
-    public static FastLogger AppLogger => Current.Cast().To<LibApp>().Logger;
+    public static FastLogger AppLogger => _logger ??= Current.Cast().To<LibApp>().Logger;
 
     public FastLogger Logger { get; private set; }
 
@@ -45,7 +38,7 @@ public abstract class LibApp : Bases.ApplicationBase
     protected virtual void HandleException(Exception exception)
     {
         var title = exception.Cast().As<IException>()?.Title ?? ApplicationTitle ?? exception?.GetType().Name;
-        var owner = (IException ex) => ex.Title ?? ex.Owner?.ToString() ?? title;
+        string? owner(IException ex) => ex.Title ?? ex.Owner?.ToString() ?? title;
         switch (exception)
         {
             case BreakException:
@@ -94,9 +87,9 @@ public abstract class LibApp : Bases.ApplicationBase
         AddDefaultServices(services);
         this.OnConfigureServices(services);
 
-        static void AddDefaultServices(ServiceCollection services)
-            => _ = services.AddScoped<IMapper, Mapper>()
-                           .AddScoped<ILogger>(_ => AppLogger)
-                           .AddScoped<IEventualLogger>(_ => AppLogger);
+        static void AddDefaultServices(ServiceCollection services) =>
+            _ = services.AddScoped<IMapper, Mapper>()
+                        .AddScoped<ILogger>(_ => AppLogger)
+                        .AddScoped<IEventualLogger>(_ => AppLogger);
     }
 }
