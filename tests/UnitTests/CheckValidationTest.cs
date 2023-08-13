@@ -53,35 +53,35 @@ public sealed class CheckValidationTest
 
     [Fact]
     public void IfNotNullFalse()
-        => Assert.Throws<NullValueValidationException>(() => Check.NotNull(null));
+        => Assert.Throws<NullValueValidationException>(() => Check.MustBeNotNull(null));
 
     [Fact]
     public void IfNotNullFalseMessage()
-        => Assert.Throws<NullValueValidationException>(() => Check.NotNull(null, () => this._string_sample1));
+        => Assert.Throws<NullValueValidationException>(() => Check.MustBeNotNull(null, () => this._string_sample1));
 
     [Fact]
     public void IfNotNullFalseObject()
-        => Assert.Throws<NullValueValidationException>(() => Check.NotNull(null, this._string_sample1));
+        => Assert.Throws<NullValueValidationException>(() => Check.MustBeNotNull(null, this._string_sample1));
 
     [Fact]
     public void IfNotNullTrue()
-        => Check.NotNull(this._string_sample1);
+        => Check.MustBeNotNull(this._string_sample1);
 
     [Fact]
     public void IfNotNullTrueMessage()
-        => Check.NotNull(this._string_sample1, () => this._string_sample1);
+        => Check.MustBeNotNull(this._string_sample1, () => this._string_sample1);
 
     [Fact]
     public void IfNotNullTrueObject()
-        => Check.NotNull(this._string_sample1, this._string_sample1);
+        => Check.MustBeNotNull(this._string_sample1, this._string_sample1);
 
     [Fact]
     public void IfNotValidNotNullStringTest()
-        => Check.NotNull(this._string_sample1, () => new NullValueValidationException());
+        => Check.MustBeNotNull(this._string_sample1, () => new NullValueValidationException());
 
     [Fact]
     public void IfNotValidNullStringTest()
-        => Assert.Throws<NullValueValidationException>(() => Check.NotNull(this._string_null, () => new NullValueValidationException()));
+        => Assert.Throws<NullValueValidationException>(() => Check.MustBeNotNull(this._string_null, () => new NullValueValidationException()));
 
     [Fact]
     public void IfTrueTest()

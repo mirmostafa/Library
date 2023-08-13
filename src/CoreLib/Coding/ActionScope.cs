@@ -57,6 +57,8 @@ public sealed class ActionScope : IDisposable
         this._prompt(message);
         return this;
     }
+
+    public object Run(Action simpleMethod) => throw new NotImplementedException();
 }
 
 public static class ActionScopeExtensions

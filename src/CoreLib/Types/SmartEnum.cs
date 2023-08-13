@@ -37,21 +37,14 @@ public abstract class SmartEnum<TSmartEnum, TIdType>(TIdType id, string? friendl
     public override string ToString()
         => this.FriendlyName ?? base.ToString() ?? string.Empty;
 
-    private static IEnumerable<TSmartEnum> GetEnumItems()
-    {
-        var type = typeof(TSmartEnum);
-        var staticFields = type.GetFields();
-        var smartEnums = staticFields.Where(x => x.FieldType == typeof(TSmartEnum));
-        var rawResult = smartEnums.Select(x => x.GetValue(null).Cast().As<TSmartEnum>());
-        var result = rawResult.Compact();
-        return result;
-    }
+    private static IEnumerable<TSmartEnum> GetEnumItems() =>
+        typeof(TSmartEnum).GetFields().Where(x => x.FieldType == typeof(TSmartEnum)).Select(x => x.GetValue(null).Cast().As<TSmartEnum>()).Compact();
 
     private string GetDebuggerDisplay()
         => this.ToString();
 }
 
-public abstract class SmartEnum<TSmartEnum>(int id, string? friendlyName) : SmartEnum<TSmartEnum, int>(id, friendlyName)
-    where TSmartEnum : SmartEnum<TSmartEnum>
+public abstract class SmartEnum<TSelf>(int id, string? friendlyName) : SmartEnum<TSelf, int>(id, friendlyName)
+    where TSelf : SmartEnum<TSelf>
 {
 }

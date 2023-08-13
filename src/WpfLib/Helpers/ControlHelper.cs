@@ -18,8 +18,6 @@ using Library.Data.Models;
 using Library.Wpf.Bases;
 using Library.Wpf.Windows;
 
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-
 using WinRT;
 
 using Key = System.Windows.Input.Key;
@@ -256,8 +254,11 @@ public static class ControlHelper
 
     public static IntPtr GetHandle(this Window window) => new WindowInteropHelper(window).Handle;
 
+    public static bool GetIsViewModelChanged<TPage>(this TPage page)
+        where TPage : IStatefulPage => page.IsViewModelChanged;
+
     public static TParent? GetParentByType<TParent>(this DependencyObject depObj)
-        where TParent : DependencyObject
+            where TParent : DependencyObject
     {
         var parent = depObj;
         while ((parent = VisualTreeHelper.GetParent(parent)) is not null)
@@ -451,7 +452,7 @@ public static class ControlHelper
     public static void Refresh(this UIElement uiElement)
     {
         //uiElement?.Dispatcher.Invoke(Methods.Empty, DispatcherPriority.Render);
-        uiElement?.UpdateLayout(); 
+        uiElement?.UpdateLayout();
         uiElement?.InvalidateVisual();
     }
 

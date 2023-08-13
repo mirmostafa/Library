@@ -11,7 +11,7 @@ public sealed class CodeDomCodeGenProvider : ICodeGenProvider
     public static CodeDomCodeGenProvider New()
         => new();
 
-    public Codes GenerateBehindCode(in INameSpace nameSpace, in GenerateCodesParameters? arguments = default)
+    public Codes GenerateCode(in INameSpace nameSpace, in GenerateCodesParameters? arguments = default)
     {
         LibLogger.Debug("Generating Behind Code");
         var myNameSpace = nameSpace.ArgumentNotNull();

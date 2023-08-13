@@ -41,12 +41,9 @@ public class __ObservationTests
     }
 }
 
-public class LocationTracker : IObservable<Location>
+public sealed class LocationTracker : IObservable<Location>
 {
-    private readonly List<IObserver<Location>> _observers;
-
-    public LocationTracker()
-        => this._observers = new List<IObserver<Location>>();
+    private readonly List<IObserver<Location>> _observers = new List<IObserver<Location>>();
 
     public void EndTransmission()
     {

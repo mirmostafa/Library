@@ -533,10 +533,13 @@ public static class ServiceHelper
     /// This code checks if the model's Id is not null and greater than 0, and then either updates or inserts the model depending on the result.
     /// </remarks>
     public static Task<Result<TViewModel>> SaveViewModelAsync<TViewModel>(this IAsyncWrite<TViewModel> service, TViewModel model, bool persist = true)
-                where TViewModel : ICanSetKey<long?>
+        where TViewModel : ICanSetKey<long?>
     {
+        Check.MustBeArgumentNotNull(service);
+        Check.MustBeArgumentNotNull(model);
+        
         //Check if the model's Id is not null and greater than 0
-        if (model.ArgumentNotNull().Id is { } id && id > 0)
+        if (model.Id is { } id && id > 0)
         {
             //If the Id is not null and greater than 0, update the model
             return service.UpdateAsync(id, model, persist);

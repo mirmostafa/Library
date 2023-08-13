@@ -722,7 +722,7 @@ public readonly struct PersianDateTime :
     /// </summary>
     /// <param name="item">The string to validate.</param>
     /// <returns>A Result object indicating whether the string is a valid date.</returns>
-    public static Result<string?> Validate([DisallowNull] in string? item)
+    public static Result<string?> Validate(in string? item)
     {
         var regex = new Regex(@"^(\d{4})\/(0?[1-9]|1[012])\/(0?[1-9]|[12][0-9]|3[01])(\s([01]?\d|2[0-3]):([0-5]?\d)(:([0-5]?\d))?\s?(AM|PM)?)?$");
         return item.Check()

@@ -9,15 +9,15 @@ public enum MemberPrefixes
     Internal = 4,
     Public = 8,
 
-    Const = 16,
+    Constant = 16,
     ReadOnly = 32,
     Ref = 64,
 
-    Visrtual = 128,
+    Virtual = 128,
     Abstract = 256,
     Override = 512,
     New = 1024,
     Sealed = 2048,
 
-    Partail = 4096,
+    Partials = 4096,
 }

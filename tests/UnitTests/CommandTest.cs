@@ -46,19 +46,19 @@ public sealed class CommandTest
     }
 }
 
-file record Adder(int X, int Y) : ICommand<int>
+readonly file record struct Adder(int X, int Y) : ICommand<int>
 {
     public int Execute() => this.X + this.Y;
 }
-file record Subtractor(int X, int Y) : ICommand<int>
+readonly file record struct Subtractor(int X, int Y) : ICommand<int>
 {
     public int Execute() => this.X - this.Y;
 }
-file record Multiplier(int X, int Y) : ICommand<int>
+readonly file record struct Multiplier(int X, int Y) : ICommand<int>
 {
     public int Execute() => this.X * this.Y;
 }
-file record Divider(int X, int Y) : ICommand<int>
+readonly file record struct Divider(int X, int Y) : ICommand<int>
 {
     public int Execute() => this.X / this.Y;
 }

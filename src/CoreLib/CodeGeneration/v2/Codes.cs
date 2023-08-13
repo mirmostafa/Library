@@ -9,7 +9,7 @@ namespace Library.CodeGeneration.v2;
 
 [Fluent]
 [Immutable]
-public sealed class Codes : ReadOnlyCollection<Code>
+public sealed class Codes(IEnumerable<Code> items) : ReadOnlyCollection<Code>(items.ToList())
     , IIndexable<string, Code?>
     , IIndexable<Language, Codes>
     , IIndexable<bool, Codes>
@@ -17,17 +17,12 @@ public sealed class Codes : ReadOnlyCollection<Code>
     , IAdditionOperators<Codes, Code, Codes>
     , IAdditionOperators<Codes, Codes, Codes>
 {
-    public Codes(IEnumerable<Code> items)
-        : base(items.ToList())
-    {
-    }
-
     public Codes(params Code[] items)
-        : base(items)
+        : this(items.AsEnumerable())
     {
     }
 
-    public Code? this[string name] => this.FirstOrDefault(x => x.Name == name);
+    public Code? this[string name] => this.First(x => x.Name == name);
 
     public Codes this[Language language] => new(this.Where(x => x.Language == language));
 
@@ -38,7 +33,4 @@ public sealed class Codes : ReadOnlyCollection<Code>
 
     public static Codes operator +(Codes left, Codes right)
         => new(left.ArgumentNotNull().ToEnumerable().AddRangeImmuted(right.ArgumentNotNull()));
-
-    //protected override Codes OnGetNew(IEnumerable<Code> items)
-    //    => new(items);
 }

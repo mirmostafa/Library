@@ -10,7 +10,7 @@ namespace Library.Wpf.Helpers;
 
 public static class PageHelper
 {
-    public static async Task<Result> AskToSaveAsync<TPage>([DisallowNull] this TPage page, [DisallowNull] string ask = "Do you want to save changes?")
+    public static async Task<Result> AskToSaveIfChangedAsync<TPage>([DisallowNull] this TPage page, [DisallowNull] string ask = "Do you want to save changes?")
         where TPage : IStatefulPage, IAsyncSavePage
         => page.NotNull().IsViewModelChanged
             ? MsgBox2.AskWithCancel(ask) switch
