@@ -37,8 +37,8 @@ public class Result<TValue>(
     public static Result<TValue> Combine(Func<TValue, TValue, TValue> add, params Result<TValue>[] resultArray)
     {
         Checker.MustBe(resultArray is not null and { Length: > 0 }, () => $"{nameof(resultArray)} cannot be empty.");
-
-        var data = Combine(resultArray);
+        
+        var combine = Combine(resultArray);
         var valueArray = resultArray.Select(x => x.Value).ToArray();
         var value = valueArray[0];
 
@@ -46,7 +46,7 @@ public class Result<TValue>(
         {
             value = add(value, v);
         }
-        return new Result<TValue>(value, data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
+        return new Result<TValue>(value, combine.Succeed, combine.Status, combine.Message, combine.Errors, combine.ExtraData);
     }
 
     /// <summary>

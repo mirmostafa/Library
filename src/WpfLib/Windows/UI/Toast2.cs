@@ -32,17 +32,20 @@ public sealed class Toast2 : IDisposable
         this.Dispose(disposing: false);
     }
 
-    public static void ClearHistory()
-        => ToastNotificationManagerCompat.History.Clear();
+    public static void ClearHistory() =>
+        ToastNotificationManagerCompat.History.Clear();
 
-    public static Toast2 New()
-                => new();
+    public static Toast2 New() =>
+        new();
 
-    public Toast2 AddAppLogoOverride(Uri logoUri, bool circlized = false)
-        => this.Do(b => b.AddAppLogoOverride(logoUri, circlized ? ToastGenericAppLogoCrop.Circle : ToastGenericAppLogoCrop.Default));
+    public static void ShowText(string text, TimeSpan? expirationTime = null) =>
+        New().AddText(text).Show(expirationTime);
 
-    public Toast2 AddAppLogoOverride(string logoPath, bool circlized = false)
-        => this.AddAppLogoOverride(new Uri(logoPath), circlized);
+    public Toast2 AddAppLogoOverride(Uri logoUri, bool circlized = false) =>
+        this.Do(b => b.AddAppLogoOverride(logoUri, circlized ? ToastGenericAppLogoCrop.Circle : ToastGenericAppLogoCrop.Default));
+
+    public Toast2 AddAppLogoOverride(string logoPath, bool circlized = false) =>
+        this.AddAppLogoOverride(new Uri(logoPath), circlized);
 
     /// <summary>
     /// Add a button to the current toast.
@@ -111,8 +114,8 @@ public sealed class Toast2 : IDisposable
     /// </summary>
     /// <param name="text">Custom text to display on the tile.</param>
     /// <returns></returns>
-    public Toast2 AddText(string text)
-        => this.Do(b => b.AddText(text));
+    public Toast2 AddText(string text) =>
+        this.Do(b => b.AddText(text));
 
     public void Dispose()
     {
