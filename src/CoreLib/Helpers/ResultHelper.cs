@@ -6,6 +6,7 @@ using Library.Exceptions;
 using Library.Interfaces;
 using Library.Logging;
 using Library.Results;
+using Library.Windows;
 
 namespace Library.Helpers;
 
@@ -145,11 +146,27 @@ public static class ResultHelper
     public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(await resultAsync, owner, instruction);
 
+    public static async Task<TResult> ThrowOnFailAsync<TResult>(this Task<TResult> resultAsync, object? owner = null, string? instruction = null)
+        where TResult : ResultBase =>
+        InnerThrowOnFail(await resultAsync, owner, instruction);
+
     public static async Task<Result> ThrowOnFailAsync(this Task<Result> resultAsync, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(await resultAsync, owner, instruction);
 
     public static Task<TResult> ToAsync<TResult>(this TResult result) where TResult : ResultBase
         => Task.FromResult(result);
+
+    public static NotificationMessage ToNotificationMessage(this ResultBase @this, string? title = null, object? owner = null, string? instruction = null)
+    {
+        Checker.MustBeArgumentNotNull(@this);
+        return new NotificationMessage(
+            Text: @this.Message ?? string.Empty,
+            Instruction: instruction,
+            Title: title,
+            Details: @this.ToString().Remove(@this.Message).Trim(),
+            Level: @this.IsSucceed ? MessageLevel.Info : MessageLevel.Error,
+            Owner: owner);
+    }
 
     public static async Task<Result<TValue1>> ToResultAsync<TValue, TValue1>(this Task<Result<TValue>> resultTask, Func<TValue, TValue1> getNewValue)
     {
@@ -160,9 +177,9 @@ public static class ResultHelper
 
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase =>
         (result = input).IsSucceed;
-
+    
     //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
-    //x public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
+    //x public static async Task<bool> TryParseAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
     //x     => (result = await input).IsSucceed;
 
     /// <summary>
@@ -206,7 +223,7 @@ public static class ResultHelper
             ?? result.Status switch
             {
                 Exception ex => ex.With(x => x.Source = owner?.ToString()),
-                _ => new CommonException(result.ToString(), instruction ?? result.Message, owner: owner)
+                _ => new CommonException(result.ToNotificationMessage(owner: owner, instruction: instruction))
             };
         throw exception;
     }

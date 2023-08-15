@@ -97,7 +97,7 @@ public class Code(in string name, in Language language, in string statement, in 
         this.Name;
 }
 
-public static class CodeStatementHelpers
+public static class SourceCodeHelpers
 {
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Code? code) =>
         code is null || code.Equals(Code.Empty);

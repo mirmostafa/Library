@@ -491,8 +491,9 @@ public static class StringHelper
     /// Returns the given string if it is not null or empty, otherwise returns the default value.
     /// </summary>
     [Pure]
-    public static string IfNullOrEmpty(this string? str, string defaultValue)
-        => string.IsNullOrEmpty(str) ? defaultValue : str;
+    [return: NotNullIfNotNull(nameof(defaultValue))]
+    public static string? IfNullOrEmpty(this string? str, string? defaultValue) =>
+        string.IsNullOrEmpty(str) ? defaultValue : str;
 
     /// <summary>
     /// Gets the index of the specified item in the given enumerable of strings.

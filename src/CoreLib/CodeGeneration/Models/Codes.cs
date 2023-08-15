@@ -8,15 +8,10 @@ namespace Library.CodeGeneration.Models;
 
 [Fluent]
 [Immutable]
-public sealed class Codes : ReadOnlyCollection<Code?>, IAdditionOperators<Codes, Codes, Codes>, IEmpty<Codes>, IIndexable<string, Code?>, IIndexable<Language, IEnumerable<Code>>, IEnumerable<Code?>//, IImmutableList<Code>
+public sealed class Codes(params Code?[] items) : ReadOnlyCollection<Code?>(items), IAdditionOperators<Codes, Codes, Codes>, IEmpty<Codes>, IIndexable<string, Code?>, IIndexable<Language, IEnumerable<Code>>, IEnumerable<Code?>//, IImmutableList<Code>
 {
     public Codes(IEnumerable<Code?> items)
-        : base(items.ToList())
-    {
-    }
-
-    public Codes(params Code?[] items)
-        : base(items)
+        : this(items.ToArray())
     {
     }
 

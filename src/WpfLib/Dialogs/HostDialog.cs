@@ -17,7 +17,7 @@ public sealed class HostDialog
     public static HostDialog Create<TPage>() where TPage : LibPageBase, new()
         => new(new TPage());
 
-    public static bool ShowDialog(object content, string title, string prompt, Func<LibPageBase, Result> onValidation)
+    public static Result ShowDialog(object content, string title, string prompt, Func<LibPageBase, Result> onValidation)
     {
         var hostPage = new HostPage
         {
@@ -29,7 +29,6 @@ public sealed class HostDialog
             .SetPrompt(prompt)
             .SetValidation(onValidation)
             .Show()
-            .IsTrue()
             .With(_ => hostPage.Content = default);
         return result;
     }
@@ -60,13 +59,13 @@ public sealed class HostDialog
 
     /// <summary>
     /// Sets the validation. <br/> If set, the dialog will use it. <br/> Else if not, the dialog
-    /// will try to cast the page to <see cref="Library.Validations.IValidatable"/> interfaces family.
-    /// <br/> Otherwise no validation will be applied.
+    /// will try to cast the page to <see cref="Library.Validations.IValidatable"/> interfaces
+    /// family. <br/> Otherwise no validation will be applied.
     /// </summary>
     /// <param name="onValidation">The OnValidation function.</param>
     public HostDialog SetValidation(Func<LibPageBase, Result> onValidation)
         => this.Fluent(this._dialogBox.OnValidate = onValidation);
 
-    public bool? Show()
-        => this._dialogBox.ShowDialog();
+    public Result Show()
+        => this._dialogBox.ShowDialog() is true ? Result.Success : Result.Failure;
 }

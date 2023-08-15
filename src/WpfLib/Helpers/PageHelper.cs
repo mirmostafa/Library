@@ -16,7 +16,7 @@ public static class PageHelper
             ? MsgBox2.AskWithCancel(ask) switch
             {
                 TaskDialogResult.Cancel or TaskDialogResult.Close => Result.Failure,
-                TaskDialogResult.Yes => await page.SaveAsync(),
+                TaskDialogResult.Yes => await page.SaveoDbAsync(),
                 TaskDialogResult.No => Result.Success,
                 _ => Result.Failure
             }

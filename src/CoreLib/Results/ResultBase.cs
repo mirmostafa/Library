@@ -62,10 +62,14 @@ public abstract class ResultBase(
     /// <returns>A string representation of the result object.</returns>
     public override string ToString()
     {
-        var result = new StringBuilder().AppendLine($"IsSucceed: {this.IsSucceed}");
+        var result = new StringBuilder();
         if (!this.Message.IsNullOrEmpty())
         {
             _ = result.AppendLine(this.Message);
+        }
+        if (!(this.Status?.ToString()?.IsNullOrEmpty() ?? true))
+        {
+            _ = result.AppendLine(this.Status.ToString());
         }
         else if (this.Errors?.Count() == 1)
         {
@@ -77,6 +81,10 @@ public abstract class ResultBase(
             {
                 _ = result.AppendLine($"- {errorMessage}");
             }
+        }
+        if (result.Length == 0)
+        {
+            _ = result.AppendLine($"IsSucceed: {this.IsSucceed}");
         }
 
         return result.ToString();
