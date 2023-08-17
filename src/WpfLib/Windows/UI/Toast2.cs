@@ -1,4 +1,7 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
+﻿using Library.DesignPatterns.Markers;
+using Library.Interfaces;
+
+using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace Library.Wpf.Windows.UI;
 
@@ -13,7 +16,8 @@ namespace Library.Wpf.Windows.UI;
 /// temporary files that were created by the library.
 /// </remarks>
 /// <seealso cref="IDisposable"/>
-public sealed class Toast2 : IDisposable
+[Immutable]
+public sealed class Toast2 : IDisposable, INew<Toast2>
 {
     private readonly ToastContentBuilder _builder = new();
     private readonly List<Button> _buttonList = new();
@@ -39,7 +43,7 @@ public sealed class Toast2 : IDisposable
         new();
 
     public static void ShowText(string text, TimeSpan? expirationTime = null) =>
-        New().AddText(text).Show(expirationTime);
+        New().AddText(text).Show(expirationTime).Dispose();
 
     public Toast2 AddAppLogoOverride(Uri logoUri, bool circlized = false) =>
         this.Do(b => b.AddAppLogoOverride(logoUri, circlized ? ToastGenericAppLogoCrop.Circle : ToastGenericAppLogoCrop.Default));
@@ -136,14 +140,17 @@ public sealed class Toast2 : IDisposable
     public void Show()
         => this._builder.Show();
 
-    public void Show(TimeSpan? expirationTime = null)
-        => this._builder.Show(toast =>
-        {
-            if (expirationTime is { } et)
+    public Toast2 Show(TimeSpan? expirationTime = null)
+    {
+        this._builder.Show(toast =>
             {
-                toast.ExpirationTime = DateTime.Now.AddMilliseconds(et.TotalMilliseconds);
-            }
-        });
+                if (expirationTime is { } et)
+                {
+                    toast.ExpirationTime = DateTime.Now.AddMilliseconds(et.TotalMilliseconds);
+                }
+            });
+        return this;
+    }
 
     private void Dispose(bool disposing)
     {

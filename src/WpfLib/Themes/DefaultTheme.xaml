@@ -397,6 +397,14 @@
     </Style>
 
     <Style
+        x:Key="TipTextBlock"
+        BasedOn="{StaticResource {x:Type TextBlock}}"
+        TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource TipTextBlockFoegound}" />
+        <Setter Property="Padding" Value="8,0,0,0" />
+    </Style>
+
+    <Style
         x:Key="TabItemHeaderBlock"
         BasedOn="{StaticResource {x:Type TextBlock}}"
         TargetType="TextBlock">
@@ -706,7 +714,7 @@
         <Setter Property="FontFamily" Value="{StaticResource DefaultFontName}" />
         <Setter Property="FontSize" Value="{StaticResource DefaultFontSize}" />
         <Setter Property="Margin" Value="{StaticResource DefaultMargin}" />
-        <Setter Property="Background" Value="{StaticResource SkinBackground}" />
+        <Setter Property="Background" Value="{StaticResource ToolbarBackground}" />
         <Setter Property="Foreground" Value="{StaticResource SkinForeground}" />
     </Style>
     <Style x:Key="LongControl" TargetType="ContentControl">
