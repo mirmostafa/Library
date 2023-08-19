@@ -110,8 +110,8 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
     /// </param>
     /// <param name="title">Title text to display above the text box.</param>
     /// <returns>The current instance of <see cref="Toast2"/></returns>
-    public Toast2 AddInputTextBox(string id, string? placeHolderContent = default, string? title = default)
-        => this.Do(b => b.AddInputTextBox(id, placeHolderContent, title));
+    public Toast2 AddInputTextBox(string id, string? placeHolderContent = default, string? title = default) =>
+        this.Do(b => b.AddInputTextBox(id, placeHolderContent, title));
 
     /// <summary>
     /// Add text to the toast.
