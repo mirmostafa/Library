@@ -1,4 +1,4 @@
-﻿using Library.Threading.MultistepProgress;
+﻿using Library.Threading;
 
 namespace UnitTests;
 

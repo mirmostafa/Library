@@ -137,8 +137,8 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
     /// <summary>
     /// Shows a new toast notification with the current content.
     /// </summary>
-    public void Show()
-        => this._builder.Show();
+    public void Show() =>
+        this._builder.Show();
 
     public Toast2 Show(TimeSpan? expirationTime = null)
     {

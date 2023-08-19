@@ -8,7 +8,7 @@
     </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<DefineConstants>$(DefineConstants);USE_LONG_ID</DefineConstants>
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<WarningLevel>4</WarningLevel>
 		<DebugType>portable</DebugType>

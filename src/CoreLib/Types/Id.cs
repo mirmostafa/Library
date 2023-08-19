@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 using Library.DesignPatterns.Markers;
@@ -16,10 +17,15 @@ namespace Library.Types;
 
 [Immutable]
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+[Serializable]
+[StructLayout(LayoutKind.Sequential)]
 public readonly struct Id(IdType value) :
     ISpanFormattable, IFormattable, ISerializable, ICloneable, IComparable,
     IEquatable<IdType>, IComparable<Id>, IComparable<IdType>,
     IConvertible<IdType>, IEmpty<Id>, IEquatable<Id>
+#if USE_LONG_ID
+    , IMinMaxValue<Id>
+#endif
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Id"/> struct.
@@ -38,7 +44,10 @@ public readonly struct Id(IdType value) :
     /// </summary>
     /// <value>The unique identifier.</value>
     public IdType Value { get; } = value;
-
+#if USE_LONG_ID
+    public static Id MaxValue { get; } = IdType.MaxValue;
+    public static Id MinValue { get; } = IdType.MinValue;
+#endif
     /// <summary>
     /// Creates a new Id the by the specific identifier.
     /// </summary>
@@ -60,16 +69,16 @@ public readonly struct Id(IdType value) :
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <returns>The result of the conversion.</returns>
-    public static implicit operator IdType(Id id)
-        => id.Value;
+    public static implicit operator IdType(Id id) =>
+        id.Value;
 
     /// <summary>
     /// Creates new empty.
     /// </summary>
     /// <returns>An empty instance of current class.</returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static Id NewEmpty()
-        => new(GetDefaultValue());
+    public static Id NewEmpty() =>
+        new(GetDefaultValue());
 
     /// <summary>
     /// Implements the operator !=.
@@ -77,8 +86,8 @@ public readonly struct Id(IdType value) :
     /// <param name="left">The left.</param>
     /// <param name="right">The right.</param>
     /// <returns>The result of the operator.</returns>
-    public static bool operator !=(Id left, Id right)
-        => !(left == right);
+    public static bool operator !=(Id left, Id right) =>
+        !(left == right);
 
     /// <summary>
     /// Implements the operator !=.

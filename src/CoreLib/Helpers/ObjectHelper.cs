@@ -419,8 +419,8 @@ public static class ObjectHelper
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid guid)
         => guid == Guid.Empty;
 
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
-        => id == Guid.Empty;
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id) =>
+        id.Equals(Guid.Empty) || id.Equals((object)0);
 
     public static bool IsSetMethodInit([DisallowNull] this PropertyInfo propertyInfo)
     {
@@ -429,7 +429,7 @@ public static class ObjectHelper
     }
 
     public static dynamic props(this object o)
-            => _propsExpando.GetOrCreateValue(o);
+        => _propsExpando.GetOrCreateValue(o);
 
     /// <summary>
     /// Search deeply for specific objects
@@ -485,6 +485,6 @@ public static class ObjectHelper
         property?.SetValue(obj, value, null);
     }
 
-    public static TOutput To<TOutput>(this object o) => 
+    public static TOutput To<TOutput>(this object o) =>
         (TOutput)o;
 }

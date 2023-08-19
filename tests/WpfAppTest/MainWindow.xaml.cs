@@ -11,14 +11,11 @@ namespace WpfApp1;
 /// </summary>
 public partial class MainWindow
 {
-    public MainWindow() 
+    public MainWindow()
         => this.InitializeComponent();
 
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-        Toast2.Test();
-
-    }
+    private void Button_Click(object sender, RoutedEventArgs e) => 
+        Toast2.ShowText("Hi");
 
     private void GoToYahooCommand_Navigating(object sender, ItemActedEventArgs<NavigationUICommand.NavigatingEventArgs> e)
     {

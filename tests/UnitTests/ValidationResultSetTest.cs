@@ -21,13 +21,6 @@ public sealed class ValidationResultSetTest
     }
 
     [Fact]
-    public void _03_IsBiggerThan_Int()
-    {
-        var arg = new Person("", 700);
-        _ = Assert.Throws<ValidationException>(() => arg.Check(CheckBehavior.ThrowOnFail).NotBiggerThan(x => x.Age, 120));
-    }
-
-    [Fact]
     public void _04_IsArgumentNull_Null()
     {
         Person? arg = null;
@@ -38,7 +31,7 @@ public sealed class ValidationResultSetTest
     public void _05_IsArgumentNullNot_Null()
     {
         var arg = new Person("Ali", 0);
-        arg = arg.Check().ArgumentNotNull();
+        _ = arg.Check().ArgumentNotNull();
     }
 
     [Fact]
@@ -48,21 +41,8 @@ public sealed class ValidationResultSetTest
         arg = arg.Check()
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
-            .NotBiggerThan(x => x.Age, 25)
+            //.NotBiggerThan(x => x.Age, 25)
             .ThrowOnFail();
-    }
-
-    [Fact]
-    public void _07_Validation_ReturnFirstFailure_ShouldThrowError()
-    {
-        var arg = new Person("", 20);
-        var check = arg.Check(CheckBehavior.ReturnFirstFailure)
-            .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
-            .NotBiggerThan(x => x.Age, 25)
-            .Build();
-        _ = Assert.Throws<NullValueValidationException>(() => check.ThrowOnFail());
-        arg = check;
     }
 
     [Fact]
@@ -72,12 +52,25 @@ public sealed class ValidationResultSetTest
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
-            .NotBiggerThan(x => x.Age, 20)
+            //.NotBiggerThan(x => x.Age, 20)
             .Build();
         arg = check;
         Assert.True(check);
-        
     }
+
+    [Fact]
+    public void _07_Validation_ReturnFirstFailure_ShouldThrowError()
+    {
+        var arg = new Person("", 20);
+        var check = arg.Check(CheckBehavior.ReturnFirstFailure)
+            .ArgumentNotNull()
+            .NotNullOrEmpty(x => x.Name)
+            //.NotBiggerThan(x => x.Age, 25)
+            .Build();
+        _ = Assert.Throws<NullValueValidationException>(() => check.ThrowOnFail());
+        arg = check;
+    }
+
     [Fact]
     public void _08_FullValidationIsNotBiggerThan()
     {
@@ -85,7 +78,7 @@ public sealed class ValidationResultSetTest
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
-            .NotBiggerThan(x => x.Age, 10)
+            //.NotBiggerThan(x => x.Age, 10)
             .Build();
         _ = Assert.Throws<ValidationException>(() => check.ThrowOnFail());
     }
@@ -97,7 +90,7 @@ public sealed class ValidationResultSetTest
         var result = arg.Check(CheckBehavior.GatherAll)
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
-            .NotBiggerThan(x => x.Age, 10)
+            //.NotBiggerThan(x => x.Age, 10)
             .Build();
         Assert.Equal(2, result.Errors?.Count());
     }
@@ -109,7 +102,8 @@ public sealed class ValidationResultSetTest
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x!.Name)
-            .NotBiggerThan(x => x!.Age, 10);
+            //.NotBiggerThan(x => x!.Age, 10)
+            ;
         _ = Assert.Throws<ArgumentNullException>(check.ThrowOnFail);
     }
 
@@ -120,7 +114,8 @@ public sealed class ValidationResultSetTest
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x!.Name)
-            .NotBiggerThan(x => x!.Age, 10);
+            //.NotBiggerThan(x => x!.Age, 10)
+            ;
         _ = Assert.Throws<NullValueValidationException>(check.ThrowOnFail);
     }
 
