@@ -6,3 +6,5 @@ global using Library;
 
 global using static System.Console;
 global using static Library.Coding.Functional;
+
+global using Person = (string Name, int Age);

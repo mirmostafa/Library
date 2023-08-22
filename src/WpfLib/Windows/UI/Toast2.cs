@@ -60,8 +60,8 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
     /// the user clicks the button.
     /// </param>
     /// <returns>The current instance of <see cref="Toast2"/></returns>
-    public Toast2 AddButton(string text, Action<Button> onClick, string? id = null)
-        => this.AddButton(new(text, onClick, id));
+    public Toast2 AddButton(string text, Action<Button> onClick, string? id = null)=> 
+        this.AddButton(new(text, onClick, id));
 
     /// <summary>
     /// Add an button to the toast that will be display to the right of the input text box,
@@ -80,24 +80,27 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
     /// the user clicks the button.
     /// </param>
     /// <returns>The current instance of <see cref="Toast2"/></returns>
-    public Toast2 AddButton(string textBoxId, string text, Action<Button> onClick, string? id = null)
-        => this.AddButton(new(text, onClick, id));
+    public Toast2 AddButton(string textBoxId, string text, Action<Button> onClick, string? id = null)=> 
+        this.AddButton(new(text, onClick, id));
 
     public Toast2 AddButton(Button button)
-        => this.Do(_ =>
-        {
-            var id = button.Id ?? Guid.NewGuid().ToString();
+    {
+        Check.IfArgumentIsNull(button);
+        return this.Do(_ =>
+            {
+                var id = button.Id ?? Guid.NewGuid().ToString();
 
-            this._buttonList.Add(button);
-            _ = this._builder.AddButton(button.Text, ToastActivationType.Foreground, id);
-            button.Owner = this;
-        });
+                this._buttonList.Add(button);
+                _ = this._builder.AddButton(button.Text, ToastActivationType.Foreground, id);
+                button.Owner = this;
+            });
+    }
 
-    public Toast2 AddInlineImage(Uri imageUri)
-        => this.Do(b => b.AddInlineImage(imageUri));
+    public Toast2 AddInlineImage(Uri imageUri)=> 
+        this.Do(b => b.AddInlineImage(imageUri));
 
-    public Toast2 AddInlineImage(string imagePath)
-        => this.AddInlineImage(new Uri(imagePath));
+    public Toast2 AddInlineImage(string imagePath)=> 
+        this.AddInlineImage(new Uri(imagePath));
 
     /// <summary>
     /// Add an input text box that the user can type into.
@@ -170,7 +173,7 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
         return this;
     }
 
-    // Listen to notification activation
+    // Listen to toast notification activation
     private void OnActivated(ToastNotificationActivatedEventArgsCompat e)
     {
         var button = this._buttonList.FirstOrDefault(b => b.Id == e.Argument);
@@ -183,22 +186,6 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
         {
             Application.Current.RunInUiThread(() => this._onActivated?.Invoke(this));
         }
-
-        ////else
-        ////{
-        ////    // Obtain the arguments from the notification
-        ////    var args = ToastArguments.Parse(e.Argument);
-
-        ////    // Obtain any user input (text boxes, menu selections) from the notification
-        ////    var userInput = e.UserInput;
-
-        ////    // Need to dispatch to UI thread if performing UI operations
-        ////    Application.Current.Dispatcher.Invoke(delegate
-        ////    {
-        ////        // TODO: Show the corresponding content
-        ////        _ = MessageBox.Show("Toast activated. Args: " + e.Argument);
-        ////    });
-        ////}
     }
 
     public record Button(string Text, Action<Button> OnClick, string? Id = null)

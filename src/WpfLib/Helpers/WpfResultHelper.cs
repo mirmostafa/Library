@@ -1,5 +1,6 @@
 ﻿using Library.Results;
 using Library.Wpf.Dialogs;
+using Library.Wpf.Windows.UI;
 
 namespace Library.Wpf.Helpers;
 
@@ -9,7 +10,9 @@ public static class WpfResultHelper
         where TResult : ResultBase
     {
         _ = result.ThrowOnFail(owner, instruction);
-        MsgBox2.Inform(instruction, result.Message.IfNullOrEmpty(successMessage ?? owner?.ToString()));
+        var text = result.Message.IfNullOrEmpty(successMessage ?? owner?.ToString());
+        //MsgBox2.Inform(instruction, text);
+        Toast2.New().AddTitle()
 
         return result;
     }
