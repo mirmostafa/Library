@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace Library.ComponentModel;
 
@@ -16,6 +19,9 @@ public abstract class NotifyPropertyChanged : INotifyPropertyChanged
     /// <summary>
     /// Gets or sets a value indicating whether the property should be validated when it is set. Default value is true.
     /// </summary>
+    [EventIgnore]
+    [JsonIgnore]
+    [XmlIgnore]
     public bool ValidateOnPropertySet { get; set; } = true;
 
     /// <summary>

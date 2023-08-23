@@ -42,9 +42,6 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
     public static Toast2 New() =>
         new();
 
-    public static void ShowText(string text, TimeSpan? expirationTime = null) =>
-        New().AddText(text).Show(expirationTime).Dispose();
-
     public Toast2 AddAppLogoOverride(Uri logoUri, bool circlized = false) =>
         this.Do(b => b.AddAppLogoOverride(logoUri, circlized ? ToastGenericAppLogoCrop.Circle : ToastGenericAppLogoCrop.Default));
 

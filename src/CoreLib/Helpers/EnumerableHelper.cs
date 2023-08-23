@@ -1139,11 +1139,28 @@ public static class EnumerableHelper
     /// <typeparam name="T">The type of the item.</typeparam>
     /// <param name="item">The item to create an array from.</param>
     /// <returns>An array containing the item.</returns>
-    public static T[] ToArray<T>(T item)
-        => ToEnumerable(item).ToArray();
+    public static T[] ToArray<T>(T item) =>
+        ToEnumerable(item).ToArray();
 
-    public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull
-            => pairs?.ToDictionary(pair => pair.Key, pair => pair.Value);
+    public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull =>
+        pairs?.ToDictionary(pair => pair.Key, pair => pair.Value) ?? new();
+
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue, TListItem>(this IList<TListItem> list, Func<TListItem, (TKey Key, TValue Value)> selector)
+        where TKey : notnull
+    {
+        if (list == null)
+        {
+            return new();
+        }
+
+        var result = new Dictionary<TKey, TValue>();
+        foreach (var item in list)
+        {
+            var (key, value) = selector(item);
+            result.Add(key, value);
+        }
+        return result;
+    }
 
     /// <summary>
     /// Converts a single item into an IEnumerable of that item.

@@ -16,9 +16,6 @@ public static class ObjectHelper
 {
     private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
 
-    public static TOutput? As<TOutput>(this object? o) where TOutput : class =>
-        o as TOutput;
-
     /// <summary>
     /// Checks the database null.
     /// </summary>
@@ -484,7 +481,4 @@ public static class ObjectHelper
         var property = obj?.GetType().GetProperty(propertyName);
         property?.SetValue(obj, value, null);
     }
-
-    public static TOutput To<TOutput>(this object o) =>
-        (TOutput)o;
 }

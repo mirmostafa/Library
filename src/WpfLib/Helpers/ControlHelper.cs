@@ -16,6 +16,7 @@ using System.Windows.Threading;
 using Library.ComponentModel;
 using Library.Data.Models;
 using Library.Wpf.Bases;
+using Library.Wpf.Dialogs;
 using Library.Wpf.Windows;
 
 using WinRT;
@@ -252,7 +253,8 @@ public static class ControlHelper
         return parent as ItemsControl;
     }
 
-    public static IntPtr GetHandle(this Window window) => new WindowInteropHelper(window).Handle;
+    public static IntPtr GetHandle(this Window window) =>
+        new WindowInteropHelper(window).Handle;
 
     public static bool GetIsViewModelChanged<TPage>(this TPage page)
         where TPage : IStatefulPage => page.IsViewModelChanged;
@@ -330,8 +332,11 @@ public static class ControlHelper
         return null;
     }
 
+    public static System.Windows.Forms.IWin32Window GetWin32Window(this Window window) =>
+        new Win32WindowForm(window);
+
     public static TItemsControl HandleChanges<TItemsControl, TNotifyCollectionChanged>(this TItemsControl control, TNotifyCollectionChanged collection, Action<TItemsControl, TNotifyCollectionChanged, NotifyCollectionChangedEventArgs> handler)
-        where TItemsControl : ItemsControl
+            where TItemsControl : ItemsControl
         where TNotifyCollectionChanged : INotifyCollectionChanged
     {
         collection.CollectionChanged += (e1, e2) => handler?.Invoke(control, collection, e2);
