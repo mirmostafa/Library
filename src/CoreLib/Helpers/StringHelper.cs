@@ -1288,6 +1288,10 @@ public static class StringHelper
     public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars)
         => values.Select(t => t.Trim(trimChars));
 
+    [return: NotNullIfNotNull(nameof(s))]
+    public static string? TrimEnd(this string? s, string trim) =>
+        s == null ? null : s.EndsWith(trim) ? s[..^trim.Length] : s;
+
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.
     /// </summary>

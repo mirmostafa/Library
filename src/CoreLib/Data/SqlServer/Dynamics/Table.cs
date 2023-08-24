@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Immutable;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -36,7 +37,52 @@ public sealed class Table : SqlObject<Table, Database>, IEnumerable
 
     public Row this[int index] => this.Rows.ElementAt(index);
 
-    public static Tables? GetByConnectionString(string connectionstring) => Database.GetDatabase(connectionstring)?.Tables;
+    public static Tables? GetByConnectionString(string connectionString) =>
+        Database.GetDatabase(connectionString)?.Tables;
+
+    public static ImmutableList<Column> GetTableColumns(Table owner)
+    {
+        var helper = new Sql(owner.ConnectionString);
+        var qColumns = string.Format(QueryBank.COLUMNS_WHERE_TABLE_NAME, owner.Name);
+        var qIdentities = string.Format(QueryBank.IDENTITIES_WHERE_TABLE_NAME, owner.Name);
+        var qForeignKeys = string.Format(QueryBank.FOREIGN_KEY_COLUMNS_WHERE_TABLE_NAME, owner.Name);
+        var query = new[] { qColumns, qIdentities, qForeignKeys }.Merge("; ");
+        var result = new List<Column>();
+        using var reader = helper.ExecuteReader(query);
+        while (reader.Read())
+        {
+            var column = new Column(default!, reader.Field("name", Convert.ToString)!, owner.ConnectionString)
+            {
+                CollationName = reader.Field("collation_name", Convert.ToString)!,
+                IsNullable = reader.Field("is_nullable", str => str.ToString()!.EqualsTo("1")),
+                MaxLength = reader.Field("max_length", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
+                Precision = reader.Field("precision", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
+                Position = reader.Field("column_id", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
+                DataType = reader.Field("system_type", Convert.ToString)!,
+                UniqueId = string.Concat(reader["object_id"].Cast().ToLong().ToString("000000000000"), reader["column_id"].Cast().ToInt().ToString("000")).Cast().ToLong(),
+            };
+            result.Add(column);
+        }
+
+        _ = reader.NextResult();
+        while (reader.Read())
+        {
+            result.First(c => c.Name == reader.Field("column_name", Convert.ToString)).IsIdentity = true;
+        }
+
+        _ = reader.NextResult();
+        while (reader.Read())
+        {
+            var column = result.First(c => c.Name == reader.Field("ParentColumn", Convert.ToString));
+            column.IsForeignKey = true;
+            column.ForeignKeyInfo = new ForeignKeyInfo
+            {
+                ReferencedColumn = reader.Field("ReferencedColumn", Convert.ToString),
+                ReferencedTable = reader.Field("ReferencedTable", Convert.ToString)
+            };
+        }
+        return result.ToImmutableList();
+    }
 
     public IEnumerator GetEnumerator()
     {
@@ -164,8 +210,7 @@ public sealed class Table : SqlObject<Table, Database>, IEnumerable
         using var reader = this.ToReader(columns);
         while (reader.Read())
         {
-            yield return new Row(this,
-                columns.Select(column => new KeyValuePair<string, object>(column, reader[column])).ToList(),
+            yield return new Row(this, columns.Select(column => new KeyValuePair<string, object>(column, reader[column])).ToList(),
                 this.ConnectionString);
         }
     }
@@ -192,51 +237,7 @@ public sealed class Table : SqlObject<Table, Database>, IEnumerable
 
     private Columns GetColumns()
     {
-        var helper = new Sql(this.ConnectionString);
-        var qColumns = string.Format(QueryBank.COLUMNS_WHERE_TABLE_NAME, this.Name);
-        var qIdentities = string.Format(QueryBank.IDENTITIES_WHERE_TABLE_NAME, this.Name);
-        var qForeignKeys = string.Format(QueryBank.FOREIGN_KEY_COLUMNS_WHERE_TABLE_NAME, this.Name);
-        var query = new[] { qColumns, qIdentities, qForeignKeys }.Merge("; ");
-        var columns = new List<Column>();
-        using (var reader = helper.ExecuteReader(query))
-        {
-            while (reader.Read())
-            {
-                columns.Add(new Column(null, reader.Field("name", Convert.ToString), null)
-                {
-                    CollationName = reader.Field("collation_name", Convert.ToString),
-                    IsNullable = reader.Field("is_nullable", str => str.ToString().EqualsTo("1")),
-                    MaxLength = reader.Field("max_length", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
-                    Precision = reader.Field("precision", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
-                    Position = reader.Field("column_id", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
-                    DataType = reader.Field("system_type", Convert.ToString),
-                    UniqueId = string.Concat(reader["object_id"].Cast().ToLong().ToString("000000000000"), reader["column_id"].Cast().ToInt().ToString("000")).Cast().ToLong(),
-                });
-            }
-
-            _ = reader.NextResult();
-            while (reader.Read())
-            {
-                columns.First(c => c.Name ==
-            reader.Field("column_name", Convert.ToString)).IsIdentity = true;
-            }
-
-            _ = reader.NextResult();
-            while (reader.Read())
-            {
-                var column = columns.First(c => c.Name ==
-            reader.Field("ParentColumn", Convert.ToString));
-                column.IsForeignKey = true;
-                column.ForeignKeyInfo = new ForeignKeyInfo
-                {
-                    ReferencedColumn =
-                reader.Field("ReferencedColumn", Convert.ToString),
-                    ReferencedTable =
-                reader.Field("ReferencedTable", Convert.ToString)
-                };
-            }
-        }
-
+        var columns = GetTableColumns(this);
         return new Columns(columns);
     }
 

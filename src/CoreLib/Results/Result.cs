@@ -45,7 +45,7 @@ public sealed class Result(
     /// </summary>
     /// <param name="results">The Result objects to combine.</param>
     /// <returns>A single Result object containing the combined data.</returns>
-    public static Result Combine(params Result[] results)
+    public static Result Merge(params Result[] results)
     {
         var data = ResultBase.Combine(results);
         var result = new Result(data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
@@ -109,7 +109,7 @@ public sealed class Result(
 
     public static Result operator +(Result left, Result right)
     {
-        var total = Combine(left, right);
+        var total = Merge(left, right);
         var result = new Result(total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
         return result;
     }

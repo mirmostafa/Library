@@ -1011,6 +1011,22 @@ public static class EnumerableHelper
         }
     }
 
+    /// <summary>
+    /// Selects all elements from a sequence of sequences.
+    /// </summary>
+    /// <param name="values">The sequence of sequences.</param>
+    /// <returns>A sequence containing all elements of the input sequences.</returns>
+    public static IEnumerable<TDestination> SelectAll<TSource, TDestination>(this IEnumerable<IEnumerable<TSource>> values, Func<TSource, TDestination> selector)
+    {
+        foreach (var value in values)
+        {
+            foreach (var item in value.Select(selector))
+            {
+                yield return item;
+            }
+        }
+    }
+
     /// <summary> Asynchronously projects each element of a sequence into a new form. </summary>
     /// <typeparam name="TSource">The type of the elements of source.</typeparam> <typeparam
     /// name="TResult">The type of the value returned by selectorAsync.</typeparam> <param
