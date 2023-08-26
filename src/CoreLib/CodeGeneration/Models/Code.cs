@@ -14,6 +14,7 @@ public class Code(in string name, in Language language, in string statement, in 
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
     protected readonly dynamic ExtraProperties = new Expando();
 
+
     /// <summary>
     /// Constructor for Code class with parameters.
     /// </summary>

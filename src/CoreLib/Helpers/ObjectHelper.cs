@@ -79,13 +79,7 @@ public static class ObjectHelper
             var constructor = typeof(TSingleton).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
                 EnumerableHelper.EmptyArray<Type>(),
-                EnumerableHelper.EmptyArray<ParameterModifier>());
-            if (constructor is null)
-            {
-                throw new SingletonException(
-                    $"""The class must have a static method: "{typeof(TSingleton)} CreateInstance()" or a private/protected parameter-less constructor.""");
-            }
-
+                EnumerableHelper.EmptyArray<ParameterModifier>()) ?? throw new SingletonException($"""The class must have a static method: "{typeof(TSingleton)} CreateInstance()" or a private/protected parameter-less constructor.""");
             result = constructor.Invoke(EnumerableHelper.EmptyArray<object>()) as TSingleton;
 
             //! Just to make sure that the code will work.
@@ -417,7 +411,7 @@ public static class ObjectHelper
         => guid == Guid.Empty;
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id) =>
-        id.Equals(Guid.Empty) || id.Equals((object)0);
+        id.Equals(Guid.Empty) || id.Equals(0);
 
     public static bool IsSetMethodInit([DisallowNull] this PropertyInfo propertyInfo)
     {
@@ -425,8 +419,8 @@ public static class ObjectHelper
         return propertyInfo.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit));
     }
 
-    public static dynamic props(this object o)
-        => _propsExpando.GetOrCreateValue(o);
+    public static dynamic props(this object o) =>
+        _propsExpando.GetOrCreateValue(o);
 
     /// <summary>
     /// Search deeply for specific objects

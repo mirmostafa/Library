@@ -107,7 +107,7 @@ public class Result<TValue>(
     public static Result<TValue> CreateFailure(in Exception error, in TValue value) =>
         CreateFailure(value, error, null)!;
 
-    public static Result<TValue?> CreateFailure(in string message, in TValue value) =>
+    public static Result<TValue?> CreateFailure(in string message, in TValue? value) =>
         CreateFailure(value, null, message);
 
     /// <summary>

@@ -63,14 +63,6 @@ public sealed class ActionScope : IDisposable
 
 public static class ActionScopeExtensions
 {
-    public static Task<TResult> ActionScopeRunAsync<TResult>(this  ILoggerContainer logger, Func<Task<TResult>> action, string beginMessage = ActionScope.BEGINING_MESSAGE, string endMessage = ActionScope.ENDING_MESSAGE)
-        where TResult : ResultBase
-    {
-        var scope = ActionScope.Begin(x => logger.Debug(x), beginMessage);
-        return action().WithAsync(x => scope.End(x));
-    }
-
-
     public static ActionScope ActionScopeBegin(this ILoggerContainer loggerContainer, string beginMessage = ActionScope.BEGINING_MESSAGE)
         => ActionScope.Begin(x => loggerContainer.Debug(x), beginMessage);
 
@@ -95,6 +87,13 @@ public static class ActionScopeExtensions
         var result = action();
         scope.End(endMessage);
         return result;
+    }
+
+    public static Task<TResult> ActionScopeRunAsync<TResult>(this ILoggerContainer logger, Func<Task<TResult>> action, string beginMessage = ActionScope.BEGINING_MESSAGE, string endMessage = ActionScope.ENDING_MESSAGE)
+                        where TResult : ResultBase
+    {
+        var scope = ActionScope.Begin(x => logger.Debug(x), beginMessage);
+        return action().WithAsync(x => scope.End(x));
     }
 
     public static async Task ActionScopeRunAsync(this ILogger logger, Func<Task> action, string beginMessage = ActionScope.BEGINING_MESSAGE, string endMessage = ActionScope.ENDING_MESSAGE)
@@ -144,7 +143,7 @@ public static class ActionScopeExtensions
     }
 
     public static ActionScope GetActionScope(this ILoggerContainer loggerContainer) =>
-        loggerContainer.props().ActionScope.Cast().As<ActionScope>() ?? ActionScope.New(loggerContainer);
+        loggerContainer.props().ActionScope.Cast().As<ActionScope>() ?? (loggerContainer.props().ActionScope = ActionScope.New(loggerContainer));
 
     public static TResult RunActionScope<TResult>(this ILogger logger, Func<TResult> action, string beginMessage = ActionScope.BEGINING_MESSAGE, string endMessage = ActionScope.ENDING_MESSAGE)
         where TResult : ResultBase =>

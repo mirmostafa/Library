@@ -75,34 +75,30 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    /// Adds a range of items to an IList.
+    /// Adds a range of items to the specified collection.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the list.</typeparam>
-    /// <param name="list">The list to add the items to.</param>
-    /// <param name="items">The items to add to the list.</param>
-    /// <returns>The list with the added items.</returns>
-    //public static IList<T> AddRange<T>([DisallowNull] this IList<T> list, in IEnumerable<T> items)
-    //{
-    //    if (items?.Any() is true)
-    //    {
-    //        foreach (var item in items)
-    //        {
-    //            list.Add(item);
-    //        }
-    //    }
-    //    return list;
-    //}
+    /// <typeparam name="TList">The type of the collection to which items will be added.</typeparam>
+    /// <typeparam name="TItem">The type of the items to be added.</typeparam>
+    /// <param name="list">The collection to which the items will be added.</param>
+    /// <param name="items">The items to be added to the collection.</param>
+    /// <returns>The updated collection with added items.</returns>
+    /// <remarks>
+    /// This extension method allows adding a range of items to a collection that implements
+    /// ICollection. The method checks if the 'items' enumerable is not null and contains items
+    /// before performing the addition.
+    /// </remarks>
     public static TList AddRange<TList, TItem>([DisallowNull] this TList list, in IEnumerable<TItem> items)
         where TList : ICollection<TItem>
     {
         if (items?.Any() is true)
         {
+            // Iterate through each item in the 'items' enumerable and add it to the collection.
             foreach (var item in items)
             {
                 list.Add(item);
             }
         }
-        return list;
+        return list; // Return the updated collection with added items.
     }
 
     /// <summary>
@@ -221,35 +217,95 @@ public static class EnumerableHelper
         }
     }
 
+    /// <summary>
+    /// Aggregates the elements of an array using a custom aggregator function and an optional
+    /// default value.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the array.</typeparam>
+    /// <param name="items">The array of elements to be aggregated.</param>
+    /// <param name="aggregator">A function that specifies how to aggregate elements.</param>
+    /// <param name="defaultValue">An optional default value to use when the array is empty.</param>
+    /// <returns>The aggregated result of the array elements.</returns>
     public static T Aggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
         => InnerAggregate(items, aggregator, defaultValue);
 
+    /// <summary>
+    /// Aggregates the elements of an IEnumerable using a custom aggregator function and an optional
+    /// default value.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the IEnumerable.</typeparam>
+    /// <param name="items">The IEnumerable of elements to be aggregated.</param>
+    /// <param name="aggregator">A function that specifies how to aggregate elements.</param>
+    /// <param name="defaultValue">An optional default value to use when the IEnumerable is empty.</param>
+    /// <returns>The aggregated result of the IEnumerable elements.</returns>
     public static T Aggregate<T>(this IEnumerable<T> items, Func<T, T?, T> aggregator, T defaultValue = default!)
         => InnerAggregate(items.ToArray(), aggregator, defaultValue);
 
+    /// <summary>
+    /// Aggregates the elements of an array using addition operators and an optional default value.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of elements in the array, which must implement addition operators.
+    /// </typeparam>
+    /// <param name="items">The array of elements to be aggregated.</param>
+    /// <param name="defaultValue">An optional default value to use when the array is empty.</param>
+    /// <returns>The aggregated result of the array elements using addition operators.</returns>
     public static T Aggregate<T>(this T[] items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
         => InnerAggregate(items, (x, y) => x + y!, defaultValue);
 
+    /// <summary>
+    /// Aggregates the elements of an IEnumerable using addition operators and an optional default value.
+    /// </summary>
+    /// <typeparam name="T">
+    /// The type of elements in the IEnumerable, which must implement addition operators.
+    /// </typeparam>
+    /// <param name="items">The IEnumerable of elements to be aggregated.</param>
+    /// <param name="defaultValue">An optional default value to use when the IEnumerable is empty.</param>
+    /// <returns>The aggregated result of the IEnumerable elements using addition operators.</returns>
     public static T Aggregate<T>(this IEnumerable<T> items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
         => InnerAggregate(items.ToArray(), (x, y) => x + y!, defaultValue);
 
-    public static bool Any([NotNullWhen(true)] this IEnumerable? source)
-        => source switch
+    /// <summary>
+    /// Determines whether any element exists in the given enumerable.
+    /// </summary>
+    /// <param name="source">The enumerable to check for elements.</param>
+    /// <returns>True if the enumerable contains any elements, otherwise false.</returns>
+    public static bool Any([NotNullWhen(true)] this IEnumerable? source) =>
+        source switch
         {
-            null => false,
-            ICollection collection => collection.Count > 0,
-            _ => source.GetEnumerator().MoveNext()
+            null => false, // If the enumerable is null, no elements exist.
+            ICollection collection => collection.Count > 0, // If the enumerable is an ICollection, check its Count property.
+            _ => source.GetEnumerator().MoveNext() // Use enumerator to check if any elements exist.
         };
 
+    /// <summary>
+    /// Determines whether any element exists in the given IList.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the IList.</typeparam>
+    /// <param name="source">The IList to check for elements.</param>
+    /// <returns>True if the IList contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this IList<T> source) =>
-        source.Count != 0;
+        source.Count != 0; // Check if the count of elements in the IList is not zero.
+
+    /// <summary>
+    /// Determines whether any element exists in the given array.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the array.</typeparam>
+    /// <param name="source">The array to check for elements.</param>
+    /// <returns>True if the array contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this T[] source) =>
-        source.Length != 0;
+        source.Length != 0; // Check if the length of the array is not zero.
+
+    /// <summary>
+    /// Determines whether any element exists in the given ICollection.
+    /// </summary>
+    /// <param name="source">The ICollection to check for elements.</param>
+    /// <returns>True if the ICollection contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this ICollection source) =>
-        source.Count != 0;
+        source.Count != 0; // Check if the count of elements in the ICollection is not zero.
 
     /// <summary>
     /// Get a <see cref="Span{T}"/> view over a <see cref="List{T}"/>'s data. Items should not be
@@ -260,17 +316,7 @@ public static class EnumerableHelper
         => CollectionsMarshal.AsSpan(list);
 
     public static Span<TItem> AsSpan<TItem>(this IEnumerable<TItem> items)
-        => items is null ? default : MemoryExtensions.AsSpan(items.ToArray());
-
-#if NET8_0_OR_GREATER
-    [Obsolete("Use `AsImmutableArray` instead.", true)]
-#endif
-    public static ImmutableArray<TItem> AsImmutableArrayUnsafe<TItem>(this TItem[] itemArray)
-        => Unsafe.As<TItem[], ImmutableArray<TItem>>(ref itemArray);
-#if NET8_0_OR_GREATER
-    public static ImmutableArray<TItem> AsImmutableArray<TItem>(this TItem[] itemArray)
-        => ImmutableCollectionsMarshal.AsImmutableArray(itemArray);
-#endif
+            => items is null ? default : MemoryExtensions.AsSpan(items.ToArray());
 
     /// <summary>
     /// Builds a read-only list from an enumerable.
@@ -354,11 +400,37 @@ public static class EnumerableHelper
         }
     }
 
-    [Obsolete("Use .Net 6.0 Chunk, instead.")]
-    public static IEnumerable<IEnumerable<T>> ChunkBy<T>([DisallowNull] this IEnumerable<T> source, int chunkSize)
-        => source.Select((x, i) => new { Index = i, Value = x })
-                 .GroupBy(x => x.Index / chunkSize)
-                 .Select(x => x.Select(v => v.Value));
+    /// <summary>
+    /// Casts elements of the source sequence to the specified type if possible.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the source sequence.</typeparam>
+    /// <typeparam name="U">The target type to cast elements to.</typeparam>
+    /// <param name="source">The source sequence containing elements to be cast.</param>
+    /// <returns>An IEnumerable containing elements cast to the specified type.</returns>
+    public static IEnumerable<U> CastIf<T, U>(this IEnumerable<T> source)
+    {
+        foreach (var item in source)
+        {
+            if (item is U u)
+            {
+                yield return u; // Yield the casted item.
+            }
+        }
+    }
+
+    /// <summary>
+    /// Splits the source sequence into chunks of specified size.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the source sequence.</typeparam>
+    /// <param name="source">The source sequence to be chunked.</param>
+    /// <param name="chunkSize">The size of each chunk.</param>
+    /// <returns>An IEnumerable of IEnumerable representing chunks of the source sequence.</returns>
+    [Obsolete("Use .NET 6.0 Chunk, instead.")]
+    public static IEnumerable<IEnumerable<T>> ChunkBy<T>([DisallowNull] this IEnumerable<T> source, int chunkSize) =>
+        // Select each element with its index, then group elements by the calculated chunk index.
+        source.Select((x, i) => new { Index = i, Value = x })
+              .GroupBy(x => x.Index / chunkSize)
+              .Select(x => x.Select(v => v.Value)); // Select values within each chunk group.
 
     /// <summary>
     /// Clears the specified collection and adds the specified item to it.
@@ -438,11 +510,12 @@ public static class EnumerableHelper
     public static T[] Copy<T>(this T[] array) =>
         array.ToEnumerable().ToArray();
 
+    public static List<T> Copy<T>(this IList<T> array) =>
+        array.ToEnumerable().ToList();
+
     public static ImmutableArray<T> CopyImmutable<T>(this T[] array) =>
         array.ToEnumerable().ToImmutableArray();
 
-    public static List<T> Copy<T>(this IList<T> array) =>
-        array.ToEnumerable().ToList();
     public static ImmutableList<T> CopyImmutable<T>(this IList<T> array) =>
         array.ToEnumerable().ToImmutableList();
 
@@ -464,7 +537,7 @@ public static class EnumerableHelper
             => items is null ? Enumerable.Empty<T>() : items;
 
     public static Dictionary<TKey, TValue> DictionaryFromKeys<TKey, TValue>(IEnumerable<TKey> keys, TValue? defaultValue = default)
-                where TKey : notnull
+        where TKey : notnull
     {
         var result = new Dictionary<TKey, TValue>();
         foreach (var key in keys)
@@ -479,8 +552,8 @@ public static class EnumerableHelper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T[] EmptyArray<T>()
-        => Array.Empty<T>();
+    public static T[] EmptyArray<T>() =>
+        Array.Empty<T>();
 
     /// <summary>
     /// Compares two IEnumerable objects for equality.
@@ -508,21 +581,6 @@ public static class EnumerableHelper
     public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
             => source.Where(x => !exclude(x));
 
-    public static IEnumerable<TSource> Filter<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
-            => source.Where(predicate);
-
-    /// <summary>
-    /// Finds the duplicates in a given IEnumerable of type T.
-    /// </summary>
-    /// <returns>An IEnumerable of type T containing the duplicates.</returns>
-    //public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> items)
-    //{
-    //    //Create a new HashSet to store the items
-    //    var buffer = new HashSet<T>();
-    //    //Return the items from the IEnumerable collection that are not added to the HashSet
-    //    return items.Where(x => !buffer.Add(x));
-    //}
-
     public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> source)
     {
         var buffer = new HashSet<T>();
@@ -534,9 +592,6 @@ public static class EnumerableHelper
             }
         }
     }
-
-    public static bool HasDuplicates<T>(this IEnumerable<T> source) =>
-        FindDuplicates(source).Any();
 
     /// <summary>
     /// Applies a folder function to each item in the IEnumerable and returns the result.
@@ -575,11 +630,6 @@ public static class EnumerableHelper
             yield return action(item);
         }
     }
-    //public static (TItems Items, IEnumerable<TResult> Results) ForEach<TItems, TItem, TResult>([DisallowNull] this TItems items, [DisallowNull] Func<TItem, TResult> action)
-    //    where TItems: IEnumerable<TItem>
-    //{
-    //    return (items, items.ForEach(action));
-    //}
 
     /// <summary>
     /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and applies an action to
@@ -603,6 +653,11 @@ public static class EnumerableHelper
         }
     }
 
+    //public static (TItems Items, IEnumerable<TResult> Results) ForEach<TItems, TItem, TResult>([DisallowNull] this TItems items, [DisallowNull] Func<TItem, TResult> action)
+    //    where TItems: IEnumerable<TItem>
+    //{
+    //    return (items, items.ForEach(action));
+    //}
     /// <summary>
     /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and performs an action
     /// on each item.
@@ -646,7 +701,7 @@ public static class EnumerableHelper
     /// <param name="items">The collection of items.</param>
     /// <param name="action">The action to execute for each item.</param>
     public static void ForEachParallel<TItem>(IEnumerable<TItem> items, Action<TItem> action)
-            => Parallel.ForEach(items, action);
+        => Parallel.ForEach(items, action);
 
     /// <summary>
     /// Recursively iterates through a tree of objects, performing an action on each node.
@@ -661,7 +716,7 @@ public static class EnumerableHelper
     /// It takes in a root node, a function to get the children of a node, an action to perform on the root node, and an action to perform on each child node.
     ///</remarks>
     public static void ForEachTreeNode<T>(T root, Func<T, IEnumerable<T>>? getChildren, Action<T>? rootAction, Action<T, T>? childAction)
-                        where T : class
+        where T : class
     {
         //If the root node is null, return
         if (root is null)
@@ -684,8 +739,8 @@ public static class EnumerableHelper
     /// <summary>
     /// Executes a set of functions in parallel and combines the results using a join function.
     /// </summary>
-    public static TOutput Fork<TInput, TOutput>(this IEnumerable<Func<TInput, TOutput>> prongs, Func<IEnumerable<TOutput>, TOutput> joinFunc, TInput input)
-            => joinFunc(prongs.Select(x => x(input)));
+    public static TOutput Fork<TInput, TOutput>(this IEnumerable<Func<TInput, TOutput>> prongs, Func<IEnumerable<TOutput>, TOutput> joinFunc, TInput input) =>
+        joinFunc(prongs.Select(x => x(input)));
 
     /// <summary>
     /// Gets all elements from a given root element and its children using a provided function.
@@ -784,11 +839,25 @@ public static class EnumerableHelper
     /// Groups the items in the given IEnumerable and returns a collection of tuples containing the
     /// item and its count.
     /// </summary>
-    public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items)
-            => items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
+    public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items) =>
+        items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
+
+    /// <summary>
+    /// Finds the duplicates in a given IEnumerable of type T.
+    /// </summary>
+    /// <returns>An IEnumerable of type T containing the duplicates.</returns>
+    //public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> items)
+    //{
+    //    //Create a new HashSet to store the items
+    //    var buffer = new HashSet<T>();
+    //    //Return the items from the IEnumerable collection that are not added to the HashSet
+    //    return items.Where(x => !buffer.Add(x));
+    //}
+    public static bool HasDuplicates<T>(this IEnumerable<T> source) =>
+        FindDuplicates(source).Any();
 
     public static TEnumerable IfEach<TEnumerable, TItem>(this TEnumerable source, Func<TItem, bool> condition, Action<TItem> trueness, Action<TItem> falseness)
-            where TEnumerable : IEnumerable<TItem>
+        where TEnumerable : IEnumerable<TItem>
     {
         Check.MustBeArgumentNotNull(source);
         Check.MustBeArgumentNotNull(condition);
@@ -811,8 +880,8 @@ public static class EnumerableHelper
     /// <summary>
     /// Returns the given items if it is not empty, otherwise returns the default values.
     /// </summary>
-    public static IEnumerable<T?> IfEmpty<T>(this IEnumerable<T?>? items, [DisallowNull] IEnumerable<T?> defaultValues)
-            => items?.Any() is true ? items : defaultValues;
+    public static IEnumerable<T?> IfEmpty<T>(this IEnumerable<T?>? items, [DisallowNull] IEnumerable<T?> defaultValues) =>
+        items?.Any() is true ? items : defaultValues;
 
     public static IEnumerable<int> IndexesOf<T>(this IEnumerable<T> source, T item)
     {
@@ -858,11 +927,11 @@ public static class EnumerableHelper
         }
     }
 
-    public static bool IsSame<T>(this IEnumerable<T>? items1, IEnumerable<T>? items2)
-        => (items1 == null && items2 == null) || (items1 != null && items2 != null && (items1.Equals(items2) || items1.SequenceEqual(items2)));
+    public static bool IsSame<T>(this IEnumerable<T>? items1, IEnumerable<T>? items2) =>
+        (items1 == null && items2 == null) || (items1 != null && items2 != null && (items1.Equals(items2) || items1.SequenceEqual(items2)));
 
-    public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> mapper)
-        => source.Select(mapper);
+    public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> mapper) =>
+        source.Select(mapper);
 
     public static IEnumerable<T> Merge<T>(params IEnumerable<T>[] enumerables)
     {
@@ -884,7 +953,7 @@ public static class EnumerableHelper
     }
 
     public static Result<TValue?> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key)
-        where TKey : notnull
+            where TKey : notnull
     {
         Check.MustBeArgumentNotNull(dic);
 
@@ -898,7 +967,7 @@ public static class EnumerableHelper
     }
 
     public static Result<KeyValuePair<TKey, TValue>> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic)
-        where TKey : notnull
+            where TKey : notnull
     {
         Check.MustBeArgumentNotNull(dic);
 
@@ -974,7 +1043,7 @@ public static class EnumerableHelper
     /// Removes all null values from the given IEnumerable of type TSource.
     /// </summary>
     public static IEnumerable<TSource> RemoveNulls<TSource>(this IEnumerable<TSource> source)
-            where TSource : class => RemoveDefaults(source);
+        where TSource : class => RemoveDefaults(source);
 
     /// <summary>
     /// Runs all actions in the given enumerable while the predicate returns true.
@@ -1107,47 +1176,66 @@ public static class EnumerableHelper
         return dic;
     }
 
+    /// <summary>
+    /// Slices an IEnumerable into a new sequence based on provided parameters.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the IEnumerable.</typeparam>
+    /// <param name="items">The source IEnumerable to be sliced.</param>
+    /// <param name="start">The starting index for slicing. Default is 0.</param>
+    /// <param name="end">The ending index for slicing. Default is 0 (no end limit).</param>
+    /// <param name="steps">The step size for slicing. Default is 0 (no step limit).</param>
+    /// <returns>An IEnumerable containing the sliced elements.</returns>
     public static IEnumerable<T> Slice<T>(this IEnumerable<T> items, int start = 0, int end = 0, int steps = 0)
     {
         var index = 0;
-        void empty()
-        {
-        }
+
+        // Placeholder empty methods
+        void empty(){}
         bool getTrue() => true;
+
+        // Define increment index actions based on the steps value
         var incIndex = steps switch
         {
-            0 or 1 => (Action)empty,
-            < 1 => () => index--,
-            _ => () => index++,
+            0 or 1 => (Action)empty, // No steps or step size is 1, no change in index
+            < 1 => () => index--, // Negative steps, decrement index
+            _ => () => index++, // Positive steps, increment index
         };
+
+        // Define reset index action based on the steps value
         var resIndex = steps is 0 or 1 ? (Action)empty : () => { index = 0; };
+
+        // Define a condition for returning items based on steps and index
         var shouldReturn = steps is 0 or 1 ? (Func<bool>)getTrue : () => index == 0 || steps == index;
+
         var buffer = items.AsEnumerable();
+
+        // Apply reverse if steps are negative
         if (steps < 0)
         {
             buffer = buffer.Reverse();
         }
-
+        // Apply skip and take based on start and end
         if (start != 0)
         {
             buffer = buffer.Skip(start);
         }
-
         if (end != 0)
         {
             buffer = buffer.Take(end);
         }
 
+        // Yield return sliced items based on conditions
         foreach (var item in buffer)
         {
             if (shouldReturn())
             {
                 yield return item;
-                resIndex();
+                resIndex(); // Reset index after returning an item
             }
-            incIndex();
+            incIndex(); // Increment or decrement index based on steps
         }
     }
+
 
     /// <summary>
     /// Creates an array from a single item.
@@ -1399,23 +1487,21 @@ public static class EnumerableHelper
         }
     }
 
+    /// <summary>
+    /// Helper method for inner aggregation of elements using the specified aggregator function and
+    /// an optional default value.
+    /// </summary>
+    /// <typeparam name="T">The type of elements to be aggregated.</typeparam>
+    /// <param name="items">The array of elements to be aggregated.</param>
+    /// <param name="aggregator">A function that specifies how to aggregate elements.</param>
+    /// <param name="defaultValue">An optional default value to use when the array is empty.</param>
+    /// <returns>The aggregated result of the array elements.</returns>
     private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!) =>
         items switch
         {
-            [] => defaultValue,
-            [var item] => item,
-            { Length: 2 } => aggregator(items[0], items[1]),
-            [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue))
+            [] => defaultValue, // Return the default value if the array is empty.
+            [var item] => item, // Return the single item if there's only one element.
+            { Length: 2 } => aggregator(items[0], items[1]), // Aggregate two elements using the aggregator function.
+            [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue)) // Recursively aggregate remaining elements.
         };
-
-    public static IEnumerable<U> CastIf<T, U>(this IEnumerable<T> source)
-    {
-        foreach (var item in source)
-        {
-            if (item is U u)
-            {
-                yield return u;
-            }
-        }
-    }
 }
