@@ -27,10 +27,22 @@ public static class ObjectHelper
     public static T CheckDbNull<T>(in object? o, in T defaultValue, in Func<object, T> converter)
         => IsDbNull(o) ? defaultValue : converter.Invoke(o);
 
+    /// <summary>
+    /// Determines whether an object contains properties that implement a specified interface.
+    /// </summary>
+    /// <param name="obj">The object to check for properties implementing the interface.</param>
+    /// <param name="type">The interface type to check for.</param>
+    /// <returns>
+    /// True if the object has properties implementing the specified interface, otherwise false.
+    /// </returns>
     public static bool Contains(in object? obj, Type type)
         => obj is not null && obj.GetType()
                 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .Any(property => property.PropertyType.FindInterfaces((m, filterCriteria) => m.FullName == type.FullName, null).Any());
+                .Any(property =>
+                    property.PropertyType.FindInterfaces(
+                        (m, filterCriteria) => m.FullName == type.FullName, // Check if the interface's full name matches the specified type's full name.
+                        null)
+                    .Any()); // Check if any interface implementation matches the specified type.
 
     /// <summary>
     /// Generates the lazy singleton instance.
@@ -269,9 +281,6 @@ public static class ObjectHelper
         return property is not null ? (TPropertyType?)property.GetValue(obj, null) : default;
     }
 
-    public static PropertyInfo? GetProp<TDeclaringType>(string propName)
-        => typeof(TDeclaringType).GetProperty(propName);
-
     /// <summary> Gets the value of a property of a given object. </summary> <typeparam
     /// name="TPropertyType">The type of the property.</typeparam> <param name="obj">The
     /// object.</param> <param name="propName">The name of the property.</param> <param
@@ -421,40 +430,6 @@ public static class ObjectHelper
 
     public static dynamic props(this object o) =>
         _propsExpando.GetOrCreateValue(o);
-
-    /// <summary>
-    /// Search deeply for specific objects
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="roots">The roots.</param>
-    /// <param name="getChildren">The get children.</param>
-    /// <param name="isTarget">The is target.</param>
-    /// <returns>The objects</returns>
-    public static IEnumerable<T> RecursiveSearchFor<T>(IEnumerable<T> roots, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
-    {
-        foreach (var root in roots)
-        {
-            foreach (var result in lookForRecursive((root, root), getChildren, isTarget))
-            {
-                yield return result;
-            }
-        }
-
-        static IEnumerable<T> lookForRecursive((T Child, T Root) item, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
-        {
-            if ((!item.Child?.Equals(item.Root) ?? item.Root is null) && isTarget(item.Child))
-            {
-                yield return item.Root;
-            }
-            foreach (T child in getChildren(item.Child))
-            {
-                foreach (var result in lookForRecursive((child, item.Root), getChildren, isTarget))
-                {
-                    yield return result;
-                }
-            }
-        }
-    }
 
     public static IEnumerable<T> Repeat<T>(T value, int count)
     {

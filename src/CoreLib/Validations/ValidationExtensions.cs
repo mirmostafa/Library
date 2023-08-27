@@ -10,8 +10,8 @@ using Library.Results;
 
 namespace Library.Validations;
 
-[DebuggerStepThrough]
-[StackTraceHidden]
+//[DebuggerStepThrough]
+//[StackTraceHidden]
 public static class ValidationExtensions
 {
     /// <summary>
@@ -104,8 +104,8 @@ public static class ValidationExtensions
     /// <summary>
     /// Adds a rule to the validation set that checks if the specified property is not null.
     /// </summary>
-    public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, object>> propertyExpression) =>
-        vrs.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(x));
+    public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, object>> propertyExpression, string? paramName = null) =>
+        vrs.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(x), paramName);
 
     public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, object>> propertyExpression, Func<Exception> onError) =>
         vrs.InnerAddRule(propertyExpression, x => x is not null, onError, x => new NullValueValidationException(x));
@@ -113,17 +113,14 @@ public static class ValidationExtensions
     public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, object>> propertyExpression, Func<string> onErrorMessage) =>
         vrs.InnerAddRule(propertyExpression, x => x is not null, null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
 
-    public static ValidationResultSet<TValue> NotNullOrEmpty<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, string>> propertyExpression, Func<Exception> onError = null) =>
-        vrs.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), onError, x => new NullValueValidationException(x));
+    public static ValidationResultSet<TValue> NotNullOrEmpty<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, string>> propertyExpression, Func<Exception> onError = null, string? paramName = null) =>
+        vrs.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), onError, x => new NullValueValidationException(x), paramName: paramName);
 
     public static ValidationResultSet<TValue> NotNullOrEmpty<TValue>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, string>> propertyExpression, Func<string> onErrorMessage) =>
         vrs.InnerAddRule(propertyExpression, x => !string.IsNullOrEmpty(x), null, x => new NullValueValidationException(onErrorMessage?.Invoke() ?? x));
 
     public static ValidationResultSet<TValue> RuleFor<TValue>(this ValidationResultSet<TValue> vrs, Func<TValue, bool> isValid, Func<Exception> onError) =>
         vrs.InnerAddRule(isValid, onError);
-
-    public static ValidationResultSet<TValue> RuleFor<TValue>(this ValidationResultSet<TValue> vrs, (Func<TValue, bool> IsValid, Func<Exception> OnError) rule) =>
-        vrs.InnerAddRule(rule.IsValid, rule.OnError);
 
     /// <summary>
     /// Adds a rule to the validation set with a custom error message.
@@ -140,8 +137,8 @@ public static class ValidationExtensions
     public static ValidationResultSet<TValue> ThrowOnFail<TValue>(this ValidationResultSet<TValue> vrs) =>
         vrs.Fluent(InnerBuild(CheckBehavior.ThrowOnFail, vrs.Value, vrs.Rules));
 
-    private static Func<Exception> GetOnError<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<string, Exception> onError) =>
-        () => onError(ObjectHelper.GetPropertyInfo(vrs.Value, propertyExpression).Name);
+    private static Func<Exception> GetOnError<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<string, Exception> onError, string? paramName = null) =>
+        () => onError(paramName ?? ObjectHelper.GetPropertyInfo(vrs.Value, propertyExpression).Name);
 
     /// <summary>
     /// Adds a rule to the validation result set.
@@ -198,16 +195,16 @@ public static class ValidationExtensions
     /// <param name="onError">The error function.</param>
     /// <param name="onErrorAlternative">The alternative error function.</param>
     /// <returns>The validation result set.</returns>
-    [DebuggerStepThrough]
-    [StackTraceHidden]
-    private static ValidationResultSet<TValue> InnerAddRule<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<string, Exception> onErrorAlternative)
+    //[DebuggerStepThrough]
+    //[StackTraceHidden]
+    private static ValidationResultSet<TValue> InnerAddRule<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<string, Exception> onErrorAlternative, string? paramName = null)
     {
         Checker.MustBeArgumentNotNull(vrs);
         Checker.MustBeArgumentNotNull(propertyExpression);
         Checker.MustBeArgumentNotNull(isValid);
 
         [DebuggerStepThrough] bool validator(TValue x) => isValid(Invoke(propertyExpression, x));
-        var error = onError ?? vrs.GetOnError(propertyExpression, onErrorAlternative.ArgumentNotNull());
+        var error = onError ?? vrs.GetOnError(propertyExpression, onErrorAlternative.ArgumentNotNull(), paramName);
         return InnerAddRule(vrs, validator, error);
     }
 

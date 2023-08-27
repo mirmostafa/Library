@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-using Library.Exceptions;
+﻿using Library.Exceptions;
 using Library.Globalization;
 using Library.Validations;
 
@@ -57,8 +55,8 @@ public static class NumberHelper
     /// Generates a random number between the given min and max values. If no min or max values are
     /// provided, the default min and max values are used.
     /// </summary>
-    public static int RandomNumber(int? min = null, int? max = null)
-        => getRandomizerMethod(min, max)();
+    public static int RandomNumber(int? min = null, int? max = null) =>
+        GetRandomizerMethod(min, max)();
 
     /// <summary>
     /// Generates a sequence of random numbers within a specified range.
@@ -68,16 +66,7 @@ public static class NumberHelper
     /// <param name="max">The maximum value of the random numbers.</param>
     /// <returns>A sequence of random numbers within the specified range.</returns>
     public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null)
-        => Enumerable.Range(0, count).Select(_ => getRandomizerMethod(min, max)());
-
-    public static IEnumerable<int> Range(int stop)
-    {
-        var x = 0;
-        while (x < stop)
-        {
-            yield return ++x;
-        }
-    }
+        => Enumerable.Range(0, count).Select(_ => GetRandomizerMethod(min, max)());
 
     /// <summary>
     /// Generates a sequence of integers within a specified range.
@@ -114,18 +103,8 @@ public static class NumberHelper
     /// <summary>
     /// Generates a sequence of integers from 0 to the specified end value, with a specified step.
     /// </summary>
-    public static IEnumerable<int> Range(int end, int step = 1)
-        => Range(0, end, step);
-
-    [Obsolete("Subject to delete", true)]
-    public static async IAsyncEnumerable<int> RangeAsync(int start, int count)
-    {
-        await Task.Yield();
-        for (var i = 0; i < count; i++)
-        {
-            yield return start + i;
-        }
-    }
+    public static IEnumerable<int> Range(int end, int step = 1) =>
+        Range(0, end, step);
 
     /// <summary>
     /// Converts a string to a cultural number based on the specified language and corrects Persian
@@ -160,7 +139,7 @@ public static class NumberHelper
     /// <returns>The Persian equivalent of the number.</returns>
     public static string ToPersian(int number)
     {
-        var persianNumbers = PersianTools.PersianDigits.Select(x => x.ToString()).ToImmutableArray();
+        var persianNumbers = PersianTools.PersianDigits.Select(x => x.ToString()).ToArray();
         var result = "";
         while (number > 0)
         {
@@ -229,11 +208,11 @@ public static class NumberHelper
     /// <summary>
     /// Converts an integer to a string using the specified format and default value.
     /// </summary>
-    public static string ToString(this int? number, string format = "0", int defaultValue = 0)
-        => (number ?? defaultValue).ToString(format);
+    public static string ToString(this int? number, string format = "0", int defaultValue = 0) =>
+        (number ?? defaultValue).ToString(format);
 
-    private static Func<int> getRandomizerMethod(int? min, int? max)
-        => (min, max) switch
+    private static Func<int> GetRandomizerMethod(int? min, int? max) =>
+        (min, max) switch
         {
             (null, null) => Random.Shared.Next,
             (null, not null) => () => Random.Shared.Next(max.Value),

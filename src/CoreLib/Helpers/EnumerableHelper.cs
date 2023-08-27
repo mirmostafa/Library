@@ -981,6 +981,40 @@ public static class EnumerableHelper
     }
 
     /// <summary>
+    /// Search deeply for specific objects
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="roots">The roots.</param>
+    /// <param name="getChildren">The get children.</param>
+    /// <param name="isTarget">The is target.</param>
+    /// <returns>The objects</returns>
+    public static IEnumerable<T> RecursiveSearchFor<T>(IEnumerable<T> roots, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
+    {
+        foreach (var root in roots)
+        {
+            foreach (var result in lookForRecursive((root, root), getChildren, isTarget))
+            {
+                yield return result;
+            }
+        }
+
+        static IEnumerable<T> lookForRecursive((T Child, T Root) item, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
+        {
+            if ((!item.Child?.Equals(item.Root) ?? item.Root is null) && isTarget(item.Child))
+            {
+                yield return item.Root;
+            }
+            foreach (T child in getChildren(item.Child))
+            {
+                foreach (var result in lookForRecursive((child, item.Root), getChildren, isTarget))
+                {
+                    yield return result;
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Reduces a sequence of nullable values using the specified reducer function.
     /// </summary>
     /// <typeparam name="T">The type of the elements of source.</typeparam>
@@ -1190,7 +1224,9 @@ public static class EnumerableHelper
         var index = 0;
 
         // Placeholder empty methods
-        void empty(){}
+        void empty()
+        {
+        }
         bool getTrue() => true;
 
         // Define increment index actions based on the steps value
@@ -1235,7 +1271,6 @@ public static class EnumerableHelper
             incIndex(); // Increment or decrement index based on steps
         }
     }
-
 
     /// <summary>
     /// Creates an array from a single item.

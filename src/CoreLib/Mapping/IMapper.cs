@@ -12,6 +12,7 @@ public interface IMapper
 {
     TDestination Map<TDestination>(in object source) where TDestination : class, new();
 
+    [return: NotNullIfNotNull(nameof(source))]
     TDestination? Map<TSource, TDestination>(in TSource source, in TDestination destination) where TDestination : class;
 
     [return: MaybeNull]

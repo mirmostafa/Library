@@ -79,11 +79,11 @@ public static class LoggingHelper
     /// <param name="exceptionFormat">The exception format.</param>
     /// <returns>A tuple containing the result and the logger.</returns>
     public static async Task<(TResult? Result, TLogger Logger)> DebugBlockAsync<TLogger, TResult>(
-                [DisallowNull] this TLogger logger, // this keyword allows the method to be called as an extension method on the TLogger type
-                [DisallowNull] Func<Task<TResult>> action, // Func is a delegate type that represents a function that takes no parameters and returns a value of type TResult
-                string start, // start is a string that will be logged if it is not empty
-                string end, // end is a string that will be logged if it is not empty
-                string? exceptionFormat = null) where TLogger : ILogger // exceptionFormat is an optional string that will be used to format the exception message if it is not empty
+        [DisallowNull] this TLogger logger, // this keyword allows the method to be called as an extension method on the TLogger type
+        [DisallowNull] Func<Task<TResult>> action, // Func is a delegate type that represents a function that takes no parameters and returns a value of type TResult
+        string start, // start is a string that will be logged if it is not empty
+        string end, // end is a string that will be logged if it is not empty
+        string? exceptionFormat = null) where TLogger : ILogger // exceptionFormat is an optional string that will be used to format the exception message if it is not empty
     {
         Check.MustBeArgumentNotNull(action); // check if the action argument is not null
         try
@@ -124,7 +124,7 @@ public static class LoggingHelper
     /// <param name="sender">The sender of the message.</param>
     /// <param name="time">The time of the message.</param>
     public static void Error(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
-                => container?.Logger?.Debug(message, sender, time);
+        => container?.Logger?.Debug(message, sender, time);
 
     /// <summary>
     /// Handles the reporter events for the specified logger.
@@ -134,7 +134,7 @@ public static class LoggingHelper
     /// <param name="reporter">The reporter.</param>
     /// <returns>The logger.</returns>
     public static TLogger HandleReporterEvents<TLogger>(this TLogger logger, IProgressReport reporter)
-            where TLogger : ILogger
+        where TLogger : ILogger
     {
         reporter.Reported -= Reporter_Reported;
         reporter.Ended -= Reporter_Ended;

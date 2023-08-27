@@ -1108,17 +1108,6 @@ public static class StringHelper
         }
     }
 
-    [Obsolete("Subject to delete", true)]
-    public static IEnumerable<string> Split(this string value, int groupSize)
-    {
-        Check.MustBeArgumentNotNull(value);
-
-        for (var x = 0; x < value.Length; x += groupSize)
-        {
-            yield return value.Slice(x, Math.Min(groupSize, value.Length - x));
-        }
-    }
-
     /// <summary>
     /// Splits a camel case string into separate words.
     /// </summary>
@@ -1288,9 +1277,20 @@ public static class StringHelper
     public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars)
         => values.Select(t => t.Trim(trimChars));
 
+    /// <summary>
+    /// Trims the specified trailing substring from the end of a string, if present.
+    /// </summary>
+    /// <param name="s">The input string to be trimmed.</param>
+    /// <param name="trim">The substring to be removed from the end of the input string.</param>
+    /// <returns>
+    /// If the input string is null, returns null.
+    /// If the input string ends with the specified 'trim' substring, returns the input string without the 'trim' substring.
+    /// Otherwise, returns the original input string.
+    /// </returns>
     [return: NotNullIfNotNull(nameof(s))]
     public static string? TrimEnd(this string? s, string trim) =>
         s == null ? null : s.EndsWith(trim) ? s[..^trim.Length] : s;
+
 
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.

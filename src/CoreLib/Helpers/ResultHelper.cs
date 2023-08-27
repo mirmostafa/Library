@@ -48,7 +48,7 @@ public static class ResultHelper
         (IsSucceed, Value) = (result.IsSucceed, result.Value);
 
     public static TResult LogDebug<TResult>(this TResult result, ILogger logger, [CallerMemberName] object? sender = null, DateTime? time = null)
-                    where TResult : ResultBase
+        where TResult : ResultBase
     {
         if (result.IsSucceed)
         {
@@ -99,7 +99,7 @@ public static class ResultHelper
 
     public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath)
     {
-        Validations.Check.MustBeArgumentNotNull(filePath);
+        Checker.MustBeArgumentNotNull(filePath);
         return result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
     }
 
@@ -175,9 +175,18 @@ public static class ResultHelper
         return Result<TValue1>.From(result, value1);
     }
 
+    /// <summary>
+    /// Tries to parse the input object as a <typeparamref name="TResult"/> object and retrieves the result.
+    /// </summary>
+    /// <typeparam name="TResult">The type of <see cref="ResultBase"/> to parse the input as.</typeparam>
+    /// <param name="input">The input object to parse.</param>
+    /// <param name="result">When this method returns, contains the parsed <typeparamref name="TResult"/> object if successful, or the default value if parsing fails.</param>
+    /// <returns><c>true</c> if the parsing is successful and the result is a success, <c>false</c> otherwise.</returns>
+    /// <remarks>The method sets the <paramref name="result"/> parameter to the parsed object and checks if the parsing is successful by evaluating <see cref="ResultBase.IsSucceed"/>.</remarks>
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase =>
         (result = input).IsSucceed;
-    
+
+
     //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
     //x public static async Task<bool> TryParseAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
     //x     => (result = await input).IsSucceed;
