@@ -219,4 +219,8 @@ public static class NumberHelper
             (not null, not null) => () => Random.Shared.Next(min.Value, max.Value),
             (not null, null) => () => throw new NotSupportedException()
         };
+
+    [Obsolete("Use `System.Nullable<T>.GetValueOrDefault()` instead.", true)]
+    public static long IfNull(this long? value, long defaultValue) =>
+        value ?? defaultValue;
 }
