@@ -32,7 +32,8 @@ public sealed class CommonException : ExceptionBase, IException
     {
     }
 
-    public CommonException(string message, string? instruction = null, string? title = null, string? details = null, Exception? inner = null, object? owner = null) : base(message, instruction, title, details, inner, owner)
+    public CommonException(string message, string? instruction = null, string? title = null, string? details = null, Exception? inner = null, object? owner = null) 
+        : base(message, instruction, title, details, inner, owner)
     {
     }
 }

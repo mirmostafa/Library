@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Library.Helpers;
+namespace Library.BusinessServices;
 
 public static class ServiceHelper
 {
@@ -38,11 +38,11 @@ public static class ServiceHelper
         where TViewModel : IHasKey<long?>
     {
         // Check if model and dbContext are not null
-        if (!Check.IfArgumentIsNull(model?.Id).TryParse(out var res1))
+        if (!Checker.IfArgumentIsNotNull(model?.Id).TryParse(out var res1))
         {
             return res1;
         }
-        if (!Check.IfArgumentIsNull(dbContext).TryParse(out var res2))
+        if (!Checker.IfArgumentIsNotNull(dbContext).TryParse(out var res2))
         {
             return res2;
         }
@@ -64,7 +64,7 @@ public static class ServiceHelper
         if (detach ?? persist)
         {
             var entity = dbContext.Set<TDbEntity>().Where(e => id == e.Id).First();
-            _ = DbContextHelper.Detach(dbContext, entity);
+            _ = dbContext.Detach(entity);
         }
 
         // Log the deletion
@@ -267,7 +267,9 @@ public static class ServiceHelper
         [DisallowNull] DbContext dbContext,
         [DisallowNull] TViewModel model,
         [DisallowNull] Func<TViewModel, TDbEntity?> convert,
-        bool persist = true, CancellationToken cancellationToken = default)
+        bool persist = true,
+        (bool UseTransaction, IDbContextTransaction? Transaction)? transactionInfo = null,
+        CancellationToken cancellationToken = default)
         where TViewModel : ICanSetKey<long?>
         where TDbEntity : class, IIdenticalEntity<long>
         where TService : IAsyncWrite<TViewModel>, IAsyncValidator<TViewModel>, IAsyncSaveChanges, ILoggerContainer
@@ -279,7 +281,7 @@ public static class ServiceHelper
                 dbContext.Add,
                 null,
                 persist,
-                (true, null),
+                transactionInfo ?? (true, null),
                 service.SaveChangesAsync,
                 onCommitted: (m, e) => m.Id = e.Id,
                 logger: service.Logger, cancellationToken: cancellationToken);
@@ -370,18 +372,12 @@ public static class ServiceHelper
         where TDbEntity : class, IIdenticalEntity<TId>
         where TId : notnull
     {
+        Checker.MutBeNotNull(manipulate);
+        Checker.MustBeNotNull(convertToEntity);
         //! Check that all arguments are not null
-        if (Check.IfArgumentIsNull(model).TryParse(out var res1))
+        if (Checker.IfArgumentIsNotNull(model).TryParse(out var res1))
         {
             return getResult(res1);
-        }
-        if (Check.IfArgumentIsNull(manipulate).TryParse(out var res2))
-        {
-            return getResult(res2);
-        }
-        if (Check.IfArgumentIsNull(convertToEntity).TryParse(out var res3))
-        {
-            return getResult(res3);
         }
 
         //! Log that manipulation has started
@@ -389,11 +385,6 @@ public static class ServiceHelper
         {
             logger?.Debug($"Manipulation started. Entity: {nameof(TDbEntity)}, Action:{nameof(manipulate)}");
         }
-
-        //! Setup transaction
-        var transaction = persist && transactionInfo is { } t and { UseTransaction: true }
-            ? await dbContext.Database.BeginTransactionAsync(cancellationToken)
-            : null;
 
         //! Validate manipulation
         if (validatorAsync is not null)
@@ -410,6 +401,11 @@ public static class ServiceHelper
             .NotNull(() => "Entity cannot be null.").Fluent(cancellationToken) // Cannot be null
             .IfTrue(onCommitting is not null, x => onCommitting!(x)).GetValue(); // On Before commit
 
+        //! Setup transaction
+        var transaction = persist && transactionInfo is { } t and { UseTransaction: true }
+            ? await dbContext.Database.BeginTransactionAsync(cancellationToken)
+            : null;
+
         //! Execute manipulation
         var entry = manipulate(entity);
 
@@ -419,11 +415,13 @@ public static class ServiceHelper
         {
             try
             {
-                if (transactionInfo?.UseTransaction is true && transaction is not null)
+                if (transaction is not null)
                 {
                     await transaction.CommitAsync(cancellationToken);
                 }
-                saveResult = await (saveChanges is not null ? saveChanges(cancellationToken) : CodeHelper.CatchResultAsync(() => dbContext.SaveChangesAsync(cancellationToken)));
+                saveResult = await (saveChanges is not null
+                    ? saveChanges(cancellationToken)
+                    : CodeHelper.CatchResultAsync(() => dbContext.SaveChangesAsync(cancellationToken)));
                 if (saveResult.IsSucceed && onCommitted is not null)
                 {
                     onCommitted(model, entity);
@@ -465,7 +463,7 @@ public static class ServiceHelper
     #region RegisterServices
 
     public static IServiceCollection RegisterServices<TService>(this IServiceCollection services, Assembly assembly)
-        => RegisterServices<TService>(services, assembly, assembly);
+        => services.RegisterServices<TService>(assembly, assembly);
 
     /// <summary>
     /// Registers services of type TService from the specified interface and service assemblies.
@@ -476,7 +474,7 @@ public static class ServiceHelper
     /// <param name="serviceModule">The service module.</param>
     /// <returns>The service collection.</returns>
     public static IServiceCollection RegisterServices<TService>(this IServiceCollection services, Type interfaceModule, Type serviceModule)
-            => RegisterServices<TService>(services, interfaceModule.Assembly, serviceModule.Assembly);
+            => services.RegisterServices<TService>(interfaceModule.Assembly, serviceModule.Assembly);
 
     /// <summary>
     /// Registers services from two assemblies based on a given interface.
@@ -494,7 +492,7 @@ public static class ServiceHelper
             in Action<(IServiceCollection ServiceCollection, Type ServiceInterface, Type ServiceType)>? add = default)
     {
         //Declare a function to add services to the ServiceCollection
-        var addToServices = add ?? (((IServiceCollection ServiceCollection, Type ServiceInterface, Type ServiceType) x) => _ = x.ServiceCollection.AddScoped(x.ServiceInterface, x.ServiceType));
+        var addToServices = add ?? ((x) => _ = x.ServiceCollection.AddScoped(x.ServiceInterface, x.ServiceType));
 
         //Get a list of all interfaces that implement TServiceInterface
         var interfaces = interfaceAsm.GetTypes().Where(t => t.IsInterface && t.GetInterfaces().Contains(typeof(TServiceInterface))).ToList();
@@ -527,7 +525,7 @@ public static class ServiceHelper
     /// <param name="services">The services.</param>
     /// <returns>The services.</returns>
     public static IServiceCollection RegisterServicesWithIService<TStartup>(this IServiceCollection services)
-            => RegisterServices<IService>(services, typeof(TStartup).Assembly);
+            => services.RegisterServices<IService>(typeof(TStartup).Assembly);
 
     #endregion RegisterServices
 
@@ -548,8 +546,8 @@ public static class ServiceHelper
     public static Task<Result<TViewModel>> SaveViewModelAsync<TViewModel>(this IAsyncWrite<TViewModel> service, TViewModel model, bool persist = true)
         where TViewModel : ICanSetKey<long?>
     {
-        Check.MustBeArgumentNotNull(service);
-        Check.MustBeArgumentNotNull(model);
+        Checker.MustBeArgumentNotNull(service);
+        Checker.MustBeArgumentNotNull(model);
 
         //Check if the model's Id is not null and greater than 0
         if (model.Id is { } id && id > 0)

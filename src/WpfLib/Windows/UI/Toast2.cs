@@ -82,7 +82,7 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
 
     public Toast2 AddButton(Button button)
     {
-        Check.IfArgumentIsNull(button);
+        Check.IfArgumentIsNotNull(button);
         return this.Do(_ =>
             {
                 var id = button.Id ?? Guid.NewGuid().ToString();

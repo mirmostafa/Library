@@ -108,18 +108,20 @@ public static class ControlHelper
         return selector;
     }
 
-    public static Selector BindItemsSourceToEnum<TEnum>(this Selector selector, TEnum? selectedItem = null) where TEnum : struct => BindItemsSource(selector, Enum.GetValues(typeof(TEnum)), null, selectedItem);
+    public static Selector BindItemsSourceToEnum<TEnum>(this Selector selector, TEnum? selectedItem = null) where TEnum : struct => 
+        BindItemsSource(selector, Enum.GetValues(typeof(TEnum)), null, selectedItem);
 
-    public static TreeViewItem BindNewItem(object dataContext, string? header = null) => new TreeViewItem().BindDataContext(dataContext, header);
+    public static TreeViewItem BindNewTreeViewItem(object dataContext, string? header = null) => 
+        new TreeViewItem().BindDataContext(dataContext, header);
 
-    public static TreeViewItem BindNewItems(this TreeViewItem parentItem, IEnumerable items)
+    public static TreeViewItem BindNewTreeViewItems(this TreeViewItem parentItem, IEnumerable items)
     {
         Check.MustBeArgumentNotNull(parentItem);
         if (items is not null)
         {
             foreach (var item in items)
             {
-                _ = parentItem.Items.Add(BindNewItem(item));
+                _ = parentItem.Items.Add(BindNewTreeViewItem(item));
             }
         }
 

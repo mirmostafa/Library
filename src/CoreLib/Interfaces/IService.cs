@@ -166,6 +166,7 @@ public interface IDbEntityToViewModelConverter<out TViewModel, in TDbEntity>
     /// </summary>
     /// <param name="entity">The entity.</param>
     /// <returns></returns>
+    [return: NotNullIfNotNull(nameof(entity))]
     TViewModel? ToViewModel(TDbEntity? entity);
 }
 
@@ -259,6 +260,7 @@ public interface IViewModelToDbEntityConverter<in TViewModel, out TDbEntity>
     /// </summary>
     /// <param name="model">The model.</param>
     /// <returns></returns>
+    [return: NotNullIfNotNull(nameof(model))]
     TDbEntity? ToDbEntity(TViewModel? model);
 }
 

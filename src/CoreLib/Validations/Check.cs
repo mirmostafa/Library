@@ -37,8 +37,8 @@ public sealed class Check
     public static Result<TValue> If<TValue>(TValue value, in bool notOk, in Func<Exception> getErrorMessage) =>
         notOk ? Result<TValue>.CreateFailure(getErrorMessage(), value) : Result<TValue>.CreateSuccess(value);
 
-    public static Result<TValue> IfArgumentIsNull<TValue>(TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
-        If(obj, obj is null, () => new NullValueValidationException(argName!));
+    public static Result<TValue> IfArgumentIsNotNull<TValue>(TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
+        If(obj, obj is not null, () => new NullValueValidationException(argName!));
 
     /// <summary>
     /// Throws an exception if the specified boolean is false.
