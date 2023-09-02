@@ -22,7 +22,7 @@ public readonly struct GenerateCodeResult(in Code? main, in Code? partial)
 }
 
 [Immutable]
-public readonly struct GenerateCodesParameters(in bool generateMainCode = true, in bool generatePartialCode = true, in bool generateUiCode = false)
+public readonly struct GenerateCodesParameters(in bool generateMainCode = true, in bool generatePartialCode = true, in bool generateUiCode = true)
 {
     public bool GenerateMainCode { get; } = generateMainCode;
     public bool GeneratePartialCode { get; } = generatePartialCode;

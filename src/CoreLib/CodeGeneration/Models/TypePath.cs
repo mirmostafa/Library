@@ -3,7 +3,8 @@
 namespace Library.CodeGeneration.Models;
 
 [Immutable]
-public readonly struct TypePath : IEquatable<TypePath>
+//public readonly struct TypePath : IEquatable<TypePath>
+public sealed class TypePath : IEquatable<TypePath>
 {
     public TypePath(in string? name, in string? nameSpace = null)
         => (this.Name, this.NameSpace) = SplitTypePath(Validate(name), nameSpace);
@@ -95,9 +96,6 @@ public readonly struct TypePath : IEquatable<TypePath>
 
     public override bool Equals(object? obj)
         => obj is TypePath path && this.Equals(path);
-
-    public bool Equals(TypePath other)
-        => (this.Name, this.NameSpace) == (other.Name, other.NameSpace);
 
     public override int GetHashCode()
         => this.Name?.GetHashCode() ?? 0 + this.NameSpace?.GetHashCode() ?? 0;
