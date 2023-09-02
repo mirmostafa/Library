@@ -34,14 +34,14 @@ public class Result<TValue>(
     public TValue Value { get; init; } = value;
 
     /// <summary>
-    /// Combines multiple <see cref="Result{TValue}"/> objects by applying a specified addition operation to their values.
+    /// Combines multiple <see cref="Result{TValue}"/> objects by applying a specified addition
+    /// operation to their values.
     /// </summary>
-    /// <param name="results">An array of<see cref="Result{TValue}"/> objects to be
-    /// combined.</param>
-    /// <param name="add">The addition operation to be applied
-    /// to the values.</param>
-    /// <returns>A combined <see cref="Result{TValue}"/> object with the sum of the values and
-    /// other combined properties.</returns>
+    /// <param name="results">An array of <see cref="Result{TValue}"/> objects to be combined.</param>
+    /// <param name="add">The addition operation to be applied to the values.</param>
+    /// <returns>
+    /// A combined <see cref="Result{TValue}"/> object with the sum of the values and other combined properties.
+    /// </returns>
     public static Result<TValue> Combine(IEnumerable<Result<TValue>> results, Func<TValue, TValue, TValue> add) =>
         Combine(add, results.ToArray());
 
@@ -50,8 +50,7 @@ public class Result<TValue>(
     /// </summary>
     /// <param name="add">The addition operation to be applied to the values.</param>
     /// <param name="resultArray">An array of Result objects to be combined.</param>
-    /// <returns>A combined Result object with the sum of the values and other combined properties.
-    /// </returns>
+    /// <returns>A combined Result object with the sum of the values and other combined properties.</returns>
     public static Result<TValue> Combine(Func<TValue, TValue, TValue> add, params Result<TValue>[] resultArray)
     {
         Checker.MustBe(resultArray is not null and { Length: > 0 }, () => $"{nameof(resultArray)} cannot be empty.");
@@ -135,7 +134,7 @@ public class Result<TValue>(
     /// <summary>
     /// Creates a Result with a failure status and an Exception.
     /// </summary>
-    /// <param name="message">The nessage to be stored in the Result.</param>
+    /// <param name="message">The message to be stored in the Result.</param>
     /// <param name="value">The value to be stored in the Result.</param>
     /// <returns>A Result with a failure status and an Exception.</returns>
     public static Result<TValue?> CreateFailure(in string message, in TValue? value) =>

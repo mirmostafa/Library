@@ -36,6 +36,7 @@ public static class StringHelper
     /// Adds the given string to the end of the current string.
     /// </summary>
     [Pure]
+    [return: NotNullIfNotNull(nameof(s))]
     public static string AddEnd(this string s, in string s1) =>
         string.Concat(s, s1);
 
@@ -43,6 +44,7 @@ public static class StringHelper
     /// Adds the given string to the start of the current string.
     /// </summary>
     [Pure]
+    [return: NotNullIfNotNull(nameof(s))]
     public static string AddStart(this string s, in string s1)
         => string.Concat(s1, s);
 
@@ -880,21 +882,18 @@ public static class StringHelper
         => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
 
     /// <summary>
-    /// Removes the end of a string if it matches the specified value.
+    /// Trims the specified trailing substring from the end of a string, if present.
     /// </summary>
-    /// <param name="str">The string to remove the end from.</param>
-    /// <param name="oldValue">The value to remove from the end of the string.</param>
-    /// <param name="comparison">The comparison type to use when comparing the end of the string.</param>
-    /// <returns>The string with the end removed if it matches the specified value.</returns>
-    public static string RemoveEnd(this string str, in string oldValue, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
-    {
-        _ = str.ArgumentNotNull(nameof(str));
-        return oldValue.IsNullOrEmpty()
-            ? str
-            : str.EndsWith(oldValue, comparison)
-                ? str.Slice(0, str.Length - oldValue.Length)
-                : str;
-    }
+    /// <param name="s">The input string to be trimmed.</param>
+    /// <param name="trim">The substring to be removed from the end of the input string.</param>
+    /// <returns>
+    /// If the input string is null, returns null.
+    /// If the input string ends with the specified 'trim' substring, returns the input string without the 'trim' substring.
+    /// Otherwise, returns the original input string.
+    /// </returns>
+    [return: NotNullIfNotNull(nameof(s))]
+    public static string? TrimEnd(this string? s, string trim) =>
+        s == null ? null : s.EndsWith(trim) ? s[..^trim.Length] : s;
 
     /// <summary>
     /// Removes the start of a string if it matches the given value.
@@ -1276,21 +1275,6 @@ public static class StringHelper
     /// </summary>
     public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars)
         => values.Select(t => t.Trim(trimChars));
-
-    /// <summary>
-    /// Trims the specified trailing substring from the end of a string, if present.
-    /// </summary>
-    /// <param name="s">The input string to be trimmed.</param>
-    /// <param name="trim">The substring to be removed from the end of the input string.</param>
-    /// <returns>
-    /// If the input string is null, returns null.
-    /// If the input string ends with the specified 'trim' substring, returns the input string without the 'trim' substring.
-    /// Otherwise, returns the original input string.
-    /// </returns>
-    [return: NotNullIfNotNull(nameof(s))]
-    public static string? TrimEnd(this string? s, string trim) =>
-        s == null ? null : s.EndsWith(trim) ? s[..^trim.Length] : s;
-
 
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.
