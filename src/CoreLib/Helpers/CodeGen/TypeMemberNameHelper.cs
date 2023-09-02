@@ -47,22 +47,32 @@ public static class TypeMemberNameHelper
             return string.Empty;
         }
 
-        var (classFullData, genericParamsFullData) = GetFullData(fullName);
-
-        var result = genericParamsFullData.Any()
-            ? $"{classFullData.Name}<{genericParamsFullData.Select(gpf => gpf.IsNullable ? $"{gpf.Name}?" : gpf.Name).Merge(", ")}"
-            : classFullData.Name;
-        //TODO موقت
-        if (result.Any(c => c == '<'))
+        string result;
+        if (!fullName.Contains('.'))
         {
-            result = $"{result}>";
+            result = fullName;
         }
-        if (classFullData.IsNullable)
+        else if (!fullName.Contains('<'))
         {
-            result = $"{result}?";
+            result = fullName.Split('.').Last();
         }
-        //result = result.Remove("?");
-        return result!;
+        else
+        {
+            var generics = fullName.Split('<');
+            result = null!;
+            foreach (var generic in generics)
+            {
+                if (result.IsNullOrEmpty())
+                {
+                    result = generic.Split(".").Last();
+                }
+                else
+                {
+                    result += $"<{generic.Split(".").Last()}";
+                }
+            }
+        }
+        return result;
     }
 
     public static string GetNameSpace(in string? fullName)
@@ -71,12 +81,20 @@ public static class TypeMemberNameHelper
         return (m?.Contains('.') ?? false) ? m[..m.LastIndexOf(".")] : string.Empty;
     }
 
-    public static IEnumerable<string> GetNameSpaces(in string fullName)
+    public static IEnumerable<string> GetNameSpaces(string fullName)
     {
-        var (classFullData, genericParamsFullData) = GetFullData(fullName);
-        var result = EnumerableHelper.ToEnumerable(classFullData.NameSpace)
-            .AddRangeImmuted(genericParamsFullData.Select(gpf => gpf.NameSpace)).Compact();
-        return result;
+        //var (classFullData, genericParamsFullData) = GetFullData(fullName);
+        //var result = EnumerableHelper.ToEnumerable(classFullData.NameSpace)
+        //    .AddRangeImmuted(genericParamsFullData.Select(gpf => gpf.NameSpace)).Compact();
+        //return result;
+        var items = fullName.Remove(">").Split('<');
+        foreach (var item in items)
+        {
+            if (item.Contains('.'))
+            {
+                yield return item[..item.LastIndexOf('.')];
+            }
+        }
     }
 
     public static string ToArgName(in string name)
@@ -114,11 +132,11 @@ public static class TypeMemberNameHelper
         else
         {
             result = memberName.StartsWithAny(Enumerable.Range(0, 9).Select(x => x.ToString()))
-                ? (new(false, "Illegal character."))
+                ? new(false, "Illegal character.")
                 : memberName.Contains(' ')
-                            ? (new(false, "Illegal character."))
+                            ? new(false, "Illegal character.")
                             : memberName.StartsWithAny("$", "!", "#", "@", "%", "^", "&", "*", "(", ")", "-", "+", "/", "\\")
-                                        ? (new(false, "Illegal character."))
+                                        ? new(false, "Illegal character.")
                                         : ((bool IsValid, string? ErrorContent))(true, null);
         }
         return result.IsValid ? memberName! : throw new ValidationException(result.ErrorContent!);

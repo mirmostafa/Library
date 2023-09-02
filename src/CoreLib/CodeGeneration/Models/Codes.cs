@@ -16,9 +16,10 @@ public sealed class Codes(params Code?[] items) : ReadOnlyCollection<Code?>(item
     , IEnumerable<Code?>
 {
     public Codes(IEnumerable<Code?> items)
-        : this(items.ToArray())
-    {
-    }
+        : this(items.ToArray()) { }
+
+    public Codes(IEnumerable<Codes> allCodes)
+        : this(allCodes.SelectAll()) { }
 
     public static Codes Empty { get; } = NewEmpty();
     public Code? this[string name] => this.FirstOrDefault(x => x?.Name == name);

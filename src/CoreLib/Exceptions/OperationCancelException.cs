@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 
 using Library.Windows;
 
 namespace Library.Exceptions;
+
 [Serializable]
 public sealed class OperationCancelException : ExceptionBase, IException
 {
     public OperationCancelException()
+        : base("Operation cancelled.")
     {
     }
 

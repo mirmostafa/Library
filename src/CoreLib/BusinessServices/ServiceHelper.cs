@@ -375,7 +375,7 @@ public static class ServiceHelper
         Checker.MutBeNotNull(manipulate);
         Checker.MustBeNotNull(convertToEntity);
         //! Check that all arguments are not null
-        if (Checker.IfArgumentIsNotNull(model).TryParse(out var res1))
+        if (!Checker.IfArgumentIsNotNull(model).TryParse(out var res1))
         {
             return getResult(res1);
         }
@@ -597,7 +597,7 @@ public static class ServiceHelper
     /// <param name="persist">Whether or not to persist the changes.</param>
     /// <param name="transaction">The transaction to commit.</param>
     /// <returns>A result indicating the success of the operation.</returns>
-    public static async Task<Result<int>> SubmitChangesAsync<TService>(this TService service, bool persist = true, IDbContextTransaction? transaction = null)
+    public static async Task<Result<int>> SubmitChangesAsync<TService>(this TService service, bool persist = true, IDbContextTransaction? transaction = null, CancellationToken token = default)
         where TService : IAsyncSaveChanges, IResetChanges
     {
         // If persist is false, return a success result with -1
@@ -609,11 +609,11 @@ public static class ServiceHelper
         // If a transaction is provided, commit it
         if (transaction is not null)
         {
-            await transaction.CommitAsync();
+            await transaction.CommitAsync(token);
         }
 
         // Save the changes and store the result
-        var result = await service.SaveChangesAsync();
+        var result = await service.SaveChangesAsync(token);
 
         // If the result is successful, reset the changes
         if (result.IsSucceed)

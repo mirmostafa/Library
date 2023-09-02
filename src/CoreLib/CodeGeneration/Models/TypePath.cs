@@ -36,7 +36,7 @@ public readonly struct TypePath : IEquatable<TypePath>
         var result = new StringBuilder(part1);
         foreach (var part in parts)
         {
-            _ = result.Append(part.EndsWith(".") ? part : string.Concat(part, "."));
+            _ = result.Append($".{part.Trim('.')}");
         }
         return result.ToString();
     }

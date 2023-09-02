@@ -31,14 +31,14 @@ public sealed class Check
     public static Result If(in bool notOk) =>
         notOk ? Result.Failure : Result.Success;
 
-    public static Result If(in bool notOk, in Func<Exception> getErrorMessage) =>
-        notOk ? Result.CreateFailure(getErrorMessage()) : Result.CreateSuccess();
+    public static Result If(in bool ok, in Func<Exception> getErrorMessage) =>
+        !ok ? Result.CreateFailure(getErrorMessage()) : Result.CreateSuccess();
 
     public static Result<TValue> If<TValue>(TValue value, in bool notOk, in Func<Exception> getErrorMessage) =>
         notOk ? Result<TValue>.CreateFailure(getErrorMessage(), value) : Result<TValue>.CreateSuccess(value);
 
     public static Result<TValue> IfArgumentIsNotNull<TValue>(TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
-        If(obj, obj is not null, () => new NullValueValidationException(argName!));
+        If(obj, obj is null, () => new NullValueValidationException(argName!));
 
     /// <summary>
     /// Throws an exception if the specified boolean is false.
