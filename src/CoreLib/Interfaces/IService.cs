@@ -160,7 +160,9 @@ public interface IDbEntityToViewModelConverter<out TViewModel, in TDbEntity>
     /// </summary>
     /// <param name="entities">The entity.</param>
     /// <returns></returns>
-    IEnumerable<TViewModel?> ToViewModel(IEnumerable<TDbEntity?> entities);
+    //IEnumerable<TViewModel?> ToViewModel(IEnumerable<TDbEntity?> entities);
+    IEnumerable<TViewModel?> ToViewModel(IEnumerable<TDbEntity?> entities) =>
+        entities.Select(ToViewModel);
 
     /// <summary>
     /// Create a new model from the database entity.
@@ -254,7 +256,8 @@ public interface IViewModelToDbEntityConverter<in TViewModel, out TDbEntity>
     /// </summary>
     /// <param name="models">The model.</param>
     /// <returns></returns>
-    IEnumerable<TDbEntity?> ToDbEntity(IEnumerable<TViewModel?> models);
+    IEnumerable<TDbEntity?> ToDbEntity(IEnumerable<TViewModel?> models) =>
+        models.Select(ToDbEntity);
 
     /// <summary>
     /// Converts the model to database entity.
