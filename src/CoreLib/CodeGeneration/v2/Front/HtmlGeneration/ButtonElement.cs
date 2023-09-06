@@ -8,7 +8,7 @@ public sealed class ButtonElement : HtmlElement<ButtonElement>
     public static ButtonElement New(string caption, params (string Key, string? value)[] attributes)
     {
         var result = new ButtonElement();
-        _ = attributes.ForEachEager(x => result.AddAttribute(x.Key, x.value));
+        _ = attributes.ForEach(x => result.AddAttribute(x.Key, x.value));
         if (caption is not null)
         {
             _ = result.SetInnerHtml(caption);

@@ -4,8 +4,8 @@ using Library.Validations;
 
 namespace Library.Helpers;
 
-//[DebuggerStepThrough]
-//[StackTraceHidden]
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class FluencyHelper
 {
     public static async Task<TInstance> Async<TInstance>(this Fluency<TInstance> instance, Func<Task> funcAsync)
@@ -14,8 +14,8 @@ public static class FluencyHelper
         return instance.Value;
     }
 
-    public static Fluency<TInstance> Fluent<TInstance>(this TInstance o)
-        => new(o);
+    public static Fluency<TInstance> Fluent<TInstance>(this TInstance o) =>
+        new(o);
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action? action)
     {
@@ -23,8 +23,8 @@ public static class FluencyHelper
         return instance;
     }
 
-    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in object? obj)
-        => instance;
+    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in object? obj) =>
+        instance;
 
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Action<TInstance>? action)
     {
@@ -38,14 +38,14 @@ public static class FluencyHelper
         return instance;
     }
 
-    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Func<TInstance> func)
-        => func.Invoke();
+    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Func<TInstance> func) =>
+        func.Invoke();
 
-    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Func<TInstance, TInstance> func)
-        => func.Invoke(instance);
+    public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in Func<TInstance, TInstance> func) =>
+        func.Invoke(instance);
 
-    public static async Task<Fluency<TResult>> Fluent<TFuncResult, TResult>(this object @this, Func<Task<TFuncResult>> funcAsync, Func<TFuncResult, TResult> action)
-        => action(await funcAsync());
+    public static async Task<Fluency<TResult>> Fluent<TFuncResult, TResult>(this object @this, Func<Task<TFuncResult>> funcAsync, Func<TFuncResult, TResult> action) =>
+        action(await funcAsync());
 
     public static async Task<Fluency<TResult>> Fluent<TResult>(this object @this, Func<Task<TResult>> funcAsync, Action action)
     {
@@ -105,23 +105,15 @@ public static class FluencyHelper
         return list;
     }
 
-    public static Fluency<TList> Items<TList, TItem>(this Fluency<TList> list, in Func<TItem, TItem> action, Func<IEnumerable<TItem>, TList> convert) 
+    public static Fluency<TList> Items<TList, TItem>(this Fluency<TList> list, in Func<TItem, TItem> action, Func<IEnumerable<TItem>, TList> convert)
         where TList : IEnumerable<TItem>
     {
         //return new Fluency<TList>(convert(iterate(list.Value, action)));
         return new Fluency<TList>(convert(list.Value.Select(action)));
-
-        static IEnumerable<TItem> iterate(IEnumerable<TItem> items, Func<TItem, TItem> action)
-        {
-            foreach (var item in items)
-            {
-                yield return action(item);
-            }
-        }
     }
 
-    public static (TInstance Instance, TResult Result) Result<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TResult> func)
-                => (instance.Value, func.Invoke());
+    public static (TInstance Instance, TResult Result) Result<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TResult> func) =>
+        (instance.Value, func.Invoke());
 
     public static Fluency<TInstance> With<TInstance>(this Fluency<TInstance> instance, in Action action)
     {
@@ -135,9 +127,9 @@ public static class FluencyHelper
         return instance;
     }
 
-    public static Fluency<TResult> With<TResult>(this Fluency<TResult> instance, in Func<TResult, TResult>? func)
-        => func is null ? instance : Fluency<TResult>.New(func(instance.Value));
+    public static Fluency<TResult> With<TResult>(this Fluency<TResult> instance, in Func<TResult, TResult>? func) =>
+        func is null ? instance : Fluency<TResult>.New(func(instance.Value));
 
-    public static Fluency<TResult> WithNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action)
-        => action(instance);
+    public static Fluency<TResult> WithNew<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TInstance, TResult> action) =>
+        action(instance);
 }

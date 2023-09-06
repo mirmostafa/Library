@@ -7,7 +7,7 @@ namespace Library.Data.SqlServer;
 public static partial class SqlStatementBuilder
 {
     public static ISelectStatement AddColumn([DisallowNull] this ISelectStatement statement, params string[] columns)
-        => statement.ArgumentNotNull().Fluent(() => columns.Compact().ForEach(c => statement.Columns.Add(c)).Build()).GetValue();
+        => statement.ArgumentNotNull().Fluent(() => columns.Compact().CreateIterator(c => statement.Columns.Add(c)).Build()).GetValue();
 
     public static ISelectStatement AddColumns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
         => statement.AddColumn(columns.ToArray());

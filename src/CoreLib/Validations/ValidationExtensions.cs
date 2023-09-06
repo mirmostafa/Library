@@ -10,8 +10,8 @@ using Library.Results;
 
 namespace Library.Validations;
 
-//[DebuggerStepThrough]
-//[StackTraceHidden]
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class ValidationExtensions
 {
     /// <summary>

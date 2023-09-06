@@ -414,7 +414,7 @@ public static class DbContextHelper
         var entities = dbContext.Set<TEntity>().Where(e => ids.Contains(e.Id));
         if (detach)
         {
-            _ = entities.ForEach((Action<TEntity>)(e => dbContext.Entry(e).State = EntityState.Detached));
+            _ = entities.CreateIterator((Action<TEntity>)(e => dbContext.Entry(e).State = EntityState.Detached));
         }
 
         dbContext.Set<TEntity>().RemoveRange(entities);

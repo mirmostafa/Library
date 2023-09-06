@@ -23,21 +23,21 @@ public static partial class SqlStatementBuilder
 
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, string column, object value)
     {
-        statement.ArgumentNotNull(nameof(statement)).ColumnsValue.Add(column.ArgumentNotNull(nameof(column)), value);
+        statement.ArgumentNotNull().ColumnsValue.Add(column.ArgumentNotNull(), value);
         return statement;
     }
 
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, params (string Column, object Value)[] columnsValue)
     {
-        _ = nameof(statement).ArgumentNotNull(nameof(statement));
-        _ = columnsValue.ForEach(cv => statement.Set(cv.Column, cv.Value)).Build();
+        _ = statement.ArgumentNotNull();
+        _ = columnsValue.CreateIterator(cv => statement.Set(cv.Column, cv.Value)).Build();
         return statement;
     }
 
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, IEnumerable<(string Column, object Value)> columnsValue)
     {
-        _ = nameof(statement).ArgumentNotNull(nameof(statement));
-        _ = columnsValue.ForEach(cv => statement.Set(cv.Column, cv.Value));
+        _ = statement.ArgumentNotNull();
+        _ = columnsValue.CreateIterator(cv => statement.Set(cv.Column, cv.Value));
         return statement;
     }
 
@@ -47,7 +47,7 @@ public static partial class SqlStatementBuilder
     public static IUpdateStatement Update() => new UpdateStatement();
 
     public static IUpdateStatement Update([DisallowNull] string tableName)
-        => new UpdateStatement { TableName = tableName.ArgumentNotNull(nameof(tableName)) };
+        => new UpdateStatement { TableName = tableName.ArgumentNotNull() };
 
     public static IUpdateStatement Where([DisallowNull] this IUpdateStatement statement, string? whereClause)
         => statement.Fluent(statement.ArgumentNotNull().WhereClause = whereClause).GetValue();

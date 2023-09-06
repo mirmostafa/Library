@@ -48,6 +48,6 @@ public abstract class NotifyPropertyChanged : INotifyPropertyChanged
 
         backingField = value;
         this.OnPropertyChanged(propertyName);
-        _ = orderPropertyNames.ForEach(this.OnPropertyChanged).Build();
+        _ = orderPropertyNames.CreateIterator(this.OnPropertyChanged).Build();
     }
 }

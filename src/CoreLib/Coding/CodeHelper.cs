@@ -486,45 +486,6 @@ public static class CodeHelper
         => GetCallerMethod();
 
     /// <summary>
-    /// Gets the function.
-    /// </summary>
-    /// <typeparam name="TArg">The type of the argument.</typeparam>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="func">The function.</param>
-    /// <param name="arg">The argument.</param>
-    /// <returns></returns>
-    public static Func<TResult> GetFunc<TArg, TResult>(Func<TArg, TResult> func, TArg arg)
-        => () => func(arg);
-
-    /// <summary>
-    /// Gets the function.
-    /// </summary>
-    /// <typeparam name="TArg1">The type of the arg1.</typeparam>
-    /// <typeparam name="TArg2">The type of the arg2.</typeparam>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="func">The function.</param>
-    /// <param name="arg1">The arg1.</param>
-    /// <param name="arg2">The arg2.</param>
-    /// <returns></returns>
-    public static Func<TResult> GetFunc<TArg1, TArg2, TResult>(Func<TArg1, TArg2, TResult> func, TArg1 arg1, TArg2 arg2)
-        => () => func(arg1, arg2);
-
-    /// <summary>
-    /// Gets the function.
-    /// </summary>
-    /// <typeparam name="TArg1">The type of the arg1.</typeparam>
-    /// <typeparam name="TArg2">The type of the arg2.</typeparam>
-    /// <typeparam name="TArg3">The type of the arg3.</typeparam>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="func">The function.</param>
-    /// <param name="arg1">The arg1.</param>
-    /// <param name="arg2">The arg2.</param>
-    /// <param name="arg3">The arg3.</param>
-    /// <returns></returns>
-    public static Func<TResult> GetFunc<TArg1, TArg2, TArg3, TResult>(Func<TArg1, TArg2, TArg3, TResult> func, TArg1 arg1, TArg2 arg2, TArg3 arg3)
-        => () => func(arg1, arg2, arg3);
-
-    /// <summary>
     /// Determines whether the specified try function has exception.
     /// </summary>
     /// <param name="tryFunc">The try function.</param>

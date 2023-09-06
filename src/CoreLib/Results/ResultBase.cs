@@ -100,7 +100,7 @@ public abstract class ResultBase(
         bool? isSucceed = results.All(x => x.Succeed == null) ? null : results.All(x => x.IsSucceed);
         var status = results.LastOrDefault(x => x.Status is not null)?.Status;
         var message = results.LastOrDefault(x => !x.Message.IsNullOrEmpty())?.Message;
-        var errors = results.SelectMany(x => EnumerableHelper.DefaultIfEmpty(x?.Errors));
+        var errors = results.SelectMany(x => EnumerableHelper.DefaultIfNull(x?.Errors));
         var statusBuffer = results.Where(x => x.Status is not null).Select(x => x.Status).ToList();
         if (statusBuffer.Count > 1)
         {

@@ -7,10 +7,11 @@ public static class UiUtility
     /// <summary>
     ///     Selects an item in a hierarchial ItemsControl using a set of options
     /// </summary>
-    /// <typeparam name="T">The type of the items present in the control and in the options</typeparam>
+    /// <typeparam name="TItem">The type of the items present in the control and in the options</typeparam>
     /// <param name="control">The ItemsControl to select an item in</param>
     /// <param name="info">The options used for the selection process</param>
-    public static void SetSelectedItem<T>(ItemsControl control, SetSelectedInfo<T> info)
+    public static TItemsControl SetSelectedItem<TItemsControl, TItem>(TItemsControl control, SetSelectedInfo<TItem> info)
+        where TItemsControl : ItemsControl
     {
         Check.MustBeArgumentNotNull(control);
         Check.MustBeArgumentNotNull(info?.Items);
@@ -25,7 +26,7 @@ public static class UiUtility
             {
                 // Convert the item if a conversion method exists. Otherwise
                 // just cast the item to the desired type.
-                var convertedItem = info.ConvertMethod is not null ? info.ConvertMethod(item) : (T)item;
+                var convertedItem = info.ConvertMethod is not null ? info.ConvertMethod(item) : (TItem)item;
 
                 // Compare the converted item with the item in the chain
                 if (info.CompareMethod is not null && info.CompareMethod(convertedItem, currentItem))
@@ -77,5 +78,6 @@ public static class UiUtility
 
             control.ItemContainerGenerator.StatusChanged += selectWhenReadyMethod;
         }
+        return control;
     }
 }

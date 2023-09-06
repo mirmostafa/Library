@@ -84,6 +84,6 @@ public static class Pluralizer
         var token = word.ArgumentNotNull(nameof(word)).ToLower(CultureInfo.InvariantCulture);
         return keepables.ContainsKey(token)
             ? RestoreCase(word, token)
-            : replacables.ContainsKey(token) ? RestoreCase(word, replacables.GetByKey(token)) : ApplyRules(token, word, rules);
+            : replacables.ContainsKey(token) ? RestoreCase(word, replacables.GetValueByKey(token)) : ApplyRules(token, word, rules);
     }
 }

@@ -2,6 +2,7 @@
 
 using Library.DesignPatterns.Markers;
 using Library.Dynamic;
+using Library.Interfaces;
 using Library.Validations;
 
 namespace Library.CodeGeneration.Models;
@@ -9,40 +10,77 @@ namespace Library.CodeGeneration.Models;
 [Fluent]
 [Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public class Code(in string name, in Language language, in string statement, in bool isPartial = false, in string? fileName = null) : IEquatable<Code>
+public class Code(in string name, in Language language, in string statement, in bool isPartial = false, in string? fileName = null) :
+    IEquatable<Code>,
+    IEmpty<Code>
 {
-    public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
-    protected readonly dynamic ExtraProperties = new Expando();
-
+    private static Code? _empty;
 
     /// <summary>
-    /// Constructor for Code class with parameters.
+    /// Constructor for the <see cref="Code"/> with parameters.
     /// </summary>
-    /// <param name="Name">Name of the code.</param>
-    /// <param name="Language">Language of the code.</param>
-    /// <param name="Statement">Statement of the code.</param>
-    /// <param name="IsPartial">Whether the code is partial or not.</param>
-    /// <returns>An instance of Code class.</returns>
+    /// <param name="name">Name of the code.</param>
+    /// <param name="language">Language of the code.</param>
+    /// <param name="statement">Statement of the code.</param>
+    /// <param name="isPartial">Whether the code is partial or not.</param>
+    /// <param name="fileName">File name of the code.</param>
+    /// <returns>An instance of the <see cref="Code"/>.</returns>
     public Code(in (string Name, Language Language, string Statement, bool IsPartial) data)
         : this(data.Name, data.Language, data.Statement, data.IsPartial) { }
 
+    /// <summary>
+    /// Constructor for the <see cref="Code"/> with parameters.
+    /// </summary>
+    /// <param name="name">Name of the code.</param>
+    /// <param name="language">Language of the code.</param>
+    /// <param name="statement">Statement of the code.</param>
+    /// <param name="isPartial">Whether the code is partial or not.</param>
+    /// <param name="fileName">File name of the code.</param>
+    /// <returns>An instance of the <see cref="Code"/>.</returns>
     public Code(in (string Name, Language Language, string Statement, bool IsPartial, string? FileName) data)
         : this(data.Name, data.Language, data.Statement, data.IsPartial, data.FileName) { }
 
+    /// <summary>
+    /// Constructor for the <see cref="Code"/> with a copy of the original Code instance.
+    /// </summary>
+    /// <param name="original">Original Code instance to copy.</param>
     public Code(Code original)
         : this(original.Name, original.Language, original.Statement, original.IsPartial, original.FileName)
     {
     }
 
+    /// <summary>
+    /// Represents an empty instance of <see cref="Code"/> class.
+    /// </summary>
+    public static Code Empty { get; } = _empty ??= new(string.Empty, Languages.None, string.Empty);
+
+    public dynamic ExtraProperties { get; } = new Expando();
+
+    /// <summary>
+    /// Gets the file name of the code. If the file name is null or empty, generate a new file name
+    /// based on the code's name, language, and partial status.
+    /// </summary>
     public string FileName => this._FileName.IfNullOrEmpty(GenerateFileName(this.Name, this.Language, this.IsPartial));
 
+    /// <summary>
+    /// Gets whether the code is partial or not.
+    /// </summary>
     public bool IsPartial { get; } = isPartial;
 
+    /// <summary>
+    /// Gets the language of the code.
+    /// </summary>
     public Language Language { get; } = language;
 
-    public string Name { get; } = name.ArgumentNotNull().ToString();
+    /// <summary>
+    /// Gets the name of the code.
+    /// </summary>
+    public string Name { get; } = name.ArgumentNotNull();
 
-    public string Statement { get; init; } = statement.ArgumentNotNull().ToString();
+    /// <summary>
+    /// Gets or sets the statement of the code.
+    /// </summary>
+    public string Statement { get; init; } = statement.ArgumentNotNull();
 
     private string? _FileName { get; init; } = fileName;
 
@@ -54,6 +92,9 @@ public class Code(in string name, in Language language, in string statement, in 
 
     public static implicit operator string?(in Code? code) =>
         code?.Statement;
+
+    public static Code NewEmpty() =>
+        new(string.Empty, Languages.None, string.Empty);
 
     public static bool operator !=(Code? left, Code? right) =>
         !(left == right);
@@ -100,16 +141,15 @@ public class Code(in string name, in Language language, in string statement, in 
 
 public static class SourceCodeHelpers
 {
+    public static Codes GatherAll(this IEnumerable<Codes> codes) =>
+        new(codes.SelectAll());
+
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Code? code) =>
-        code is null || code.Equals(Code.Empty);
+            code is null || code.Equals(Code.Empty);
 
     public static Codes ToCodes(this IEnumerable<Code> codes) =>
         new(codes);
 
-    public static Codes GatherAll(this IEnumerable<Codes> codes) =>
-        new(codes.SelectAll());
-
     public static Code WithStatement(this Code code, [DisallowNull] string statement) =>
         new(code) { Statement = statement };
-
 }

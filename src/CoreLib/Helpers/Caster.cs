@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 
+using Library.Results;
+
 namespace Library.Helpers;
 
 public interface ICastable
@@ -29,7 +31,6 @@ public static class Caster
     /// <returns>A new Castable object.</returns>
     public static ICastable Cast(this object? obj)
         => new Castable(obj);
-
 
     /// <summary>
     /// Returns the result of a type match between the given object and the generic type T, or the default value of T if the match fails.
