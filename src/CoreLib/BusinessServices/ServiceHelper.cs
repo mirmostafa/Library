@@ -180,6 +180,32 @@ public static class ServiceHelper
         where TDbEntity : class, IIdenticalEntity<long>
         => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, validatorAsync, dbContext.NotNull().Add, null, persist, (true, null), saveChanges, onCommitted, logger, cancellationToken);
 
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> InsertAsync<TViewModel, TDbEntity>(
+            [DisallowNull] IAsyncWrite<TViewModel> service,
+            [DisallowNull] DbContext dbContext,
+            [DisallowNull] TViewModel model,
+            [DisallowNull] Func<TViewModel, TDbEntity?> convert,
+            Func<TViewModel, Result<TViewModel>>? validator = null,
+            bool persist = true,
+            Func<CancellationToken, Task<Result<int>>>? saveChanges = null,
+            ILogger? logger = null,
+            Func<TDbEntity, TDbEntity>? onCommitting = null,
+            Action<TViewModel, TDbEntity>? onCommitted = null, CancellationToken cancellationToken = default)
+            where TDbEntity : class, IIdenticalEntity<long> =>
+        InnerManipulate<TViewModel, TDbEntity, long>(
+            dbContext,
+            model,
+            convert,
+            (x, _) => validator != null ? Task.FromResult(validator(x)) : Task.FromResult(Result<TViewModel>.CreateSuccess(x)),
+            dbContext.NotNull().Add,
+            null,
+            persist,
+            (true, null),
+            saveChanges,
+            onCommitted,
+            logger,
+            cancellationToken);
+
     /// <summary>
     /// Inserts a new entity into the database asynchronously.
     /// </summary>
@@ -310,6 +336,12 @@ public static class ServiceHelper
         where TDbEntity : class, IIdenticalEntity<long>
         where TService : IAsyncWrite<TViewModel>, IAsyncValidator<TViewModel>, IAsyncSaveChanges
         => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, service.ValidateAsync, dbContext.Attach, onCommitting, persist, (true, null), service.SaveChangesAsync, onCommitted, logger, cancellationToken);
+
+    public static Task<Result<ManipulationResult<TViewModel, TDbEntity?>>> UpdateAsync<TService, TViewModel, TDbEntity>([DisallowNull] TService service, [DisallowNull] DbContext dbContext, [DisallowNull] TViewModel model, [DisallowNull] Func<TViewModel, TDbEntity?> convert, bool persist = true, Func<TViewModel, Result<TViewModel>>? validator = null, Func<TDbEntity, TDbEntity>? onCommitting = null, ILogger? logger = null,
+            Action<TViewModel, TDbEntity>? onCommitted = null, CancellationToken cancellationToken = default)
+        where TDbEntity : class, IIdenticalEntity<long>
+        where TService : IAsyncWrite<TViewModel>, IAsyncSaveChanges
+        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, (x, _) => validator != null ? validator(x).ToAsync() : Result<TViewModel>.CreateSuccess(x).ToAsync(), dbContext.Attach, onCommitting, persist, (true, null), service.SaveChangesAsync, onCommitted, logger, cancellationToken);
 
     /// <summary>
     /// Updates an entity in the database asynchronously.
