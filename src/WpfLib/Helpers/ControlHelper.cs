@@ -45,18 +45,82 @@ public static class ControlHelper
         }
         items.Filter = predicate;
     }
+    /// <summary>
+    ///     Selects an item in a hierarchial ItemsControl using a set of options
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items present in the control and in the options</typeparam>
+    /// <param name="control">The ItemsControl to select an item in</param>
+    /// <param name="info">The options used for the selection process</param>
+    public static TItemsControl SetSelectedItem<TItemsControl, TItem>(TItemsControl control, SetSelectedInfo<TItem> info)
+        where TItemsControl : ItemsControl
+    {
+        Check.MustBeArgumentNotNull(control);
+        Check.MustBeArgumentNotNull(info?.Items);
 
-    public static async Task<Result> AskToSaveIfChangedAsync<TPage>([DisallowNull] this TPage page, [DisallowNull] string ask = "Do you want to save changes?")
-        where TPage : IStatefulPage, IAsyncSavePage =>
-        page.NotNull().IsViewModelChanged
-        ? MsgBox2.AskWithCancel(ask) switch
+        var currentItem = info.Items.First();
+
+        if (control.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+        // Compare each item in the container and look for the next item
+        // in the chain.
         {
-            TaskDialogResult.Cancel or TaskDialogResult.Close => Result.Failure,
-            TaskDialogResult.Yes => await page.SaveDbAsync(),
-            TaskDialogResult.No => Result.Success,
-            _ => Result.Failure
+            foreach (var item in control.Items)
+            {
+                // Convert the item if a conversion method exists. Otherwise
+                // just cast the item to the desired type.
+                var convertedItem = info.ConvertMethod is not null ? info.ConvertMethod(item) : (TItem)item;
+
+                // Compare the converted item with the item in the chain
+                if (info.CompareMethod is not null && info.CompareMethod(convertedItem, currentItem))
+                {
+                    var container = (ItemsControl)control.ItemContainerGenerator.ContainerFromItem(item);
+
+                    // Replace with the remaining items in the chain
+                    info.Items = info.Items.Skip(1);
+
+                    // If no items are left in the chain, then we're finished
+                    if (!info.Items.Any())
+                    {
+                        // Select the last item
+                        if (info.OnSelected is not null)
+                        {
+                            info.OnSelected(container, info);
+                        }
+                    }
+                    else
+                    // Request more items and continue the search
+                    if (info.OnNeedMoreItems is not null)
+                    {
+                        info.OnNeedMoreItems(container, info);
+                        SetSelectedItem(container, info);
+                    }
+
+                    break;
+                }
+            }
         }
-        : Result.Success;
+        else
+        {
+            // If the item containers haven't been generated yet, attach an event
+            // and wait for the status to change.
+            EventHandler? selectWhenReadyMethod = null;
+
+            var method = selectWhenReadyMethod;
+            selectWhenReadyMethod = (ds, de) =>
+            {
+                if (control.ItemContainerGenerator.Status == GeneratorStatus.ContainersGenerated)
+                {
+                    // Stop listening for status changes on this container
+                    control.ItemContainerGenerator.StatusChanged -= method;
+
+                    // Search the container for the item chain
+                    SetSelectedItem(control, info);
+                }
+            };
+
+            control.ItemContainerGenerator.StatusChanged += selectWhenReadyMethod;
+        }
+        return control;
+    }
 
     public static THeaderedItemsControl BindDataContext<THeaderedItemsControl>(this THeaderedItemsControl itemsControl, object dataContext, string? header = null)
                     where THeaderedItemsControl : HeaderedItemsControl

@@ -95,7 +95,7 @@ public static class TreeViewHelper
     /// The method used to convert items in the control to be compared with items in the chain
     /// </param>
     public static void SetSelectedItem<T>(this TreeView treeView, IEnumerable<T> items, Func<T, T, bool> compareMethod, Func<object, T>? convertMethod) =>
-        UiUtility.SetSelectedItem(treeView,
+        ControlHelper.SetSelectedItem(treeView,
             new SetSelectedInfo<T>
             {
                 Items = items,

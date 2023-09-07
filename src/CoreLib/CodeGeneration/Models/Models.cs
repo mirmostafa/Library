@@ -22,11 +22,18 @@ public readonly struct GenerateCodeResult(in Code? main, in Code? partial)
 }
 
 [Immutable]
-public readonly struct GenerateCodesParameters(in bool generateMainCode = true, in bool generatePartialCode = true, in bool generateUiCode = true)
+public readonly struct GenerateCodesParameters
 {
-    public bool GenerateMainCode { get; } = generateMainCode;
-    public bool GeneratePartialCode { get; } = generatePartialCode;
-    public bool GenerateUiCode { get; } = generateUiCode;
+    public GenerateCodesParameters(in bool generateMainCode = true, in bool generatePartialCode = true, in bool generateUiCode = true)
+    {
+        this.GenerateMainCode = generateMainCode;
+        this.GeneratePartialCode = generatePartialCode;
+        this.GenerateUiCode = generateUiCode;
+    }
+
+    public bool GenerateMainCode { get; } = true;
+    public bool GeneratePartialCode { get; } = true;
+    public bool GenerateUiCode { get; } = true;
 }
 
 [Immutable]
