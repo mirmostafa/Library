@@ -8,11 +8,21 @@ public static class NumberHelper
 {
     private static readonly string[] _sizeSuffixes = { "", "K", "M", "G", "T", "P", "E", "Z", "Y" };
 
+    [Obsolete("Use `System.Nullable<T>.GetValueOrDefault()` instead.", true)]
+    public static long IfNull(this long? value, long defaultValue) =>
+            value ?? defaultValue;
+
     /// <summary>
     /// Checks if a given integer is between two other integers.
     /// </summary>
     public static bool IsBetween(this int num, in int min, in int max)
         => num >= min && num <= max;
+
+    public static bool IsNullOrZero(this int? number) =>
+            number is null or 0;
+
+    public static bool IsNullOrZero(params int?[] numbers) =>
+            numbers.All(IsNullOrZero);
 
     /// <summary>
     /// Checks if a given number is a prime number.
@@ -56,7 +66,7 @@ public static class NumberHelper
     /// provided, the default min and max values are used.
     /// </summary>
     public static int RandomNumber(int? min = null, int? max = null) =>
-        GetRandomizerMethod(min, max)();
+        InnerRandomizerMethod(min, max)();
 
     /// <summary>
     /// Generates a sequence of random numbers within a specified range.
@@ -66,7 +76,7 @@ public static class NumberHelper
     /// <param name="max">The maximum value of the random numbers.</param>
     /// <returns>A sequence of random numbers within the specified range.</returns>
     public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null)
-        => Enumerable.Range(0, count).Select(_ => GetRandomizerMethod(min, max)());
+        => Enumerable.Range(0, count).Select(_ => InnerRandomizerMethod(min, max)());
 
     /// <summary>
     /// Generates a sequence of integers within a specified range.
@@ -211,7 +221,7 @@ public static class NumberHelper
     public static string ToString(this int? number, string format = "0", int defaultValue = 0) =>
         (number ?? defaultValue).ToString(format);
 
-    private static Func<int> GetRandomizerMethod(int? min, int? max) =>
+    private static Func<int> InnerRandomizerMethod(int? min, int? max) =>
         (min, max) switch
         {
             (null, null) => Random.Shared.Next,
@@ -219,8 +229,4 @@ public static class NumberHelper
             (not null, not null) => () => Random.Shared.Next(min.Value, max.Value),
             (not null, null) => () => throw new NotSupportedException()
         };
-
-    [Obsolete("Use `System.Nullable<T>.GetValueOrDefault()` instead.", true)]
-    public static long IfNull(this long? value, long defaultValue) =>
-        value ?? defaultValue;
 }
