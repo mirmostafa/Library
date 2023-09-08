@@ -375,7 +375,7 @@ public static class StringHelper
             // Find the end index of the phrase
             var indexOfEnd = str.IndexOf(end, indexOfStart + 1);
             // If the end index is less than 0, return default values
-            return indexOfEnd < 0 ? ((string? Text, int? StartIndex))(default, default) : ((string? Text, int? StartIndex))(str.Substring(indexOfStart + 1, indexOfEnd - indexOfStart - 1), indexOfStart);
+            return indexOfEnd < 0 ? ((string? Text, int? StartIndex))(default, default) : ((string? Text, int? StartIndex))(str.Slice(indexOfStart + 1, indexOfEnd - indexOfStart - 1), indexOfStart);
         }
     }
 
