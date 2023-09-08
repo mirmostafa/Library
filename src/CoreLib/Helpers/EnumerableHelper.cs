@@ -660,7 +660,7 @@ public static class EnumerableHelper
     public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> source)
     {
         var buffer = new HashSet<T>();
-        return source.Where(x => !buffer.Add(x));
+        return source.Where([DebuggerStepThrough] (x) => !buffer.Add(x));
     }
 
     /// <summary>
@@ -1409,7 +1409,7 @@ public static class EnumerableHelper
     /// <summary>
     /// Converts an IEnumerable of type T to an IReadOnlySet of type T.
     /// </summary>
-    public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items)=> 
+    public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items) =>
         ImmutableList.CreateRange(items).ToHashSet();
 
     /// <summary>
@@ -1424,10 +1424,10 @@ public static class EnumerableHelper
     /// failed to determine the count.
     /// </para>
     /// </returns>
-    public static TryMethodResult<int> TryCountNonEnumerated<T>([DisallowNull] this IEnumerable<T> source)=> 
+    public static TryMethodResult<int> TryCountNonEnumerated<T>([DisallowNull] this IEnumerable<T> source) =>
         TryMethodResult<int>.TryParseResult(source.TryGetNonEnumeratedCount(out var count), count);
 
-    public static TryMethodResult<TValue> TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key) 
+    public static TryMethodResult<TValue> TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key)
         where TKey : notnull => TryMethodResult<TValue>.TryParseResult(dic.TryGetValue(key, out var value), value);
 
     public static Dictionary<TKey, TValue> Update<TKey, TValue>(this Dictionary<TKey, TValue> src, Dictionary<TKey, TValue> dst)

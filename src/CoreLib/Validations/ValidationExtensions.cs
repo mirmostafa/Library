@@ -195,8 +195,8 @@ public static class ValidationExtensions
     /// <param name="onError">The error function.</param>
     /// <param name="onErrorAlternative">The alternative error function.</param>
     /// <returns>The validation result set.</returns>
-    //[DebuggerStepThrough]
-    //[StackTraceHidden]
+    [DebuggerStepThrough]
+    [StackTraceHidden]
     private static ValidationResultSet<TValue> InnerAddRule<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<TType, bool> isValid, Func<Exception> onError, Func<string, Exception> onErrorAlternative, string? paramName = null)
     {
         Checker.MustBeArgumentNotNull(vrs);
