@@ -188,8 +188,12 @@ public class Result<TValue>(
         return new Result<TValue>(left.Value, total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
     }
 
+    /// <summary> Converts a Result<TValue> to a Result. </summary>
+    public static Result ToResult(in Result<TValue> result) =>
+        result;
+
     public Result<TValue> Add(Result<TValue> item, Func<TValue, TValue, TValue> add) =>
-        Result<TValue>.Combine(add, item);
+            Result<TValue>.Combine(add, item);
 
     public bool Equals(Result<TValue>? other) => throw new NotImplementedException();
 
@@ -212,7 +216,6 @@ public class Result<TValue>(
     public Task<Result<TValue>> ToAsync() =>
         Task.FromResult(this);
 
-    /// <summary> Converts a Result<TValue> to a Result. </summary>
-    public Result ToResult(in Result<TValue> result) =>
-        result;
+    public Result ToResult() =>
+        this.ToResult();
 }

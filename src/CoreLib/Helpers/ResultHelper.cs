@@ -145,6 +145,11 @@ public static class ResultHelper
     /// <returns>The result of the provided Task.</returns>
     public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(await resultAsync, owner, instruction);
+    public static async Task<TValue> GetValueAsync<TValue>(this Task<Result<TValue>> taskResult)
+    {
+        var result = await taskResult;
+        return result.Value;
+    }
 
     public static async Task<TResult> ThrowOnFailAsync<TResult>(this Task<TResult> resultAsync, object? owner = null, string? instruction = null)
         where TResult : ResultBase =>
