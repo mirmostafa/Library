@@ -1,6 +1,7 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Reflection;
+using System.Reflection.Metadata;
 
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
@@ -687,5 +688,12 @@ public static class CodeDomHelper
             _ = ns.UseNameSpace(nameSpace);
         }
         return ns;
+    }
+
+    public static CodeTypeDeclaration AddAttribute(this CodeTypeDeclaration type, string attributeName, (string Key, string Value) arg)
+    {
+        CodeAttributeDeclaration securityAttribute = new CodeAttributeDeclaration(attributeName, new CodeAttributeArgument(arg.Key, new CodePrimitiveExpression(arg.Value)));
+        type.CustomAttributes.Add(securityAttribute);
+        return type;
     }
 }

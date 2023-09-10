@@ -35,7 +35,11 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
     public TaskRunner<TArg> Then([DisallowNull] Func<TArg, CancellationToken, Task> func) =>
         this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, t) =>
         {
-            await func(x, t);
+            if (!t.IsCancellationRequested)
+            {
+                await func(x, t);
+            }
+
             return x;
         }));
 
@@ -43,30 +47,46 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
         this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, _) => func(x)));
 
     public TaskRunner<TArg> Then(Func<TArg, Task> func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, _) =>
+        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, t) =>
         {
-            await func(x);
+            if (!t.IsCancellationRequested)
+            {
+                await func(x);
+            }
+
             return x;
         }));
 
     public TaskRunner<TArg> Then(Func<Task> func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, _) =>
+        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, t) =>
         {
-            await func();
+            if (!t.IsCancellationRequested)
+            {
+                await func();
+            }
+
             return x;
         }));
 
     public TaskRunner<TArg> Then(Func<CancellationToken, Task> func) =>
         this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, t) =>
         {
-            await func(t);
+            if (!t.IsCancellationRequested)
+            {
+                await func(t);
+            }
+
             return x;
         }));
 
     public TaskRunner<TArg> Then(Action<TArg> func) =>
         this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, t) =>
         {
-            func(x);
+            if (!t.IsCancellationRequested)
+            {
+                func(x);
+            }
+
             return Task.FromResult(x);
         }));
 
@@ -76,7 +96,11 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
     public TaskRunner<TArg> Then(Action func) =>
         this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, t) =>
         {
-            func();
+            if (!t.IsCancellationRequested)
+            {
+                func();
+            }
+
             return Task.FromResult(x);
         }));
 
