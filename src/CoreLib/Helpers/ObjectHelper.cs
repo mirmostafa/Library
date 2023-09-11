@@ -432,10 +432,19 @@ public static class ObjectHelper
     public static dynamic props(this object o) =>
         _propsExpando.GetOrCreateValue(o);
 
+    /// <summary>
+    /// Generates a sequence that contains a specified value repeated a specified number of times.
+    /// </summary>
+    /// <typeparam name="T">The type of the value.</typeparam>
+    /// <param name="value">The value to repeat.</param>
+    /// <param name="count">The number of times to repeat the value.</param>
+    /// <returns>An IEnumerable that contains the repeated value.</returns>
     public static IEnumerable<T> Repeat<T>(T value, int count)
     {
+        // Loops as many times as requested in `count`
         for (var i = 0; i < count; i++)
         {
+            // Returns "value" in the requested count.
             yield return value;
         }
     }

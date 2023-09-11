@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 
 using Library.Results;
 
@@ -13,6 +14,8 @@ public interface ICastable
 /// Provides methods for casting objects to different types.
 /// </summary>
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class Caster
 {
     /// <summary>

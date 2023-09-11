@@ -641,8 +641,8 @@ public static class EnumerableHelper
     /// <returns>True if the two IEnumerables are equal, false otherwise.</returns>
     public static bool Equal<T>(IEnumerable<T> enum1, IEnumerable<T> enum2, bool ignoreIndexes) =>
         ignoreIndexes
-                ? !enum1.ArgumentNotNull().Except(enum2).Any() && !enum2.ArgumentNotNull().Except(enum1).Any()
-                : enum1.SequenceEqual(enum2);
+            ? !enum1.ArgumentNotNull().Except(enum2).Any() && !enum2.ArgumentNotNull().Except(enum1).Any()
+            : enum1.SequenceEqual(enum2);
 
     /// <summary>
     /// Returns a collection of elements from the input sequence that do not satisfy the specified predicate.
@@ -723,46 +723,26 @@ public static class EnumerableHelper
     /// <param name="getRootElements">A function to get the root elements.</param>
     /// <param name="getChildren">A function to get the children of an element.</param>
     /// <returns>An enumerable of all elements.</returns>
-    public static IEnumerable<T> GetAll<T>([DisallowNull] Func<IEnumerable<T>> getRootElements, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
+    public static IEnumerable<T> SelectAll<T>([DisallowNull] this IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
     {
-        // Check that the parameters are not null
-        _ = getRootElements.ArgumentNotNull();
-        _ = getChildren.ArgumentNotNull();
-
-        // Create a list to store the result
-        var result = new List<T>();
-
-        // Iterate through the root elements
-        foreach (var item in getRootElements())
+        foreach (var root in roots)
         {
-            // Add the root element to the result list
-            result.Add(item);
-            // Call the findChildren method to find the children of the root element
-            findChildren(item);
-        }
+            yield return root; // Yield the current root element
 
-        // Return the result list as an enumerable
-        return result.AsEnumerable();
+            var children = getChildren(root); // Get the children of the current root
 
-        // Method to find the children of an element
-        void findChildren(in T item)
-        {
-            // Get the children of the element
-            var children = getChildren(item);
-            // Check if the element has any children
-            if (children?.Any() is true)
+            if (children != null)
             {
-                // Iterate through the children
-                foreach (var child in children)
+                foreach (var child in SelectAll(children, getChildren)) // Recursively iterate over children, yielding the results
                 {
-                    // Add the child to the result list
-                    result.Add(child);
-                    // Call the findChildren method to find the children of the child
-                    findChildren(child);
+                    yield return child;
                 }
             }
         }
     }
+
+    public static IEnumerable<T> Flatten<T>([DisallowNull] IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren) =>
+        roots.SelectAll(getChildren);
 
     /// <summary>
     /// Gets the item from the source collection by the specified key.
@@ -946,40 +926,6 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    /// Search deeply for specific objects
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="roots">The roots.</param>
-    /// <param name="getChildren">The get children.</param>
-    /// <param name="isTarget">The is target.</param>
-    /// <returns>The objects</returns>
-    public static IEnumerable<T> RecursiveSearchFor<T>(IEnumerable<T> roots, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
-    {
-        foreach (var root in roots)
-        {
-            foreach (var result in lookForRecursive((root, root), getChildren, isTarget))
-            {
-                yield return result;
-            }
-        }
-
-        static IEnumerable<T> lookForRecursive((T Child, T Root) item, Func<T, IEnumerable> getChildren, Func<T, bool> isTarget)
-        {
-            if ((!item.Child?.Equals(item.Root) ?? item.Root is null) && isTarget(item.Child))
-            {
-                yield return item.Root;
-            }
-            foreach (T child in getChildren(item.Child))
-            {
-                foreach (var result in lookForRecursive((child, item.Root), getChildren, isTarget))
-                {
-                    yield return result;
-                }
-            }
-        }
-    }
-
-    /// <summary>
     /// Reduces a sequence of nullable values using the specified reducer function.
     /// </summary>
     /// <typeparam name="T">The type of the elements of source.</typeparam>
@@ -1112,22 +1058,6 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    /// Selects all items from a collection of collections and returns them as a single collection.
-    /// </summary>
-    /// <param name="sources">The collection of collections to select from.</param>
-    /// <returns>A single collection containing all items from the source collections.</returns>
-    public static IEnumerable<T> SelectManyAndCompact<T>(this IEnumerable<IEnumerable<T>> sources)
-    {
-        if (sources is not null)
-        {
-            foreach (var item in sources.Where(items => items is not null).SelectMany(items => items))
-            {
-                yield return item;
-            }
-        }
-    }
-
-    /// <summary>
     /// Sets the value of the specified key in the list.
     /// </summary>
     /// <typeparam name="TKey">The type of the key.</typeparam>
@@ -1250,6 +1180,20 @@ public static class EnumerableHelper
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs) where TKey : notnull =>
         pairs?.ToDictionary(pair => pair.Key, pair => pair.Value) ?? new();
 
+    /// <summary>
+    /// Converts a list to a dictionary using a selector function to extract the key-value pairs.
+    /// </summary>
+    /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
+    /// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
+    /// <typeparam name="TListItem">The type of the items in the list.</typeparam>
+    /// <param name="list">The list to convert to a dictionary.</param>
+    /// <param name="selector">A function that maps each item in the list to a key-value pair.</param>
+    /// <returns>A dictionary containing the key-value pairs extracted from the list.</returns>
+    /// <remarks>
+    /// This extension method converts a list to a dictionary by applying a selector function to
+    /// each item in the list. The selector function should return a tuple of the key and value for
+    /// each item.
+    /// </remarks>
     public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue, TListItem>(this IList<TListItem> list, Func<TListItem, (TKey Key, TValue Value)> selector)
         where TKey : notnull
     {
@@ -1272,9 +1216,9 @@ public static class EnumerableHelper
     /// </summary>
     /// <param name="item">The item to convert.</param>
     /// <returns>An IEnumerable containing the item.</returns>
+    /// <remarks>This code creates an IEnumerable of type T and returns the item passed in as an argument.</remarks>
     [return: NotNull]
     public static IEnumerable<T> ToEnumerable<T>(T item)
-    //This code creates an IEnumerable of type T and returns the item passed in as an argument.
     {
         //The yield keyword is used to return the item passed in as an argument.
         yield return item;
@@ -1353,6 +1297,12 @@ public static class EnumerableHelper
         return result.ToEnumerable();
     }
 
+    /// <summary>
+    /// Converts an IEnumerable to an ImmutableArray.
+    /// </summary>
+    /// <typeparam name="T">The type of elements in the IEnumerable.</typeparam>
+    /// <param name="items">The IEnumerable to convert.</param>
+    /// <returns>An ImmutableArray containing the elements of the IEnumerable.</returns>
     public static ImmutableArray<T> ToImmutableArray<T>(IEnumerable<T> items)
     {
         var builder = ImmutableArray.CreateBuilder<T>();
@@ -1470,19 +1420,19 @@ public static class EnumerableHelper
     /// Enumerates the elements of an IEnumerable with the option to cancel the operation.
     /// </summary>
     /// <typeparam name="T">The type of the elements of the IEnumerable.</typeparam>
-    /// <param name="query">The IEnumerable to enumerate.</param>
+    /// <param name="source">The IEnumerable to enumerate.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>An IEnumerable containing the elements of the source sequence.</returns>
-    public static IEnumerable<T> WithCancellation<T>(this IEnumerable<T> query, CancellationToken cancellationToken = default)
+    public static IEnumerable<T> WithCancellation<T>(this IEnumerable<T> source, CancellationToken cancellationToken = default)
     {
         //Check if the query is null
-        if (query is null)
+        if (source is null)
         {
             //If it is, return an empty sequence
             yield break;
         }
         //Get the enumerator for the query
-        using var enumerator = query.GetEnumerator();
+        using var enumerator = source.GetEnumerator();
         //Loop through the query until the cancellation token is requested or the enumerator has no more elements
         while (!cancellationToken.IsCancellationRequested && enumerator.MoveNext())
         {
