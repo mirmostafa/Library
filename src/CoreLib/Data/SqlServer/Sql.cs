@@ -6,12 +6,9 @@ using Library.Validations;
 
 namespace Library.Data.SqlServer;
 
-public sealed class Sql
+public sealed class Sql(string connectionString)
 {
-    public Sql(string connectionString)
-        => this.ConnectionString = connectionString.ArgumentNotNull();
-
-    public string ConnectionString { get; }
+    public string ConnectionString { get; } = connectionString.ArgumentNotNull();
 
     public object DefaultLogSender { get; } = nameof(Sql);
 
@@ -38,11 +35,11 @@ public sealed class Sql
         return result;
     }
 
-    public SqlDataReader ExecuteReader(string query)
-        => new SqlConnection(this.ConnectionString).ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
+    public SqlDataReader ExecuteReader(string query) =>
+        new SqlConnection(this.ConnectionString).ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
 
-    public object? ExecuteScalarCommand(string sql)
-        => this.ExecuteScalarCommand(sql, null);
+    public object? ExecuteScalarCommand(string sql) =>
+        this.ExecuteScalarCommand(sql, null);
 
     public object? ExecuteScalarCommand(string sql, Action<SqlParameterCollection>? fillParams)
     {
@@ -51,8 +48,8 @@ public sealed class Sql
         return result;
     }
 
-    public object? ExecuteScalarQuery(string sql)
-            => this.ExecuteScalarQuery(sql, null);
+    public object? ExecuteScalarQuery(string sql) =>
+        this.ExecuteScalarQuery(sql, null);
 
     public object? ExecuteScalarQuery(string sql, Action<SqlParameterCollection>? fillParams)
     {
@@ -61,8 +58,8 @@ public sealed class Sql
         return result;
     }
 
-    public object? ExecuteStoredProcedure(string spName, Action<SqlParameterCollection>? fillParams = null)
-        => Execute(this.ConnectionString, conn => conn.ExecuteStoredProcedure(spName, fillParams));
+    public object? ExecuteStoredProcedure(string spName, Action<SqlParameterCollection>? fillParams = null) =>
+        Execute(this.ConnectionString, conn => conn.ExecuteStoredProcedure(spName, fillParams));
 
     public void ExecuteTransactionalCommand(string cmdText, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null)
     {
@@ -91,8 +88,8 @@ public sealed class Sql
         }
     }
 
-    public DataSet FillDataSet(string query)
-        => Execute(this.ConnectionString, conn => conn.FillDataSet(query));
+    public DataSet FillDataSet(string query) =>
+        Execute(this.ConnectionString, conn => conn.FillDataSet(query));
 
     public DataSet FillDataSetByTableNames(params string[] tableNames)
     {
@@ -105,15 +102,15 @@ public sealed class Sql
         return result;
     }
 
-    public DataTable FillDataTable(string query)
-        => Execute(this.ConnectionString, conn => conn.FillDataTable(query));
+    public DataTable FillDataTable(string query) =>
+        Execute(this.ConnectionString, conn => conn.FillDataTable(query));
 
     public IEnumerable<DataTable> FillDataTables(params string[] queries)
     {
         using var connection = new SqlConnection(this.ConnectionString);
         using var cmd = connection.CreateCommand();
         using var da = new SqlDataAdapter(cmd);
-        
+
         connection.Open();
         foreach (var query in queries)
         {
@@ -210,8 +207,8 @@ public sealed class Sql
         }
     }
 
-    public IEnumerable<dynamic> Select(string query, Func<SqlDataReader, dynamic> rowFiller)
-        => Execute<IEnumerable<dynamic>>(this.ConnectionString, conn => conn.Select(query, rowFiller).ToList());
+    public IEnumerable<dynamic> Select(string query, Func<SqlDataReader, dynamic> rowFiller) =>
+        Execute<IEnumerable<dynamic>>(this.ConnectionString, conn => conn.Select(query, rowFiller).ToList());
 
     private static TResult Execute<TResult>(string connectionString, Func<SqlConnection, TResult> func)
     {

@@ -1,17 +1,13 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+
 using Library.Data.SqlServer.Dynamics.Collections;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public sealed class StoredProcedure : SqlObject<StoredProcedure, Database>
+public sealed class StoredProcedure(Database owner, string name, string schema, string connectionString) : SqlObject<StoredProcedure, Database>(owner, name, schema, connectionString)
 {
-    private StoredProcedureParams _Params;
-
-    public StoredProcedure(Database owner, string name, string schema, string connectionString)
-        : base(owner, name, schema, connectionString)
-    {
-    }
+    private StoredProcedureParams _params;
 
     public string AssemblyName { get; set; }
     public string Body { get; set; }
@@ -20,19 +16,19 @@ public sealed class StoredProcedure : SqlObject<StoredProcedure, Database>
     public bool IsSystemObject { get; set; }
     public DateTime LastModifiedDate { get; set; }
 
-    public StoredProcedureParams Params => this._Params ??=
-        new StoredProcedureParams(from row in
-                                      (from row in this.Owner.AllParams
-                                       where row.Field<string>("SpName").EqualsTo(this.Name)
-                                       select row).ToList()
-                                  select new StoredProcedureParam(this, row.Field<string>("name"), this.ConnectionString)
-                                  {
-                                      DefaultValue = row.Field("DefaultValue", Convert.ToString),
-                                      Id = row.Field("ID", Convert.ToInt64),
-                                      Length = row.Field("Length", Convert.ToInt32),
-                                      NumericPrecision = row.Field("NumericPrecision", Convert.ToInt32),
-                                      SqlDataType = row.Field("DataType", Convert.ToString)
-                                  });
+    public StoredProcedureParams Params =>
+        this._params ??= new StoredProcedureParams(from row in
+                                                       (from row in this.Owner.AllParams
+                                                        where row.Field<string>("SpName").EqualsTo(this.Name)
+                                                        select row).ToList()
+                                                   select new StoredProcedureParam(this, row.Field<string>("name"), this.ConnectionString)
+                                                   {
+                                                       DefaultValue = row.Field("DefaultValue", Convert.ToString),
+                                                       Id = row.Field("ID", Convert.ToInt64),
+                                                       Length = row.Field("Length", Convert.ToInt32),
+                                                       NumericPrecision = row.Field("NumericPrecision", Convert.ToInt32),
+                                                       SqlDataType = row.Field("DataType", Convert.ToString)
+                                                   });
 
     public new string Schema { get; set; }
 

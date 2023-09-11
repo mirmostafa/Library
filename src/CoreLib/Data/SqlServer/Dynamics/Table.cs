@@ -9,14 +9,9 @@ using static Library.Data.SqlServer.SqlStatementBuilder;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public sealed class Table : SqlObject<Table, Database>, IEnumerable
+public sealed class Table(Database owner, string name, string? schema = null, string? connectionString = null) : SqlObject<Table, Database>(owner, name, schema, connectionString ?? owner.ConnectionString), IEnumerable
 {
     private Columns? _columns;
-
-    public Table(Database owner, string name, string? schema = null, string? connectionString = null)
-        : base(owner, name, schema, connectionString ?? owner.ConnectionString)
-    {
-    }
 
     public Columns Columns { get => this._columns ??= this.GetColumns(); set => this._columns = value; }
     public DateTime CreateDate { get; set; }
