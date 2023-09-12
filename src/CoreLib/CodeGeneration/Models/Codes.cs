@@ -15,6 +15,8 @@ public sealed class Codes(params Code?[] items) : ReadOnlyCollection<Code?>(item
     , IIndexable<Language, IEnumerable<Code>>
     , IEnumerable<Code?>
 {
+    private static Codes? _empty;
+
     /// <summary>
     /// Initializes a new instance of the Codes class with a given collection of Code items.
     /// </summary>
@@ -32,7 +34,7 @@ public sealed class Codes(params Code?[] items) : ReadOnlyCollection<Code?>(item
     /// <summary>
     /// Represents an empty instance of Codes class.
     /// </summary>
-    public static Codes Empty { get; } = NewEmpty();
+    public static Codes Empty { get; } = _empty ??= NewEmpty();
 
     /// <summary>
     /// Gets the Code item with the specified name.
@@ -79,7 +81,6 @@ public sealed class Codes(params Code?[] items) : ReadOnlyCollection<Code?>(item
     /// <returns>A new Codes instance that combines the Code items from both input instances.</returns>
     public static Codes operator +(Codes c1, Codes c2) =>
         new(c1.AsEnumerable().AddRangeImmuted(c2.AsEnumerable()));
-
 
     /// <summary>
     /// Adds a new Code item to the Codes collection.

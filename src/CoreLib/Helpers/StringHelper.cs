@@ -892,8 +892,8 @@ public static class StringHelper
     /// Otherwise, returns the original input string.
     /// </returns>
     [return: NotNullIfNotNull(nameof(s))]
-    public static string? TrimEnd(this string? s, string trim) =>
-        s == null ? null : s.EndsWith(trim) ? s[..^trim.Length] : s;
+    public static string? TrimEnd(this string? s, string trim, StringComparison comparisonType = StringComparison.Ordinal) =>
+        s == null ? null : s.EndsWith(trim, comparisonType) ? s[..^trim.Length] : s;
 
     /// <summary>
     /// Removes the start of a string if it matches the given value.
