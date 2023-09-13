@@ -72,32 +72,33 @@ public sealed class CheckValidationTest
         => Check.MustBeNotNull(this._string_sample1, () => this._string_sample1);
 
     [Fact]
-    public void IfNotNullTrueObject()
-        => Check.MustBeNotNull(this._string_sample1, this._string_sample1);
+    public void MustBeNotNull_TrueObject()
+        => Check.MustBeNotNull(this._string_sample1, nameof(this._string_sample1));
 
     [Fact]
-    public void IfNotValidNotNullStringTest()
+    public void MustBeNotNull_NotNullStringTest()
         => Check.MustBeNotNull(this._string_sample1, () => new NullValueValidationException());
 
     [Fact]
-    public void IfNotValidNullStringTest()
-        => Assert.Throws<NullValueValidationException>(() => Check.MustBeNotNull(this._string_null, () => new NullValueValidationException()));
+    public void MustBeNotNull_NullStringTest()
+        => Assert.Throws<NullValueValidationException>(() => 
+        Check.MustBeNotNull(this._string_null, () => new NullValueValidationException()));
 
     [Fact]
     public void IfTrueTest()
         => Check.MustBe(true);
 
     [Fact]
-    public void MustBeArgumentNotNullNullTest()
+    public void IfArgumentIsNotNull_NullTest()
     {
-        var result = Check.IfArgumentIsNull(this._string_null);
+        var result = Check.IfArgumentIsNotNull(this._string_null);
         Assert.False(result);
     }
 
     [Fact]
     public void MustBeFalse()
     {
-        string? a = null;
+        string a = null;
         var result = Check.If(a is null, () => new ValidationException());
         Assert.False(result);
         _ = Assert.IsType<ValidationException>(result.Status);

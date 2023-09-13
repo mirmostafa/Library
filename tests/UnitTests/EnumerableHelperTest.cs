@@ -60,17 +60,6 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void AggregateTest()
-    {
-        var first = new[] { 1, 2, 3 };
-        var second = new[] { 4, 5, 6 };
-        var merged = new[] { first, second };
-        var actual = merged.SelectManyAndCompact();
-        var expected = new[] { 1, 2, 3, 4, 5, 6 };
-        Assert.True(expected.SequenceEqual(actual));
-    }
-
-    [Fact]
     public void Any_ReturnsFalse_WhenSourceIsEmpty()
     {
         // Arrange

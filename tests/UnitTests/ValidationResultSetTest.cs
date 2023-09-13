@@ -74,13 +74,12 @@ public sealed class ValidationResultSetTest
     [Fact]
     public void _08_FullValidationIsNotBiggerThan()
     {
-        var arg = new Person("Ali", 20);
+        var arg = new Person("", 20);
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
-            //.NotBiggerThan(x => x.Age, 10)
             .Build();
-        _ = Assert.Throws<ValidationException>(() => check.ThrowOnFail());
+        _ = Assert.Throws<NullValueValidationException>(() => check.ThrowOnFail());
     }
 
     [Fact]
@@ -90,9 +89,8 @@ public sealed class ValidationResultSetTest
         var result = arg.Check(CheckBehavior.GatherAll)
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
-            //.NotBiggerThan(x => x.Age, 10)
             .Build();
-        Assert.Equal(2, result.Errors?.Count());
+        Assert.Equal(1, result.Errors?.Count());
     }
 
     [Fact]

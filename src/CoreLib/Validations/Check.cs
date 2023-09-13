@@ -31,8 +31,8 @@ public sealed class Check
     public static Result If(in bool notOk) =>
         notOk ? Result.Failure : Result.Success;
 
-    public static Result If(in bool ok, in Func<Exception> getErrorMessage) =>
-        !ok ? Result.CreateFailure(getErrorMessage()) : Result.CreateSuccess();
+    public static Result If(in bool notOk, in Func<Exception> getErrorMessage) =>
+        notOk ? Result.CreateFailure(getErrorMessage()) : Result.CreateSuccess();
 
     public static Result<TValue> If<TValue>(TValue value, in bool notOk, in Func<Exception> getErrorMessage) =>
         notOk ? Result<TValue>.CreateFailure(getErrorMessage(), value) : Result<TValue>.CreateSuccess(value);

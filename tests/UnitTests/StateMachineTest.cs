@@ -50,7 +50,7 @@ public sealed class StateMachineTest
         Task display((int Current, IEnumerable<(int State, MoveDirection Direction)> History) flow)
         {
             this._output.WriteLine(flow.Current.ToString());
-            _ = flow.History.ForEachEager(x => this._output.WriteLine(x.ToString()));
+            flow.History.ForEach(x => this._output.WriteLine(x.ToString()));
             this._output.WriteLine("==================");
             return Task.CompletedTask;
         }

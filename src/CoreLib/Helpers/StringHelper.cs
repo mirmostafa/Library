@@ -797,8 +797,8 @@ public static class StringHelper
     /// <summary>
     /// Merges the specified quat, separator and array into a single string.
     /// </summary>
-    public static string Merge(string quat, string separator, params string[] array)
-            => array.Merge(quat, separator);
+    public static string Merge(string quat, string separator, params string[] array) =>
+        array.Merge(quat, separator);
 
     /// <summary> Merges the elements of an IEnumerable<string> into a single string, separated by
     /// the given separator. </summary>
@@ -880,20 +880,6 @@ public static class StringHelper
     /// </summary>
     public static string RemoveEnd(this string str, in int count)
         => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
-
-    /// <summary>
-    /// Trims the specified trailing substring from the end of a string, if present.
-    /// </summary>
-    /// <param name="s">The input string to be trimmed.</param>
-    /// <param name="trim">The substring to be removed from the end of the input string.</param>
-    /// <returns>
-    /// If the input string is null, returns null.
-    /// If the input string ends with the specified 'trim' substring, returns the input string without the 'trim' substring.
-    /// Otherwise, returns the original input string.
-    /// </returns>
-    [return: NotNullIfNotNull(nameof(s))]
-    public static string? TrimEnd(this string? s, string trim, StringComparison comparisonType = StringComparison.Ordinal) =>
-        s == null ? null : s.EndsWith(trim, comparisonType) ? s[..^trim.Length] : s;
 
     /// <summary>
     /// Removes the start of a string if it matches the given value.
@@ -1007,8 +993,8 @@ public static class StringHelper
         return sb.ToString();
 
         //Function to determine if the character is a separator and if it should be ignored
-        static (bool IsSeparator, bool ShouldIgnore) determineSeparator(char c, char[] separators)
-        => separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
+        static (bool IsSeparator, bool ShouldIgnore) determineSeparator(char c, char[] separators) =>
+            separators.Contains(c) ? (true, true) : (char.IsUpper(c), false);
     }
 
     /// <summary>
@@ -1017,8 +1003,8 @@ public static class StringHelper
     /// <param name="value">The string to separate.</param>
     /// <returns>The separated string, or null if the input was null.</returns>
     [return: NotNullIfNotNull(nameof(value))]
-    public static string? SeparateCamelCase(this string? value)
-        => value.SplitCamelCase().Merge(" ");
+    public static string? SeparateCamelCase(this string? value) =>
+        value.SplitCamelCase().Merge(" ");
 
     /// <summary>
     /// Replaces a phrase in a string with a new string.
@@ -1275,6 +1261,20 @@ public static class StringHelper
     /// </summary>
     public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars)
         => values.Select(t => t.Trim(trimChars));
+
+    /// <summary>
+    /// Trims the specified trailing substring from the end of a string, if present.
+    /// </summary>
+    /// <param name="s">The input string to be trimmed.</param>
+    /// <param name="trim">The substring to be removed from the end of the input string.</param>
+    /// <returns>
+    /// If the input string is null, returns null.
+    /// If the input string ends with the specified 'trim' substring, returns the input string without the 'trim' substring.
+    /// Otherwise, returns the original input string.
+    /// </returns>
+    [return: NotNullIfNotNull(nameof(s))]
+    public static string? TrimEnd(this string? s, string trim, StringComparison comparisonType = StringComparison.Ordinal) =>
+        s == null ? null : s.EndsWith(trim, comparisonType) ? s[..^trim.Length] : s;
 
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.

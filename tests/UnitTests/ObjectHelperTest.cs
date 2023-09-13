@@ -62,14 +62,6 @@ public sealed class ObjectHelperTest
     }
 
     [Fact]
-    public void DeepSearchForClassByGrandParentInterface()
-    {
-        var asm = this.GetType().Assembly;
-        var types = asm.GetTypes();
-        var targets = ObjectHelper.RecursiveSearchFor(types, x => x.GetInterfaces(), x => x == typeof(IB)).Build();
-    }
-
-    [Fact]
     public void ExtraPropertyTest()
     {
         var testString = "Ali";

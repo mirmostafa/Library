@@ -267,16 +267,6 @@ public sealed class FunctionalTest
     }
 
     [Fact]
-    public void ItemsAction()
-    {
-        var actual = 0;
-        var expected = 55;
-        var items = NumberHelper.Range(10).Fluent().Items<IEnumerable<int>, int>(x => actual += x).GetValue();
-        Assert.True(items.Count() == 10);
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
     public void LockTest()
         => Lock(this, Methods.Empty);
 

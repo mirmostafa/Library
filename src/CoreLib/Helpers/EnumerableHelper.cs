@@ -548,6 +548,20 @@ public static class EnumerableHelper
         }
     }
 
+    public static IEnumerable<T> CreateIterator<T>(this IEnumerable<T> items)
+    {
+        //Check if the source is null
+        if (items is null)
+        {
+            //If it is, return an empty IEnumerable
+            yield break;
+        }
+        foreach (var item in items)
+        {
+            yield return item;
+        }
+    }
+
     /// <summary>
     /// Executes an action for each item in the IEnumerable.
     /// </summary>
@@ -663,6 +677,9 @@ public static class EnumerableHelper
         return source.Where([DebuggerStepThrough] (x) => !buffer.Add(x));
     }
 
+    public static IEnumerable<T> Flatten<T>([DisallowNull] IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren) =>
+            roots.SelectAll(getChildren);
+
     /// <summary>
     /// Executes an action for each item in the given enumerable and returns a read-only list of the items.
     /// </summary>
@@ -715,34 +732,6 @@ public static class EnumerableHelper
     /// <param name="action">The action to execute for each item.</param>
     public static void ForEachParallel<TItem>(IEnumerable<TItem> items, Action<TItem> action) =>
         Parallel.ForEach(items, action);
-
-    /// <summary>
-    /// Gets all elements from a given root element and its children using a provided function.
-    /// </summary>
-    /// <typeparam name="T">The type of the elements.</typeparam>
-    /// <param name="getRootElements">A function to get the root elements.</param>
-    /// <param name="getChildren">A function to get the children of an element.</param>
-    /// <returns>An enumerable of all elements.</returns>
-    public static IEnumerable<T> SelectAll<T>([DisallowNull] this IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
-    {
-        foreach (var root in roots)
-        {
-            yield return root; // Yield the current root element
-
-            var children = getChildren(root); // Get the children of the current root
-
-            if (children != null)
-            {
-                foreach (var child in SelectAll(children, getChildren)) // Recursively iterate over children, yielding the results
-                {
-                    yield return child;
-                }
-            }
-        }
-    }
-
-    public static IEnumerable<T> Flatten<T>([DisallowNull] IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren) =>
-        roots.SelectAll(getChildren);
 
     /// <summary>
     /// Gets the item from the source collection by the specified key.
@@ -802,7 +791,7 @@ public static class EnumerableHelper
         FindDuplicates(source).Any();
 
     public static TEnumerable IfEach<TEnumerable, TItem>(this TEnumerable source, Func<TItem, bool> condition, Action<TItem> trueness, Action<TItem> falseness)
-        where TEnumerable : IEnumerable<TItem>
+            where TEnumerable : IEnumerable<TItem>
     {
         Check.MustBeArgumentNotNull(source);
         Check.MustBeArgumentNotNull(condition);
@@ -873,10 +862,10 @@ public static class EnumerableHelper
     }
 
     public static bool IsSame<T>(this IEnumerable<T>? items1, IEnumerable<T>? items2) =>
-        (items1 == null && items2 == null) || (items1 != null && items2 != null && (items1.Equals(items2) || items1.SequenceEqual(items2)));
+            (items1 == null && items2 == null) || (items1 != null && items2 != null && (items1.Equals(items2) || items1.SequenceEqual(items2)));
 
     public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> mapper) =>
-        source.Select(mapper);
+            source.Select(mapper);
 
     public static IEnumerable<T> Merge<T>(params IEnumerable<T>[] enumerables)
     {
@@ -898,7 +887,7 @@ public static class EnumerableHelper
     }
 
     public static Result<TValue?> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key)
-            where TKey : notnull
+                where TKey : notnull
     {
         Check.MustBeArgumentNotNull(dic);
 
@@ -912,7 +901,7 @@ public static class EnumerableHelper
     }
 
     public static Result<KeyValuePair<TKey, TValue>> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic)
-            where TKey : notnull
+                where TKey : notnull
     {
         Check.MustBeArgumentNotNull(dic);
 
@@ -1007,6 +996,31 @@ public static class EnumerableHelper
             }
 
             action();
+        }
+    }
+
+    /// <summary>
+    /// Gets all elements from a given root element and its children using a provided function.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements.</typeparam>
+    /// <param name="getRootElements">A function to get the root elements.</param>
+    /// <param name="getChildren">A function to get the children of an element.</param>
+    /// <returns>An enumerable of all elements.</returns>
+    public static IEnumerable<T> SelectAll<T>([DisallowNull] this IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
+    {
+        foreach (var root in roots)
+        {
+            yield return root; // Yield the current root element
+
+            var children = getChildren(root); // Get the children of the current root
+
+            if (children != null)
+            {
+                foreach (var child in SelectAll(children, getChildren)) // Recursively iterate over children, yielding the results
+                {
+                    yield return child;
+                }
+            }
         }
     }
 

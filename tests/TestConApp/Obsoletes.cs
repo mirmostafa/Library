@@ -112,7 +112,7 @@ internal partial class Obsoletes
         static Task display((int Current, IEnumerable<(int State, MoveDirection Direction)> History) flow)
         {
             WriteLine(flow.Current);
-            _ = flow.History.ForEachEager(x => Write(x));
+            _ = flow.History.ForEach(x => Write(x));
             WriteLine();
             WriteLine("==================");
             return Task.CompletedTask;
@@ -126,7 +126,7 @@ internal partial class Obsoletes
 
         While(() => ReadKey().Key != ConsoleKey.X);
         WriteLine("Closing...");
-        _ = watchers.ForEachEager(x => x.Dispose());
+        watchers.ForEach(x => x.Dispose());
 
         static Library.IO.FileSystemWatcher watch(Drive drive)
             => Library.IO.FileSystemWatcher.New(drive, includeSubdirectories: true)

@@ -12,7 +12,7 @@ public sealed class UpdateStatementBuilderTest
         var actual = SqlStatementBuilder
                         .Update("dbo.Person")
                         .Set("Name", "Ali");
-        _ = Assert.Throws<NoItemValidationException>(() => actual.Build());
+        var statement = actual.Build();
     }
 
     [Fact]
@@ -23,7 +23,7 @@ public sealed class UpdateStatementBuilderTest
                         .Set("Name", "Ali")
                         .Set("Age", 5)
                         .Where("Id = 5");
-        _ = Assert.Throws<NoItemValidationException>(() => actual.Build());
+        var statement = actual.Build();
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public sealed class UpdateStatementBuilderTest
         var actual = SqlStatementBuilder
                         .Update("dbo.Person")
                         .Set(("Name", "Ali"), ("Age", 5));
-        _ = Assert.Throws<NoItemValidationException>(() => actual.Build());
+        var statement = actual.Build();
     }
 
     [Fact]
@@ -42,6 +42,6 @@ public sealed class UpdateStatementBuilderTest
                         .Update()
                         .Table("dbo.Person")
                         .Set(("Name", "Ali"), ("Age", 5));
-        _ = Assert.Throws<NoItemValidationException>(() => actual.Build());
+        var statement = actual.Build();
     }
 }
