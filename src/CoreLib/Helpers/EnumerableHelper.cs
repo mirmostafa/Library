@@ -548,20 +548,6 @@ public static class EnumerableHelper
         }
     }
 
-    public static IEnumerable<T> CreateIterator<T>(this IEnumerable<T> items)
-    {
-        //Check if the source is null
-        if (items is null)
-        {
-            //If it is, return an empty IEnumerable
-            yield break;
-        }
-        foreach (var item in items)
-        {
-            yield return item;
-        }
-    }
-
     /// <summary>
     /// Executes an action for each item in the IEnumerable.
     /// </summary>
@@ -688,8 +674,8 @@ public static class EnumerableHelper
     /// <param name="action">The action to execute for each item.</param>
     /// <returns>A read-only list of the items.</returns>
     [return: NotNull]
-    public static IReadOnlyList<T> ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action) =>
-        items.DefaultIfNull().CreateIterator(action).Build();
+    public static void ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action) => 
+        _ = items.CreateIterator(action).Build();
 
     /// <summary>
     /// Recursively iterates through a tree of objects, performing an action on each node.
@@ -1230,7 +1216,9 @@ public static class EnumerableHelper
     /// </summary>
     /// <param name="item">The item to convert.</param>
     /// <returns>An IEnumerable containing the item.</returns>
-    /// <remarks>This code creates an IEnumerable of type T and returns the item passed in as an argument.</remarks>
+    /// <remarks>
+    /// This code creates an IEnumerable of type T and returns the item passed in as an argument.
+    /// </remarks>
     [return: NotNull]
     public static IEnumerable<T> ToEnumerable<T>(T item)
     {

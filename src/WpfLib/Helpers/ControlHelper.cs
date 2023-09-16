@@ -30,7 +30,7 @@ public static class ControlHelper
     public static DataGrid AddColumns(this DataGrid dataGrid, IEnumerable<IDataColumnBindingInfo> dataColumns)
     {
         Check.MustBeArgumentNotNull(dataGrid);
-        _ = dataColumns.ToDataGridColumn().CreateIterator(dataGrid.Columns.Add).Build();
+        dataColumns.ToDataGridColumn().ForEach(dataGrid.Columns.Add);
         return dataGrid;
     }
 

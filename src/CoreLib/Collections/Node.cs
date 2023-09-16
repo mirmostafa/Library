@@ -68,7 +68,7 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
 
         node.Parent = this;
         this._innerChildren.Add(node);
-        _ = nodes.CreateIterator((Action<Node<T>>)(x => this.AddChild(x))).Build();
+        nodes.ForEach(x => this.AddChild(x));
         return this;
     }
 
@@ -78,7 +78,7 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
 
         foreach (var value in values)
         {
-            _ = this.AddChild(value, this.Display);
+            this.AddChild(value, this.Display);
         }
         return this;
     }

@@ -9,7 +9,7 @@ public static class LibCrudPolicies
     {
         get
         {
-            void configurePolicy(AuthorizationPolicyBuilder policy) => LibCrudClaims.GetClaimTypes().CreateIterator((Action<string>)(x => policy.RequireClaim(x))).Build();
+            void configurePolicy(AuthorizationPolicyBuilder policy) => LibCrudClaims.GetClaimTypes().ForEach(x => policy.RequireClaim(x));
             return (FULL_ACCESS_POLICY_NAME, configurePolicy);
         }
     }
