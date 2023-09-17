@@ -787,20 +787,15 @@ public static string GetPhrase(in string text, in string start, in string end)
     public static void Iterate(this string str, [DisallowNull] Action<char> action)
     {
         Check.MustBeArgumentNotNull(action);
+
         if (str.IsNullOrEmpty())
         {
             return;
         }
-        var i = 0;
-        var num = checked(str.Length - 1);
-        if (num >= i)
+
+        for (int i = 0; i < str.Length; i++)
         {
-            do
-            {
-                action(str[i]);
-                i++;
-            }
-            while (i != num + 1);
+            action(str[i]);
         }
     }
 
