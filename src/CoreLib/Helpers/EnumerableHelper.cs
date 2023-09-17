@@ -1382,18 +1382,6 @@ public static class EnumerableHelper
     public static TryMethodResult<TValue> TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key)
         where TKey : notnull => TryMethodResult<TValue>.TryParseResult(dic.TryGetValue(key, out var value), value);
 
-    public static Dictionary<TKey, TValue> Update<TKey, TValue>(this Dictionary<TKey, TValue> src, Dictionary<TKey, TValue> dst)
-        where TKey : notnull
-    {
-        var a = src.Keys;
-        Check.MustBeArgumentNotNull(dst);
-        _ = src.IfEach<Dictionary<TKey, TValue>, KeyValuePair<TKey, TValue>>(
-            x => dst.ContainsKey(x.Key)
-            , x => dst[x.Key] = x.Value
-            , x => dst.Add(x.Key, x.Value));
-        return dst;
-    }
-
     /// <summary>
     /// Asynchronously filters a sequence of values based on a predicate.
     /// </summary>
@@ -1440,20 +1428,6 @@ public static class EnumerableHelper
         {
             //Return the current element
             yield return enumerator.Current;
-        }
-    }
-
-    public static IEnumerable<IEnumerable<T>> Zip<T>(params IEnumerable<T>[] value)
-    {
-        var buffer = new List<T>();
-        foreach (var topLayer in value)
-        {
-            foreach (var innerLayer in topLayer)
-            {
-                buffer.Add(innerLayer);
-            }
-            yield return buffer;
-            buffer.Clear();
         }
     }
 

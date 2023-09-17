@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 
-using Library.Results;
-
 namespace Library.Helpers;
 
 public interface ICastable
@@ -24,8 +22,8 @@ public static class Caster
     /// <typeparam name="T">The type to cast the value to.</typeparam>
     /// <param name="o">The object.</param>
     /// <returns>The value of the object cast to the specified type.</returns>
-    public static T? As<T>([DisallowNull] this ICastable o) where T : class
-            => o.Value as T;
+    public static T? As<T>([DisallowNull] this ICastable o) where T : class =>
+        o.Value as T;
 
     /// <summary>
     /// The entry of casting operations.
@@ -35,8 +33,13 @@ public static class Caster
     public static ICastable Cast(this object? obj)
         => new Castable(obj);
 
+    [return: NotNullIfNotNull(nameof(defaultValue))]
+    public static T? Is<T>([DisallowNull] this ICastable o, T? defaultValue) where T : class
+        => o is T t ? t : defaultValue;
+
     /// <summary>
-    /// Returns the result of a type match between the given object and the generic type T, or the default value of T if the match fails.
+    /// Returns the result of a type match between the given object and the generic type T, or the
+    /// default value of T if the match fails.
     /// </summary>
     public static T? Match<T>(object obj)
         => obj is T result ? result : default;
@@ -57,7 +60,32 @@ public static class Caster
     public static T To<T>([DisallowNull] this ICastable o)
         => (T)o.Value!;
 
+    public static byte ToByte([DisallowNull] this ICastable o, byte defaultValue = default, IFormatProvider? formatProvider = null)
+    {
+        //Check if the value of o is an integer
+        if (o.Value is byte intValue)
+        {
+            //If it is, return the integer value
+            return intValue;
+        }
 
+        //Check if the value of o is IConvertible
+        if (o.Value is IConvertible convertible)
+        {
+            //If it is, convert it to an integer using the format provider
+            return convertible.ToByte(formatProvider);
+        }
+
+        //Try to parse the value of o as an integer
+        if (!byte.TryParse(Convert.ToString(o.Value, formatProvider), out var result))
+        {
+            //If it fails, set the result to the default value
+            result = defaultValue;
+        }
+
+        //Return the result
+        return result;
+    }
 
     /// <summary>
     /// Converts the specified object to an integer.
@@ -93,33 +121,6 @@ public static class Caster
         return result;
     }
 
-    public static byte ToByte([DisallowNull] this ICastable o, byte defaultValue = default, IFormatProvider? formatProvider = null)
-    {
-        //Check if the value of o is an integer
-        if (o.Value is byte intValue)
-        {
-            //If it is, return the integer value
-            return intValue;
-        }
-
-        //Check if the value of o is IConvertible
-        if (o.Value is IConvertible convertible)
-        {
-            //If it is, convert it to an integer using the format provider
-            return convertible.ToByte(formatProvider);
-        }
-
-        //Try to parse the value of o as an integer
-        if (!byte.TryParse(Convert.ToString(o.Value, formatProvider), out var result))
-        {
-            //If it fails, set the result to the default value
-            result = defaultValue;
-        }
-
-        //Return the result
-        return result;
-    }
-
     /// <summary>
     /// Converts the value of the specified object to a long.
     /// </summary>
@@ -133,9 +134,7 @@ public static class Caster
     /// </summary>
     /// <typeparam name="T">The type of items to return.</typeparam>
     /// <param name="items">The sequence of items to filter.</param>
-    /// <returns>
-    /// An <see cref="IEnumerableT"/> containing only those items of type T.
-    /// </returns>
+    /// <returns>An <see cref="IEnumerableT"/> containing only those items of type T.</returns>
     public static IEnumerable<T> TypeOf<T>(IEnumerable items)
     {
         foreach (var item in items)
@@ -148,7 +147,8 @@ public static class Caster
     }
 
     /// <summary>
-    /// Returns the specified type of the given object, or the default value if the object is not of the specified type.
+    /// Returns the specified type of the given object, or the default value if the object is not of
+    /// the specified type.
     /// </summary>
     public static T? TypeOf<T>(object obj)
             => obj.GetType() == typeof(T) ? (T)obj : default;
@@ -157,9 +157,7 @@ public static class Caster
     /// Filters a sequence of items and returns only those of type T.
     /// </summary>
     /// <param name="items">The sequence of items to filter.</param>
-    /// <returns>
-    /// An IEnumerable of type T containing the filtered items.
-    /// </returns>
+    /// <returns>An IEnumerable of type T containing the filtered items.</returns>
     public static IEnumerable<T> WhereIs<T>(IEnumerable items)
     {
         foreach (var item in items)

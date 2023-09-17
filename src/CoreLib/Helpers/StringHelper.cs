@@ -49,25 +49,36 @@ public static class StringHelper
         => string.Concat(s1, s);
 
     /// <summary>
-    /// Gets all indexes of a given string in another string.
+    /// Retrieves all indexes of a specified substring within a given string.
     /// </summary>
-    /// <param name="str">The string to search in.</param>
-    /// <param name="value">The string to search for.</param>
-    /// <param name="ignoreCase">Whether to ignore case when searching.</param>
-    /// <returns>An enumerable of all indexes of the given string in the other string.</returns>
+    /// <param name="str">The string to search within.</param>
+    /// <param name="value">The substring to find.</param>
+    /// <param name="ignoreCase">A flag indicating whether the search should be case-insensitive (default is <c>false</c>).</param>
+    /// <returns>An enumerable of integers representing the indexes where the substring was found within the string.</returns>
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
+        // Prepare the source string and the search string according to the ignoreCase flag.
         var buffer = ignoreCase ? str.ArgumentNotNull().ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull();
         var stat = ignoreCase ? value.ArgumentNotNull().ToLower(CultureInfo.CurrentCulture) : value.ArgumentNotNull();
+
+        // Initialize variables for tracking indexes and search position.
         var result = 0;
         int currentIndex;
+
+        // Continue searching until no more occurrences of the substring are found.
         while ((currentIndex = buffer.IndexOf(stat, StringComparison.Ordinal)) != -1)
         {
+            // Yield the index where the substring was found.
             yield return result + currentIndex;
+
+            // Update the result and move the search position.
             result += currentIndex + stat.Length;
+
+            // Remove the processed portion of the buffer to avoid duplicates.
             buffer = buffer[(currentIndex + stat.Length)..];
         }
     }
+
 
     /// <summary>
     /// Checks if any character in the given string is present in the given range.
@@ -380,26 +391,39 @@ public static class StringHelper
     }
 
     /// <summary>
-    /// Gets a substring from a given string based on the start and end strings.
-    /// </summary>
-    /// <param name="text">The string to search in.</param>
-    /// <param name="start">The start string.</param>
-    /// <param name="end">The end string.</param>
-    /// <returns>The substring between the start and end strings.</returns>
-    public static string GetPhrase(in string text, in string start, in string end)
+/// Extracts a phrase from a given text, delimited by start and end strings.
+/// </summary>
+/// <param name="text">The text to search within.</param>
+/// <param name="start">The starting delimiter of the desired phrase.</param>
+/// <param name="end">The ending delimiter of the desired phrase.</param>
+/// <returns>The extracted phrase if found; otherwise, an empty string.</returns>
+public static string GetPhrase(in string text, in string start, in string end)
+{
+    // Check if both start and end delimiters are empty, return an empty string.
+    if (start.IsNullOrEmpty() && end.IsNullOrEmpty())
     {
-        if (start.IsNullOrEmpty() && end.IsNullOrEmpty())
-        {
-            return string.Empty;
-        }
-
-        var prefixOffset = text.AsSpan().IndexOf(start);
-        var startIndex = prefixOffset == -1 ? 0 : (prefixOffset + start.Length);
-        var endIndex = text.AsSpan(startIndex).IndexOf(end);
-        var buffer = endIndex == -1 ? text.AsSpan(startIndex) : text.AsSpan(startIndex, endIndex);
-        var result = buffer.ToString();
-        return result;
+        return string.Empty;
     }
+
+    // Find the offset of the start delimiter in the text.
+    var prefixOffset = text.AsSpan().IndexOf(start);
+
+    // Calculate the starting index for the phrase (0 if start is not found).
+    var startIndex = prefixOffset == -1 ? 0 : (prefixOffset + start.Length);
+
+    // Search for the end delimiter in the remaining portion of the text.
+    var endIndex = text.AsSpan(startIndex).IndexOf(end);
+
+    // Define a buffer span that contains the extracted portion.
+    var buffer = endIndex == -1 ? text.AsSpan(startIndex) : text.AsSpan(startIndex, endIndex);
+
+    // Convert the buffer span to a string to get the extracted phrase.
+    var result = buffer.ToString();
+
+    // Return the extracted phrase (empty string if not found).
+    return result;
+}
+
 
     /// <summary>
     /// Gets all phrases from a string that are delimited by a start and end character.
@@ -800,10 +824,40 @@ public static class StringHelper
     public static string Merge(string quat, string separator, params string[] array) =>
         array.Merge(quat, separator);
 
-    /// <summary> Merges the elements of an IEnumerable<string> into a single string, separated by
-    /// the given separator. </summary>
-    public static string Merge(this IEnumerable<string> array, in string separator)
-        => string.Join(separator, array.ToArray());
+    /// <summary>
+    /// Merges a sequence of strings into a single string using the specified separator.
+    /// </summary>
+    /// <param name="source">The sequence of strings to merge.</param>
+    /// <param name="separator">The separator to place between the merged strings.</param>
+    /// <param name="addSeparatorToEnd">A flag indicating whether to add the separator to the end of the merged string.</param>
+    /// <returns>A single string containing the merged values separated by the specified separator.</returns>
+    public static string Merge(this IEnumerable<string> source, string separator, bool addSeparatorToEnd = true)
+    {
+        // Define a function to operate on each item in the source.
+        Func<string, string> operate = addSeparatorToEnd
+            ? (s => string.Concat(s, separator))
+            : (s => string.Concat(separator, s));
+
+        // Create an iterator for the source using the specified operation and then merge the results.
+        return source.CreateIterator(item => operate(item)).Merge();
+    }
+
+    /// <summary>
+    /// Merges a sequence of strings into a single string without any separators.
+    /// </summary>
+    /// <param name="source">The sequence of strings to merge.</param>
+    /// <returns>A single string containing the merged values without any separators.</returns>
+    public static string Merge(this IEnumerable<string> source)
+    {
+        // Create a StringBuilder to efficiently concatenate the strings.
+        var result = new StringBuilder();
+
+        // Iterate through the source and append each string to the result.
+        source.ForEach(x => result.Append(x));
+
+        // Convert the StringBuilder to a string and return the merged result.
+        return result.ToString();
+    }
 
     /// <summary> Merges the elements of an IEnumerable<string> into a single string, separated by
     /// the given separator. </summary>
@@ -830,34 +884,6 @@ public static class StringHelper
     /// <returns>A single string containing the merged tuples.</returns>
     public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";")
         => string.Join(statementSeparator, splitPair.Select(pair => $"{pair.Item1}{keyValueSeparator}{pair.Item2}"));
-
-    /// <summary>
-    /// Removes special characters from a string and returns the result.
-    /// </summary>
-    /// <param name="text">The string to be processed.</param>
-    /// <returns>A string with all special characters removed.</returns>
-    /// <remarks>
-    /// This code takes a string as an input and returns a string with all special characters
-    /// removed. It first calls the CorrectUnicodeProblem() method to correct any Unicode problems
-    /// in the string. It then creates an array of special characters to be removed from the string.
-    /// It then splits the string into an array of strings, removing any empty entries. Finally, it
-    /// uses the Aggregate() method to combine the strings in the array into a single string and
-    /// returns the result.
-    /// </remarks>
-    public static string PatternPolicy(in string text)
-    {
-        var result = string.Empty;
-        var t = CorrectUnicodeProblem(text);
-
-        char[] outChar =
-        {
-                '~', '`', '!', '#', '$', '%', '^', '&', '*', '(', ')', '-', '+', '=', '{', '[', '}', ']', ':', ';', '\'', '"', '<', ',', '>', '?', '|', '\\'
-        };
-
-        var arrayString = t.Split(outChar, StringSplitOptions.RemoveEmptyEntries);
-
-        return arrayString.Aggregate(result, (current, s) => current + s);
-    }
 
     /// <summary>
     /// Returns the plural form of the given string, or null if the string is null or empty.
@@ -1268,9 +1294,9 @@ public static class StringHelper
     /// <param name="s">The input string to be trimmed.</param>
     /// <param name="trim">The substring to be removed from the end of the input string.</param>
     /// <returns>
-    /// If the input string is null, returns null.
-    /// If the input string ends with the specified 'trim' substring, returns the input string without the 'trim' substring.
-    /// Otherwise, returns the original input string.
+    /// If the input string is null, returns null. If the input string ends with the specified
+    /// 'trim' substring, returns the input string without the 'trim' substring. Otherwise, returns
+    /// the original input string.
     /// </returns>
     [return: NotNullIfNotNull(nameof(s))]
     public static string? TrimEnd(this string? s, string trim, StringComparison comparisonType = StringComparison.Ordinal) =>
