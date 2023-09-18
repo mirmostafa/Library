@@ -53,8 +53,12 @@ public static class StringHelper
     /// </summary>
     /// <param name="str">The string to search within.</param>
     /// <param name="value">The substring to find.</param>
-    /// <param name="ignoreCase">A flag indicating whether the search should be case-insensitive (default is <c>false</c>).</param>
-    /// <returns>An enumerable of integers representing the indexes where the substring was found within the string.</returns>
+    /// <param name="ignoreCase">
+    /// A flag indicating whether the search should be case-insensitive (default is <c>false</c>).
+    /// </param>
+    /// <returns>
+    /// An enumerable of integers representing the indexes where the substring was found within the string.
+    /// </returns>
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
         // Prepare the source string and the search string according to the ignoreCase flag.
@@ -78,7 +82,6 @@ public static class StringHelper
             buffer = buffer[(currentIndex + stat.Length)..];
         }
     }
-
 
     /// <summary>
     /// Checks if any character in the given string is present in the given range.
@@ -391,39 +394,38 @@ public static class StringHelper
     }
 
     /// <summary>
-/// Extracts a phrase from a given text, delimited by start and end strings.
-/// </summary>
-/// <param name="text">The text to search within.</param>
-/// <param name="start">The starting delimiter of the desired phrase.</param>
-/// <param name="end">The ending delimiter of the desired phrase.</param>
-/// <returns>The extracted phrase if found; otherwise, an empty string.</returns>
-public static string GetPhrase(in string text, in string start, in string end)
-{
-    // Check if both start and end delimiters are empty, return an empty string.
-    if (start.IsNullOrEmpty() && end.IsNullOrEmpty())
+    /// Extracts a phrase from a given text, delimited by start and end strings.
+    /// </summary>
+    /// <param name="text">The text to search within.</param>
+    /// <param name="start">The starting delimiter of the desired phrase.</param>
+    /// <param name="end">The ending delimiter of the desired phrase.</param>
+    /// <returns>The extracted phrase if found; otherwise, an empty string.</returns>
+    public static string GetPhrase(in string text, in string start, in string end)
     {
-        return string.Empty;
+        // Check if both start and end delimiters are empty, return an empty string.
+        if (start.IsNullOrEmpty() && end.IsNullOrEmpty())
+        {
+            return string.Empty;
+        }
+
+        // Find the offset of the start delimiter in the text.
+        var prefixOffset = text.AsSpan().IndexOf(start);
+
+        // Calculate the starting index for the phrase (0 if start is not found).
+        var startIndex = prefixOffset == -1 ? 0 : (prefixOffset + start.Length);
+
+        // Search for the end delimiter in the remaining portion of the text.
+        var endIndex = text.AsSpan(startIndex).IndexOf(end);
+
+        // Define a buffer span that contains the extracted portion.
+        var buffer = endIndex == -1 ? text.AsSpan(startIndex) : text.AsSpan(startIndex, endIndex);
+
+        // Convert the buffer span to a string to get the extracted phrase.
+        var result = buffer.ToString();
+
+        // Return the extracted phrase (empty string if not found).
+        return result;
     }
-
-    // Find the offset of the start delimiter in the text.
-    var prefixOffset = text.AsSpan().IndexOf(start);
-
-    // Calculate the starting index for the phrase (0 if start is not found).
-    var startIndex = prefixOffset == -1 ? 0 : (prefixOffset + start.Length);
-
-    // Search for the end delimiter in the remaining portion of the text.
-    var endIndex = text.AsSpan(startIndex).IndexOf(end);
-
-    // Define a buffer span that contains the extracted portion.
-    var buffer = endIndex == -1 ? text.AsSpan(startIndex) : text.AsSpan(startIndex, endIndex);
-
-    // Convert the buffer span to a string to get the extracted phrase.
-    var result = buffer.ToString();
-
-    // Return the extracted phrase (empty string if not found).
-    return result;
-}
-
 
     /// <summary>
     /// Gets all phrases from a string that are delimited by a start and end character.
@@ -793,7 +795,7 @@ public static string GetPhrase(in string text, in string start, in string end)
             return;
         }
 
-        for (int i = 0; i < str.Length; i++)
+        for (var i = 0; i < str.Length; i++)
         {
             action(str[i]);
         }
@@ -824,7 +826,9 @@ public static string GetPhrase(in string text, in string start, in string end)
     /// </summary>
     /// <param name="source">The sequence of strings to merge.</param>
     /// <param name="separator">The separator to place between the merged strings.</param>
-    /// <param name="addSeparatorToEnd">A flag indicating whether to add the separator to the end of the merged string.</param>
+    /// <param name="addSeparatorToEnd">
+    /// A flag indicating whether to add the separator to the end of the merged string.
+    /// </param>
     /// <returns>A single string containing the merged values separated by the specified separator.</returns>
     public static string Merge(this IEnumerable<string> source, string separator, bool addSeparatorToEnd = true)
     {
@@ -1295,7 +1299,11 @@ public static string GetPhrase(in string text, in string start, in string end)
     /// </returns>
     [return: NotNullIfNotNull(nameof(s))]
     public static string? TrimEnd(this string? s, string trim, StringComparison comparisonType = StringComparison.Ordinal) =>
-        s == null ? null : s.EndsWith(trim, comparisonType) ? s[..^trim.Length] : s;
+        s.IsNullOrEmpty() ? s : trim.IsNullOrEmpty() ? s : s.EndsWith(trim, comparisonType) ? s[..^trim.Length] : s;
+
+    [return: NotNullIfNotNull(nameof(s))]
+    public static string? TrimStart(this string? s, string trim, StringComparison comparisonType = StringComparison.Ordinal) =>
+        s.IsNullOrEmpty() ? s : trim.IsNullOrEmpty() ? s : s.StartsWith(trim, comparisonType) ? s[trim.Length..] : s;
 
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.

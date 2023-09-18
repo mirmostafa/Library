@@ -62,6 +62,7 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IProgress
             return Task.FromResult(e.State);
         }, description, progressCount));
 
+    [return: NotNull]
     public async Task<Result<TState>> RunAsync(CancellationToken cancellationToken = default)
     {
         if (cancellationToken.IsCancellationRequested)
