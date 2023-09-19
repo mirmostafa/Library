@@ -80,7 +80,7 @@ public sealed class Codes(params Code?[] items) : ReadOnlyCollection<Code?>(item
     /// <param name="c2">The second Codes instance.</param>
     /// <returns>A new Codes instance that combines the Code items from both input instances.</returns>
     public static Codes operator +(Codes c1, Codes c2) =>
-        new(c1.AsEnumerable().AddRangeImmuted(c2.AsEnumerable()));
+        new(c1.ToEnumerable().AddRangeImmuted(c2.ToEnumerable()));
 
     /// <summary>
     /// Adds a new Code item to the Codes collection.

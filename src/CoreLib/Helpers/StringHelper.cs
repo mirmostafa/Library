@@ -90,6 +90,18 @@ public static class StringHelper
     public static bool AnyCharInString(this string str, in string range) =>
         !string.IsNullOrEmpty(str) && range.Any(str.Contains);
 
+    public static StringBuilder AppendAllLines(this StringBuilder sb, IEnumerable<string> lines)
+    {
+        foreach (var line in lines)
+        {
+            _ = sb.AppendLine(line);
+        }
+        return sb;
+    }
+
+    public static StringBuilder AppendAllLines<TItem>(this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> format) =>
+        sb.AppendAllLines(items.Select(format));
+
     /// <summary>
     /// Replaces all invalid Arabic characters in the given string with their Persian equivalents.
     /// </summary>
@@ -1308,6 +1320,6 @@ public static class StringHelper
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.
     /// </summary>
-    public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
-        => CatchFunc(() => str.CountOf(c, index)).Fluent().WithNew(x => TryMethodResult<int>.TryParseResult(x.Exception is null, x.Result));
+    public static TryMethodResult<int> TryCountOf(this string str, char c, int index) =>
+        CatchFunc(() => str.CountOf(c, index)).Fluent().WithNew(x => TryMethodResult<int>.TryParseResult(x.Exception is null, x.Result));
 }
