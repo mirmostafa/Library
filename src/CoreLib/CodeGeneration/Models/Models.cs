@@ -22,19 +22,7 @@ public readonly struct GenerateCodeResult(in Code? main, in Code? partial)
 }
 
 [Immutable]
-public readonly struct GenerateCodesParameters
-{
-    public GenerateCodesParameters(in bool generateMainCode = true, in bool generatePartialCode = true, in bool generateUiCode = true)
-    {
-        this.GenerateMainCode = generateMainCode;
-        this.GeneratePartialCode = generatePartialCode;
-        this.GenerateUiCode = generateUiCode;
-    }
-
-    public bool GenerateMainCode { get; } = true;
-    public bool GeneratePartialCode { get; } = true;
-    public bool GenerateUiCode { get; } = true;
-}
+public record GenerateCodesParameters(in bool GenerateMainCode = true, in bool GeneratePartialCode = true, in bool GenerateUiCode = true);
 
 [Immutable]
 public readonly struct MethodArgument(in TypePath type, in string name) : IEquatable<MethodArgument>
