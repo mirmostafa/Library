@@ -49,5 +49,5 @@ public static class SqlEntity
     }
 }
 
-public readonly record struct ColumnInfo(string Name, Type Type, bool IsKey, bool IsForiegnKey, string? ForiegnKeyName, int Order);
+public readonly record struct ColumnInfo(string Name, Type Type, bool IsKey, bool IsForeignKey, string? ForeignKeyName, int Order);
 public readonly record struct TableInfo(string Name, IEnumerable<ColumnInfo> Columns);
