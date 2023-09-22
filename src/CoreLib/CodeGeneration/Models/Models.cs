@@ -22,7 +22,7 @@ public readonly struct GenerateCodeResult(in Code? main, in Code? partial)
 }
 
 [Immutable]
-public record GenerateCodesParameters(in bool GenerateMainCode = true, in bool GeneratePartialCode = true, in bool GenerateUiCode = true);
+public record GenerateCodesParameters(in bool GenerateMainCode = true, in bool GeneratePartialCode = true, in bool GenerateUiCode = true, in string? BackendFileName = null, in string? FrontFileName = null);
 
 [Immutable]
 public readonly struct MethodArgument(in TypePath type, in string name) : IEquatable<MethodArgument>
