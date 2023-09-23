@@ -90,7 +90,7 @@ public static class StringHelper
     public static bool AnyCharInString(this string str, in string range) =>
         !string.IsNullOrEmpty(str) && range.Any(str.Contains);
 
-    public static StringBuilder AppendAllLines(this StringBuilder sb, IEnumerable<string> lines)
+    public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, IEnumerable<string> lines)
     {
         foreach (var line in lines)
         {
@@ -99,7 +99,7 @@ public static class StringHelper
         return sb;
     }
 
-    public static StringBuilder AppendAllLines<TItem>(this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> format) =>
+    public static StringBuilder AppendAllLines<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> format) =>
         sb.AppendAllLines(items.Select(format));
 
     /// <summary>

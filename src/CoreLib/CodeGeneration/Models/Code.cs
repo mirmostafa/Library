@@ -93,17 +93,17 @@ public class Code(in string name, in Language language, in string statement, in 
     public static implicit operator string?(in Code? code) =>
         code?.Statement;
 
+    public static Code New(in string name, in Language language, in string statement, in bool isPartial, in string? fileName) =>
+        new(name, language, statement, isPartial, fileName);
+
     public static Code NewEmpty() =>
-        new(string.Empty, Languages.None, string.Empty);
+            new(string.Empty, Languages.None, string.Empty);
 
     public static bool operator !=(Code? left, Code? right) =>
         !(left == right);
 
     public static bool operator ==(Code? left, Code? right) =>
         left?.Equals(right) ?? (right is null);
-
-    public static Code ToCode(in string name, in Language language, in string statement, in bool isPartial, in string? fileName) =>
-        new(name, language, statement, isPartial, fileName);
 
     public void Deconstruct(out string name, out string statement) =>
         (name, statement) = (this.Name, this.Statement);
@@ -145,10 +145,14 @@ public static class SourceCodeHelpers
         new(codes.SelectAll());
 
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Code? code) =>
-            code is null || code.Equals(Code.Empty);
+        code is null || code.Equals(Code.Empty);
 
     public static Codes ToCodes(this IEnumerable<Code> codes) =>
         new(codes);
+
+    [return: NotNull]
+    public static Codes ToCodes(this Code code) =>
+        new(EnumerableHelper.ToEnumerable(code));
 
     public static Code WithStatement(this Code code, [DisallowNull] string statement) =>
         new(code) { Statement = statement };

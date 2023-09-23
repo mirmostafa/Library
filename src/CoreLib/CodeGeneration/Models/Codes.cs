@@ -8,12 +8,13 @@ namespace Library.CodeGeneration.Models;
 
 [Fluent]
 [Immutable]
-public sealed class Codes(params Code?[] items) : ReadOnlyCollection<Code?>(items)
-    , IAdditionOperators<Codes, Codes, Codes>
-    , IEmpty<Codes>, IIndexable<string, Code?>
-    , INew<Codes>
-    , IIndexable<Language, IEnumerable<Code>>
+public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(items.ToList())
     , IEnumerable<Code?>
+    , IAdditionOperators<Codes, Codes, Codes>
+    , IIndexable<Language, IEnumerable<Code>>
+    , IIndexable<string, Code?>
+    , INew<Codes, IEnumerable<Code>>
+    , IEmpty<Codes>
 {
     private static Codes? _empty;
 
@@ -21,8 +22,8 @@ public sealed class Codes(params Code?[] items) : ReadOnlyCollection<Code?>(item
     /// Initializes a new instance of the Codes class with a given collection of Code items.
     /// </summary>
     /// <param name="items">The collection of Code items.</param>
-    public Codes(IEnumerable<Code?> items)
-        : this(items.ToArray()) { }
+    public Codes(params Code?[] items)
+        : this(items.AsEnumerable()) { }
 
     /// <summary>
     /// Initializes a new instance of the Codes class with a given collection of Codes.
@@ -63,8 +64,8 @@ public sealed class Codes(params Code?[] items) : ReadOnlyCollection<Code?>(item
     /// Creates a new instance of the Codes class.
     /// </summary>
     /// <returns>A new instance of the Codes class.</returns>
-    public static Codes New() =>
-        new();
+    public static Codes New(IEnumerable<Code> codes) =>
+        new(codes);
 
     /// <summary>
     /// Creates a new instance of the Codes class that is empty.
