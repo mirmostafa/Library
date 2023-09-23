@@ -665,12 +665,15 @@ public static class EnumerableHelper
         => items ?? Enumerable.Empty<T>();
 
     /// <summary>
-    /// Creates a new <see cref="Dictionary{TKey, TValue}"/> from a sequence of keys, with an optional default value.
+    /// Creates a new <see cref="Dictionary{TKey, TValue}"/> from a sequence of keys, with an
+    /// optional default value.
     /// </summary>
     /// <typeparam name="TKey">The type of keys in the dictionary (must be not null).</typeparam>
     /// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
     /// <param name="keys">The sequence of keys to populate the dictionary with.</param>
-    /// <param name="defaultValue">An optional default value for the dictionary's values (default is null).</param>
+    /// <param name="defaultValue">
+    /// An optional default value for the dictionary's values (default is null).
+    /// </param>
     /// <returns>A new dictionary populated with the given keys and optional default values.</returns>
     public static Dictionary<TKey, TValue?> DictionaryFromKeys<TKey, TValue>(IEnumerable<TKey> keys, TValue? defaultValue = default)
         where TKey : notnull =>
@@ -716,10 +719,13 @@ public static class EnumerableHelper
     /// </summary>
     /// <typeparam name="T">The type of elements in the source sequence.</typeparam>
     /// <param name="source">The source sequence to search for duplicates.</param>
-    /// <returns>An <see cref="IEnumerable{T}"/> containing the duplicate elements from the source sequence.</returns>
+    /// <returns>
+    /// An <see cref="IEnumerable{T}"/> containing the duplicate elements from the source sequence.
+    /// </returns>
     /// <remarks>
-    /// This method uses a <see cref="HashSet{T}"/> to keep track of unique elements while iterating through the source sequence.
-    /// It returns elements that are encountered more than once in the source sequence, indicating duplicates.
+    /// This method uses a <see cref="HashSet{T}"/> to keep track of unique elements while iterating
+    /// through the source sequence. It returns elements that are encountered more than once in the
+    /// source sequence, indicating duplicates.
     /// </remarks>
     public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> source)
     {
@@ -853,9 +859,10 @@ public static class EnumerableHelper
     /// <param name="falseness">The action to perform on items that do not meet the condition.</param>
     /// <returns>The original source sequence.</returns>
     /// <remarks>
-    /// This method iterates through the source sequence and performs the specified actions on each item based on the condition.
-    /// The condition is determined by the provided <paramref name="condition"/> function. If an item meets the condition,
-    /// the <paramref name="trueness"/> action is invoked; otherwise, the <paramref name="falseness"/> action is invoked.
+    /// This method iterates through the source sequence and performs the specified actions on each
+    /// item based on the condition. The condition is determined by the provided <paramref
+    /// name="condition"/> function. If an item meets the condition, the <paramref name="trueness"/>
+    /// action is invoked; otherwise, the <paramref name="falseness"/> action is invoked.
     /// </remarks>
     public static TEnumerable IfEach<TEnumerable, TItem>(this TEnumerable source, Func<TItem, bool> condition, Action<TItem> trueness, Action<TItem> falseness)
         where TEnumerable : IEnumerable<TItem>
@@ -890,12 +897,11 @@ public static class EnumerableHelper
     /// <typeparam name="T">The type of elements in the source sequence.</typeparam>
     /// <param name="source">The source sequence to search in.</param>
     /// <param name="item">The item to find the indexes of.</param>
-    /// <returns>
-    /// An enumerable of indexes at which the specified item appears in the source sequence.
-    /// </returns>
+    /// <returns>An enumerable of indexes at which the specified item appears in the source sequence.</returns>
     /// <remarks>
-    /// This method iterates through the source sequence and returns an enumerable of indexes at which
-    /// the specified item appears. If the item is not found in the sequence, an empty enumerable is returned.
+    /// This method iterates through the source sequence and returns an enumerable of indexes at
+    /// which the specified item appears. If the item is not found in the sequence, an empty
+    /// enumerable is returned.
     /// </remarks>
     public static IEnumerable<int> IndexesOf<T>(this IEnumerable<T> source, T item)
     {
@@ -918,8 +924,8 @@ public static class EnumerableHelper
     /// <param name="defaultItem">The default value to initialize the elements with.</param>
     /// <returns>The array with all elements set to the specified default value.</returns>
     /// <remarks>
-    /// This method initializes all elements in the given array with the specified default value. It iterates through
-    /// each element in the array and assigns the default value to it.
+    /// This method initializes all elements in the given array with the specified default value. It
+    /// iterates through each element in the array and assigns the default value to it.
     /// </remarks>
     public static T[] InitializeItems<T>(this T[] items, T defaultItem)
     {
@@ -959,11 +965,12 @@ public static class EnumerableHelper
     /// <param name="items1">The first IEnumerable sequence to compare.</param>
     /// <param name="items2">The second IEnumerable sequence to compare.</param>
     /// <returns>
-    ///   <c>true</c> if both sequences are equal or both are <c>null</c>; otherwise, <c>false</c>.
+    /// <c>true</c> if both sequences are equal or both are <c>null</c>; otherwise, <c>false</c>.
     /// </returns>
     /// <remarks>
-    /// This method compares two IEnumerable sequences for equality. Sequences are considered equal if they have the same elements
-    /// in the same order. It also handles cases where one or both of the input sequences are null.
+    /// This method compares two IEnumerable sequences for equality. Sequences are considered equal
+    /// if they have the same elements in the same order. It also handles cases where one or both of
+    /// the input sequences are null.
     /// </remarks>
     public static bool IsSame<T>(this IEnumerable<T>? items1, IEnumerable<T>? items2) =>
         (items1 == null && items2 == null) || (items1 != null && items2 != null && (items1.Equals(items2) || items1.SequenceEqual(items2)));
@@ -974,7 +981,10 @@ public static class EnumerableHelper
     /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
     /// <typeparam name="TResult">The type of elements in the resulting sequence after mapping.</typeparam>
     /// <param name="source">The source IEnumerable sequence.</param>
-    /// <param name="mapper">A function that transforms each element of the source sequence into a new element of the result sequence.</param>
+    /// <param name="mapper">
+    /// A function that transforms each element of the source sequence into a new element of the
+    /// result sequence.
+    /// </param>
     /// <returns>An IEnumerable sequence containing the mapped elements.</returns>
     /// <remarks>
     /// This method applies the specified mapping function to each element in the source sequence,
@@ -990,8 +1000,8 @@ public static class EnumerableHelper
     /// <param name="enumerables">The IEnumerable sequences to merge.</param>
     /// <returns>A single IEnumerable sequence containing elements from all input sequences.</returns>
     /// <remarks>
-    /// This method merges multiple IEnumerable sequences into a single IEnumerable sequence.
-    /// It enumerates each input sequence one by one and yields its elements in the merged sequence.
+    /// This method merges multiple IEnumerable sequences into a single IEnumerable sequence. It
+    /// enumerates each input sequence one by one and yields its elements in the merged sequence.
     /// </remarks>
     public static IEnumerable<T> Merge<T>(params IEnumerable<T>[] enumerables)
     {
@@ -1009,12 +1019,14 @@ public static class EnumerableHelper
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
     /// <param name="list">The list to pop an element from.</param>
-    /// <param name="index">The index of the element to remove and return.
-    /// If negative, it counts from the end of the list (-1 for the last element).</param>
+    /// <param name="index">
+    /// The index of the element to remove and return. If negative, it counts from the end of the
+    /// list (-1 for the last element).
+    /// </param>
     /// <returns>The element removed from the list.</returns>
     /// <remarks>
-    /// This method removes and returns the element at the specified index from the list.
-    /// If the index is negative, it counts from the end of the list (e.g., -1 for the last element).
+    /// This method removes and returns the element at the specified index from the list. If the
+    /// index is negative, it counts from the end of the list (e.g., -1 for the last element).
     /// </remarks>
     public static T Pop<T>(this IList<T> list, int index = -1)
     {
@@ -1043,8 +1055,8 @@ public static class EnumerableHelper
     /// or a failure result if the key is not found in the dictionary.
     /// </returns>
     /// <remarks>
-    /// This method removes and returns the value associated with the specified key from the dictionary.
-    /// If the key is not found in the dictionary, it returns a failure result.
+    /// This method removes and returns the value associated with the specified key from the
+    /// dictionary. If the key is not found in the dictionary, it returns a failure result.
     /// </remarks>
     public static Result<TValue?> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key)
         where TKey : notnull
@@ -1073,12 +1085,12 @@ public static class EnumerableHelper
     /// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
     /// <param name="dic">The dictionary to pop a key-value pair from.</param>
     /// <returns>
-    /// A <see cref="Result{T}"/> containing the last key-value pair from the dictionary if successful,
-    /// or a failure result if the dictionary is empty.
+    /// A <see cref="Result{T}"/> containing the last key-value pair from the dictionary if
+    /// successful, or a failure result if the dictionary is empty.
     /// </returns>
     /// <remarks>
-    /// This method removes and returns the last key-value pair from the dictionary.
-    /// If the dictionary is empty, it returns a failure result.
+    /// This method removes and returns the last key-value pair from the dictionary. If the
+    /// dictionary is empty, it returns a failure result.
     /// </remarks>
     public static Result<KeyValuePair<TKey, TValue>> Pop<TKey, TValue>(this Dictionary<TKey, TValue> dic)
         where TKey : notnull
@@ -1386,7 +1398,10 @@ public static class EnumerableHelper
     /// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
     /// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
     /// <param name="pairs">An enumerable collection of key-value pairs to convert.</param>
-    /// <returns>A dictionary containing the key-value pairs from the input collection, or null if the input is null.</returns>
+    /// <returns>
+    /// A dictionary containing the key-value pairs from the input collection, or null if the input
+    /// is null.
+    /// </returns>
     public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
         where TKey : notnull
     {
@@ -1396,8 +1411,8 @@ public static class EnumerableHelper
             return null;
         }
 
-        // Use LINQ's ToDictionary method to convert the key-value pairs into a dictionary.
-        // The lambda expressions specify how to extract keys and values from the pairs.
+        // Use LINQ's ToDictionary method to convert the key-value pairs into a dictionary. The
+        // lambda expressions specify how to extract keys and values from the pairs.
         return pairs.ToDictionary(pair => pair.Key, pair => pair.Value) ?? new Dictionary<TKey, TValue>();
     }
 
@@ -1447,6 +1462,10 @@ public static class EnumerableHelper
         yield return item;
     }
 
+    [return: NotNull]
+    public static IEnumerable<T> ToEnumerable<T>(params T[] items) =>
+        items.ToEnumerable();
+
     /// <summary>
     /// Creates an IEnumerable from a given IEnumerable.
     /// </summary>
@@ -1468,13 +1487,11 @@ public static class EnumerableHelper
         }
     }
 
-    /// <summary>
-    /// Converts a Dictionary<TKey, TValue> to an IEnumerable of key-value pairs.
-    /// </summary>
-    /// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
-    /// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
-    /// <param name="source">The input Dictionary to convert.</param>
-    /// <returns>An IEnumerable of key-value pairs containing the items from the input Dictionary.</returns>
+    /// <summary> Converts a Dictionary<TKey, TValue> to an IEnumerable of key-value pairs.
+    /// </summary> <typeparam name="TKey">The type of keys in the dictionary.</typeparam> <typeparam
+    /// name="TValue">The type of values in the dictionary.</typeparam> <param name="source">The
+    /// input Dictionary to convert.</param> <returns>An IEnumerable of key-value pairs containing
+    /// the items from the input Dictionary.</returns>
     public static IEnumerable<(TKey, TValue)> ToEnumerable<TKey, TValue>(this Dictionary<TKey, TValue> source)
         where TKey : notnull
     {
