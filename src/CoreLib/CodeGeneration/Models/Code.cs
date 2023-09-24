@@ -152,7 +152,7 @@ public static class SourceCodeHelpers
 
     [return: NotNull]
     public static Codes ToCodes(this Code code) =>
-        new(EnumerableHelper.ToEnumerable(code));
+        new(code.Cast().ToEnumerable<Code>());
 
     public static Code WithStatement(this Code code, [DisallowNull] string statement) =>
         new(code) { Statement = statement };
