@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Globalization;
 
 using Library.Validations;
@@ -9,6 +10,7 @@ namespace Library.Helpers;
 /// <summary>
 /// A utility to do some common tasks about ADO arguments
 /// </summary>
+[DebuggerStepThrough]
 public static partial class AdoHelper
 {
     /// <summary>

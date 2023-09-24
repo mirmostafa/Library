@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 using Library.Interfaces;
 using Library.Threading;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.Helpers;
 
+[DebuggerStepThrough]
 public static class QueryableHelper
 {
     /// <summary>

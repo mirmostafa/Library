@@ -137,6 +137,9 @@ public static class ValidationExtensions
     public static ValidationResultSet<TValue> ThrowOnFail<TValue>(this ValidationResultSet<TValue> vrs) =>
         vrs.Fluent(InnerBuild(CheckBehavior.ThrowOnFail, vrs.Value, vrs.Rules));
 
+    public static bool TryParse<TValue>([DisallowNull] this ValidationResultSet<TValue> input, [NotNull] out Result<TValue> result) =>
+        (result = input.Build()).IsSucceed;
+
     private static Func<Exception> GetOnError<TValue, TType>(this ValidationResultSet<TValue> vrs, Expression<Func<TValue, TType>> propertyExpression, Func<string, Exception> onError, string? paramName = null) =>
         () => onError(paramName ?? ObjectHelper.GetPropertyInfo(vrs.Value, propertyExpression).Name);
 

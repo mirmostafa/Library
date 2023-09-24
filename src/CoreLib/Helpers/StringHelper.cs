@@ -32,26 +32,35 @@ public static class StringHelper
     public static string? Add(this string? s, in int count, char add = ' ', bool before = false) =>
         count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 
+    /// <summary>
+    /// Adds the given string to the end of the current string.
+    /// </summary>
+    /// <param name="str">The original string.</param>
+    /// <param name="s">The string to add to the end of the original string.</param>
+    /// <returns>The string with the added string at the end.</returns>
     [Pure]
     [return: NotNull]
     public static string? Add(this string? str, string? s) =>
-        str.AddEnd(s);
+        string.Concat(str, s);
 
     /// <summary>
     /// Adds the given string to the end of the current string.
     /// </summary>
+    /// <param name="str">The original string.</param>
+    /// <param name="s">The string to add to the end of the original string.</param>
+    /// <returns>The string with the added string at the end.</returns>
     [Pure]
     [return: NotNull]
-    public static string AddEnd(this string? s, in string? s1) =>
-        string.Concat(s, s1);
+    public static string AddEnd(this string? str, in string? s) =>
+        string.Concat(str, s);
 
     /// <summary>
     /// Adds the given string to the start of the current string.
     /// </summary>
     [Pure]
-    [return: NotNullIfNotNull(nameof(s))]
-    public static string AddStart(this string s, in string s1)
-        => string.Concat(s1, s);
+    [return: NotNull]
+    public static string AddStart(this string str, in string s)
+        => string.Concat(s, str);
 
     /// <summary>
     /// Retrieves all indexes of a specified substring within a given string.
@@ -904,6 +913,7 @@ public static class StringHelper
     /// <summary>
     /// Returns the plural form of the given string, or null if the string is null or empty.
     /// </summary>
+    [return: NotNullIfNotNull(nameof(text))]
     public static string? Pluralize(string? text)
         => text.IsNullOrEmpty() ? null : Pluralizer.Pluralize(text);
 
@@ -1115,6 +1125,11 @@ public static class StringHelper
     /// <param name="this">The string to split.</param>
     /// <param name="separator">The separator to use for splitting.</param>
     /// <returns>A collection of substrings from the original string.</returns>
+    /// <example>
+    /// //Note: Check the <seealso cref="string.Split(string?, StringSplitOptions)"/> source in
+    /// .NET. It's funny. 😁
+    /// </example>
+    [Obsolete("Use `string.Split`, instead.", true)]
     public static IEnumerable<string> Split(this string @this, string separator)
     {
         //Create a checkpoint variable to keep track of the current index

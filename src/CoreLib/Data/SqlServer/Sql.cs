@@ -1,11 +1,13 @@
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 using Library.Dynamic;
 using Library.Validations;
 
 namespace Library.Data.SqlServer;
 
+[DebuggerStepThrough]
 public sealed class Sql(string connectionString)
 {
     public string ConnectionString { get; } = connectionString.ArgumentNotNull();
