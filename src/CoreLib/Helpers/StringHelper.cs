@@ -32,12 +32,17 @@ public static class StringHelper
     public static string? Add(this string? s, in int count, char add = ' ', bool before = false) =>
         count is 0 ? s : before ? s?.PadLeft(s.Length + count, add) : s?.PadRight(s.Length + count, add);
 
+    [Pure]
+    [return: NotNull]
+    public static string? Add(this string? str, string? s) =>
+        str.AddEnd(s);
+
     /// <summary>
     /// Adds the given string to the end of the current string.
     /// </summary>
     [Pure]
-    [return: NotNullIfNotNull(nameof(s))]
-    public static string AddEnd(this string s, in string s1) =>
+    [return: NotNull]
+    public static string AddEnd(this string? s, in string? s1) =>
         string.Concat(s, s1);
 
     /// <summary>
@@ -1191,6 +1196,26 @@ public static class StringHelper
 
         return result.ToString();
     }
+
+    /// <summary>
+    /// Splits a string by a separator, merges the resulting array back into a string with a
+    /// different separator, and optionally adds the separator to the end.
+    /// </summary>
+    /// <param name="str">The string to split and merge.</param>
+    /// <param name="splitSeparator">
+    /// The separator to use when splitting the string. If null, Environment.NewLine is used.
+    /// </param>
+    /// <param name="mergeSeparator">
+    /// The separator to use when merging the string. If null, Environment.NewLine is used.
+    /// </param>
+    /// <param name="addSeparatorToEnd">
+    /// A flag indicating whether to add the merge separator to the end of the string.
+    /// </param>
+    /// <param name="options">Specifies the options to use when splitting the string.</param>
+    /// <returns>The split and merged string, or null if the original string is null or empty.</returns>
+    [return: NotNullIfNotNull(nameof(str))]
+    public static string? SplitMerge(this string? str, string? splitSeparator = null, string? mergeSeparator = null, bool addSeparatorToEnd = true, StringSplitOptions options = StringSplitOptions.None) =>
+        str.IsNullOrEmpty() ? str : str.Split(splitSeparator ?? Environment.NewLine, options).Merge(mergeSeparator ?? Environment.NewLine, addSeparatorToEnd);
 
     /// <summary>
     /// Splits a string into a sequence of key-value pairs. (To be used in `ConnectionString`-like strings)

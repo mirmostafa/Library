@@ -16,16 +16,18 @@ public struct MethodInfo(
     public string Name { get; } = name;
     public string? ReturnType { get; } = returnType;
 
-    public static bool operator !=(MethodInfo left, MethodInfo right) => !(left == right);
+    public static bool operator !=(MethodInfo left, MethodInfo right) =>
+        !(left == right);
 
-    public static bool operator ==(MethodInfo left, MethodInfo right) => left.Equals(right);
+    public static bool operator ==(MethodInfo left, MethodInfo right) =>
+        left.Equals(right);
 
-    public override bool Equals(object? obj)
-        => obj is MethodInfo info && this.Equals(info);
+    public override bool Equals(object? obj) =>
+        obj is MethodInfo info && this.Equals(info);
 
-    public readonly bool Equals(MethodInfo other)
-        => this.Name == other.Name && EqualityComparer<IEnumerable<MethodArgument>?>.Default.Equals(this.Arguments, other.Arguments);
+    public readonly bool Equals(MethodInfo other) =>
+        this.Name == other.Name && EqualityComparer<IEnumerable<MethodArgument>?>.Default.Equals(this.Arguments, other.Arguments);
 
-    public override readonly int GetHashCode()
-        => HashCode.Combine(this.Name, this.Arguments);
+    public override readonly int GetHashCode() =>
+        HashCode.Combine(this.Name, this.Arguments);
 }
