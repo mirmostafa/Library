@@ -1112,7 +1112,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
             controls);
 }
 
-public record ButtonInfo(string Text, EventHandler OnClick, string? Name = null, bool? UseElevationIcon = null)
+public record ButtonInfo(string Text, EventHandler OnClick, string? Name = null, bool IsDefault = false, bool? UseElevationIcon = null)
 {
     public TaskDialogButton ToButton()
     {
@@ -1121,7 +1121,7 @@ public record ButtonInfo(string Text, EventHandler OnClick, string? Name = null,
         {
             control.UseElevationIcon = ue;
         }
-
+        control.Default = this.IsDefault;
         control.Click += this.OnClick;
         return control;
     }
@@ -1137,8 +1137,8 @@ public record ButtonInfo(string Text, EventHandler OnClick, string? Name = null,
     public static IEnumerable<TaskDialogButton> ToButtons(IEnumerable<ButtonInfo> buttons)
         => ToButtons(buttons.ToArray());
 
-    public static ButtonInfo New(string text, EventHandler onClick, string? name = null, bool? useElevationIcon = null)
-        => new(text, onClick, name, useElevationIcon);
+    public static ButtonInfo New(string text, EventHandler onClick, string? name = null, bool isDefault = false, bool? useElevationIcon = null)
+        => new(text, onClick, name, isDefault, useElevationIcon);
 
     public static implicit operator TaskDialogButton(ButtonInfo buttonInfo)
         => buttonInfo.ToButton();

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Library.Helpers;
 
 [DebuggerStepThrough]
+[StackTraceHidden]
 public static class QueryableHelper
 {
     /// <summary>
