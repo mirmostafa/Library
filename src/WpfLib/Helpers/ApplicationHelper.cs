@@ -31,10 +31,25 @@ public static partial class ApplicationHelper
         }
     }
 
+    public static TApp DoEvents<TApp>(this TApp app)
+        where TApp : Application
+    {
+        var frame = new DispatcherFrame();
+        _ = Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
+            new DispatcherOperationCallback(
+                delegate (object f)
+                {
+                    ((DispatcherFrame)f).Continue = false;
+                    return null;
+                }), frame);
+        Dispatcher.PushFrame(frame);
+        return app;
+    }
+
     public static string GetAboutAppString(string? moreInfo = null)
     {
-        var builder = new StringBuilder();
-        _ = builder.AppendLine($"Product:    \t{ProductTitle}")
+        var builder = new StringBuilder()
+            .AppendLine($"Product:    \t{ProductTitle}")
             .AppendLine($"Application:\t{ApplicationTitle}")
             .AppendLine($"Version:    \t{Version}")
             .AppendLine(Description)
@@ -47,6 +62,9 @@ public static partial class ApplicationHelper
         _ = builder.AppendLine(Copyright);
         return builder.ToString();
     }
+
+    public static TApp RunInUiThread<TApp>(this TApp app, Action action)
+        where TApp : DispatcherObject => app.Fluent(app?.Dispatcher.Invoke(DispatcherPriority.Render, action));
 
     private static string? CalculatePropertyValue<T>(string propertyName)
     {
@@ -65,22 +83,5 @@ public static partial class ApplicationHelper
         var attrib = (T)attributes[0];
         var property = attrib.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
         return property is not null ? property.GetValue(attributes[0], null) as string : string.Empty;
-    }
-
-    public static void RunInUiThread(this Application app, Action action)
-        => app?.Dispatcher.Invoke(DispatcherPriority.Render, action);
-
-    public static Application DoEvents(this Application app)
-    {
-        var frame = new DispatcherFrame();
-        Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
-            new DispatcherOperationCallback(
-                delegate (object f)
-                {
-                    ((DispatcherFrame)f).Continue = false;
-                    return null;
-                }), frame);
-        Dispatcher.PushFrame(frame);
-        return app;
     }
 }

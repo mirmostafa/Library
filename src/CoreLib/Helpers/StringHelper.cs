@@ -15,6 +15,8 @@ namespace Library.Helpers;
 /// <summary>
 /// A utility to do some common tasks about strings
 /// </summary>
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class StringHelper
 {
     private static readonly char[] _standardSeparators = new[] { '\0', '\n', '\r', '\t', '_', '-' };
@@ -59,8 +61,8 @@ public static class StringHelper
     /// </summary>
     [Pure]
     [return: NotNull]
-    public static string AddStart(this string str, in string s)
-        => string.Concat(s, str);
+    public static string AddStart(this string str, in string s) =>
+        string.Concat(s, str);
 
     /// <summary>
     /// Retrieves all indexes of a specified substring within a given string.
@@ -170,8 +172,8 @@ public static class StringHelper
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// </returns>
     [Pure]
-    public static int CompareTo(this string str1, in string str, bool ignoreCase = false)
-        => string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+    public static int CompareTo(this string str1, in string str, bool ignoreCase = false) =>
+        string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
     /// <summary>
     /// Concatenates all strings in the given enumerable, using the given separator.
@@ -179,10 +181,10 @@ public static class StringHelper
     /// <param name="strings">The strings to concatenate.</param>
     /// <param name="sep">The separator to use.</param>
     /// <returns>The concatenated string.</returns>
-    public static string ConcatAll(IEnumerable<string> strings, string sep)
-        => (sep?.Length ?? 0) switch
+    public static string ConcatAll(IEnumerable<string> strings, string sep) =>
+        (sep?.Length) switch
         {
-            0 => string.Concat(strings),
+            0 or null => string.Concat(strings),
             _ => string.Join(sep, strings),
         };
 
@@ -198,8 +200,8 @@ public static class StringHelper
     /// <summary>
     /// Checks if a string contains a specified value, with an optional case-insensitive comparison.
     /// </summary>
-    public static bool Contains(string str, in string value, bool ignoreCase = true)
-        => str?.IndexOf(value, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) >= 0;
+    public static bool Contains(string str, in string value, bool ignoreCase = true) =>
+        str?.IndexOf(value, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) >= 0;
 
     /// <summary>
     /// Checks if a given string is present in an array of strings, with the option to ignore case.
@@ -729,8 +731,6 @@ public static class StringHelper
     /// Checks if the given string is null or empty.
     /// </summary>
     [Pure]
-    [DebuggerStepThrough]
-    [StackTraceHidden]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
         => str == null || str.Length == 0;
@@ -872,30 +872,21 @@ public static class StringHelper
     /// </summary>
     /// <param name="source">The sequence of strings to merge.</param>
     /// <returns>A single string containing the merged values without any separators.</returns>
-    public static string Merge(this IEnumerable<string> source)
-    {
-        // Create a StringBuilder to efficiently concatenate the strings.
-        var result = new StringBuilder();
-
-        // Iterate through the source and append each string to the result.
-        source.ForEach(x => result.Append(x));
-
-        // Convert the StringBuilder to a string and return the merged result.
-        return result.ToString();
-    }
+    public static string Merge(this IEnumerable<string> source) =>
+        string.Concat(source.ToArray());
 
     /// <summary> Merges the elements of an IEnumerable<string> into a single string, separated by
     /// the given separator. </summary>
-    public static string Merge(this IEnumerable<string> array, in char separator)
-        => string.Join(separator, array.ToArray());
+    public static string Merge(this IEnumerable<string> array, in char separator) =>
+        string.Join(separator, array.ToArray());
 
     /// <summary> Merges the elements of an IEnumerable<string> array into a single string, using
     /// the specified quotation mark and separator. </summary> <param name="array">The array of
     /// strings to be merged.</param> <param name="quat">The quotation mark to be used.</param>
     /// <param name="separator">The separator to be used.</param> <returns>A string containing the
     /// merged elements of the array.</returns>
-    public static string Merge(this IEnumerable<string> array, string quat, string separator)
-        => array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator}").TrimEnd(separator.ToCharArray())[..^1];
+    public static string Merge(this IEnumerable<string> array, string quat, string separator) =>
+        array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator}").TrimEnd(separator.ToCharArray())[..^1];
 
     /// <summary>
     /// Merges a collection of tuples into a single string, separated by a key-value separator and
@@ -907,8 +898,8 @@ public static class StringHelper
     /// </param>
     /// <param name="statementSeparator">The separator to use between each tuple.</param>
     /// <returns>A single string containing the merged tuples.</returns>
-    public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";")
-        => string.Join(statementSeparator, splitPair.Select(pair => $"{pair.Item1}{keyValueSeparator}{pair.Item2}"));
+    public static string MergePair(this IEnumerable<(string, string)> splitPair, string keyValueSeparator = "=", string statementSeparator = ";") =>
+        string.Join(statementSeparator, splitPair.Select(pair => $"{pair.Item1}{keyValueSeparator}{pair.Item2}"));
 
     /// <summary>
     /// Returns the plural form of the given string, or null if the string is null or empty.
@@ -960,40 +951,40 @@ public static class StringHelper
     /// <summary>
     /// Replaces a specified number of occurrences of a character in a string with a new character.
     /// </summary>
-    public static string Replace2(this string s, char old, in char replacement, in int count = 1)
-        => s.Replace2(old.ToString(), replacement.ToString(), count);
+    public static string Replace2(this string s, char old, in char replacement, in int count = 1) =>
+        s.Replace2(old.ToString(), replacement.ToString(), count);
 
     /// <summary>
     /// Replaces a specified number of occurrences of a string with another string.
     /// </summary>
-    public static string Replace2(this string s, in string old, in string replacement, in int count = 1)
-        => new Regex(Regex.Escape(old)).Replace(s, replacement, count);
+    public static string Replace2(this string s, in string old, in string replacement, in int count = 1) =>
+        new Regex(Regex.Escape(old)).Replace(s, replacement, count);
 
     /// <summary>
     /// Replaces all occurrences of a character in a string with a new character.
     /// </summary>
-    public static string ReplaceAll(this string value, in IEnumerable<(char OldValue, char NewValue)> items)
-        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+    public static string ReplaceAll(this string value, in IEnumerable<(char OldValue, char NewValue)> items) =>
+        items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     /// <summary>
     /// Replaces all occurrences of the specified old values with the specified new value in the
     /// given string.
     /// </summary>
-    public static string ReplaceAll(this string value, in IEnumerable<string> oldValues, string newValue)
-        => oldValues.Aggregate(value, (current, oldValue) => current.Replace(oldValue, newValue));
+    public static string ReplaceAll(this string value, in IEnumerable<string> oldValues, string newValue) =>
+        oldValues.Aggregate(value, (current, oldValue) => current.Replace(oldValue, newValue));
 
     /// <summary>
     /// Replaces all occurrences of the specified old values with the specified new values in the
     /// given string.
     /// </summary>
-    public static string ReplaceAll(this string value, in IEnumerable<(string OldValue, string NewValue)> items)
-        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+    public static string ReplaceAll(this string value, in IEnumerable<(string OldValue, string NewValue)> items) =>
+        items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     /// <summary>
     /// Replaces all occurrences of a character in a string with a new character.
     /// </summary>
-    public static string ReplaceAll(this string value, params (char OldValue, char NewValue)[] items)
-        => items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
+    public static string ReplaceAll(this string value, params (char OldValue, char NewValue)[] items) =>
+        items.Aggregate(value, (current, item) => current.Replace(item.OldValue, item.NewValue));
 
     /// <summary>
     /// Replaces all occurrences of the specified old values with the specified new values in the
@@ -1203,7 +1194,7 @@ public static class StringHelper
     /// <returns>The merged string.</returns>
     public static string SplitMerge(this string str, char splitter, in string startSeparator, in string endSeparator)
     {
-        StringBuilder result = new();
+        var result = new StringBuilder();
         foreach (var part in str.Split(splitter))
         {
             _ = result.Append($"{startSeparator}{part}{endSeparator}");
@@ -1263,20 +1254,20 @@ public static class StringHelper
     /// <summary>
     /// Converts a string from SQL encoding to UTF-8 encoding.
     /// </summary>
-    public static string SqlEncodingToUtf(this string obj)
-        => Encoding.UTF8.GetString(Encoding.GetEncoding(1256).GetBytes(obj));
+    public static string SqlEncodingToUtf(this string obj) =>
+        Encoding.UTF8.GetString(Encoding.GetEncoding(1256).GetBytes(obj));
 
     /// <summary>
     /// Checks if the given string starts with any of the strings in the given IEnumerable.
     /// </summary>
-    public static bool StartsWithAny(this string str, in IEnumerable<string> values)
-        => values.Any(str.StartsWith);
+    public static bool StartsWithAny(this string str, in IEnumerable<string> values) =>
+        values.Any(str.StartsWith);
 
     /// <summary>
     /// Checks if a string starts with any of the given values.
     /// </summary>
-    public static bool StartsWithAny(this string str, params string[] values)
-        => values.Any(str.StartsWith);
+    public static bool StartsWithAny(this string str, params string[] values) =>
+        values.Any(str.StartsWith);
 
     /// <summary>
     /// Converts a string to a byte array using the specified encoding.
@@ -1312,8 +1303,8 @@ public static class StringHelper
     /// <summary>
     /// Converts a collection of strings to a collection of integers.
     /// </summary>
-    public static IEnumerable<int> ToInt(in IEnumerable<string> array)
-        => array.Where(str => IsNumber(str)).Select(str => str.Cast().ToInt());
+    public static IEnumerable<int> ToInt(in IEnumerable<string> array) =>
+        array.Where(str => IsNumber(str)).Select(str => str.Cast().ToInt());
 
     /// <summary>
     /// Converts a collection of strings to lowercase.

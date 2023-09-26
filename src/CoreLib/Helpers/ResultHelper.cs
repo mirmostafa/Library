@@ -6,7 +6,6 @@ using Library.Exceptions;
 using Library.Interfaces;
 using Library.Logging;
 using Library.Results;
-using Library.Validations;
 using Library.Windows;
 
 namespace Library.Helpers;
@@ -48,8 +47,37 @@ public static class ResultHelper
     public static void Deconstruct<TValue>(this Result<TValue> result, out bool IsSucceed, out TValue Value) =>
         (IsSucceed, Value) = (result.IsSucceed, result.Value);
 
+    public static async Task<TValue> GetValueAsync<TValue>(this Task<Result<TValue>> taskResult)
+    {
+        var result = await taskResult;
+        return result.Value;
+    }
+
+    public static TResult IfFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    {
+        if (result == false)
+        {
+            action(result);
+        }
+
+        return result;
+    }
+
+    public static TResult IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
+        => result == true ? next() : result;
+
+    public static TResult IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    {
+        if (result == true)
+        {
+            action(result);
+        }
+
+        return result;
+    }
+
     public static TResult LogDebug<TResult>(this TResult result, ILogger logger, [CallerMemberName] object? sender = null, DateTime? time = null)
-        where TResult : ResultBase
+                        where TResult : ResultBase
     {
         if (result.IsSucceed)
         {
@@ -72,29 +100,6 @@ public static class ResultHelper
     public static TResult OnDone<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
         action(result);
-        return result;
-    }
-
-    public static TResult OnFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
-    {
-        if (result == false)
-        {
-            action(result);
-        }
-
-        return result;
-    }
-
-    public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
-        => result == true ? next() : result;
-
-    public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
-    {
-        if (result == true)
-        {
-            action(result);
-        }
-
         return result;
     }
 
@@ -146,11 +151,6 @@ public static class ResultHelper
     /// <returns>The result of the provided Task.</returns>
     public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(await resultAsync, owner, instruction);
-    public static async Task<TValue> GetValueAsync<TValue>(this Task<Result<TValue>> taskResult)
-    {
-        var result = await taskResult;
-        return result.Value;
-    }
 
     public static async Task<TResult> ThrowOnFailAsync<TResult>(this Task<TResult> resultAsync, object? owner = null, string? instruction = null)
         where TResult : ResultBase =>
@@ -186,9 +186,17 @@ public static class ResultHelper
     /// </summary>
     /// <typeparam name="TResult">The type of <see cref="ResultBase"/> to parse the input as.</typeparam>
     /// <param name="input">The input object to parse.</param>
-    /// <param name="result">When this method returns, contains the parsed <typeparamref name="TResult"/> object if successful, or the default value if parsing fails.</param>
-    /// <returns><c>true</c> if the parsing is successful and the result is a success, <c>false</c> otherwise.</returns>
-    /// <remarks>The method sets the <paramref name="result"/> parameter to the parsed object and checks if the parsing is successful by evaluating <see cref="ResultBase.IsSucceed"/>.</remarks>
+    /// <param name="result">
+    /// When this method returns, contains the parsed <typeparamref name="TResult"/> object if
+    /// successful, or the default value if parsing fails.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the parsing is successful and the result is a success, <c>false</c> otherwise.
+    /// </returns>
+    /// <remarks>
+    /// The method sets the <paramref name="result"/> parameter to the parsed object and checks if
+    /// the parsing is successful by evaluating <see cref="ResultBase.IsSucceed"/>.
+    /// </remarks>
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase =>
         (result = input).IsSucceed;
 
