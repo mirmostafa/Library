@@ -31,7 +31,7 @@ public static partial class ApplicationHelper
         }
     }
 
-    public static TApp DoEvents<TApp>(this TApp app)
+    public static void DoEvents<TApp>(this TApp app)
         where TApp : Application
     {
         var frame = new DispatcherFrame();
@@ -43,7 +43,6 @@ public static partial class ApplicationHelper
                     return null;
                 }), frame);
         Dispatcher.PushFrame(frame);
-        return app;
     }
 
     public static string GetAboutAppString(string? moreInfo = null)
