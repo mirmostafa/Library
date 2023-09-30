@@ -2,7 +2,7 @@
 
 public interface ISelectStatement : IStatementOnTable, IWhereClause
 {
-    List<string> Columns { get; }
+    IList<string> Columns { get; }
 
     string? OrderByColumn { get; set; }
 

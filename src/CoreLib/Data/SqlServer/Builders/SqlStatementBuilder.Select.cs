@@ -1,4 +1,8 @@
-﻿using Library.Data.SqlServer;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+
+using Library.Data.SqlServer;
 using Library.Data.SqlServer.Builders.Bases;
 using Library.Validations;
 
@@ -70,6 +74,20 @@ public static partial class SqlStatementBuilder
         return statement.AddColumns(columns);
     }
 
+    public static ISelectStatement CreateSelect<TTable>()
+    {
+        var type = typeof(TTable);
+        var tableName = type.GetCustomAttribute<TableAttribute>()?.Name ?? type.Name;
+        var columns = type.GetProperties().Select(x => x.GetCustomAttribute<ColumnAttribute>()?.Name ?? x.Name);
+        var result = Select(tableName).AddColumns(columns);
+        //if (TryNotNull(columns.FirstOrDefault(x => x.EqualsTo("Id")), out var id))
+        //{
+        //    result = result.OrderBy(id);
+        //}
+
+        return result;
+    }
+
     public static ISelectStatement Descending([DisallowNull] this ISelectStatement statement)
         => statement.ArgumentNotNull().Fluent(() => statement.OrderByDirection = OrderByDirection.Descending).GetValue();
 
@@ -111,7 +129,7 @@ public static partial class SqlStatementBuilder
             this.WhereClause = this.OrderBy = this.OrderByColumn = null;
         }
 
-        public List<string> Columns { get; } = new();
+        public IList<string> Columns { get; } = new List<string>();
 
         public string? OrderBy { get; set; }
 

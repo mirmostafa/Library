@@ -524,6 +524,12 @@ public static class CodeHelper
     public static Task ToVoidAsync<TValue>(this Task<TValue> task) =>
         task;
 
+    public static bool TryNotNull<T>(T? o, [NotNullIfNotNull(nameof(o))] out T result)
+    {
+        result = o!;
+        return result != null;
+    }
+
     /// <summary>
     /// Invokes an action on an instance and returns the instance.
     /// </summary>

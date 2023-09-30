@@ -106,6 +106,28 @@ public static class StringHelper
     public static bool AnyCharInString(this string str, in string range) =>
         !string.IsNullOrEmpty(str) && range.Any(str.Contains);
 
+    public static StringBuilder AppendAll([DisallowNull] this StringBuilder sb, IEnumerable<string> lines)
+    {
+        foreach (var line in lines)
+        {
+            _ = sb.Append(line);
+        }
+        return sb;
+    }
+
+    public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> format) =>
+        sb.AppendAll(items.Select(format));
+
+    public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, int, string> format)
+    {
+        var index = 0;
+        foreach (var item in items)
+        {
+            _ = sb.Append(format(item, index++));
+        }
+        return sb;
+    }
+
     public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, IEnumerable<string> lines)
     {
         foreach (var line in lines)
@@ -879,6 +901,12 @@ public static class StringHelper
     /// the given separator. </summary>
     public static string Merge(this IEnumerable<string> array, in char separator) =>
         string.Join(separator, array.ToArray());
+
+    public static string Merge(this IEnumerable<string> array, in char separator, Func<string, string> format) => 
+        string.Join(separator, array.Select(format).ToArray());
+
+    public static string Merge(this IEnumerable<string> array, in string separator, Func<string, int, string> format) =>
+        string.Join(separator, array.Select(format).ToArray());
 
     /// <summary> Merges the elements of an IEnumerable<string> array into a single string, using
     /// the specified quotation mark and separator. </summary> <param name="array">The array of

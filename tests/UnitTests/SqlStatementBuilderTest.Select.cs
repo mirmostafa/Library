@@ -1,5 +1,9 @@
-﻿using Library.Data.SqlServer;
+﻿using System;
+
+using Library.Data.SqlServer;
 using Library.Exceptions.Validations;
+
+using Xunit;
 
 namespace UnitTests;
 
@@ -67,7 +71,7 @@ public sealed class SelectStatementBuilderTest
     {
         var specQueryActual = SqlStatementBuilder
                         .Select()
-                        .AddColumns(new[] { "Id", "Name", "Age" })
+                        .AddColumns(["Id", "Name", "Age" ])
                         .From("Person")
                         .Build();
         var specQueryExpected = @"SELECT [Id], [Name], [Age]
@@ -136,4 +140,20 @@ public sealed class SelectStatementBuilderTest
     FROM [Person]";
         Assert.Equal(specQueryExpected, specQueryActual);
     }
+
+    [Fact]
+    public void CreateSelectGeneric()
+    {
+        var specQueryActual = SqlStatementBuilder.CreateSelect<Person>().Build();
+        var specQueryExpected = @"SELECT [Id], [Name], [Age]
+    FROM [Person]";
+        Assert.Equal(specQueryExpected, specQueryActual);
+    }
+}
+
+sealed class Person(long id, string name, int age)
+{
+    public long Id { get; } = id;
+    public string Name { get; } = name;
+    public int Age { get; } = age;
 }
