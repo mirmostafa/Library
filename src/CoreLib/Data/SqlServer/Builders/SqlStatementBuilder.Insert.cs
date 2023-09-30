@@ -14,5 +14,5 @@ public partial class SqlStatementBuilder
     }
 
     private static string FormatValue(string value, int index, IInsertStatement statement) =>
-        statement.Columns[index].IsString ? $"`{value}`" : $"{value}";
+        statement.Columns[index].IsString ? $"'{value}'" : $"{value}";
 }

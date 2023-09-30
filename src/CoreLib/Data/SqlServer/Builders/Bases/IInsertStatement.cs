@@ -7,7 +7,7 @@ public interface IInsertStatement : IInsertStatementBase
 
 public interface IInsertStatementBase : IStatementOnTable
 {
-    IList<(string ColumnName, bool IsString> Columns { get; }
+    IList<(string ColumnName, bool IsString)> Columns { get; }
 }
 
 public interface IBulkInsertStatement : IInsertStatementBase
