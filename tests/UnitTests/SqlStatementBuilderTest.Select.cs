@@ -70,10 +70,10 @@ public sealed class SelectStatementBuilderTest
     public void BuildAddListColSelectTest()
     {
         var specQueryActual = SqlStatementBuilder
-                        .Select()
-                        .AddColumns(["Id", "Name", "Age" ])
-                        .From("Person")
-                        .Build();
+            .Select()
+            .AddColumns(["Id", "Name", "Age" ])
+            .From("Person")
+            .Build();
         var specQueryExpected = @"SELECT [Id], [Name], [Age]
     FROM [Person]";
         Assert.Equal(specQueryExpected, specQueryActual);
