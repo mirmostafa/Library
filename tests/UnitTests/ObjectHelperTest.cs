@@ -119,17 +119,7 @@ public sealed class ObjectHelperTest
         var actual = ObjectHelper.IsNullOrEmpty(arg);
         Assert.Equal(expected, actual);
     }
-    [Theory]
-    [InlineData("John", 5)]
-    [InlineData(3000, 2999)]
-    public void RepeatTest(object item, int count)
-    {
-        var actual = ObjectHelper.Repeat(item, count).ToArray();
-        for (var i = 0; i < count; i++)
-        {
-            Assert.Equal(item, actual[i]);
-        }
-    }
+    
 }
 
 #region Models

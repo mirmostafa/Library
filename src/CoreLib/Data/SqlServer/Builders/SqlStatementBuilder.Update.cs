@@ -44,7 +44,8 @@ public static partial class SqlStatementBuilder
     public static IUpdateStatement Table([DisallowNull] this IUpdateStatement statement, [DisallowNull] string tableName)
         => statement.Fluent(statement.ArgumentNotNull().TableName = tableName.ArgumentNotNull()).GetValue();
 
-    public static IUpdateStatement Update() => new UpdateStatement();
+    public static IUpdateStatement Update() => 
+        new UpdateStatement();
 
     public static IUpdateStatement Update([DisallowNull] string tableName)
         => new UpdateStatement { TableName = tableName.ArgumentNotNull() };

@@ -588,4 +588,15 @@ public sealed class EnumerableHelperTest
         // Assert
         Assert.Equal(new[] { 1, 3, 4 }, result);
     }
+    [Theory]
+    [InlineData("John", 5)]
+    [InlineData(3000, 2999)]
+    public void RepeatTest(object item, int count)
+    {
+        var actual = EnumerableHelper.Repeat(item, count).ToArray();
+        for (var i = 0; i < count; i++)
+        {
+            Assert.Equal(item, actual[i]);
+        }
+    }
 }

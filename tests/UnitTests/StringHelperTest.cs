@@ -676,18 +676,6 @@ public sealed class StringHelperTest
     }
 
     [Theory]
-    [InlineData("This is a test!")]
-    [InlineData("Hello, World!")]
-    [InlineData("1234567890")]
-    [InlineData("The quick brown fox jumps over the lazy dog.")]
-    public void PatternPolicyTest(string text)
-    {
-        var result = StringHelper.PatternPolicy(text);
-
-        Assert.DoesNotContain("~`!#$%^&*()-+={[}]|\\:;\"'<,>.?/", result);
-    }
-
-    [Theory]
     [InlineData("numbers", "number")]
     [InlineData("cases", "case")]
     [InlineData("handies", "handy")]

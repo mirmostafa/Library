@@ -8,7 +8,7 @@ namespace Library.Helpers.ConsoleHelper;
 
 public static class ConsoleHelper
 {
-    public static void Configure(Action<ConsoleHelperOptions>? configurator = null)
+    public static void Initialize(Action<ConsoleHelperOptions>? configurator = null)
     {
         LibLogger.Debug("Configuring...", nameof(ConsoleHelper));
         var options = new ConsoleHelperOptions();

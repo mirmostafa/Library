@@ -1,5 +1,6 @@
 ﻿using System.IO;
 
+using Library.Exceptions.Validations;
 using Library.Results;
 using Library.Wpf.Dialogs;
 
@@ -14,7 +15,8 @@ public static class FileUiTools
         var fileList = files?.ToList();
 
         var validation = fileList.Check().ArgumentNotNull()
-            .RuleFor(x => x!.All(item => !item.FilePath.IsNullOrEmpty()), () => new ArgumentNullException("File Path cannot be empty", (Exception?)null));
+            .RuleFor(x => !x!.Any(), () => new NoItemValidationException("No file to save"))
+            .RuleFor(x => x!.All(item => !item.FilePath.IsNullOrEmpty()), () => new ArgumentNullException($"`FilePath` cannot be empty", (Exception?)null));
         if (!validation.TryParse(out var vr))
         {
             return vr;
@@ -58,15 +60,15 @@ public static class FileUiTools
         }
         return Result.Success;
 
-        static void setResp(object? o, EventArgs e, TaskDialogResult res) => MsgBox2.GetOnButtonClick(o, e).Parent.Close(res);
-
         static TaskDialogResult askToSkipOrReplace(string? title, string filePath)
         {
             var skipButton = ButtonInfo.New("&Skip", (o, e) => setResp(o, e, TaskDialogResult.No), isDefault: true).ToButton();
             var replButton = ButtonInfo.New("&Replace", (o, e) => setResp(o, e, TaskDialogResult.Yes)).ToButton();
             var replAllButton = ButtonInfo.New("Replace &all", (o, e) => setResp(o, e, TaskDialogResult.Ok), useElevationIcon: true).ToButton();
             var cancelButton = ButtonInfo.New("&Cancel", (o, e) => setResp(o, e, TaskDialogResult.Cancel)).ToButton();
-            return MsgBox2.AskWithWarn($"The destination already has a file named \"{Path.GetFileName(filePath)}\".", text: title, $"Replace or Skip Files", controls: new[] { skipButton, replButton, replAllButton, cancelButton });
+            return MsgBox2.AskWithWarn($"The destination already has a file named \"{Path.GetFileName(filePath)}\".", text: title, $"Replace or Skip Files", controls: [skipButton, replButton, replAllButton, cancelButton]);
+
+            static void setResp(object? o, EventArgs e, TaskDialogResult res) => MsgBox2.GetOnButtonClick(o, e).Parent.Close(res);
         }
     }
 }

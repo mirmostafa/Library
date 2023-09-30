@@ -34,9 +34,9 @@ public sealed class ResultTest
     public void OnSuccessFalseTest()
     {
         var actual = Check(true, "1")
-            .OnSucceed(() => Check(true, "2"))
-            .OnSucceed(() => Check(false, "3"))
-            .OnSucceed(() => Check(false, "4"));
+            .IfSucceed(() => Check(true, "2"))
+            .IfSucceed(() => Check(false, "3"))
+            .IfSucceed(() => Check(false, "4"));
         Assert.False(actual);
         Assert.Equal("3", actual.Message);
     }
@@ -45,9 +45,9 @@ public sealed class ResultTest
     public void OnSuccessTrueTest()
     {
         var actual = Check(true, "1")
-            .OnSucceed(() => Check(true, "2"))
-            .OnSucceed(() => Check(true, "3"))
-            .OnSucceed(() => Check(true, "4"));
+            .IfSucceed(() => Check(true, "2"))
+            .IfSucceed(() => Check(true, "3"))
+            .IfSucceed(() => Check(true, "4"));
         Assert.True(actual);
         Assert.Equal("4", actual.Message);
     }

@@ -604,10 +604,14 @@ public static class EnumerableHelper
     {
         Check.MustBeArgumentNotNull(items);
         Check.MustBeArgumentNotNull(action);
+        return getIterator(items, action);
 
-        foreach (var item in items)
+        static IEnumerable<TResult> getIterator(IEnumerable<T> items, Func<T, TResult> action)
         {
-            yield return action(item);
+            foreach (var item in items)
+            {
+                yield return action(item);
+            }
         }
     }
 
@@ -678,7 +682,7 @@ public static class EnumerableHelper
     public static Dictionary<TKey, TValue?> DictionaryFromKeys<TKey, TValue>(IEnumerable<TKey> keys, TValue? defaultValue = default)
         where TKey : notnull =>
         // Create a new dictionary by selecting key-value pairs from the keys sequence with default values.
-        new(keys.Select(x => new KeyValuePair<TKey, TValue?>(x, defaultValue)));
+        new(keys.CreateIterator(x => new KeyValuePair<TKey, TValue?>(x, defaultValue)));
 
     /// <summary>
     /// Creates an empty array.
@@ -832,7 +836,7 @@ public static class EnumerableHelper
     /// item and its count.
     /// </summary>
     public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items) =>
-        items.GroupBy(x => x).Select(x => (x.Key, x.Count()));
+        items.GroupBy(x => x).CreateIterator(x => (x.Key, x.Count()));
 
     /// <summary>
     /// Finds the duplicates in a given IEnumerable of type T.
@@ -991,7 +995,7 @@ public static class EnumerableHelper
     /// producing a new sequence of elements of type TResult.
     /// </remarks>
     public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> mapper) =>
-        source.Select(mapper);
+        source.CreateIterator(mapper);
 
     /// <summary>
     /// Merges multiple IEnumerable sequences into a single IEnumerable sequence.
@@ -1182,6 +1186,16 @@ public static class EnumerableHelper
         where TSource : class => RemoveDefaults(source);
 
     /// <summary>
+    /// Generates a sequence that contains a specified value repeated a specified number of times.
+    /// </summary>
+    /// <typeparam name="T">The type of the value.</typeparam>
+    /// <param name="value">The value to repeat.</param>
+    /// <param name="count">The number of times to repeat the value.</param>
+    /// <returns>An IEnumerable that contains the repeated value.</returns>
+    public static IEnumerable<T> Repeat<T>(T value, int count) =>
+        Enumerable.Repeat(value, count);
+
+    /// <summary>
     /// Runs all actions in the given enumerable while the predicate returns true.
     /// </summary>
     /// <param name="actions">The actions to run.</param>
@@ -1250,7 +1264,7 @@ public static class EnumerableHelper
     {
         foreach (var value in values)
         {
-            foreach (var item in value.Select(selector))
+            foreach (var item in value.CreateIterator(selector))
             {
                 yield return item;
             }
@@ -1306,15 +1320,10 @@ public static class EnumerableHelper
         Check.MustBeArgumentNotNull(dic);
 
         //Check if the key already exists in the dictionary
-        if (dic.ContainsKey(key))
+        if (!dic.TryAdd(key, value))
         {
             //If it does, update the value
             dic[key] = value;
-        }
-        else
-        {
-            //Otherwise, add the key-value pair
-            dic.Add(key, value);
         }
 
         //Return the dictionary

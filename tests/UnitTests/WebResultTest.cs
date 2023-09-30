@@ -54,8 +54,8 @@ public sealed class WebResultTest
     {
         var num = -1;
         var result = Succeed()
-                        .OnSucceed(x => num = 5)
-                        .OnFailure(x => num = 6);
+                        .IfSucceed(x => num = 5)
+                        .IfFailure(x => num = 6);
         Assert.Equal(5, num);
     }
 
@@ -64,8 +64,8 @@ public sealed class WebResultTest
     {
         var num = -1;
         var result = Failed()
-                        .OnSucceed(r => num = 5)
-                        .OnFailure(r => num = 6);
+                        .IfSucceed(r => num = 5)
+                        .IfFailure(r => num = 6);
         Assert.Equal(6, num);
     }
     [Fact]

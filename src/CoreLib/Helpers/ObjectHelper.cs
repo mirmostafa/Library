@@ -429,25 +429,18 @@ public static class ObjectHelper
         return propertyInfo.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit));
     }
 
+    /// <summary>
+    /// Parses the specified input string into an object of type TSelf, using the specified format provider.
+    /// </summary>
+    /// <typeparam name="TSelf">The type of the self.</typeparam>
+    /// <param name="input">The input string to parse.</param>
+    /// <param name="formatProvider">The format provider.</param>
+    /// <returns>An object of type TSelf.</returns>
+    public static TSelf Parse<TSelf>(this string input, IFormatProvider? formatProvider = null)
+        where TSelf : IParsable<TSelf> => TSelf.Parse(input, formatProvider);
+
     public static dynamic props(this object o) =>
         _propsExpando.GetOrCreateValue(o);
-
-    /// <summary>
-    /// Generates a sequence that contains a specified value repeated a specified number of times.
-    /// </summary>
-    /// <typeparam name="T">The type of the value.</typeparam>
-    /// <param name="value">The value to repeat.</param>
-    /// <param name="count">The number of times to repeat the value.</param>
-    /// <returns>An IEnumerable that contains the repeated value.</returns>
-    public static IEnumerable<T> Repeat<T>(T value, int count)
-    {
-        // Loops as many times as requested in `count`
-        for (var i = 0; i < count; i++)
-        {
-            // Returns "value" in the requested count.
-            yield return value;
-        }
-    }
 
     public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
     {
@@ -461,23 +454,11 @@ public static class ObjectHelper
         property?.SetValue(obj, value, null);
     }
 
-    /// <summary>
-    /// Parses the specified input string into an object of type TSelf, using the specified format provider.
-    /// </summary>
-    /// <typeparam name="TSelf">The type of the self.</typeparam>
-    /// <param name="input">The input string to parse.</param>
-    /// <param name="formatProvider">The format provider.</param>
-    /// <returns>An object of type TSelf.</returns>
-    public static TSelf Parse<TSelf>(this string input, IFormatProvider? formatProvider = null)
-        where TSelf : IParsable<TSelf> => TSelf.Parse(input, formatProvider);
-
-    /// <summary>
-    /// Tries to parse the specified input string into an object of type TSelf, which implements IParsable<TSelf>.
-    /// </summary>
-    /// <typeparam name="TSelf">The type of the object to parse.</typeparam>
-    /// <param name="input">The input string to parse.</param>
-    /// <param name="formatProvider">The format provider to use for parsing.</param>
-    /// <returns>A TryMethodResult containing the result of the parse operation.</returns>
+    /// <summary> Tries to parse the specified input string into an object of type TSelf, which
+    /// implements IParsable<TSelf>. </summary> <typeparam name="TSelf">The type of the object to
+    /// parse.</typeparam> <param name="input">The input string to parse.</param> <param
+    /// name="formatProvider">The format provider to use for parsing.</param> <returns>A
+    /// TryMethodResult containing the result of the parse operation.</returns>
     public static TryMethodResult<TSelf> TryParse<TSelf>(this string input, IFormatProvider? formatProvider = null)
         where TSelf : IParsable<TSelf> => TryMethodResult<TSelf>.TryParseResult(TSelf.TryParse(input, formatProvider, out var result), result);
 }
