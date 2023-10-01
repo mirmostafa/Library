@@ -33,6 +33,7 @@
     <System:Double x:Key="ControlHeight">27</System:Double>
     <System:Double x:Key="ControlLongWidth">120</System:Double>
     <System:Double x:Key="ContentControlLongWidth">240</System:Double>
+    <System:Double x:Key="ContentControlLongLongWidth">500</System:Double>
     <System:Double x:Key="ContentControlLongHeight">75</System:Double>
     <GridLength x:Key="LabelColumn">80</GridLength>
     <GridLength x:Key="LongLabelColumn">120</GridLength>

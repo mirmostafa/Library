@@ -42,6 +42,12 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
     public static Toast2 New() =>
         new();
 
+    public static void Test() =>
+        New()
+            .AddText("This is a sample Toast Notification")
+            .AddText("The sound of ocean waves calms my soul.")
+            .Show();
+
     public Toast2 AddAppLogoOverride(Uri logoUri, bool circlized = false) =>
         this.Do(b => b.AddAppLogoOverride(logoUri, circlized ? ToastGenericAppLogoCrop.Circle : ToastGenericAppLogoCrop.Default));
 
@@ -57,7 +63,7 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
     /// the user clicks the button.
     /// </param>
     /// <returns>The current instance of <see cref="Toast2"/></returns>
-    public Toast2 AddButton(string text, Action<Button> onClick, string? id = null)=> 
+    public Toast2 AddButton(string text, Action<Button> onClick, string? id = null) =>
         this.AddButton(new(text, onClick, id));
 
     /// <summary>
@@ -77,12 +83,12 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
     /// the user clicks the button.
     /// </param>
     /// <returns>The current instance of <see cref="Toast2"/></returns>
-    public Toast2 AddButton(string textBoxId, string text, Action<Button> onClick, string? id = null)=> 
+    public Toast2 AddButton(string textBoxId, string text, Action<Button> onClick, string? id = null) =>
         this.AddButton(new(text, onClick, id));
 
     public Toast2 AddButton(Button button)
     {
-        Check.IfArgumentIsNotNull(button);
+        Check.MustBeArgumentNotNull(button);
         return this.Do(_ =>
             {
                 var id = button.Id ?? Guid.NewGuid().ToString();
@@ -93,10 +99,10 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
             });
     }
 
-    public Toast2 AddInlineImage(Uri imageUri)=> 
+    public Toast2 AddInlineImage(Uri imageUri) =>
         this.Do(b => b.AddInlineImage(imageUri));
 
-    public Toast2 AddInlineImage(string imagePath)=> 
+    public Toast2 AddInlineImage(string imagePath) =>
         this.AddInlineImage(new Uri(imagePath));
 
     /// <summary>
@@ -174,15 +180,9 @@ public sealed class Toast2 : IDisposable, INew<Toast2>
     private void OnActivated(ToastNotificationActivatedEventArgsCompat e)
     {
         var button = this._buttonList.FirstOrDefault(b => b.Id == e.Argument);
-        if (button?.OnClick is { } click)
-        {
-            Application.Current.RunInUiThread(() => click(button));
-        }
-        //!? I know that this block is called twice, but I have no solution so far.
-        else
-        {
-            Application.Current.RunInUiThread(() => this._onActivated?.Invoke(this));
-        }
+        _ = button?.OnClick is { } click
+            ? Application.Current.RunInUiThread(() => click(button))
+            : Application.Current.RunInUiThread(() => this._onActivated?.Invoke(this));
     }
 
     public record Button(string Text, Action<Button> OnClick, string? Id = null)

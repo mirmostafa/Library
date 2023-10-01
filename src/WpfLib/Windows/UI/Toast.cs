@@ -2,6 +2,8 @@
 
 using Library.Exceptions.Validations;
 
+using Microsoft.Toolkit.Uwp.Notifications;
+
 using Windows.UI.Notifications;
 
 namespace Library.Wpf.Windows.UI;
@@ -12,8 +14,8 @@ public sealed class Toast
     private ToastNotification? _toast;
     private ToastNotifier? _toastNotifier;
 
-    private Toast(string appTitle)
-        => this._appTitle = appTitle.ArgumentNotNull();
+    private Toast(string? appTitle = null)
+        => this._appTitle = appTitle ?? Application.Current.MainWindow.Title;
 
     public static Toast CreateImageLongContent(string imagePath, string title, string content, string appTitle)
         => new(appTitle)

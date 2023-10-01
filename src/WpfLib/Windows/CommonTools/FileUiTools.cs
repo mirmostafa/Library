@@ -6,7 +6,7 @@ using Library.Wpf.Dialogs;
 
 using Microsoft.WindowsAPICodePack.Dialogs;
 
-namespace Library.Wpf.Windows.UI;
+namespace Library.Wpf.Windows.CommonTools;
 
 public static class FileUiTools
 {
