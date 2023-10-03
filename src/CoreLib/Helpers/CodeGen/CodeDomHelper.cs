@@ -1,7 +1,6 @@
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Reflection;
-using System.Reflection.Metadata;
 
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
@@ -16,6 +15,13 @@ namespace Library.Helpers.CodeGen;
 [Fluent]
 public static class CodeDomHelper
 {
+    public static CodeTypeDeclaration AddAttribute(this CodeTypeDeclaration type, string attributeName, (string Key, string Value) arg)
+    {
+        var securityAttribute = new CodeAttributeDeclaration(attributeName, new CodeAttributeArgument(arg.Key, new CodePrimitiveExpression(arg.Value)));
+        _ = type.CustomAttributes.Add(securityAttribute);
+        return type;
+    }
+
     /// <summary>
     /// Adds a constructor to the given <see cref="CodeTypeDeclaration"/>.
     /// </summary>
@@ -176,15 +182,20 @@ public static class CodeDomHelper
     /// <param name="baseTypes">The base types.</param>
     /// <param name="isPartial">if set to <c>true</c> [is partial].</param>
     /// <returns></returns>
-    public static CodeTypeDeclaration AddNewClass(this CodeNamespace ns, in string className, in IEnumerable<string>? baseTypes = null, bool isPartial = false)
+    public static CodeTypeDeclaration AddNewClass(
+        this CodeNamespace ns,
+        in string className,
+        in IEnumerable<string>? baseTypes = null,
+        bool isPartial = false,
+        TypeAttributes typeAttributes = TypeAttributes.Public | TypeAttributes.Sealed)
     {
         Check.MustBeArgumentNotNull(ns);
 
-        CodeTypeDeclaration? result = new(className)
+        var result = new CodeTypeDeclaration(className)
         {
             IsClass = true,
             IsPartial = isPartial,
-            TypeAttributes = TypeAttributes.Public | TypeAttributes.Sealed
+            TypeAttributes = typeAttributes
         };
         var bts = baseTypes?.ToList();
         if (bts?.Any() == true)
@@ -493,6 +504,9 @@ public static class CodeDomHelper
         return t;
     }
 
+    public static CodeCompileUnit Begin()
+            => new();
+
     /// <summary>
     /// Generates a string of C# code from a CodeCompileUnit and optional directives.
     /// </summary>
@@ -688,12 +702,5 @@ public static class CodeDomHelper
             _ = ns.UseNameSpace(nameSpace);
         }
         return ns;
-    }
-
-    public static CodeTypeDeclaration AddAttribute(this CodeTypeDeclaration type, string attributeName, (string Key, string Value) arg)
-    {
-        CodeAttributeDeclaration securityAttribute = new CodeAttributeDeclaration(attributeName, new CodeAttributeArgument(arg.Key, new CodePrimitiveExpression(arg.Value)));
-        type.CustomAttributes.Add(securityAttribute);
-        return type;
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 using Library.Dynamic;
 using Library.Interfaces;
+using Library.Results;
 using Library.Validations;
 
 namespace Library.Data.SqlServer;
@@ -222,9 +223,15 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
     public static Sql New(string connectionString) =>
         new(connectionString);
 
-    public static Task CanConnectAsync(string? connectionString)
+    public static Task<bool> CanConnectAsync(string? connectionString)
     {
         using var conn = new SqlConnection(connectionString);
         return conn.CanConnectAsync();
+    }
+
+    public static Task<TryMethodResult> TryConnectAsync(string? connectionString)
+    {
+        using var conn = new SqlConnection(connectionString);
+        return conn.TryConnectAsync();
     }
 }

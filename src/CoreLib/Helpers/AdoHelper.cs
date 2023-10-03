@@ -54,7 +54,6 @@ public static partial class AdoHelper
         }
     }
 
-
     public static SqlCommand CreateCommand(this SqlConnection connection, string commandText, Action<SqlParameterCollection>? fillParams = null)
     {
         Check.MustBeArgumentNotNull(connection);
@@ -188,7 +187,7 @@ public static partial class AdoHelper
     /// <param name="fillParams">The fill parameters.</param>
     /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
-    public static IEnumerable<T> ExecuteReader<T>(SqlConnection connection, string query, Action<SqlParameterCollection>? fillParams = null)
+    public static IEnumerable<T> ExecuteReader<T>(this SqlConnection connection, string query, Action<SqlParameterCollection>? fillParams = null)
         where T : new()
     {
         using var command = connection.CreateCommand(query, fillParams);
@@ -639,7 +638,7 @@ public static partial class AdoHelper
     /// <param name="tableName">Name of the table.</param>
     /// <returns></returns>
     [Obsolete("Please use Sql, instead.", true)]
-    public static IEnumerable<T> SelectTable<T>(SqlConnection connection, string tableName)
+    public static IEnumerable<T> SelectTable<T>(this SqlConnection connection, string tableName)
         where T : new()
         => connection.Execute(cmd => cmd.ExecuteReader(CommandBehavior.CloseConnection).Select<T>(), $"SELECT * FROM [{tableName}]");
 

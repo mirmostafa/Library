@@ -15,7 +15,7 @@ public static class FileUiTools
         var fileList = files?.ToList();
 
         var validation = fileList.Check().ArgumentNotNull()
-            .RuleFor(x => !x!.Any(), () => new NoItemValidationException("No file to save"))
+            .RuleFor(x => x!.Any(), () => new NoItemValidationException("No file to save"))
             .RuleFor(x => x!.All(item => !item.FilePath.IsNullOrEmpty()), () => new ArgumentNullException($"`FilePath` cannot be empty", (Exception?)null));
         if (!validation.TryParse(out var vr))
         {

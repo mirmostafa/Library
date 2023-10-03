@@ -16,6 +16,9 @@ public static class WpfResultHelper
     }
 
     public static async Task<TResult> ShowOrThrowAsync<TResult>(this Task<TResult> result, object? owner = null, string? instruction = null, string? successMessage = null)
-        where TResult : ResultBase =>
-        ShowOrThrow(await result, owner, instruction);
+        where TResult : ResultBase
+    {
+        var taskResult = await result;
+        return ShowOrThrow(taskResult, owner, instruction);
+    }
 }
