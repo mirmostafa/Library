@@ -35,52 +35,33 @@ public enum TaskbarProgressState
 [Immutable]
 public sealed class Taskbar
 {
+    private static Taskbar? _mainWindow;
+
     public Taskbar(Window window)
     {
-        this.Item = window.TaskbarItemInfo ??= new();
+        this.TaskbarItem = window.TaskbarItemInfo ??= new();
         this.ProgressBar = new(this);
     }
 
-    public string? Description { get => this.Item.Description; set => this.Item.Description = value; }
+    public static Taskbar MainWindow => _mainWindow ??= new(Application.Current.MainWindow);
+
+    public string? Description { get => this.TaskbarItem.Description; set => this.TaskbarItem.Description = value; }
     public TaskbarProgressBar ProgressBar { get; }
-    internal TaskbarItemInfo Item { get; }
-
-    public Taskbar HideProgressBar() =>
-        this.Do(x => x.ProgressState = TaskbarItemProgressState.None);
-
-    public Taskbar SetProgressBarToError() =>
-            this.Do(x => x.ProgressState = TaskbarItemProgressState.Error);
-
-    public Taskbar SetProgressBarToIndeterminate() =>
-        this.Do(x => x.ProgressState = TaskbarItemProgressState.Indeterminate);
-
-    public Taskbar SetProgressBarToNormal() =>
-        this.Do(x => x.ProgressState = TaskbarItemProgressState.Normal);
-
-    public Taskbar SetProgressBarToPaused() =>
-        this.Do(x => x.ProgressState = TaskbarItemProgressState.Paused);
-
-    public Taskbar SetProgressBarValue(double value, double max = 100) =>
-        this.Do(x => x.ProgressValue = value * 1 / max);
-
-    private Taskbar Do(Action<TaskbarItemInfo> action)
-    {
-        action(this.Item);
-        return this;
-    }
+    internal TaskbarItemInfo TaskbarItem { get; }
 }
 
 public sealed class TaskbarProgressBar : FluentClass<TaskbarProgressBar>
 {
     private readonly Taskbar _taskbar;
 
-    internal TaskbarProgressBar(Taskbar taskbar) => this._taskbar = taskbar;
+    internal TaskbarProgressBar(Taskbar taskbar) =>
+        this._taskbar = taskbar;
 
-    public TaskbarProgressBar SetState(TaskbarProgressState state) =>
-        this.Do(() =>
-        {
-            this._taskbar.Item.ProgressState = EnumHelper.Convert<TaskbarItemProgressState>(state);
-        });
+    public TaskbarProgressBar SetState(TaskbarProgressState value) =>
+        this.Do(() => this._taskbar.TaskbarItem.ProgressState = EnumHelper.Convert<TaskbarItemProgressState>(value));
+
+    public TaskbarProgressBar SetValue(double value, double max = 100) =>
+        this.Do(() => this._taskbar.TaskbarItem.ProgressValue = value * 1 / max);
 }
 
 public abstract class FluentClass<TSelf>
