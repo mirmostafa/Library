@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 
+using Library.Results;
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -18,14 +19,11 @@ public static partial class AdoHelper
     /// </summary>
     /// <param name="conn">The SqlConnection to check.</param>
     /// <returns>True if the SqlConnection can connect, false otherwise.</returns>
-    public static bool CanConnect(this SqlConnection conn)=> 
-        conn.TryConnectAsync() == null;
-
-    /// <summary>
-    /// Checks the connection string asynchronously and returns an exception if one occurs.
-    /// </summary>
-    public static async Task<Exception?> CheckConnectionStringAsync(string connectionString)
-        => await Using(() => new SqlConnection(connectionString), x => x.TryConnectAsync());
+    public static async Task<bool> CanConnectAsync(this SqlConnection conn)
+    {
+        var result = await conn.TryConnectAsync();
+        return result.IsSucceed;
+    }
 
     /// <summary>
     /// Checks if a value retrieved from a SqlDataReader is DBNull and provides a default value if it is.
@@ -471,9 +469,6 @@ public static partial class AdoHelper
     public static bool IsNullOrEmpty(this DataRow row, string columnTitle)
         => row is null || row[columnTitle] is null || StringHelper.IsEmpty(row[columnTitle].ToString()) || row[columnTitle] == DBNull.Value;
 
-    public static bool IsValidConnectionString(string connectionString)
-        => CheckConnectionStringAsync(connectionString)?.Result == null;
-
     /// <summary>
     /// Selects the specified table.
     /// </summary>
@@ -653,16 +648,16 @@ public static partial class AdoHelper
     /// </summary>
     /// <param name="conn">The SqlConnection to connect to.</param>
     /// <returns>An exception if the connection fails, otherwise null.</returns>
-    public static async Task<Exception?> TryConnectAsync(this SqlConnection conn)
+    public static async Task<TryMethodResult> TryConnectAsync(this SqlConnection conn)
     {
         try
         {
             await conn.EnsureClosedAsync(c => c.OpenAsync());
-            return null;
+            return TryMethodResult.CreateSuccess();
         }
         catch (Exception ex)
         {
-            return ex;
+            return TryMethodResult.CreateFailure(ex);
         }
     }
 

@@ -221,4 +221,10 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
 
     public static Sql New(string connectionString) =>
         new(connectionString);
+
+    public static Task CanConnectAsync(string? connectionString)
+    {
+        using var conn = new SqlConnection(connectionString);
+        return conn.CanConnectAsync();
+    }
 }
