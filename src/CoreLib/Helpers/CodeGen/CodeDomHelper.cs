@@ -2,6 +2,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Reflection;
 
+using Library.CodeGeneration;
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
@@ -15,9 +16,9 @@ namespace Library.Helpers.CodeGen;
 [Fluent]
 public static class CodeDomHelper
 {
-    public static CodeTypeDeclaration AddAttribute(this CodeTypeDeclaration type, string attributeName, (string Key, string Value) arg)
+    public static CodeTypeDeclaration AddAttribute(this CodeTypeDeclaration type, string attributeName, (string Key, string Value) prop)
     {
-        var securityAttribute = new CodeAttributeDeclaration(attributeName, new CodeAttributeArgument(arg.Key, new CodePrimitiveExpression(arg.Value)));
+        var securityAttribute = new CodeAttributeDeclaration(attributeName, new CodeAttributeArgument(prop.Key, new CodePrimitiveExpression(prop.Value)));
         _ = type.CustomAttributes.Add(securityAttribute);
         return type;
     }
@@ -116,23 +117,16 @@ public static class CodeDomHelper
     /// <param name="accessModifier">The access modifier.</param>
     /// <returns></returns>
     public static CodeTypeDeclaration AddField(this CodeTypeDeclaration c,
-                                               in string type,
-                                               in string name,
-                                               in string? comment = null,
-                                               in MemberAttributes? accessModifier = null)
-        => AddField(c, new(type, name, comment, accessModifier ?? MemberAttributes.Private));
-
-    /// <summary>
-    /// Adds a field to the given CodeTypeDeclaration.
-    /// </summary>
-    /// <param name="c">The CodeTypeDeclaration to add the field to.</param>
-    /// <param name="fieldInfo">The information about the field to add.</param>
-    /// <returns>The CodeTypeDeclaration with the added field.</returns>
-    public static CodeTypeDeclaration AddField(this CodeTypeDeclaration c, in CodeGeneration.Models.FieldInfo fieldInfo)
+        in string type,
+        in string name,
+        in string? comment = null,
+        in MemberAttributes? accessModifier = null,
+        in bool isReadOnly = false,
+        in bool isPartial = false)
     {
         Check.MustBeArgumentNotNull(c);
 
-        _ = c.Members.Add(NewField(fieldInfo));
+        _ = c.Members.Add(NewField(type, name, comment, accessModifier, isPartial));
         return c;
     }
 
@@ -230,49 +224,13 @@ public static class CodeDomHelper
     /// <param name="returnType">Type of the return.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">nameof(c)</exception>
-    public static CodeTypeDeclaration AddPartialMethod(this CodeTypeDeclaration c, in string name, in Type? returnType = null)
+    public static CodeTypeDeclaration AddPartialMethod(this CodeTypeDeclaration c, in string name, in TypePath? returnType = null)
     {
         Check.MustBeArgumentNotNull(c);
         var method = NewPartialMethodAsField(name, returnType);
         _ = c.Members.Add(method);
         return c;
     }
-
-    /// <summary>
-    /// Adds ae property and creates backing-field.
-    /// </summary>
-    /// <param name="c">The CodeTypeDeclaration.</param>
-    /// <param name="type">The type.</param>
-    /// <param name="name">The name.</param>
-    /// <param name="backingField">The backing field.</param>
-    /// <param name="comment">The comment.</param>
-    /// <param name="accessModifier">The access modifier.</param>
-    /// <param name="hasGet">if set to <c>true</c> creates getter.</param>
-    /// <param name="hasSet">if set to <c>true</c> creates setter.</param>
-    /// <returns></returns>
-    /// <remarks>
-    /// This method creates a backing field using <paramref name="backingField"/> data
-    /// </remarks>
-    public static CodeTypeDeclaration AddPropCreateField(this CodeTypeDeclaration c,
-        in string type,
-        in string name,
-        in string? backingField = null,
-        in string? comment = null,
-        in MemberAttributes? accessModifier = null,
-        in bool hasGet = true,
-        in bool hasSet = true)
-        => AddProperty(c, new()
-        {
-            Type = type,
-            Name = name,
-            Comment = comment,
-            AccessModifier = accessModifier,
-            Getter = new(hasGet, false),
-            Setter = new(hasSet, false),
-            HasBackingField = true,
-            BackingFieldName = backingField,
-            ShouldCreateBackingField = true
-        });
 
     /// <summary>
     /// Adds the property.
@@ -380,7 +338,7 @@ public static class CodeDomHelper
             {
                 attrStatements = $"{new string(' ', INDENT_SIZE)}[{attribute}]{Environment.NewLine}{attrStatements}";
             }
-            statement = $"{attrStatements.Trim(Environment.NewLine.ToArray())}{Environment.NewLine}{statement}";
+            statement = $"{attrStatements.Trim([.. Environment.NewLine])}{Environment.NewLine}{statement}";
         }
         var prop = new CodeSnippetTypeMember(statement)
         {
@@ -439,6 +397,41 @@ public static class CodeDomHelper
     }
 
     /// <summary>
+    /// Adds ae property and creates backing-field.
+    /// </summary>
+    /// <param name="c">The CodeTypeDeclaration.</param>
+    /// <param name="type">The type.</param>
+    /// <param name="name">The name.</param>
+    /// <param name="backingField">The backing field.</param>
+    /// <param name="comment">The comment.</param>
+    /// <param name="accessModifier">The access modifier.</param>
+    /// <param name="hasGet">if set to <c>true</c> creates getter.</param>
+    /// <param name="hasSet">if set to <c>true</c> creates setter.</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// This method creates a backing field using <paramref name="backingField"/> data
+    /// </remarks>
+    public static CodeTypeDeclaration AddPropertyCreateField(this CodeTypeDeclaration c,
+        in string type,
+        in string name,
+        in string? backingField = null,
+        in string? comment = null,
+        in MemberAttributes? accessModifier = null,
+        in bool hasGet = true,
+        in bool hasSet = true)
+        => AddProperty(c, new()
+        {
+            Type = type,
+            Name = name,
+            Comment = comment,
+            AccessModifier = accessModifier,
+            Getter = new(hasGet, false),
+            Setter = new(hasSet, false),
+            HasBackingField = true,
+            BackingFieldName = backingField,
+            ShouldCreateBackingField = true
+        });
+    /// <summary>
     /// Adds the property with field.
     /// </summary>
     /// <param name="c">The CodeTypeDeclaration.</param>
@@ -453,7 +446,7 @@ public static class CodeDomHelper
     /// <remarks>
     /// This method DOES NOT create <paramref name="backingField"/>
     /// </remarks>
-    public static CodeTypeDeclaration AddPropWithField(this CodeTypeDeclaration c,
+    public static CodeTypeDeclaration AddPropertyWithField(this CodeTypeDeclaration c,
         in string type,
         in string name,
         in string? backingField = null,
@@ -532,18 +525,24 @@ public static class CodeDomHelper
     /// </summary>
     /// <param name="fieldInfo">The FieldInfo to create the CodeMemberField from.</param>
     /// <returns>A new CodeMemberField.</returns>
-    public static CodeMemberField NewField(CodeGeneration.Models.FieldInfo fieldInfo)
+    public static CodeMemberField NewField(
+        in string type,
+        in string name,
+        in string? comment = null,
+        in MemberAttributes? accessModifier = null,
+        in bool isReadOnly = false,
+        in bool isPartial = false)
     {
-        var fieldName = ToFieldName(fieldInfo.Name.ArgumentNotNull(nameof(fieldInfo)));
+        var fieldName = ToFieldName(name.ArgumentNotNull());
         var result = new CodeMemberField
         {
-            Attributes = fieldInfo.AccessModifier ?? MemberAttributes.Private,
+            Attributes = accessModifier ?? MemberAttributes.Private,
             Name = fieldName,
-            Type = new(new CodeTypeParameter(fieldInfo.Type))
+            Type = new(new CodeTypeParameter(type))
         };
-        if (fieldInfo.Comment is not null)
+        if (comment is not null)
         {
-            _ = result.Comments.Add(new CodeCommentStatement(fieldInfo.Comment));
+            _ = result.Comments.Add(new CodeCommentStatement(comment));
         }
 
         return result;
@@ -619,7 +618,7 @@ public static class CodeDomHelper
     /// <param name="name">The name of the method.</param>
     /// <param name="returnType">The return type of the method.</param>
     /// <returns>A CodeMemberField representing the partial method.</returns>
-    public static CodeMemberField NewPartialMethodAsField(in string name, in Type? returnType = null)
+    public static CodeMemberField NewPartialMethodAsField(in string name, in TypePath? returnType = null)
     {
         var accessModifiers = MemberAttributes.ScopeMask;
 
@@ -629,7 +628,7 @@ public static class CodeDomHelper
             Attributes = accessModifiers,
             Type = returnType is null
                 ? new("partial void")
-                : new($"partial {returnType.FullName}")
+                : new($"partial {returnType.FullPath}")
         };
         return method;
     }
@@ -704,3 +703,4 @@ public static class CodeDomHelper
         return ns;
     }
 }
+

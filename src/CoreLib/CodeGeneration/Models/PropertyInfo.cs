@@ -35,6 +35,6 @@ public struct PropertyInfo(
     public readonly bool Equals(PropertyInfo other)
         => this.Name == other.Name;
 
-    public override int GetHashCode()
+    public override readonly int GetHashCode()
         => HashCode.Combine(this.Name);
 }

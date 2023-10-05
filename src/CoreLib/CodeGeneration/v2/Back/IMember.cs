@@ -2,11 +2,10 @@
 
 public interface IMember
 {
-    string? Comment { get; }
-
+    AccessModifier AccessModifier { get; }
+    InheritanceModifier InheritanceModifier { get; }
     bool IsStatic { get; }
-
-    AccessModifier MemberPrefix { get; }
-
     string Name { get; }
+
+    TypePath Type { get; }
 }

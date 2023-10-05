@@ -2,5 +2,5 @@
 
 public interface ICodeGenProvider
 {
-    Codes GenerateCode(in INameSpace nameSpace, in GenerateCodesParameters? arguments = default);
+    Codes GenerateCode(in INameSpace nameSpace);
 }

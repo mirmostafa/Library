@@ -2,6 +2,7 @@
 
 namespace Library.CodeGeneration.Models;
 
+[Obsolete("",true)]
 public struct MethodInfo(
     in string name,
     in string? returnType = null,
