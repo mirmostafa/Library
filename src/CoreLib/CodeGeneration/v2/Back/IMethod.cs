@@ -2,6 +2,8 @@
 
 public interface IMethod : IMember
 {
+    bool IsAbstract { get; }
+
     ISet<string>? Body { get; }
 
     bool IsConstructor { get; }

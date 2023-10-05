@@ -2,4 +2,5 @@
 
 public interface IStruct : IType
 {
+    bool IsReadOnly { get; }
 }

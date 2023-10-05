@@ -2,5 +2,6 @@
 
 public interface IField : IMember
 {
+    bool IsReadOnly { get; }
     IType Type { get; }
 }

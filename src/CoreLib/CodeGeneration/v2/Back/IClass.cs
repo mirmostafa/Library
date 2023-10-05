@@ -2,31 +2,21 @@
 
 public interface IClass : IType
 {
-    static IClass New(string name)
-        => new Class(name);
+    bool IsPartial { get; }
+    bool IsStatic { get; }
 
-    IClass AddProperty(string propertyName, Type type);
+    static IClass New(string name, bool isStatic, bool isPartial) =>
+        new Class(name) { IsStatic = isStatic, IsPartial = isPartial };
 }
 
-internal class Class : IClass
+internal class Class(string name) : IClass
 {
-    public Class(string name) => this.Name = name;
-
+    public AccessModifier AccessModifier { get; set; } = AccessModifier.None;
     public ISet<IAttribute> Attributes { get; } = new HashSet<IAttribute>();
-
     public ISet<string>? BaseTypeNames { get; } = new HashSet<string>();
-
-    public MemberPrefixes MemberPrefixes { get; set; } = MemberPrefixes.None;
-
+    public bool IsPartial { get; init; }
+    public bool IsStatic { get; init; }
     public ISet<IMember> Members { get; } = new HashSet<IMember>();
-
-    public string Name { get; }
-
+    public string Name { get; } = name;
     public ISet<string> UsingNamespaces { get; } = new HashSet<string>();
-
-    public IClass AddProperty(string propertyName, Type type)
-    {
-        _ = this.Members.Add(IProperty.New(propertyName, type!.FullName!));
-        return this;
-    }
 }

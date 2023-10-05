@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 
 using Library.Validations;
 
@@ -23,6 +25,8 @@ public static class FluencyHelper
         return instance;
     }
 
+    [Pure]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Fluency<TInstance> Fluent<TInstance>(this TInstance instance, in object? obj) =>
         instance;
 

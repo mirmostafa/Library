@@ -1,15 +1,14 @@
-﻿namespace Library.CodeGeneration.v2.Back;
+﻿using Library.DesignPatterns.Markers;
+
+namespace Library.CodeGeneration.v2.Back;
 
 public interface IProperty : IMember
 {
     string? BackingFieldName { get; }
-
     PropertyAccessor Getter { get; }
-
     bool HasGetter { get; }
-
     bool HasSetter { get; }
-
+    bool IsAbstract { get; }
     PropertyAccessor Setter { get; }
 
     string TypeFullName { get; }
@@ -39,11 +38,19 @@ internal class Property : IProperty
 
     public bool IsStatic { get; }
 
-    public MemberPrefixes MemberPrefix { get; }
+    public AccessModifier MemberPrefix { get; }
 
     public string Name { get; }
 
     public PropertyAccessor Setter { get; }
 
     public string TypeFullName { get; }
+}
+
+[Immutable]
+public readonly struct PropertyAccessor(in bool has = true, in bool? isPrivate = null, in string? code = null)
+{
+    public string? Code { get; } = code;
+    public bool Has { get; } = has;
+    public bool? IsPrivate { get; } = isPrivate;
 }

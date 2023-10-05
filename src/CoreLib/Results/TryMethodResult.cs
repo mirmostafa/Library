@@ -62,11 +62,14 @@ public sealed class TryMethodResult
     public static explicit operator bool(TryMethodResult result) =>
         result.IsSucceed;
 
+    public static TryMethodResult New(bool? succeed, string? message = null) =>
+        new(succeed, message: message);
+
     /// <summary>
     /// Creates a new TryMethodResult object with the specified value, success status, and optional message.
     /// </summary>
     public static TryMethodResult TryParseResult(bool? succeed, string? message = null) =>
-        new(succeed, message: message);
+        New(succeed, message: message);
 }
 
 public sealed class TryMethodResult<TValue>(in TValue? value,
