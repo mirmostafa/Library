@@ -7,6 +7,9 @@ public interface INamespace
     string Name { get; }
     ISet<IType> Types { get; }
     ISet<string> UsingNamespaces { get; }
+
+    static INamespace New(string name) =>
+        new Namespace(name);
 }
 
 internal class Namespace(string name) : INamespace

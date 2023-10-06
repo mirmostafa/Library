@@ -9,7 +9,7 @@ using Library.Validations;
 
 namespace Library.CodeGeneration.v2;
 
-public sealed class CodeDomCodeGenerator : ICodeGenerator
+public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
 {
     public Result<string> Generate(INamespace nameSpace)
     {
