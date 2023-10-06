@@ -131,20 +131,6 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    /// Adds the given interfaces to the given CodeTypeDeclaration.
-    /// </summary>
-    /// <param name="codeTypeDeclaration">The CodeTypeDeclaration to add the interfaces to.</param>
-    /// <param name="interfaces">The interfaces to add.</param>
-    /// <returns>The CodeTypeDeclaration with the added interfaces.</returns>
-    //This method adds interfaces to a CodeTypeDeclaration object
-    public static CodeTypeDeclaration AddInterfaces(this CodeTypeDeclaration codeTypeDeclaration, IEnumerable<string> interfaces)
-    {
-        Check.MustBeArgumentNotNull(codeTypeDeclaration);
-        interfaces?.ToList().ForEach(codeTypeDeclaration.BaseTypes.Add);
-        return codeTypeDeclaration;
-    }
-
-    /// <summary>
     /// Adds a method.
     /// </summary>
     /// <param name="c">The c.</param>
@@ -161,7 +147,7 @@ public static class CodeDomHelper
         in string? body = null,
         in string? returnType = null,
         in MemberAttributes? accessModifiers = null,
-        bool isPartial = false, params MethodArgument[] arguments)
+        bool isPartial = false, params (TypePath Type, string Name)[] arguments)
     {
         Check.MustBeArgumentNotNull(c);
         _ = c.Members.Add(NewMethod(name, body, returnType, accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final, isPartial, arguments));
@@ -240,8 +226,9 @@ public static class CodeDomHelper
     /// <returns></returns>
     public static CodeTypeDeclaration AddProperty(this CodeTypeDeclaration c, in CodeGeneration.Models.PropertyInfo propertyInfo)
     {
-        _ = c.ArgumentNotNull(nameof(c));
-        var pi = propertyInfo.ArgumentNotNull(nameof(propertyInfo));
+        Check.MustBeArgumentNotNull(c);
+        Check.MustBeArgumentNotNull(propertyInfo);
+
         const int INDENT_SIZE = 4;
         var nullableSign = propertyInfo.IsNullable ? "?" : "";
 
@@ -249,8 +236,8 @@ public static class CodeDomHelper
         var signature = $"{indent}public {propertyInfo.Type}{nullableSign} {ToPropName(propertyInfo.Name.Trim())}";
         var getterStatement = $"{indent}{indent}";
         var setterStatement = $"{indent}{indent}";
-        var g = pi.Getter ?? new(true, false);
-        var s = pi.Setter ?? new(true, false);
+        var g = propertyInfo.Getter ?? new(true, false);
+        var s = propertyInfo.Setter ?? new(true, false);
         if (g.Has)
         {
             if (g.IsPrivate is true)
@@ -258,31 +245,26 @@ public static class CodeDomHelper
                 getterStatement = "private ";
             }
 
-            if (pi.HasBackingField)
+            if (propertyInfo.HasBackingField)
             {
-                var bf = pi.BackingFieldName ?? ToFieldName(pi.Name);
+                var bf = propertyInfo.BackingFieldName ?? ToFieldName(propertyInfo.Name);
                 getterStatement = $"{getterStatement}get => this.{bf};";
             }
             else
             {
                 getterStatement = $"{getterStatement}get";
-                if (g.Code.IsNullOrEmpty())
-                {
-                    getterStatement = $"{getterStatement};";
-                }
-                else
-                {
-                    var buffer = new StringBuilder(getterStatement);
-                    getterStatement = buffer.AppendLine()
-                                            .Append($"{indent}{indent}")
-                                            .Append('{')
-                                            .AppendLine()
-                                            .Append($"{indent}{indent}{indent}")
-                                            .Append(g.Code)
-                                            .AppendLine()
-                                            .Append($"{indent}{indent}")
-                                            .Append('}').ToString();
-                }
+                getterStatement = g.Code.IsNullOrEmpty()
+                    ? $"{getterStatement};"
+                    : new StringBuilder(getterStatement)
+                        .AppendLine()
+                        .Append($"{indent}{indent}")
+                        .Append('{')
+                        .AppendLine()
+                        .Append($"{indent}{indent}{indent}")
+                        .Append(g.Code)
+                        .AppendLine()
+                        .Append($"{indent}{indent}")
+                        .Append('}').ToString();
             }
         }
         if (s.Has)
@@ -294,9 +276,9 @@ public static class CodeDomHelper
 
             if (s.Code.IsNullOrEmpty())
             {
-                if (pi.HasBackingField)
+                if (propertyInfo.HasBackingField)
                 {
-                    var bf = pi.BackingFieldName ?? ToFieldName(pi.Name);
+                    var bf = propertyInfo.BackingFieldName ?? ToFieldName(propertyInfo.Name);
                     setterStatement = $"{setterStatement}set => this.{bf} = value;";
                 }
                 else
@@ -308,9 +290,9 @@ public static class CodeDomHelper
             {
                 setterStatement = $"{setterStatement}set";
                 setterStatement = $"{setterStatement}{Environment.NewLine}{indent}{indent}{{";
-                if (pi.HasBackingField)
+                if (propertyInfo.HasBackingField)
                 {
-                    var bf = pi.BackingFieldName ?? ToFieldName(pi.Name);
+                    var bf = propertyInfo.BackingFieldName ?? ToFieldName(propertyInfo.Name);
                     setterStatement = $"{setterStatement}{Environment.NewLine}{indent}{indent}{indent}this.{bf} = value;";
                 }
                 setterStatement = $"{setterStatement}{Environment.NewLine}{indent}{indent}{indent}{s.Code}";
@@ -318,18 +300,15 @@ public static class CodeDomHelper
             }
         }
         var statement = $"{signature}{Environment.NewLine}{indent}{{{Environment.NewLine}{getterStatement}{Environment.NewLine}{setterStatement}{Environment.NewLine}{indent}}}";
-        if (!pi.InitCode.IsNullOrEmpty())
+        if (!propertyInfo.InitCode.IsNullOrEmpty())
         {
-            statement = $"{statement} = {pi.InitCode}";
+            statement = $"{statement} = {propertyInfo.InitCode}";
         }
 
-        if (pi.HasBackingField)
+        if (propertyInfo.HasBackingField)
         {
-            var bf = pi.BackingFieldName ?? ToFieldName(pi.Name);
-            if (pi.ShouldCreateBackingField is true)
-            {
-                _ = c.AddField(pi.Type, bf);
-            }
+            var bf = propertyInfo.BackingFieldName ?? ToFieldName(propertyInfo.Name);
+            _ = c.AddField(propertyInfo.Type, bf);
         }
         if (propertyInfo.Attributes?.Any() is true)
         {
@@ -395,76 +374,6 @@ public static class CodeDomHelper
 
         return AddProperty(c, prop);
     }
-
-    /// <summary>
-    /// Adds ae property and creates backing-field.
-    /// </summary>
-    /// <param name="c">The CodeTypeDeclaration.</param>
-    /// <param name="type">The type.</param>
-    /// <param name="name">The name.</param>
-    /// <param name="backingField">The backing field.</param>
-    /// <param name="comment">The comment.</param>
-    /// <param name="accessModifier">The access modifier.</param>
-    /// <param name="hasGet">if set to <c>true</c> creates getter.</param>
-    /// <param name="hasSet">if set to <c>true</c> creates setter.</param>
-    /// <returns></returns>
-    /// <remarks>
-    /// This method creates a backing field using <paramref name="backingField"/> data
-    /// </remarks>
-    public static CodeTypeDeclaration AddPropertyCreateField(this CodeTypeDeclaration c,
-        in string type,
-        in string name,
-        in string? backingField = null,
-        in string? comment = null,
-        in MemberAttributes? accessModifier = null,
-        in bool hasGet = true,
-        in bool hasSet = true)
-        => AddProperty(c, new()
-        {
-            Type = type,
-            Name = name,
-            Comment = comment,
-            AccessModifier = accessModifier,
-            Getter = new(hasGet, false),
-            Setter = new(hasSet, false),
-            HasBackingField = true,
-            BackingFieldName = backingField,
-            ShouldCreateBackingField = true
-        });
-    /// <summary>
-    /// Adds the property with field.
-    /// </summary>
-    /// <param name="c">The CodeTypeDeclaration.</param>
-    /// <param name="type">The type.</param>
-    /// <param name="name">The name.</param>
-    /// <param name="backingField">The backing field.</param>
-    /// <param name="comment">The comment.</param>
-    /// <param name="accessModifier">The access modifier.</param>
-    /// <param name="hasGet">if set to <c>true</c> [has get].</param>
-    /// <param name="hasSet">if set to <c>true</c> [has set].</param>
-    /// <returns></returns>
-    /// <remarks>
-    /// This method DOES NOT create <paramref name="backingField"/>
-    /// </remarks>
-    public static CodeTypeDeclaration AddPropertyWithField(this CodeTypeDeclaration c,
-        in string type,
-        in string name,
-        in string? backingField = null,
-        in string? comment = null,
-        in MemberAttributes? accessModifier = null,
-        in bool hasGet = true,
-        in bool hasSet = true)
-        => AddProperty(c, new()
-        {
-            Type = type,
-            Name = name,
-            Comment = comment,
-            AccessModifier = accessModifier,
-            Getter = new(hasGet, false),
-            Setter = new(hasSet, false),
-            HasBackingField = true,
-            BackingFieldName = backingField
-        });
 
     /// <summary>
     /// Adds the region.
@@ -564,7 +473,7 @@ public static class CodeDomHelper
         in string? returnType = null,
         in MemberAttributes? accessModifiers = null,
         in bool isPartial = false,
-        params MethodArgument[] arguments)
+        params (TypePath Type, string Name)[] arguments)
     {
         Check.MustBeArgumentNotNull(name);
         var method = new CodeMemberMethod

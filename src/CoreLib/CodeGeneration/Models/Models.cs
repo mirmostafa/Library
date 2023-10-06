@@ -1,31 +1,60 @@
-﻿using Library.DesignPatterns.Markers;
+﻿using System.CodeDom;
+
+using Library.DesignPatterns.Markers;
 
 namespace Library.CodeGeneration.Models;
 
+[Immutable]
+public readonly struct FieldInfo(
+        in string type,
+        in string name,
+        in string? comment = null,
+        in MemberAttributes? accessModifier = null,
+        in bool isReadOnly = false,
+        in bool isPartial = false) : IMemberInfo
+{
+    public MemberAttributes? AccessModifier { get; } = accessModifier;
+    public string? Comment { get; } = comment;
+    public bool IsPartial { get; } = isPartial;
+    public bool IsReadOnly { get; } = isReadOnly;
+    public string Name { get; } = name;
+    public string Type { get; } = type;
+}
 
 [Immutable]
-public readonly struct MethodArgument(in TypePath type, in string name) : IEquatable<MethodArgument>
+public readonly struct MethodArgument(in TypePath type, in string name)
 {
     public string Name { get; } = name;
     public TypePath Type { get; } = type;
 
-    public static bool operator !=(MethodArgument left, MethodArgument right)
-        => !(left == right);
+    public void Deconstruct(out TypePath type, out string name) =>
+        (type, name) = (this.Type, this.Name);
+}
 
-    public static bool operator ==(MethodArgument left, MethodArgument right)
-        => left.Equals(right);
+[Immutable]
+public readonly struct PropertyInfo(
+    in string type,
+    in string name,
+    in MemberAttributes? accessModifier = null,
+    in PropertyAccessor? getter = null,
+    in PropertyAccessor? setter = null) : IMemberInfo
+{
+    public MemberAttributes? AccessModifier { get; init; } = accessModifier;
+    public List<string> Attributes { get; } = new List<string>();
+    public string? BackingFieldName { get; init; } = null;
+    public string? Comment { get; init; } = null;
+    public PropertyAccessor? Getter { get; init; } = getter;
+    public bool HasBackingField { get; init; } = false;
+    public string? InitCode { get; init; } = null;
+    public bool IsNullable { get; init; } = false;
+    public string Name { get; init; } = name;
+    public PropertyAccessor? Setter { get; init; } = setter;
+    public string Type { get; init; } = type;
+}
 
-    public void Deconstruct(out TypePath type, out string name)
-        => (type, name) = (this.Type, this.Name);
-
-    public readonly bool Equals(MethodArgument other)
-        => other.GetHashCode() == this.GetHashCode();
-
-    public override bool Equals(object? obj)
-        => obj is MethodArgument argument && this.Equals(argument);
-
-    public override int GetHashCode()
-        => HashCode.Combine(this.Name.GetHashCode(), this.Type.GetHashCode());
+public interface IMemberInfo
+{
+    string Name { get; }
 }
 
 [Immutable]
@@ -34,4 +63,7 @@ public readonly struct PropertyAccessor(in bool has = true, in bool? isPrivate =
     public string? Code { get; } = code;
     public bool Has { get; } = has;
     public bool? IsPrivate { get; } = isPrivate;
+
+    public void Destruct(out bool has, out bool? isPrivate, out string? code) =>
+        (has, isPrivate, code) = (this.Has, this.IsPrivate, this.Code);
 }

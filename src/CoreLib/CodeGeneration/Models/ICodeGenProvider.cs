@@ -1,6 +1,6 @@
-﻿namespace Library.CodeGeneration.Models;
+﻿//namespace Library.CodeGeneration.Models;
 
-public interface ICodeGenProvider
-{
-    Codes GenerateCode(in INameSpace nameSpace);
-}
+//public interface ICodeGenProvider
+//{
+//    Codes GenerateCode(in ICodeGenNameSpace nameSpace);
+//}

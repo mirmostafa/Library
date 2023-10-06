@@ -1,9 +1,9 @@
-﻿namespace Library.CodeGeneration.Models;
+﻿//namespace Library.CodeGeneration.Models;
 
-public enum InheritanceKind
-{
-    None,
-    Abstract,
-    Sealed,
-    New
-}
+//public enum InheritanceKind
+//{
+//    None,
+//    Abstract,
+//    Sealed,
+//    New
+//}

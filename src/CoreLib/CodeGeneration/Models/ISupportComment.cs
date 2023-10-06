@@ -1,6 +1,6 @@
-﻿namespace Library.CodeGeneration.Models;
+﻿//namespace Library.CodeGeneration.Models;
 
-public interface ISupportComment
-{
-    public string Comment { get; }
-}
+//public interface ISupportComment
+//{
+//    public string Comment { get; }
+//}

@@ -1,11 +1,11 @@
-﻿namespace Library.CodeGeneration.Models;
+﻿//namespace Library.CodeGeneration.Models;
 
-public enum AccessModifier
-{
-    None,
-    Private,
-    Protected,
-    Internal,
-    InternalProtected,
-    Public
-}
+//public enum AccessModifier
+//{
+//    None,
+//    Private,
+//    Protected,
+//    Internal,
+//    InternalProtected,
+//    Public
+//}

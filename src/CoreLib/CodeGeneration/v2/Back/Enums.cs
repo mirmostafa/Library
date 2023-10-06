@@ -1,20 +1,24 @@
 ﻿namespace Library.CodeGeneration.v2.Back;
 
+[Flags]
 public enum AccessModifier
 {
-    None,
-    Private,
-    Protected,
-    Internal,
-    InternalProtected,
-    Public,
+    None = 0,
+    Private = 1,
+    Protected = 2,
+    Internal = 4,
+    Public = 8,
+    InternalProtected = Protected | Internal,
 }
 
+[Flags]
 public enum InheritanceModifier
 {
-    Virtual,
-    Abstract,
-    Override,
-    New,
-    Sealed,
+    None = 0,
+    Virtual = 1,
+    Abstract = 2,
+    Override = 4,
+    New = 8,
+    Sealed = 16,
+    Partial = 32
 }

@@ -58,10 +58,10 @@ public sealed class TypePath : IEquatable<TypePath>
             return default;
         }
 
-        var dotLastIndex = typePath.LastIndexOf('.');
-        return dotLastIndex == -1
+        var lastIndexOfDot = typePath.LastIndexOf('.');
+        return lastIndexOfDot == -1
             ? (typePath, null)
-            : (typePath[(dotLastIndex + 1)..], typePath[..dotLastIndex]);
+            : (typePath[(lastIndexOfDot + 1)..], typePath[..lastIndexOfDot]);
     }
     //========
     //        var dotLastIndex = typePath.LastIndexOf('.');

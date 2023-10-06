@@ -12,7 +12,7 @@ public readonly record struct Code : IEquatable<Code>, IAdditionOperators<Code, 
 {
     public static readonly Code Empty = new(string.Empty, Languages.None, string.Empty);
 
-    public Code(in string name, in Language language, in string statement, in bool isPartial = false)
+    public Code([DisallowNull] in string name, in Language language, [DisallowNull] in string statement, in bool isPartial = false)
     {
         this.Name = name.ArgumentNotNull();
         this.Statement = statement.ArgumentNotNull();
@@ -21,7 +21,7 @@ public readonly record struct Code : IEquatable<Code>, IAdditionOperators<Code, 
         this._fileName = null;
     }
 
-    public Code(in (string Name, Language language, string Statement, bool IsPartial) data)
+    public Code([DisallowNull] in (string Name, Language language, string Statement, bool IsPartial) data)
         : this(data.Name, data.language, data.Statement, data.IsPartial) { }
 
     public void Deconstruct(out string name, out string statement)
@@ -53,11 +53,11 @@ public readonly record struct Code : IEquatable<Code>, IAdditionOperators<Code, 
     public bool Equals(string name)
         => this.Name == name;
 
-    public static implicit operator string(in Code code)
+    public static implicit operator string([DisallowNull] in Code code)
         => code.Statement;
-    public static implicit operator Code(in (string Name, Language language, string Statement, bool IsPartial) codeData)
+    public static implicit operator Code([DisallowNull] in (string Name, Language language, string Statement, bool IsPartial) codeData)
         => new(codeData);
-    public static implicit operator Code(in (string Name, Language language, string Statement, bool IsPartial, string FileName) codeData)
+    public static implicit operator Code([DisallowNull] in (string Name, Language language, string Statement, bool IsPartial, string FileName) codeData)
         => new(codeData.Name, codeData.language, codeData.Statement, codeData.IsPartial) { _fileName = codeData.FileName };
 
     public static bool operator ==(Code left, string code)
@@ -73,10 +73,10 @@ public readonly record struct Code : IEquatable<Code>, IAdditionOperators<Code, 
     public override string ToString()
         => this.Name;
 
-    public static Code ToCode(in (string Name, Language language, string Statement, bool IsPartial) codeData)
+    public static Code New([DisallowNull] in (string Name, Language language, string Statement, bool IsPartial) codeData)
         => codeData;
-    public static Code ToCode(in string name, in Language language, in string statement, in bool isPartial)
+    public static Code New([DisallowNull] in string name, in Language language, [DisallowNull] in string statement, in bool isPartial)
         => new(name, language, statement, isPartial);
-    public static Code ToCode(in string name, in Language language, in string statement, in bool isPartial, in string? fileName)
+    public static Code New([DisallowNull] in string name, in Language language, [DisallowNull] in string statement, in bool isPartial, in string? fileName)
         => new(name, language, statement, isPartial) { _fileName = fileName };
 }
