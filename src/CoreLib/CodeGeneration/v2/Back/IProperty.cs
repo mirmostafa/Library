@@ -7,6 +7,7 @@ public interface IProperty : IMember
     string? BackingFieldName { get; }
     PropertyAccessor? Getter { get; }
     PropertyAccessor? Setter { get; }
+    TypePath Type { get; }
 }
 
 [Immutable]
