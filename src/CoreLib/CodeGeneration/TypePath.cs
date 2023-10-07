@@ -22,6 +22,7 @@ public sealed class TypePath : IEquatable<TypePath>
             var result = this.NameSpace.IsNullOrEmpty() ? this.Name : $"{this.NameSpace}.{this.Name}";
             if (this.GenericTypes.Any())
             {
+                //UNDONE: Must be cheecked.
                 result = $"{result}<{StringHelper.Merge(this.GenericTypes.Select(x => x.Type.FullPath), ',')}>";
             }
             return result;
@@ -35,10 +36,12 @@ public sealed class TypePath : IEquatable<TypePath>
     public static string Combine(string part1, params string[] parts) =>
         new StringBuilder(part1).AppendAll(parts, part => $".{part.Trim('.')}").ToString();
 
-    public static implicit operator string?(in TypePath typeInfo) =>
-        typeInfo.ToString();
-    public static implicit operator TypePath(in string? typeInfo) =>
-        new(typeInfo);
+    [return: NotNullIfNotNull(nameof(typeInfo))]
+    public static implicit operator string?(in TypePath? typeInfo) =>
+        typeInfo?.ToString();
+    [return: NotNullIfNotNull(nameof(typeInfo))]
+    public static implicit operator TypePath?(in string? typeInfo) =>
+        typeInfo.IsNullOrEmpty() ? null : new(typeInfo);
 
     public static TypePath New(in string? name, in string? nameSpace = null) =>
         new(name, nameSpace);
@@ -68,12 +71,12 @@ public sealed class TypePath : IEquatable<TypePath>
     //        return dotLastIndex == -1 ? ((string? Name, string? NameSpace))(typePath, null) : ((string? Name, string? NameSpace))(typePath[(dotLastIndex + 1)..], typePath[..dotLastIndex]);
     //    }
 
-    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace = null) =>
+    public static (string? Name, string? NameSpace) SplitTypePath(in string? name, in string? nameSpace) =>
         string.IsNullOrEmpty(nameSpace)
             ? SplitTypePath(name)
             : nameSpace.EndsWith('.') ? SplitTypePath($"{nameSpace}{name}") : SplitTypePath($"{nameSpace}.{name}");
 
-    public TypePath AddGenericType(GenericTypeInfo genericType)
+    public TypePath AddGenericType(in GenericTypeInfo genericType)
     {
         _ = this.GenericTypes.Add(genericType);
         return this;
@@ -103,4 +106,12 @@ public sealed class TypePath : IEquatable<TypePath>
 
     private static string? Validate(string? name) =>
         name?.Contains('`') is null or false ? name : name[..name.IndexOf('`')];
+
+    [return: NotNullIfNotNull(nameof(typePath))]
+    public static string? GetName(string? typePath) =>
+        typePath == null ? null : SplitTypePath(typePath).Name;
+
+    [return: NotNullIfNotNull(nameof(typePath))]
+    public static string? GetNameSpace(string? typePath) =>
+        typePath == null ? null : SplitTypePath(typePath).NameSpace;
 }

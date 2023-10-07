@@ -13,25 +13,40 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
 {
     public Result<string> Generate(INamespace nameSpace)
     {
+        Check.MustBeArgumentNotNull(nameSpace);
+        if (!nameSpace.Validate().TryParse(out var vs))
+        {
+            return vs.WithValue(string.Empty);
+        }
+
         var codeUnit = CodeDomHelper.Begin();
         var domNameSpace = codeUnit.AddNewNameSpace(nameSpace.Name).UseNameSpace(nameSpace.UsingNamespaces);
         foreach (var type in nameSpace.Types)
         {
+            if (!type.Validate().TryParse(out vs))
+            {
+                return vs.WithValue(string.Empty);
+            }
+
             var domClass = domNameSpace.AddNewClass(
                 type.Name,
                 type.BaseTypes.Compact().Select(x => x.Name.NotNull()),
                 type.InheritanceModifier.Contains(InheritanceModifier.Partial),
-                toTypeAttributes(type.AccessModifier));
+                toTypeAttributes(domNameSpace, type.AccessModifier));
             _ = domNameSpace.UseNameSpace(type.BaseTypes.Select(x => x.NameSpace).Compact());
 
             foreach (var member in type.Members)
             {
-                useNameSpace(domNameSpace, member);
+                if (!member.Validate().TryParse(out vs))
+                {
+                    return vs.WithValue(string.Empty);
+                }
+
                 var domMember = member switch
                 {
-                    IField field => createDomField(field),
-                    IProperty prop => createDomProperty(prop),
-                    IMethod method => createDomMethod(method),
+                    IField field => createDomField(domNameSpace, field),
+                    IProperty prop => createDomProperty(domNameSpace, prop),
+                    IMethod method => createDomMethod(domNameSpace, method),
                     _ => throw new NotImplementedException(),
                 };
                 _ = domClass.Members.Add(domMember);
@@ -40,21 +55,26 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
         var code = codeUnit.GenerateCode();
         return Result<string>.CreateSuccess(code);
 
-        static TypeAttributes toTypeAttributes(AccessModifier accessModifier) => throw new NotImplementedException();
-        static CodeTypeMember createDomField(IField member) => throw new NotImplementedException();
-        static CodeTypeMember createDomProperty(IProperty member) => throw new NotImplementedException();
-        static CodeTypeMember createDomMethod(IMethod member) =>
-            CodeDomHelper.NewMethod(member.Name,
-                                    member.Body,
-                                    member.Type,
-                                    MemberAttributes.Public,
-                                    member.InheritanceModifier.Contains(InheritanceModifier.Partial),
-                                    member.Parameters.Select(x => (new TypePath(x.Type), x.Name)).ToArray());
-        static void useNameSpace(CodeNamespace domNameSpace, IMember member)
+        static TypeAttributes toTypeAttributes(CodeNamespace domNameSpace, AccessModifier accessModifier) => throw new NotImplementedException();
+        static CodeTypeMember createDomField(CodeNamespace domNameSpace, IField member) => throw new NotImplementedException();
+        static CodeTypeMember createDomProperty(CodeNamespace domNameSpace, IProperty member) => throw new NotImplementedException();
+        static CodeTypeMember createDomMethod(CodeNamespace domNameSpace, IMethod method)
         {
-            if (!member.Type.NameSpace.IsNullOrEmpty())
+            useNameSpace(domNameSpace, method.ReturnType);
+            method.Parameters.Select(x => x.Type).ForEach(x => useNameSpace(domNameSpace, x));
+            return CodeDomHelper.NewMethod(method.Name,
+                                    method.Body,
+                                    method.ReturnType,
+                                    MemberAttributes.Public,
+                                    method.InheritanceModifier.Contains(InheritanceModifier.Partial),
+                                    method.Parameters.Select(x => (new TypePath(x.Type), x.Name)).ToArray());
+        }
+
+        static void useNameSpace(CodeNamespace domNameSpace, TypePath? typePath)
+        {
+            if (!(typePath?.NameSpace.IsNullOrEmpty() ?? true))
             {
-                _ = domNameSpace.UseNameSpace(member.Type.NameSpace);
+                _ = domNameSpace.UseNameSpace(typePath.NameSpace);
             }
         }
     }

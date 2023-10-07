@@ -28,3 +28,9 @@ public sealed class Method(string name) : Member(name), IMethod
             .RuleFor(x => x.IsConstructor && x.IsExtension, () => "Constructor cannot be extension method.")
             .Build();
 }
+
+public static class MethodExtensions
+{
+    public static TMethod AddParameter<TMethod>(this TMethod method, string Type, string Name) where TMethod : IMethod =>
+        method.Fluent(method.Parameters.Add((Type, Name)));
+}

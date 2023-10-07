@@ -1,8 +1,10 @@
 ﻿using Library.DesignPatterns.Markers;
+using Library.Results;
+using Library.Validations;
 
 namespace Library.CodeGeneration.v2.Back;
 
-public interface IType
+public interface IType:IValidatable
 {
     AccessModifier AccessModifier { get; }
     ISet<IAttribute> Attributes { get; }
@@ -26,4 +28,7 @@ public abstract class TypeBase : IType
     public virtual ISet<IMember> Members { get; } = new HashSet<IMember>();
     public virtual string Name { get; }
     public virtual ISet<string> UsingNamesSpaces { get; } = new HashSet<string>();
+
+    public virtual Result Validate() => 
+        Result.Success;
 }

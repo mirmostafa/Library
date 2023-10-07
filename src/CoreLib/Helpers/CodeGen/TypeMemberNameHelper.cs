@@ -99,7 +99,7 @@ public static class TypeMemberNameHelper
 
     public static string ToArgName(in string name)
     {
-        var buffer = name.ArgumentNotNull(nameof(name)).Trim().TrimStart('_');
+        var buffer = name.ArgumentNotNull().Trim().TrimStart('_');
         return $"{buffer[Range.EndAt(1)].ToLower()}{buffer[1..]}";
     }
 
