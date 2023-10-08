@@ -60,11 +60,12 @@ public sealed class TypePath : IEquatable<TypePath>
         {
             return default;
         }
-
-        var lastIndexOfDot = typePath.LastIndexOf('.');
-        return lastIndexOfDot == -1
-            ? (typePath, null)
-            : (typePath[(lastIndexOfDot + 1)..], typePath[..lastIndexOfDot]);
+        var buffer = typePath.Contains('<') ? typePath[..typePath.IndexOf('<')] : typePath;
+        var lastIndexOfDot = buffer.LastIndexOf('.');
+        var result = lastIndexOfDot == -1
+            ? (buffer, null)
+            : (buffer[(lastIndexOfDot + 1)..], buffer[..lastIndexOfDot]);
+        return result;
     }
     //========
     //        var dotLastIndex = typePath.LastIndexOf('.');

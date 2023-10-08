@@ -28,4 +28,13 @@ public static class NamSpaceExtensions
 {
     public static TNameSpace AddType<TNameSpace>(this TNameSpace nameSpace, IType type) where TNameSpace : INamespace =>
         nameSpace.Fluent(nameSpace.Types.Add(type));
+
+    public static TNameSpace AddUsingNameSpace<TNameSpace>(this TNameSpace ns, IEnumerable<string> nameSpaces) where TNameSpace : INamespace =>
+        AddUsingNameSpace(ns, nameSpaces.ToArray());
+
+    public static TNameSpace AddUsingNameSpace<TNameSpace>(this TNameSpace ns, params string[] nameSpaces) where TNameSpace : INamespace
+    {
+        nameSpaces.ForEach(x => ns.UsingNamespaces.Add(x));
+        return ns;
+    }
 }
