@@ -8,6 +8,7 @@ public interface IMethod : IMember, IHasGenericTypes
 {
     string? Body { get; }
     bool IsConstructor { get; }
+    bool IsExtension { get; }
     ISet<(string Type, string Name)> Parameters { get; }
     public TypePath? ReturnType { get; }
 }
@@ -24,8 +25,8 @@ public sealed class Method(string name) : Member(name), IMethod
 
     public override Result Validate() =>
         this.Check()
-            .RuleFor(x => x.IsExtension && !x.Parameters.Any(), () => "Extension method cannot be parameterless.")
-            .RuleFor(x => x.IsConstructor && x.IsExtension, () => "Constructor cannot be extension method.")
+            .RuleFor(x => !(x.IsExtension && !x.Parameters.Any()), () => "Extension method cannot be parameterless.")
+            .RuleFor(x => !(x.IsConstructor && x.IsExtension), () => "Constructor cannot be extension method.")
             .Build();
 }
 

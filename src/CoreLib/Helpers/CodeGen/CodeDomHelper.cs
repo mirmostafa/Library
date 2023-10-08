@@ -147,7 +147,7 @@ public static class CodeDomHelper
         in string? body = null,
         in string? returnType = null,
         in MemberAttributes? accessModifiers = null,
-        bool isPartial = false, params (TypePath Type, string Name)[] arguments)
+        bool isPartial = false, params (string Type, string Name)[] arguments)
     {
         Check.MustBeArgumentNotNull(c);
         _ = c.Members.Add(NewMethod(name, body, returnType, accessModifiers ?? MemberAttributes.Public | MemberAttributes.Final, isPartial, arguments));
@@ -162,11 +162,12 @@ public static class CodeDomHelper
     /// <param name="baseTypes">The base types.</param>
     /// <param name="isPartial">if set to <c>true</c> [is partial].</param>
     /// <returns></returns>
-    public static CodeTypeDeclaration AddNewClass(
+    public static CodeTypeDeclaration AddNewType(
         this CodeNamespace ns,
         in string className,
         in IEnumerable<string>? baseTypes = null,
         bool isPartial = false,
+        bool isClass = true, 
         TypeAttributes typeAttributes = TypeAttributes.Public | TypeAttributes.Sealed)
     {
         Check.MustBeArgumentNotNull(ns);
@@ -210,7 +211,7 @@ public static class CodeDomHelper
     /// <param name="returnType">Type of the return.</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException">nameof(c)</exception>
-    public static CodeTypeDeclaration AddPartialMethod(this CodeTypeDeclaration c, in string name, in TypePath? returnType = null)
+    public static CodeTypeDeclaration AddPartialMethod(this CodeTypeDeclaration c, in string name, in string? returnType = null)
     {
         Check.MustBeArgumentNotNull(c);
         var method = NewPartialMethodAsField(name, returnType);
@@ -473,7 +474,7 @@ public static class CodeDomHelper
         in string? returnType = null,
         in MemberAttributes? accessModifiers = null,
         in bool isPartial = false,
-        params (TypePath Type, string Name)[] arguments)
+        params (string Type, string Name)[] arguments)
     {
         Check.MustBeArgumentNotNull(name);
         var method = new CodeMemberMethod
@@ -527,7 +528,7 @@ public static class CodeDomHelper
     /// <param name="name">The name of the method.</param>
     /// <param name="returnType">The return type of the method.</param>
     /// <returns>A CodeMemberField representing the partial method.</returns>
-    public static CodeMemberField NewPartialMethodAsField(in string name, in TypePath? returnType = null)
+    public static CodeMemberField NewPartialMethodAsField(in string name, in string? returnType = null)
     {
         var accessModifiers = MemberAttributes.ScopeMask;
 
@@ -537,7 +538,7 @@ public static class CodeDomHelper
             Attributes = accessModifiers,
             Type = returnType is null
                 ? new("partial void")
-                : new($"partial {returnType.FullPath}")
+                : new($"partial {returnType}")
         };
         return method;
     }

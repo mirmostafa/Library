@@ -4,7 +4,7 @@ using Library.Validations;
 
 namespace Library.CodeGeneration.v2.Back;
 
-public interface IType:IValidatable
+public interface IType : IValidatable
 {
     AccessModifier AccessModifier { get; }
     ISet<IAttribute> Attributes { get; }
@@ -21,14 +21,14 @@ public abstract class TypeBase : IType
     protected TypeBase(string name) =>
         this.Name = name;
 
-    public virtual AccessModifier AccessModifier { get; init; }
+    public virtual AccessModifier AccessModifier { get; init; } = AccessModifier.Public;
     public virtual ISet<IAttribute> Attributes { get; } = new HashSet<IAttribute>();
     public virtual ISet<TypePath> BaseTypes { get; } = new HashSet<TypePath>();
-    public virtual InheritanceModifier InheritanceModifier { get; init; }
+    public virtual InheritanceModifier InheritanceModifier { get; init; } = InheritanceModifier.Sealed;
     public virtual ISet<IMember> Members { get; } = new HashSet<IMember>();
     public virtual string Name { get; }
-    public virtual ISet<string> UsingNamesSpaces { get; } = new HashSet<string>();
+    public virtual ISet<string> UsingNamesSpaces { get; } = new HashSet<string>(new[] { nameof(System), nameof(System.Linq), nameof(System.Threading.Tasks), });
 
-    public virtual Result Validate() => 
+    public virtual Result Validate() =>
         Result.Success;
 }
