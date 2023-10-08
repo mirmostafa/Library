@@ -33,6 +33,9 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                 type.BaseTypes.Compact().Select(x => x.Name.NotNull()),
                 type.InheritanceModifier.Contains(InheritanceModifier.Partial),
                 typeAttributes: toTypeAttributes(domNameSpace, type.AccessModifier, type.InheritanceModifier));
+            domType.IsClass = true;
+            domType.TypeAttributes = TypeAttributes.Abstract | TypeAttributes.Sealed;
+
             _ = domNameSpace.UseNameSpace(type.BaseTypes.Select(x => x.NameSpace).Compact());
 
             foreach (var member in type.Members.Compact())
