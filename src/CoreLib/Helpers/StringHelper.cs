@@ -271,6 +271,19 @@ public static class StringHelper
         }
         return false;
     }
+    public static bool ContainsAny(this string str, in IEnumerable<string> items, out string found)
+    {
+        foreach (var item in items)
+        {
+            if (str.Contains(item))
+            {
+                found = item; 
+                return true;
+            }
+        }
+        found = string.Empty;
+        return false;
+    }
 
     /// <summary>
     /// Checks if a string contains any of the characters in the given array.
@@ -623,6 +636,28 @@ public static class StringHelper
             string.Compare(current, item, ignoreCase) == 0;
     }
 
+    [Pure]
+    public static int IndexOfAny(this string s, out string foundItem, params string[] items)
+    {
+        foreach (var s3 in items)
+        {
+            if (found(s, s3, out var result))
+            {
+                foundItem = s3;
+                return result;
+            }
+        }
+
+        foundItem = string.Empty;
+        return -1;
+
+        static bool found(string s, string s2, out int index)
+        {
+            index = s.IndexOf(s2);
+            return index != -1;
+        }
+    }
+
     /// Checks if the given character is a common character. </summary>
     [Pure]
     public static bool IsCommon(this char c)
@@ -902,7 +937,7 @@ public static class StringHelper
     public static string Merge(this IEnumerable<string> array, in char separator) =>
         string.Join(separator, array.ToArray());
 
-    public static string Merge(this IEnumerable<string> array, in char separator, Func<string, string> format) => 
+    public static string Merge(this IEnumerable<string> array, in char separator, Func<string, string> format) =>
         string.Join(separator, array.Select(format).ToArray());
 
     public static string Merge(this IEnumerable<string> array, in string separator, Func<string, int, string> format) =>
