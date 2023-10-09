@@ -2,7 +2,6 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Reflection;
 
-using Library.CodeGeneration;
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
@@ -155,40 +154,6 @@ public static class CodeDomHelper
     }
 
     /// <summary>
-    ///     Adds a new class.
-    /// </summary>
-    /// <param name="ns">The namespace.</param>
-    /// <param name="className">Name of the class.</param>
-    /// <param name="baseTypes">The base types.</param>
-    /// <param name="isPartial">if set to <c>true</c> [is partial].</param>
-    /// <returns></returns>
-    public static CodeTypeDeclaration AddNewType(
-        this CodeNamespace ns,
-        in string className,
-        in IEnumerable<string>? baseTypes = null,
-        bool isPartial = false,
-        bool isClass = true, 
-        TypeAttributes typeAttributes = TypeAttributes.Public | TypeAttributes.Sealed)
-    {
-        Check.MustBeArgumentNotNull(ns);
-
-        var result = new CodeTypeDeclaration(className)
-        {
-            IsClass = true,
-            IsPartial = isPartial,
-            TypeAttributes = typeAttributes
-        };
-        var bts = baseTypes?.ToList();
-        if (bts?.Any() == true)
-        {
-            bts.ForEach(result.BaseTypes.Add);
-        }
-
-        _ = ns.Types.Add(result);
-        return result;
-    }
-
-    /// <summary>
     ///     Creates new namespace.
     /// </summary>
     /// <param name="unit">The CodeCompileUnit unit.</param>
@@ -203,6 +168,45 @@ public static class CodeDomHelper
         return result;
     }
 
+    /// <summary>
+    ///     Adds a new class.
+    /// </summary>
+    /// <param name="ns">The namespace.</param>
+    /// <param name="className">Name of the class.</param>
+    /// <param name="baseTypes">The base types.</param>
+    /// <param name="isPartial">if set to <c>true</c> [is partial].</param>
+    /// <returns></returns>
+    public static CodeTypeDeclaration AddNewType(
+        this CodeNamespace ns,
+        in string className,
+        in IEnumerable<string>? baseTypes = null,
+        bool isClass = true,
+        bool isPartial = false,
+        bool isStatic = false,
+        TypeAttributes typeAttributes = TypeAttributes.Public | TypeAttributes.Sealed)
+    {
+        Check.MustBeArgumentNotNull(ns);
+
+        var result = new CodeTypeDeclaration(className)
+        {
+            IsClass = isClass,
+            IsPartial = isPartial,
+            TypeAttributes = typeAttributes,
+        };
+        if (isStatic)
+        {
+            result.Attributes |= MemberAttributes.Static;
+        }
+
+        var bts = baseTypes?.ToList();
+        if (bts?.Any() == true)
+        {
+            bts.ForEach(result.BaseTypes.Add);
+        }
+
+        _ = ns.Types.Add(result);
+        return result;
+    }
     /// <summary>
     /// Adds the partial method.
     /// </summary>
