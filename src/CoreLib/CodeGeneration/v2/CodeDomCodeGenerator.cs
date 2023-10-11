@@ -32,7 +32,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                 type.BaseTypes.Compact().Select(x => x.Name.NotNull()),
                 isStatic: type.InheritanceModifier.Contains(InheritanceModifier.Static),
                 isPartial: type.InheritanceModifier.Contains(InheritanceModifier.Partial),
-                typeAttributes: toTypeAttributes(domNameSpace, type.AccessModifier, type.InheritanceModifier));
+                typeAttributes: toTypeAttributes(type.AccessModifier, type.InheritanceModifier));
 
             _ = domNameSpace.UseNameSpace(type.BaseTypes.Select(x => x.NameSpace).Compact());
 
@@ -58,7 +58,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
         var result = setStaticIfRequired(nameSpace, code);
         return Result<string>.CreateSuccess(result);
 
-        static TypeAttributes toTypeAttributes(CodeNamespace domNameSpace, AccessModifier accessModifier, InheritanceModifier inheritanceModifier)
+        static TypeAttributes toTypeAttributes(AccessModifier accessModifier, InheritanceModifier inheritanceModifier)
         {
             var result = TypeAttributes.AutoLayout;
             if (accessModifier.Contains(AccessModifier.Public))
@@ -73,7 +73,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
 
             return result;
         }
-        static MemberAttributes toMemberAttributes(CodeNamespace domNameSpace, AccessModifier accessModifier, InheritanceModifier inheritanceModifier)
+        static MemberAttributes toMemberAttributes(AccessModifier accessModifier, InheritanceModifier inheritanceModifier)
         {
             var result = MemberAttributes.Final;
             if (accessModifier.Contains(AccessModifier.Public))
@@ -107,7 +107,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
             return CodeDomHelper.NewMethod(method.Name,
                                         method.Body,
                                         method.ReturnType,
-                                        MemberAttributes.Public,
+                                        toMemberAttributes(method.AccessModifier, method.InheritanceModifier),
                                         method.InheritanceModifier.Contains(InheritanceModifier.Partial),
                                         parameters);
         }
@@ -135,7 +135,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                 .Where(x => x.InheritanceModifier.Contains(InheritanceModifier.Static)).Select(x => x.Name);
             if (staticMembers.Any())
             {
-                staticMembers.Aggregate((string member, string code) => addStaticToMember(code, member), code);
+                _ = staticMembers.Aggregate((string member, string code) => addStaticToMember(code, member), code);
             }
 
             return code;
