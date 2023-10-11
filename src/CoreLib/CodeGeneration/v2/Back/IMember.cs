@@ -14,13 +14,15 @@ public interface IMember : IValidatable
 [Immutable]
 public abstract class Member : IMember
 {
-    protected Member(string name) =>
+    protected Member([DisallowNull] string name) =>
         this.Name = name.ArgumentNotNull();
 
-    public virtual AccessModifier AccessModifier { get; }
+    public virtual AccessModifier AccessModifier { get; } = AccessModifier.Public;
     public virtual InheritanceModifier InheritanceModifier { get; }
     public virtual string Name { get; }
 
-    public virtual Result Validate() =>
+    public Result Validate() =>
+        OnValidate();
+    protected virtual Result OnValidate() =>
         Result.Success;
 }

@@ -53,8 +53,10 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                 _ = domType.Members.Add(domMember);
             }
         }
-        var code = SetStaticIfRequired(nameSpace, codeUnit.GenerateCode());
-        return Result<string>.CreateSuccess(code);
+
+        var code = codeUnit.GenerateCode();
+        var result = setStaticIfRequired(nameSpace, code);
+        return Result<string>.CreateSuccess(result);
 
         static TypeAttributes toTypeAttributes(CodeNamespace domNameSpace, AccessModifier accessModifier, InheritanceModifier inheritanceModifier)
         {
@@ -71,6 +73,24 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
 
             return result;
         }
+        static MemberAttributes toMemberAttributes(CodeNamespace domNameSpace, AccessModifier accessModifier, InheritanceModifier inheritanceModifier)
+        {
+            var result = MemberAttributes.Final;
+            if (accessModifier.Contains(AccessModifier.Public))
+            {
+                result |= MemberAttributes.Public;
+            }
+            else if (accessModifier.Contains(AccessModifier.Private))
+            {
+                result |= MemberAttributes.Private;
+            }
+            else if (accessModifier.Contains(AccessModifier.Protected))
+            {
+                result |= MemberAttributes.Family;
+            }
+
+            return result;
+        }
         static CodeTypeMember createDomField(CodeNamespace domNameSpace, IField member) => throw new NotImplementedException();
         static CodeTypeMember createDomProperty(CodeNamespace domNameSpace, IProperty member) => throw new NotImplementedException();
         static CodeTypeMember createDomMethod(CodeNamespace domNameSpace, IMethod method)
@@ -79,10 +99,8 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
             method.Parameters.Select(x => x.Type).ForEach(x => useNameSpace(domNameSpace, x));
 
             var parameters = method.Parameters.ToArray();
-            // Check if the method is an extension method
-            if (method.IsExtension && parameters.Any())
+            if (method.IsExtension)
             {
-                // Add "this" to the type of the first parameter (extension method)
                 parameters[0] = ($"this {parameters[0].Type}", parameters[0].Name);
             }
 
@@ -100,43 +118,50 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                 _ = domNameSpace.UseNameSpace(typePath.NameSpace);
             }
         }
-        static string addStaticToMember(string code, in IEnumerable<string> memberNames)
-        {
-            var lines = code.Split(Environment.NewLine);
-            var accessModifiers = new string[] { "public ", "private ", "protected ", "internal " };
-            var result = new StringBuilder();
-            string buffer;
-
-            foreach (var line in lines)
-            {
-                buffer = line;
-                if (line.ContainsAny(memberNames, out var member))
-                {
-                    if (line.ContainsAny(new[] { $"class {member}", $"{member}(", $"{member} (" }) && !line.Contains(" static"))
-                    {
-                        var rightPlace = line.IndexOfAny(out var accessModifier, accessModifiers);
-                        buffer = rightPlace != -1 ? line.Insert(rightPlace + accessModifier!.Length, "static ") : line;
-                    }
-                }
-                _ = result.AppendLine(buffer);
-            }
-
-            return result.ToString();
-        }
-
-        static string SetStaticIfRequired(INamespace nameSpace, string code)
+        static string setStaticIfRequired(INamespace nameSpace, string code)
         {
             var staticTypes = nameSpace.Types.Where(x => x.InheritanceModifier.Contains(InheritanceModifier.Static));
             if (staticTypes.Any())
             {
                 foreach (var type in staticTypes)
                 {
-                    var things = Enumerable.Empty<string>().AddImmuted(type.Name).AddRangeImmuted(type.Members.Select(x => x.Name)).Distinct();
-                    code = addStaticToMember(code, things);
+                    var allMembers = Enumerable.Empty<string>().AddImmuted(type.Name).AddRangeImmuted(type.Members.Select(x => x.Name)).Distinct().ToArray();
+                    code = addStaticToMember(code, allMembers);
                 }
+            }
+            var staticMembers = nameSpace.Types
+                .Except(staticTypes)
+                .Select(x => x.Members).SelectAll()
+                .Where(x => x.InheritanceModifier.Contains(InheritanceModifier.Static)).Select(x => x.Name);
+            if (staticMembers.Any())
+            {
+                staticMembers.Aggregate((string member, string code) => addStaticToMember(code, member), code);
             }
 
             return code;
+            static string addStaticToMember(string code, params string[] memberNames)
+            {
+                var lines = code.Split(Environment.NewLine);
+                var accessModifiers = new string[] { "public ", "private ", "protected ", "internal " };
+                var result = new StringBuilder();
+                string buffer;
+
+                foreach (var line in lines)
+                {
+                    buffer = line;
+                    if (line.ContainsAny(memberNames, out var member))
+                    {
+                        if (line.ContainsAny(new[] { $"class {member}", $"{member}(", $"{member} (" }) && !line.Contains(" static"))
+                        {
+                            var rightPlace = line.IndexOfAny(out var accessModifier, accessModifiers);
+                            buffer = rightPlace != -1 ? line.Insert(rightPlace + accessModifier!.Length, "static ") : line;
+                        }
+                    }
+                    _ = result.AppendLine(buffer);
+                }
+
+                return result.ToString();
+            }
         }
     }
 }

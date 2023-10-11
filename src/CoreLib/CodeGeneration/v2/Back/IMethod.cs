@@ -23,7 +23,7 @@ public sealed class Method(string name) : Member(name), IMethod
     public ISet<(string Type, string Name)> Parameters { get; } = new HashSet<(string Type, string Name)>();
     public TypePath? ReturnType { get; init; }
 
-    public override Result Validate() =>
+    protected override Result OnValidate() =>
         this.Check()
             .RuleFor(x => !(x.IsExtension && !x.Parameters.Any()), () => "Extension method cannot be parameterless.")
             .RuleFor(x => !(x.IsConstructor && x.IsExtension), () => "Constructor cannot be extension method.")

@@ -411,8 +411,8 @@ public static class CodeDomHelper
         return t;
     }
 
-    public static CodeCompileUnit Begin()
-            => new();
+    public static CodeCompileUnit Begin()=> 
+        new();
 
     /// <summary>
     /// Generates a string of C# code from a CodeCompileUnit and optional directives.

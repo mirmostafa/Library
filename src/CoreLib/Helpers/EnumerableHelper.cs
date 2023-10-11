@@ -130,6 +130,7 @@ public static class EnumerableHelper
     /// <returns>The ICollection with the added items.</returns>
     public static ICollection<T> AddRange<T>([DisallowNull] this ICollection<T> list, in IEnumerable<T> items)
     {
+        Check.MustBeArgumentNotNull(list);
         if (items?.Any() is true)
         {
             foreach (var item in items)
@@ -151,6 +152,7 @@ public static class EnumerableHelper
     public static IFluentList<TFluentList, TItem> AddRange<TFluentList, TItem>([DisallowNull] this IFluentList<TFluentList, TItem> list, IEnumerable<TItem>? items)
             where TFluentList : IFluentList<TFluentList, TItem>
     {
+        Check.MustBeArgumentNotNull(list);
         if (items?.Any() is true)
         {
             foreach (var item in items)
@@ -204,30 +206,25 @@ public static class EnumerableHelper
         //Function to add items from both source and items
         static IEnumerable<T> addRangeImmutedIterator(IEnumerable<T> source, IEnumerable<T> items)
         {
-            //Loop through source and yield each item
-            foreach (var item in source)
+            if (source?.Any() == true)
             {
-                yield return item;
+                //Loop through source and yield each item
+                foreach (var item in source)
+                {
+                    yield return item;
+                }
             }
-            //Loop through items and yield each item
-            foreach (var item in items)
+
+            if (items?.Any() == true)
             {
-                yield return item;
+                //Loop through items and yield each item
+                foreach (var item in items)
+                {
+                    yield return item;
+                }
             }
         }
     }
-
-    /// <summary>
-    /// Aggregates the elements of an array using a custom aggregator function and an optional
-    /// default value.
-    /// </summary>
-    /// <typeparam name="T">The type of elements in the array.</typeparam>
-    /// <param name="items">The array of elements to be aggregated.</param>
-    /// <param name="aggregator">A function that specifies how to aggregate elements.</param>
-    /// <param name="defaultValue">An optional default value to use when the array is empty.</param>
-    /// <returns>The aggregated result of the array elements.</returns>
-    public static T Aggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!)
-        => InnerAggregate(items, aggregator, defaultValue);
 
     /// <summary>
     /// Aggregates the elements of an IEnumerable using a custom aggregator function and an optional
@@ -238,8 +235,21 @@ public static class EnumerableHelper
     /// <param name="aggregator">A function that specifies how to aggregate elements.</param>
     /// <param name="defaultValue">An optional default value to use when the IEnumerable is empty.</param>
     /// <returns>The aggregated result of the IEnumerable elements.</returns>
-    public static T Aggregate<T>(this IEnumerable<T> items, Func<T, T?, T> aggregator, T defaultValue = default!)
-        => InnerAggregate(items.ToArray(), aggregator, defaultValue);
+    public static T Aggregate<T>(this IEnumerable<T> items, Func<T, T, T> aggregator, T defaultValue)
+    {
+        Check.MustBeArgumentNotNull(aggregator);
+        var itemArray = items.ArgumentNotNull().ToArray();
+        return itemArray switch
+        {
+            [] => defaultValue, // Return the default value if the array is empty.
+            [var item] => item, // Return the single item if there's only one element.
+            { Length: 2 } => aggregator.ArgumentNotNull()(itemArray.First(), itemArray.Last()), // Aggregate two elements using the aggregator function.
+            [var item, .. var others] => aggregator(item, Aggregate(others, aggregator, defaultValue)) // Recursively aggregate remaining elements.
+        };
+    }
+
+    public static T Aggregate<T>(this IEnumerable<T> items, Func<(T current, T result), T> aggregator, T defaultValue) =>
+        Aggregate(items, (T curr, T res) => aggregator((curr, res)), defaultValue);
 
     /// <summary>
     /// Aggregates the elements of an array using addition operators and an optional default value.
@@ -250,8 +260,8 @@ public static class EnumerableHelper
     /// <param name="items">The array of elements to be aggregated.</param>
     /// <param name="defaultValue">An optional default value to use when the array is empty.</param>
     /// <returns>The aggregated result of the array elements using addition operators.</returns>
-    public static T Aggregate<T>(this T[] items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
-        => InnerAggregate(items, (x, y) => x + y!, defaultValue);
+    public static T AggregateAdd<T>(this T[] items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
+        => Aggregate(items, (x, y) => x + y!, defaultValue);
 
     /// <summary>
     /// Aggregates the elements of an IEnumerable using addition operators and an optional default value.
@@ -262,8 +272,8 @@ public static class EnumerableHelper
     /// <param name="items">The IEnumerable of elements to be aggregated.</param>
     /// <param name="defaultValue">An optional default value to use when the IEnumerable is empty.</param>
     /// <returns>The aggregated result of the IEnumerable elements using addition operators.</returns>
-    public static T Aggregate<T>(this IEnumerable<T> items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
-        => InnerAggregate(items.ToArray(), (x, y) => x + y!, defaultValue);
+    public static T AggregateAdd<T>(this IEnumerable<T> items, T defaultValue = default!) where T : IAdditionOperators<T, T, T>
+        => Aggregate(items, (x, y) => x + y!, defaultValue);
 
     /// <summary>
     /// Determines whether any element exists in the given enumerable.
@@ -285,7 +295,7 @@ public static class EnumerableHelper
     /// <param name="source">The IList to check for elements.</param>
     /// <returns>True if the IList contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Any<T>(this IList<T> source) =>
+    public static bool Any<T>([DisallowNull]this IList<T> source) =>
         source.Count != 0; // Check if the count of elements in the IList is not zero.
 
     /// <summary>
@@ -740,7 +750,7 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<T> Flatten<T>([DisallowNull] IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren) =>
-            roots.SelectAll(getChildren);
+            roots.SelectAllChildren(getChildren);
 
     /// <summary>
     /// Executes an action for each item in the given enumerable and returns a read-only list of the items.
@@ -1215,31 +1225,6 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    /// Gets all elements from a given root element and its children using a provided function.
-    /// </summary>
-    /// <typeparam name="T">The type of the elements.</typeparam>
-    /// <param name="getRootElements">A function to get the root elements.</param>
-    /// <param name="getChildren">A function to get the children of an element.</param>
-    /// <returns>An enumerable of all elements.</returns>
-    public static IEnumerable<T> SelectAll<T>([DisallowNull] this IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
-    {
-        foreach (var root in roots)
-        {
-            yield return root; // Yield the current root element
-
-            var children = getChildren(root); // Get the children of the current root
-
-            if (children != null)
-            {
-                foreach (var child in SelectAll(children, getChildren)) // Recursively iterate over children, yielding the results
-                {
-                    yield return child;
-                }
-            }
-        }
-    }
-
-    /// <summary>
     /// Selects all elements from a sequence of sequences.
     /// </summary>
     /// <param name="values">The sequence of sequences.</param>
@@ -1271,6 +1256,31 @@ public static class EnumerableHelper
         }
     }
 
+    /// <summary>
+    /// Gets all elements from a given root element and its children using a provided function.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements.</typeparam>
+    /// <param name="getRootElements">A function to get the root elements.</param>
+    /// <param name="getChildren">A function to get the children of an element.</param>
+    /// <returns>An enumerable of all elements.</returns>
+    public static IEnumerable<T> SelectAllChildren<T>([DisallowNull] this IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
+    {
+        foreach (var root in roots)
+        {
+            yield return root; // Yield the current root element
+
+            var children = getChildren(root); // Get the children of the current root
+
+            if (children != null)
+            {
+                foreach (var child in SelectAllChildren(children, getChildren)) // Recursively iterate over children, yielding the results
+                {
+                    yield return child;
+                }
+            }
+        }
+    }
+
     /// <summary> Asynchronously projects each element of a sequence into a new form. </summary>
     /// <typeparam name="TSource">The type of the elements of source.</typeparam> <typeparam
     /// name="TResult">The type of the value returned by selectorAsync.</typeparam> <param
@@ -1282,7 +1292,7 @@ public static class EnumerableHelper
     {
         foreach (var item in source)
         {
-            yield return await selectorAsync(item);
+            yield return await selectorAsync(item).ConfigureAwait(false);
         }
     }
 
@@ -1422,7 +1432,7 @@ public static class EnumerableHelper
 
         // Use LINQ's ToDictionary method to convert the key-value pairs into a dictionary. The
         // lambda expressions specify how to extract keys and values from the pairs.
-        return pairs.ToDictionary(pair => pair.Key, pair => pair.Value) ?? new Dictionary<TKey, TValue>();
+        return pairs.ToDictionary(pair => pair.Key, pair => pair.Value) ?? [];
     }
 
     /// <summary>
@@ -1444,7 +1454,7 @@ public static class EnumerableHelper
     {
         if (list == null)
         {
-            return new();
+            return [];
         }
 
         var result = new Dictionary<TKey, TValue>();
@@ -1598,7 +1608,7 @@ public static class EnumerableHelper
     [return: NotNull]
     public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default)
     {
-        var result = await (asyncItems is null ? empty() : data()).ToListAsync(cancellationToken: cancellationToken);
+        var result = await (asyncItems is null ? empty() : data()).ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
         return result!;
         IAsyncEnumerable<TItem> empty() => EmptyAsyncEnumerable<TItem>.Empty;
         IAsyncEnumerable<TItem> data() => WhereAsync(asyncItems!, x => x is not null, cancellationToken)!;
@@ -1688,22 +1698,4 @@ public static class EnumerableHelper
             yield return enumerator.Current;
         }
     }
-
-    /// <summary>
-    /// Helper method for inner aggregation of elements using the specified aggregator function and
-    /// an optional default value.
-    /// </summary>
-    /// <typeparam name="T">The type of elements to be aggregated.</typeparam>
-    /// <param name="items">The array of elements to be aggregated.</param>
-    /// <param name="aggregator">A function that specifies how to aggregate elements.</param>
-    /// <param name="defaultValue">An optional default value to use when the array is empty.</param>
-    /// <returns>The aggregated result of the array elements.</returns>
-    private static T InnerAggregate<T>(this T[] items, Func<T, T?, T> aggregator, T defaultValue = default!) =>
-        items switch
-        {
-            [] => defaultValue, // Return the default value if the array is empty.
-            [var item] => item, // Return the single item if there's only one element.
-            { Length: 2 } => aggregator(items[0], items[1]), // Aggregate two elements using the aggregator function.
-            [var item, .. var others] => aggregator(item, InnerAggregate(others, aggregator, defaultValue)) // Recursively aggregate remaining elements.
-        };
 }
