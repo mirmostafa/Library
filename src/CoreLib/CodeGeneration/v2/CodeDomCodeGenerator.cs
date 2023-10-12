@@ -146,7 +146,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                 var result = new StringBuilder();
                 string buffer;
 
-                code.Split(Environment.NewLine).ForEach(line =>
+                code.ReadLines().ForEach(line =>
                 {
                     buffer = line;
                     buffer.FindEach(memberNames).ForEach(member =>

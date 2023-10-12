@@ -181,7 +181,7 @@ public static class StringHelper
     [Pure]
     [return: NotNull]
     public static IEnumerable<string> Compact(this IEnumerable<string?>? strings) =>
-        (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
+        (strings?.Where([StackTraceHidden][DebuggerStepThrough](item) => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     /// <summary>
     /// Compares two strings and returns an integer that indicates their relative position in the
@@ -807,8 +807,8 @@ public static class StringHelper
     /// </summary>
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
-        => str == null || str.Length == 0;
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str) =>
+        str == null || str.Length == 0;
 
     /// <summary>
     /// Checks if the given string is a valid number.
