@@ -22,6 +22,9 @@ public static class ValidationExtensions
     /// <param name="value">The value to check.</param>
     /// <param name="paramName">The name of the argument.</param>
     /// <returns>The value.</returns>
+    [DebuggerStepThrough]
+    [StackTraceHidden]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     [return: NotNull]
     public static TValue ArgumentNotNull<TValue>([NotNull] this TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null!) =>
         InnerCheck(value, CheckBehavior.ThrowOnFail, paramName).ArgumentNotNull();

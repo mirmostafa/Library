@@ -126,7 +126,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                 foreach (var type in staticTypes)
                 {
                     var allMembers = Enumerable.Empty<string>().AddImmuted(type.Name).AddRangeImmuted(type.Members.Select(x => x.Name)).Distinct().ToArray();
-                    code = addStaticToMember(code, allMembers);
+                    code = addPrefixToMember(code, "static", allMembers);
                 }
             }
             var staticMembers = nameSpace.Types
@@ -135,30 +135,31 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                 .Where(x => x.InheritanceModifier.Contains(InheritanceModifier.Static)).Select(x => x.Name);
             if (staticMembers.Any())
             {
-                _ = staticMembers.Aggregate((string member, string code) => addStaticToMember(code, member), code);
+                _ = staticMembers.Aggregate((string member, string code) => addPrefixToMember(code, "static", member), code);
             }
 
             return code;
-            static string addStaticToMember(string code, params string[] memberNames)
+            static string addPrefixToMember(string code, string prefix, params string[] memberNames)
             {
-                var lines = code.Split(Environment.NewLine);
+                var prfx = $"{prefix.Trim()} ";
                 var accessModifiers = new string[] { "public ", "private ", "protected ", "internal " };
                 var result = new StringBuilder();
                 string buffer;
 
-                foreach (var line in lines)
+                code.Split(Environment.NewLine).ForEach(line =>
                 {
                     buffer = line;
-                    if (line.ContainsAny(memberNames, out var member))
+                    buffer.FindEach(memberNames).ForEach(member =>
                     {
-                        if (line.ContainsAny(new[] { $"class {member}", $"{member}(", $"{member} (" }) && !line.Contains(" static"))
+                        if (!buffer.ContainsAny(new[] { $"class {member}", $"{member}(", $"{member} (" }) || buffer.Contains(prfx))
                         {
-                            var rightPlace = line.IndexOfAny(out var accessModifier, accessModifiers);
-                            buffer = rightPlace != -1 ? line.Insert(rightPlace + accessModifier!.Length, "static ") : line;
+                            return;
                         }
-                    }
+                        var rightPlace = buffer.IndexOfAny(out var accessModifier, accessModifiers);
+                        buffer = rightPlace != -1 ? buffer.Insert(rightPlace + accessModifier!.Length, "static ") : buffer;
+                    });
                     _ = result.AppendLine(buffer);
-                }
+                });
 
                 return result.ToString();
             }

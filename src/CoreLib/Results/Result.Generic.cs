@@ -1,4 +1,7 @@
-﻿using Library.Interfaces;
+﻿using System.Diagnostics;
+
+using Library.Interfaces;
+using Library.Validations;
 
 namespace Library.Results;
 
@@ -21,7 +24,7 @@ public class Result<TValue>(
     private static Result<TValue?>? _failure;
 
     public Result(ResultBase original, TValue value)
-        : this(value, original.Succeed, original.Status, original.Message, original.Errors, original.ExtraData)
+        : this(value, original.ArgumentNotNull().Succeed, original.Status, original.Message, original.Errors, original.ExtraData)
     {
     }
 
@@ -31,7 +34,15 @@ public class Result<TValue>(
     /// <returns>A Result object representing a failed operation.</returns>
     public static Result<TValue?> Failure => _failure ??= CreateFailure();
 
-    public TValue Value { get; init; } = value;
+    public TValue Value
+    {
+        [StackTraceHidden]
+        [DebuggerStepThrough]
+        get;
+        [StackTraceHidden]
+        [DebuggerStepThrough]
+        init;
+    } = value;
 
     /// <summary>
     /// Combines multiple <see cref="Result{TValue}"/> objects by applying a specified addition
@@ -162,6 +173,8 @@ public class Result<TValue>(
     public static implicit operator Result(Result<TValue> result) =>
         new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
 
+    [StackTraceHidden]
+    [DebuggerStepThrough]
     public static implicit operator TValue(Result<TValue> result) =>
         result.Value;
 
@@ -200,7 +213,8 @@ public class Result<TValue>(
     public override bool Equals(object? obj) =>
         this.Equals(obj as Result<TValue>);
 
-    public override int GetHashCode() => throw new NotImplementedException();
+    public override int GetHashCode() =>
+        this.Value?.GetHashCode() ?? -1;
 
     /// <summary>
     /// Gets the value of the current instance.
@@ -208,7 +222,7 @@ public class Result<TValue>(
     /// <returns>The value of the current instance.</returns>
     [return: NotNullIfNotNull(nameof(Value))]
     public TValue GetValue() =>
-        this.Value;
+        this;
 
     /// <summary>
     /// Converts the current Result object to an asynchronous Task.
@@ -216,6 +230,8 @@ public class Result<TValue>(
     public Task<Result<TValue>> ToAsync() =>
         Task.FromResult(this);
 
-    public Result ToResult() =>
-        this.ToResult();
+    public TValue ToTValue()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -271,13 +271,14 @@ public static class StringHelper
         }
         return false;
     }
+
     public static bool ContainsAny(this string str, in IEnumerable<string> items, out string found)
     {
         foreach (var item in items)
         {
             if (str.Contains(item))
             {
-                found = item; 
+                found = item;
                 return true;
             }
         }
@@ -295,7 +296,7 @@ public static class StringHelper
     /// Checks if a string contains a target string, ignoring case.
     /// </summary>
     public static bool ContainsOf(this string str, in string target)
-        => str.Contains(target.ToLower(), StringComparison.CurrentCultureIgnoreCase);
+        => str.Contains(target.ToLower(CultureInfo.CurrentCulture), StringComparison.CurrentCultureIgnoreCase);
 
     /// <summary>
     /// Converts a string to Google Standard Encoding.
@@ -366,6 +367,23 @@ public static class StringHelper
     [Pure]
     public static bool EqualsToAny(this string str1, params string[] array)
         => array.Any(s => str1.EqualsTo(s));
+
+    [return: NotNull]
+    public static IEnumerable<string> FindEach(this string str, IEnumerable<string> items)
+    {
+        if (str.IsNullOrEmpty())
+        {
+            yield break;
+        }
+
+        foreach (var item in items.Compact())
+        {
+            if (str.Contains(item))
+            {
+                yield return item;
+            }
+        }
+    }
 
     /// <summary>
     /// Fixes the size of the given string to the specified maximum length, padding with the given
@@ -969,7 +987,27 @@ public static class StringHelper
     /// </summary>
     [return: NotNullIfNotNull(nameof(text))]
     public static string? Pluralize(string? text)
-        => text.IsNullOrEmpty() ? null : Pluralizer.Pluralize(text);
+        => text.IsNullOrEmpty() ? text : Pluralizer.Pluralize(text);
+
+    /// <summary>
+    /// Reads a large string line by line.
+    /// </summary>
+    /// <param name="str">The large string to read.</param>
+    /// <returns>An enumerable of strings representing each line of the input string.</returns>
+    public static IEnumerable<string> ReadLines(this string str)
+    {
+        if (str.IsNullOrEmpty())
+        {
+            yield break;
+        }
+
+        using var reader = new StringReader(str);
+        string? line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            yield return line;
+        }
+    }
 
     /// <summary>
     /// Removes the specified value from the string.
@@ -1373,7 +1411,7 @@ public static class StringHelper
     /// Converts a collection of strings to lowercase.
     /// </summary>
     public static IEnumerable<string> ToLower(this IEnumerable<string> strings)
-        => strings.Select(str => str.ToLower());
+        => strings.Select(str => str.ToLower(CultureInfo.CurrentCulture));
 
     /// <summary>
     /// Converts a string to Unicode encoding.
