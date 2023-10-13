@@ -192,36 +192,23 @@ public static class EnumerableHelper
     /// <returns>A new IEnumerable containing the items from the source and the items to add.</returns>
     public static IEnumerable<T> AddRangeImmuted<T>(this IEnumerable<T>? source, IEnumerable<T>? items)
     {
-        //Check if both source and items are null
         return (source, items) switch
         {
             (null, null) => Enumerable.Empty<T>(),
-            //If source is not null, return source
             (_, null) => source,
-            //If items is not null, return items
             (null, _) => items,
-            //If both source and items are not null, call addRangeImmutedIterator
             (_, _) => addRangeImmutedIterator(source, items)
         };
-        //Function to add items from both source and items
         static IEnumerable<T> addRangeImmutedIterator(IEnumerable<T> source, IEnumerable<T> items)
         {
-            if (source?.Any() == true)
+            foreach (var item in source)
             {
-                //Loop through source and yield each item
-                foreach (var item in source)
-                {
-                    yield return item;
-                }
+                yield return item;
             }
 
-            if (items?.Any() == true)
+            foreach (var item in items)
             {
-                //Loop through items and yield each item
-                foreach (var item in items)
-                {
-                    yield return item;
-                }
+                yield return item;
             }
         }
     }
@@ -295,7 +282,7 @@ public static class EnumerableHelper
     /// <param name="source">The IList to check for elements.</param>
     /// <returns>True if the IList contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Any<T>([DisallowNull]this IList<T> source) =>
+    public static bool Any<T>([DisallowNull] this IList<T> source) =>
         source.Count != 0; // Check if the count of elements in the IList is not zero.
 
     /// <summary>

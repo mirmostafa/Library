@@ -181,7 +181,7 @@ public static class StringHelper
     [Pure]
     [return: NotNull]
     public static IEnumerable<string> Compact(this IEnumerable<string?>? strings) =>
-        (strings?.Where([StackTraceHidden][DebuggerStepThrough](item) => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
+        (strings?.Where([StackTraceHidden][DebuggerStepThrough] (item) => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     /// <summary>
     /// Compares two strings and returns an integer that indicates their relative position in the
@@ -1178,8 +1178,8 @@ public static class StringHelper
     /// </summary>
     /// <param name="text">The text.</param>
     /// <returns></returns>
-    public static string? Singularize(string? text)
-        => text.IsNullOrEmpty() ? null : Pluralizer.Singularize(text);
+    public static string? Singularize(string? text) =>
+        text.IsNullOrEmpty() ? null : Pluralizer.Singularize(text);
 
     /// <summary>
     /// Creates a new string from a slice of the given string.
@@ -1293,6 +1293,7 @@ public static class StringHelper
     /// <param name="startSeparator">The string to add to the start of each part.</param>
     /// <param name="endSeparator">The string to add to the end of each part.</param>
     /// <returns>The merged string.</returns>
+    [Obsolete("Subject to remove. Do it by yourself!")]
     public static string SplitMerge(this string str, char splitter, in string startSeparator, in string endSeparator)
     {
         var result = new StringBuilder();
@@ -1321,6 +1322,7 @@ public static class StringHelper
     /// <param name="options">Specifies the options to use when splitting the string.</param>
     /// <returns>The split and merged string, or null if the original string is null or empty.</returns>
     [return: NotNullIfNotNull(nameof(str))]
+    [Obsolete("Subject to remove. Do it by yourself!")]
     public static string? SplitMerge(this string? str, string? splitSeparator = null, string? mergeSeparator = null, bool addSeparatorToEnd = true, StringSplitOptions options = StringSplitOptions.None) =>
         str.IsNullOrEmpty() ? str : str.Split(splitSeparator ?? Environment.NewLine, options).Merge(mergeSeparator ?? Environment.NewLine, addSeparatorToEnd);
 
