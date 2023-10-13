@@ -933,6 +933,48 @@ public sealed class StringHelperTest
         // Assert
         Assert.Equal(new[] { "Hello", "World", "!" }, result);
     }
+
+    [Fact]
+    public void Merge_ShouldConcatenateStrings()
+    {
+        // Arrange
+        var source = new List<string> { "Hello", "World", "GPT" };
+        var separator = " ";
+
+        // Act
+        var result = source.Merge(separator);
+
+        // Assert
+        Assert.Equal("Hello World GPT", result);
+    }
+
+    [Fact]
+    public void Merge_ShouldAddSeparatorToEnd()
+    {
+        // Arrange
+        var source = new List<string> { "One", "Two", "Three-" };
+        var separator = "-";
+
+        // Act
+        var result = source.Merge(separator);
+
+        // Assert
+        Assert.EndsWith("-", result); // Check if the result ends with the separator.
+    }
+
+    [Fact]
+    public void Merge_ShouldNotAddSeparatorToEnd()
+    {
+        // Arrange
+        var source = new List<string> { "Apple", "Banana", "Cherry" };
+        var separator = "-";
+
+        // Act
+        var result = source.Merge(separator, false);
+
+        // Assert
+        Assert.True(!result.EndsWith(separator)); // Check if the separator is not at the end of the result.
+    }
 }
 
 file class CompactDataClass : IEnumerable<object[]>

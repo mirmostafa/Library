@@ -1,5 +1,3 @@
-
-#pragma warning disable CA1305 // Specify IFormatProvider
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
@@ -8,24 +6,12 @@ using TypeData = (string Name, string? NameSpace, System.Collections.Generic.IEn
 
 namespace Library.CodeGeneration;
 
-[SuppressMessage("Globalization", "CA1307:Specify StringComparison for clarity", Justification = "<Pending>")]
 [Immutable]
-public sealed class TypePath : IEquatable<TypePath>
+public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<string>? generics = null) : IEquatable<TypePath>
 {
-    private readonly TypeData _data;
+    private readonly TypeData _data = Parse(fullPath.ArgumentNotNull(), generics);
     private string? _fullPath;
     private string? _fullName;
-
-    public TypePath([DisallowNull] in string fullPath, IEnumerable<string>? generics = null) =>
-        this._data = Parse(fullPath.ArgumentNotNull(), generics);
-    public TypePath(TypePath typePath)
-        : this(typePath.ArgumentNotNull().FullPath)
-    {
-    }
-    public TypePath(in string? name, in string? nameSpace, params string[] generics)
-        : this(Combine(name, nameSpace), generics)
-    {
-    }
 
     [NotNull]
     public IEnumerable<TypePath> Generics => this._data.Generics;
@@ -74,9 +60,6 @@ public sealed class TypePath : IEquatable<TypePath>
 
     public override bool Equals(object? obj) =>
         obj is TypePath path && this.Equals(path);
-
-    public string GetClassName() =>
-        this.Name.Contains('<') ? this.Name[..this.Name.IndexOf('<')] : this.Name;
 
     public override int GetHashCode() =>
         HashCode.Combine(this.Name?.GetHashCode() ?? 0, this.NameSpace?.GetHashCode() ?? 0);
@@ -133,23 +116,38 @@ public sealed class TypePath : IEquatable<TypePath>
     private static TypeData Parse(string typePath, IEnumerable<string>? generics = null)
     {
         var temp = typePath;
-        var gens = generics?.ToList() ?? [];
+        var gens = new List<string>();
+        // Find Generics
         if (temp.Contains('<'))
         {
             var indexOfGenSymbol = temp.IndexOf('<');
             var gen = temp[indexOfGenSymbol..].Trim('<').Trim('>');
             gens.AddRange(gen.Split(',').Select(x => x.Trim()));
+            if (generics?.Any() ?? false)
+            {
+                gens.AddRange(generics);
+            }
             temp = temp[..indexOfGenSymbol];
         }
-        var lastIndexOfDot = temp.IndexOf('.');
-        var nameSpace = lastIndexOfDot > 0 ? temp[..lastIndexOfDot] : string.Empty;
-        var name = lastIndexOfDot > 0 ? temp[lastIndexOfDot..] : temp;
+
+        // Retrieve name and namespace
+        var lastIndexOfDot = temp.LastIndexOf('.');
+        (var name, var nameSpace) = lastIndexOfDot > 0
+            ? (temp[(lastIndexOfDot + 1)..], temp[..lastIndexOfDot])
+            : (temp, string.Empty);
         var genTypes = gens.Select(x => new TypePath(x));
 
         return (name, nameSpace, genTypes);
     }
 
     public static TypePath? ToTypePath() => throw new NotImplementedException();
-}
 
-#pragma warning restore CA1305 // Specify IFormatProvider
+    public static TypePath New<T>(IEnumerable<string>? generics = null) =>
+        new(typeof(T).FullName, generics);
+    public static TypePath New(Type type, IEnumerable<string>? generics = null) =>
+        new(type?.FullName, generics);
+    public static TypePath New(TypePath typePath) =>
+        new(typePath?.FullPath);
+    public static TypePath New(in string? name, in string? nameSpace, params string[] generics) =>
+        new(Combine(name, nameSpace), generics);
+}

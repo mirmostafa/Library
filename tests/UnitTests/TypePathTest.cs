@@ -1,5 +1,6 @@
 ﻿#pragma warning disable CA1707 // Identifiers should not contain underscores
 using Library.CodeGeneration;
+using Library.Helpers.ConsoleHelper;
 
 using Xunit.Abstractions;
 
@@ -8,6 +9,7 @@ public sealed class TypePathTest(ITestOutputHelper output)
 {
     private readonly ITestOutputHelper _output = output;
     private readonly string _sampleFullPath = "System.Linq.IQueryable<Library.Tests.UnitTests.TypePathTest>";
+    private static readonly string[] _generics = ["System.Int32", "String"];
 
     [Fact]
     public void _05_SimpleTypeTest()
@@ -29,7 +31,7 @@ public sealed class TypePathTest(ITestOutputHelper output)
         Assert.Equal(expectedNameSpace, actualNameSpace);
         Assert.Equal(expectedFullPath, actualFullPath);
     }
-    
+
     [Fact]
     public void _10_NormalTypeTest()
     {
@@ -52,7 +54,7 @@ public sealed class TypePathTest(ITestOutputHelper output)
     }
 
     [Fact]
-    public void _20_GenericTypeTest()
+    public void _25_GenericTypeTest()
     {
         // Assign
         var expectedName = "IQueryable<Library.Tests.UnitTests.TypePathTest>";
@@ -63,21 +65,19 @@ public sealed class TypePathTest(ITestOutputHelper output)
         var expectedGenericNameSpace = "Library.Tests.UnitTests";
 
         // Act
-        TypePath path = _sampleFullPath;
+        TypePath path = this._sampleFullPath;
         var actualGeneric = path.Generics.FirstOrDefault();
         var actualName = path.Name;
         var actualNameSpace = path.NameSpace;
         var actualFullPath = path.FullPath;
         var allNameSpaces = path.GetNameSpaces().ToList();
-        var actualClassName = path.GetClassName();
 
         // Assert
         this.Display(path);
         this.Display(actualGeneric);
         Assert.Equal(expectedName, actualName);
         Assert.Equal(expectedNameSpace, actualNameSpace);
-        Assert.Equal(_sampleFullPath, actualFullPath);
-        Assert.Equal(expectedClassName, actualClassName);
+        Assert.Equal(this._sampleFullPath, actualFullPath);
 
         Assert.NotNull(actualGeneric);
         Assert.NotNull(actualGeneric.Name);
@@ -90,9 +90,17 @@ public sealed class TypePathTest(ITestOutputHelper output)
     }
 
     [Fact]
-    public void _25_DynamicGenericTypeTest()
+    public void _20_SimpleGenericTypeTest()
     {
-        var type = "ns1.ns2.t1<ns3.ns4.t2>";
+        var path = new TypePath(this._sampleFullPath);
+        this.Display(path);
+    }
+
+    [Fact]
+    public void _25_SimpleGenericWithAdditionalGenericsTypeTest()
+    {
+        var path = new TypePath(this._sampleFullPath, _generics);
+        this.Display(path);
     }
 
     private void Display(TypePath? path)
@@ -105,6 +113,16 @@ public sealed class TypePathTest(ITestOutputHelper output)
         this._output.WriteLine($"Path: {path}");
         this._output.WriteLine($"Name: {path.Name}");
         this._output.WriteLine($"NameSpace: {path.NameSpace}");
+        this._output.WriteLine($"FullName: {path.FullName}");
+        this._output.WriteLine($"FullPath: {path.FullPath}");
+        if(path.GetNameSpaces().Any())
+        {
+            this._output.WriteLine("namespaces:");
+            foreach (var ns in path.GetNameSpaces())
+            {
+                _output.WriteLine($"\t{ns}");
+            }
+        }
     }
 }
 #pragma warning restore CA1707 // Identifiers should not contain underscores
