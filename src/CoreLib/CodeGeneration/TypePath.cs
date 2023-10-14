@@ -9,23 +9,28 @@ namespace Library.CodeGeneration;
 [Immutable]
 public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<string>? generics = null) : IEquatable<TypePath>
 {
-    private readonly TypeData _data = Parse(fullPath.ArgumentNotNull(), generics);
-    private string? _fullPath;
+    private readonly TypeData _data = Parse(fullPath, generics);
     private string? _fullName;
+    private string? _fullPath;
 
-    [NotNull]
-    public IEnumerable<TypePath> Generics => this._data.Generics;
-    public bool IsGeneric => this._data.Generics.Any();
-    [NotNull]
-    public string Name => this._data.Name;
-    public string? NameSpace => this._data.NameSpace;
-    [NotNull]
-    public string FullPath => this._fullPath ??= this.GetFullPath();
     [NotNull]
     public string FullName => this._fullName ??= this.GetFullName();
 
+    [NotNull]
+    public string FullPath => this._fullPath ??= this.GetFullPath();
+
+    [NotNull]
+    public IEnumerable<TypePath> Generics => this._data.Generics;
+
+    public bool IsGeneric => this._data.Generics.Any();
+
+    [NotNull]
+    public string Name => this._data.Name;
+
+    public string? NameSpace => this._data.NameSpace;
+
     public static string Combine(string? part1, params string?[] parts) =>
-        StringHelper.Merge(parts.AddImmuted(part1).Compact(), '.');
+        StringHelper.Merge(parts.AddImmuted(part1).Compact().Select(x => x.Trim('.')), '.');
 
     [return: NotNullIfNotNull(nameof(typePath))]
     public static string? GetName(string? typePath) =>
@@ -43,14 +48,28 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
     public static implicit operator TypePath?(in string? typeInfo) =>
         typeInfo.IsNullOrEmpty() ? null : new(typeInfo);
 
+    public static TypePath New([DisallowNull] TypePath typePath) =>
+        new(typePath.ArgumentNotNull().FullPath);
+
+    public static TypePath New<T>(IEnumerable<string>? generics = null) =>
+        new(typeof(T).FullName!, generics);
+
+    public static TypePath New([DisallowNull] Type type, IEnumerable<string>? generics = null) =>
+        new(type.ArgumentNotNull().FullName!, generics);
+
+    public static TypePath New(in string? name, in string? nameSpace, params string[] generics) =>
+        new(Combine(name, nameSpace), generics);
+
     public static bool operator !=(TypePath left, TypePath right) =>
-        !(left == right);
+                        !(left == right);
 
     public static bool operator ==(TypePath left, TypePath right) =>
         left?.Equals(right) ?? (right is null);
 
+    public static TypePath? ToTypePath() => throw new NotImplementedException();
+
     public void Deconstruct(out string? name, out string? nameSpace) =>
-        (name, nameSpace) = (this.Name, this.NameSpace);
+            (name, nameSpace) = (this.Name, this.NameSpace);
 
     public void Deconstruct(out string? name, out string? nameSpace, out IEnumerable<TypePath> generics) =>
         (name, nameSpace, generics) = (this.Name, this.NameSpace, this.Generics);
@@ -62,7 +81,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         obj is TypePath path && this.Equals(path);
 
     public override int GetHashCode() =>
-        HashCode.Combine(this.Name?.GetHashCode() ?? 0, this.NameSpace?.GetHashCode() ?? 0);
+        HashCode.Combine(this.Name.GetHashCode(), this.NameSpace?.GetHashCode() ?? 0);
 
     public IEnumerable<string> GetNameSpaces()
     {
@@ -83,38 +102,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
     public override string ToString() =>
         this.GetFullPath();
 
-    private string GetFullPath()
-    {
-        var buffer = new StringBuilder();
-        if (!this.NameSpace.IsNullOrEmpty())
-        {
-            _ = buffer.Append($"{this.NameSpace}.");
-        }
-        _ = buffer.Append(this.Name);
-        if (this.Generics.Any())
-        {
-            _ = buffer.Append('<')
-                .Append(this.Generics.Select(x => x.GetFullPath())!.Merge(", "))
-                .Append('>');
-        }
-        return buffer.ToString();
-    }
-
-    private string GetFullName()
-    {
-        var buffer = new StringBuilder();
-        _ = buffer.Append(this.Name);
-        if (this.Generics.Any())
-        {
-            _ = buffer.Append('<')
-                .Append(this.Generics.Select(x => x.GetFullName())!.Merge(", "))
-                .Append('>');
-        }
-        return buffer.ToString();
-    }
-
     private static TypeData Parse(string typePath, IEnumerable<string>? generics = null)
     {
+        Check.MustBeArgumentNotNull(typePath);
+
         var temp = typePath;
         var gens = new List<string>();
         // Find Generics
@@ -140,14 +131,34 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         return (name, nameSpace, genTypes);
     }
 
-    public static TypePath? ToTypePath() => throw new NotImplementedException();
+    private string GetFullName()
+    {
+        var buffer = new StringBuilder();
+        _ = buffer.Append(this.Name);
+        if (this.Generics.Any())
+        {
+            _ = buffer.Append('<')
+                .Append(this.Generics.Select(x => x.GetFullName())!.Merge(", "))
+                .Append('>');
+        }
+        return buffer.ToString();
+    }
 
-    public static TypePath New<T>(IEnumerable<string>? generics = null) =>
-        new(typeof(T).FullName, generics);
-    public static TypePath New(Type type, IEnumerable<string>? generics = null) =>
-        new(type?.FullName, generics);
-    public static TypePath New(TypePath typePath) =>
-        new(typePath?.FullPath);
-    public static TypePath New(in string? name, in string? nameSpace, params string[] generics) =>
-        new(Combine(name, nameSpace), generics);
+    [return: NotNull]
+    private string GetFullPath()
+    {
+        var buffer = new StringBuilder();
+        if (!this.NameSpace.IsNullOrEmpty())
+        {
+            _ = buffer.Append($"{this.NameSpace}.");
+        }
+        _ = buffer.Append(this.Name);
+        if (this.Generics.Any())
+        {
+            _ = buffer.Append('<')
+                .Append(this.Generics.Select(x => x.GetFullPath())!.Merge(", "))
+                .Append('>');
+        }
+        return buffer.ToString();
+    }
 }
