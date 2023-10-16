@@ -3,7 +3,6 @@
 using Library.DesignPatterns.Markers;
 using Library.Dynamic;
 using Library.Interfaces;
-using Library.Results;
 using Library.Validations;
 
 namespace Library.CodeGeneration.Models;
@@ -154,9 +153,6 @@ public static class SourceCodeHelpers
     [return: NotNull]
     public static Codes ToCodes(this Code code) =>
         new(code.Cast().ToEnumerable<Code>());
-
-    public static Result<Codes> ToCodes(this Result<Code> code) =>
-        Result<Codes>.From(code, code.ToCodes());
 
     public static Code WithStatement(this Code code, [DisallowNull] string statement) =>
         new(code) { Statement = statement };

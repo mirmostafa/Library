@@ -53,6 +53,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Collections\Generic\" />
+	  <Folder Include="Linq\" />
 	</ItemGroup>
 
 </Project>

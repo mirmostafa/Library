@@ -2,6 +2,13 @@
 
 public interface IAttribute
 {
-    TypePath Name { get; }
-    (string Name, string Vallue) Properties { get; }
+    string Name { get; }
+
+    static IAttribute New(string name) =>
+        new ClassAttribute(name);
+}
+
+internal class ClassAttribute(string name) : IAttribute
+{
+    public string Name { get; } = name;
 }

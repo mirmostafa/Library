@@ -1,28 +1,12 @@
-﻿using Library.DesignPatterns.Markers;
-using Library.Results;
-using Library.Validations;
+﻿namespace Library.CodeGeneration.v2.Back;
 
-namespace Library.CodeGeneration.v2.Back;
-
-public interface IMember : IValidatable
+public interface IMember
 {
-    AccessModifier AccessModifier { get; }
-    InheritanceModifier InheritanceModifier { get; }
+    string? Comment { get; }
+
+    bool IsStatic { get; }
+
+    AccessModifier MemberPrefix { get; }
+
     string Name { get; }
-}
-
-[Immutable]
-public abstract class Member : IMember
-{
-    protected Member([DisallowNull] string name) =>
-        this.Name = name.ArgumentNotNull();
-
-    public virtual AccessModifier AccessModifier { get; } = AccessModifier.Public;
-    public virtual InheritanceModifier InheritanceModifier { get; }
-    public virtual string Name { get; }
-
-    public Result Validate() =>
-        OnValidate();
-    protected virtual Result OnValidate() =>
-        Result.Success;
 }
