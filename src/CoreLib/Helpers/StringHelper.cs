@@ -181,7 +181,7 @@ public static class StringHelper
     [Pure]
     [return: NotNull]
     public static IEnumerable<string> Compact(this IEnumerable<string?>? strings) =>
-        (strings?.Where(item => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
+        (strings?.Where([StackTraceHidden][DebuggerStepThrough] (item) => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
 
     /// <summary>
     /// Compares two strings and returns an integer that indicates their relative position in the
@@ -272,6 +272,20 @@ public static class StringHelper
         return false;
     }
 
+    public static bool ContainsAny(this string str, in IEnumerable<string> items, out string found)
+    {
+        foreach (var item in items)
+        {
+            if (str.Contains(item))
+            {
+                found = item;
+                return true;
+            }
+        }
+        found = string.Empty;
+        return false;
+    }
+
     /// <summary>
     /// Checks if a string contains any of the characters in the given array.
     /// </summary>
@@ -282,7 +296,7 @@ public static class StringHelper
     /// Checks if a string contains a target string, ignoring case.
     /// </summary>
     public static bool ContainsOf(this string str, in string target)
-        => str.Contains(target.ToLower(), StringComparison.CurrentCultureIgnoreCase);
+        => str.Contains(target.ToLower(CultureInfo.CurrentCulture), StringComparison.CurrentCultureIgnoreCase);
 
     /// <summary>
     /// Converts a string to Google Standard Encoding.
@@ -353,6 +367,23 @@ public static class StringHelper
     [Pure]
     public static bool EqualsToAny(this string str1, params string[] array)
         => array.Any(s => str1.EqualsTo(s));
+
+    [return: NotNull]
+    public static IEnumerable<string> FindEach(this string str, IEnumerable<string> items)
+    {
+        if (str.IsNullOrEmpty())
+        {
+            yield break;
+        }
+
+        foreach (var item in items.Compact())
+        {
+            if (str.Contains(item))
+            {
+                yield return item;
+            }
+        }
+    }
 
     /// <summary>
     /// Fixes the size of the given string to the specified maximum length, padding with the given
@@ -623,6 +654,28 @@ public static class StringHelper
             string.Compare(current, item, ignoreCase) == 0;
     }
 
+    [Pure]
+    public static int IndexOfAny(this string s, out string foundItem, params string[] items)
+    {
+        foreach (var s3 in items)
+        {
+            if (found(s, s3, out var result))
+            {
+                foundItem = s3;
+                return result;
+            }
+        }
+
+        foundItem = string.Empty;
+        return -1;
+
+        static bool found(string s, string s2, out int index)
+        {
+            index = s.IndexOf(s2);
+            return index != -1;
+        }
+    }
+
     /// Checks if the given character is a common character. </summary>
     [Pure]
     public static bool IsCommon(this char c)
@@ -754,8 +807,8 @@ public static class StringHelper
     /// </summary>
     [Pure]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str)
-        => str == null || str.Length == 0;
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? str) =>
+        str == null || str.Length == 0;
 
     /// <summary>
     /// Checks if the given string is a valid number.
@@ -886,7 +939,7 @@ public static class StringHelper
             : (s => string.Concat(separator, s));
 
         // Create an iterator for the source using the specified operation and then merge the results.
-        return source.CreateIterator(item => operate(item)).Merge();
+        return source.CreateIterator(item => operate(item)).Merge().RemoveEnd(separator?.Length ?? 0);
     }
 
     /// <summary>
@@ -902,7 +955,7 @@ public static class StringHelper
     public static string Merge(this IEnumerable<string> array, in char separator) =>
         string.Join(separator, array.ToArray());
 
-    public static string Merge(this IEnumerable<string> array, in char separator, Func<string, string> format) => 
+    public static string Merge(this IEnumerable<string> array, in char separator, Func<string, string> format) =>
         string.Join(separator, array.Select(format).ToArray());
 
     public static string Merge(this IEnumerable<string> array, in string separator, Func<string, int, string> format) =>
@@ -934,7 +987,27 @@ public static class StringHelper
     /// </summary>
     [return: NotNullIfNotNull(nameof(text))]
     public static string? Pluralize(string? text)
-        => text.IsNullOrEmpty() ? null : Pluralizer.Pluralize(text);
+        => text.IsNullOrEmpty() ? text : Pluralizer.Pluralize(text);
+
+    /// <summary>
+    /// Reads a large string line by line.
+    /// </summary>
+    /// <param name="str">The large string to read.</param>
+    /// <returns>An enumerable of strings representing each line of the input string.</returns>
+    public static IEnumerable<string> ReadLines(this string str)
+    {
+        if (str.IsNullOrEmpty())
+        {
+            yield break;
+        }
+
+        using var reader = new StringReader(str);
+        string? line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            yield return line;
+        }
+    }
 
     /// <summary>
     /// Removes the specified value from the string.
@@ -1105,8 +1178,8 @@ public static class StringHelper
     /// </summary>
     /// <param name="text">The text.</param>
     /// <returns></returns>
-    public static string? Singularize(string? text)
-        => text.IsNullOrEmpty() ? null : Pluralizer.Singularize(text);
+    public static string? Singularize(string? text) =>
+        text.IsNullOrEmpty() ? null : Pluralizer.Singularize(text);
 
     /// <summary>
     /// Creates a new string from a slice of the given string.
@@ -1220,6 +1293,7 @@ public static class StringHelper
     /// <param name="startSeparator">The string to add to the start of each part.</param>
     /// <param name="endSeparator">The string to add to the end of each part.</param>
     /// <returns>The merged string.</returns>
+    [Obsolete("Subject to remove. Do it by yourself!")]
     public static string SplitMerge(this string str, char splitter, in string startSeparator, in string endSeparator)
     {
         var result = new StringBuilder();
@@ -1248,6 +1322,7 @@ public static class StringHelper
     /// <param name="options">Specifies the options to use when splitting the string.</param>
     /// <returns>The split and merged string, or null if the original string is null or empty.</returns>
     [return: NotNullIfNotNull(nameof(str))]
+    [Obsolete("Subject to remove. Do it by yourself!")]
     public static string? SplitMerge(this string? str, string? splitSeparator = null, string? mergeSeparator = null, bool addSeparatorToEnd = true, StringSplitOptions options = StringSplitOptions.None) =>
         str.IsNullOrEmpty() ? str : str.Split(splitSeparator ?? Environment.NewLine, options).Merge(mergeSeparator ?? Environment.NewLine, addSeparatorToEnd);
 
@@ -1338,7 +1413,7 @@ public static class StringHelper
     /// Converts a collection of strings to lowercase.
     /// </summary>
     public static IEnumerable<string> ToLower(this IEnumerable<string> strings)
-        => strings.Select(str => str.ToLower());
+        => strings.Select(str => str.ToLower(CultureInfo.CurrentCulture));
 
     /// <summary>
     /// Converts a string to Unicode encoding.

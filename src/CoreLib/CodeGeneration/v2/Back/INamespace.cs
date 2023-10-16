@@ -1,26 +1,40 @@
-﻿using Library.Interfaces;
+﻿using Library.DesignPatterns.Markers;
+using Library.Results;
+using Library.Validations;
 
 namespace Library.CodeGeneration.v2.Back;
 
-public interface INamespace<TSelf> : INew<TSelf, string>
-    where TSelf : INamespace<TSelf>
+public interface INamespace : IValidatable
 {
     string Name { get; }
     ISet<IType> Types { get; }
     ISet<string> UsingNamespaces { get; }
 
-    TSelf AddType(IType type);
+    static INamespace New(string name) =>
+        new Namespace(name);
 }
 
-internal class Namespace(string name) : INamespace<Namespace>
+[Immutable]
+public sealed class Namespace(string name) : INamespace
 {
-    public string Name { get; } = name;
+    public string Name { get; } = name.ArgumentNotNull();
     public ISet<IType> Types { get; } = new HashSet<IType>();
     public ISet<string> UsingNamespaces { get; } = new HashSet<string>();
 
-    public static Namespace New(string name) =>
-        new(name);
+    public Result Validate() => Result.Success;
+}
 
-    public Namespace AddType(IType type) =>
-        this.Fluent(this.Types.Add(type));
+public static class NamSpaceExtensions
+{
+    public static TNameSpace AddType<TNameSpace>(this TNameSpace nameSpace, IType type) where TNameSpace : INamespace =>
+        nameSpace.Fluent(nameSpace.Types.Add(type));
+
+    public static TNameSpace AddUsingNameSpace<TNameSpace>(this TNameSpace ns, IEnumerable<string> nameSpaces) where TNameSpace : INamespace =>
+        AddUsingNameSpace(ns, nameSpaces.ToArray());
+
+    public static TNameSpace AddUsingNameSpace<TNameSpace>(this TNameSpace ns, params string[] nameSpaces) where TNameSpace : INamespace
+    {
+        nameSpaces.ForEach(x => ns.UsingNamespaces.Add(x));
+        return ns;
+    }
 }

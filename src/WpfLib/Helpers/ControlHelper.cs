@@ -177,7 +177,7 @@ public static class ControlHelper
             Catch(() => Animations.Flick(element, duration));
 
     public static IEnumerable<TreeViewItem> GetAllItems([DisallowNull] this TreeView tree) =>
-            EnumerableHelper.SelectAll(tree.Items.Cast<TreeViewItem>(), item => item.Items.Cast<TreeViewItem>());
+            EnumerableHelper.SelectAllChildren(tree.Items.Cast<TreeViewItem>(), item => item.Items.Cast<TreeViewItem>());
 
     public static DataGridCell? GetCell(this DataGrid grid, int row, int column)
     {

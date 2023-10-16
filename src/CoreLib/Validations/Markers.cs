@@ -38,6 +38,7 @@ public interface IValidatable
     /// <summary>
     /// Validates the current state and returns a Result object.
     /// </summary>
+    [return: NotNull]
     Result Validate();
 }
 
