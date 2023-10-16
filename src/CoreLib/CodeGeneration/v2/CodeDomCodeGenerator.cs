@@ -109,7 +109,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                                         method.ReturnType,
                                         toMemberAttributes(method.AccessModifier, method.InheritanceModifier),
                                         method.InheritanceModifier.Contains(InheritanceModifier.Partial),
-                                        parameters);
+                                        parameters.Select(x => (x.Type.FullName, x.Name)));
         }
         static void useNameSpace(CodeNamespace domNameSpace, TypePath? typePath)
         {

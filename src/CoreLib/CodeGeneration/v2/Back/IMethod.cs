@@ -9,7 +9,7 @@ public interface IMethod : IMember, IHasGenericTypes
     string? Body { get; }
     bool IsConstructor { get; }
     bool IsExtension { get; }
-    ISet<(string Type, string Name)> Parameters { get; }
+    ISet<(TypePath Type, string Name)> Parameters { get; }
     public TypePath? ReturnType { get; }
 }
 
@@ -20,7 +20,7 @@ public sealed class Method(string name) : Member(name), IMethod
     public ISet<IGenericType> GenericTypes { get; } = new HashSet<IGenericType>();
     public bool IsConstructor { get; init; }
     public bool IsExtension { get; init; }
-    public ISet<(string Type, string Name)> Parameters { get; } = new HashSet<(string Type, string Name)>();
+    public ISet<(TypePath Type, string Name)> Parameters { get; } = new HashSet<(TypePath Type, string Name)>();
     public TypePath? ReturnType { get; init; }
 
     protected override Result OnValidate() =>
@@ -34,4 +34,25 @@ public static class MethodExtensions
 {
     public static TMethod AddParameter<TMethod>(this TMethod method, string Type, string Name) where TMethod : IMethod =>
         method.Fluent(method.Parameters.Add((Type, Name)));
+
+    public static IEnumerable<string> GetNameSpaces(this IMethod method)
+    {
+        Check.MustBeArgumentNotNull(method);
+
+        if (method.ReturnType != null)
+        {
+            foreach (var item in method.ReturnType.GetNameSpaces())
+            {
+                yield return item;
+            }
+        }
+
+        foreach (var item in method.Parameters.Select(x => x.Type))
+        {
+            foreach (var ns in item.GetNameSpaces())
+            {
+                yield return ns;
+            }
+        }
+    }
 }

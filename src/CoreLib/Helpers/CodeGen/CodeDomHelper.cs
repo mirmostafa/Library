@@ -411,7 +411,7 @@ public static class CodeDomHelper
         return t;
     }
 
-    public static CodeCompileUnit Begin()=> 
+    public static CodeCompileUnit Begin() =>
         new();
 
     /// <summary>
@@ -478,7 +478,7 @@ public static class CodeDomHelper
         in string? returnType = null,
         in MemberAttributes? accessModifiers = null,
         in bool isPartial = false,
-        params (string Type, string Name)[] arguments)
+        IEnumerable<(string Type, string Name)>? arguments = null)
     {
         Check.MustBeArgumentNotNull(name);
         var method = new CodeMemberMethod
@@ -497,9 +497,12 @@ public static class CodeDomHelper
             _ = method.Statements.Add(new CodeSnippetStatement(body));
         }
 
-        foreach ((var argType, var argName) in arguments)
+        if (arguments?.Any() == true)
         {
-            _ = method.Parameters.Add(new CodeParameterDeclarationExpression(argType, ToArgName(argName)));
+            foreach ((var argType, var argName) in arguments)
+            {
+                _ = method.Parameters.Add(new CodeParameterDeclarationExpression(argType, ToArgName(argName)));
+            }
         }
 
         return method;

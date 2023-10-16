@@ -29,15 +29,15 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
 
     public string? NameSpace => this._data.NameSpace;
 
-    public static string Combine(string? part1, params string?[] parts) =>
+    public static string Combine(in string? part1, params string?[] parts) =>
         StringHelper.Merge(parts.AddImmuted(part1).Compact().Select(x => x.Trim('.')), '.');
 
     [return: NotNullIfNotNull(nameof(typePath))]
-    public static string? GetName(string? typePath) =>
+    public static string? GetName(in string? typePath) =>
         typePath == null ? null : Parse(typePath).Name;
 
     [return: NotNullIfNotNull(nameof(typePath))]
-    public static string? GetNameSpace(string? typePath) =>
+    public static string? GetNameSpace(in string? typePath) =>
         typePath == null ? null : Parse(typePath).NameSpace;
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
@@ -48,25 +48,31 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
     public static implicit operator TypePath?(in string? typeInfo) =>
         typeInfo.IsNullOrEmpty() ? null : new(typeInfo);
 
-    public static TypePath New([DisallowNull] TypePath typePath) =>
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in string fullPath, IEnumerable<string>? generics = null)
+        => new(fullPath, generics);
+
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in TypePath typePath) =>
         new(typePath.ArgumentNotNull().FullPath);
 
+    [return: NotNull]
     public static TypePath New<T>(IEnumerable<string>? generics = null) =>
         new(typeof(T).FullName!, generics);
 
-    public static TypePath New([DisallowNull] Type type, IEnumerable<string>? generics = null) =>
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in Type type, IEnumerable<string>? generics = null) =>
         new(type.ArgumentNotNull().FullName!, generics);
 
+    [return: NotNull]
     public static TypePath New(in string? name, in string? nameSpace, params string[] generics) =>
         new(Combine(name, nameSpace), generics);
 
-    public static bool operator !=(TypePath left, TypePath right) =>
-                        !(left == right);
+    public static bool operator !=(in TypePath? left, in TypePath? right) =>
+        !(left == right);
 
-    public static bool operator ==(TypePath left, TypePath right) =>
+    public static bool operator ==(in TypePath? left, in TypePath? right) =>
         left?.Equals(right) ?? (right is null);
-
-    public static TypePath? ToTypePath() => throw new NotImplementedException();
 
     public void Deconstruct(out string? name, out string? nameSpace) =>
             (name, nameSpace) = (this.Name, this.NameSpace);
@@ -81,8 +87,9 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         obj is TypePath path && this.Equals(path);
 
     public override int GetHashCode() =>
-        HashCode.Combine(this.Name.GetHashCode(), this.NameSpace?.GetHashCode() ?? 0);
+        this.FullName.GetHashCode();
 
+    [return: NotNull]
     public IEnumerable<string> GetNameSpaces()
     {
         if (!this.NameSpace.IsNullOrEmpty())
@@ -102,7 +109,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
     public override string ToString() =>
         this.GetFullPath();
 
-    private static TypeData Parse(string typePath, IEnumerable<string>? generics = null)
+    public TypePath? ToTypePath() => 
+        new(this.FullName);
+
+    private static TypeData Parse(in string typePath, IEnumerable<string>? generics = null)
     {
         Check.MustBeArgumentNotNull(typePath);
 
@@ -113,12 +123,12 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         {
             var indexOfGenSymbol = temp.IndexOf('<');
             var gen = temp[indexOfGenSymbol..].Trim('<').Trim('>');
-            gens.AddRange(gen.Split(',').Select(x => x.Trim()));
-            if (generics?.Any() ?? false)
-            {
-                gens.AddRange(generics);
-            }
             temp = temp[..indexOfGenSymbol];
+            gens.AddRange(gen.Split(',').Select(x => x.Trim()));
+        }
+        if (generics?.Any() ?? false)
+        {
+            gens.AddRange(generics);
         }
 
         // Retrieve name and namespace
