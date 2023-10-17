@@ -9,6 +9,7 @@ public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>
     public static readonly Language CSharp = new("C#", "cs");
     public static readonly Language Html = new("HTML", "htm");
     public static readonly Language None = new("(Unknown)", "");
+    public static readonly Language Sql = new("SQL", "sql");
     public static readonly Language Xaml = new("XAML", "xaml.cs");
 
     public static bool operator !=(Languages left, Languages right)
