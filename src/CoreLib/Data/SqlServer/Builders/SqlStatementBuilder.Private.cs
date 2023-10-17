@@ -4,7 +4,7 @@ public static partial class SqlStatementBuilder
 {
     private static string AddBrackets(in string entity)
     {
-        var entities = entity.Split('.');
+        var entities = entity.Split('.').Compact();
         var result = entities.Select(e =>
         {
             var r = e.StartsWith("[") ? e : $"[{e}";

@@ -32,5 +32,6 @@ public partial class SqlStatementBuilder
     {
         public string TableName { get; set; }
         public string? WhereClause { get; set; }
+        public string? Schema { get; set; }
     }
 }

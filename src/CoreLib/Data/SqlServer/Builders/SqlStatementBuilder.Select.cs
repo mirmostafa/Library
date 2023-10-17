@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
 using Library.Data.SqlServer;
@@ -38,7 +37,7 @@ public static partial class SqlStatementBuilder
         {
             _ = result.Append(" *");
         }
-        _ = AddClause($"FROM {AddBrackets(statement.TableName)}", indent, result);
+        _ = AddClause($"FROM {AddBrackets($"{statement.Schema}.{statement.TableName}")}", indent, result);
         if (!statement.WhereClause.IsNullOrEmpty())
         {
             _ = AddClause($"WHERE {statement.WhereClause}", indent, result);
@@ -104,8 +103,8 @@ public static partial class SqlStatementBuilder
     {
         var table = SqlEntity.GetTableInfo<TEntity>();
         var result = Select()
-                        .Columns(table.Columns.Select(c => c.Name))
-                        .From(table.Name);
+            .Columns(table.Columns.Select(c => c.Name))
+            .From(table.Name);
         return result;
     }
 
@@ -114,6 +113,9 @@ public static partial class SqlStatementBuilder
 
     public static ISelectStatement Select()
         => new SelectStatement();
+
+    public static TStatementOnTable SetSchema<TStatementOnTable>([DisallowNull] this TStatementOnTable statement, string? schema) where TStatementOnTable : IStatementOnTable
+        => statement.ArgumentNotNull().Fluent(() => statement.Schema = schema);
 
     public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)
         => statement.ArgumentNotNull().Fluent(statement.Columns.Clear).GetValue();
@@ -137,6 +139,7 @@ public static partial class SqlStatementBuilder
 
         public OrderByDirection OrderByDirection { get; set; } = OrderByDirection.None;
 
+        public string? Schema { get; set; }
         public string TableName { get; set; }
 
         public string? WhereClause { get; set; }

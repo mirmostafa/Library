@@ -58,5 +58,6 @@ public static partial class SqlStatementBuilder
         public Dictionary<string, object> ColumnsValue { get; } = new();
         public string TableName { get; set; } = null!;
         public string? WhereClause { get; set; }
+        public string? Schema { get; set; }
     }
 }

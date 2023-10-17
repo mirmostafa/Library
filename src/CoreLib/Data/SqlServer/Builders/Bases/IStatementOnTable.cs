@@ -2,5 +2,6 @@
 
 public interface IStatementOnTable : ISqlStatement
 {
+    string? Schema { get; set; }
     string TableName { get; set; }
 }
