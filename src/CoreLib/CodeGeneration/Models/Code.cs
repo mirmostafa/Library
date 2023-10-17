@@ -94,7 +94,7 @@ public class Code(in string name, in Language language, in string statement, in 
     public static implicit operator string?(in Code? code) =>
         code?.Statement;
 
-    public static Code New(in string name, in Language language, in string statement, in bool isPartial, in string? fileName) =>
+    public static Code New(in string name, in Language language, in string statement, in bool isPartial = false, in string? fileName = null) =>
         new(name, language, statement, isPartial, fileName);
 
     public static Code NewEmpty() =>
