@@ -48,9 +48,13 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
     public static implicit operator TypePath?(in string? typeInfo) =>
         typeInfo.IsNullOrEmpty() ? null : new(typeInfo);
 
+    [return: NotNullIfNotNull(nameof(typeInfo))]
+    public static implicit operator TypePath?(in Type? typeInfo) =>
+        typeInfo == null ? null : New(typeInfo);
+
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string fullPath, IEnumerable<string>? generics = null)
-        => new(fullPath, generics);
+    public static TypePath New([DisallowNull] in string fullPath, IEnumerable<string>? generics = null) =>
+        new(fullPath, generics);
 
     [return: NotNull]
     public static TypePath New([DisallowNull] in TypePath typePath) =>
@@ -75,7 +79,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         left?.Equals(right) ?? (right is null);
 
     public void Deconstruct(out string? name, out string? nameSpace) =>
-            (name, nameSpace) = (this.Name, this.NameSpace);
+        (name, nameSpace) = (this.Name, this.NameSpace);
 
     public void Deconstruct(out string? name, out string? nameSpace, out IEnumerable<TypePath> generics) =>
         (name, nameSpace, generics) = (this.Name, this.NameSpace, this.Generics);
@@ -106,10 +110,12 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         }
     }
 
+    [return: NotNull]
     public override string ToString() =>
         this.GetFullPath();
 
-    public TypePath? ToTypePath() => 
+    [return: NotNull]
+    public TypePath ToTypePath() =>
         new(this.FullName);
 
     private static TypeData Parse(in string typePath, IEnumerable<string>? generics = null)
@@ -137,10 +143,23 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
             ? (temp[(lastIndexOfDot + 1)..], temp[..lastIndexOfDot])
             : (temp, string.Empty);
         var genTypes = gens.Select(x => new TypePath(x));
+        if (nameSpace == "System")
+        {
+            (name, nameSpace) = name switch
+            {
+                "String" => ("string", ""),
+                "Boolean" => ("bool", ""),
+                "Int32" => ("int", ""),
+                "Int64" => ("long", ""),
+                "Single" => ("float", ""),
+                _ => (name, nameSpace),
+            };
+        }
 
         return (name, nameSpace, genTypes);
     }
 
+    [return: NotNull]
     private string GetFullName()
     {
         var buffer = new StringBuilder();

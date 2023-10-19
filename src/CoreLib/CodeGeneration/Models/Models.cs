@@ -40,7 +40,7 @@ public readonly struct PropertyInfo(
     in PropertyAccessor? setter = null) : IMemberInfo
 {
     public MemberAttributes? AccessModifier { get; init; } = accessModifier;
-    public List<string> Attributes { get; } = new List<string>();
+    public List<string> Attributes { get; } = [];
     public string? BackingFieldName { get; init; } = null;
     public string? Comment { get; init; } = null;
     public PropertyAccessor? Getter { get; init; } = getter;
@@ -49,7 +49,7 @@ public readonly struct PropertyInfo(
     public bool IsNullable { get; init; } = false;
     public string Name { get; init; } = name;
     public PropertyAccessor? Setter { get; init; } = setter;
-    public string Type { get; init; } = type;
+    public TypePath Type { get; init; } = type;
 }
 
 public interface IMemberInfo
