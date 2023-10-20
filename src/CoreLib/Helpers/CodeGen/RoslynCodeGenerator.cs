@@ -127,7 +127,12 @@ public static class RoslynHelper
 
         return nameSpace.AddMembers(type);
     }
+    public static RosClass AddBase(this RosClass type, string baseClassName)
+    {
+        Checker.MustBeArgumentNotNull(type);
 
+        return type.WithBaseList(SyntaxFactory.BaseList(new SeparatedSyntaxList<BaseTypeSyntax>().Add(SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName("BaseClass")))));
+    }
     public static NamespaceDeclarationSyntax AddType(this NamespaceDeclarationSyntax nameSpace, string typeName) =>
         nameSpace.AddType(typeName, out _);
 
@@ -142,31 +147,12 @@ public static class RoslynHelper
     public static CompilationUnitSyntax AddUsingNameSpace(this CompilationUnitSyntax root, string usingNamespace) =>
         root.ArgumentNotNull().AddUsings(CreateUsingNameSpace(usingNamespace));
 
-    public static NamespaceDeclarationSyntax AddUsingNameSpace(this NamespaceDeclarationSyntax nameSpace, string usingNamespace, bool addToRoot = true)
+    public static NamespaceDeclarationSyntax AddUsingNameSpace(this NamespaceDeclarationSyntax nameSpace, string usingNamespace)
     {
         Checker.MustBeArgumentNotNull(nameSpace);
 
         var usingDirective = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(usingNamespace));
-        if (addToRoot)
-        {
-            //var root = nameSpace.SyntaxTree.GetRoot();
-            //var syntaxTree = SyntaxFactory.SyntaxTree(root);
-
-            if (nameSpace.SyntaxTree.GetRoot() is CompilationUnitSyntax root)
-            {
-                var newUsings = root.Usings.Add(usingDirective);
-                var newRoot = root.WithUsings(newUsings);
-                return nameSpace.ReplaceNode(root, newRoot);
-            }
-            else
-            {
-                return nameSpace.AddUsings(usingDirective);
-            }
-        }
-        else
-        {
-            return nameSpace.AddUsings(usingDirective);
-        }
+        return nameSpace.AddUsings(usingDirective);
     }
 
     public static RosMethod CreateConstructor(string className, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null, IEnumerable<SyntaxKind>? modifiers = null) =>
