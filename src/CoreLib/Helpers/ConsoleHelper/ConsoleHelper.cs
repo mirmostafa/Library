@@ -84,7 +84,8 @@ public static class ConsoleHelper
             }
             else
             {
-                consoleOut.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {text}");
+                //consoleOut.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {text}");
+                consoleOut.WriteLine($"{text}");
             }
         }
     }
