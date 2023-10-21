@@ -28,10 +28,10 @@ public static class RoslynHelper
         return type.AddMethod(ctor);
     }
 
-    public static RosClass AddField(this RosClass type, FieldInfo fieldInfo) =>
+    public static RosClass AddField(this RosClass type, RosFieldInfo fieldInfo) =>
         type.AddField(fieldInfo, out _);
 
-    public static RosClass AddField(this RosClass type, FieldInfo fieldInfo, out RosFld field)
+    public static RosClass AddField(this RosClass type, RosFieldInfo fieldInfo, out RosFld field)
     {
         Checker.MustBeArgumentNotNull(type);
 
@@ -39,7 +39,7 @@ public static class RoslynHelper
         return type.AddMembers(field);
     }
 
-    public static RosClass AddMethod(this RosClass type, MethodInfo methodInfo, out RosMethod method)
+    public static RosClass AddMethod(this RosClass type, RosMethodInfo methodInfo, out RosMethod method)
     {
         Checker.MustBeArgumentNotNull(type);
 
@@ -47,7 +47,7 @@ public static class RoslynHelper
         return type.AddMethod(method);
     }
 
-    public static RosClass AddMethod(this RosClass type, MethodInfo methodInfo) =>
+    public static RosClass AddMethod(this RosClass type, RosMethodInfo methodInfo) =>
         type.AddMethod(methodInfo, out _);
 
     public static RosClass AddMethod(this RosClass type, RosMethod method)
@@ -83,10 +83,10 @@ public static class RoslynHelper
     public static RosClass AddProperty<TPropertyType>(this RosClass type, string name, out RosProp prop, bool hasSetAccessor = true, bool hasGetAccessor = true) =>
         type.AddProperty(name, typeof(TPropertyType), out prop, hasSetAccessor, hasGetAccessor);
 
-    public static RosClass AddProperty(this RosClass type, PropertyInfo propertyInfo) =>
+    public static RosClass AddProperty(this RosClass type, RosPropertyInfo propertyInfo) =>
         type.AddProperty(propertyInfo, out _);
 
-    public static RosClass AddProperty(this RosClass type, PropertyInfo propertyInfo, out RosProp property)
+    public static RosClass AddProperty(this RosClass type, RosPropertyInfo propertyInfo, out RosProp property)
     {
         Checker.MustBeArgumentNotNull(type);
 
@@ -95,12 +95,12 @@ public static class RoslynHelper
     }
 
     public static RosClass AddPropertyWithBackingField<TPropertyType>(this RosClass type, string propertyName) =>
-        type.AddPropertyWithBackingField(new PropertyInfo(propertyName, typeof(TPropertyType)));
+        type.AddPropertyWithBackingField(new RosPropertyInfo(propertyName, typeof(TPropertyType)));
 
-    public static RosClass AddPropertyWithBackingField(this RosClass type, PropertyInfo propertyInfo, FieldInfo? fieldInfo = null) =>
+    public static RosClass AddPropertyWithBackingField(this RosClass type, RosPropertyInfo propertyInfo, RosFieldInfo? fieldInfo = null) =>
         type.AddPropertyWithBackingField(propertyInfo, out _, fieldInfo);
 
-    public static RosClass AddPropertyWithBackingField(this RosClass type, PropertyInfo propertyInfo, out (RosProp Property, RosFld Field) fullProperty, FieldInfo? fieldInfo = null)
+    public static RosClass AddPropertyWithBackingField(this RosClass type, RosPropertyInfo propertyInfo, out (RosProp Property, RosFld Field) fullProperty, RosFieldInfo? fieldInfo = null)
     {
         Checker.MustBeArgumentNotNull(type);
         Checker.MustBeArgumentNotNull(propertyInfo);
@@ -110,10 +110,10 @@ public static class RoslynHelper
         return type.AddMembers(fullProperty.Field, fullProperty.Property);
     }
 
-    public static RosClass AddPropertyWithBackingField([DisallowNull] this RosClass type, [DisallowNull] PropertyInfo propertyInfo, [DisallowNull] RosFld field) =>
+    public static RosClass AddPropertyWithBackingField([DisallowNull] this RosClass type, [DisallowNull] RosPropertyInfo propertyInfo, [DisallowNull] RosFld field) =>
         type.AddPropertyWithBackingField(propertyInfo, field, out _);
 
-    public static RosClass AddPropertyWithBackingField([DisallowNull] this RosClass type, [DisallowNull] PropertyInfo propertyInfo, [DisallowNull] RosFld field, out RosProp property)
+    public static RosClass AddPropertyWithBackingField([DisallowNull] this RosClass type, [DisallowNull] RosPropertyInfo propertyInfo, [DisallowNull] RosFld field, out RosProp property)
     {
         Checker.MustBeArgumentNotNull(type);
 
@@ -136,11 +136,11 @@ public static class RoslynHelper
     public static NamespaceDeclarationSyntax AddType(this NamespaceDeclarationSyntax nameSpace, string typeName) =>
         nameSpace.AddType(typeName, out _);
 
-    public static NamespaceDeclarationSyntax AddType(this NamespaceDeclarationSyntax nameSpace, string typeName, out RosClass type)
+    public static NamespaceDeclarationSyntax AddType(this NamespaceDeclarationSyntax nameSpace, string typeName, out RosClass type, IEnumerable<SyntaxKind>? modifiers = null)
     {
         Checker.MustBeArgumentNotNull(nameSpace);
 
-        type = CreateType(typeName);
+        type = CreateType(typeName, modifiers);
         return nameSpace.AddType(type);
     }
 
@@ -165,7 +165,7 @@ public static class RoslynHelper
         return InnerCreateBaseMethod(new(modifiers, null, TypePath.GetName(className), parameters, body), ctor);
     }
 
-    public static RosFld CreateField(FieldInfo fieldInfo)
+    public static RosFld CreateField(RosFieldInfo fieldInfo)
     {
         Checker.MustBeArgumentNotNull(fieldInfo);
 
@@ -183,7 +183,7 @@ public static class RoslynHelper
         return result;
     }
 
-    public static RosMethod CreateMethod(MethodInfo methodInfo)
+    public static RosMethod CreateMethod(RosMethodInfo methodInfo)
     {
         Checker.MustBeArgumentNotNull(methodInfo);
 
@@ -199,15 +199,13 @@ public static class RoslynHelper
         return result;
     }
 
-    public static NamespaceDeclarationSyntax CreateNamespace(string nameSpaceName, CompilationUnitSyntax? root = null)
+    public static NamespaceDeclarationSyntax CreateNamespace(string nameSpaceName)
     {
-        root ??= SyntaxFactory.CompilationUnit();
         var result = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(nameSpaceName));
-        _ = root.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(result));
         return result;
     }
 
-    public static RosProp CreateProperty(PropertyInfo propertyInfo)
+    public static RosProp CreateProperty(RosPropertyInfo propertyInfo)
     {
         Checker.MustBeArgumentNotNull(propertyInfo);
         var result = InnerCreatePropertyBase(propertyInfo);
@@ -224,14 +222,14 @@ public static class RoslynHelper
         return result;
     }
 
-    public static (RosProp Property, RosFld Field) CreatePropertyWithBackingField(PropertyInfo propertyInfo, FieldInfo fieldInfo)
+    public static (RosProp Property, RosFld Field) CreatePropertyWithBackingField(RosPropertyInfo propertyInfo, RosFieldInfo fieldInfo)
     {
         var field = CreateField(fieldInfo);
         var property = CreatePropertyWithBackingField(propertyInfo, field);
         return (property, field);
     }
 
-    public static RosProp CreatePropertyWithBackingField([DisallowNull] PropertyInfo propertyInfo, [DisallowNull] RosFld field)
+    public static RosProp CreatePropertyWithBackingField([DisallowNull] RosPropertyInfo propertyInfo, [DisallowNull] RosFld field)
     {
         Checker.MustBeArgumentNotNull(propertyInfo);
         Checker.MustBeArgumentNotNull(field);
@@ -295,7 +293,7 @@ public static class RoslynHelper
     public static string GetName(this RosClass type) =>
         type.ArgumentNotNull().Identifier.ValueText;
 
-    private static RosMethod InnerCreateBaseMethod(MethodInfo methodInfo, RosMethod result)
+    private static RosMethod InnerCreateBaseMethod(RosMethodInfo methodInfo, RosMethod result)
     {
         Checker.MustBeArgumentNotNull(methodInfo);
         Checker.MustBeArgumentNotNull(result);
@@ -337,7 +335,7 @@ public static class RoslynHelper
             SyntaxFactory.Parameter(SyntaxFactory.Identifier(p.Name)).WithType(SyntaxFactory.ParseTypeName(p.Type.FullName));
     }
 
-    private static RosProp InnerCreatePropertyBase(PropertyInfo propertyInfo)
+    private static RosProp InnerCreatePropertyBase(RosPropertyInfo propertyInfo)
     {
         var result = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(propertyInfo.Type.Name), propertyInfo.Name);
         if (propertyInfo.Modifiers?.Any() ?? false)
@@ -350,25 +348,25 @@ public static class RoslynHelper
 }
 
 [Immutable]
-public sealed class FieldInfo(
+public sealed class RosFieldInfo(
     in string name,
     in TypePath type,
-    in IEnumerable<SyntaxKind>? accessModifiers = null) : IEquatable<FieldInfo>
+    in IEnumerable<SyntaxKind>? accessModifiers = null) : IEquatable<RosFieldInfo>
 {
     public IEnumerable<SyntaxKind>? AccessModifiers { get; } = accessModifiers ?? EnumerableHelper.ToEnumerable(SyntaxKind.PrivateKeyword);
     public string Name { get; } = name;
     public TypePath Type { get; } = type;
 
-    public static bool operator !=(FieldInfo left, FieldInfo right) =>
+    public static bool operator !=(RosFieldInfo left, RosFieldInfo right) =>
         !(left == right);
 
-    public static bool operator ==(FieldInfo left, FieldInfo right) =>
+    public static bool operator ==(RosFieldInfo left, RosFieldInfo right) =>
         left?.Equals(right) ?? right is null;
 
     public override bool Equals(object? obj) =>
-        obj is FieldInfo other && this.Equals(other);
+        obj is RosFieldInfo other && this.Equals(other);
 
-    public bool Equals(FieldInfo? other) =>
+    public bool Equals(RosFieldInfo? other) =>
         other is { } o && o.Name == this.Name && o.Type == this.Type;
 
     public override int GetHashCode() =>
@@ -376,13 +374,13 @@ public sealed class FieldInfo(
 }
 
 [Immutable]
-public sealed class MethodInfo(
+public sealed class RosMethodInfo(
     in IEnumerable<SyntaxKind>? modifiers,
     in TypePath? returnType,
     in string name,
     in IEnumerable<MethodParameterInfo>? parameters,
     in string? body = null,
-    in bool isExtensionMethod = false) : IEquatable<MethodInfo>
+    in bool isExtensionMethod = false) : IEquatable<RosMethodInfo>
 {
     public string? Body { get; } = body ?? "throw new NotImplementedException();";
     public bool IsExtensionMethod { get; } = isExtensionMethod;
@@ -391,16 +389,16 @@ public sealed class MethodInfo(
     public IEnumerable<MethodParameterInfo>? Parameters { get; } = parameters;
     public TypePath? ReturnType { get; } = returnType;
 
-    public static bool operator !=(MethodInfo left, MethodInfo right) =>
+    public static bool operator !=(RosMethodInfo left, RosMethodInfo right) =>
         !(left == right);
 
-    public static bool operator ==(MethodInfo left, MethodInfo right) =>
+    public static bool operator ==(RosMethodInfo left, RosMethodInfo right) =>
         left?.Equals(right) ?? right is null;
 
     public override bool Equals(object? obj) =>
-        obj is MethodInfo other && this.Equals(other);
+        obj is RosMethodInfo other && this.Equals(other);
 
-    public bool Equals(MethodInfo? other) =>
+    public bool Equals(RosMethodInfo? other) =>
         other is { } o && o.Name == this.Name && o.Parameters == this.Parameters;
 
     public override int GetHashCode() =>
@@ -408,12 +406,12 @@ public sealed class MethodInfo(
 }
 
 [Immutable]
-public sealed class PropertyInfo(
+public sealed class RosPropertyInfo(
     in string name,
     in TypePath type,
     in IEnumerable<SyntaxKind>? modifiers = null,
     in PropertyAccessorInfo? getAccessor = null,
-    in PropertyAccessorInfo? setAccessor = null) : IEquatable<PropertyInfo>
+    in PropertyAccessorInfo? setAccessor = null) : IEquatable<RosPropertyInfo>
 {
     public PropertyAccessorInfo GetAccessor { get; } = getAccessor == null ? (true, EnumerableHelper.ToEnumerable(SyntaxKind.PublicKeyword)) : getAccessor.Value;
     public IEnumerable<SyntaxKind> Modifiers { get; } = modifiers ?? EnumerableHelper.ToEnumerable(SyntaxKind.PublicKeyword);
@@ -421,16 +419,16 @@ public sealed class PropertyInfo(
     public PropertyAccessorInfo SetAccessor { get; } = setAccessor == null ? (true, EnumerableHelper.ToEnumerable(SyntaxKind.PublicKeyword)) : setAccessor.Value;
     public TypePath Type { get; } = type;
 
-    public static bool operator !=(PropertyInfo left, PropertyInfo right) =>
+    public static bool operator !=(RosPropertyInfo left, RosPropertyInfo right) =>
         !(left == right);
 
-    public static bool operator ==(PropertyInfo left, PropertyInfo right) =>
+    public static bool operator ==(RosPropertyInfo left, RosPropertyInfo right) =>
         left?.Equals(right) ?? right is null;
 
     public override bool Equals(object? obj) =>
-        obj is PropertyInfo other && this.Equals(other);
+        obj is RosPropertyInfo other && this.Equals(other);
 
-    public bool Equals(PropertyInfo? other) =>
+    public bool Equals(RosPropertyInfo? other) =>
         other is { } o && o.Name == this.Name && o.Type == this.Type;
 
     public override int GetHashCode() =>

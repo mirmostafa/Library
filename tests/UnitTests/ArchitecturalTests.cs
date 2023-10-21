@@ -80,29 +80,46 @@ public sealed class ArchitecturalTests
     [Fact]
     public void ImmutableShouldBeImmutable()
     {
-        var mutableProperties = getMutableProperties(GetAllTypes());
+        var immutableTypes = GetAllTypes().Where(ObjectHelper.HasAttribute<ImmutableAttribute>);
+        RuleNo1(immutableTypes);
+        RuleNo2(immutableTypes);
 
-        if (!mutableProperties.Any())
+        static void RuleNo1(IEnumerable<Type> immutableTypes)
         {
-            return;
+            var mutableProperties = immutableTypes.SelectMany(t => t.GetProperties()).Where(x => (x.SetMethod?.IsPublic ?? false) && !x.IsSetMethodInit()).ToArray();
+            if (mutableProperties.Any())
+            {
+                var result = new StringBuilder();
+                result.AppendLine("The following classes are marked as Immutable but they have muted properties.");
+                foreach (var prop in mutableProperties)
+                {
+                    _ = result.AppendLine($"Type: `{prop.DeclaringType}`. Property: {prop}");
+                }
+                Assert.Fail(result.ToString());
+            }
         }
 
-        var result = new StringBuilder("The following classes are marked as Immutable but they have muted properties.");
-        foreach (var prop in mutableProperties)
+        static void RuleNo2(IEnumerable<Type> immutableTypes)
         {
-            _ = result.AppendLine($"Type: `{prop.DeclaringType}`. Property: {prop}");
-        }
-        Assert.Fail(result.ToString());
+            var notReadOnlyFields = immutableTypes.SelectMany(x => x.GetFields()).Where(x => !x.IsInitOnly);
+            var constFields = immutableTypes.SelectMany(x => x.GetFields(BindingFlags.Static)).Where(x => x.IsLiteral && !x.IsInitOnly);
+            notReadOnlyFields = notReadOnlyFields.Except(constFields);
 
-        static IEnumerable<PropertyInfo> getMutableProperties(IEnumerable<Type> types)
-            => types
-                .Where(ObjectHelper.HasAttribute<ImmutableAttribute>)
-                .SelectMany(t => t.GetProperties())
-                .Where(x => (x.SetMethod?.IsPublic ?? false) && !x.IsSetMethodInit());
+            if (notReadOnlyFields.Any())
+            {
+                var result = new StringBuilder();
+                result.AppendLine("The following classes are marked as Immutable but they have non-readonly fields.");
+                foreach (var field in notReadOnlyFields)
+                {
+                    _ = result.AppendLine($"Type: `{field.DeclaringType}`. Field: {field}");
+                }
+                Assert.Fail(result.ToString());
+            }
+        }
     }
 
     [Fact]
-    public void ImmutableShouldBeImmutable_DeepLookIn()
+    public void ImmutableShouldBeImmutableDeepLookIn()
     {
         var immutableTypes = getImmutableTypes(GetAllTypes());
         var allProps = getAllPropertiesInTypes(immutableTypes);
