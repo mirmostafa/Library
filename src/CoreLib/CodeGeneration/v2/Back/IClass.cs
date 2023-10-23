@@ -5,6 +5,9 @@ namespace Library.CodeGeneration.v2.Back;
 public interface IClass : IType, IHasGenericTypes
 {
     bool IsStatic { get; }
+
+    static IClass New(string name) =>
+        new Class(name);
 }
 
 [Immutable]

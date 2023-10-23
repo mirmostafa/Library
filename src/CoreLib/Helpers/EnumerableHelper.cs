@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using Library.Collections;
+using Library.Exceptions;
 using Library.Interfaces;
 using Library.Results;
 using Library.Validations;

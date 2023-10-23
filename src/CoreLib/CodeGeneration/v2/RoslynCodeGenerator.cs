@@ -28,7 +28,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             }
 
             var modifiers = GeneratorHelper.ToModifiers(type.AccessModifier, type.InheritanceModifier);
-            rosNameSpace = rosNameSpace.AddType(type.Name, out var rosType, modifiers);
+            var rosType = RoslynHelper.CreateType(TypePath.New(type.Name), modifiers);
             foreach (var baseType in type.BaseTypes)
             {
                 if (!baseType.NameSpace.IsNullOrEmpty())
@@ -51,8 +51,10 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
                     IMethod method => createRosMethod(root, method),
                     _ => throw new NotImplementedException(),
                 };
-                (root, rosType) = (ros.Root, rosType.AddMembers(ros.Member));
+                root = ros.Root;
+                rosType = rosType.AddMembers(ros.Member);
             }
+            rosNameSpace = rosNameSpace.AddType(rosType);
         }
 
         nameSpace.UsingNamespaces.ForEach(x => root = root.AddUsingNameSpace(x));
@@ -61,11 +63,51 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
 
         static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosField(CompilationUnitSyntax root, IField member) => throw new NotImplementedException();
         static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosProperty(CompilationUnitSyntax root, IProperty member) => throw new NotImplementedException();
-        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosMethod(CompilationUnitSyntax root, IMethod method) => throw new NotImplementedException();
+        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosMethod(CompilationUnitSyntax root, IMethod method)
+        {
+            var result = RoslynHelper.CreateMethod(new(GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier)
+                , method.ReturnType, method.Name, method.Parameters, method.Body, method.IsExtension));
+            method.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
+            return (result, root);
+        }
     }
 }
 
 internal static class GeneratorHelper
 {
-    internal static List<SyntaxKind> ToModifiers(AccessModifier accessModifier, InheritanceModifier inheritanceModifier) => throw new NotImplementedException();
+    internal static IEnumerable<SyntaxKind> ToModifiers(AccessModifier access, InheritanceModifier inheritance)
+    {
+        var result = new List<SyntaxKind>();
+        updateModifier(access, result, AccessModifier.Public, SyntaxKind.PublicKeyword);
+        updateModifier(access, result, AccessModifier.Private, SyntaxKind.PrivateKeyword);
+        updateModifier(access, result, AccessModifier.Internal, SyntaxKind.InternalKeyword);
+        updateModifier(access, result, AccessModifier.Protected, SyntaxKind.ProtectedKeyword);
+
+        updateInheritance(inheritance, result, InheritanceModifier.Sealed, SyntaxKind.SealedKeyword);
+        updateInheritance(inheritance, result, InheritanceModifier.New, SyntaxKind.NewKeyword);
+        updateInheritance(inheritance, result, InheritanceModifier.Override, SyntaxKind.OverrideKeyword);
+        updateInheritance(inheritance, result, InheritanceModifier.Abstract, SyntaxKind.AbstractKeyword);
+        updateInheritance(inheritance, result, InheritanceModifier.Const, SyntaxKind.ConstKeyword);
+        updateInheritance(inheritance, result, InheritanceModifier.Partial, SyntaxKind.PartialKeyword);
+        updateInheritance(inheritance, result, InheritanceModifier.Static, SyntaxKind.StaticKeyword);
+        updateInheritance(inheritance, result, InheritanceModifier.Virtual, SyntaxKind.VirtualKeyword);
+
+        return result;
+
+        static void updateModifier(AccessModifier access, List<SyntaxKind> result, AccessModifier referral, SyntaxKind kind)
+        {
+            if (access.Contains(referral))
+            {
+                result.Add(kind);
+            }
+        }
+
+        static void updateInheritance(InheritanceModifier inheritance, List<SyntaxKind> result, InheritanceModifier referral, SyntaxKind kind)
+        {
+            if (inheritance.Contains(referral))
+            {
+                result.Add(kind);
+            }
+        }
+    }
 }

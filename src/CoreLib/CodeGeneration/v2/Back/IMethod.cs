@@ -10,7 +10,7 @@ public interface IMethod : IMember, IHasGenericTypes
     bool IsConstructor { get; }
     bool IsExtension { get; }
     ISet<(TypePath Type, string Name)> Parameters { get; }
-    public TypePath? ReturnType { get; }
+    TypePath? ReturnType { get; }
 }
 
 [Immutable]
