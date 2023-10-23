@@ -131,7 +131,7 @@ public static class RoslynHelper
     {
         Checker.MustBeArgumentNotNull(type);
 
-        return type.WithBaseList(SyntaxFactory.BaseList(new SeparatedSyntaxList<BaseTypeSyntax>().Add(SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName("BaseClass")))));
+        return type.WithBaseList(SyntaxFactory.BaseList(new SeparatedSyntaxList<BaseTypeSyntax>().Add(SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseClassName)))));
     }
     public static NamespaceDeclarationSyntax AddType(this NamespaceDeclarationSyntax nameSpace, string typeName) =>
         nameSpace.AddType(typeName, out _);
@@ -193,7 +193,7 @@ public static class RoslynHelper
             modifiers = modifiers.AddImmuted(SyntaxKind.StaticKeyword);
         }
 
-        RosMethod result = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(methodInfo.ReturnType?.Name ?? "void"), methodInfo.Name).WithModifiers(modifiers.ToSyntaxTokenList());
+        RosMethod result = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(methodInfo.ReturnType?.FullName ?? "void"), methodInfo.Name).WithModifiers(modifiers.ToSyntaxTokenList());
 
         result = InnerCreateBaseMethod(methodInfo, result);
         return result;

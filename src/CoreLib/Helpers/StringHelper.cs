@@ -15,8 +15,8 @@ namespace Library.Helpers;
 /// <summary>
 /// A utility to do some common tasks about strings
 /// </summary>
-[DebuggerStepThrough]
-[StackTraceHidden]
+//[DebuggerStepThrough]
+//[StackTraceHidden]
 public static class StringHelper
 {
     private static readonly char[] _standardSeparators = new[] { '\0', '\n', '\r', '\t', '_', '-' };

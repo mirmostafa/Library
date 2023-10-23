@@ -14,7 +14,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
 {
     public string ConnectionString { get; } = connectionString.ArgumentNotNull();
 
-    public object DefaultLogSender { get; } = nameof(Sql);
+    public static object DefaultLogSender { get; } = nameof(Sql);
 
     public void ExecuteCommand(string cmdText, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null)
     {

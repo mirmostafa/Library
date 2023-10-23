@@ -36,7 +36,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
                     rosNameSpace = rosNameSpace.AddUsingNameSpace(baseType.NameSpace);
                 }
 
-                rosType = rosType.AddBase(baseType.Name);
+                rosType = rosType.AddBase(baseType.FullName);
             }
             foreach (var member in type.Members.Compact())
             {
@@ -48,7 +48,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
                 {
                     IField field => createRosField(root, field),
                     IProperty prop => createRosProperty(root, prop),
-                    IMethod method => createRosMethod(root, method),
+                    IMethod method => createRosMethod(root, method, type.Name),
                     _ => throw new NotImplementedException(),
                 };
                 root = ros.Root;
@@ -61,12 +61,19 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
         root = root.AddNameSpace(rosNameSpace);
         return Result<string>.CreateSuccess(root.GenerateCode());
 
-        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosField(CompilationUnitSyntax root, IField member) => throw new NotImplementedException();
-        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosProperty(CompilationUnitSyntax root, IProperty member) => throw new NotImplementedException();
-        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosMethod(CompilationUnitSyntax root, IMethod method)
+        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosField(CompilationUnitSyntax root, IField member)
         {
-            var result = RoslynHelper.CreateMethod(new(GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier)
-                , method.ReturnType, method.Name, method.Parameters, method.Body, method.IsExtension));
+            var result = RoslynHelper.CreateField(new(member.Name, member.Type));
+            member.Type.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
+            return (result, root);
+        }
+
+        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosProperty(CompilationUnitSyntax root, IProperty member) => throw new NotImplementedException();
+        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosMethod(CompilationUnitSyntax root, IMethod method, string className)
+        {
+            var result = method.IsConstructor
+                ? RoslynHelper.CreateConstructor(TypePath.GetName(className), out _, method.Parameters, method.Body, GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier))
+                : RoslynHelper.CreateMethod(new(GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier), method.ReturnType, method.Name, method.Parameters, method.Body, method.IsExtension));
             method.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
             return (result, root);
         }

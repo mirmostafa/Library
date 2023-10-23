@@ -37,8 +37,8 @@ public static class SqlEntity
     public static TableInfo GetTableInfo<TEntity>()
         => new(GetTableName<TEntity>(), GetColumns<TEntity>());
 
-    public static string GetTableName<Entity>()
-        => GetTableName(typeof(Entity));
+    public static string GetTableName<TEntity>()
+        => GetTableName(typeof(TEntity));
 
     private static string GetTableName(Type tableType)
     {

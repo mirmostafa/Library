@@ -30,7 +30,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
     public string? NameSpace => this._data.NameSpace;
 
     public static string Combine(in string? part1, params string?[] parts) =>
-        StringHelper.Merge(parts.AddImmuted(part1).Compact().Select(x => x.Trim('.')), '.');
+        StringHelper.Merge(EnumerableHelper.ToEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
 
     [return: NotNullIfNotNull(nameof(typePath))]
     public static string? GetName(in string? typePath) =>
@@ -70,7 +70,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
 
     [return: NotNull]
     public static TypePath New(in string? name, in string? nameSpace, params string[] generics) =>
-        new(Combine(name, nameSpace), generics);
+        new(Combine(nameSpace, name), generics);
 
     public static bool operator !=(in TypePath? left, in TypePath? right) =>
         !(left == right);
@@ -132,6 +132,11 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
             temp = temp[..indexOfGenSymbol];
             gens.AddRange(gen.Split(',').Select(x => x.Trim()));
         }
+        if (temp.Contains('`'))
+        {
+            temp = temp.Remove(temp.IndexOf('`'), 2);
+        }
+
         if (generics?.Any() ?? false)
         {
             gens.AddRange(generics);
@@ -142,6 +147,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         (var name, var nameSpace) = lastIndexOfDot > 0
             ? (temp[(lastIndexOfDot + 1)..], temp[..lastIndexOfDot])
             : (temp, string.Empty);
+
         var genTypes = gens.Select(x => new TypePath(x));
         if (nameSpace == "System")
         {

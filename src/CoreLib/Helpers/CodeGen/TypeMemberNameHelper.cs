@@ -1,4 +1,5 @@
-﻿using Library.Exceptions.Validations;
+﻿using Library.CodeGeneration;
+using Library.Exceptions.Validations;
 using Library.Helpers.Models;
 using Library.Validations;
 
@@ -32,6 +33,7 @@ public static class TypeMemberNameHelper
     /// <param name="nameSpace">The namespace.</param>
     /// <param name="name">The name.</param>
     /// <returns>The combined name.</returns>
+    [Obsolete($"Use {nameof(TypePath)}, instead.")]
     public static string GetFullName(string? nameSpace, string? name)
         => CombineWithDot(nameSpace, name);
 
@@ -40,6 +42,7 @@ public static class TypeMemberNameHelper
     /// </summary>
     /// <param name="fullName">The full name of the type.</param>
     /// <returns>The name of the type.</returns>
+    [Obsolete($"Use {nameof(TypePath)}, instead.")]
     public static string GetName(in string? fullName)
     {
         if (fullName.IsNullOrEmpty())
@@ -81,6 +84,7 @@ public static class TypeMemberNameHelper
         return (m?.Contains('.') ?? false) ? m[..m.LastIndexOf(".")] : string.Empty;
     }
 
+    [Obsolete($"Use {nameof(TypePath)}, instead.")]
     public static IEnumerable<string> GetNameSpaces(string fullName)
     {
         //var (classFullData, genericParamsFullData) = GetFullData(fullName);
@@ -100,19 +104,24 @@ public static class TypeMemberNameHelper
     public static string ToArgName(in string name)
     {
         var buffer = name.ArgumentNotNull().Trim().TrimStart('_');
-        return $"{buffer[Range.EndAt(1)].ToLower()}{buffer[1..]}";
+        // Support interfaces
+        if (buffer.Length > 1 && buffer[0] is 'i' or 'I' && char.IsUpper(buffer[1]))
+        {
+            buffer = buffer[1..];
+        }
+        return $"{buffer[Range.EndAt(1)].ToLower(System.Globalization.CultureInfo.CurrentCulture)}{buffer[1..]}";
     }
 
     public static string ToFieldName(in string name)
     {
         var buffer = name.ArgumentNotNull(nameof(name)).Trim().TrimStart('_').TrimStart('I');
-        return $"_{buffer[Range.EndAt(1)].ToLower()}{buffer[1..]}";
+        return $"_{buffer[Range.EndAt(1)].ToLower(System.Globalization.CultureInfo.CurrentCulture)}{buffer[1..]}";
     }
 
     public static string ToPropName(in string name)
     {
         var propName = name.ArgumentNotNull(nameof(name)).StartsWith("_") ? name[1..] : name;
-        return $"{propName[Range.EndAt(1)].ToUpper()}{propName[1..]}";
+        return $"{propName[Range.EndAt(1)].ToUpper(System.Globalization.CultureInfo.CurrentCulture)}{propName[1..]}";
     }
 
     public static string ValidateName(in string? memberName, bool checkNullability = true)
