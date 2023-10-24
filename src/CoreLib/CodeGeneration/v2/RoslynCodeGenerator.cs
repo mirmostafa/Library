@@ -33,7 +33,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             {
                 if (!baseType.NameSpace.IsNullOrEmpty())
                 {
-                    rosNameSpace = rosNameSpace.AddUsingNameSpace(baseType.NameSpace);
+                    root = root.AddUsingNameSpace(baseType.NameSpace);
                 }
 
                 rosType = rosType.AddBase(baseType.FullName);
@@ -71,9 +71,10 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
         static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosProperty(CompilationUnitSyntax root, IProperty member) => throw new NotImplementedException();
         static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosMethod(CompilationUnitSyntax root, IMethod method, string className)
         {
+            var modifiers = GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier);
             var result = method.IsConstructor
-                ? RoslynHelper.CreateConstructor(TypePath.GetName(className), out _, method.Parameters, method.Body, GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier))
-                : RoslynHelper.CreateMethod(new(GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier), method.ReturnType, method.Name, method.Parameters, method.Body, method.IsExtension));
+                ? RoslynHelper.CreateConstructor(TypePath.GetName(className), modifiers, method.Parameters, method.Body)
+                : RoslynHelper.CreateMethod(new(modifiers, method.ReturnType, method.Name, method.Parameters, method.Body, method.IsExtension));
             method.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
             return (result, root);
         }

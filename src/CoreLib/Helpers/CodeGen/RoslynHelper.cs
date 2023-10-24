@@ -24,7 +24,7 @@ public static class RoslynHelper
     {
         Checker.MustBeArgumentNotNull(type);
 
-        ctor = CreateConstructor(type.GetName(), parameters, body, modifiers);
+        ctor = CreateConstructor(type.GetName(), modifiers, parameters, body);
         return type.AddMethod(ctor);
     }
 
@@ -155,13 +155,10 @@ public static class RoslynHelper
         return nameSpace.AddUsings(usingDirective);
     }
 
-    public static RosMethod CreateConstructor(string className, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null, IEnumerable<SyntaxKind>? modifiers = null) =>
-                CreateConstructor(className, out _, parameters, body, modifiers);
-
-    public static RosMethod CreateConstructor(string className, out RosMethod ctor, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null, IEnumerable<SyntaxKind>? modifiers = null)
+    public static RosMethod CreateConstructor(string className, IEnumerable<SyntaxKind>? modifiers = null, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null)
     {
         modifiers ??= EnumerableHelper.ToEnumerable(SyntaxKind.PublicKeyword);
-        ctor = SyntaxFactory.ConstructorDeclaration(className).WithModifiers(modifiers.ToSyntaxTokenList());
+        var ctor = SyntaxFactory.ConstructorDeclaration(className).WithModifiers(modifiers.ToSyntaxTokenList());
         return InnerCreateBaseMethod(new(modifiers, null, TypePath.GetName(className), parameters, body), ctor);
     }
 
