@@ -1,6 +1,5 @@
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Globalization;
 
 using Library.Results;
@@ -11,7 +10,6 @@ namespace Library.Helpers;
 /// <summary>
 /// A utility to do some common tasks about ADO arguments
 /// </summary>
-[DebuggerStepThrough]
 public static partial class AdoHelper
 {
     /// <summary>
@@ -21,12 +19,13 @@ public static partial class AdoHelper
     /// <returns>True if the SqlConnection can connect, false otherwise.</returns>
     public static async Task<bool> CanConnectAsync(this SqlConnection conn)
     {
-        var result = await conn.TryConnectAsync();
+        var result = await conn.TryConnectAsync().ConfigureAwait(false);
         return result.IsSucceed;
     }
 
     /// <summary>
-    /// Checks if a value retrieved from a SqlDataReader is DBNull and provides a default value if it is.
+    /// Checks if a value retrieved from a SqlDataReader is DBNull and provides a default value if
+    /// it is.
     /// </summary>
     /// <typeparam name="T">The type of the value to check.</typeparam>
     /// <param name="reader">The SqlDataReader to retrieve the value from.</param>
@@ -42,9 +41,10 @@ public static partial class AdoHelper
         if (reader is not null and { IsClosed: false })
         {
             // Retrieve the value from the SqlDataReader using the columnName.
-            object? value = reader[columnName];
+            var value = reader[columnName];
 
-            // Use the ObjectHelper.CheckDbNull method to check for DBNull and provide a default value if needed.
+            // Use the ObjectHelper.CheckDbNull method to check for DBNull and provide a default
+            // value if needed.
             return ObjectHelper.CheckDbNull(value, defaultValue, converter);
         }
         else
@@ -116,10 +116,10 @@ public static partial class AdoHelper
         {
             if (openConnection)
             {
-                await connection.OpenAsync();
+                await connection.OpenAsync().ConfigureAwait(false);
             }
 
-            return await actionAsync(connection);
+            return await actionAsync(connection).ConfigureAwait(false);
         }
         finally
         {
@@ -138,10 +138,10 @@ public static partial class AdoHelper
         {
             if (openConnection)
             {
-                await connection.OpenAsync();
+                await connection.OpenAsync().ConfigureAwait(false);
             }
 
-            await actionAsync(connection);
+            await actionAsync(connection).ConfigureAwait(false);
         }
         finally
         {
@@ -172,7 +172,7 @@ public static partial class AdoHelper
         Check.MustBeArgumentNotNull(sql);
 
         using var command = connection.CreateCommand(sql, fillParams);
-        return await connection.EnsureClosedAsync(conn => executeAsync(command), true);
+        return await connection.EnsureClosedAsync(conn => executeAsync(command), true).ConfigureAwait(false);
     }
 
     public static int ExecuteNonQuery(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null)
@@ -226,14 +226,14 @@ public static partial class AdoHelper
             }
         };
         connection.Open();
-        return await command.ExecuteReaderAsync(behavior);
+        return await command.ExecuteReaderAsync(behavior).ConfigureAwait(false);
     }
 
     public static object ExecuteScalar(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null)
             => connection.Execute(cmd => cmd.ExecuteScalar(), sql, fillParams);
 
     public static async Task<object?> ExecuteScalarAsync(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null)
-            => await connection.ExecuteAsync(cmd => cmd.ExecuteScalarAsync(), sql, fillParams);
+            => await connection.ExecuteAsync(cmd => cmd.ExecuteScalarAsync(), sql, fillParams).ConfigureAwait(false);
 
     public static object? ExecuteStoredProcedure(this SqlConnection connection,
             string spName,
@@ -580,9 +580,29 @@ public static partial class AdoHelper
     /// <param name="creator">The function used to create objects.</param>
     /// <returns>A collection of objects created using the specified creator function.</returns>
     public static IEnumerable<T> Select<T>(this IDataReader reader, Func<T> creator)
-            => reader is null
-                ? throw new ArgumentNullException(nameof(reader))
-                : While(reader.Read, () => InnerReaderSelect(reader, creator));
+    {
+        Check.MustBeArgumentNotNull(reader);
+        Check.MustBeArgumentNotNull(creator);
+
+        var properties = typeof(T).GetProperties();
+        var columnNames = For(reader.FieldCount, reader.GetName).Except(x => !properties.Select(x => x.Name).Contains(x));
+        while (reader.Read())
+        {
+            var t = creator();
+            foreach (var columnName in columnNames)
+            {
+                var value = reader[columnName];
+                if (value == DBNull.Value)
+                {
+                    value = null;
+                }
+
+                var property = properties.FirstOrDefault(x => x.Name == columnName);
+                _ = Catch(() => property!.SetValue(t, value, []));
+            }
+            yield return t;
+        }
+    }
 
     /// <summary>
     /// Executes a SQL query and returns the result as an IEnumerable of type T.
@@ -651,30 +671,12 @@ public static partial class AdoHelper
     {
         try
         {
-            await conn.EnsureClosedAsync(c => c.OpenAsync());
+            await conn.EnsureClosedAsync(c => c.OpenAsync()).ConfigureAwait(false);
             return TryMethodResult.CreateSuccess();
         }
         catch (Exception ex)
         {
             return TryMethodResult.CreateFailure(ex);
         }
-    }
-
-    private static T InnerReaderSelect<T>(IDataReader reader, Func<T> creator)
-    {
-        var properties = typeof(T).GetProperties();
-        var t = creator();
-        foreach (var property in properties)
-        {
-            var value = reader[property.Name];
-            if (DBNull.Value.Equals(value))
-            {
-                value = null;
-            }
-
-            property.SetValue(t, value, Array.Empty<object>());
-        }
-
-        return t;
     }
 }

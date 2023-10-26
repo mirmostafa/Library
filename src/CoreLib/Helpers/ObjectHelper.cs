@@ -378,7 +378,7 @@ public static class ObjectHelper
     /// <returns><c>true</c> if [is database null] [the specified o]; otherwise, <c>false</c>.</returns>
     public static bool IsDbNull([NotNullWhen(false)] in object? o)
         => o is null or DBNull;
-
+    
     /// <summary>
     /// Checks if a given struct is equal to its default value.
     /// </summary>

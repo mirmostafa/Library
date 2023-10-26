@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -9,7 +10,6 @@ using Library.Validations;
 
 namespace Library.Data.SqlServer;
 
-[DebuggerStepThrough]
 public sealed class Sql(string connectionString) : INew<Sql, string>
 {
     public string ConnectionString { get; } = connectionString.ArgumentNotNull();
@@ -41,6 +41,9 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
 
     public SqlDataReader ExecuteReader(string query) =>
         new SqlConnection(this.ConnectionString).ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
+    
+    public Task<SqlDataReader> ExecuteReaderAsync(string query) =>
+        new SqlConnection(this.ConnectionString).ExecuteReaderAsync(query, behavior: CommandBehavior.CloseConnection);
 
     public object? ExecuteScalarCommand(string sql) =>
         this.ExecuteScalarCommand(sql, null);
@@ -186,7 +189,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         where T : new()
     {
         using var conn = new SqlConnection(this.ConnectionString);
-        return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>();
+        return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>().ToList();
     }
 
     public IEnumerable<dynamic> Select(string query)
