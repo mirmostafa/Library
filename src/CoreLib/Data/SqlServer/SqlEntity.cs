@@ -27,7 +27,7 @@ public static class SqlEntity
                 var isKey = keyAttr is not null || dbGen?.DatabaseGeneratedOption is DatabaseGeneratedOption.Identity;
                 var isFk = fkAttr is not null;
                 var fkName = fkAttr?.Name;
-                var type = colAttr?.TypeName is not null ? SqlHelper.SqlTypeToNetType(colAttr.TypeName) : prop.PropertyType;
+                var type = colAttr?.TypeName is not null ? SqlTypeHelper.SqlTypeToNetType(colAttr.TypeName) : prop.PropertyType;
                 var order = colAttr?.Order is not null ? colAttr.Order : int.MaxValue;
                 yield return new ColumnInfo(name, type, isKey, isFk, fkName, order);
             }

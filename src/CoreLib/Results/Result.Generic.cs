@@ -112,7 +112,7 @@ public class Result<TValue>(
         in object? status,
         in string? message,
         in (object Id, object Error) error) =>
-        new(value, false, status, message, EnumerableHelper.ToEnumerable(error), null);
+        new(value, false, status, message, EnumerableHelper.Iterate(error), null);
 
     /// <summary>
     /// Creates a failure result with the specified message, exception and value.

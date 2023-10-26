@@ -15,7 +15,7 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
     public Node(in T value, in string? display = null)
             => (this.Value, this.Display) = (value, display ?? value?.ToString());
 
-    public IEnumerable<Node<T>> Children => this._innerChildren.ToEnumerable();
+    public IEnumerable<Node<T>> Children => this._innerChildren.Iterate();
 
     public IEnumerable<T> ChildValues => this._innerChildren.Select(x => x.Cast().To<T>());
 
@@ -29,7 +29,7 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
     {
         Node<T?>? buffer = null;
         EnumerableHelper.BuildTree<(T Value, string? Display), Node<T>>(
-            EnumerableHelper.ToEnumerable(getRoot())!
+            EnumerableHelper.Iterate(getRoot())!
             , raw => new(raw.Value, raw.Display)
             , raw => getChildren(raw), raw => buffer = new(raw.Value, raw.Display)
             , (p, c) => p.AddChild(c));
@@ -40,7 +40,7 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
     {
         var result = Node<T>.Empty;
         EnumerableHelper.BuildTree<T, Node<T>>(
-            EnumerableHelper.ToEnumerable(getRoot())!
+            EnumerableHelper.Iterate(getRoot())!
             , raw => new(raw)
             , raw => getChildren(raw), raw => result = raw!
             , (p, c) => p.AddChild(c));

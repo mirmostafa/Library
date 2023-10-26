@@ -1,6 +1,6 @@
 ﻿namespace Library.Helpers;
 
-public static class SqlHelper
+public static class SqlTypeHelper
 {
     /// <summary>
     /// Converts a SQL type name to its corresponding .NET type.
@@ -18,5 +18,16 @@ public static class SqlHelper
             "bit" => typeof(bool), // Map "bit" to bool.
             null => throw new NotSupportedException(), // Throw an exception if typeName is null.
             _ => throw new NotImplementedException(), // Throw an exception for any other typeName.
+        };
+    public static string NetTypeToSqlType(Type type) =>
+        type.Name switch
+        {
+            "Int16" => "smallint",
+            "Int32" => "int",
+            "String" => "nvarchar",
+            "DateTime" => "datetime2",
+            "Boolean" => "bit",
+            //"Guid"=>
+            _ => throw new NotImplementedException(),
         };
 }

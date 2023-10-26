@@ -157,7 +157,7 @@ public static class RoslynHelper
 
     public static RosMethod CreateConstructor(string className, IEnumerable<SyntaxKind>? modifiers = null, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null)
     {
-        modifiers ??= EnumerableHelper.ToEnumerable(SyntaxKind.PublicKeyword);
+        modifiers ??= EnumerableHelper.Iterate(SyntaxKind.PublicKeyword);
         var ctor = SyntaxFactory.ConstructorDeclaration(className).WithModifiers(modifiers.ToSyntaxTokenList());
         return InnerCreateBaseMethod(new(modifiers, null, TypePath.GetName(className), parameters, body), ctor);
     }
@@ -350,7 +350,7 @@ public sealed class RosFieldInfo(
     in TypePath type,
     in IEnumerable<SyntaxKind>? accessModifiers = null) : IEquatable<RosFieldInfo>
 {
-    public IEnumerable<SyntaxKind>? AccessModifiers { get; } = accessModifiers ?? EnumerableHelper.ToEnumerable(SyntaxKind.PrivateKeyword);
+    public IEnumerable<SyntaxKind>? AccessModifiers { get; } = accessModifiers ?? EnumerableHelper.Iterate(SyntaxKind.PrivateKeyword);
     public string Name { get; } = name;
     public TypePath Type { get; } = type;
 
@@ -381,7 +381,7 @@ public sealed class RosMethodInfo(
 {
     public string? Body { get; } = body ?? "throw new NotImplementedException();";
     public bool IsExtensionMethod { get; } = isExtensionMethod;
-    public IEnumerable<SyntaxKind> Modifiers { get; } = modifiers ?? EnumerableHelper.ToEnumerable(SyntaxKind.PublicKeyword);
+    public IEnumerable<SyntaxKind> Modifiers { get; } = modifiers ?? EnumerableHelper.Iterate(SyntaxKind.PublicKeyword);
     public string Name { get; } = name;
     public IEnumerable<MethodParameterInfo>? Parameters { get; } = parameters;
     public TypePath? ReturnType { get; } = returnType;
@@ -410,10 +410,10 @@ public sealed class RosPropertyInfo(
     in PropertyAccessorInfo? getAccessor = null,
     in PropertyAccessorInfo? setAccessor = null) : IEquatable<RosPropertyInfo>
 {
-    public PropertyAccessorInfo GetAccessor { get; } = getAccessor == null ? (true, EnumerableHelper.ToEnumerable(SyntaxKind.PublicKeyword)) : getAccessor.Value;
-    public IEnumerable<SyntaxKind> Modifiers { get; } = modifiers ?? EnumerableHelper.ToEnumerable(SyntaxKind.PublicKeyword);
+    public PropertyAccessorInfo GetAccessor { get; } = getAccessor == null ? (true, EnumerableHelper.Iterate(SyntaxKind.PublicKeyword)) : getAccessor.Value;
+    public IEnumerable<SyntaxKind> Modifiers { get; } = modifiers ?? EnumerableHelper.Iterate(SyntaxKind.PublicKeyword);
     public string Name { get; } = name;
-    public PropertyAccessorInfo SetAccessor { get; } = setAccessor == null ? (true, EnumerableHelper.ToEnumerable(SyntaxKind.PublicKeyword)) : setAccessor.Value;
+    public PropertyAccessorInfo SetAccessor { get; } = setAccessor == null ? (true, EnumerableHelper.Iterate(SyntaxKind.PublicKeyword)) : setAccessor.Value;
     public TypePath Type { get; } = type;
 
     public static bool operator !=(RosPropertyInfo left, RosPropertyInfo right) =>

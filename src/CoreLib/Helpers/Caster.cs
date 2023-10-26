@@ -88,7 +88,7 @@ public static class Caster
     }
 
     public static IEnumerable<T> ToEnumerable<T>(this ICastable o) =>
-        EnumerableHelper.ToEnumerable(o.To<T>());
+        EnumerableHelper.Iterate(o.To<T>());
 
     /// <summary>
     /// Converts the specified object to an integer.
