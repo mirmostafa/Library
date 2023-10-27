@@ -63,12 +63,21 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
 
         static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosField(CompilationUnitSyntax root, IField member)
         {
-            var result = RoslynHelper.CreateField(new(member.Name, member.Type));
+            var modifiers = GeneratorHelper.ToModifiers(member.AccessModifier, member.InheritanceModifier);
+            var result = RoslynHelper.CreateField(new(member.Name, member.Type, modifiers));
+            member.Type.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
+            return (result, root);
+        }
+        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosProperty(CompilationUnitSyntax root, IProperty member)
+        {
+            var result = RoslynHelper.CreateProperty(new(member.Name, member.Type, (IEnumerable<SyntaxKind>?)GeneratorHelper.ToModifiers(member.AccessModifier, member.InheritanceModifier),
+                (member.Getter is not null, GeneratorHelper.ToModifiers(member.Getter?.AccessModifier, null)),
+                (member.Setter is not null, GeneratorHelper.ToModifiers(member.Setter?.AccessModifier, null))
+                ));
             member.Type.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
             return (result, root);
         }
 
-        static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosProperty(CompilationUnitSyntax root, IProperty member) => throw new NotImplementedException();
         static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosMethod(CompilationUnitSyntax root, IMethod method, string className)
         {
             var modifiers = GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier);
@@ -83,22 +92,25 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
 
 internal static class GeneratorHelper
 {
-    internal static IEnumerable<SyntaxKind> ToModifiers(AccessModifier access, InheritanceModifier inheritance)
+    internal static IEnumerable<SyntaxKind> ToModifiers(AccessModifier? access, InheritanceModifier? inheritance)
     {
         var result = new List<SyntaxKind>();
-        updateModifier(access, result, AccessModifier.Public, SyntaxKind.PublicKeyword);
-        updateModifier(access, result, AccessModifier.Private, SyntaxKind.PrivateKeyword);
-        updateModifier(access, result, AccessModifier.Internal, SyntaxKind.InternalKeyword);
-        updateModifier(access, result, AccessModifier.Protected, SyntaxKind.ProtectedKeyword);
+        
+        var modifier = access == null ? AccessModifier.None : access.Value;
+        updateModifier(modifier, result, AccessModifier.Public, SyntaxKind.PublicKeyword);
+        updateModifier(modifier, result, AccessModifier.Private, SyntaxKind.PrivateKeyword);
+        updateModifier(modifier, result, AccessModifier.Internal, SyntaxKind.InternalKeyword);
+        updateModifier(modifier, result, AccessModifier.Protected, SyntaxKind.ProtectedKeyword);
 
-        updateInheritance(inheritance, result, InheritanceModifier.Sealed, SyntaxKind.SealedKeyword);
-        updateInheritance(inheritance, result, InheritanceModifier.New, SyntaxKind.NewKeyword);
-        updateInheritance(inheritance, result, InheritanceModifier.Override, SyntaxKind.OverrideKeyword);
-        updateInheritance(inheritance, result, InheritanceModifier.Abstract, SyntaxKind.AbstractKeyword);
-        updateInheritance(inheritance, result, InheritanceModifier.Const, SyntaxKind.ConstKeyword);
-        updateInheritance(inheritance, result, InheritanceModifier.Partial, SyntaxKind.PartialKeyword);
-        updateInheritance(inheritance, result, InheritanceModifier.Static, SyntaxKind.StaticKeyword);
-        updateInheritance(inheritance, result, InheritanceModifier.Virtual, SyntaxKind.VirtualKeyword);
+        var inherit = inheritance == null ? InheritanceModifier.None : inheritance.Value;
+        updateInheritance(inherit, result, InheritanceModifier.Sealed, SyntaxKind.SealedKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.New, SyntaxKind.NewKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.Override, SyntaxKind.OverrideKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.Abstract, SyntaxKind.AbstractKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.Const, SyntaxKind.ConstKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.Partial, SyntaxKind.PartialKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.Static, SyntaxKind.StaticKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.Virtual, SyntaxKind.VirtualKeyword);
 
         return result;
 

@@ -207,12 +207,20 @@ public static class RoslynHelper
         Checker.MustBeArgumentNotNull(propertyInfo);
         var result = InnerCreatePropertyBase(propertyInfo);
 
-        if (propertyInfo.GetAccessor.Has)
+        if (propertyInfo.GetAccessor.Has || propertyInfo.SetAccessor.Has)
+        {
+            if (propertyInfo.GetAccessor.Has)
+            {
+                result = result.AddAccessorListAccessors(SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+            }
+            if (propertyInfo.SetAccessor.Has)
+            {
+                result = result.AddAccessorListAccessors(SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+            }
+        }
+        else
         {
             result = result.AddAccessorListAccessors(SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
-        }
-        if (propertyInfo.SetAccessor.Has)
-        {
             result = result.AddAccessorListAccessors(SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
         }
 

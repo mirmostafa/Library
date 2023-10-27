@@ -19,6 +19,15 @@ public sealed class Class(string name) : TypeBase(name), IClass
 
 public static class ClassExtensions
 {
-    public static TClass AddMember<TClass>(this TClass @class, IMember member) where TClass : IClass =>
-        @class.Fluent(@class.Members.Add(member));
+    public static TClass AddMember<TClass>(this TClass @class, params IMember[] members) where TClass : IClass
+    {
+        foreach (var member in members.Compact())
+        {
+            _ = @class.Members.Add(member);
+        }
+        return @class;
+    }
+
+    public static TClass AddMember<TClass>(this TClass @class, IEnumerable<IMember> members) where TClass : IClass =>
+        AddMember(@class, members?.ToArray() ?? []);
 }
