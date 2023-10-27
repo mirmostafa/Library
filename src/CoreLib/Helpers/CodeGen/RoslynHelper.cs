@@ -342,7 +342,7 @@ public static class RoslynHelper
 
     private static RosProp InnerCreatePropertyBase(RosPropertyInfo propertyInfo)
     {
-        var result = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(propertyInfo.Type.Name), propertyInfo.Name);
+        var result = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(propertyInfo.Type.FullName), propertyInfo.Name);
         if (propertyInfo.Modifiers?.Any() ?? false)
         {
             result = result.AddModifiers(propertyInfo.Modifiers.ToSyntaxTokenArray());

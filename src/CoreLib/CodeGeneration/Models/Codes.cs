@@ -68,6 +68,8 @@ public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(
         new(codes);
     public static Codes New(params Code[] codes) =>
         new(codes);
+    public static Codes New(params Codes[] codes) =>
+        new(codes);
 
     /// <summary>
     /// Creates a new instance of the Codes class that is empty.
