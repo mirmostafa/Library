@@ -34,10 +34,29 @@ public sealed class Check
     public static Result If(in bool notOk, in Func<Exception> getErrorMessage) =>
         notOk ? Result.CreateFailure(getErrorMessage()) : Result.CreateSuccess();
 
-    public static Result<TValue> If<TValue>(TValue value, in bool notOk, in Func<Exception> getErrorMessage) =>
+    public static Result<TValue> If<TValue>(in TValue value, in bool notOk, in Func<Exception> getErrorMessage) =>
         notOk ? Result<TValue>.CreateFailure(getErrorMessage(), value) : Result<TValue>.CreateSuccess(value);
 
-    public static Result<TValue> IfArgumentIsNotNull<TValue>(TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
+    public static Result<IEnumerable<string?>?> IfAnyNull(in IEnumerable<string?>? items)
+    {
+        if (items?.Any() ?? false)
+        {
+            foreach (var item in items)
+            {
+                if (IfIsNull(item).TryParse(out var vr))
+                {
+                    return vr.WithValue(items)!;
+                }
+            }
+        }
+
+        return Result<IEnumerable<string?>?>.CreateSuccess(items);
+    }
+
+    public static Result<TValue> IfArgumentIsNull<TValue>(in TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
+        If(obj, obj is null, () => new NullValueValidationException(argName!));
+
+    public static Result<TValue> IfIsNull<TValue>(in TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
         If(obj, obj is null, () => new NullValueValidationException(argName!));
 
     /// <summary>

@@ -18,7 +18,7 @@ public interface IType : IValidatable
 [Immutable]
 public abstract class TypeBase : IType
 {
-    protected TypeBase(string name) =>
+    protected TypeBase(in string name) =>
         this.Name = name;
 
     public virtual AccessModifier AccessModifier { get; init; } = AccessModifier.Public;
@@ -29,6 +29,10 @@ public abstract class TypeBase : IType
     public virtual string Name { get; }
     public virtual ISet<string> UsingNamesSpaces { get; } = new HashSet<string>(new[] { nameof(System), nameof(System.Linq), nameof(System.Threading.Tasks), });
 
-    public virtual Result Validate() =>
-        Result.Success;
+    public virtual Result Validate() => 
+        Check.IfIsNull(this.Name).TryParse(out var vr1)
+            ? vr1
+            : Check.IfAnyNull(this.UsingNamesSpaces).TryParse(out var vr2) 
+                ? vr2 
+                : Result.Success;
 }

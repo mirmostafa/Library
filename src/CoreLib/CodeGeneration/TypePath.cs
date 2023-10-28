@@ -41,6 +41,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [return: NotNullIfNotNull(nameof(typePath))]
     public static string? GetNameSpace(in string? typePath) =>
         typePath == null ? null : Parse(typePath).NameSpace;
+    
+    [return: NotNullIfNotNull(nameof(typePath))]
+    public static IEnumerable<string>? GetNameSpaces(in string? typePath) =>
+        typePath == null ? null : New(typePath).GetNameSpaces();
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
     public static implicit operator string?(in TypePath? typeInfo) =>

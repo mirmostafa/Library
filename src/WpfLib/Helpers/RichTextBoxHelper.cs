@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Documents;
 using System.Windows.Media;
 
+using Library.CodeGeneration;
 using Library.CodeGeneration.Models;
 
 namespace Library.Wpf.Helpers;
@@ -20,8 +21,8 @@ public static class RichTextBoxHelper
         var detectedTypes = new List<string>();
         var keyWordRules = new (string[] Keys, Brush Brush)[]
         {
-            (new[] { "void","using", "short", "int", "get", "set", "string", "public","protected","private", "sealed", "partial", "class", "namespace", "async", "await", "throw", "new", "this","override","var", "return" }, Brushes.Blue),
-            (new[] { "Guid", "Byte", "Int16","Int32", "Int64", "Single", "String", "DateTime","IEnumerable", "Task" }, Brushes.DarkGreen),
+            (LanguageKeywords.Keywords, Brushes.Blue),
+            (LanguageKeywords.PrimitiveTypes, Brushes.DarkGreen),
             (new[]{"ICommandProcessor", "IEnumerable", "IQueryProcessor"}, Brushes.Green)
         };
         var genericRegExes = new[]
@@ -42,15 +43,13 @@ public static class RichTextBoxHelper
             {
                 return (true, EnumerableHelper.Iterate(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DarkGreen }));
             }
-            else if (line.CurrentLine.Trim().StartsWith("//"))
-            {
-                return (true, EnumerableHelper.Iterate(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DimGray }));
-            }
             else
             {
-                return line.CurrentLine.Trim().StartsWithAny(preprocessors)
-                    ? (true, EnumerableHelper.Iterate(new Run(line.CurrentLine) { Foreground = Brushes.Gray }))
-                    : null;
+                return line.CurrentLine.Trim().StartsWith("//")
+                    ? ((bool Found, IEnumerable<Inline>? Inline)?)(true, EnumerableHelper.Iterate(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DimGray }))
+                    : line.CurrentLine.Trim().StartsWithAny(preprocessors)
+                                    ? (true, EnumerableHelper.Iterate(new Run(line.CurrentLine) { Foreground = Brushes.Gray }))
+                                    : null;
             }
         }
         (bool Found, IEnumerable<Inline>? Inline)? wordProcess((string CurrentWord, string? PrevWord) word)
