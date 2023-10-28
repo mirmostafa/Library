@@ -1,3 +1,5 @@
+using System.Globalization;
+
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
@@ -7,7 +9,7 @@ using TypeData = (string Name, string? NameSpace, System.Collections.Generic.IEn
 namespace Library.CodeGeneration;
 
 [Immutable]
-public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<string>? generics = null) : IEquatable<TypePath>
+public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null) : IEquatable<TypePath>
 {
     private readonly TypeData _data = Parse(fullPath, generics);
     private string? _fullName;
@@ -53,7 +55,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         typeInfo == null ? null : New(typeInfo);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string fullPath, IEnumerable<string>? generics = null) =>
+    public static TypePath New([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null) =>
         new(fullPath, generics);
 
     [return: NotNull]
@@ -61,11 +63,11 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         new(typePath.ArgumentNotNull().FullPath);
 
     [return: NotNull]
-    public static TypePath New<T>(IEnumerable<string>? generics = null) =>
+    public static TypePath New<T>(in IEnumerable<string>? generics = null) =>
         new(typeof(T).FullName!, generics);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in Type type, IEnumerable<string>? generics = null) =>
+    public static TypePath New([DisallowNull] in Type type, in IEnumerable<string>? generics = null) =>
         new(type.ArgumentNotNull().FullName!, generics);
 
     [return: NotNull]
@@ -91,7 +93,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         obj is TypePath path && this.Equals(path);
 
     public override int GetHashCode() =>
-        this.FullName.GetHashCode();
+        this.FullName.GetHashCode(StringComparison.Ordinal);
 
     [return: NotNull]
     public IEnumerable<string> GetNameSpaces()
@@ -118,23 +120,24 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
     public TypePath ToTypePath() =>
         new(this.FullName);
 
-    private static TypeData Parse(in string typePath, IEnumerable<string>? generics = null)
+    private static TypeData Parse(in string typePath, in IEnumerable<string>? generics = null)
     {
         Check.MustBeArgumentNotNull(typePath);
+        Check.MustBe(generics?.All(x => !x.IsNullOrEmpty()) ?? true, () => "Generic types cannot be null or empty.");
 
         var temp = typePath;
         var gens = new List<string>();
         // Find Generics
-        if (temp.Contains('<'))
+        if (temp.Contains('<', StringComparison.Ordinal))
         {
-            var indexOfGenSymbol = temp.IndexOf('<');
+            var indexOfGenSymbol = temp.IndexOf('<', StringComparison.Ordinal);
             var gen = temp[indexOfGenSymbol..].Trim('<').Trim('>');
             temp = temp[..indexOfGenSymbol];
             gens.AddRange(gen.Split(',').Select(x => x.Trim()));
         }
-        if (temp.Contains('`'))
+        if (temp.Contains('`', StringComparison.Ordinal))
         {
-            temp = temp.Remove(temp.IndexOf('`'), 2);
+            temp = temp.Remove(temp.IndexOf('`', StringComparison.Ordinal), 2);
         }
 
         if (generics?.Any() ?? false)
@@ -185,7 +188,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, IEnumerable<stri
         var buffer = new StringBuilder();
         if (!this.NameSpace.IsNullOrEmpty())
         {
-            _ = buffer.Append($"{this.NameSpace}.");
+            _ = buffer.Append(CultureInfo.CurrentCulture, $"{this.NameSpace}.");
         }
         _ = buffer.Append(this.Name);
         if (this.Generics.Any())

@@ -32,7 +32,6 @@ public static class ServiceHelper
     /// <param name="detach">Whether to detach the entity from the database.</param>
     /// <param name="logger">The logger.</param>
     /// <returns>The result of the operation.</returns>
-    [EditorBrowsable(EditorBrowsableState.Advanced)]
     public static async Task<Result> DeleteAsync<TViewModel, TDbEntity>([DisallowNull] IAsyncWrite<TViewModel> service, [DisallowNull] DbContext dbContext, TViewModel model, bool persist, bool? detach = null, ILogger? logger = null)
         where TDbEntity : class, IIdenticalEntity<long>, new()
         where TViewModel : IHasKey<long?>

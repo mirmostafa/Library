@@ -54,8 +54,9 @@ public sealed class Check
             Throw(getExceptionIfNot);
         }
     }
+
     public static void MustBe([DoesNotReturnIf(false)] bool ok, Func<string> getMessageIfNot) =>
-        MustBe(ok, ()=> new ValidationException(getMessageIfNot()));
+        MustBe(ok, () => new ValidationException(getMessageIfNot()));
 
     /// <summary>
     /// Checks if the given boolean is true, and throws a new instance of the specified exception if
