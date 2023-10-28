@@ -7,13 +7,9 @@ public static class TypeMemberNameHelper
 {
     public static string FixVariableName(in string memberName)
     {
-        //Create an array of illegal characters
         var illegalChars = new[] { "!", "#", "%", "^", "&", "*", "(", ")", "-", "+", "/", "\\", " " };
-
-        //Replace all illegal characters with underscores
         var result = memberName.ArgumentNotNull().Trim().ReplaceAll(illegalChars, "_");
 
-        //Detect language keywords
         if (LanguageKeywords.Keywords.Contains(result))
         {
             result = $"@{result}";
@@ -25,19 +21,22 @@ public static class TypeMemberNameHelper
     public static string ToArgName(in string name)
     {
         var buffer = Initialize(name);
-        return $"{buffer[Range.EndAt(1)].ToLower()}{buffer[1..]}";
+        var result = $"{buffer[Range.EndAt(1)].ToLower()}{buffer[1..]}";
+        return FixVariableName(result);
     }
 
     public static string ToFieldName(in string name)
     {
         var buffer = Initialize(name);
-        return $"_{buffer[Range.EndAt(1)].ToLower()}{buffer[1..]}";
+        var result = $"_{buffer[Range.EndAt(1)].ToLower()}{buffer[1..]}";
+        return FixVariableName(result);
     }
 
     public static string ToPropName(in string name)
     {
         var buffer = Initialize(name);
-        return $"{buffer[Range.EndAt(1)].ToUpper()}{buffer[1..]}";
+        var result = $"{buffer[Range.EndAt(1)].ToUpper()}{buffer[1..]}";
+        return FixVariableName(result);
     }
 
     private static string Initialize(in string name)
@@ -49,6 +48,6 @@ public static class TypeMemberNameHelper
             result = result[1..];
         }
 
-        return FixVariableName(result);
+        return result;
     }
 }
