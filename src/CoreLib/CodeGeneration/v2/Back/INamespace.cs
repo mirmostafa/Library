@@ -21,7 +21,25 @@ public sealed class Namespace(string name) : INamespace
     public ISet<IType> Types { get; } = new HashSet<IType>();
     public ISet<string> UsingNamespaces { get; } = new HashSet<string>();
 
-    public Result Validate() => Result.Success;
+    public Result Validate()
+    {
+        if (this.UsingNamespaces.Any(x => x.IsNullOrEmpty()))
+        {
+            return Result.CreateFailure(message: "Using namespace cannot be empty.");
+        }
+        if (this.Types.Any(x => x == null))
+        {
+            return Result.CreateFailure(message: "Type cannot be empty.");
+        }
+        foreach (var type in this.Types)
+        {
+            if (!type.Validate().TryParse(out var vr))
+            {
+                return vr;
+            }
+        }
+        return Result.Success;
+    }
 }
 
 public static class NamSpaceExtensions

@@ -98,16 +98,21 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [return: NotNull]
     public IEnumerable<string> GetNameSpaces()
     {
-        if (!this.NameSpace.IsNullOrEmpty())
-        {
-            yield return this.NameSpace;
-        }
+        return iterate().Compact().Distinct();
 
-        foreach (var generic in this.Generics)
+        IEnumerable<string> iterate()
         {
-            foreach (var genericNamespace in generic.GetNameSpaces())
+            if (!this.NameSpace.IsNullOrEmpty())
             {
-                yield return genericNamespace;
+                yield return this.NameSpace;
+            }
+
+            foreach (var generic in this.Generics)
+            {
+                foreach (var genericNamespace in generic.GetNameSpaces())
+                {
+                    yield return genericNamespace;
+                }
             }
         }
     }

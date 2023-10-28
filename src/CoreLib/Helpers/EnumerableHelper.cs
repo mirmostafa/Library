@@ -1686,4 +1686,18 @@ public static class EnumerableHelper
             yield return enumerator.Current;
         }
     }
+
+    public static TResult SelectImmutable<TItem, TResult>(this IEnumerable<TItem> items, in Func<TItem, TResult, TResult> selector, in TResult defaultResult)
+    {
+        var result = defaultResult;
+        if (items is { } && items.Any())
+        {
+            Check.MustBeArgumentNotNull(selector);
+            foreach (var item in items)
+            {
+                result = selector(item, result);
+            }
+        }
+        return result;
+    }
 }

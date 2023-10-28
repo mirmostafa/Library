@@ -287,7 +287,7 @@ public static class RoslynHelper
     }
 
     public static UsingDirectiveSyntax CreateUsingNameSpace(string usingNameSpace) =>
-                                SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(usingNameSpace));
+        SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(usingNameSpace));
 
     public static string GenerateCode(this SyntaxNode syntaxNode) =>
         syntaxNode.NormalizeWhitespace().ToFullString();

@@ -15,49 +15,36 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
         Check.MustBeArgumentNotNull(nameSpace);
 
         var root = RoslynHelper.CreateRoot();
-        if (!nameSpace.Validate().TryParse(out var vr1))
+        if (!nameSpace.Validate().TryParse(out var vr))
         {
-            return vr1.WithValue(string.Empty);
+            return vr.WithValue(string.Empty);
         }
         var rosNameSpace = RoslynHelper.CreateNamespace(nameSpace.Name);
         foreach (var type in nameSpace.Types)
         {
-            if (!type.Validate().TryParse(out var vr2))
-            {
-                return vr2.WithValue(string.Empty);
-            }
-
             var modifiers = GeneratorHelper.ToModifiers(type.AccessModifier, type.InheritanceModifier);
             var rosType = RoslynHelper.CreateType(TypePath.New(type.Name), modifiers);
             foreach (var baseType in type.BaseTypes)
             {
-                if (!baseType.NameSpace.IsNullOrEmpty())
-                {
-                    root = root.AddUsingNameSpace(baseType.NameSpace);
-                }
-
                 rosType = rosType.AddBase(baseType.FullName);
+                root = baseType.GetNameSpaces().SelectImmutable((ns, r) => r.AddUsingNameSpace(ns), root);
             }
             foreach (var member in type.Members.Compact())
             {
-                if (!member.Validate().TryParse(out var vr3))
-                {
-                    return vr3.WithValue(string.Empty);
-                }
-                var ros = member switch
+                (var codeMember, root) = member switch
                 {
                     IField field => createRosField(root, field),
                     IProperty prop => createRosProperty(root, prop),
                     IMethod method => createRosMethod(root, method, type.Name),
                     _ => throw new NotImplementedException(),
                 };
-                root = ros.Root;
-                rosType = rosType.AddMembers(ros.Member);
+                rosType = rosType.AddMembers(codeMember);
             }
             rosNameSpace = rosNameSpace.AddType(rosType);
         }
 
         nameSpace.UsingNamespaces.ForEach(x => root = root.AddUsingNameSpace(x));
+
         root = root.AddNameSpace(rosNameSpace);
         return Result<string>.CreateSuccess(root.GenerateCode());
 
@@ -95,7 +82,7 @@ internal static class GeneratorHelper
     internal static IEnumerable<SyntaxKind> ToModifiers(AccessModifier? access, InheritanceModifier? inheritance)
     {
         var result = new List<SyntaxKind>();
-        
+
         var modifier = access == null ? AccessModifier.None : access.Value;
         updateModifier(modifier, result, AccessModifier.Public, SyntaxKind.PublicKeyword);
         updateModifier(modifier, result, AccessModifier.Private, SyntaxKind.PrivateKeyword);
