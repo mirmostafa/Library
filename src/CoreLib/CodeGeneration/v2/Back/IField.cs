@@ -9,8 +9,14 @@ public interface IField : IMember
 }
 
 [Immutable]
-public sealed class Field(string name, TypePath type) : Member(name), IField
+public sealed class Field : Member, IField
 {
+    public Field(string name, TypePath type)
+        :base(name)
+    {
+        this.Type = type;
+        this.AccessModifier = AccessModifier.Private | AccessModifier.ReadOnly;
+    }
     public bool IsReadOnly { get; init; }
-    public TypePath Type { get; } = type;
+    public TypePath Type { get; }
 }

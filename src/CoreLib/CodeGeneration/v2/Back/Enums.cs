@@ -9,6 +9,7 @@ public enum AccessModifier
     Internal = 4,
     Public = 8,
     InternalProtected = Protected | Internal,
+    ReadOnly = 32
 }
 
 [Flags]

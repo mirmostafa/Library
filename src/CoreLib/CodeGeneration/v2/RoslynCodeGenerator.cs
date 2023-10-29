@@ -88,6 +88,7 @@ internal static class GeneratorHelper
         updateModifier(modifier, result, AccessModifier.Private, SyntaxKind.PrivateKeyword);
         updateModifier(modifier, result, AccessModifier.Internal, SyntaxKind.InternalKeyword);
         updateModifier(modifier, result, AccessModifier.Protected, SyntaxKind.ProtectedKeyword);
+        updateModifier(modifier, result, AccessModifier.ReadOnly, SyntaxKind.ReadOnlyKeyword);
 
         var inherit = inheritance == null ? InheritanceModifier.None : inheritance.Value;
         updateInheritance(inherit, result, InheritanceModifier.Sealed, SyntaxKind.SealedKeyword);

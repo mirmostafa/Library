@@ -42,7 +42,7 @@ public static class StringHelper
     /// <returns>The string with the added string at the end.</returns>
     [Pure]
     [return: NotNull]
-    public static string? Add(this string? str, string? s) =>
+    public static string? Add(this string? str, in string? s) =>
         string.Concat(str, s);
 
     /// <summary>
@@ -147,6 +147,9 @@ public static class StringHelper
     [return: NotNullIfNotNull(nameof(value))]
     public static string ArabicCharsToPersian(this string value) =>
         value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
+
+    public static string Build(this StringBuilder sb) =>
+            sb.ArgumentNotNull().ToString();
 
     /// <summary>
     /// Checks if all characters in the given string are valid according to the given validation function.
@@ -1456,6 +1459,4 @@ public static class StringHelper
     /// </summary>
     public static TryMethodResult<int> TryCountOf(this string str, char c, int index) =>
         CatchFunc(() => str.CountOf(c, index)).Fluent().WithNew(x => TryMethodResult<int>.TryParseResult(x.Exception is null, x.Result));
-    public static string Build(this StringBuilder sb) =>
-        sb.ArgumentNotNull().ToString();
 }
