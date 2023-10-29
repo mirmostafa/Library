@@ -23,5 +23,5 @@ public enum InheritanceModifier
     Sealed = 16,
     Static = 32,
     Partial = 64,
-    Const = 128,
+    Const = 128
 }

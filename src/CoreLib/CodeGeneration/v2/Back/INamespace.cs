@@ -52,7 +52,7 @@ public static class NamSpaceExtensions
 
     public static TNameSpace AddUsingNameSpace<TNameSpace>(this TNameSpace ns, params string[] nameSpaces) where TNameSpace : INamespace
     {
-        nameSpaces.ForEach(x => ns.UsingNamespaces.Add(x));
+        nameSpaces.Distinct().Compact().ForEach(x => ns.UsingNamespaces.Add(x));
         return ns;
     }
 }
