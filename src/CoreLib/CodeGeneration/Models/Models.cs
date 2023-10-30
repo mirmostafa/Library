@@ -6,7 +6,7 @@ namespace Library.CodeGeneration.Models;
 
 [Immutable]
 public readonly struct FieldInfo(
-        in string type,
+        in TypePath type,
         in string name,
         in string? comment = null,
         in MemberAttributes? accessModifier = null,
@@ -18,7 +18,7 @@ public readonly struct FieldInfo(
     public bool IsPartial { get; } = isPartial;
     public bool IsReadOnly { get; } = isReadOnly;
     public string Name { get; } = name;
-    public string Type { get; } = type;
+    public TypePath Type { get; } = type;
 }
 
 [Immutable]

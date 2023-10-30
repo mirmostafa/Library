@@ -1,11 +1,18 @@
 ﻿using System.Collections;
 using System.Diagnostics;
 
+using Library.Validations;
+
 namespace Library.Helpers;
 
 public interface ICastable
 {
     object? Value { get; }
+}
+
+public interface ICastable<T>
+{
+    T? Value { get; }
 }
 
 /// <summary>
@@ -32,6 +39,8 @@ public static class Caster
     /// <returns>A new Castable object.</returns>
     public static ICastable Cast(this object? obj)
         => new Castable(obj);
+    public static ICastable<T> CastSafe<T>(this T? obj)
+        => new Castable<T>(obj);
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
     public static T? Is<T>([DisallowNull] this ICastable o, T? defaultValue) where T : class
@@ -59,6 +68,9 @@ public static class Caster
     [return: NotNull]
     public static T To<T>([DisallowNull] this ICastable o)
         => (T)o.Value!;
+
+    public static TResult? To<T, TResult>([DisallowNull] this ICastable<T?> o, Func<T?, TResult?> converter)
+        => converter.ArgumentNotNull()(o.ArgumentNotNull().Value);
 
     public static byte ToByte([DisallowNull] this ICastable o, byte defaultValue = default, IFormatProvider? formatProvider = null)
     {
@@ -174,3 +186,4 @@ public static class Caster
 }
 
 internal readonly record struct Castable(object? Value) : ICastable { }
+internal readonly record struct Castable<T>(T? Value) : ICastable<T> { }

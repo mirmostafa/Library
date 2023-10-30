@@ -7,7 +7,6 @@ namespace Library.CodeGeneration.v2.Back;
 public interface IType : IValidatable
 {
     AccessModifier AccessModifier { get; }
-    ISet<IAttribute> Attributes { get; }
     ISet<TypePath> BaseTypes { get; }
     InheritanceModifier InheritanceModifier { get; }
     ISet<IMember> Members { get; }
@@ -22,7 +21,6 @@ public abstract class TypeBase : IType
         this.Name = name;
 
     public virtual AccessModifier AccessModifier { get; init; } = AccessModifier.Public;
-    public virtual ISet<IAttribute> Attributes { get; } = new HashSet<IAttribute>();
     public virtual ISet<TypePath> BaseTypes { get; } = new HashSet<TypePath>();
     public virtual InheritanceModifier InheritanceModifier { get; init; } = InheritanceModifier.Sealed;
     public virtual ISet<IMember> Members { get; } = new HashSet<IMember>();
