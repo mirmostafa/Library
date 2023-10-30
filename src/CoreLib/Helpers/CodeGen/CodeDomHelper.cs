@@ -423,15 +423,17 @@ public static class CodeDomHelper
     public static string GenerateCode(this CodeCompileUnit unit, params string[] directives)
     {
         var options = new CodeGeneratorOptions { BracingStyle = "C", BlankLinesBetweenMembers = true, VerbatimOrder = true, ElseOnClosing = false, IndentString = "    " };
-        using var result = new StringWriter();
+        using var writer = new StringWriter();
         using var provider = new CSharpCodeProvider();
         foreach (var directive in directives)
         {
-            provider.GenerateCodeFromCompileUnit(new CodeSnippetCompileUnit(directive), result, options);
+            provider.GenerateCodeFromCompileUnit(new CodeSnippetCompileUnit(directive), writer, options);
         }
 
-        provider.GenerateCodeFromCompileUnit(unit, result, options);
-        return result.ToString();
+        provider.GenerateCodeFromCompileUnit(unit, writer, options);
+        var result = writer.ToString();
+        result = RoslynHelper.ReformatCode(result);
+        return result;
     }
 
     /// <summary>

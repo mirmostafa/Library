@@ -161,18 +161,19 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
             : (temp, string.Empty);
 
         var genTypes = gens.Select(x => new TypePath(x));
-        if (nameSpace == "System")
-        {
-            (name, nameSpace) = name switch
-            {
-                "String" => ("string", ""),
-                "Boolean" => ("bool", ""),
-                "Int32" => ("int", ""),
-                "Int64" => ("long", ""),
-                "Single" => ("float", ""),
-                _ => (name, nameSpace),
-            };
-        }
+        // CodeCOM makes a mistake.
+        //if (nameSpace == "System")
+        //{
+        //    (name, nameSpace) = name switch
+        //    {
+        //        "String" => ("string", ""),
+        //        "Boolean" => ("bool", ""),
+        //        "Int32" => ("int", ""),
+        //        "Int64" => ("long", ""),
+        //        "Single" => ("float", ""),
+        //        _ => (name, nameSpace),
+        //    };
+        //}
 
         return (name, nameSpace, genTypes);
     }

@@ -350,6 +350,14 @@ public static class RoslynHelper
 
         return result;
     }
+
+    public static string ReformatCode(string sourceCode) => 
+        CSharpSyntaxTree.ParseText(sourceCode)
+            .GetRoot()
+            .NormalizeWhitespace()
+            .SyntaxTree
+            .GetText()
+            .ToString();
 }
 
 [Immutable]
