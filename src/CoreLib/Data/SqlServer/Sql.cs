@@ -192,6 +192,13 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>().ToList();
     }
 
+    public T? FirstOrDefault<T>(string query)
+        where T : new()
+    {
+        using var conn = new SqlConnection(this.ConnectionString);
+        return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>().FirstOrDefault();
+    }
+
     public IEnumerable<dynamic> Select(string query)
     {
         var columns = new List<string>();
