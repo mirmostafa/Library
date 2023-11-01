@@ -44,8 +44,14 @@ public sealed class Namespace(string name) : INamespace
 
 public static class NamSpaceExtensions
 {
-    public static TNameSpace AddType<TNameSpace>(this TNameSpace nameSpace, IType type) where TNameSpace : INamespace =>
-        nameSpace.Fluent(nameSpace.Types.Add(type));
+    public static TNameSpace AddType<TNameSpace>(this TNameSpace nameSpace, params IType[] types) where TNameSpace : INamespace
+    {
+        foreach (var type in types.Compact())
+        {
+            _ = nameSpace.Types.Add(type);
+        }
+        return nameSpace;
+    }
 
     public static TNameSpace AddUsingNameSpace<TNameSpace>(this TNameSpace ns, IEnumerable<string> nameSpaces) where TNameSpace : INamespace =>
         AddUsingNameSpace(ns, nameSpaces.ToArray());
