@@ -1309,27 +1309,6 @@ public static class StringHelper
     }
 
     /// <summary>
-    /// Splits a string by a separator, merges the resulting array back into a string with a
-    /// different separator, and optionally adds the separator to the end.
-    /// </summary>
-    /// <param name="str">The string to split and merge.</param>
-    /// <param name="splitSeparator">
-    /// The separator to use when splitting the string. If null, Environment.NewLine is used.
-    /// </param>
-    /// <param name="mergeSeparator">
-    /// The separator to use when merging the string. If null, Environment.NewLine is used.
-    /// </param>
-    /// <param name="addSeparatorToEnd">
-    /// A flag indicating whether to add the merge separator to the end of the string.
-    /// </param>
-    /// <param name="options">Specifies the options to use when splitting the string.</param>
-    /// <returns>The split and merged string, or null if the original string is null or empty.</returns>
-    [return: NotNullIfNotNull(nameof(str))]
-    [Obsolete("Subject to remove. Do it by yourself!")]
-    public static string? SplitMerge(this string? str, string? splitSeparator = null, string? mergeSeparator = null, bool addSeparatorToEnd = true, StringSplitOptions options = StringSplitOptions.None) =>
-        str.IsNullOrEmpty() ? str : str.Split(splitSeparator ?? Environment.NewLine, options).Merge(mergeSeparator ?? Environment.NewLine, addSeparatorToEnd);
-
-    /// <summary>
     /// Splits a string into a sequence of key-value pairs. (To be used in `ConnectionString`-like strings)
     /// </summary>
     /// <param name="str">The string to split.</param>
