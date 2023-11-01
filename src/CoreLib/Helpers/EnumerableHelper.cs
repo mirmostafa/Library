@@ -6,7 +6,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 using Library.Collections;
-using Library.Exceptions;
 using Library.Interfaces;
 using Library.Results;
 using Library.Validations;
@@ -978,6 +977,67 @@ public static class EnumerableHelper
         (items1 == null && items2 == null) || (items1 != null && items2 != null && (items1.Equals(items2) || items1.SequenceEqual(items2)));
 
     /// <summary>
+    /// Converts a single item into an IEnumerable of that item.
+    /// </summary>
+    /// <param name="item">The item to convert.</param>
+    /// <returns>An IEnumerable containing the item.</returns>
+    /// <remarks>
+    /// This code creates an IEnumerable of type T and returns the item passed in as an argument.
+    /// </remarks>
+    [return: NotNull]
+    public static IEnumerable<T> Iterate<T>(T item)
+    {
+        //The yield keyword is used to return the item passed in as an argument.
+        yield return item;
+    }
+
+    [return: NotNull]
+    public static IEnumerable<T> Iterate<T>(params T[] items) =>
+            items.Iterate();
+
+    /// <summary>
+    /// Creates an IEnumerable from a given IEnumerable.
+    /// </summary>
+    /// <param name="source">The source IEnumerable.</param>
+    /// <returns>An IEnumerable.</returns>
+    public static IEnumerable<T> Iterate<T>(this IEnumerable<T> source)
+    {
+        //Check if the source is null
+        if (source is null)
+        {
+            //If it is, return an empty IEnumerable
+            yield break;
+        }
+        //Loop through each item in the source
+        foreach (var item in source)
+        {
+            //Return each item in the source
+            yield return item;
+        }
+    }
+
+    /// <summary>
+    /// Converts an IEnumerable to an IEnumerable of objects.
+    /// </summary>
+    /// <param name="items">The input IEnumerable to convert.</param>
+    /// <returns>An IEnumerable of objects containing the items from the input IEnumerable.</returns>
+    public static IEnumerable<object> Iterate(this IEnumerable items)
+    {
+        // Check if the input enumerable is null, if so, return an empty enumerable.
+        if (items is null)
+        {
+            yield break; // The sequence is empty, so we yield break to exit the enumeration.
+        }
+
+        // Iterate through each item in the input enumerable.
+        foreach (var item in items)
+        {
+            // Yield return each item, effectively converting it to an IEnumerable<object>.
+            yield return item;
+        }
+    }
+
+    /// <summary>
     /// Projects each element of an IEnumerable sequence into a new form using the specified mapping function.
     /// </summary>
     /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
@@ -1284,6 +1344,20 @@ public static class EnumerableHelper
         }
     }
 
+    public static TResult? SelectImmutable<TItem, TResult>(this IEnumerable<TItem?> items, in Func<TItem?, TResult?, TResult?> selector, in TResult? defaultResult = default)
+    {
+        var result = defaultResult;
+        if (items is { } && items.Any())
+        {
+            Check.MustBeArgumentNotNull(selector);
+            foreach (var item in items)
+            {
+                result = selector(item, result);
+            }
+        }
+        return result;
+    }
+
     /// <summary>
     /// Sets the value of the specified key in the list.
     /// </summary>
@@ -1454,46 +1528,6 @@ public static class EnumerableHelper
         return result;
     }
 
-    /// <summary>
-    /// Converts a single item into an IEnumerable of that item.
-    /// </summary>
-    /// <param name="item">The item to convert.</param>
-    /// <returns>An IEnumerable containing the item.</returns>
-    /// <remarks>
-    /// This code creates an IEnumerable of type T and returns the item passed in as an argument.
-    /// </remarks>
-    [return: NotNull]
-    public static IEnumerable<T> Iterate<T>(T item)
-    {
-        //The yield keyword is used to return the item passed in as an argument.
-        yield return item;
-    }
-
-    [return: NotNull]
-    public static IEnumerable<T> Iterate<T>(params T[] items) =>
-        items.Iterate();
-
-    /// <summary>
-    /// Creates an IEnumerable from a given IEnumerable.
-    /// </summary>
-    /// <param name="source">The source IEnumerable.</param>
-    /// <returns>An IEnumerable.</returns>
-    public static IEnumerable<T> Iterate<T>(this IEnumerable<T> source)
-    {
-        //Check if the source is null
-        if (source is null)
-        {
-            //If it is, return an empty IEnumerable
-            yield break;
-        }
-        //Loop through each item in the source
-        foreach (var item in source)
-        {
-            //Return each item in the source
-            yield return item;
-        }
-    }
-
     /// <summary> Converts a Dictionary<TKey, TValue> to an IEnumerable of key-value pairs.
     /// </summary> <typeparam name="TKey">The type of keys in the dictionary.</typeparam> <typeparam
     /// name="TValue">The type of values in the dictionary.</typeparam> <param name="source">The
@@ -1513,27 +1547,6 @@ public static class EnumerableHelper
         {
             // Yield return each key-value pair as a tuple (TKey, TValue).
             yield return (item.Key, item.Value);
-        }
-    }
-
-    /// <summary>
-    /// Converts an IEnumerable to an IEnumerable of objects.
-    /// </summary>
-    /// <param name="items">The input IEnumerable to convert.</param>
-    /// <returns>An IEnumerable of objects containing the items from the input IEnumerable.</returns>
-    public static IEnumerable<object> Iterate(this IEnumerable items)
-    {
-        // Check if the input enumerable is null, if so, return an empty enumerable.
-        if (items is null)
-        {
-            yield break; // The sequence is empty, so we yield break to exit the enumeration.
-        }
-
-        // Iterate through each item in the input enumerable.
-        foreach (var item in items)
-        {
-            // Yield return each item, effectively converting it to an IEnumerable<object>.
-            yield return item;
         }
     }
 
@@ -1685,19 +1698,5 @@ public static class EnumerableHelper
             //Return the current element
             yield return enumerator.Current;
         }
-    }
-
-    public static TResult SelectImmutable<TItem, TResult>(this IEnumerable<TItem> items, in Func<TItem, TResult, TResult> selector, in TResult defaultResult)
-    {
-        var result = defaultResult;
-        if (items is { } && items.Any())
-        {
-            Check.MustBeArgumentNotNull(selector);
-            foreach (var item in items)
-            {
-                result = selector(item, result);
-            }
-        }
-        return result;
     }
 }
