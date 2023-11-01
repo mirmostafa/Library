@@ -25,6 +25,10 @@ public static partial class SqlStatementBuilder
     {
         Check.MustBeArgumentNotNull(statement?.TableName);
         var result = new StringBuilder("SELECT");
+        if (statement.TopCount > 0)
+        {
+            _ = result.Append($" TOP ({statement.TopCount})");
+        }
         if (statement.Columns.Any())
         {
             foreach (var column in statement.Columns)
@@ -117,6 +121,12 @@ public static partial class SqlStatementBuilder
     public static TStatementOnTable SetSchema<TStatementOnTable>([DisallowNull] this TStatementOnTable statement, string? schema) where TStatementOnTable : IStatementOnTable
         => statement.ArgumentNotNull().Fluent(() => statement.Schema = schema);
 
+    public static ISelectStatement SetTopCount([DisallowNull] this ISelectStatement statement, int? topCount)
+    {
+        Check.MustBeArgumentNotNull(statement, nameof(statement));
+        return statement.With(x => x.TopCount = topCount);
+    }
+
     public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)
         => statement.ArgumentNotNull().Fluent(statement.Columns.Clear).GetValue();
 
@@ -142,6 +152,8 @@ public static partial class SqlStatementBuilder
         public string? Schema { get; set; }
         public string TableName { get; set; }
 
+        public int? TopCount { get; }
+        int? ISelectStatement.TopCount { get; set; }
         public string? WhereClause { get; set; }
     }
 }

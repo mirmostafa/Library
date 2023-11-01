@@ -4,6 +4,8 @@ public interface ISelectStatement : IStatementOnTable, IWhereClause
 {
     IList<string> Columns { get; }
 
+    int? TopCount { get; set; }
+
     string? OrderByColumn { get; set; }
 
     OrderByDirection OrderByDirection { get; set; }
