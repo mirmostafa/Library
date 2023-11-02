@@ -64,10 +64,12 @@ public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(
     /// Creates a new instance of the Codes class.
     /// </summary>
     /// <returns>A new instance of the Codes class.</returns>
-    public static Codes New(IEnumerable<Code> codes) =>
-        new(codes);
+    public static Codes New(IEnumerable<Code> arg) =>
+        new(arg);
+
     public static Codes New(params Code[] codes) =>
         new(codes);
+
     public static Codes New(params Codes[] codes) =>
         new(codes);
 
@@ -87,13 +89,11 @@ public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(
     public static Codes operator +(Codes c1, Codes c2) =>
         new(c1.Iterate().AddRangeImmuted(c2.Iterate()));
 
-    /// <summary>
-    /// Adds a new Code item to the Codes collection.
-    /// </summary>
-    /// <param name="code">The Code item to be added.</param>
-    /// <returns>A new Codes instance containing the added Code item.</returns>
     public Codes Add(Code code) =>
         new(this.AddImmuted(code));
+
+    public Codes AddRange(IEnumerable<Code> codes) =>
+        new(this.AddRangeImmuted(codes));
 
     /// <summary>
     /// Composes all Code items in the Codes collection into a single Code.

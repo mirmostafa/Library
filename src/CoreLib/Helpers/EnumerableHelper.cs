@@ -509,10 +509,12 @@ public static class EnumerableHelper
     /// <summary>
     /// Returns an IEnumerable of non-null elements from the given IEnumerable of nullable elements.
     /// </summary>
+    [return: NotNull]
     public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items) where TSource : class =>
         items?
              .Where([DebuggerStepThrough] (x) => x is not null)
-             .Select([DebuggerStepThrough] (x) => x!) ?? Enumerable.Empty<TSource>();
+             .Select([DebuggerStepThrough] (x) => x!)
+        ?? Enumerable.Empty<TSource>();
 
     /// <summary>
     /// Checks if the given IEnumerable contains a key-value pair with the specified key.
@@ -735,6 +737,9 @@ public static class EnumerableHelper
         // Use the LINQ Where operator to filter elements that have already been added to the HashSet.
         return source.Where([DebuggerStepThrough] (x) => !buffer.Add(x));
     }
+
+    public static IEnumerable<T> RemoveDuplicates<T>(this IEnumerable<T> source)=> 
+        source.GroupBy(x => x).Select(x => x.First());
 
     public static IEnumerable<T> Flatten<T>([DisallowNull] IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren) =>
             roots.SelectAllChildren(getChildren);
@@ -1340,7 +1345,7 @@ public static class EnumerableHelper
     {
         foreach (var item in source)
         {
-            yield return await selectorAsync(item).ConfigureAwait(false);
+            yield return await selectorAsync(item);
         }
     }
 
@@ -1526,6 +1531,18 @@ public static class EnumerableHelper
             result.Add(key, value);
         }
         return result;
+    }
+
+    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> items)
+    {
+        if (items?.Any() != true)
+        {
+            yield break;
+        }
+        foreach (var item in items)
+        {
+            yield return item;
+        }
     }
 
     /// <summary> Converts a Dictionary<TKey, TValue> to an IEnumerable of key-value pairs.

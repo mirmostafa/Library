@@ -31,6 +31,13 @@ public static partial class ApplicationHelper
         }
     }
 
+    public static async Task DoEventsAsync<TApp>(this TApp app, int milliseconds)
+        where TApp : Application
+    {
+        await Task.Delay(500);
+        DoEvents(app);
+    }
+
     public static void DoEvents<TApp>(this TApp app)
         where TApp : Application
     {

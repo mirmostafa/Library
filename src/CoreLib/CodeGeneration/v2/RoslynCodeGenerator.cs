@@ -3,6 +3,7 @@ using Library.Helpers.CodeGen;
 using Library.Results;
 using Library.Validations;
 
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -44,9 +45,15 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
         }
 
         nameSpace.UsingNamespaces.ForEach(x => root = root.AddUsingNameSpace(x));
+        
+        root = root!.AddNameSpace(rosNameSpace);
 
-        root = root.AddNameSpace(rosNameSpace);
-        return Result<string>.CreateSuccess(root.GenerateCode());
+        var distinctUsings = root.DescendantNodes().OfType<UsingDirectiveSyntax>()
+            .GroupBy(u => u.Name?.ToString()).Select(g => g.First())
+            .Compact();
+        var finalRoot = root.WithUsings(SyntaxFactory.List(distinctUsings));
+
+        return Result<string>.CreateSuccess(finalRoot.GenerateCode());
 
         static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosField(CompilationUnitSyntax root, IField member)
         {
@@ -91,14 +98,14 @@ internal static class GeneratorHelper
         updateModifier(modifier, result, AccessModifier.ReadOnly, SyntaxKind.ReadOnlyKeyword);
 
         var inherit = inheritance == null ? InheritanceModifier.None : inheritance.Value;
-        updateInheritance(inherit, result, InheritanceModifier.Sealed, SyntaxKind.SealedKeyword);
         updateInheritance(inherit, result, InheritanceModifier.New, SyntaxKind.NewKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.Static, SyntaxKind.StaticKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.Sealed, SyntaxKind.SealedKeyword);
         updateInheritance(inherit, result, InheritanceModifier.Override, SyntaxKind.OverrideKeyword);
         updateInheritance(inherit, result, InheritanceModifier.Abstract, SyntaxKind.AbstractKeyword);
         updateInheritance(inherit, result, InheritanceModifier.Const, SyntaxKind.ConstKeyword);
-        updateInheritance(inherit, result, InheritanceModifier.Partial, SyntaxKind.PartialKeyword);
-        updateInheritance(inherit, result, InheritanceModifier.Static, SyntaxKind.StaticKeyword);
         updateInheritance(inherit, result, InheritanceModifier.Virtual, SyntaxKind.VirtualKeyword);
+        updateInheritance(inherit, result, InheritanceModifier.Partial, SyntaxKind.PartialKeyword);
 
         return result;
 
