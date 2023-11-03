@@ -101,6 +101,18 @@ public static class EnumerableHelper
         return list; // Return the updated collection with added items.
     }
 
+    public static void AddRange<TList, TItem>([DisallowNull] this TList list, params TItem[] items)
+        where TList : ICollection<TItem>
+    {
+        if (items?.Any() is true)
+        {
+            // Iterate through each item in the 'items' enumerable and add it to the collection.
+            foreach (var item in items)
+            {
+                list.Add(item);
+            }
+        }
+    }
     /// <summary>
     /// Adds a range of items to an ObservableCollection.
     /// </summary>
@@ -302,7 +314,7 @@ public static class EnumerableHelper
     /// <returns>True if the ICollection contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this ICollection source) =>
-        source.Count != 0; // Check if the count of elements in the ICollection is not zero.
+        source.Count!=0; // Check if the count of elements in the ICollection is not zero.
 
     /// <summary>
     /// Get a <see cref="Span{T}"/> view over a <see cref="List{T}"/>'s data. Items should not be

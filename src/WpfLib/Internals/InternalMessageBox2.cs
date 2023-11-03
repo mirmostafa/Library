@@ -57,9 +57,9 @@ public abstract class InternalMessageBox2
                 StartupLocation = startupLocation,
                 OwnerWindowHandle = hWnd
             };
-            if (controls.Length != 0)
+            if (controls.Any())
             {
-                _ = result.Controls.AddRange(controls);
+                result.Controls.AddRange(controls);
             }
             else
             {

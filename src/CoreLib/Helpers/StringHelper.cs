@@ -128,8 +128,10 @@ public static class StringHelper
         return sb;
     }
 
-    public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, IEnumerable<string> lines)
+    public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, IEnumerable<string>? lines)
     {
+        Check.MustBeArgumentNotNull(sb);
+        if(lines?.Any() == true)
         foreach (var line in lines)
         {
             _ = sb.AppendLine(line);
@@ -401,9 +403,12 @@ public static class StringHelper
     /// <summary>
     /// Formats a string using the specified arguments.
     /// </summary>
-    [Pure]
     public static string Format(this string format, params object[] args)
         => string.Format(format, args);
+
+    [Pure]
+    public static string Format(this string str, Func<string, string> formatter) =>
+        formatter.ArgumentNotNull()(str);
 
     /// <summary>
     /// Gets a sequence of key-value tuples from a string.
@@ -903,6 +908,15 @@ public static class StringHelper
         {
             action(str[i]);
         }
+    }
+
+    public static string Merge(this string s, IEnumerable<string> items, string delimiter)
+    {
+        if(!items.Any())
+            return s;
+        var result = new StringBuilder(s);
+        items.ForEach(item => result.Append($"{item}{delimiter}"));
+        return result.ToString().TrimEnd(delimiter);
     }
 
     /// <summary>
