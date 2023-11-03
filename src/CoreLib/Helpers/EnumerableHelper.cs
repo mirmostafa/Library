@@ -17,24 +17,6 @@ namespace Library.Helpers;
 public static class EnumerableHelper
 {
     /// <summary>
-    /// Adds an item to the System.Collections.Generic.ICollection`1.
-    /// </summary>
-    /// <typeparam name="TDic">The type of the dic.</typeparam>
-    /// <typeparam name="TKey">The type of the key.</typeparam>
-    /// <typeparam name="TValue">The type of the value.</typeparam>
-    /// <param name="dic">The dic.</param>
-    /// <param name="key">The key.</param>
-    /// <param name="value">The value.</param>
-    /// <returns></returns>
-    public static TDic Add<TDic, TKey, TValue>([DisallowNull] this TDic dic, in TKey key, in TValue value)
-        where TDic : IList<KeyValuePair<TKey, TValue>>
-    {
-        Check.MustBeArgumentNotNull(dic);
-        dic.Add(new(key, value));
-        return dic;
-    }
-
-    /// <summary>
     /// Adds the specified item immutably and returns a new instance of source.
     /// </summary>
     /// <typeparam name="T"></typeparam>
