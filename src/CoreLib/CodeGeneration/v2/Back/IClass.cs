@@ -30,4 +30,6 @@ public static class ClassExtensions
 
     public static TClass AddMember<TClass>(this TClass @class, IEnumerable<IMember> members) where TClass : IClass =>
         AddMember(@class, members?.ToArray() ?? []);
+    public static TClass AddBaseType<TClass>(this TClass @class, TypePath baseType) where TClass : IClass =>
+        @class.Fluent(c => c.BaseTypes.Add(baseType));
 }
