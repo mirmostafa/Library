@@ -19,7 +19,7 @@ public static partial class AdoHelper
     /// <returns>True if the SqlConnection can connect, false otherwise.</returns>
     public static async Task<bool> CanConnectAsync(this SqlConnection conn)
     {
-        var result = await conn.TryConnectAsync().ConfigureAwait(false);
+        var result = await conn.TryConnectAsync();
         return result.IsSucceed;
     }
 
@@ -116,10 +116,10 @@ public static partial class AdoHelper
         {
             if (openConnection)
             {
-                await connection.OpenAsync().ConfigureAwait(false);
+                await connection.OpenAsync();
             }
 
-            return await actionAsync(connection).ConfigureAwait(false);
+            return await actionAsync(connection);
         }
         finally
         {
@@ -138,10 +138,10 @@ public static partial class AdoHelper
         {
             if (openConnection)
             {
-                await connection.OpenAsync().ConfigureAwait(false);
+                await connection.OpenAsync();
             }
 
-            await actionAsync(connection).ConfigureAwait(false);
+            await actionAsync(connection);
         }
         finally
         {
@@ -172,7 +172,7 @@ public static partial class AdoHelper
         Check.MustBeArgumentNotNull(sql);
 
         using var command = connection.CreateCommand(sql, fillParams);
-        return await connection.EnsureClosedAsync(conn => executeAsync(command), true).ConfigureAwait(false);
+        return await connection.EnsureClosedAsync(conn => executeAsync(command), true);
     }
 
     public static int ExecuteNonQuery(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null)
@@ -226,14 +226,14 @@ public static partial class AdoHelper
             }
         };
         connection.Open();
-        return await command.ExecuteReaderAsync(behavior).ConfigureAwait(false);
+        return await command.ExecuteReaderAsync(behavior);
     }
 
     public static object ExecuteScalar(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null)
             => connection.Execute(cmd => cmd.ExecuteScalar(), sql, fillParams);
 
     public static async Task<object?> ExecuteScalarAsync(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null)
-            => await connection.ExecuteAsync(cmd => cmd.ExecuteScalarAsync(), sql, fillParams).ConfigureAwait(false);
+            => await connection.ExecuteAsync(cmd => cmd.ExecuteScalarAsync(), sql, fillParams);
 
     public static object? ExecuteStoredProcedure(this SqlConnection connection,
             string spName,
@@ -671,7 +671,7 @@ public static partial class AdoHelper
     {
         try
         {
-            await conn.EnsureClosedAsync(c => c.OpenAsync()).ConfigureAwait(false);
+            await conn.EnsureClosedAsync(c => c.OpenAsync());
             return TryMethodResult.CreateSuccess();
         }
         catch (Exception ex)

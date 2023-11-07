@@ -6,6 +6,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+
 using MethodParameterInfo = (Library.CodeGeneration.TypePath Type, string Name);
 using PropertyAccessorInfo = (bool Has, System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.CSharp.SyntaxKind>? AccessModifiers);
 using RosClass = Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax;
@@ -57,13 +59,13 @@ public static class RoslynHelper
         return type.AddMembers(method);
     }
 
-    public static CompilationUnitSyntax AddNameSpace(this CompilationUnitSyntax root, NamespaceDeclarationSyntax nameSpace) =>
-        root.ArgumentNotNull().WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(nameSpace));
+    public static CompilationUnitSyntax AddNameSpace(this CompilationUnitSyntax root, BaseNamespaceDeclarationSyntax nameSpace) =>
+        root.ArgumentNotNull().WithMembers(SingletonList<MemberDeclarationSyntax>(nameSpace));
 
-    public static CompilationUnitSyntax AddNameSpace(this CompilationUnitSyntax root, string nameSpaceName, out NamespaceDeclarationSyntax nameSpace)
+    public static CompilationUnitSyntax AddNameSpace(this CompilationUnitSyntax root, string nameSpaceName, out BaseNamespaceDeclarationSyntax nameSpace)
     {
         nameSpace = CreateNamespace(nameSpaceName);
-        return root.ArgumentNotNull().WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(nameSpace));
+        return root.ArgumentNotNull().WithMembers(SingletonList<MemberDeclarationSyntax>(nameSpace));
     }
 
     public static RosClass AddProperty<TPropertyType>(this RosClass type, string name, bool hasSetAccessor = true, bool hasGetAccessor = true) =>
@@ -121,7 +123,7 @@ public static class RoslynHelper
         return type.AddMembers(property);
     }
 
-    public static NamespaceDeclarationSyntax AddType(this NamespaceDeclarationSyntax nameSpace, RosClass type)
+    public static BaseNamespaceDeclarationSyntax AddType(this BaseNamespaceDeclarationSyntax nameSpace, RosClass type)
     {
         Checker.MustBeArgumentNotNull(nameSpace);
 
@@ -131,12 +133,12 @@ public static class RoslynHelper
     {
         Checker.MustBeArgumentNotNull(type);
 
-        return type.WithBaseList(SyntaxFactory.BaseList(new SeparatedSyntaxList<BaseTypeSyntax>().Add(SyntaxFactory.SimpleBaseType(SyntaxFactory.ParseTypeName(baseClassName)))));
+        return type.WithBaseList(BaseList(new SeparatedSyntaxList<BaseTypeSyntax>().Add(SimpleBaseType(ParseTypeName(baseClassName)))));
     }
-    public static NamespaceDeclarationSyntax AddType(this NamespaceDeclarationSyntax nameSpace, string typeName) =>
+    public static BaseNamespaceDeclarationSyntax AddType(this BaseNamespaceDeclarationSyntax nameSpace, string typeName) =>
         nameSpace.AddType(typeName, out _);
 
-    public static NamespaceDeclarationSyntax AddType(this NamespaceDeclarationSyntax nameSpace, string typeName, out RosClass type, IEnumerable<SyntaxKind>? modifiers = null)
+    public static BaseNamespaceDeclarationSyntax AddType(this BaseNamespaceDeclarationSyntax nameSpace, string typeName, out RosClass type, IEnumerable<SyntaxKind>? modifiers = null)
     {
         Checker.MustBeArgumentNotNull(nameSpace);
 
@@ -147,18 +149,18 @@ public static class RoslynHelper
     public static CompilationUnitSyntax AddUsingNameSpace(this CompilationUnitSyntax root, string usingNamespace) =>
         root.ArgumentNotNull().AddUsings(CreateUsingNameSpace(usingNamespace));
 
-    public static NamespaceDeclarationSyntax AddUsingNameSpace(this NamespaceDeclarationSyntax nameSpace, string usingNamespace)
+    public static BaseNamespaceDeclarationSyntax AddUsingNameSpace(this BaseNamespaceDeclarationSyntax nameSpace, string usingNamespace)
     {
         Checker.MustBeArgumentNotNull(nameSpace);
 
-        var usingDirective = SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(usingNamespace));
+        var usingDirective = UsingDirective(ParseName(usingNamespace));
         return nameSpace.AddUsings(usingDirective);
     }
 
     public static RosMethod CreateConstructor(string className, IEnumerable<SyntaxKind>? modifiers = null, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null)
     {
         modifiers ??= EnumerableHelper.Iterate(SyntaxKind.PublicKeyword);
-        var ctor = SyntaxFactory.ConstructorDeclaration(className).WithModifiers(modifiers.ToSyntaxTokenList());
+        var ctor = ConstructorDeclaration(className).WithModifiers(modifiers.ToSyntaxTokenList());
         return InnerCreateBaseMethod(new(modifiers, null, TypePath.GetName(className), parameters, body), ctor);
     }
 
@@ -166,11 +168,11 @@ public static class RoslynHelper
     {
         Checker.MustBeArgumentNotNull(fieldInfo);
 
-        var result = SyntaxFactory.FieldDeclaration(
-            SyntaxFactory.VariableDeclaration(
-                SyntaxFactory.ParseTypeName(fieldInfo.Type.FullName),
-                SyntaxFactory.SeparatedList(new[] {
-                    SyntaxFactory.VariableDeclarator(SyntaxFactory.Identifier(fieldInfo.Name))
+        var result = FieldDeclaration(
+            VariableDeclaration(
+                ParseTypeName(fieldInfo.Type.FullName),
+                SeparatedList(new[] {
+                    VariableDeclarator(Identifier(fieldInfo.Name))
         })));
         if (fieldInfo.AccessModifiers?.Any() ?? false)
         {
@@ -190,15 +192,15 @@ public static class RoslynHelper
             modifiers = modifiers.AddImmuted(SyntaxKind.StaticKeyword);
         }
 
-        RosMethod result = SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName(methodInfo.ReturnType?.FullName ?? "void"), methodInfo.Name).WithModifiers(modifiers.ToSyntaxTokenList());
+        RosMethod result = MethodDeclaration(ParseTypeName(methodInfo.ReturnType?.FullName ?? "void"), methodInfo.Name).WithModifiers(modifiers.ToSyntaxTokenList());
 
         result = InnerCreateBaseMethod(methodInfo, result);
         return result;
     }
 
-    public static NamespaceDeclarationSyntax CreateNamespace(string nameSpaceName)
+    public static BaseNamespaceDeclarationSyntax CreateNamespace(string nameSpaceName)
     {
-        var result = SyntaxFactory.NamespaceDeclaration(SyntaxFactory.ParseName(nameSpaceName));
+        var result = FileScopedNamespaceDeclaration(ParseName(nameSpaceName));
         return result;
     }
 
@@ -211,17 +213,17 @@ public static class RoslynHelper
         {
             if (propertyInfo.GetAccessor.Has)
             {
-                result = result.AddAccessorListAccessors(SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+                result = result.AddAccessorListAccessors(AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
             }
             if (propertyInfo.SetAccessor.Has)
             {
-                result = result.AddAccessorListAccessors(SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+                result = result.AddAccessorListAccessors(AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
             }
         }
         else
         {
-            result = result.AddAccessorListAccessors(SyntaxFactory.AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
-            result = result.AddAccessorListAccessors(SyntaxFactory.AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
+            result = result.AddAccessorListAccessors(AccessorDeclaration(SyntaxKind.GetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
+            result = result.AddAccessorListAccessors(AccessorDeclaration(SyntaxKind.SetAccessorDeclaration).WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
         }
 
         return result;
@@ -241,53 +243,53 @@ public static class RoslynHelper
         var result = InnerCreatePropertyBase(propertyInfo);
         if (propertyInfo.GetAccessor.Has || propertyInfo.SetAccessor.Has)
         {
-            var accessors = SyntaxFactory.List<AccessorDeclarationSyntax>();
+            var accessors = List<AccessorDeclarationSyntax>();
             if (propertyInfo.GetAccessor.Has)
             {
-                accessors = accessors.Add(SyntaxFactory.AccessorDeclaration(
+                accessors = accessors.Add(AccessorDeclaration(
                         SyntaxKind.GetAccessorDeclaration,
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ReturnStatement(SyntaxFactory.IdentifierName(field.GetName()))
+                        Block(
+                            SingletonList<StatementSyntax>(
+                                ReturnStatement(IdentifierName(field.GetName()))
                             )
                         )
                     ));
             }
             if (propertyInfo.SetAccessor.Has)
             {
-                accessors = accessors.Add(SyntaxFactory.AccessorDeclaration(
+                accessors = accessors.Add(AccessorDeclaration(
                         SyntaxKind.SetAccessorDeclaration,
-                        SyntaxFactory.Block(
-                            SyntaxFactory.SingletonList<StatementSyntax>(
-                                SyntaxFactory.ExpressionStatement(
-                                    SyntaxFactory.AssignmentExpression(
+                        Block(
+                            SingletonList<StatementSyntax>(
+                                ExpressionStatement(
+                                    AssignmentExpression(
                                         SyntaxKind.SimpleAssignmentExpression,
-                                        SyntaxFactory.IdentifierName(field.GetName()),
-                                        SyntaxFactory.IdentifierName("value")
+                                        IdentifierName(field.GetName()),
+                                        IdentifierName("value")
                                     )
                                 )
                             )
                         )
                     ));
             }
-            result = result.WithAccessorList(SyntaxFactory.AccessorList(accessors));
+            result = result.WithAccessorList(AccessorList(accessors));
         }
         return result;
     }
 
     public static CompilationUnitSyntax CreateRoot() =>
-        SyntaxFactory.CompilationUnit();
+        CompilationUnit();
 
     public static RosClass CreateType(TypePath typeName, IEnumerable<SyntaxKind>? modifiers = null)
     {
         Checker.MustBeArgumentNotNull(typeName?.Name);
 
         modifiers ??= new[] { SyntaxKind.PublicKeyword, SyntaxKind.SealedKeyword };
-        return SyntaxFactory.ClassDeclaration(typeName.Name).WithModifiers(modifiers.ToSyntaxTokenList());
+        return ClassDeclaration(typeName.Name).WithModifiers(modifiers.ToSyntaxTokenList());
     }
 
     public static UsingDirectiveSyntax CreateUsingNameSpace(string usingNameSpace) =>
-        SyntaxFactory.UsingDirective(SyntaxFactory.ParseName(usingNameSpace));
+        UsingDirective(ParseName(usingNameSpace));
 
     public static string GenerateCode(this SyntaxNode syntaxNode) =>
         syntaxNode.NormalizeWhitespace().ToFullString();
@@ -316,11 +318,11 @@ public static class RoslynHelper
                     createParam(p);
                 if (paramIndex != paramArray.Length - 1)
                 {
-                    nodes[++nodeIndex] = SyntaxFactory.Token(SyntaxKind.CommaToken);
+                    nodes[++nodeIndex] = Token(SyntaxKind.CommaToken);
                 }
                 nodeIndex++;
             }
-            result = result.WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList<ParameterSyntax>(nodes)));
+            result = result.WithParameterList(ParameterList(SeparatedList<ParameterSyntax>(nodes)));
         }
         if (!methodInfo.Body.IsNullOrEmpty())
         {
@@ -328,21 +330,21 @@ public static class RoslynHelper
 
             result = lines switch
             {
-                //{ Length: > 1 } => result.WithBody(SyntaxFactory.Block(lines.Select(x => SyntaxFactory.ParseStatement(x)))),
-                //{ Length: 1 } => result.WithExpressionBody(SyntaxFactory.ArrowExpressionClause(SyntaxFactory.ParseExpression(lines[0]))),
+                //{ Length: > 1 } => result.WithBody(Block(lines.Select(x => ParseStatement(x)))),
+                //{ Length: 1 } => result.WithExpressionBody(ArrowExpressionClause(ParseExpression(lines[0]))),
                 //_ => throw new NotImplementedException()
-                _ => result.WithBody(SyntaxFactory.Block(lines.Select(x => SyntaxFactory.ParseStatement(x)))),
+                _ => result.WithBody(Block(lines.Select(x => ParseStatement(x)))),
             };
         }
         return result;
 
         static ParameterSyntax createParam(MethodParameterInfo p) =>
-            SyntaxFactory.Parameter(SyntaxFactory.Identifier(p.Name)).WithType(SyntaxFactory.ParseTypeName(p.Type.FullName));
+            Parameter(Identifier(p.Name)).WithType(ParseTypeName(p.Type.FullName));
     }
 
     private static RosProp InnerCreatePropertyBase(RosPropertyInfo propertyInfo)
     {
-        var result = SyntaxFactory.PropertyDeclaration(SyntaxFactory.ParseTypeName(propertyInfo.Type.FullName), propertyInfo.Name);
+        var result = PropertyDeclaration(ParseTypeName(propertyInfo.Type.FullName), propertyInfo.Name);
         if (propertyInfo.Modifiers?.Any() ?? false)
         {
             result = result.AddModifiers(propertyInfo.Modifiers.ToSyntaxTokenArray());
@@ -351,7 +353,7 @@ public static class RoslynHelper
         return result;
     }
 
-    public static string ReformatCode(string sourceCode) => 
+    public static string ReformatCode(string sourceCode) =>
         CSharpSyntaxTree.ParseText(sourceCode)
             .GetRoot()
             .NormalizeWhitespace()
@@ -464,7 +466,7 @@ internal static partial class Helpers
             {
                 if (kind is { } k)
                 {
-                    yield return SyntaxFactory.Token(k);
+                    yield return Token(k);
                 }
             }
         }
@@ -476,7 +478,7 @@ internal static partial class Helpers
 
         foreach (var kind in syntaxKinds ?? Enumerable.Empty<SyntaxKind>())
         {
-            var token = SyntaxFactory.Token(kind);
+            var token = Token(kind);
             tokenList = tokenList.Add(token);
         }
 
