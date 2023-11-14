@@ -99,7 +99,7 @@ public sealed class Check
     /// </summary>
     /// <param name="obj">The object to check.</param>
     /// <param name="argName">The name of the argument.</param>
-    public static void MustBeArgumentNotNull([NotNull][AllowNull] object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
+    public static void MustBeArgumentNotNull([NotNull][AllowNull] in object? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
         MustBe(obj is not null, () => new ArgumentNullException(argName));
 
     /// <summary>
