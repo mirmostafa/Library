@@ -11,8 +11,6 @@ namespace Library.Wpf.Windows;
 
 public abstract class LibApp : Bases.ApplicationBase
 {
-    private static FastLogger? _logger;
-
     protected LibApp()
     {
         this.Logger = new FastLogger();
@@ -28,9 +26,9 @@ public abstract class LibApp : Bases.ApplicationBase
 
     public static string? ApplicationTitle => ApplicationHelper.ApplicationTitle ?? Current?.MainWindow?.Title;
 
-    public static FastLogger AppLogger => _logger ??= Current.Cast().To<LibApp>().Logger;
+    public static FastLogger AppLogger => Current.Cast().To<LibApp>().Logger;
 
-    public FastLogger Logger { get; private set; }
+    public FastLogger Logger { get; }
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
     public string? Title => ApplicationTitle;
@@ -53,7 +51,7 @@ public abstract class LibApp : Bases.ApplicationBase
                 _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message ?? "Operation canceled by user.", owner(ex));
                 break;
 
-            case System.Data.SqlClient.SqlException ex when ex?.Message?.Contains("A transport-level error has occurred when receiving results from the server") ?? false:
+            case System.Data.SqlClient.SqlException ex when ex.Message?.Contains("A transport-level error has occurred when receiving results from the server") ?? false:
                 this.Logger.Fatal(ex.GetFullMessage(), sender: ex.Source ?? title);
                 _ = MsgBox2.Error("Error on connecting to database", text: ex.Message, detailsExpandedText: "Make sure SQL Server service is up and function, and the database exists.");
                 break;

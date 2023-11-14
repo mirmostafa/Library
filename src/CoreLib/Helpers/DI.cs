@@ -12,7 +12,7 @@ namespace Library.Helpers;
 /// </summary>
 public static class DI
 {
-    private static IServiceProvider? _serviceProvider = null;
+    private static IServiceProvider? _serviceProvider;
 
     /// <summary>
     /// Gets the service of the specified type.
@@ -20,22 +20,23 @@ public static class DI
     /// <typeparam name="T">The type of the service.</typeparam>
     /// <returns>The service of the specified type.</returns>
     /// <exception cref="LibraryException">Thrown when DI is not initiated.</exception>
-    /// <exception cref="ObjectNotFoundException">Thrown when unable to resolve service for the specified type.</exception>
+    /// <exception cref="ObjectNotFoundException">
+    /// Thrown when unable to resolve service for the specified type.
+    /// </exception>
     [DebuggerStepThrough]
     [return: NotNull]
     public static T GetService<T>()
     {
-        _serviceProvider.NotNull(() => new LibraryException($"{nameof(DI)} not initiated."));
+        _ = _serviceProvider.NotNull(() => new LibraryException($"{nameof(DI)} not initiated."));
 
         LibLogger.Debug($"Requested service: {typeof(T)}", typeof(DI));
-        var result = _serviceProvider.GetService<T>().NotNull(() => new ObjectNotFoundException($"Unable to resolve service for type {typeof(T)}."));
-        return result;
+        return _serviceProvider.GetService<T>().NotNull(() => new ObjectNotFoundException($"Unable to resolve service for type {typeof(T)}."));
     }
 
     /// <summary>
     /// Initializes the DI class.
     /// </summary>
     /// <param name="serviceProvider">The service provider.</param>
-    public static void Initialize(in IServiceProvider serviceProvider)
-            => _serviceProvider = serviceProvider;
+    public static void Initialize(in IServiceProvider serviceProvider) =>
+        _serviceProvider = serviceProvider;
 }
