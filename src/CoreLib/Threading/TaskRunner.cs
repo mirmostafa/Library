@@ -35,7 +35,8 @@ public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
 
     public TaskRunner Then([DisallowNull] Func<CancellationToken, Task> func)
     {
-        Checker.MustBe<CommonException>(!this.IsRunning);
+        CheckIfNotRunning();
+
         Checker.MustBeArgumentNotNull(func);
         this._funcList.Add(func);
         return this;

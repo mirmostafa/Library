@@ -13,7 +13,6 @@ public abstract class TaskRunnerBase<TSelf, TResult>
 {
     private Action<TResult>? _onEnded;
     private Action<Exception>? _onException;
-    private bool _isRunning;
 
     public bool IsRunning { get; private set; }
 
@@ -26,8 +25,13 @@ public abstract class TaskRunnerBase<TSelf, TResult>
         return this.Me();
     }
 
+    protected void CheckIfNotRunning() =>
+        Checker.MustBe(!this.IsRunning, () => new Exceptions.InvalidOperationException($"{nameof(TSelf)} is already running."));
+
     public async Task<TResult> RunAsync(CancellationToken token = default)
     {
+        CheckIfNotRunning();
+
         TResult result = default!;
         try
         {
@@ -49,8 +53,8 @@ public abstract class TaskRunnerBase<TSelf, TResult>
 
     protected abstract TResult GetErrorResult(Exception exception);
 
-    protected abstract Task<TResult> OnRunningAsync(CancellationToken token);
-
     protected virtual TSelf Me() =>
         (TSelf)this;
+
+    protected abstract Task<TResult> OnRunningAsync(CancellationToken token);
 }

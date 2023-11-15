@@ -1,10 +1,13 @@
 ﻿using Library.CodeGeneration;
 using Library.DesignPatterns.Markers;
+using Library.Extensions.Options;
+using Library.Results;
 using Library.Validations;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -19,6 +22,13 @@ namespace Library.Helpers.CodeGen;
 
 public static class RoslynHelper
 {
+    public static RosClass AddBase(this RosClass type, string baseClassName)
+    {
+        Checker.MustBeArgumentNotNull(type);
+
+        return type.WithBaseList(BaseList(new SeparatedSyntaxList<BaseTypeSyntax>().Add(SimpleBaseType(ParseTypeName(baseClassName)))));
+    }
+
     public static RosClass AddConstructor(this RosClass type, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null, IEnumerable<SyntaxKind>? modifiers = null) =>
         type.AddConstructor(out _, parameters, body);
 
@@ -85,10 +95,10 @@ public static class RoslynHelper
     public static RosClass AddProperty<TPropertyType>(this RosClass type, string name, out RosProp prop, bool hasSetAccessor = true, bool hasGetAccessor = true) =>
         type.AddProperty(name, typeof(TPropertyType), out prop, hasSetAccessor, hasGetAccessor);
 
-    public static RosClass AddProperty(this RosClass type, RosPropertyInfo propertyInfo) =>
+    public static RosClass AddProperty(this RosClass type, [DisallowNull] RosPropertyInfo propertyInfo) =>
         type.AddProperty(propertyInfo, out _);
 
-    public static RosClass AddProperty(this RosClass type, RosPropertyInfo propertyInfo, out RosProp property)
+    public static RosClass AddProperty([DisallowNull] this RosClass type, [DisallowNull] RosPropertyInfo propertyInfo, [DisallowNull] out RosProp property)
     {
         Checker.MustBeArgumentNotNull(type);
 
@@ -99,10 +109,10 @@ public static class RoslynHelper
     public static RosClass AddPropertyWithBackingField<TPropertyType>(this RosClass type, string propertyName) =>
         type.AddPropertyWithBackingField(new RosPropertyInfo(propertyName, typeof(TPropertyType)));
 
-    public static RosClass AddPropertyWithBackingField(this RosClass type, RosPropertyInfo propertyInfo, RosFieldInfo? fieldInfo = null) =>
+    public static RosClass AddPropertyWithBackingField([DisallowNull] this RosClass type, [DisallowNull] RosPropertyInfo propertyInfo, RosFieldInfo? fieldInfo = null) =>
         type.AddPropertyWithBackingField(propertyInfo, out _, fieldInfo);
 
-    public static RosClass AddPropertyWithBackingField(this RosClass type, RosPropertyInfo propertyInfo, out (RosProp Property, RosFld Field) fullProperty, RosFieldInfo? fieldInfo = null)
+    public static RosClass AddPropertyWithBackingField([DisallowNull] this RosClass type, [DisallowNull] RosPropertyInfo propertyInfo, out (RosProp Property, RosFld Field) fullProperty, RosFieldInfo? fieldInfo = null)
     {
         Checker.MustBeArgumentNotNull(type);
         Checker.MustBeArgumentNotNull(propertyInfo);
@@ -129,12 +139,7 @@ public static class RoslynHelper
 
         return nameSpace.AddMembers(type);
     }
-    public static RosClass AddBase(this RosClass type, string baseClassName)
-    {
-        Checker.MustBeArgumentNotNull(type);
 
-        return type.WithBaseList(BaseList(new SeparatedSyntaxList<BaseTypeSyntax>().Add(SimpleBaseType(ParseTypeName(baseClassName)))));
-    }
     public static BaseNamespaceDeclarationSyntax AddType(this BaseNamespaceDeclarationSyntax nameSpace, string typeName) =>
         nameSpace.AddType(typeName, out _);
 
@@ -156,6 +161,42 @@ public static class RoslynHelper
         var usingDirective = UsingDirective(ParseName(usingNamespace));
         return nameSpace.AddUsings(usingDirective);
     }
+
+    public static Result CompileOnFly(CompileOnFlyOptionsBase options)
+    {
+        var source = options switch
+        {
+            CompileOnFlyByFileOptions file => File.ReadAllText(file.SourceFile),
+            CompileOnFlyBySourceOptions src => src.Source,
+            _ => throw new NotImplementedException(),
+        };
+        var parsedSyntaxTree = ParseSyntaxTree(SourceText.From(source, Encoding.UTF8), CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Latest));
+        _ = options.FrameworkReferences.Add("mscorlib");
+        _ = options.FrameworkReferences.Add("System");
+        _ = options.FrameworkReferences.Add("System.Core.dll");
+        var defaultReferences = options.FrameworkReferences.Select(x => MetadataReference.CreateFromFile(x));
+        var defaultCompilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
+            .WithOverflowChecks(options.WithOverflowChecks)
+            .WithOptimizationLevel(options.IsReleaseMode ? OptimizationLevel.Release : OptimizationLevel.Debug);
+        var compilation = CSharpCompilation.Create($"{Guid.NewGuid}.dll", [parsedSyntaxTree], defaultReferences, defaultCompilationOptions);
+        try
+        {
+            var result = string.IsNullOrEmpty(options.OutputFile) ? compilation.Emit(Stream.Null) : compilation.Emit(options.OutputFile);
+            return result.Success
+                ? Result.Success
+                : Result.CreateFailure(errors: result.Diagnostics.Select(x => ((object)x.Id, (object)x.GetMessage())));
+        }
+        catch (Exception ex)
+        {
+            return Result.CreateFailure(ex);
+        }
+    }
+
+    public static Result CompileOnFlyByFile(string inputFile, string? outputFile = null) =>
+        CompileOnFly(new CompileOnFlyByFileOptions(inputFile, outputFile));
+
+    public static Result CompileOnFlyBySource(string source, string? outputFile = null) =>
+        CompileOnFly(new CompileOnFlyBySourceOptions(source, outputFile));
 
     public static RosMethod CreateConstructor(string className, IEnumerable<SyntaxKind>? modifiers = null, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null)
     {
@@ -300,6 +341,14 @@ public static class RoslynHelper
     public static string GetName(this RosClass type) =>
         type.ArgumentNotNull().Identifier.ValueText;
 
+    public static string ReformatCode(string sourceCode) =>
+        CSharpSyntaxTree.ParseText(sourceCode)
+            .GetRoot()
+            .NormalizeWhitespace()
+            .SyntaxTree
+            .GetText()
+            .ToString();
+
     private static RosMethod InnerCreateBaseMethod(RosMethodInfo methodInfo, RosMethod result)
     {
         Checker.MustBeArgumentNotNull(methodInfo);
@@ -352,14 +401,28 @@ public static class RoslynHelper
 
         return result;
     }
+}
 
-    public static string ReformatCode(string sourceCode) =>
-        CSharpSyntaxTree.ParseText(sourceCode)
-            .GetRoot()
-            .NormalizeWhitespace()
-            .SyntaxTree
-            .GetText()
-            .ToString();
+[Immutable]
+public sealed class CompileOnFlyByFileOptions(string sourceFile, string? outputFile = null) : CompileOnFlyOptionsBase(outputFile)
+{
+    public string SourceFile { get; init; } = sourceFile;
+}
+
+[Immutable]
+public sealed class CompileOnFlyBySourceOptions(string source, string? outputFile = null) : CompileOnFlyOptionsBase(outputFile)
+{
+    public string Source { get; init; } = source;
+}
+
+[Immutable]
+public abstract class CompileOnFlyOptionsBase(string? outputFile = null) : IOptions
+{
+    public ISet<string> FrameworkReferences { get; } = new HashSet<string>();
+    public bool IsReleaseMode { get; init; } = true;
+    public string? OutputFile { get; init; } = outputFile;
+    public string RuntimePath { get; init; } = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\";
+    public bool WithOverflowChecks { get; init; } = true;
 }
 
 [Immutable]

@@ -71,7 +71,6 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             member.Type.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
             return (result, root);
         }
-
         static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) createRosMethod(CompilationUnitSyntax root, IMethod method, string className)
         {
             var modifiers = GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier);

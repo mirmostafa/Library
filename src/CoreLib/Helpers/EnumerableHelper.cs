@@ -95,6 +95,7 @@ public static class EnumerableHelper
             }
         }
     }
+
     /// <summary>
     /// Adds a range of items to an ObservableCollection.
     /// </summary>
@@ -195,14 +196,20 @@ public static class EnumerableHelper
         };
         static IEnumerable<T> addRangeImmutedIterator(IEnumerable<T> source, IEnumerable<T> items)
         {
-            foreach (var item in source)
+            if (source != null)
             {
-                yield return item;
+                foreach (var item in source)
+                {
+                    yield return item;
+                }
             }
 
-            foreach (var item in items)
+            if (items != null)
             {
-                yield return item;
+                foreach (var item in items)
+                {
+                    yield return item;
+                }
             }
         }
     }
@@ -277,7 +284,7 @@ public static class EnumerableHelper
     /// <returns>True if the IList contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>([DisallowNull] this IList<T> source) =>
-        source.Count != 0; // Check if the count of elements in the IList is not zero.
+        source?.Count > 0; // Check if the count of elements in the IList is not zero or null.
 
     /// <summary>
     /// Determines whether any element exists in the given array.
@@ -287,7 +294,7 @@ public static class EnumerableHelper
     /// <returns>True if the array contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this T[] source) =>
-        source.Length != 0; // Check if the length of the array is not zero.
+        source?.Length > 0; // Check if the length of the array is not zero or null.
 
     /// <summary>
     /// Determines whether any element exists in the given ICollection.
@@ -296,7 +303,7 @@ public static class EnumerableHelper
     /// <returns>True if the ICollection contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this ICollection source) =>
-        source.Count!=0; // Check if the count of elements in the ICollection is not zero.
+        source?.Count > 0; // Check if the count of elements in the ICollection is not zero.
 
     /// <summary>
     /// Get a <see cref="Span{T}"/> view over a <see cref="List{T}"/>'s data. Items should not be
@@ -410,17 +417,20 @@ public static class EnumerableHelper
     /// <summary>
     /// Casts elements of the source sequence to the specified type if possible.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the source sequence.</typeparam>
-    /// <typeparam name="U">The target type to cast elements to.</typeparam>
+    /// <typeparam name="TParams">The type of elements in the source sequence.</typeparam>
+    /// <typeparam name="TResult">The target type to cast elements to.</typeparam>
     /// <param name="source">The source sequence containing elements to be cast.</param>
     /// <returns>An IEnumerable containing elements cast to the specified type.</returns>
-    public static IEnumerable<U> CastSafe<T, U>(this IEnumerable<T> source)
+    public static IEnumerable<TResult> CastSafe<TParams, TResult>(this IEnumerable<TParams> source)
     {
-        foreach (var item in source)
+        if (source != null)
         {
-            if (item is U u)
+            foreach (var item in source)
             {
-                yield return u; // Yield the casted item.
+                if (item is TResult u)
+                {
+                    yield return u; // Yield the casted item.
+                }
             }
         }
     }
@@ -463,13 +473,17 @@ public static class EnumerableHelper
     /// <returns>The list with the added items.</returns>
     public static ICollection<TItem> ClearAndAddRange<TItem>(this ICollection<TItem> list, [DisallowNull] in IEnumerable<TItem> items)
     {
-        Check.MustBeArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(list);
 
         list.Clear();
-        foreach (var item in items)
+        if (items != null)
         {
-            list.Add(item);
+            foreach (var item in items)
+            {
+                list.Add(item);
+            }
         }
+
         return list;
     }
 
@@ -489,13 +503,16 @@ public static class EnumerableHelper
     public static IEnumerable<TItem> Collect<TItem>(IEnumerable<TItem> items)
             where TItem : IParent<TItem>
     {
-        foreach (var item in items)
+        if (items != null)
         {
-            yield return item;
-
-            foreach (var child in Collect(item.Children))
+            foreach (var item in items)
             {
-                yield return child;
+                yield return item;
+
+                foreach (var child in Collect(item.Children))
+                {
+                    yield return child;
+                }
             }
         }
     }
@@ -532,7 +549,7 @@ public static class EnumerableHelper
     /// <typeparam name="T">The type of elements in the list.</typeparam>
     /// <param name="array">The IList from which elements will be copied.</param>
     /// <returns>A new list containing elements copied from the original IList.</returns>
-    public static List<T> Copy<T>(this IList<T> array) =>
+    public static IList<T> Copy<T>(this IList<T> array) =>
         // Convert the IList to an IEnumerable and then create a List from it.
         array.Iterate().ToList();
 
@@ -624,6 +641,8 @@ public static class EnumerableHelper
     public static async IAsyncEnumerable<TItem> CreateIteratorAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         Check.MustBeArgumentNotNull(asyncItems);
+        Check.MustBeArgumentNotNull(action);
+
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             yield return action(item);
@@ -647,6 +666,8 @@ public static class EnumerableHelper
     public static async IAsyncEnumerable<TItem> CreateIteratorAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         Check.MustBeArgumentNotNull(asyncItems);
+        Check.MustBeArgumentNotNull(action);
+
         await foreach (var item in asyncItems.WithCancellation(cancellationToken))
         {
             action(item);
@@ -701,8 +722,12 @@ public static class EnumerableHelper
     /// <summary>
     /// Returns a collection of elements from the input sequence that do not satisfy the specified predicate.
     /// </summary>
-    public static IEnumerable<T> Except<T>(this IEnumerable<T> items, Func<T, bool> exceptor) =>
-        items.Where(x => !exceptor(x));
+    public static IEnumerable<T> Except<T>(this IEnumerable<T> items, Func<T, bool> exceptor)
+    {
+        Check.MustBeArgumentNotNull(exceptor);
+
+        return items.Where(x => !exceptor(x));
+    }
 
     /// <summary>
     /// Returns an IEnumerable of TItem from the source IEnumerable, excluding any items that match
@@ -731,9 +756,6 @@ public static class EnumerableHelper
         // Use the LINQ Where operator to filter elements that have already been added to the HashSet.
         return source.Where([DebuggerStepThrough] (x) => !buffer.Add(x));
     }
-
-    public static IEnumerable<T> RemoveDuplicates<T>(this IEnumerable<T> source)=> 
-        source.GroupBy(x => x).Select(x => x.First());
 
     public static IEnumerable<T> Flatten<T>([DisallowNull] IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren) =>
             roots.SelectAllChildren(getChildren);
@@ -812,7 +834,7 @@ public static class EnumerableHelper
     public static TryMethodResult<TResult?> GetValue<TResult>([DisallowNull] this HashSet<TResult> resultSet, TResult equalValue)
             where TResult : new()
     {
-        var tryResult = resultSet.TryGetValue(equalValue, out var actualValue);
+        var tryResult = resultSet.ArgumentNotNull().TryGetValue(equalValue, out var actualValue);
         return TryMethodResult<TResult?>.TryParseResult(tryResult, actualValue);
     }
 
@@ -905,6 +927,7 @@ public static class EnumerableHelper
     /// </remarks>
     public static IEnumerable<int> IndexesOf<T>(this IEnumerable<T> source, T item)
     {
+        Check.MustBeArgumentNotNull(source);
         var index = 0;
         foreach (var sourceItem in source)
         {
@@ -927,12 +950,17 @@ public static class EnumerableHelper
     /// This method initializes all elements in the given array with the specified default value. It
     /// iterates through each element in the array and assigns the default value to it.
     /// </remarks>
-    public static T[] InitializeItems<T>(this T[] items, T defaultItem)
+    [return: NotNullIfNotNull(nameof(items))]
+    public static T[]? InitializeItems<T>(this T[] items, T defaultItem)
     {
-        for (var index = 0; index < items.Length; index++)
+        if (items != null)
         {
-            items[index] = defaultItem;
+            for (var index = 0; index < items.Length; index++)
+            {
+                items[index] = defaultItem;
+            }
         }
+
         return items;
     }
 
@@ -1066,11 +1094,17 @@ public static class EnumerableHelper
     /// </remarks>
     public static IEnumerable<T> Merge<T>(params IEnumerable<T>[] enumerables)
     {
-        foreach (var enumerable in enumerables)
+        if (enumerables?.Any() ?? false)
         {
-            foreach (var item in enumerable)
+            foreach (var enumerable in enumerables)
             {
-                yield return item;
+                if (enumerable?.Any() ?? false)
+                {
+                    foreach (var item in enumerable)
+                    {
+                        yield return item;
+                    }
+                }
             }
         }
     }
@@ -1214,6 +1248,9 @@ public static class EnumerableHelper
     /// </summary>
     public static IEnumerable<TSource> RemoveDefaults<TSource>(this IEnumerable<TSource> source, TSource? defaultValue = default) =>
         defaultValue is null ? source.Where(item => item is not null) : source.Where(item => (!item?.Equals(defaultValue)) ?? false);
+
+    public static IEnumerable<T> RemoveDuplicates<T>(this IEnumerable<T> source) =>
+                                                                                                                    source.GroupBy(x => x).Select(x => x.First());
 
     /// <summary>
     /// Removes the specified item from the source IEnumerable.

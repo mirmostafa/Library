@@ -77,6 +77,7 @@ public static class CodeHelper
     /// <returns>A Result object with the result of the function or an error message.</returns>
     public static async Task<Result<TResult?>> CatchResultAsync<TResult>(Func<Task<TResult>> func, TResult? defaultResult = default)
     {
+        Check.MustBeArgumentNotNull(func);
         try
         {
             var result = await func();
@@ -90,6 +91,7 @@ public static class CodeHelper
 
     public static async Task<Result> CatchResultAsync(Func<Task> func)
     {
+        Check.MustBeArgumentNotNull(func);
         try
         {
             await func();
@@ -376,6 +378,7 @@ public static class CodeHelper
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TDisposable, TResult> action)
         where TDisposable : IDisposable
     {
+        Check.MustBeArgumentNotNull(action);
         try
         {
             return action(disposable);
@@ -418,6 +421,7 @@ public static class CodeHelper
     public static TResult Dispose<TDisposable, TResult>(this TDisposable disposable, in Func<TResult> action)
         where TDisposable : IDisposable
     {
+        Check.MustBeArgumentNotNull(action);
         try
         {
             return action();

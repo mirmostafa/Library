@@ -1,4 +1,5 @@
 ﻿using Library.Interfaces;
+using Library.Validations;
 
 namespace Library.Results;
 
@@ -17,8 +18,8 @@ public sealed class Result(
     private static Result? _fail;
     private static Result? _success;
 
-    public Result(Result origin)
-        : this(origin.Succeed, origin.Status, origin.Message, origin.Errors, origin.ExtraData)
+    public Result(ResultBase origin)
+        : this(origin.ArgumentNotNull().Succeed, origin.Status, origin.Message, origin.Errors, origin.ExtraData)
     {
     }
 
@@ -40,17 +41,8 @@ public sealed class Result(
     /// <returns>A new instance of the Result class representing a successful operation.</returns>
     public static Result Success => _success ??= CreateSuccess();
 
-    /// <summary>
-    /// Combines multiple Result objects into a single Result object.
-    /// </summary>
-    /// <param name="results">The Result objects to combine.</param>
-    /// <returns>A single Result object containing the combined data.</returns>
-    public static Result Merge(params Result[] results)
-    {
-        var data = ResultBase.Combine(results);
-        var result = new Result(data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
-        return result;
-    }
+    public static Result Add(Result left, Result right) =>
+        left + right;
 
     /// <summary>
     /// Creates a new Result object with a failure status.
@@ -102,6 +94,18 @@ public sealed class Result(
             b ? Success : Failure;
 
     /// <summary>
+    /// Combines multiple Result objects into a single Result object.
+    /// </summary>
+    /// <param name="results">The Result objects to combine.</param>
+    /// <returns>A single Result object containing the combined data.</returns>
+    public static Result Merge(params Result[] results)
+    {
+        var data = Combine(results);
+        var result = new Result(data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
+        return result;
+    }
+
+    /// <summary>
     /// Creates a new empty Result object.
     /// </summary>
     public static Result NewEmpty() =>
@@ -114,9 +118,12 @@ public sealed class Result(
         return result;
     }
 
-    public bool Equals(Result? other) => throw new NotImplementedException();
+    public bool Equals(Result? other) =>
+        other is not null && other == this;
 
-    public override bool Equals(object? obj) => this.Equals(obj as Result);
+    public override bool Equals(object? obj) =>
+        this.Equals(obj as Result);
 
-    public override int GetHashCode() => throw new NotImplementedException();
+    public override int GetHashCode() =>
+        base.GetHashCode();
 }

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
@@ -210,10 +211,10 @@ public static class ResultHelper
     /// <param name="errors">The errors to add to the Result.</param>
     /// <returns>A new instance of the Result class with the specified errors.</returns>
     public static Result WithError(this ResultBase result, params (object Id, object Error)[] errors) =>
-        new(result) { Errors = errors };
+        new(result) { Errors = errors.ToImmutableArray() };
 
     public static Result WithError(this ResultBase result, IEnumerable<(object Id, object Error)> errors) =>
-        result.WithError(errors.ToArray());
+        new(result) { Errors = errors.ToImmutableArray() };
 
     public static Result WithSucceed(this ResultBase result, bool? succeed) =>
         new(result) { Succeed = succeed };
@@ -241,7 +242,7 @@ public static class ResultHelper
         }
 
         var exception =
-            result.Errors?.Select(x => x.Error).Cast<Exception>().FirstOrDefault()
+            result.Errors.Select(x => x.Error).Cast<Exception>().FirstOrDefault()
             ?? result.Status switch
             {
                 Exception ex => ex.With(x => x.Source = owner?.ToString()),

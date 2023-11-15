@@ -8,7 +8,7 @@ public abstract class ValueObject<TValueObject> : IEquatable<TValueObject>, IStr
     where TValueObject : ValueObject<TValueObject>
 {
     public static bool operator !=(ValueObject<TValueObject> a, ValueObject<TValueObject> b) =>
-        !(a?.Equals(b) ?? false);
+        !(a == b);
 
     public static bool operator ==(ValueObject<TValueObject> a, ValueObject<TValueObject> b) =>
         a?.Equals(b) ?? false;

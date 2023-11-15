@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
 
 using Library.Validations;
 
@@ -12,15 +13,19 @@ public abstract class ResultBase(
     in IEnumerable<(object Id, object Error)>? errors = null,
     in IEnumerable<(string, object)>? extraData = null)
 {
-    private readonly IEnumerable<(object Id, object Error)>? _error;
+    private ImmutableArray<(object Id, object Error)>? _errors = errors?.ToImmutableArray();
 
-    private IEnumerable<(object Id, object Error)>? _errors = errors;
+    private ImmutableArray<(string, object)>? _extraData = extraData?.ToImmutableArray();
 
-    private IEnumerable<(string, object)>? _extraData = extraData;
+    [NotNull]
+    public ImmutableArray<(object Id, object Error)> Errors
+    {
+        get => this._errors ??= ImmutableArray.Create<(object, object)>();
+        init => this._errors = value;
+    }
 
-    public IEnumerable<(object Id, object Error)> Errors { get => this._errors ??= Enumerable.Empty<(object, object)>(); init => this._errors = value; }
-
-    public IEnumerable<(string Id, object Data)> ExtraData => this._extraData ??= Enumerable.Empty<(string, object)>();
+    [NotNull]
+    public ImmutableArray<(string Id, object Data)> ExtraData => this._extraData ??= ImmutableArray.Create<(string, object)>();
 
     /// <summary>
     /// Gets a value indicating whether the operation has failed.
@@ -30,7 +35,7 @@ public abstract class ResultBase(
     /// <summary>
     /// Checks if the operation was successful by checking the Succeed flag, Status and Errors.
     /// </summary>
-    public virtual bool IsSucceed => this.Succeed ?? ((this.Status is null or 0 or 200) && (!this.Errors?.Any() ?? true));
+    public virtual bool IsSucceed => this.Succeed ?? ((this.Status is null or 0 or 200) && (!this.Errors.Any()));
 
     public string? Message { get; set; } = message;
 
@@ -71,11 +76,11 @@ public abstract class ResultBase(
         {
             _ = result.AppendLine(this.Status.ToString());
         }
-        else if (this.Errors?.Count() == 1)
+        else if (this.Errors.Length == 1)
         {
             _ = result.AppendLine(this.Errors!.First().Error?.ToString() ?? "An error occurred.");
         }
-        else if (this.Errors?.Any() ?? false)
+        else if (this.Errors.Any())
         {
             foreach (var errorMessage in this.Errors.Select(x => x.Error?.ToString()).Compact())
             {
@@ -100,7 +105,7 @@ public abstract class ResultBase(
         bool? isSucceed = results.All(x => x.Succeed == null) ? null : results.All(x => x.IsSucceed);
         var status = results.LastOrDefault(x => x.Status is not null)?.Status;
         var message = results.LastOrDefault(x => !x.Message.IsNullOrEmpty())?.Message;
-        var errors = results.SelectMany(x => EnumerableHelper.DefaultIfNull(x?.Errors));
+        var errors = results.SelectMany(x => x.Errors);
         var statusBuffer = results.Where(x => x.Status is not null).Select(x => x.Status).ToList();
         if (statusBuffer.Count > 1)
         {
