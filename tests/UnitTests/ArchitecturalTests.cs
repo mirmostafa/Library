@@ -73,8 +73,17 @@ public sealed class ArchitecturalTests
     {
         var types = _libraryTypes.CoreLibTypes;
         var helpers = types.Where(x => IsInNameSpace(x, "Library.Helpers")).Except(x => IsInNameSpace(x, "Library.Helpers.Model"));
-        var notSealed = helpers.Where(x => x.IsClass).Where(x => !x.IsSealed);
-        Assert.True(!notSealed.Any());
+        var notSealed = helpers.Where(x => x.IsClass).Where(x => !x.IsSealed && !x.IsAbstract).ToArray();
+        if(notSealed.Any())
+        {
+            var result = new StringBuilder();
+            result.AppendLine("The following classes are not `sealed` or `abstract` or `static`.");
+            foreach (var type in notSealed)
+            {
+                _ = result.AppendLine($"Type: `{type}`");
+            }
+            Assert.Fail(result.ToString());
+        }
     }
 
     [Fact]

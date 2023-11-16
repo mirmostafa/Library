@@ -236,7 +236,8 @@ public static class ValidationExtensions
                 Checker.MustBeNotNull(onError);
 
                 // Depending on the behavior parameter, take the appropriate action
-                var errorResult = Result<TValue>.CreateFailure(onError(), value);
+                var exception = onError();
+                var errorResult = Result<TValue>.CreateFailure(value, errors: [(exception, exception)], status: exception);
                 switch (behavior)
                 {
                     // Combine all errors
