@@ -3,7 +3,7 @@
 namespace UnitTests;
 
 
-[Trait("Category", "Code Helpers")]
+[Trait("Category", nameof(Library.Coding))]
 [Obsolete("Subject to remove", true)]
 public sealed class IfStatementTest
 {

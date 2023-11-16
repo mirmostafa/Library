@@ -1,5 +1,6 @@
 ﻿namespace UnitTests;
 
+[Trait("Category", "CommonPractices")]
 public class IpAddressTest
 {
     public int[] SumIPSegments(int[] segment1, int[] segment2)

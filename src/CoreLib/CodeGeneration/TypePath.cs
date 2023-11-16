@@ -4,7 +4,7 @@ using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 
-using TypeData = (string Name, string? NameSpace, System.Collections.Generic.IEnumerable<Library.CodeGeneration.TypePath> Generics);
+using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnumerable<Library.CodeGeneration.TypePath> Generics, bool IsNullable);
 
 namespace Library.CodeGeneration;
 
@@ -26,10 +26,12 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
     public bool IsGeneric => this._data.Generics.Any();
 
+    public bool IsNullable => this._data.IsNullable;
+
     [NotNull]
     public string Name => this._data.Name;
 
-    public string? NameSpace => this._data.NameSpace;
+    public string NameSpace => this._data.NameSpace;
 
     public static string Combine(in string? part1, params string?[] parts) =>
         StringHelper.Merge(EnumerableHelper.Iterate(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
@@ -41,10 +43,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [return: NotNullIfNotNull(nameof(typePath))]
     public static string? GetNameSpace(in string? typePath) =>
         typePath == null ? null : Parse(typePath).NameSpace;
-    
-    [return: NotNullIfNotNull(nameof(typePath))]
+
+    [return: NotNull]
     public static IEnumerable<string>? GetNameSpaces(in string? typePath) =>
-        typePath == null ? null : New(typePath).GetNameSpaces();
+        typePath == null ? Enumerable.Empty<string>() : New(typePath).GetNameSpaces();
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
     public static implicit operator string?(in TypePath? typeInfo) =>
@@ -161,22 +163,37 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
             : (temp, string.Empty);
 
         var genTypes = gens.Select(x => new TypePath(x));
+        var isNullable = typePath.EndsWith('?');
         // CodeCOM makes a mistake.
-        //if (nameSpace == "System")
-        //{
-        //    (name, nameSpace) = name switch
-        //    {
-        //        "String" => ("string", ""),
-        //        "Boolean" => ("bool", ""),
-        //        "Int32" => ("int", ""),
-        //        "Int64" => ("long", ""),
-        //        "Single" => ("float", ""),
-        //        _ => (name, nameSpace),
-        //    };
-        //}
-
-        return (name, nameSpace, genTypes);
+        //(name, nameSpace) = ToKeyword(name, nameSpace);
+        return (name, nameSpace, genTypes, isNullable);
     }
+
+    public (string Name, string NameSpace) ToKeyword() =>
+        ToKeyword(this.Name, this.NameSpace);
+
+    public static (string Name, string NameSpace) ToKeyword(string name, string nameSpace) =>
+        nameSpace == "System"
+            ? (name switch
+            {
+                nameof(String) => ("string", ""),
+                nameof(Byte) => ("byte", ""),
+                nameof(SByte) => ("sbyte", ""),
+                nameof(Char) => ("char", ""),
+                nameof(Boolean) => ("bool", ""),
+                nameof(UInt32) => ("uint", ""),
+                nameof(IntPtr) => ("nint", ""),
+                nameof(UIntPtr) => ("nuint", ""),
+                nameof(Int16) => ("short", ""),
+                nameof(UInt16) => ("ushort", ""),
+                nameof(Int32) => ("int", ""),
+                nameof(Int64) => ("long", ""),
+                nameof(Single) => ("float", ""),
+                nameof(Decimal) => ("decimal", ""),
+                nameof(Double) => ("double", ""),
+                _ => (name, nameSpace),
+            })
+            : (name, nameSpace);
 
     [return: NotNull]
     private string GetFullName()

@@ -1,6 +1,6 @@
 ﻿namespace UnitTests;
 
-[Trait("Category", "Helpers")]
+[Trait("Category", nameof(Library.Helpers))]
 public sealed class RangeHelperTest
 {
     [Theory]

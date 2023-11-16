@@ -5,7 +5,7 @@ using Xunit;
 
 namespace UnitTests;
 
-[Trait("Category", "Helpers")]
+[Trait("Category", nameof(Library.Helpers))]
 public sealed class ObjectHelperTest
 {
     public static TheoryData<(object?, object, Delegate), object> CheckDbNullData =>

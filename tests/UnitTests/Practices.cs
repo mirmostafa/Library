@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace UnitTests;
 
+[Trait("Category", "CommonPractices")]
 public class Practices(ITestOutputHelper output)
 {
     private readonly ITestOutputHelper _output = output;

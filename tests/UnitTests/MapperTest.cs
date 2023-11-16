@@ -10,6 +10,7 @@ using Xunit;
 namespace UnitTests;
 
 
+[Trait("Category", nameof(Library.Mapping))]
 public sealed class MapperTest
 {
     [Fact]

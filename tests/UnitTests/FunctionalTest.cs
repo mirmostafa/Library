@@ -4,7 +4,7 @@ using Library.Results;
 
 namespace UnitTests;
 
-[Trait("Category", "Code Helpers")]
+[Trait("Category", nameof(Library.Coding))]
 public sealed class FunctionalTest
 {
     private static readonly Action<int> _emptyIntAction = x => { };
@@ -242,7 +242,7 @@ public sealed class FunctionalTest
     {
         _ = this.Fluent(Methods.Empty);
         var two = 2.Fluent(() => { });
-        Assert.Equal(2, two.Value);
+        Assert.Equal(2, two.GetValue());
     }
 
     [Fact]

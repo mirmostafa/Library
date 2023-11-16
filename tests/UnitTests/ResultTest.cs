@@ -1,20 +1,17 @@
-﻿
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
-using Library.Exceptions.Validations;
 using Library.Results;
 
 namespace UnitTests;
 
-[Trait("Category", "Design Patterns")]
+[Trait("Category", nameof(Library.Results))]
 public sealed class ResultTest
 {
     [Fact]
     public void AddOperationResultCountTest()
     {
         var all = AddThreeResults();
-        Assert.NotNull(all.Errors);
-        Assert.Equal(5, all.Errors.Count());
+        Assert.Equal(5, all.Errors.Length);
         Assert.Equal(403, all.Status);
         Assert.Equal((3, "Error Thr"), all.Errors.Last());
     }
@@ -23,11 +20,11 @@ public sealed class ResultTest
     public void AddOperationResultIndex1Test()
     {
         var all = AddThreeResults();
-        Assert.Equal((1, "Error One"), all.Errors?.ElementAt(0));
-        Assert.Equal((2, "Error Two"), all.Errors?.ElementAt(1));
-        Assert.Equal((null!, 401), all.Errors?.ElementAt(2));
-        Assert.Equal((null!, 402), all.Errors?.ElementAt(3));
-        Assert.Equal((3, "Error Thr"), all.Errors?.ElementAt(4));
+        Assert.Equal((1, "Error One"), all.Errors.ElementAt(0));
+        Assert.Equal((2, "Error Two"), all.Errors.ElementAt(1));
+        Assert.Equal((null!, 401), all.Errors.ElementAt(2));
+        Assert.Equal((null!, 402), all.Errors.ElementAt(3));
+        Assert.Equal((3, "Error Thr"), all.Errors.ElementAt(4));
     }
 
     [Fact]

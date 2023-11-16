@@ -1,6 +1,6 @@
 ﻿namespace UnitTests;
 
-[Trait("Category", "Code Helpers")]
+[Trait("Category", nameof(Library.Coding))]
 public sealed class CastTest
 {
     [Fact]

@@ -1,66 +1,24 @@
-﻿#pragma warning disable CA1707 // Identifiers should not contain underscores
-using Library.CodeGeneration;
-using Library.Helpers.ConsoleHelper;
+﻿using Library.CodeGeneration;
 
 using Xunit.Abstractions;
 
 namespace UnitTests;
+
+[Collection(nameof(TypePathTest))]
+[Trait("Category", nameof(Library.CodeGeneration))]
 public sealed class TypePathTest(ITestOutputHelper output)
 {
+    private static readonly string[] _generics = ["System.Int32", "String"];
     private readonly ITestOutputHelper _output = output;
     private readonly string _sampleFullPath = "System.Linq.IQueryable<Library.Tests.UnitTests.TypePathTest>";
-    private static readonly string[] _generics = ["System.Int32", "String"];
 
-    [Fact]
-    public void _05_SimpleTypeTest()
+    [Fact, Priority(25)]
+    public void GenericTypeTest()
     {
         // Assign
-        var expectedFullPath = "TypePathTest";
-        var expectedName = "TypePathTest";
-        string? expectedNameSpace = null;
-        TypePath path = expectedFullPath;
-
-        // Act
-        var actualName = path.Name;
-        var actualNameSpace = path.NameSpace;
-        var actualFullPath = path.FullPath;
-
-        // Assert
-        this.Display(path);
-        Assert.Equal(expectedName, actualName);
-        Assert.Equal(expectedNameSpace, actualNameSpace);
-        Assert.Equal(expectedFullPath, actualFullPath);
-    }
-
-    [Fact]
-    public void _10_NormalTypeTest()
-    {
-        // Assign
-        var expectedFullPath = "Library.Tests.UnitTests.TypePathTest";
-        var expectedName = "TypePathTest";
-        var expectedNameSpace = "Library.Tests.UnitTests";
-        TypePath path = expectedFullPath;
-
-        // Act
-        var actualName = path.Name;
-        var actualNameSpace = path.NameSpace;
-        var actualFullPath = path.FullPath;
-
-        // Assert
-        this.Display(path);
-        Assert.Equal(expectedName, actualName);
-        Assert.Equal(expectedNameSpace, actualNameSpace);
-        Assert.Equal(expectedFullPath, actualFullPath);
-    }
-
-    [Fact]
-    public void _25_GenericTypeTest()
-    {
-        // Assign
-        var expectedName = "IQueryable<Library.Tests.UnitTests.TypePathTest>";
+        var expectedName = "IQueryable";
         var expectedNameSpace = "System.Linq";
         var expectedGeneric = "Library.Tests.UnitTests.TypePathTest";
-        var expectedClassName = "IQueryable";
         var expectedGenericName = "TypePathTest";
         var expectedGenericNameSpace = "Library.Tests.UnitTests";
 
@@ -86,21 +44,78 @@ public sealed class TypePathTest(ITestOutputHelper output)
         Assert.Equal(expectedGenericName, actualGeneric.Name);
         Assert.Equal(expectedGenericNameSpace, actualGeneric.NameSpace);
         Assert.Equal(2, allNameSpaces.Count);
-
     }
 
-    [Fact]
-    public void _20_SimpleGenericTypeTest()
+    [Theory]
+    [InlineData("System.String", "string", "")]
+    [InlineData("System.Int32", "int", "")]
+    [InlineData("System.Int64", "long", "")]
+    [InlineData("System.Decimal", "decimal", "")]
+    [InlineData("System.Single", "float", "")]
+    [InlineData("System.Boolean", "bool", "")]
+    [InlineData("Test.Person", "Person", "Test")]
+    public void KeywordTest(string source, string name, string nameSpace)
+    {
+        var type = TypePath.New(source);
+        var (n, ns) = type.ToKeyword();
+        Assert.Equal(nameSpace, ns);
+        Assert.Equal(name, n);
+    }
+
+    [Fact, Priority(2)]
+    public void NormalTypeTest()
+    {
+        // Assign
+        var expectedFullPath = "Library.Tests.UnitTests.TypePathTest";
+        var expectedName = "TypePathTest";
+        var expectedNameSpace = "Library.Tests.UnitTests";
+        TypePath path = expectedFullPath;
+
+        // Act
+        var actualName = path.Name;
+        var actualNameSpace = path.NameSpace;
+        var actualFullPath = path.FullPath;
+
+        // Assert
+        this.Display(path);
+        Assert.Equal(expectedName, actualName);
+        Assert.Equal(expectedNameSpace, actualNameSpace);
+        Assert.Equal(expectedFullPath, actualFullPath);
+    }
+
+    [Fact, Priority(20)]
+    public void SimpleGenericTypeTest()
     {
         var path = new TypePath(this._sampleFullPath);
         this.Display(path);
     }
 
-    [Fact]
-    public void _25_SimpleGenericWithAdditionalGenericsTypeTest()
+    [Fact, Priority(35)]
+    public void SimpleGenericWithAdditionalGenericsTypeTest()
     {
         var path = new TypePath(this._sampleFullPath, _generics);
         this.Display(path);
+    }
+
+    [Fact, Priority(1)]
+    public void SimpleTypeTest()
+    {
+        // Assign
+        var expectedFullPath = "TypePathTest";
+        var expectedName = "TypePathTest";
+        string expectedNameSpace = string.Empty;
+        TypePath path = expectedFullPath;
+
+        // Act
+        var actualName = path.Name;
+        var actualNameSpace = path.NameSpace;
+        var actualFullPath = path.FullPath;
+
+        // Assert
+        this.Display(path);
+        Assert.Equal(expectedName, actualName);
+        Assert.Equal(expectedNameSpace, actualNameSpace);
+        Assert.Equal(expectedFullPath, actualFullPath);
     }
 
     private void Display(TypePath? path)
@@ -115,14 +130,13 @@ public sealed class TypePathTest(ITestOutputHelper output)
         this._output.WriteLine($"NameSpace: {path.NameSpace}");
         this._output.WriteLine($"FullName: {path.FullName}");
         this._output.WriteLine($"FullPath: {path.FullPath}");
-        if(path.GetNameSpaces().Any())
+        if (path.GetNameSpaces().Any())
         {
             this._output.WriteLine("namespaces:");
             foreach (var ns in path.GetNameSpaces())
             {
-                _output.WriteLine($"\t{ns}");
+                this._output.WriteLine($"\t{ns}");
             }
         }
     }
 }
-#pragma warning restore CA1707 // Identifiers should not contain underscores

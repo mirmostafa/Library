@@ -3,6 +3,7 @@ using Library.Globalization;
 
 namespace UnitTests;
 
+[Trait("Category", nameof(Library.Globalization))]
 public sealed class PersianDateTimeTest
 {
     [Theory]

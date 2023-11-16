@@ -1,5 +1,6 @@
 ﻿namespace UnitTests;
 
+[Trait("Category", nameof(Library.Helpers))]
 public class NumberHelperTest
 {
     [Theory]

@@ -1,11 +1,8 @@
 ﻿using Library.Coding;
-using Library.Logging;
-using Library.Results;
 
 namespace UnitTests;
 
-[Trait("Category", "Helpers")]
-[Trait("Category", "Code Helpers")]
+[Trait("Category", nameof(Library.Coding))]
 [Obsolete("Subject to remove", true)]
 public sealed class CodeHelperTest
 {
@@ -15,7 +12,7 @@ public sealed class CodeHelperTest
         var stopwatch = new LibStopwatch();
         using (stopwatch.Start())
         {
-            await Task.Delay(1000);
+            await Task.Delay(1000).ConfigureAwait(false);
         }
         var elapsed = stopwatch.Elapsed;
         Assert.True(elapsed.Ticks > 0, "Stopwatch is working like a charm!");
@@ -25,14 +22,45 @@ public sealed class CodeHelperTest
     public async Task LibStopwatchTest2Async()
     {
         var stopwatch = LibStopwatch.StartNew();
-        await Task.Delay(1000);
+        await Task.Delay(1000).ConfigureAwait(false);
         _ = stopwatch.Stop();
         var elapsed = stopwatch.Elapsed;
         Assert.True(elapsed.Ticks > 0);
     }
 
     [Fact]
-    public void TryResult_02_Failure()
+    public void TryResult01Success()
+    {
+        // Assign
+        var divedBy = 5;
+        void local_act()
+        {
+        }
+        int local_fun()
+            => 5 / divedBy;
+        void an_act()
+        {
+            _ = 5 / divedBy;
+        }
+        int an_fun() => 5 / divedBy;
+
+        // Act
+        var actual_an_act = CatchResult(an_act);
+        var actual_an_fun = CatchResult(an_fun);
+        var actual_local_act = CatchResult(ToAction(local_act));
+        var actual_local_fun = CatchResult(ToFunc(local_fun));
+
+        // Assert
+        Assert.NotNull(actual_an_act);
+        Assert.NotNull(actual_an_fun);
+        Assert.NotNull(actual_local_act);
+        Assert.NotNull(actual_local_fun);
+        Assert.Equal(1, actual_an_fun);
+        Assert.Equal(1, actual_local_fun);
+    }
+
+    [Fact]
+    public void TryResult02Failure()
     {
         // Assign
         var divedBy = 0;
@@ -41,11 +69,14 @@ public sealed class CodeHelperTest
         }
         int local_fun()
             => 5 / divedBy;
-        var an_act = () => { _ = 5 / divedBy; };
-        var an_fun = () => 5 / divedBy;
+        void an_act()
+        {
+            _ = 5 / divedBy;
+        }
+        int an_fun() => 5 / divedBy;
 
         // Act
-        var actual_an_act =CatchResult(an_act);
+        var actual_an_act = CatchResult(an_act);
         var actual_an_fun = CatchResult(an_fun);
         var actual_local_act = CatchResult(ToAction(local_act));
         var actual_local_fun = CatchResult(ToFunc(local_fun));
@@ -61,35 +92,5 @@ public sealed class CodeHelperTest
         Assert.Equal(expectedMessage, ex.Message);
         ex = Assert.IsAssignableFrom<DivideByZeroException>(actual_local_fun.Status);
         Assert.Equal(expectedMessage, ex.Message);
-
-    }
-
-    [Fact]
-    public void TryResult_01_Success()
-    {
-        // Assign
-        var divedBy = 5;
-        void local_act()
-        {
-        }
-        int local_fun()
-            => 5 / divedBy;
-        var an_act = () => { _ = 5 / divedBy; };
-        var an_fun = () => 5 / divedBy;
-
-        // Act
-        var actual_an_act = CatchResult(an_act);
-        var actual_an_fun = CatchResult(an_fun);
-        var actual_local_act = CatchResult(ToAction(local_act));
-        var actual_local_fun = CatchResult(ToFunc(local_fun));
-
-        // Assert
-        Assert.NotNull(actual_an_act);
-        Assert.NotNull(actual_an_fun);
-        Assert.NotNull(actual_local_act);
-        Assert.NotNull(actual_local_fun);
-        Assert.Equal(1, actual_an_fun);
-        Assert.Equal(1, actual_local_fun);
-
     }
 }

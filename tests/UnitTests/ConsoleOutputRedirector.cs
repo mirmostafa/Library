@@ -2,6 +2,7 @@
 
 namespace UnitTests;
 
+[Trait("Category", nameof(Library.Helpers.ConsoleHelper))]
 internal class ConsoleOutputRedirector : IDisposable
 {
     private TextWriter? _lastWriter;

@@ -19,7 +19,7 @@ var personDto = RoslynHelper.CreateType(personType)
     .AddProperty<string>("Name")
     .AddPropertyWithBackingField(new("LastName", TypePath.New<string>()), lastNameField)
     .AddPropertyWithBackingField(new("Age", TypePath.New<int>(), setAccessor: (false, null)))
-    .AddMethod(new MethodInfo(null, personType, "SetAge", new[] { (TypePath.New<int>(), "age") }, setAgeMethodBody))
+    .AddMethod(new RosMethodInfo(null, personType, "SetAge", new[] { (TypePath.New<int>(), "age") }, setAgeMethodBody))
     ;
 
 ns = ns.AddType(personDto);

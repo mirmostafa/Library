@@ -2,6 +2,7 @@
 
 namespace UnitTests;
 
+[Trait("Category", nameof(Library.Coding))]
 public sealed class FluentListTest
 {
     private static readonly Action<int> _emptyIntAction = x => { };

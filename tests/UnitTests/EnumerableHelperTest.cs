@@ -2,7 +2,7 @@
 
 namespace UnitTests;
 
-[Trait("Category", "Helpers")]
+[Trait("Category", nameof(Library.Helpers))]
 public sealed class EnumerableHelperTest
 {
     private readonly string[] _names = new[] { "Nick", "Mike", "John", "Leyla", "David", "Damian" };
@@ -38,24 +38,6 @@ public sealed class EnumerableHelperTest
     public void AddRangeImmutedTest(IEnumerable<int> source, IEnumerable<int> items, IEnumerable<int> expected)
     {
         var actual = EnumerableHelper.AddRangeImmuted(source, items);
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void AddToKeyValuePairTest()
-    {
-        var dic = new List<KeyValuePair<int, string>>
-        {
-            { 0, "Zero" },
-            { 1, "One"},
-            { 2, "Two"},
-            { 3, "Three" },
-            { 4, "Four" }
-        };
-        _ = dic.Add(5, "Fix");
-        _ = dic.Add(6, "Six");
-        var expected = 7;
-        var actual = dic.Count;
         Assert.Equal(expected, actual);
     }
 

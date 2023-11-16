@@ -5,7 +5,7 @@ using Library.Validations;
 
 namespace UnitTests;
 
-[Trait("Category", "Validation Tests")]
+[Trait("Category", nameof(Library.Validations))]
 public sealed class CheckValidationTest
 {
     private readonly Array _array_empty = Array.Empty<string>();
@@ -91,7 +91,8 @@ public sealed class CheckValidationTest
     [Fact]
     public void IfArgumentIsNotNull_NullTest()
     {
-        var result = Check.IfArgumentIsNotNull(this._string_null);
+        var result = Check.IfArgumentIsNull(this._string_null);
+
         Assert.False(result);
     }
 

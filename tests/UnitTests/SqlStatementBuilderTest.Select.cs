@@ -7,7 +7,7 @@ using Xunit;
 
 namespace UnitTests;
 
-[Trait("Category", "SQL Data Access")]
+[Trait("Category", nameof(Library.Data.SqlServer))]
 public sealed class SelectStatementBuilderTest
 {
     [Fact]

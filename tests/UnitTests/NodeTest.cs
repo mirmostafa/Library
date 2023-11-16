@@ -7,6 +7,7 @@ using Xunit.Abstractions;
 namespace UnitTests;
 
 
+[Trait("Category", nameof(Library.Collections))]
 public sealed class NodeTest
 {
     private readonly string[] _array = new string[10];

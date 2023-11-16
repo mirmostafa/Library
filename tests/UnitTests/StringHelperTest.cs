@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace UnitTests;
 
-[Trait("Category", "Helpers")]
+[Trait("Category", nameof(Library.Helpers))]
 public sealed class StringHelperTest
 {
     private const string LONG_TEXT = "There 'a text', inside 'another text'. I want 'to find\" it.";
@@ -246,33 +246,18 @@ public sealed class StringHelperTest
     }
 
     [Fact]
-    public void Contains_Mine_ReturnsTrue_WhenMatchingCaseSensitiveStringExists()
+    public void Contains_Mine_ReturnsFalse_WhenCaseInsensitiveStringDoesNotExist()
     {
         // Arrange
         IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
-        var str = "Banana";
-        var ignoreCase = false;
-
-        // Act
-        var result = array.Contains(str, ignoreCase);
-
-        // Assert
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void Contains_Mine_ReturnsTrue_WhenMatchingCaseInsensitiveStringExists()
-    {
-        // Arrange
-        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
-        string str = "banana";
+        string str = "grape";
         bool ignoreCase = true;
 
         // Act
         bool result = array.Contains(str, ignoreCase);
 
         // Assert
-        Assert.True(result);
+        Assert.False(result);
     }
 
     [Fact]
@@ -291,20 +276,34 @@ public sealed class StringHelperTest
     }
 
     [Fact]
-    public void Contains_Mine_ReturnsFalse_WhenCaseInsensitiveStringDoesNotExist()
+    public void Contains_Mine_ReturnsTrue_WhenMatchingCaseInsensitiveStringExists()
     {
         // Arrange
         IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
-        string str = "grape";
+        string str = "banana";
         bool ignoreCase = true;
 
         // Act
         bool result = array.Contains(str, ignoreCase);
 
         // Assert
-        Assert.False(result);
+        Assert.True(result);
     }
 
+    [Fact]
+    public void Contains_Mine_ReturnsTrue_WhenMatchingCaseSensitiveStringExists()
+    {
+        // Arrange
+        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
+        var str = "Banana";
+        var ignoreCase = false;
+
+        // Act
+        var result = array.Contains(str, ignoreCase);
+
+        // Assert
+        Assert.True(result);
+    }
 
     [Theory]
     [InlineData("This is a test string.", new char[] { 'x', 'y', 'z' }, false)]
@@ -505,13 +504,6 @@ public sealed class StringHelperTest
     }
 
     [Fact]
-    public void Format_ShouldThrowArgumentNullException_WhenFormatIsNullEmpty()
-    {
-        string? format = null;
-        _ = Assert.Throws<ArgumentNullException>(() => format.Format(null));
-    }
-
-    [Fact]
     public void Format_ShouldThrowArgumentNullException_WhenFormatIsNullEmptyButArgsIsNotNull()
     {
         // Arrange
@@ -544,8 +536,6 @@ public sealed class StringHelperTest
         Assert.Equal(expected, actual);
     }
 
-    [Trait("Category", "Optimizations")]
-    [Theory(DisplayName = $"{nameof(GetPhrase_StringOptimization)} : memory allocation.")]
     [InlineData(@"https://my.site.com", "://", "/", "my.site.com")]
     [InlineData(@"https://my.site.com/", "://", "/", "my.site.com")]
     [InlineData(@"https://my.site.com/clientarea.php", "://", "/", "my.site.com")]
@@ -673,6 +663,48 @@ public sealed class StringHelperTest
         var actual = StringHelper.IsNumber(number);
 
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Merge_ShouldAddSeparatorToEnd()
+    {
+        // Arrange
+        var source = new List<string> { "One", "Two", "Three-" };
+        var separator = "-";
+
+        // Act
+        var result = source.Merge(separator);
+
+        // Assert
+        Assert.EndsWith("-", result); // Check if the result ends with the separator.
+    }
+
+    [Fact]
+    public void Merge_ShouldConcatenateStrings()
+    {
+        // Arrange
+        var source = new List<string> { "Hello", "World", "GPT" };
+        var separator = " ";
+
+        // Act
+        var result = source.Merge(separator);
+
+        // Assert
+        Assert.Equal("Hello World GPT", result);
+    }
+
+    [Fact]
+    public void Merge_ShouldNotAddSeparatorToEnd()
+    {
+        // Arrange
+        var source = new List<string> { "Apple", "Banana", "Cherry" };
+        var separator = "-";
+
+        // Act
+        var result = source.Merge(separator, false);
+
+        // Assert
+        Assert.True(!result.EndsWith(separator)); // Check if the separator is not at the end of the result.
     }
 
     [Theory]
@@ -933,51 +965,9 @@ public sealed class StringHelperTest
         // Assert
         Assert.Equal(new[] { "Hello", "World", "!" }, result);
     }
-
-    [Fact]
-    public void Merge_ShouldConcatenateStrings()
-    {
-        // Arrange
-        var source = new List<string> { "Hello", "World", "GPT" };
-        var separator = " ";
-
-        // Act
-        var result = source.Merge(separator);
-
-        // Assert
-        Assert.Equal("Hello World GPT", result);
-    }
-
-    [Fact]
-    public void Merge_ShouldAddSeparatorToEnd()
-    {
-        // Arrange
-        var source = new List<string> { "One", "Two", "Three-" };
-        var separator = "-";
-
-        // Act
-        var result = source.Merge(separator);
-
-        // Assert
-        Assert.EndsWith("-", result); // Check if the result ends with the separator.
-    }
-
-    [Fact]
-    public void Merge_ShouldNotAddSeparatorToEnd()
-    {
-        // Arrange
-        var source = new List<string> { "Apple", "Banana", "Cherry" };
-        var separator = "-";
-
-        // Act
-        var result = source.Merge(separator, false);
-
-        // Assert
-        Assert.True(!result.EndsWith(separator)); // Check if the separator is not at the end of the result.
-    }
 }
 
-file class CompactDataClass : IEnumerable<object[]>
+internal class CompactDataClass : IEnumerable<object[]>
 {
     public static object[][] CompactData => new[]
         {

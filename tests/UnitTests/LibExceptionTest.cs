@@ -2,6 +2,7 @@
 
 namespace UnitTests;
 
+[Trait("Category", nameof(Library.Exceptions))]
 public class LibExceptionTest
 {
     [Fact]
