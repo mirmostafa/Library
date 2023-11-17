@@ -1,8 +1,4 @@
-﻿using System;
-
-using Library.CodeGeneration;
-
-using Xunit;
+﻿using Library.CodeGeneration;
 
 using Xunit.Abstractions;
 
@@ -10,7 +6,7 @@ namespace UnitTests;
 
 [Collection(nameof(TypePathTest))]
 [Trait("Category", nameof(Library.CodeGeneration))]
-[Trait("Category", nameof(TypePathTest))]
+[Trait("Category", nameof(TypePath))]
 public sealed class TypePathTest(ITestOutputHelper output)
 {
     private static readonly string[] _generics = ["System.Int32", "String"];
@@ -63,56 +59,13 @@ public sealed class TypePathTest(ITestOutputHelper output)
     {
         // Assign
         var type = TypePath.New(source);
-        
+
         // Act
         var (n, ns) = type.ToKeyword();
 
         // Assert
         Assert.Equal(nameSpace, ns);
         Assert.Equal(name, n);
-    }
-
-    [Theory]
-    [InlineData("int?", true)]
-    [InlineData("string?", true)]
-    [InlineData("Test.Person?", true)]
-    [InlineData("System.Collection.IEnumerable<int?>?", true)]
-    [InlineData("System.Collection.IEnumerable<int?>", false)]
-    [InlineData("System.Collection.IEnumerable<int>?", true)]
-    public void Nullability_Check(string type, bool expected)
-    {
-        // Assign
-        var tp = TypePath.New(type);
-
-        // Act
-        var actual = tp.IsNullable;
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("int?", true)]
-    [InlineData("int?", false)]
-    [InlineData("string?", true)]
-    [InlineData("string?", false)]
-    [InlineData("Test.Person?", true)]
-    [InlineData("System.Collection.IEnumerable<int?>?", true)]
-    [InlineData("System.Collection.IEnumerable<int?>?", false)]
-    [InlineData("System.Collection.IEnumerable<int?>", true)]
-    [InlineData("System.Collection.IEnumerable<int?>", false)]
-    [InlineData("System.Collection.IEnumerable<int>?", true)]
-    [InlineData("System.Collection.IEnumerable<int>?", false)]
-    public void Nullability_Create(string type, bool expected)
-    {
-        // Assign
-        var tp = TypePath.New(type, isNullable: expected);
-
-        // Act
-        var actual = tp.IsNullable;
-
-        // Assert
-        Assert.Equal(expected, actual);
     }
 
     [Fact, Priority(2)]
@@ -136,6 +89,49 @@ public sealed class TypePathTest(ITestOutputHelper output)
         Assert.Equal(expectedFullPath, actualFullPath);
     }
 
+    [Theory]
+    [InlineData("int?", true)]
+    [InlineData("string?", true)]
+    [InlineData("Test.Person?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>", false)]
+    [InlineData("System.Collection.IEnumerable<int>?", true)]
+    public void NullabilityCheck(string type, bool expected)
+    {
+        // Assign
+        var tp = TypePath.New(type);
+
+        // Act
+        var actual = tp.IsNullable;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("int?", true)]
+    [InlineData("int?", false)]
+    [InlineData("string?", true)]
+    [InlineData("string?", false)]
+    [InlineData("Test.Person?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", false)]
+    [InlineData("System.Collection.IEnumerable<int?>", true)]
+    [InlineData("System.Collection.IEnumerable<int?>", false)]
+    [InlineData("System.Collection.IEnumerable<int>?", true)]
+    [InlineData("System.Collection.IEnumerable<int>?", false)]
+    public void NullabilityCreate(string type, bool expected)
+    {
+        // Assign
+        var tp = TypePath.New(type, isNullable: expected);
+
+        // Act
+        var actual = tp.IsNullable;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
     [Fact, Priority(20)]
     public void SimpleGenericTypeTest()
     {
@@ -156,7 +152,7 @@ public sealed class TypePathTest(ITestOutputHelper output)
         // Assign
         var expectedFullPath = "TypePathTest";
         var expectedName = "TypePathTest";
-        string expectedNameSpace = string.Empty;
+        var expectedNameSpace = string.Empty;
         TypePath path = expectedFullPath;
 
         // Act
