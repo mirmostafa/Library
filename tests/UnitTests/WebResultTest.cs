@@ -5,6 +5,7 @@ using Library.Web.Results;
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Web.Results))]
+[Trait("Category", nameof(ApiResult))]
 public sealed class WebResultTest
 {
     [Fact]
@@ -72,7 +73,7 @@ public sealed class WebResultTest
     }
 
     private static ApiResult Failed()
-                                        => ApiResult.BadRequest();
+        => ApiResult.BadRequest();
 
     private static ApiResult Succeed()
         => ApiResult.Ok();

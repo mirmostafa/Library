@@ -8,6 +8,7 @@ namespace UnitTests;
 
 
 [Trait("Category", nameof(Library.Collections))]
+[Trait("Category", nameof(Node<string>))]
 public sealed class NodeTest
 {
     private readonly string[] _array = new string[10];

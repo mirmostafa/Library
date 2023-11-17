@@ -1,6 +1,8 @@
 ﻿namespace UnitTests;
 
 [Trait("Category", nameof(Library.Coding))]
+[Trait("Category", nameof(Caster))]
+[Trait("Category", nameof(ICastable))]
 public sealed class CastTest
 {
     [Fact]

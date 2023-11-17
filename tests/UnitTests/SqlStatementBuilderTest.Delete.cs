@@ -3,6 +3,7 @@
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Data.SqlServer))]
+[Trait("Category", nameof(SqlStatementBuilder))]
 public sealed class DeleteStatementBuilderTest
 {
     [Fact]

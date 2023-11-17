@@ -6,6 +6,7 @@ using Library.Validations;
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Validations))]
+[Trait("Category", nameof(Check))]
 public sealed class CheckValidationTest
 {
     private readonly Array _array_empty = Array.Empty<string>();

@@ -56,12 +56,9 @@ internal class ConsoleOutputRedirector : IDisposable
         }
     }
 
-    private class WriterCapturer : TextWriter
+    private class WriterCapturer(Action<object?> redirect) : TextWriter
     {
-        private readonly Action<object?> _redirect;
-
-        public WriterCapturer(Action<object?> redirect)
-            => this._redirect = redirect;
+        private readonly Action<object?> _redirect = redirect;
 
         public override Encoding Encoding { get; } = Encoding.UTF8;
 
@@ -72,13 +69,10 @@ internal class ConsoleOutputRedirector : IDisposable
             => this._redirect(value);
     }
 
-    private class WriterCapturerLazy : TextWriter
+    private class WriterCapturerLazy(Action<object?> redirect) : TextWriter
     {
-        private readonly List<object?> _buffer = new();
-        private readonly Action<object?> _redirect;
-
-        public WriterCapturerLazy(Action<object?> redirect)
-            => this._redirect = redirect;
+        private readonly List<object?> _buffer = [];
+        private readonly Action<object?> _redirect = redirect;
 
         public override Encoding Encoding { get; } = Encoding.UTF8;
 

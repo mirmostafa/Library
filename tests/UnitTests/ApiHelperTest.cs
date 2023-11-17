@@ -3,6 +3,7 @@
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Web.Results))]
+[Trait("Category", nameof(ApiResult))]
 public sealed class ApiHelperTest
 {
     [Fact]

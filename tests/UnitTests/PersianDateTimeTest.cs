@@ -4,6 +4,7 @@ using Library.Globalization;
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Globalization))]
+[Trait("Category", nameof(PersianDateTime))]
 public sealed class PersianDateTimeTest
 {
     [Theory]

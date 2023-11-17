@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 
+using Library.Types;
+
 namespace Library.CodeGeneration.Models;
 
 public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>
@@ -19,7 +21,7 @@ public readonly struct Languages : IEnumerable<Language>, IEquatable<Languages>
         => left.Equals(right);
 
     public override bool Equals(object? obj)
-                => base.Equals(obj);
+        => base.Equals(obj);
 
     public bool Equals(Languages other)
         => this == other;

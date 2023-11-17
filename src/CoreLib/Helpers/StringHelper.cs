@@ -57,6 +57,17 @@ public static class StringHelper
         string.Concat(str, s);
 
     /// <summary>
+    /// Adds the given string to the end of the current string.
+    /// </summary>
+    /// <param name="str">The original string.</param>
+    /// <param name="c">The character to add to the end of the original string.</param>
+    /// <returns>The string with the added string at the end.</returns>
+    [Pure]
+    [return: NotNull]
+    public static string AddEnd(this string? str, in char c) =>
+        string.Concat(str, c);
+
+    /// <summary>
     /// Adds the given string to the start of the current string.
     /// </summary>
     [Pure]

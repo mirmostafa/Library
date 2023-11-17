@@ -3,14 +3,15 @@
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Helpers))]
+[Trait("Category", nameof(EnumerableHelper))]
 public sealed class EnumerableHelperTest
 {
-    private readonly string[] _names = new[] { "Nick", "Mike", "John", "Leyla", "David", "Damian" };
+    private readonly string[] _names = ["Nick", "Mike", "John", "Leyla", "David", "Damian"];
 
     public static TheoryData<IEnumerable<object?>?, IEnumerable<object>> TestCompactData =>
         new()
         {
-            { new string?[] { "a", "b", null, "c" }, new string[] { "a", "b", "c" } }, // Filter out a null value from a non-empty sequence
+            { new string?[] { "a", "b", null, "c" }, ["a", "b", "c"] }, // Filter out a null value from a non-empty sequence
             { new string?[] { null, null, null }, Array.Empty<string>() }, // Filter out all null values from a non-empty sequence
             { Array.Empty<string?>(), Array.Empty<string>() }, // Filter out nothing from an empty sequence
             { null, Array.Empty<string>() } // Return an empty sequence for a null input

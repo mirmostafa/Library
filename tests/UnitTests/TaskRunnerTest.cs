@@ -3,6 +3,7 @@
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Coding))]
+[Trait("Category", nameof(TaskRunner))]
 public sealed class TaskRunnerTest
 {
     [Theory]

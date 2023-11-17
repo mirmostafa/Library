@@ -11,6 +11,7 @@ namespace UnitTests;
 
 
 [Trait("Category", nameof(Library.Mapping))]
+[Trait("Category", nameof(Mapper))]
 public sealed class MapperTest
 {
     [Fact]

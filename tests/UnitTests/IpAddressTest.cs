@@ -1,6 +1,10 @@
-﻿namespace UnitTests;
+﻿using Library.Net;
+
+namespace UnitTests;
 
 [Trait("Category", "CommonPractices")]
+[Trait("Category", nameof(Library.Net))]
+[Trait("Category", nameof(IpAddress))]
 public class IpAddressTest
 {
     public int[] SumIPSegments(int[] segment1, int[] segment2)

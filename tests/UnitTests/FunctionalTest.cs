@@ -5,6 +5,7 @@ using Library.Results;
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Coding))]
+[Trait("Category", nameof(Functional))]
 public sealed class FunctionalTest
 {
     private static readonly Action<int> _emptyIntAction = x => { };

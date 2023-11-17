@@ -3,6 +3,7 @@
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Helpers))]
+[Trait("Category", nameof(SmartEnum<Gender>))]
 public sealed class SmartEnumTest
 {
     [Fact]

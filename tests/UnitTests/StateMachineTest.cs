@@ -5,6 +5,7 @@ using Xunit.Abstractions;
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.DesignPatterns))]
+[Trait("Category", nameof(StateMachineManager))]
 public sealed class StateMachineTest
 {
     private readonly ITestOutputHelper _output;

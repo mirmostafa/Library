@@ -1,4 +1,8 @@
-﻿using Library.CodeGeneration;
+﻿using System;
+
+using Library.CodeGeneration;
+
+using Xunit;
 
 using Xunit.Abstractions;
 
@@ -6,6 +10,7 @@ namespace UnitTests;
 
 [Collection(nameof(TypePathTest))]
 [Trait("Category", nameof(Library.CodeGeneration))]
+[Trait("Category", nameof(TypePathTest))]
 public sealed class TypePathTest(ITestOutputHelper output)
 {
     private static readonly string[] _generics = ["System.Int32", "String"];
@@ -56,10 +61,58 @@ public sealed class TypePathTest(ITestOutputHelper output)
     [InlineData("Test.Person", "Person", "Test")]
     public void KeywordTest(string source, string name, string nameSpace)
     {
+        // Assign
         var type = TypePath.New(source);
+        
+        // Act
         var (n, ns) = type.ToKeyword();
+
+        // Assert
         Assert.Equal(nameSpace, ns);
         Assert.Equal(name, n);
+    }
+
+    [Theory]
+    [InlineData("int?", true)]
+    [InlineData("string?", true)]
+    [InlineData("Test.Person?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>", false)]
+    [InlineData("System.Collection.IEnumerable<int>?", true)]
+    public void Nullability_Check(string type, bool expected)
+    {
+        // Assign
+        var tp = TypePath.New(type);
+
+        // Act
+        var actual = tp.IsNullable;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("int?", true)]
+    [InlineData("int?", false)]
+    [InlineData("string?", true)]
+    [InlineData("string?", false)]
+    [InlineData("Test.Person?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", false)]
+    [InlineData("System.Collection.IEnumerable<int?>", true)]
+    [InlineData("System.Collection.IEnumerable<int?>", false)]
+    [InlineData("System.Collection.IEnumerable<int>?", true)]
+    [InlineData("System.Collection.IEnumerable<int>?", false)]
+    public void Nullability_Create(string type, bool expected)
+    {
+        // Assign
+        var tp = TypePath.New(type, isNullable: expected);
+
+        // Act
+        var actual = tp.IsNullable;
+
+        // Assert
+        Assert.Equal(expected, actual);
     }
 
     [Fact, Priority(2)]

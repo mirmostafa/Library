@@ -37,11 +37,12 @@ public static class SqlEntity
     public static TableInfo GetTableInfo<TEntity>()
         => new(GetTableName<TEntity>(), GetColumns<TEntity>());
 
-    public static string GetTableName<TEntity>()
-        => GetTableName(typeof(TEntity));
+    public static string GetTableName<TEntity>() =>
+        GetTableName(typeof(TEntity));
 
-    private static string GetTableName(Type tableType)
+    public static string GetTableName(Type tableType)
     {
+        Checker.MustBeArgumentNotNull(tableType);
         var tableAttr = ObjectHelper.GetAttribute<TableAttribute>(tableType);
         return tableAttr is not null
             ? tableAttr.Schema.IsNullOrEmpty() ? tableAttr.Name : $"{tableAttr.Schema}.{tableAttr.Name}"

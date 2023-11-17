@@ -5,6 +5,7 @@ using Library.Results;
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Results))]
+[Trait("Category", nameof(Result))]
 public sealed class ResultTest
 {
     [Fact]

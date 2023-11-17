@@ -3,6 +3,8 @@
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Coding))]
+[Trait("Category", nameof(Library.Collections))]
+[Trait("Category", nameof(FluentList<int>))]
 public sealed class FluentListTest
 {
     private static readonly Action<int> _emptyIntAction = x => { };

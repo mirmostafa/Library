@@ -9,6 +9,8 @@ namespace UnitTests;
 
 
 [Trait("Category", nameof(Library.Data.SqlServer))]
+[Trait("Category", nameof(SqlStatementBuilder))]
+[Trait("Category", nameof(SqlEntity))]
 public sealed class SqlEntityTest
 {
     [Fact]

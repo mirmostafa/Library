@@ -4,6 +4,7 @@ using Library.Validations;
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Validations))]
+[Trait("Category", nameof(ValidationResultSet<string>))]
 public sealed class ValidationResultSetTest
 {
     [Fact]
@@ -21,7 +22,7 @@ public sealed class ValidationResultSetTest
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.Name)
             .Build();
-        Assert.Single(result.Errors);
+        _ = Assert.Single(result.Errors);
     }
 
     [Fact]
