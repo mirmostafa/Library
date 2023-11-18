@@ -19,7 +19,7 @@ namespace Library.Helpers;
 //[StackTraceHidden]
 public static class StringHelper
 {
-    private static readonly char[] _standardSeparators = new[] { '\0', '\n', '\r', '\t', '_', '-' };
+    private static readonly char[] _standardSeparators = ['\0', '\n', '\r', '\t', '_', '-'];
 
     /// <summary>
     /// Adds a specified number of characters to a string, either before or after the string.
@@ -119,6 +119,9 @@ public static class StringHelper
 
     public static StringBuilder AppendAll([DisallowNull] this StringBuilder sb, IEnumerable<string> lines)
     {
+        Check.MustBeArgumentNotNull(sb);
+
+        if(lines != null)
         foreach (var line in lines)
         {
             _ = sb.Append(line);
