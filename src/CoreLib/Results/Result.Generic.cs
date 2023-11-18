@@ -175,8 +175,13 @@ public class Result<TValue>(
 
     [StackTraceHidden]
     [DebuggerStepThrough]
+    public static implicit operator Result<TValue>(TValue value) =>
+        new(value);
+
+    [StackTraceHidden]
+    [DebuggerStepThrough]
     public static implicit operator TValue(Result<TValue> result) =>
-        result.Value;
+        result.ArgumentNotNull().Value;
 
     /// <summary>
     /// Creates a new Result object with the given value, succeed, status, message, errors, and extraData.
@@ -230,8 +235,5 @@ public class Result<TValue>(
     public Task<Result<TValue>> ToAsync() =>
         Task.FromResult(this);
 
-    public TValue ToTValue()
-    {
-        throw new NotImplementedException();
-    }
+    public TValue ToTValue() => throw new NotImplementedException();
 }

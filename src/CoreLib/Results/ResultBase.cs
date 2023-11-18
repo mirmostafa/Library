@@ -37,7 +37,7 @@ public abstract class ResultBase(
     /// </summary>
     public virtual bool IsSucceed => this.Succeed ?? ((this.Status is null or 0 or 200) && (!this.Errors.Any()));
 
-    public string? Message { get; set; } = message;
+    public string? Message { get; set; } = message ?? status?.ToString() ?? errors?.FirstOrDefault().Error?.ToString();
 
     public object? Status { get; set; } = status;
 

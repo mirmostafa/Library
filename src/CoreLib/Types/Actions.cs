@@ -10,4 +10,7 @@ public static class Actions
 
     public static Func<bool> True() =>
         () => true;
+
+    public static void Void()
+    { }
 }
