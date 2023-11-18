@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 
+using Library.Globalization.DataTypes;
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -39,49 +40,51 @@ public static class DateTimeHelper
     public static void Deconstruct(this DateTime dt, out int hour, out int minute, out int second, out int millisecond)
         => (hour, minute, second, millisecond) = (dt.Hour, dt.Minute, dt.Second, dt.Millisecond);
 
+    public static TimeBand GetTimeBand(this TimeOnly source) =>
+        source.Hour switch
+        {
+            < 6 or > 19 => TimeBand.Overnight,
+            < 10 => TimeBand.MorningRush,
+            < 16 => TimeBand.Daytime,
+            _ => TimeBand.Eveningrush
+        };
+    
+
     /// <summary>
-    ///     Determines whether this instance start is between.
+    /// Determines whether this instance start is between.
     /// </summary>
-    /// <param name="source"> The source. </param>
-    /// <param name="start"> The start. </param>
-    /// <param name="end"> The end. </param>
-    /// <returns>
-    ///     <c> true </c> if the specified start is between; otherwise, <c> false </c>.
-    /// </returns>
+    /// <param name="source">The source.</param>
+    /// <param name="start">The start.</param>
+    /// <param name="end">The end.</param>
+    /// <returns><c>true</c> if the specified start is between; otherwise, <c>false</c>.</returns>
     public static bool IsBetween(this TimeSpan source, in TimeSpan start, in TimeSpan end)
         => source >= start && source <= end;
 
     /// <summary>
-    ///     Determines whether this instance start is between.
+    /// Determines whether this instance start is between.
     /// </summary>
-    /// <param name="source"> The source. </param>
-    /// <param name="start"> The start. </param>
-    /// <param name="end"> The end. </param>
-    /// <returns>
-    ///     <c> true </c> if the specified start is between; otherwise, <c> false </c>.
-    /// </returns>
+    /// <param name="source">The source.</param>
+    /// <param name="start">The start.</param>
+    /// <param name="end">The end.</param>
+    /// <returns><c>true</c> if the specified start is between; otherwise, <c>false</c>.</returns>
     public static bool IsBetween(this DateTime source, in DateTime start, in DateTime end) =>
         source >= start && source <= end;
 
     /// <summary>
-    ///     Determines whether this instance is between.
+    /// Determines whether this instance is between.
     /// </summary>
-    /// <param name="source"> The source. </param>
-    /// <param name="start"> The start. </param>
-    /// <param name="end"> The end. </param>
-    /// <returns>
-    ///     <c> true </c> if the specified start is between; otherwise, <c> false </c>.
-    /// </returns>
+    /// <param name="source">The source.</param>
+    /// <param name="start">The start.</param>
+    /// <param name="end">The end.</param>
+    /// <returns><c>true</c> if the specified start is between; otherwise, <c>false</c>.</returns>
     public static bool IsBetween(this TimeSpan source, in string start, in string end)
         => source.IsBetween(ToTimeSpan(start), ToTimeSpan(end));
 
     /// <summary>
-    ///     Returns true if dateTime format is valid.
+    /// Returns true if dateTime format is valid.
     /// </summary>
-    /// <param name="dateTime"> The date time. </param>
-    /// <returns>
-    ///     <c> true </c> if the specified date time is valid; otherwise, <c> false </c>.
-    /// </returns>
+    /// <param name="dateTime">The date time.</param>
+    /// <returns><c>true</c> if the specified date time is valid; otherwise, <c>false</c>.</returns>
     public static bool IsValid(in string dateTime)
         => DateTime.TryParse(dateTime, out _);
 
@@ -89,25 +92,29 @@ public static class DateTimeHelper
     /// Checks if the given dateTime is a weekend day according to the given culture.
     /// </summary>
     /// <param name="dateTime">The dateTime to check.</param>
-    /// <param name="culture">The culture to use for the check. If not specified, the current culture is used.</param>
-    /// <returns>True if the given dateTime is a weekend day according to the given culture, false otherwise.</returns>
+    /// <param name="culture">
+    /// The culture to use for the check. If not specified, the current culture is used.
+    /// </param>
+    /// <returns>
+    /// True if the given dateTime is a weekend day according to the given culture, false otherwise.
+    /// </returns>
     public static bool IsWeekend([DisallowNull] this DateTime dateTime, CultureInfo? culture = null)
         => (culture ?? CultureInfo.CurrentCulture).GetWeekdayState(dateTime.ArgumentNotNull(nameof(dateTime)).DayOfWeek)
             is CultureInfoHelper.WeekdayState.Weekend or CultureInfoHelper.WeekdayState.WorkdayMorning;
 
     /// <summary>
-    ///     Converts to datetime.
+    /// Converts to datetime.
     /// </summary>
-    /// <param name="source"> The source. </param>
-    /// <returns> </returns>
+    /// <param name="source">The source.</param>
+    /// <returns></returns>
     public static DateTime ToDateTime(this TimeSpan source)
         => new(source.Ticks);
 
     /// <summary>
-    ///     Converts to timespan.
+    /// Converts to timespan.
     /// </summary>
-    /// <param name="source"> The source. </param>
-    /// <returns> </returns>
+    /// <param name="source">The source.</param>
+    /// <returns></returns>
     public static TimeSpan ToTimeSpan(in string source)
         => TimeSpan.Parse(source, CultureInfo.CurrentCulture);
 

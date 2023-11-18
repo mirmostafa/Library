@@ -113,6 +113,8 @@ public sealed class TypePathTest(ITestOutputHelper output)
     [InlineData("int?", false)]
     [InlineData("string?", true)]
     [InlineData("string?", false)]
+    [InlineData("System.String?", false)]
+    [InlineData("System.String?", true)]
     [InlineData("Test.Person?", true)]
     [InlineData("System.Collection.IEnumerable<int?>?", true)]
     [InlineData("System.Collection.IEnumerable<int?>?", false)]
@@ -130,6 +132,28 @@ public sealed class TypePathTest(ITestOutputHelper output)
 
         // Assert
         Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("int?", true)]
+    [InlineData("int?", false)]
+    [InlineData("string?", true)]
+    [InlineData("string?", false)]
+    [InlineData("System.String?", false)]
+    [InlineData("System.String?", true)]
+    [InlineData("Test.Person?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", false)]
+    [InlineData("System.Collection.IEnumerable<int?>", true)]
+    [InlineData("System.Collection.IEnumerable<int?>", false)]
+    [InlineData("System.Collection.IEnumerable<int>?", true)]
+    [InlineData("System.Collection.IEnumerable<int>?", false)]
+    public void WithNullable(string path, bool isNullable)
+    {
+        var tp = TypePath.New(path);
+        var tp1 = tp.WithNullable(isNullable);
+
+        Assert.Equal(isNullable, tp1.IsNullable);
     }
 
     [Fact, Priority(20)]

@@ -779,3 +779,11 @@ public enum PercentPositivePattern
     [Description("% n")]
     Value3 = 3
 }
+
+public enum TimeBand
+{
+    Overnight,
+    MorningRush,
+    Daytime,
+    Eveningrush
+}

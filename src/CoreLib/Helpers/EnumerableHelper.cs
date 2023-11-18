@@ -1109,6 +1109,9 @@ public static class EnumerableHelper
         }
     }
 
+    public static IEnumerable<T> Merge<T>(IEnumerable<T> enumerable1, IEnumerable<T> enumerable2) =>
+        [.. enumerable1, .. enumerable2];
+
     /// <summary>
     /// Removes and returns the element at the specified index from the list.
     /// </summary>

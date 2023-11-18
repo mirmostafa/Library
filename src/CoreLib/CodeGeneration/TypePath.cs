@@ -11,6 +11,11 @@ namespace Library.CodeGeneration;
 [Immutable]
 public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
 {
+    public TypePath(TypePath typePath)
+        : this(typePath.ArgumentNotNull().FullPath)
+    {
+    }
+
     private readonly TypeData _data = Parse(fullPath, generics, isNullable);
     private string? _fullName;
     private string? _fullPath;
@@ -241,5 +246,20 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
                 .Append('>');
         }
         return buffer.ToString();
+    }
+
+    public TypePath WithNullable(bool isNullable)
+    {
+        if (this.IsNullable == isNullable)
+        {
+            return this;
+        }
+
+        var fullPath = this.GetFullPath().Trim('?');
+        if (isNullable)
+        {
+            fullPath = fullPath.AddEnd('?');
+        }
+        return new(fullPath);
     }
 }
