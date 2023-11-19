@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 
 using Library.Collections;
 using Library.DesignPatterns.Markers;
@@ -42,7 +43,7 @@ public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(
     /// </summary>
     /// <param name="name">The name of the Code item.</param>
     /// <returns>The Code item with the specified name. If no such item exists, returns null.</returns>
-    public Code? this[string name] => this.FirstOrDefault(x => x?.Name == name);
+    public Code? this[string name] => this.SingleOrDefault(x => x?.Name == name);
 
     /// <summary>
     /// Gets all the Code items with the specified language.

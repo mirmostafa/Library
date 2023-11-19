@@ -13,7 +13,8 @@ namespace Library.CodeGeneration.Models;
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
 public class Code(in string name, in Language language, in string statement, in bool isPartial = false, in string? fileName = null) :
     IEquatable<Code>,
-    IEmpty<Code>
+    IEmpty<Code>,
+    IComparable<Code>
 {
     private static Code? _empty;
 
@@ -138,6 +139,8 @@ public class Code(in string name, in Language language, in string statement, in 
 
     private string GetDebuggerDisplay() =>
         this.Name;
+    public int CompareTo(Code? other) =>
+        other is null ? 1 : other.Name.CompareTo(this.Name);
 }
 
 public static class SourceCodeHelpers
