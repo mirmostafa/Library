@@ -21,7 +21,6 @@ public static class FileUiTools
         {
             return vr;
         }
-
         var isYesToAll = false;
         foreach (var (filePath, fileText) in fileList!)
         {
@@ -49,6 +48,7 @@ public static class FileUiTools
 
                         case TaskDialogResult.No:
                             continue;
+                            break;
 
                         default:
                             return Result.CreateFailure(new InvalidOperationException());
