@@ -77,8 +77,8 @@ public sealed class FunctionalTest
         var actual = CatchResult(() => five + zero);
 
         // Assert
-        Assert.True(actual);
-        Assert.Equal(5, actual);
+        Assert.True(actual.IsSucceed);
+        Assert.Equal(5, actual.GetValue());
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public sealed class FunctionalTest
 
         // Assert
         Assert.True(actual);
-        Assert.Equal(5, actual);
+        Assert.Equal(5, actual.GetValue());
     }
 
     [Fact]
@@ -206,7 +206,7 @@ public sealed class FunctionalTest
 
         var campsite = start.Compose(step, getArgs).Compose(step, getArgs).Compose(err, getArgs).Compose(step, getArgs).Compose(step, getArgs);
         var actual = campsite();
-        Assert.Equal(7, actual);
+        Assert.Equal(7, actual.GetValue());
     }
 
     [Fact]

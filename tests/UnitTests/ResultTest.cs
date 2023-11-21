@@ -53,7 +53,7 @@ public sealed class ResultTest
     [Fact]
     public void SimpleTest()
     {
-        var five = Result<int>.CreateSuccess(5, 60);
+        int five = Result<int>.CreateSuccess(5, 60);
         Assert.Equal(5, five);
     }
 

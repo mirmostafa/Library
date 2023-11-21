@@ -12,8 +12,6 @@ public sealed class ArchitecturalTests
 
     public ArchitecturalTests()
     {
-        static bool defaultPredicate(Type x) => x.Namespace?.StartsWith("System.") is not true;
-
         var coreLibAsm = typeof(CoreLibModule).Assembly;
         var codeLibTypes = coreLibAsm.GetTypes().Where(defaultPredicate);
 
@@ -27,6 +25,8 @@ public sealed class ArchitecturalTests
         var wpfLibTypes = wpfLibAsm.GetTypes().Where(defaultPredicate);
 
         _libraryTypes = new(codeLibTypes, cqrsLibTypes, webLibTypes, wpfLibTypes);
+
+        static bool defaultPredicate(Type x) => x.Namespace?.StartsWith("System.") is not true;
     }
 
     [Fact(Skip = "Not always is required.")]
@@ -147,15 +147,15 @@ public sealed class ArchitecturalTests
         }
 
         IEnumerable<Type> getImmutableTypes(IEnumerable<Type> types)
-            => types.Where(ObjectHelper.HasAttribute<ImmutableAttribute>);
+            => types.Where(ObjectHelper.HasAttribute<ImmutableAttribute>).Build();
         IEnumerable<PropertyInfo> getAllPropertiesInTypes(IEnumerable<Type> types)
-            => types.SelectMany(t => t.GetProperties());
+            => types.SelectMany(t => t.GetProperties()).Build();
         IEnumerable<PropertyInfo> getMutableProperties(IEnumerable<PropertyInfo> properties)
-            => properties.Where(x => (x.SetMethod?.IsPublic ?? false) && !x.IsSetMethodInit());
+            => properties.Where(x => (x.SetMethod?.IsPublic ?? false) && !x.IsSetMethodInit()).Build();
         IEnumerable<PropertyInfo> getLibraryTypeProperties(IEnumerable<PropertyInfo> properties)
-            => properties.Where(x => x.PropertyType?.Namespace?.StartsWith("Library") ?? false);
+            => properties.Where(x => x.PropertyType?.Namespace?.StartsWith("Library") ?? false).Build();
         IEnumerable<PropertyInfo> getMutableTypeProperties(IEnumerable<PropertyInfo> properties)
-            => properties.Where(x => (x.PropertyType?.IsClass ?? false) && !ObjectHelper.HasAttribute<ImmutableAttribute>(x.PropertyType));
+            => properties.Where(x => (x.PropertyType?.IsClass ?? false) && !ObjectHelper.HasAttribute<ImmutableAttribute>(x.PropertyType)).Build();
     }
 
     private static IEnumerable<Type> GetAllTypes()
@@ -164,7 +164,7 @@ public sealed class ArchitecturalTests
             _libraryTypes.CqrsLibTypes,
             _libraryTypes.WebLibTypes,
             _libraryTypes.WpfLibTypes
-            );
+            ).Build();
 
     private static bool IsInNameSpace(Type type, string ns)
         => type?.Namespace?.StartsWith(ns) is true;

@@ -17,7 +17,7 @@ public sealed class TaskRunnerTest
             .Then(add5)
             .Then(add5)
             .RunAsync();
-        Assert.Equal(expected, actual);
+        Assert.Equal(expected, actual.GetValue());
 
         int add5(int x) => x + steps;
         int init() => initialValue;

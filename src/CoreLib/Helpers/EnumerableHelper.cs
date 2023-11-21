@@ -759,7 +759,14 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<T> Flatten<T>([DisallowNull] IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren) =>
-            roots.SelectAllChildren(getChildren);
+        roots.SelectAllChildren(getChildren);
+
+    public static TCollection FluentAdd<TCollection, T>(this TCollection collection, T item)
+            where TCollection : ICollection<T>
+    {
+        collection.Add(item);
+        return collection;
+    }
 
     /// <summary>
     /// Executes an action for each item in the given enumerable and returns a read-only list of the items.

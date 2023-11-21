@@ -11,11 +11,6 @@ namespace Library.CodeGeneration;
 [Immutable]
 public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
 {
-    public TypePath(TypePath typePath)
-        : this(typePath.ArgumentNotNull().FullPath)
-    {
-    }
-
     private readonly TypeData _data = Parse(fullPath, generics, isNullable);
     private string? _fullName;
     private string? _fullPath;
@@ -182,10 +177,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
             }
         }
 
-        // Nullability checks
+        // Nullability output parameter
         var nullability = typePathBuffer.EndsWith('?');
 
-        // Find Generics
+        // Find generics
         if (typePathBuffer.Contains('<', StringComparison.Ordinal))
         {
             var indexOfGenSymbol = typePathBuffer.IndexOf('<', StringComparison.Ordinal);
@@ -211,8 +206,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         var genTypes = gens.Select(x => new TypePath(x));
 
         // To be more friendly, let's be kind and use C# keywords.
-        //! CodeCOM makes a mistake.
-        //x (name, nameSpace) = ToKeyword(name, nameSpace);
+        (name, nameSpace) = ToKeyword(name, nameSpace);
         return (name, nameSpace, genTypes, nullability);
     }
 

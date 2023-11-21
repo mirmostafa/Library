@@ -160,6 +160,7 @@ public class Result<TValue>(
     /// <param name="errors">The errors of the Result.</param>
     /// <param name="extraData">The extra data of the Result.</param>
     /// <returns>A new successful Result.</returns>
+    [return:NotNull]
     public static Result<TValue> CreateSuccess(in TValue value,
         in object? status = null,
         in string? message = null,
