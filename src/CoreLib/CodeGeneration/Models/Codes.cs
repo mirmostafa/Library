@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 using Library.Collections;
 using Library.DesignPatterns.Markers;
@@ -79,7 +78,7 @@ public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(
     /// </summary>
     /// <returns>A new empty instance of the Codes class.</returns>
     public static Codes NewEmpty() =>
-        new();
+        [];
 
     /// <summary>
     /// Combines two Codes instances into one.
@@ -110,4 +109,7 @@ public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(
         }
         return result;
     }
+
+    public override string? ToString() =>
+        this.Count == 1 ? this[0]!.ToString() : $"{nameof(Codes)} ({this.Count})";
 }

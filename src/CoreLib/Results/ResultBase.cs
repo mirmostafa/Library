@@ -72,27 +72,20 @@ public abstract class ResultBase(
         {
             _ = result.AppendLine(this.Message);
         }
-        if (!(this.Status?.ToString()?.IsNullOrEmpty() ?? true))
+        if (this.Status?.ToString()?.IsNullOrEmpty() is false)
         {
             _ = result.AppendLine(this.Status.ToString());
         }
-        else if (this.Errors.Length == 1)
-        {
-            _ = result.AppendLine(this.Errors!.First().Error?.ToString() ?? "An error occurred.");
-        }
         else if (this.Errors.Any())
         {
-            foreach (var errorMessage in this.Errors.Select(x => x.Error?.ToString()).Compact())
-            {
-                _ = result.AppendLine($"- {errorMessage}");
-            }
+            _ = result.AppendLine(this.Errors.First().Error.ToString());
         }
         if (result.Length == 0)
         {
             _ = result.AppendLine($"IsSucceed: {this.IsSucceed}");
         }
 
-        return result.ToString();
+        return result.Build();
     }
 
     /// <summary>

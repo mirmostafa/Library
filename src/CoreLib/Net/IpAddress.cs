@@ -18,7 +18,7 @@ public sealed class IpAddress([DisallowNull] in string ip) :
     public static readonly IpAddress MaxValue = Parse("255.255.255.255");
     public static readonly IpAddress MinValue = Parse("0.0.0.0");
 
-    private readonly ImmutableArray<int> _segments = Validate(ip).ThrowOnFail().GetValue()!.Split('.').Select(s => s.Cast().ToInt()).ToImmutableArray();
+    private readonly ImmutableArray<int> _segments = Validate(ip).ThrowOnFail().Value!.Split('.').Select(s => s.Cast().ToInt()).ToImmutableArray();
 
     static IpAddress IMinMaxValue<IpAddress>.MaxValue => MaxValue;
     static IpAddress IMinMaxValue<IpAddress>.MinValue => MinValue;

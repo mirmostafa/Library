@@ -10,6 +10,7 @@ namespace Library.Results;
 /// errors, and extra data.
 /// </summary>
 /// <typeparam name="TValue">The type of the encapsulated value.</typeparam>
+[SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "<Pending>")]
 public class Result<TValue>(
     TValue value,
     in bool? succeed = null,
@@ -64,6 +65,7 @@ public class Result<TValue>(
     /// <returns>A combined Result object with the sum of the values and other combined properties.</returns>
     public static Result<TValue> Combine(Func<TValue, TValue, TValue> add, params Result<TValue>[] resultArray)
     {
+        Check.MustBeArgumentNotNull(add);
         Checker.MustBe(resultArray is not null and { Length: > 0 }, () => $"{nameof(resultArray)} cannot be empty.");
 
         // Combine the Result<TValue> objects to get a combined Tuple object.
@@ -160,7 +162,7 @@ public class Result<TValue>(
     /// <param name="errors">The errors of the Result.</param>
     /// <param name="extraData">The extra data of the Result.</param>
     /// <returns>A new successful Result.</returns>
-    [return:NotNull]
+    [return: NotNull]
     public static Result<TValue> CreateSuccess(in TValue value,
         in object? status = null,
         in string? message = null,
@@ -168,11 +170,17 @@ public class Result<TValue>(
         in IEnumerable<(string Id, object Data)>? extraData = null) =>
         new(value, true, status, message, errors, extraData);
 
-    public static Result<TValue> From(in Result result, in TValue value) =>
-        new(value, result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+    public static Result<TValue> From(in Result result, in TValue value)
+    {
+        Check.MustBeArgumentNotNull(result);
+        return new(value, result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+    }
 
-    public static implicit operator Result(Result<TValue> result) =>
-        new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+    public static implicit operator Result(Result<TValue> result)
+    {
+        Check.MustBeArgumentNotNull(result);
+        return new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+    }
 
     [StackTraceHidden]
     [DebuggerStepThrough]
@@ -195,21 +203,12 @@ public class Result<TValue>(
         in IEnumerable<(string Id, object Data)>? extraData = null) =>
         new(value, succeed, status, message, errors, extraData);
 
-    //public static Result<TValue> operator +(Result<TValue> left, ResultBase right)
-    //{
-    //    var total = Combine(left, right);
-    //    return new Result<TValue>(left.Value, total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
-    //}
-
     public static Result<TValue> operator +(Result<TValue> left, Result right)
     {
+        Check.MustBeArgumentNotNull(left);
         var total = Combine(left, right);
         return new Result<TValue>(left.Value, total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
     }
-
-    /// <summary> Converts a Result<TValue> to a Result. </summary>
-    public static Result ToResult(in Result<TValue> result) =>
-        result;
 
     public Result<TValue> Add(Result<TValue> item, Func<TValue, TValue, TValue> add) =>
             Result<TValue>.Combine(add, item);
@@ -223,18 +222,11 @@ public class Result<TValue>(
         this.Value?.GetHashCode() ?? -1;
 
     /// <summary>
-    /// Gets the value of the current instance.
-    /// </summary>
-    /// <returns>The value of the current instance.</returns>
-    [return: NotNullIfNotNull(nameof(Value))]
-    public TValue GetValue() =>
-        this;
-
-    /// <summary>
     /// Converts the current Result object to an asynchronous Task.
     /// </summary>
     public Task<Result<TValue>> ToAsync() =>
         Task.FromResult(this);
 
-    public TValue ToTValue() => throw new NotImplementedException();
+    public override string ToString() =>
+        this.IsFailure ? base.ToString() : this.Value?.ToString() ?? base.ToString();
 }
