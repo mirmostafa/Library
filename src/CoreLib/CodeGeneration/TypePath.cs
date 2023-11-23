@@ -11,6 +11,24 @@ namespace Library.CodeGeneration;
 [Immutable]
 public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
 {
+    private static readonly (Type Type, string Keyword)[] _primitiveTypes = [
+        (typeof(string), "string"),
+        (typeof(byte), "byte"),
+        (typeof(sbyte), "sbyte"),
+        (typeof(char), "char"),
+        (typeof(bool), "bool"),
+        (typeof(uint), "uint"),
+        (typeof(nint), "nint"),
+        (typeof(nuint), "nuint"),
+        (typeof(short), "short"),
+        (typeof(ushort), "ushort"),
+        (typeof(int), "int"),
+        (typeof(long), "long"),
+        (typeof(float), "float"),
+        (typeof(decimal), "decimal"),
+        (typeof(double), "double"),
+        ];
+
     private readonly TypeData _data = Parse(fullPath, generics, isNullable);
     private string? _fullName;
     private string? _fullPath;
@@ -86,31 +104,21 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     public static bool operator ==(in TypePath? left, in TypePath? right) =>
         left?.Equals(right) ?? (right is null);
 
-    public static (string Name, string NameSpace) ToKeyword(string name, string nameSpace) =>
-        nameSpace == "System"
-            ? (name switch
+    public string AsKeyword()
+    {
+        if (this.NameSpace == "System")
+        {
+            var keyword = _primitiveTypes.FirstOrDefault(x => x.Type.Name == this.Name).Keyword;
+            if (!keyword.IsNullOrEmpty())
             {
-                nameof(String) => ("string", ""),
-                nameof(Byte) => ("byte", ""),
-                nameof(SByte) => ("sbyte", ""),
-                nameof(Char) => ("char", ""),
-                nameof(Boolean) => ("bool", ""),
-                nameof(UInt32) => ("uint", ""),
-                nameof(IntPtr) => ("nint", ""),
-                nameof(UIntPtr) => ("nuint", ""),
-                nameof(Int16) => ("short", ""),
-                nameof(UInt16) => ("ushort", ""),
-                nameof(Int32) => ("int", ""),
-                nameof(Int64) => ("long", ""),
-                nameof(Single) => ("float", ""),
-                nameof(Decimal) => ("decimal", ""),
-                nameof(Double) => ("double", ""),
-                _ => (name, nameSpace),
-            })
-            : (name, nameSpace);
+                return this.IsNullable ? keyword.AddEnd('?') : keyword;
+            }
+        }
+        return this.ToString();
+    }
 
     public void Deconstruct(out string? name, out string? nameSpace) =>
-            (name, nameSpace) = (this.Name, this.NameSpace);
+        (name, nameSpace) = (this.Name, this.NameSpace);
 
     public void Deconstruct(out string? name, out string? nameSpace, out IEnumerable<TypePath> generics) =>
         (name, nameSpace, generics) = (this.Name, this.NameSpace, this.Generics);
@@ -146,16 +154,24 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         }
     }
 
-    public (string Name, string NameSpace) ToKeyword() =>
-        ToKeyword(this.Name, this.NameSpace);
-
     [return: NotNull]
     public override string ToString() =>
-        this.GetFullPath();
+        this.FullName;
 
-    [return: NotNull]
-    public TypePath ToTypePath() =>
-        new(this.FullName);
+    public TypePath WithNullable(bool isNullable)
+    {
+        if (this.IsNullable == isNullable)
+        {
+            return this;
+        }
+
+        var fullPath = this.GetFullPath().Trim('?');
+        if (isNullable)
+        {
+            fullPath = fullPath.AddEnd('?');
+        }
+        return new(fullPath);
+    }
 
     private static TypeData Parse(in string typePath, in IEnumerable<string>? generics = null, bool? isNullable = null)
     {
@@ -164,7 +180,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         Check.MustBe(generics?.All(x => !x.IsNullOrEmpty()) ?? true, () => "Generic types cannot be null or empty.");
 
         // Initializations
-        var typePathBuffer = typePath;
+        string typePathBuffer = typePath.EndsWith('?')
+            ? typePathBuffer = TransformKeyword(typePath.TrimEnd('?')).AddEnd('?')
+            : typePathBuffer = TransformKeyword(typePath);
+
         var gens = new List<string>();
 
         // Take care of nullability.
@@ -209,8 +228,16 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         var genTypes = gens.Select(x => new TypePath(x));
 
         // To be more friendly, let's be kind and use C# keywords.
-        (name, nameSpace) = ToKeyword(name, nameSpace);
+        //x (name, nameSpace) = ToKeyword(name, nameSpace);
         return (name, nameSpace, genTypes, nullability);
+    }
+
+    private static string TransformKeyword(string keyword)
+    {
+        var primitive = _primitiveTypes.FirstOrDefault(x => x.Keyword == keyword);
+        return primitive != default && primitive.Type?.FullName != null
+            ? primitive.Type.FullName
+            : keyword;
     }
 
     [return: NotNull]
@@ -251,20 +278,5 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
             _ = buffer.Append('?');
         }
         return buffer.ToString();
-    }
-
-    public TypePath WithNullable(bool isNullable)
-    {
-        if (this.IsNullable == isNullable)
-        {
-            return this;
-        }
-
-        var fullPath = this.GetFullPath().Trim('?');
-        if (isNullable)
-        {
-            fullPath = fullPath.AddEnd('?');
-        }
-        return new(fullPath);
     }
 }

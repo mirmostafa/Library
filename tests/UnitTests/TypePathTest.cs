@@ -1,8 +1,4 @@
-﻿using System;
-
-using Library.CodeGeneration;
-
-using Xunit;
+﻿using Library.CodeGeneration;
 
 using Xunit.Abstractions;
 
@@ -16,6 +12,36 @@ public sealed class TypePathTest(ITestOutputHelper output)
     private static readonly string[] _generics = ["System.Int32", "String"];
     private readonly ITestOutputHelper _output = output;
     private readonly string _sampleFullPath = "System.Linq.IQueryable<Library.Tests.UnitTests.TypePathTest>";
+
+    [Theory]
+    [InlineData("int", "System.Int32")]
+    [InlineData("int?", "System.Int32?")]
+    [InlineData("string", "System.String")]
+    [InlineData("string?", "System.String?")]
+    [InlineData("Person", "Test.Person")]
+    [InlineData("Person?", "Test.Person?")]
+    public void AsKeyword(string keyword, string fullPath)
+    {
+        var expected = keyword;
+        var actual = TypePath.New(fullPath).AsKeyword();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("int", "System.Int32")]
+    [InlineData("int?", "System.Int32?")]
+    [InlineData("string", "System.String")]
+    [InlineData("string?", "System.String?")]
+    [InlineData("System.String?", "System.String?")]
+    [InlineData("Test.Person?", "Test.Person?")]
+    public void FromKeyword(string keyword, string fullPath)
+    {
+        var expected = fullPath;
+        var actual = TypePath.New(keyword).FullPath;
+
+        Assert.Equal(expected, actual);
+    }
 
     [Fact, Priority(25)]
     public void GenericTypeTest()
@@ -49,27 +75,6 @@ public sealed class TypePathTest(ITestOutputHelper output)
         Assert.Equal(expectedGenericName, actualGeneric.Name);
         Assert.Equal(expectedGenericNameSpace, actualGeneric.NameSpace);
         Assert.Equal(2, allNameSpaces.Count);
-    }
-
-    [Theory]
-    [InlineData("System.String", "string", "")]
-    [InlineData("System.Int32", "int", "")]
-    [InlineData("System.Int64", "long", "")]
-    [InlineData("System.Decimal", "decimal", "")]
-    [InlineData("System.Single", "float", "")]
-    [InlineData("System.Boolean", "bool", "")]
-    [InlineData("Test.Person", "Person", "Test")]
-    public void KeywordTest(string source, string name, string nameSpace)
-    {
-        // Assign
-        var type = TypePath.New(source);
-
-        // Act
-        var (n, ns) = type.ToKeyword();
-
-        // Assert
-        Assert.Equal(nameSpace, ns);
-        Assert.Equal(name, n);
     }
 
     [Fact, Priority(2)]
@@ -138,28 +143,6 @@ public sealed class TypePathTest(ITestOutputHelper output)
         Assert.Equal(expected, actual);
     }
 
-    [Theory]
-    [InlineData("int?", true)]
-    [InlineData("int?", false)]
-    [InlineData("string?", true)]
-    [InlineData("string?", false)]
-    [InlineData("System.String?", false)]
-    [InlineData("System.String?", true)]
-    [InlineData("Test.Person?", true)]
-    [InlineData("System.Collection.IEnumerable<int?>?", true)]
-    [InlineData("System.Collection.IEnumerable<int?>?", false)]
-    [InlineData("System.Collection.IEnumerable<int?>", true)]
-    [InlineData("System.Collection.IEnumerable<int?>", false)]
-    [InlineData("System.Collection.IEnumerable<int>?", true)]
-    [InlineData("System.Collection.IEnumerable<int>?", false)]
-    public void WithNullable(string path, bool isNullable)
-    {
-        var tp = TypePath.New(path);
-        var tp1 = tp.WithNullable(isNullable);
-
-        Assert.Equal(isNullable, tp1.IsNullable);
-    }
-
     [Fact, Priority(20)]
     public void SimpleGenericTypeTest()
     {
@@ -205,6 +188,28 @@ public sealed class TypePathTest(ITestOutputHelper output)
         var actual = TypePath.New(in typeFullPath);
 
         Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("int?", true)]
+    [InlineData("int?", false)]
+    [InlineData("string?", true)]
+    [InlineData("string?", false)]
+    [InlineData("System.String?", false)]
+    [InlineData("System.String?", true)]
+    [InlineData("Test.Person?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", false)]
+    [InlineData("System.Collection.IEnumerable<int?>", true)]
+    [InlineData("System.Collection.IEnumerable<int?>", false)]
+    [InlineData("System.Collection.IEnumerable<int>?", true)]
+    [InlineData("System.Collection.IEnumerable<int>?", false)]
+    public void WithNullable(string path, bool isNullable)
+    {
+        var tp = TypePath.New(path);
+        var tp1 = tp.WithNullable(isNullable);
+
+        Assert.Equal(isNullable, tp1.IsNullable);
     }
 
     private void Display(TypePath? path)

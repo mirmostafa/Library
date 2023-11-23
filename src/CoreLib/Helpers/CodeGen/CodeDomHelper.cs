@@ -2,6 +2,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Reflection;
 
+using Library.CodeGeneration;
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
@@ -238,7 +239,7 @@ public static class CodeDomHelper
         var nullableSign = propertyInfo.IsNullable ? "?" : "";
 
         var indent = new string(' ', INDENT_SIZE);
-        var signature = $"{indent}public {propertyInfo.Type}{nullableSign} {ToPropName(propertyInfo.Name.Trim())}";
+        var signature = $"{indent}public {propertyInfo.Type.FullPath}{nullableSign} {ToPropName(propertyInfo.Name.Trim())}";
         var getterStatement = $"{indent}{indent}";
         var setterStatement = $"{indent}{indent}";
         var g = propertyInfo.Getter ?? new(true, false);
@@ -313,7 +314,7 @@ public static class CodeDomHelper
         if (propertyInfo.HasBackingField)
         {
             var bf = propertyInfo.BackingFieldName ?? ToFieldName(propertyInfo.Name);
-            _ = c.AddField(propertyInfo.Type, bf);
+            _ = c.AddField(propertyInfo.Type.FullName, bf);
         }
         if (propertyInfo.Attributes?.Any() is true)
         {
@@ -503,7 +504,7 @@ public static class CodeDomHelper
         {
             foreach ((var argType, var argName) in arguments)
             {
-                _ = method.Parameters.Add(new CodeParameterDeclarationExpression(argType, ToArgName(argName)));
+                _ = method.Parameters.Add(new CodeParameterDeclarationExpression(TypePath.New(argType).FullName, ToArgName(argName)));
             }
         }
 
