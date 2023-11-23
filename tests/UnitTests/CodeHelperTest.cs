@@ -55,8 +55,8 @@ public sealed class CodeHelperTest
         Assert.NotNull(actual_an_fun);
         Assert.NotNull(actual_local_act);
         Assert.NotNull(actual_local_fun);
-        Assert.Equal(1, actual_an_fun.GetValue());
-        Assert.Equal(1, actual_local_fun.GetValue());
+        Assert.Equal(1, actual_an_fun.Value);
+        Assert.Equal(1, actual_local_fun.Value);
     }
 
     [Fact]

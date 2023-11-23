@@ -1,4 +1,8 @@
-﻿using Library.CodeGeneration;
+﻿using System;
+
+using Library.CodeGeneration;
+
+using Xunit;
 
 using Xunit.Abstractions;
 
@@ -189,6 +193,18 @@ public sealed class TypePathTest(ITestOutputHelper output)
         Assert.Equal(expectedName, actualName);
         Assert.Equal(expectedNameSpace, actualNameSpace);
         Assert.Equal(expectedFullPath, actualFullPath);
+    }
+
+    [Theory]
+    [InlineData("System.Collections.Generic.List<Test.HumanResources.PersonDto>?")]
+    [InlineData("System.Collections.Generic.List<Test.HumanResources.PersonDto?>?")]
+    public void SpecificTest1(string typeFullPath)
+    {
+        var expected = typeFullPath;
+
+        var actual = TypePath.New(in typeFullPath);
+
+        Assert.Equal(expected, actual);
     }
 
     private void Display(TypePath? path)

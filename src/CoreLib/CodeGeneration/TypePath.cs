@@ -180,6 +180,9 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         // Nullability output parameter
         var nullability = typePathBuffer.EndsWith('?');
 
+        // No longer nullable sign is required. So remove it.
+        typePathBuffer = typePathBuffer.TrimEnd('?');
+
         // Find generics
         if (typePathBuffer.Contains('<', StringComparison.Ordinal))
         {
@@ -221,6 +224,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
                 .Append(this.Generics.Select(x => x.GetFullName())!.Merge(", "))
                 .Append('>');
         }
+        if (this.IsNullable)
+        {
+            _ = buffer.Append('?');
+        }
         return buffer.ToString();
     }
 
@@ -238,6 +245,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
             _ = buffer.Append('<')
                 .Append(this.Generics.Select(x => x.GetFullPath())!.Merge(", "))
                 .Append('>');
+        }
+        if (this.IsNullable)
+        {
+            _ = buffer.Append('?');
         }
         return buffer.ToString();
     }
