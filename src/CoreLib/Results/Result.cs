@@ -91,7 +91,10 @@ public sealed class Result(
         new(true, status, message);
 
     public static explicit operator Result(bool b) =>
-            b ? Success : Failure;
+        b ? Success : Failure;
+
+    public static Result<TValue> From<TValue>(Result result, TValue value) =>
+        Result<TValue>.From(result, value);
 
     /// <summary>
     /// Combines multiple Result objects into a single Result object.
