@@ -11,7 +11,7 @@ namespace Library.CodeGeneration.Models;
 [Fluent]
 [Immutable]
 [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-public class Code(in string name, in Language language, in string statement, in bool isPartial = false, in string? fileName = null) :
+public class Code([DisallowNull] in string name, [DisallowNull] in Language language, [DisallowNull] in string statement, in bool isPartial = false, in string? fileName = null) :
     IEquatable<Code>,
     IEmpty<Code>,
     IComparable<Code>
@@ -104,11 +104,34 @@ public class Code(in string name, in Language language, in string statement, in 
     public static bool operator !=(Code? left, Code? right) =>
         !(left == right);
 
+    public static bool operator <(Code left, Code right)
+    {
+        return ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+    }
+
+    public static bool operator <=(Code left, Code right)
+    {
+        return ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+    }
+
     public static bool operator ==(Code? left, Code? right) =>
-        left?.Equals(right) ?? (right is null);
+                left?.Equals(right) ?? (right is null);
+
+    public static bool operator >(Code left, Code right)
+    {
+        return !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+    }
+
+    public static bool operator >=(Code left, Code right)
+    {
+        return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+    }
+
+    public int CompareTo(Code? other) =>
+        other is null ? 1 : other.Name.CompareTo(this.Name);
 
     public void Deconstruct(out string name, out string statement) =>
-        (name, statement) = (this.Name, this.Statement);
+                    (name, statement) = (this.Name, this.Statement);
 
     public void Deconstruct(out string name, out string statement, out bool isPartial) =>
         (name, statement, isPartial) = (this.Name, this.Statement, this.IsPartial);
@@ -139,8 +162,6 @@ public class Code(in string name, in Language language, in string statement, in 
 
     private string GetDebuggerDisplay() =>
         this.Name;
-    public int CompareTo(Code? other) =>
-        other is null ? 1 : other.Name.CompareTo(this.Name);
 }
 
 public static class SourceCodeHelpers
@@ -158,8 +179,8 @@ public static class SourceCodeHelpers
     public static Codes ToCodes(this Code code) =>
         new(code.Cast().ToEnumerable<Code>());
 
-    public static Result<Codes> ToCodes(this Result<Code> code) =>
-        Result<Codes>.From(code, code.ToCodes());
+    public static Result<Codes> ToCodesResult(this Result<Code> code) =>
+        Result<Codes>.From(code.ArgumentNotNull(), code.Value.ToCodes());
 
     public static Code WithStatement(this Code code, [DisallowNull] string statement) =>
         new(code) { Statement = statement };

@@ -39,7 +39,7 @@ public static class Caster
     /// <returns>A new Castable object.</returns>
     public static ICastable Cast(this object? obj)
         => new Castable(obj);
-    public static ICastable<T> CastSafe<T>(this T? obj)
+    public static ICastable<T> Safe<T>(this ICastable o, T? obj)
         => new Castable<T>(obj);
 
     [return: NotNullIfNotNull(nameof(defaultValue))]

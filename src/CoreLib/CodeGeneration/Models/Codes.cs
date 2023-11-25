@@ -67,6 +67,9 @@ public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(
     public static Codes New(IEnumerable<Code> arg) =>
         new(arg);
 
+    public static Codes New(IEnumerable<Codes> arg) =>
+        new(arg);
+
     public static Codes New(params Code[] codes) =>
         new(codes);
 
