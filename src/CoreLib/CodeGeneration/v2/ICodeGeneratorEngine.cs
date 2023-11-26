@@ -12,7 +12,13 @@ public interface ICodeGeneratorEngine
 
 public static class CodeGeneratorExtensions
 {
-    public static Result<Code> Generate(this ICodeGeneratorEngine codeGenerator, in INamespace nameSpace, [DisallowNull] in string name, [DisallowNull] Language language, bool isPartial, string? fileName = null)
+    public static Result<Code> Generate(
+        this ICodeGeneratorEngine codeGenerator,
+        in INamespace nameSpace,
+        [DisallowNull] in string name,
+        [DisallowNull] Language language,
+        bool isPartial,
+        string? fileName = null)
     {
         Checker.MustBeArgumentNotNull(codeGenerator);
 

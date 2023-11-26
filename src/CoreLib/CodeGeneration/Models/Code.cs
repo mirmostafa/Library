@@ -174,6 +174,8 @@ public static class SourceCodeHelpers
 
     public static Codes ToCodes(this IEnumerable<Code> codes) =>
         new(codes);
+    public static Codes ToCodes(this IEnumerable<Codes> codes) =>
+         new(codes);
 
     [return: NotNull]
     public static Codes ToCodes(this Code code) =>
