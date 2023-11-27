@@ -17,16 +17,21 @@ public static partial class SqlStatementBuilder
     private static StringBuilder AddClause(in string clause, in string indent, in StringBuilder result) =>
         result.AppendLine().Append($"{indent}{clause}");
 
-    private static string FormatValue(object value) =>
-        value switch
-        {
-            int i => i.ToString(),
-            float f => f.ToString(),
-            decimal d => d.ToString(),
-            long l => l.ToString(),
-            string and { Length: 0 } => "''",
-            string s => $"N'{s.Trim('\'')}'",
-            null => DBNull.Value.ToString(),
-            _ => $"'{value.ToString()?.Trim('\'')}'",
-        };
+    private static string FormatValue(object? value)
+    {
+        var stringValue = value?.ToString();
+        return stringValue?.StartsWith('\'') ?? false
+            ? stringValue
+            : value switch
+            {
+                int i => i.ToString(),
+                float f => f.ToString(),
+                decimal d => d.ToString(),
+                long l => l.ToString(),
+                string and { Length: 0 } => "''",
+                string s => $"N'{s.Trim('\'')}'",
+                null => DBNull.Value.ToString(),
+                _ => $"'{stringValue?.Trim('\'')}'",
+            };
+    }
 }

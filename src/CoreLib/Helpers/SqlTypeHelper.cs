@@ -2,6 +2,21 @@
 
 public static class SqlTypeHelper
 {
+    public static string FormatDateForSql(DateTime date) => 
+        date.ToString("yyyy-MM-dd HH:mm:ss");
+
+    public static string NetTypeToSqlType(Type type) =>
+            type.Name switch
+            {
+                "Int16" => "smallint",
+                "Int32" => "int",
+                "String" => "nvarchar",
+                "DateTime" => "datetime2",
+                "Boolean" => "bit",
+                //"Guid"=>
+                _ => throw new NotImplementedException(),
+            };
+
     /// <summary>
     /// Converts a SQL type name to its corresponding .NET type.
     /// </summary>
@@ -18,16 +33,5 @@ public static class SqlTypeHelper
             "bit" => typeof(bool), // Map "bit" to bool.
             null => throw new NotSupportedException(), // Throw an exception if typeName is null.
             _ => throw new NotImplementedException(), // Throw an exception for any other typeName.
-        };
-    public static string NetTypeToSqlType(Type type) =>
-        type.Name switch
-        {
-            "Int16" => "smallint",
-            "Int32" => "int",
-            "String" => "nvarchar",
-            "DateTime" => "datetime2",
-            "Boolean" => "bit",
-            //"Guid"=>
-            _ => throw new NotImplementedException(),
         };
 }

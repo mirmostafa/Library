@@ -1,8 +1,8 @@
 ﻿namespace Library.Data.SqlServer.Builders.Bases;
 
-public interface IInsertStatement : IStatementOnTable
+public interface IInsertStatement : IStatementOnTable, ICommandStatement
 {
-    IDictionary<string, object> Columns { get; }
+    IDictionary<string, object?> Values { get; }
 
     bool ReturnId { get; set; }
 }
