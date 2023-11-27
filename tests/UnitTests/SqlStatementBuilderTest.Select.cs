@@ -1,9 +1,4 @@
-﻿using System;
-
-using Library.Data.SqlServer;
-using Library.Exceptions.Validations;
-
-using Xunit;
+﻿using Library.Data.SqlServer;
 
 namespace UnitTests;
 
@@ -11,8 +6,32 @@ namespace UnitTests;
 [Trait("Category", nameof(SqlStatementBuilder))]
 public sealed class SelectStatementBuilderTest
 {
+    private static readonly string[] _sourceArray = ["Id", "Name", "Age"];
+
     [Fact]
-    public void _01_BuildFullSelectTest()
+    public void BuildAddListColSelectTest()
+    {
+        var actual = SqlStatementBuilder
+            .Select()
+            .AddColumns(["Id", "Name", "Age"])
+            .From("Person")
+            .Build();
+        var expected = @"SELECT [Id], [Name], [Age]
+    FROM [Person]";
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void BuildAscendingFromSelectTest()
+    {
+        var specQueryActual = SqlStatementBuilder
+                        .Select("Person")
+                        .Ascending();
+        _ = Assert.Throws<ArgumentNullException>(() => specQueryActual.Build());
+    }
+
+    [Fact]
+    public void BuildFullSelectTest()
     {
         var specQueryActual = SqlStatementBuilder
                         .Select()
@@ -30,7 +49,7 @@ public sealed class SelectStatementBuilderTest
     }
 
     [Fact]
-    public void _02_BuildMinimalFromSelectTest()
+    public void BuildMinimalFromSelectTest()
     {
         var specQueryActual = SqlStatementBuilder
                         .Select("Person")
@@ -38,55 +57,6 @@ public sealed class SelectStatementBuilderTest
         var specQueryExpected = @"SELECT *
     FROM [Person]";
         Assert.Equal(specQueryExpected, specQueryActual);
-    }
-
-    [Fact]
-    public void _03_BuildStandardMinimizeSelectTest()
-    {
-        var specQueryActual = SqlStatementBuilder
-                        .Select()
-                        .Star()
-                        .From("Person")
-                        .Build();
-        var specQueryExpected = @"SELECT *
-    FROM [Person]";
-        Assert.Equal(specQueryExpected, specQueryActual);
-    }
-
-    [Fact]
-    public void _04_BuildSelectOrderByDescendingTest()
-    {
-        var specQueryActual = SqlStatementBuilder
-                        .Select("Person")
-                        .Star()
-                        .OrderByDescending("Id");
-        var actual = specQueryActual.Build();
-        var specQueryExpected = @"SELECT *
-    FROM [Person]
-    ORDER BY [Id] DESC";
-        Assert.Equal(specQueryExpected, actual);
-    }
-
-    [Fact]
-    public void BuildAddListColSelectTest()
-    {
-        var specQueryActual = SqlStatementBuilder
-            .Select()
-            .AddColumns(["Id", "Name", "Age" ])
-            .From("Person")
-            .Build();
-        var specQueryExpected = @"SELECT [Id], [Name], [Age]
-    FROM [Person]";
-        Assert.Equal(specQueryExpected, specQueryActual);
-    }
-
-    [Fact]
-    public void BuildAscendingFromSelectTest()
-    {
-        var specQueryActual = SqlStatementBuilder
-                        .Select("Person")
-                        .Ascending();
-        _ = Assert.Throws<ArgumentNullException>(() => specQueryActual.Build());
     }
 
     [Fact]
@@ -119,13 +89,40 @@ public sealed class SelectStatementBuilderTest
     }
 
     [Fact]
+    public void BuildSelectOrderByDescendingTest()
+    {
+        var specQueryActual = SqlStatementBuilder
+                        .Select("Person")
+                        .Star()
+                        .OrderByDescending("Id");
+        var actual = specQueryActual.Build();
+        var specQueryExpected = @"SELECT *
+    FROM [Person]
+    ORDER BY [Id] DESC";
+        Assert.Equal(specQueryExpected, actual);
+    }
+
+    [Fact]
     public void BuildSelectSpecTest()
     {
         var specQueryActual = SqlStatementBuilder
                         .Select("Person")
-                        .Columns((new[] { "Id", "Name", "Age" }).AsEnumerable())
+                        .Columns((_sourceArray).AsEnumerable())
                         .Build();
         var specQueryExpected = @"SELECT [Id], [Name], [Age]
+    FROM [Person]";
+        Assert.Equal(specQueryExpected, specQueryActual);
+    }
+
+    [Fact]
+    public void BuildStandardMinimizeSelectTest()
+    {
+        var specQueryActual = SqlStatementBuilder
+                        .Select()
+                        .Star()
+                        .From("Person")
+                        .Build();
+        var specQueryExpected = @"SELECT *
     FROM [Person]";
         Assert.Equal(specQueryExpected, specQueryActual);
     }
@@ -146,15 +143,15 @@ public sealed class SelectStatementBuilderTest
     public void CreateSelectGeneric()
     {
         var specQueryActual = SqlStatementBuilder.CreateSelect<Person>().Build();
-        var specQueryExpected = @"SELECT [Id], [Name], [Age]
+        var specQueryExpected = @"SELECT [Age], [Id], [Name]
     FROM [Person]";
         Assert.Equal(specQueryExpected, specQueryActual);
     }
 }
 
-sealed class Person(long id, string name, int age)
+internal sealed class Person(long id, string name, int age)
 {
+    public int Age { get; } = age;
     public long Id { get; } = id;
     public string Name { get; } = name;
-    public int Age { get; } = age;
 }

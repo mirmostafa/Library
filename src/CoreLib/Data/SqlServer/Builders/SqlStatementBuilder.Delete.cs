@@ -1,4 +1,6 @@
-﻿using Library.Data.SqlServer.Builders.Bases;
+﻿using System;
+
+using Library.Data.SqlServer.Builders.Bases;
 using Library.Validations;
 
 namespace Library.Data.SqlServer;
@@ -18,7 +20,7 @@ public partial class SqlStatementBuilder
 
     public static IDeleteStatement Delete([DisallowNull] string tableName)
         => new DeleteStatement { TableName = tableName.ArgumentNotNull() };
-
+    
     public static IDeleteStatement Delete()
         => new DeleteStatement();
 
