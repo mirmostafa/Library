@@ -2,7 +2,7 @@
 
 public static class SqlTypeHelper
 {
-    public static string FormatDateForSql(DateTime date) => 
+    public static string FormatDate(DateTime date) => 
         date.ToString("yyyy-MM-dd HH:mm:ss");
 
     public static string NetTypeToSqlType(Type type) =>

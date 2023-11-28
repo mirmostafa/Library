@@ -10,27 +10,21 @@ public static partial class SqlStatementBuilder
         Check.MutBeNotNull(statement?.TableName);
         Check.MustBe(statement.ColumnsValue?.Count > 0);
 
-        //var result = new StringBuilder($"Update {AddBrackets(statement.TableName)}");
-        //_ = AddClause($"SET ({statement.ColumnsValue.Select(cv => AddBrackets(cv.Key)).Merge(", ")})", indent, result);
-        //if (!statement.ForceFormatValues)
-        //{
-        //    _ = AddClause($"VALUES ({statement.ColumnsValue.Select(cv => cv.Value?.ToString() ?? DBNull.Value.ToString()).Merge(", ")})", indent, result);
-        //}
-        //else
-        //{
-        //    _ = AddClause($"VALUES ({statement.ColumnsValue.Select(cv => FormatValue(cv.Value)).Merge(", ")})", indent, result);
-        //}
+        var result = new StringBuilder($"UPDATE {AddBrackets(statement.TableName)} ");
 
-        //if (!statement.WhereClause.IsNullOrEmpty())
-        //{
-        //    _ = AddClause($"WHERE {statement.WhereClause}", indent, result);
-        //}
-
-        var result = new StringBuilder($"Update {AddBrackets(statement.TableName)}");
         Func<object, string> format = statement.ForceFormatValues ? FormatValue : cv => cv?.ToString() ?? DBNull.Value.ToString();
         var keyValues = statement.ColumnsValue.Select(kv => $"{AddBrackets(kv.Key)} = {format(kv.Value)}").Merge(", ");
         _ = AddClause($"SET {keyValues}", indent, result);
 
+        if (!statement.WhereClause.IsNullOrEmpty())
+        {
+            _ = AddClause($"WHERE {statement.WhereClause}", indent, result);
+        }
+
+        if (statement.ReturnId)
+        {
+            _ = result.AppendLine(";").Append("SELECT SCOPE_IDENTITY();");
+        }
         return result.ToString();
     }
 
@@ -70,6 +64,7 @@ public static partial class SqlStatementBuilder
     {
         public Dictionary<string, object> ColumnsValue { get; } = [];
         public bool ForceFormatValues { get; set; } = true;
+        public bool ReturnId { get; set; }
         public string? Schema { get; set; }
         public string TableName { get; set; } = null!;
         public string? WhereClause { get; set; }

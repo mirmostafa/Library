@@ -34,9 +34,6 @@ public partial class SqlStatementBuilder
     public static IInsertStatement Into([DisallowNull] this IInsertStatement statement, string tableName) =>
         statement.With(x => x.TableName = tableName);
 
-    public static IInsertStatement ReturnId([DisallowNull] this IInsertStatement statement, bool returnId = true) =>
-        statement.With(x => x.ReturnId = returnId);
-
     public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params (string ColumnName, object? Value)[] values) =>
         statement.With(x => x.Values(values.Select(x => new KeyValuePair<string, object?>(x.ColumnName, x.Value))));
 

@@ -3,6 +3,4 @@
 public interface IInsertStatement : IStatementOnTable, ICommandStatement
 {
     IDictionary<string, object?> Values { get; }
-
-    bool ReturnId { get; set; }
 }
