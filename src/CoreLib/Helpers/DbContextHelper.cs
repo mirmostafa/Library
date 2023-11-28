@@ -483,6 +483,8 @@ public static class DbContextHelper
     public static async Task<Result<int>> SaveChangesResultAsync<TDbContext>(this TDbContext dbContext, CancellationToken cancellationToken = default)
                 where TDbContext : DbContext
     {
+        Check.MustBeArgumentNotNull(dbContext);
+
         // Try to save changes to the database
         try
         {

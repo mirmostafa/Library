@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
@@ -12,8 +11,8 @@ using Library.Windows;
 
 namespace Library.Helpers;
 
-[DebuggerStepThrough]
-[StackTraceHidden]
+//[DebuggerStepThrough]
+//[StackTraceHidden]
 public static class ResultHelper
 {
     /// <summary>
@@ -48,6 +47,15 @@ public static class ResultHelper
 
     public static void Deconstruct<TValue>(this Result<TValue> result, out bool IsSucceed, out TValue Value) =>
         (IsSucceed, Value) = (result.IsSucceed, result.Value);
+
+    public static void End([DisallowNull] this Result result) =>
+        Actions.Void();
+
+    public static void End<TValue>([DisallowNull] this Result<TValue> result) =>
+        Actions.Void();
+
+    public static Task EndAsync(this Task<Result> resultAsync) =>
+        Task.CompletedTask;
 
     public static async Task<TValue> GetValueAsync<TValue>(this Task<Result<TValue>> taskResult)
     {
@@ -118,11 +126,8 @@ public static class ResultHelper
     /// <param name="owner">The object that is throwing the exception.</param>
     /// <param name="instruction">The instruction that is throwing the exception.</param>
     /// <returns>The given Result.</returns>
-    public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null)=> 
+    public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null) =>
         InnerThrowOnFail(result, owner, instruction);
-
-    public static void End([DisallowNull] this Result result) =>
-        Actions.Void();
 
     /// <summary>
     /// Throws an exception if the given result is not successful.
@@ -146,9 +151,6 @@ public static class ResultHelper
     public static Result<TValue> ThrowOnFail<TValue>([DisallowNull] this Result<TValue> result, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(result, owner, instruction);
 
-    public static void End<TValue>([DisallowNull] this Result<TValue> result) =>
-        Actions.Void();
-
     /// <summary>
     /// Throws an exception if the result of the provided Task is a failure.
     /// </summary>
@@ -166,10 +168,6 @@ public static class ResultHelper
 
     public static async Task<Result> ThrowOnFailAsync(this Task<Result> resultAsync, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(await resultAsync, owner, instruction);
-
-    public static Task EndAsync(this Task<Result> resultAsync) =>
-        Task.CompletedTask;
-
 
     public static Task<TResult> ToAsync<TResult>(this TResult result) where TResult : ResultBase
         => Task.FromResult(result);
@@ -252,13 +250,34 @@ public static class ResultHelper
             return result;
         }
 
-        var exception =
-            result.Errors.Select(x => x.Error).Cast<Exception>().FirstOrDefault()
-            ?? result.Status switch
-            {
-                Exception ex => ex.With(x => x.Source = owner?.ToString()),
-                _ => new CommonException(result.ToNotificationMessage(owner: owner, instruction: instruction))
-            };
+        Exception exception;
+        var error = result.Errors.Select(x => x.Error).FirstOrDefault();
+
+        if (!result.Message.IsNullOrEmpty())
+        {
+            exception = new CommonException(result.Message) { Instruction = instruction }.With(x => x.Source = owner?.ToString());
+        }
+        else if (result.Status is Exception ex1)
+        {
+            exception = ex1.With(x => x.Source = owner?.ToString());
+        }
+        else if (result.Status is string s1)
+        {
+            exception = new CommonException(s1) { Instruction = instruction }.With(x => x.Source = owner?.ToString());
+        }
+        else if (error is Exception ex)
+        {
+            exception = ex.With(x => x.Source = owner?.ToString());
+        }
+        else if (error is string s)
+        {
+            exception = new CommonException(s) { Instruction = instruction }.With(x => x.Source = owner?.ToString());
+        }
+        else
+        {
+            exception = new CommonException(result.ToNotificationMessage(owner: owner, instruction: instruction)).With(x => x.Source = owner?.ToString());
+        }
+
         throw exception;
     }
 }

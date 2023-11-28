@@ -1,8 +1,11 @@
-﻿using Library.Results;
+﻿using System.Diagnostics;
+
+using Library.Results;
 using Library.Wpf.Dialogs;
 
 namespace Library.Wpf.Helpers;
 
+[DebuggerStepThrough]
 public static class WpfResultHelper
 {
     public static TResult ShowOrThrow<TResult>(this TResult result, object? owner = null, string? instruction = null, string? successMessage = null)

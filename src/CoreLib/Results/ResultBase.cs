@@ -16,6 +16,7 @@ public abstract class ResultBase(
     private ImmutableArray<(object Id, object Error)>? _errors = errors?.ToImmutableArray();
 
     private ImmutableArray<(string, object)>? _extraData = extraData?.ToImmutableArray();
+    protected object? _status = status;
 
     [NotNull]
     public ImmutableArray<(object Id, object Error)> Errors
@@ -37,10 +38,9 @@ public abstract class ResultBase(
     /// </summary>
     public virtual bool IsSucceed => this.Succeed ?? ((this.Status is null or 0 or 200) && (!this.Errors.Any()));
 
-    public string? Message { get; set; } = message ?? status?.ToString() ?? errors?.FirstOrDefault().Error?.ToString();
+    public string? Message { get; set; } = message ?? status?.ToString();
 
-    public object? Status { get; set; } = status;
-
+    public object? Status { get => this._status ?? this.Errors.FirstOrDefault().Error; set => this._status = value; }
     public bool? Succeed { get; set; } = succeed;
 
     public static implicit operator bool(ResultBase result) =>

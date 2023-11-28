@@ -10,10 +10,6 @@ using Library.Results;
 
 namespace Library.Validations;
 
-#if UNITTEST
-    [DebuggerStepThrough]
-    [StackTraceHidden]
-#endif
 public static class ValidationExtensions
 {
     /// <summary>
@@ -34,7 +30,7 @@ public static class ValidationExtensions
     /// </summary>
     [MemberNotNull(nameof(ValidationResultSet<TValue>.Value))]
     public static ValidationResultSet<TValue> ArgumentNotNull<TValue>(this ValidationResultSet<TValue> vrs, Func<Exception> onError = null) =>
-        vrs.InnerAddRule(x => x, _ => vrs.Value is not null, onError, () => new ArgumentNullException(vrs._valueName));
+        vrs.InnerAddRule(x => x, [DebuggerStepThrough](_) => vrs.Value is not null, onError, () => new ArgumentNullException(vrs._valueName));
 
     /// <summary> Traverses the rules and create a fail <code>Result<TValue></code>, at first broken
     /// rule . Otherwise created a succeed result. </summary>
@@ -237,7 +233,7 @@ public static class ValidationExtensions
 
                 // Depending on the behavior parameter, take the appropriate action
                 var exception = onError();
-                var errorResult = Result<TValue>.CreateFailure(value, errors: [(exception, exception)], status: exception);
+                var errorResult = Result<TValue>.CreateFailure(value, errors: [(-1, exception)]);
                 switch (behavior)
                 {
                     // Combine all errors

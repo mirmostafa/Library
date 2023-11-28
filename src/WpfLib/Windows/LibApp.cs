@@ -57,8 +57,14 @@ public abstract class LibApp : Bases.ApplicationBase
                 break;
 
             case IException ex:
-                this.Logger.Error(ex.Instruction ?? ex.Message, sender: owner(ex));
-                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message, owner(ex), detailsExpandedText: ex.Details);
+                var message = ex.Message switch
+                {
+                    null => ex.GetBaseException()?.Message ?? string.Empty,
+                    _ when ex.Message.StartsWith("Exception of type") => ex.GetBaseException()?.Message,
+                    _ => ex.Message
+                };
+                this.Logger.Error(ex.Instruction ?? message!, sender: owner(ex));
+                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, message, owner(ex), detailsExpandedText: ex.Details);
                 break;
 
             case Exception ex:

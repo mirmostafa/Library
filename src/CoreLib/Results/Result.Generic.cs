@@ -142,7 +142,7 @@ public class Result<TValue>(
     /// <param name="value">The value to be stored in the Result.</param>
     /// <returns>A Result with a failure status and an Exception.</returns>
     public static Result<TValue> CreateFailure(in Exception error, in TValue value) =>
-        CreateFailure(value, error, null)!;
+        CreateFailure(value, null, null, error: (-1, error))!;
 
     /// <summary>
     /// Creates a Result with a failure status and an Exception.
@@ -179,7 +179,7 @@ public class Result<TValue>(
     public static implicit operator Result(Result<TValue> result)
     {
         Check.MustBeArgumentNotNull(result);
-        return new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
+        return new(result.Succeed, result._status, result.Message, result.Errors, result.ExtraData);
     }
 
     [StackTraceHidden]
@@ -211,9 +211,10 @@ public class Result<TValue>(
     }
 
     public Result<TValue> Add(Result<TValue> item, Func<TValue, TValue, TValue> add) =>
-            Result<TValue>.Combine(add, item);
+        Result<TValue>.Combine(add, item);
 
-    public bool Equals(Result<TValue>? other) => throw new NotImplementedException();
+    public bool Equals(Result<TValue>? other) => 
+        other is not null && this.GetHashCode() == other.GetHashCode();
 
     public override bool Equals(object? obj) =>
         this.Equals(obj as Result<TValue>);

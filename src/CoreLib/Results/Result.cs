@@ -1,8 +1,10 @@
-﻿using Library.Interfaces;
+﻿using Library.DesignPatterns.Markers;
+using Library.Interfaces;
 using Library.Validations;
 
 namespace Library.Results;
 
+[Immutable]
 public sealed class Result(
     in bool? succeed = null,
     in object? status = null,
@@ -70,8 +72,8 @@ public sealed class Result(
     /// <param name="message">The message to be included in the Result object.</param>
     /// <param name="error">The Exception to be included in the Result object.</param>
     /// <returns>A new Result object with a failure status and the specified message and error.</returns>
-    public static Result CreateFailure(in string message, in Exception error) =>
-        CreateFailure(error, message);
+    public static Result CreateFailure(in string? message, in Exception error) =>
+        CreateFailure(message: message, errors: [(-1, error)]);
 
     /// <summary>
     /// Creates a failure result with the given exception and optional message.
@@ -79,7 +81,7 @@ public sealed class Result(
     /// <param name="error">The exception to use for the failure result.</param>
     /// <returns>A failure result with the given exception.</returns>
     public static Result CreateFailure(Exception error) =>
-        CreateFailure(error, null);
+        CreateFailure(null, error);
 
     /// <summary>
     /// Creates a new Result object with a success status.
