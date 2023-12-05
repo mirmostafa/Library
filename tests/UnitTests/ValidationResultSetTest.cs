@@ -11,7 +11,7 @@ public sealed class ValidationResultSetTest
     public void Basic()
     {
         var arg = new Person("", 0);
-        _ = Assert.Throws<NullReferenceException>(() => arg.Check(CheckBehavior.ThrowOnFail).RuleFor(x => !x.Name.IsNullOrEmpty(), () => new NullReferenceException()));
+        _ = Assert.Throws<NullReferenceException>(() => arg.Check(CheckBehavior.ThrowOnFail).RuleFor(x => !x.FirstName.IsNullOrEmpty(), () => new NullReferenceException()));
     }
 
     [Fact]
@@ -20,7 +20,7 @@ public sealed class ValidationResultSetTest
         var arg = new Person("", 20);
         var result = arg.Check(CheckBehavior.GatherAll)
             .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
+            .NotNullOrEmpty(x => x.FirstName)
             .Build();
         _ = Assert.Single(result.Errors);
     }
@@ -31,7 +31,7 @@ public sealed class ValidationResultSetTest
         var arg = new Person("", 20);
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
-            .NotNullOrEmpty(x => x!.Name)
+            .NotNullOrEmpty(x => x!.FirstName)
             //.NotBiggerThan(x => x!.Age, 10)
             ;
         _ = Assert.Throws<NullValueValidationException>(check.ThrowOnFail);
@@ -43,7 +43,7 @@ public sealed class ValidationResultSetTest
         var arg = new Person("", 20);
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
+            .NotNullOrEmpty(x => x.FirstName)
             .Build();
         _ = Assert.Throws<NullValueValidationException>(() => check.ThrowOnFail());
     }
@@ -54,7 +54,7 @@ public sealed class ValidationResultSetTest
         Person? arg = null;
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
-            .NotNullOrEmpty(x => x!.Name)
+            .NotNullOrEmpty(x => x!.FirstName)
             //.NotBiggerThan(x => x!.Age, 10)
             ;
         _ = Assert.Throws<ArgumentNullException>(check.ThrowOnFail);
@@ -66,7 +66,7 @@ public sealed class ValidationResultSetTest
         var arg = new Person("Ali", 0);
         arg = arg.Check()
             .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
+            .NotNullOrEmpty(x => x.FirstName)
             //.NotBiggerThan(x => x.Age, 25)
             .ThrowOnFail();
     }
@@ -97,7 +97,7 @@ public sealed class ValidationResultSetTest
     public void IsNullOrEmptyString()
     {
         var arg = new Person("", 0);
-        _ = Assert.Throws<NullValueValidationException>(() => arg.Check(CheckBehavior.ThrowOnFail).NotNullOrEmpty(x => x.Name));
+        _ = Assert.Throws<NullValueValidationException>(() => arg.Check(CheckBehavior.ThrowOnFail).NotNullOrEmpty(x => x.FirstName));
     }
 
     [Fact]
@@ -113,7 +113,7 @@ public sealed class ValidationResultSetTest
         var arg = new Person("Ali", 20);
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
+            .NotNullOrEmpty(x => x.FirstName)
             //.NotBiggerThan(x => x.Age, 20)
             .Build();
         arg = check;
@@ -126,7 +126,7 @@ public sealed class ValidationResultSetTest
         var arg = new Person("", 20);
         var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
+            .NotNullOrEmpty(x => x.FirstName)
             //.NotBiggerThan(x => x.Age, 25)
             .Build();
         _ = Assert.Throws<NullValueValidationException>(() => check.ThrowOnFail());
@@ -134,4 +134,4 @@ public sealed class ValidationResultSetTest
     }
 }
 
-file record Person(string Name, int Age);
+file record Person(string FirstName, int Age);

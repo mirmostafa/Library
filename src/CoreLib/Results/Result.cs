@@ -1,27 +1,34 @@
 ﻿using Library.DesignPatterns.Markers;
 using Library.Interfaces;
-using Library.Validations;
 
 namespace Library.Results;
 
 [Immutable]
-public sealed class Result(
-    in bool? succeed = null,
-    in object? status = null,
-    in string? message = null,
-    in IEnumerable<(object Id, object Error)>? errors = null,
-    in IEnumerable<(string Id, object Data)>? extraData = null)
-    : ResultBase(succeed, status, message, errors, extraData)
+[Fluent]
+public sealed class Result : ResultBase
     , IEmpty<Result>
     , IAdditionOperators<Result, Result, Result>
+    , IAdditionOperators<Result, ResultBase, Result>
     , IEquatable<Result>
+    , ICombinable<Result>
+    , ICombinable<ResultBase, Result>
 {
     private static Result? _empty;
     private static Result? _fail;
     private static Result? _success;
 
+    public Result(
+        in bool? succeed = null,
+        in object? status = null,
+        in string? message = null,
+        in IEnumerable<(object Id, object Error)>? errors = null,
+        in IEnumerable<object>? extraData = null,
+        in ResultBase? innerResult = null) : base(succeed, status, message, errors, extraData, innerResult)
+    {
+    }
+
     public Result(ResultBase origin)
-        : this(origin.ArgumentNotNull().Succeed, origin.Status, origin.Message, origin.Errors, origin.ExtraData)
+        : base(origin)
     {
     }
 
@@ -54,7 +61,7 @@ public sealed class Result(
     /// <param name="errors">Optional enumerable of (Id, Error) tuples.</param>
     /// <param name="extraData">Optional extra data dictionary.</param>
     /// <returns>A new Result object with a failure status.</returns>
-    public static Result CreateFailure(in object? status = null, in string? message = null, in IEnumerable<(object Id, object Error)>? errors = null, in IEnumerable<(string Id, object Data)>? extraData = null) =>
+    public static Result CreateFailure(in object? status = null, in string? message = null, in IEnumerable<(object Id, object Error)>? errors = null, in IEnumerable<object>? extraData = null) =>
         new(false, status, message, errors: errors, extraData);
 
     /// <summary>
@@ -98,33 +105,25 @@ public sealed class Result(
     public static Result<TValue> From<TValue>(Result result, TValue value) =>
         Result<TValue>.From(result, value);
 
-    /// <summary>
-    /// Combines multiple Result objects into a single Result object.
-    /// </summary>
-    /// <param name="results">The Result objects to combine.</param>
-    /// <returns>A single Result object containing the combined data.</returns>
-    public static Result Merge(params Result[] results)
-    {
-        var data = Combine(results);
-        var result = new Result(data.Succeed, data.Status, data.Message, data.Errors, data.ExtraData);
-        return result;
-    }
-
-    /// <summary>
-    /// Creates a new empty Result object.
-    /// </summary>
+    // <summary>
+    /// Creates a new empty Result object. </summary>
     public static Result NewEmpty() =>
         new();
 
-    public static Result operator +(Result left, Result right)
-    {
-        var total = Merge(left, right);
-        var result = new Result(total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
-        return result;
-    }
+    public static Result operator +(Result left, Result right) =>
+        new(left) { InnerResult = right };
+
+    public static Result operator +(Result left, ResultBase right) =>
+        new(left) { InnerResult = right };
+
+    public Result Combine(Result obj) =>
+        this + obj;
+
+    public Result Combine(ResultBase obj) =>
+        this + obj;
 
     public bool Equals(Result? other) =>
-        other is not null && other == this;
+                other is not null && other == this;
 
     public override bool Equals(object? obj) =>
         this.Equals(obj as Result);

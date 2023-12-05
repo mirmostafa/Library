@@ -9,13 +9,13 @@ namespace Library.Web.Results;
 public class ApiResult : ResultBase, IApiResult
 {
     public ApiResult(int? statusCode = null, string? message = null)
-        : base(null, statusCode, message) { }
+        : base(null, statusCode, message, innerResult: null) { }
 
     public ApiResult(HttpStatusCode? statusCode = null, string? message = null)
-        : base(null, statusCode?.Cast().ToInt(), message) { }
+        : base(null, statusCode?.Cast().ToInt(), message, innerResult: null) { }
 
-    public ApiResult(in bool? Succeed = null, in object? Status = null, in string? Message = null, in IEnumerable<(object Id, object Error)>? Errors = null, in IEnumerable<(string, object)>? ExtraData = null)
-        : base(Succeed, Status, Message, Errors, ExtraData)
+    public ApiResult(in bool? Succeed = null, in object? Status = null, in string? Message = null, in IEnumerable<(object Id, object Error)>? Errors = null, in IEnumerable<object>? extraData = null)
+        : base(Succeed, Status, Message, Errors, extraData, innerResult: null)
     {
     }
 

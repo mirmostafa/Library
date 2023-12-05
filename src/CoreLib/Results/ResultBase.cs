@@ -11,12 +11,16 @@ public abstract class ResultBase(
     in object? status = null,
     in string? message = null,
     in IEnumerable<(object Id, object Error)>? errors = null,
-    in IEnumerable<(string, object)>? extraData = null)
+    in IEnumerable<object>? extraData = null, ResultBase? innerResult = null)
 {
     private ImmutableArray<(object Id, object Error)>? _errors = errors?.ToImmutableArray();
 
-    private ImmutableArray<(string, object)>? _extraData = extraData?.ToImmutableArray();
-    protected object? _status = status;
+    private ImmutableArray<object>? _extraData = extraData?.ToImmutableArray();
+
+    protected ResultBase(ResultBase result)
+        : this(result.ArgumentNotNull().Succeed, result.Status, result.Message, result.Errors, result.ExtraData, result.InnerResult)
+    {
+    }
 
     [NotNull]
     public ImmutableArray<(object Id, object Error)> Errors
@@ -26,7 +30,9 @@ public abstract class ResultBase(
     }
 
     [NotNull]
-    public ImmutableArray<(string Id, object Data)> ExtraData => this._extraData ??= ImmutableArray.Create<(string, object)>();
+    public ImmutableArray<object> ExtraData => this._extraData ??= ImmutableArray.Create<object>();
+
+    public ResultBase? InnerResult { get; init; } = innerResult;
 
     /// <summary>
     /// Gets a value indicating whether the operation has failed.
@@ -38,10 +44,9 @@ public abstract class ResultBase(
     /// </summary>
     public virtual bool IsSucceed => this.Succeed ?? ((this.Status is null or 0 or 200) && (!this.Errors.Any()));
 
-    public string? Message { get; set; } = message ?? status?.ToString();
-
-    public object? Status { get => this._status ?? this.Errors.FirstOrDefault().Error; set => this._status = value; }
-    public bool? Succeed { get; set; } = succeed;
+    public string? Message { get; init; } = message;
+    public object? Status { get; init; } = status;
+    public bool? Succeed { get; init; } = succeed;
 
     public static implicit operator bool(ResultBase result) =>
         result.NotNull().IsSucceed;
@@ -60,6 +65,14 @@ public abstract class ResultBase(
     /// <returns>The hash code for the current instance.</returns>
     public override int GetHashCode() =>
         HashCode.Combine(this.Status, this.Message);
+
+    [return: NotNull]
+    public IEnumerable<(object Id, object Error)>? SelectAllErrors() =>
+        this.IterateOnAll<IEnumerable<(object, object)>>(x => x.Errors).SelectAll();
+
+    [return: NotNull]
+    public IEnumerable<object> SelectAllExtraData() =>
+        this.IterateOnAll<IEnumerable<object>>(x => x.ExtraData).SelectAll();
 
     /// <summary>
     /// Generates a string representation of the result object.
@@ -88,39 +101,17 @@ public abstract class ResultBase(
         return result.Build();
     }
 
-    /// <summary>
-    /// Combines multiple ResultBase objects into a single ResultBase object.
-    /// </summary>
-    /// <param name="results">The ResultBase objects to combine.</param>
-    /// <returns>A ResultBase object containing the combined results.</returns>
-    protected static (bool? Succeed, object? Status, string? Message, IEnumerable<(object Id, object Error)>? Errors, IEnumerable<(string Id, object Data)>? ExtraData) Combine(params ResultBase[] results)
-    {
-        bool? isSucceed = results.All(x => x.Succeed == null) ? null : results.All(x => x.IsSucceed);
-        var status = results.LastOrDefault(x => x.Status is not null)?.Status;
-        var message = results.LastOrDefault(x => !x.Message.IsNullOrEmpty())?.Message;
-        var errors = results.SelectMany(x => x.Errors);
-        var statusBuffer = results.Where(x => x.Status is not null).Select(x => x.Status).ToList();
-        if (statusBuffer.Count > 1)
-        {
-            errors = errors.AddRangeImmuted(statusBuffer.Select(x => ((object)null!, x!)));
-            status = null;
-        }
-        var extraData = combineExtraData(results);
-
-        return (isSucceed, status, message, errors, extraData);
-
-        static IEnumerable<(string Id, object Data)> combineExtraData(in ResultBase[] results)
-        {
-            var lastData = results
-                .Where(x => x?.ExtraData is not null)
-                .SelectMany(x => x.ExtraData!)
-                .Where(item => !item.IsDefault() && !item.Id.IsNullOrEmpty() && item.Data is not null);
-            return !lastData.Any()
-                ? results.Select(x => ("Previous Result", (object)x))
-                : lastData;
-        }
-    }
-
     private string GetDebuggerDisplay() =>
         this.ToString();
+
+    private IEnumerable<T> IterateOnAll<T>(Func<ResultBase, T> selector)
+    {
+        yield return selector(this);
+        var innerResult = this.InnerResult;
+        while (innerResult != null)
+        {
+            yield return selector(innerResult);
+            innerResult = innerResult.InnerResult;
+        }
+    }
 }

@@ -8,15 +8,15 @@ public sealed class TryMethodResult
     in object? status = null,
     in string? message = null,
     in IEnumerable<(object Id, object Error)>? errors = null,
-    in IEnumerable<(string Id, object Data)>? ExtraData = null)
-    : base(succeed, status, message, errors, ExtraData) { }
+    in IEnumerable<object>? extraData = null)
+    : base(succeed, status, message, errors, extraData, innerResult: null) { }
 
     private TryMethodResult(
     in Exception exception,
     in string? message = null,
     in IEnumerable<(object Id, object Error)>? errors = null,
-    in IEnumerable<(string Id, object Data)>? ExtraData = null)
-    : base(false, exception, message, errors, ExtraData) { }
+    in IEnumerable<object>? extraData = null)
+    : base(false, exception, message, errors, extraData, innerResult: null) { }
 
     /// <summary>
     /// Creates a new TryMethodResult with a given value, status, message, errors, and extra data.
@@ -33,14 +33,14 @@ public sealed class TryMethodResult
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null)
+        in IEnumerable<object>? extraData = null)
         => new(false, status, message, errors, extraData);
 
     public static TryMethodResult CreateFailure(
         in Exception exception,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null)
+        in IEnumerable<object>? extraData = null)
         => new(exception, message, errors, extraData);
 
     /// <summary>
@@ -56,7 +56,7 @@ public sealed class TryMethodResult
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null) =>
+        in IEnumerable<object>? extraData = null) =>
         new(true, status, message, errors, extraData);
 
     public static explicit operator bool(TryMethodResult result) =>
@@ -77,7 +77,7 @@ public sealed class TryMethodResult<TValue>(in TValue? value,
     in object? status = null,
     in string? message = null,
     in IEnumerable<(object Id, object Error)>? errors = null,
-    in IEnumerable<(string Id, object Data)>? ExtraData = null)
+    in IEnumerable<object>? ExtraData = null)
     : Result<TValue?>(value, succeed, status, message, errors, ExtraData)
 {
     /// <summary>
@@ -95,7 +95,7 @@ public sealed class TryMethodResult<TValue>(in TValue? value,
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null)
+        in IEnumerable<object>? extraData = null)
         => new(value, false, status, message, errors, extraData);
 
     /// <summary>
@@ -111,7 +111,7 @@ public sealed class TryMethodResult<TValue>(in TValue? value,
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null) =>
+        in IEnumerable<object>? extraData = null) =>
         new(value, true, status, message, errors, extraData);
 
     public static explicit operator bool(TryMethodResult<TValue?> result) =>

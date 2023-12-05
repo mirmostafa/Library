@@ -38,12 +38,25 @@ public static class ResultHelper
         return result;
     }
 
-    public static Result<TValue> Combine<TValue>(this IEnumerable<Result<TValue>> results)
-        where TValue : IAdditionOperators<TValue, TValue, TValue> =>
-        Result<TValue>.Combine((x, y) => x + y, results.ToArray());
+    [return: NotNullIfNotNull(nameof(results))]
+    public static TResult? Combine<TResult>(this IEnumerable<TResult> results)
+        where TResult : ResultBase, INew<TResult, TResult>, ICombinable<TResult>
+    {
+        if (results == null || !results.Any())
+        {
+            return null;
+        }
+        var buffer = results.ToImmutableArray();
+        var result = TResult.New(buffer.First());
+        foreach (var item in buffer.Skip(1))
+        {
+            result = result.Combine(item);
+        }
+        return result;
+    }
 
     public static void Deconstruct(this Result result, out bool isSucceed, out string message) =>
-        (isSucceed, message) = (result.IsSucceed, result.Message?.ToString() ?? string.Empty);
+            (isSucceed, message) = (result.IsSucceed, result.Message?.ToString() ?? string.Empty);
 
     public static void Deconstruct<TValue>(this Result<TValue> result, out bool IsSucceed, out TValue Value) =>
         (IsSucceed, Value) = (result.IsSucceed, result.Value);
@@ -100,12 +113,6 @@ public static class ResultHelper
 
         return result;
     }
-
-    public static Result<TValue> Merge<TValue>(this IEnumerable<Result<TValue>> results, Func<TValue, TValue, TValue> add) =>
-        Result<TValue>.Combine(results, add);
-
-    public static Result<TValue> Merge<TValue>(this IEnumerable<Result<TValue>> results) where TValue : IAdditionOperators<TValue, TValue, TValue> =>
-        Result<TValue>.Combine(results, (x1, x2) => x1 + x2);
 
     public static TResult OnDone<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {

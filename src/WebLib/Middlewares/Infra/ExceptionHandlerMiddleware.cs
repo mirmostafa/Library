@@ -38,7 +38,7 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exc
         //ApiResult result;
         int status;
         string message;
-        Dictionary<string, object> extra = new();
+        List<object> extra = [];
 
         if (exception is IApiException apiException)
         {
@@ -59,7 +59,7 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exc
                 var traceId = Activity.Current?.Id ?? context.TraceIdentifier;
                 if (traceId is not null)
                 {
-                    extra.Add("traceId", traceId);
+                    extra.Add(traceId);
                 }
             }
             //this._Logger.LogError($"Exception Handler Middleware Report: Error Message: '{message}'{Environment.NewLine}Status Code: {status}");
@@ -70,7 +70,7 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exc
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
-        ApiResult result = new(false, status, message, ExtraData: extra.Select(x => (x.Key, x.Value)));
+        ApiResult result = new(false, status, message, extraData: extra);
         var json = JsonSerializer.Serialize(result, jsonOptions);
 
         context.Response.ContentType = "application/problem+json";

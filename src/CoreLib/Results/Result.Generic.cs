@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+using Library.DesignPatterns.Markers;
 using Library.Interfaces;
 using Library.Validations;
 
@@ -11,29 +12,33 @@ namespace Library.Results;
 /// </summary>
 /// <typeparam name="TValue">The type of the encapsulated value.</typeparam>
 [SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "<Pending>")]
-public class Result<TValue>(
-    TValue value,
-    in bool? succeed = null,
-    in object? status = null,
-    in string? message = null,
-    in IEnumerable<(object Id, object Error)>? errors = null,
-    in IEnumerable<(string Id, object Data)>? extraData = null)
-    : ResultBase(succeed, status, message, errors, extraData)
+[Immutable]
+[Fluent]
+public class Result<TValue> : ResultBase
     , IAdditionOperators<Result<TValue>, Result, Result<TValue>>
+    , IAdditionOperators<Result<TValue>, Result<TValue>, Result<TValue>>
     , IEquatable<Result<TValue>>
+    , ICombinable<Result<TValue>>
+    , ICombinable<Result, Result<TValue>>
+    , INew<Result<TValue>, Result<TValue>>
 {
-    private static Result<TValue?>? _failure;
+    public Result(
+        TValue value,
+        in bool? succeed = null,
+        in object? status = null,
+        in string? message = null,
+        in IEnumerable<(object Id, object Error)>? errors = null,
+        in IEnumerable<object>? extraData = null,
+        in ResultBase? innerResult = null)
+        : base(succeed, status, message, errors, extraData, innerResult) =>
+        this.Value = value;
 
     public Result(ResultBase original, TValue value)
-        : this(value, original.ArgumentNotNull().Succeed, original.Status, original.Message, original.Errors, original.ExtraData)
-    {
-    }
+        : base(original) =>
+        this.Value = value;
 
-    /// <summary>
-    /// Gets a Result object representing a failed operation.
-    /// </summary>
-    /// <returns>A Result object representing a failed operation.</returns>
-    public static Result<TValue?> Failure => _failure ??= CreateFailure();
+    //! Incomplete Abstraction 👃
+    //x public static Result<TValue?> Failure => _failure ??= CreateFailure();
 
     public TValue Value
     {
@@ -43,48 +48,10 @@ public class Result<TValue>(
         [StackTraceHidden]
         [DebuggerStepThrough]
         init;
-    } = value;
-
-    /// <summary>
-    /// Combines multiple <see cref="Result{TValue}"/> objects by applying a specified addition
-    /// operation to their values.
-    /// </summary>
-    /// <param name="results">An array of <see cref="Result{TValue}"/> objects to be combined.</param>
-    /// <param name="add">The addition operation to be applied to the values.</param>
-    /// <returns>
-    /// A combined <see cref="Result{TValue}"/> object with the sum of the values and other combined properties.
-    /// </returns>
-    public static Result<TValue> Combine(IEnumerable<Result<TValue>> results, Func<TValue, TValue, TValue> add) =>
-        Combine(add, results.ToArray());
-
-    /// <summary>
-    /// Combines multiple Result objects by applying a specified addition operation to their values.
-    /// </summary>
-    /// <param name="add">The addition operation to be applied to the values.</param>
-    /// <param name="resultArray">An array of Result objects to be combined.</param>
-    /// <returns>A combined Result object with the sum of the values and other combined properties.</returns>
-    public static Result<TValue> Combine(Func<TValue, TValue, TValue> add, params Result<TValue>[] resultArray)
-    {
-        Check.MustBeArgumentNotNull(add);
-        Checker.MustBe(resultArray is not null and { Length: > 0 }, () => $"{nameof(resultArray)} cannot be empty.");
-
-        // Combine the Result<TValue> objects to get a combined Tuple object.
-        var combine = Combine(resultArray);
-
-        // Extract the values from the Result<TValue> objects.
-        var valueArray = resultArray.Select(x => x.Value).ToArray();
-        var value = valueArray[0]; // Initialize the combined value with the first value.
-
-        // Apply the addition operation to combine the values, using auxiliary functions, given by
-        // the caller.
-        foreach (var v in valueArray.Skip(1))
-        {
-            value = add(value, v); // Apply the addition operation to the current value and the next value.
-        }
-
-        // Create and return a new Result<TValue> object with the combined value and other combined properties.
-        return new Result<TValue>(value, combine.Succeed, combine.Status, combine.Message, combine.Errors, combine.ExtraData);
     }
+
+    public static Result<TValue> Combine(IEnumerable<Result<TValue>> results) =>
+            results.Combine();
 
     /// <summary>
     /// Creates a new Result with the given parameters and a success value of false.
@@ -99,7 +66,7 @@ public class Result<TValue>(
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null) =>
+        in IEnumerable<object>? extraData = null) =>
         new(value, false, status, message, errors, extraData);
 
     /// <summary>
@@ -123,8 +90,8 @@ public class Result<TValue>(
     /// <param name="ex">The exception.</param>
     /// <param name="value">The value.</param>
     /// <returns>A failure result.</returns>
-    public static Result<TValue?> CreateFailure(in string message, in Exception ex, in TValue? value)
-        => CreateFailure(value, ex, message);
+    public static Result<TValue?> CreateFailure(in string message, in Exception ex, in TValue? value) =>
+        CreateFailure(value, ex, message);
 
     /// <summary>
     /// Creates a Result with a failure status and an Exception.
@@ -132,8 +99,8 @@ public class Result<TValue>(
     /// <param name="error">The Exception to be stored in the Result.</param>
     /// <param name="value">The value to be stored in the Result.</param>
     /// <returns>A Result with a failure status and an Exception.</returns>
-    public static Result<TValue?> CreateFailure(in Exception error)
-        => CreateFailure(default, error, null);
+    public static Result<TValue?> CreateFailure(in Exception error) =>
+        CreateFailure(default, error, null);
 
     /// <summary>
     /// Creates a Result with a failure status and an Exception.
@@ -167,7 +134,7 @@ public class Result<TValue>(
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null) =>
+        in IEnumerable<object>? extraData = null) =>
         new(value, true, status, message, errors, extraData);
 
     public static Result<TValue> From(in Result result, in TValue value)
@@ -179,7 +146,7 @@ public class Result<TValue>(
     public static implicit operator Result(Result<TValue> result)
     {
         Check.MustBeArgumentNotNull(result);
-        return new(result.Succeed, result._status, result.Message, result.Errors, result.ExtraData);
+        return new(result.Succeed, result.Status, result.Message, result.Errors, result.ExtraData);
     }
 
     [StackTraceHidden]
@@ -200,27 +167,42 @@ public class Result<TValue>(
         in object? status = null,
         in string? message = null,
         in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<(string Id, object Data)>? extraData = null) =>
-        new(value, succeed, status, message, errors, extraData);
+        in IEnumerable<object>? extraData = null,
+        in ResultBase? innerResult = null) =>
+        new(value, succeed, status, message, errors, extraData, innerResult);
+
+    public static Result<TValue> New(Result<TValue> arg) =>
+        new(arg, arg.ArgumentNotNull().Value);
 
     public static Result<TValue> operator +(Result<TValue> left, Result right)
     {
         Check.MustBeArgumentNotNull(left);
-        var total = Combine(left, right);
-        return new Result<TValue>(left.Value, total.Succeed, total.Status, total.Message, total.Errors, total.ExtraData);
+        return new Result<TValue>(left, left.Value) { InnerResult = right };
     }
 
-    public Result<TValue> Add(Result<TValue> item, Func<TValue, TValue, TValue> add) =>
-        Result<TValue>.Combine(add, item);
+    public static Result<TValue> operator +(Result<TValue> left, Result<TValue> right)
+    {
+        Check.MustBeArgumentNotNull(left);
+        return new Result<TValue>(left, left.Value) { InnerResult = right };
+    }
 
-    public bool Equals(Result<TValue>? other) => 
-        other is not null && this.GetHashCode() == other.GetHashCode();
+    public Result<TValue> Combine(Result obj) =>
+        this + obj;
+
+    public Result<TValue> Combine(Result<TValue> obj) =>
+        this + obj;
+
+    public bool Equals(Result<TValue>? other) =>
+            other is not null && this.GetHashCode() == other.GetHashCode();
 
     public override bool Equals(object? obj) =>
         this.Equals(obj as Result<TValue>);
 
     public override int GetHashCode() =>
-        this.Value?.GetHashCode() ?? -1;
+        this.Value?.GetHashCode() ?? base.GetHashCode();
+
+    public Result<TValue> SetMessage(string? message) =>
+        new(this) { Message = message };
 
     /// <summary>
     /// Converts the current Result object to an asynchronous Task.

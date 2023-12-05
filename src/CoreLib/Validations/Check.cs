@@ -129,6 +129,10 @@ public sealed class Check
     public static void MustHaveAny([NotNull][AllowNull] IEnumerable? obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
         MustBe(obj?.Any() ?? false, () => new NoItemValidationException(argName!));
 
+    [return: NotNull]
+    public static void MustHaveAny([NotNull][AllowNull] IEnumerable? obj, Func<string> getMessage) =>
+        MustBe(obj?.Any() ?? false, () => new NoItemValidationException(getMessage()));
+
     /// <summary>
     /// Checks if the given object is not null and throws an ArgumentNullException if it is.
     /// </summary>

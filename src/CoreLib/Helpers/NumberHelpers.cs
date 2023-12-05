@@ -227,6 +227,6 @@ public static class NumberHelper
             (null, null) => Random.Shared.Next,
             (null, not null) => () => Random.Shared.Next(max.Value),
             (not null, not null) => () => Random.Shared.Next(min.Value, max.Value),
-            (not null, null) => () => throw new NotSupportedException()
+            (not null, null) => () => Random.Shared.Next(min.Value, int.MaxValue)
         };
 }

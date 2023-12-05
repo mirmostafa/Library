@@ -23,19 +23,19 @@ public sealed class ValueObjectTest
             FullName = ("Mohammad", "Kiani")
         };
         Assert.True(p.Age == 5);
-        Assert.True(p.Name == "Ali");
+        Assert.True(p.FirstName == "Ali");
     }
 }
 
 
-sealed file class Person(Name name, Age age, Addess? address = null)
+sealed file class Person(Name firstName, Age age, Addess? address = null)
 {
     public Addess Address { get; set; } = address ?? new(string.Empty);
 
     public FullName FullName { get; set; }
 
     public Age Age { get; } = age;
-    public Name Name { get; } = name;
+    public Name FirstName { get; } = firstName;
 }
 
 sealed file record Name(string value) : ValueObjectBase<string, Name>(value)

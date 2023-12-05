@@ -10,7 +10,7 @@ namespace Library.Data.SqlServer;
 public static partial class SqlStatementBuilder
 {
     public static ISelectStatement AddColumn([DisallowNull] this ISelectStatement statement, params string[] columns)
-        => statement.ArgumentNotNull().Fluent(() => columns.Compact().CreateIterator(c => statement.Columns.Add(c)).Build()).GetValue();
+        => statement.ArgumentNotNull().With(x => columns.Compact().CreateIterator(c => x.Columns.Add(c)).Build());
 
     public static ISelectStatement AddColumns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
         => statement.AddColumn(columns.ToArray());
@@ -19,7 +19,7 @@ public static partial class SqlStatementBuilder
         => statement.Star();
 
     public static ISelectStatement Ascending([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull().Fluent(() => statement.OrderByDirection = OrderByDirection.Ascending).GetValue();
+        => statement.ArgumentNotNull().With(x => x.OrderByDirection = OrderByDirection.Ascending);
 
     public static string Build([DisallowNull] this ISelectStatement statement, string indent = "    ")
     {
@@ -57,6 +57,11 @@ public static partial class SqlStatementBuilder
                 _ => throw new NotImplementedException(),
             });
         }
+        if (statement.WithNoLock)
+        {
+            _ = AddClause("WITH (NOLOCK)", indent, result);
+            _ = result.Append("  WITH (NOLOCK)");
+        }
         return result.ToString();
     }
 
@@ -68,7 +73,7 @@ public static partial class SqlStatementBuilder
         }).GetValue();
 
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, params string[] columns)
-        => statement.ArgumentNotNull().Fluent(() => statement.Columns.ClearAndAddRange(columns.Compact())).GetValue();
+        => statement.ArgumentNotNull().With(x => x.Columns.ClearAndAddRange(columns.Compact()));
 
     public static ISelectStatement Columns([DisallowNull] this ISelectStatement statement, IEnumerable<string> columns)
     {
@@ -77,40 +82,20 @@ public static partial class SqlStatementBuilder
         return statement.AddColumns(columns);
     }
 
-    public static ISelectStatement CreateSelect<TTable>()
-    {
-        var type = typeof(TTable);
-        var tableName = type.GetCustomAttribute<TableAttribute>()?.Name ?? type.Name;
-        var columns = type.GetProperties().Select(x => x.GetCustomAttribute<ColumnAttribute>()?.Name ?? x.Name);
-        var result = Select(tableName).AddColumns(columns);
-        //if (TryNotNull(columns.FirstOrDefault(x => x.EqualsTo("Id")), out var id))
-        //{
-        //    result = result.OrderBy(id);
-        //}
-
-        return result;
-    }
-
     public static ISelectStatement Descending([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull().Fluent(() => statement.OrderByDirection = OrderByDirection.Descending).GetValue();
+        => statement.ArgumentNotNull().With(x => x.OrderByDirection = OrderByDirection.Descending);
 
     public static ISelectStatement From([DisallowNull] this ISelectStatement statement, [DisallowNull] string tableName)
-        => statement.ArgumentNotNull().Fluent(() => statement.TableName = tableName.ArgumentNotNull()).GetValue();
+        => statement.ArgumentNotNull().With(x => x.TableName = tableName.ArgumentNotNull());
 
     public static ISelectStatement OrderBy([DisallowNull] this ISelectStatement statement, string? column)
-        => statement.ArgumentNotNull().Fluent(() => statement.OrderByColumn = column).GetValue();
+        => statement.ArgumentNotNull().With(x => x.OrderByColumn = column);
 
     public static ISelectStatement OrderByDescending([DisallowNull] this ISelectStatement statement, string? column)
         => OrderBy(statement, column).Descending();
 
-    public static ISelectStatement Select<TEntity>()
-    {
-        var table = SqlEntity.GetTableInfo<TEntity>();
-        var result = Select()
-            .Columns(table.Columns.Select(c => c.Name))
-            .From(table.Name);
-        return result;
-    }
+    public static ISelectStatement Select<TTable>() =>
+        Select(typeof(TTable));
 
     public static ISelectStatement Select([DisallowNull] string tableName)
         => new SelectStatement { TableName = tableName.ArgumentNotNull() };
@@ -118,42 +103,45 @@ public static partial class SqlStatementBuilder
     public static ISelectStatement Select()
         => new SelectStatement();
 
-    public static TStatementOnTable SetSchema<TStatementOnTable>([DisallowNull] this TStatementOnTable statement, string? schema) where TStatementOnTable : IStatementOnTable
-        => statement.ArgumentNotNull().Fluent(() => statement.Schema = schema);
-
-    public static ISelectStatement SetTopCount([DisallowNull] this ISelectStatement statement, int? topCount)
+    public static ISelectStatement Select(Type type)
     {
-        Check.MustBeArgumentNotNull(statement, nameof(statement));
-        return statement.With(x => x.TopCount = topCount);
+        var table = GetTable(type);
+        var result = Select(table.Name)
+            .SetSchema(table.Schema)
+            .AddColumns(table.Columns.Select(x => x.Name));
+        return result;
     }
 
-    public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)
-        => statement.ArgumentNotNull().Fluent(statement.Columns.Clear).GetValue();
+    public static TStatementOnTable SetSchema<TStatementOnTable>([DisallowNull] this TStatementOnTable statement, string? schema) where TStatementOnTable : IStatementOnTable=> 
+        statement.ArgumentNotNull().With(x => x.Schema = schema);
 
-    public static ISelectStatement Where([DisallowNull] this ISelectStatement statement, string? whereClause)
-        => statement.ArgumentNotNull().Fluent(() => statement.WhereClause = whereClause).GetValue();
+    public static ISelectStatement SetTopCount([DisallowNull] this ISelectStatement statement, int? topCount) =>
+        statement.ArgumentNotNull().With(x => x.TopCount = topCount);
+
+    public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)=> 
+        statement.ArgumentNotNull().Fluent(statement.Columns.Clear).GetValue();
+
+    public static ISelectStatement Where([DisallowNull] this ISelectStatement statement, string? whereClause)=> 
+        statement.ArgumentNotNull().With(x => x.WhereClause = whereClause);
+
+    public static ISelectStatement WithNoLock(this ISelectStatement statement, bool withNoLock = true)=> 
+        statement.With(x => x.WithNoLock = withNoLock);
 
     private struct SelectStatement : ISelectStatement
     {
         public SelectStatement()
         {
             this.TableName = string.Empty;
-            this.WhereClause = this.OrderBy = this.OrderByColumn = null;
+            this.WhereClause = this.OrderByColumn = null;
         }
 
         public IList<string> Columns { get; } = new List<string>();
-
-        public string? OrderBy { get; set; }
-
         public string? OrderByColumn { get; set; }
-
         public OrderByDirection OrderByDirection { get; set; } = OrderByDirection.None;
-
         public string? Schema { get; set; }
         public string TableName { get; set; }
-
-        public int? TopCount { get; }
-        int? ISelectStatement.TopCount { get; set; }
+        public int? TopCount { get; set; }
         public string? WhereClause { get; set; }
+        public bool WithNoLock { get; set; }
     }
 }

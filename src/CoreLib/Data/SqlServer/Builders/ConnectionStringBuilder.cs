@@ -156,5 +156,5 @@ public sealed class ConnectionStringBuilder : IValidatable<ConnectionStringBuild
 
     // Validate the connection string.
     public Result<ConnectionStringBuilder> Validate()
-        => Result<ConnectionStringBuilder>.New(this);
+        => new(this);
 }
