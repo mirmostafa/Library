@@ -49,7 +49,7 @@ public sealed class Table(Database owner, string name, string? schema = null, st
             var column = new Column(default!, reader.Field("name", Convert.ToString)!, owner.ConnectionString)
             {
                 CollationName = reader.Field("collation_name", Convert.ToString)!,
-                IsNullable = reader.Field("is_nullable", str => str.ToString()!.EqualsTo("1")),
+                IsNullable = reader.Field("is_nullable", str => str.ToString()!.EqualsTo("True")),
                 MaxLength = reader.Field("max_length", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
                 Precision = reader.Field("precision", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),
                 Position = reader.Field("column_id", v => DBNull.Value.Equals(v) ? 0 : Convert.ToInt32(v)),

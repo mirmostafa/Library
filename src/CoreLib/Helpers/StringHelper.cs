@@ -121,11 +121,14 @@ public static class StringHelper
     {
         Check.MustBeArgumentNotNull(sb);
 
-        if(lines != null)
-        foreach (var line in lines)
+        if (lines != null)
         {
-            _ = sb.Append(line);
+            foreach (var line in lines)
+            {
+                _ = sb.Append(line);
+            }
         }
+
         return sb;
     }
 
@@ -145,11 +148,14 @@ public static class StringHelper
     public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, IEnumerable<string>? lines)
     {
         Check.MustBeArgumentNotNull(sb);
-        if(lines?.Any() == true)
-        foreach (var line in lines)
+        if (lines?.Any() == true)
         {
-            _ = sb.AppendLine(line);
+            foreach (var line in lines)
+            {
+                _ = sb.AppendLine(line);
+            }
         }
+
         return sb;
     }
 
@@ -926,8 +932,11 @@ public static class StringHelper
 
     public static string Merge(this string s, IEnumerable<string> items, string delimiter)
     {
-        if(!items.Any())
+        if (!items.Any())
+        {
             return s;
+        }
+
         var result = new StringBuilder(s);
         items.ForEach(item => result.Append($"{item}{delimiter}"));
         return result.ToString().TrimEnd(delimiter);

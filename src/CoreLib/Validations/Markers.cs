@@ -22,7 +22,7 @@ public interface IAsyncValidator<TItem>
     /// <param name="item">The item to validate.</param>
     /// <param name="token">The cancellation token.</param>
     /// <returns>A result indicating the validation status.</returns>
-    Task<Result<TItem>> ValidateAsync(TItem item, CancellationToken token = default);
+    Task<Result<TItem?>> ValidateAsync(TItem? item, CancellationToken token = default);
 }
 
 public interface IValidatable<T>

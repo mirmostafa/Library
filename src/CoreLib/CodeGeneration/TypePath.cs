@@ -61,6 +61,12 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [return: NotNullIfNotNull(nameof(typePath))]
     public static string? GetNameSpace(in string? typePath) =>
         typePath == null ? null : Parse(typePath).NameSpace;
+    
+    public static string? GetNameSpace<T>()
+    {
+        var path = typeof(T).FullName;
+        return path.IsNullOrEmpty() ? string.Empty : Parse(path).NameSpace;
+    }
 
     [return: NotNull]
     public static IEnumerable<string>? GetNameSpaces(in string? typePath) =>
