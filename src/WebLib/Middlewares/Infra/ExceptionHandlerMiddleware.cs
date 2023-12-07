@@ -11,18 +11,17 @@ namespace Library.Web.Middlewares.Infra;
 [MonitoringMiddleware]
 public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger) : IInfraMiddleware
 {
-    private readonly ILogger<ExceptionHandlerMiddleware> _logger = logger;
-    private readonly RequestDelegate _next = next;
+    private JsonSerializerOptions? _jsonOptions;
 
-    public async Task Invoke(HttpContext context)
+    public async Task Invoke(HttpContext httpContext)
     {
         try
         {
-            await this._next(context);
+            await next(httpContext);
         }
         catch (Exception ex)
         {
-            await this.HandleException(context, ex);
+            await this.HandleException(httpContext, ex);
         }
     }
 
@@ -62,16 +61,14 @@ public sealed class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<Exc
                     extra.Add(traceId);
                 }
             }
-            //this._Logger.LogError($"Exception Handler Middleware Report: Error Message: '{message}'{Environment.NewLine}Status Code: {status}");
-            this._logger.LogError("Exception Handler Middleware Report: Error Message: '{message}'{Environment.NewLine}Status Code: {status}"
-                , message, Environment.NewLine, status);
+            logger.LogError("Exception Handler Middleware Report: Error Message: '{message}'{Environment.NewLine}Status Code: {status}", message, Environment.NewLine, status);
         }
-        var jsonOptions = new JsonSerializerOptions
+        this._jsonOptions ??= new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
         ApiResult result = new(false, status, message, extraData: extra);
-        var json = JsonSerializer.Serialize(result, jsonOptions);
+        var json = JsonSerializer.Serialize(result, this._jsonOptions);
 
         context.Response.ContentType = "application/problem+json";
         context.Response.StatusCode = result.Status?.Cast().ToInt() ?? HttpStatusCode.BadRequest.Cast().ToInt();

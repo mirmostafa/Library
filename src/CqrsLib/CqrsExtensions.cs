@@ -12,6 +12,7 @@ namespace Library.Cqrs;
 
 public static class CqrsExtensions
 {
+    [CLSCompliant(false)]
     public static ContainerBuilder AddCqrs(this ContainerBuilder builder, params Assembly[] scannedAssemblies)
     {
         _ = builder.RegisterType<QueryProcessor>()
@@ -32,7 +33,7 @@ public static class CqrsExtensions
 
         _ = builder
                 .RegisterAssemblyTypes(scannedAssemblies)
-                .AsClosedTypesOf(typeof(ICommandValidator<>))
+                .AsClosedTypesOf(typeof(ICommandValidator<>), "3")
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
 
