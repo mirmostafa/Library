@@ -80,25 +80,19 @@ public abstract class ResultBase(
     /// <returns>A string representation of the result object.</returns>
     public override string ToString()
     {
-        var result = new StringBuilder();
         if (!this.Message.IsNullOrEmpty())
         {
-            _ = result.AppendLine(this.Message);
+            return this.Message;
         }
-        if (this.Status?.ToString()?.IsNullOrEmpty() is false)
+        if (this.Status?.ToString() is { } status)
         {
-            _ = result.AppendLine(this.Status.ToString());
+            return status;
         }
-        else if (this.Errors.Any())
+        else if (this.Errors.FirstOrDefault().Error?.ToString() is { } error)
         {
-            _ = result.AppendLine(this.Errors.First().Error.ToString());
+            return error;
         }
-        if (result.Length == 0)
-        {
-            _ = result.AppendLine($"IsSucceed: {this.IsSucceed}");
-        }
-
-        return result.Build();
+        return $"IsSucceed: {this.IsSucceed}";
     }
 
     private string GetDebuggerDisplay() =>
