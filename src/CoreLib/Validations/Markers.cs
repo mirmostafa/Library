@@ -47,7 +47,11 @@ public interface IValidator<TItem>
     /// <summary>
     /// Validates the given item and returns a Result object.
     /// </summary>
-    Result<TItem?> Validate(in TItem? item);
+    Result<
+#nullable disable // there's no way to annotate the connection of the nullability of TItem to that of the source
+                TItem
+#nullable restore        
+        > Validate(in TItem item);
 }
 
 public interface IStaticValidator<TItem>

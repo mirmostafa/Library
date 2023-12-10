@@ -1,6 +1,5 @@
 ﻿using Library.CodeGeneration.v2.Front.HtmlGeneration;
 using Library.Interfaces;
-using Library.Validations;
 
 namespace Library.CodeGeneration.v2.Front;
 
@@ -8,8 +7,6 @@ public static class HtmlElementInfoExtension
 {
     public static string ToHtml(this IHtmlElementInfo element, string indent = " ")
     {
-        Check.MustBeArgumentNotNull(element);
-
         if (element is ISelfCoder auto)
         {
             return auto.GenerateCodeStatement();
@@ -18,7 +15,7 @@ public static class HtmlElementInfoExtension
         var codeStatement = new StringBuilder(indent).Append($"<{element.Name}");
         foreach (var (key, value) in element.Attributes)
         {
-            _ = codeStatement.Append(value is not null ? $" {key}=\"{value}\"" : $" {key}");
+            _ = codeStatement.Append(value is not null ? $" {key}=\"{value}\"" : $" \"{key}\"");
         }
 
         if (element.InnerHtml is not null)
@@ -40,6 +37,10 @@ public static class HtmlElementInfoExtension
         {
             switch (element.ClosingTagType)
             {
+                case ClosingTagType.None:
+                    _ = codeStatement.Append('>');
+                    break;
+
                 case ClosingTagType.Slash:
                     _ = codeStatement.Append("/>");
                     break;
@@ -47,10 +48,6 @@ public static class HtmlElementInfoExtension
                 case ClosingTagType.Full:
                     _ = codeStatement.Append('>');
                     _ = codeStatement.AppendLine().Append(indent).Append($"</{element.Name}>");
-                    break;
-
-                default:
-                    _ = codeStatement.Append('>');
                     break;
             }
         }

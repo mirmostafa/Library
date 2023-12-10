@@ -4,7 +4,7 @@ using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 
-using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnumerable<Library.CodeGeneration.TypePath> Generics, bool IsNullable, bool IsAsync);
+using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnumerable<Library.CodeGeneration.TypePath> Generics, bool IsNullable);
 
 namespace Library.CodeGeneration;
 
@@ -42,8 +42,6 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [NotNull]
     public IEnumerable<TypePath> Generics => this._data.Generics;
 
-    public bool IsAsync => this._data.IsAsync;
-
     public bool IsGeneric => this._data.Generics.Any();
 
     public bool IsNullable => this._data.IsNullable;
@@ -63,7 +61,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [return: NotNullIfNotNull(nameof(typePath))]
     public static string? GetNameSpace(in string? typePath) =>
         typePath == null ? null : Parse(typePath).NameSpace;
-
+    
     public static string? GetNameSpace<T>()
     {
         var path = typeof(T).FullName;
@@ -188,15 +186,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         Check.MustBe(generics?.All(x => !x.IsNullOrEmpty()) ?? true, () => "Generic types cannot be null or empty.");
 
         // Initializations
-        var typePathBuffer = typePath;
-
-        var isAsync = typePathBuffer.StartsWith(" async ");
-        if (isAsync)
-        {
-            typePathBuffer = typePathBuffer.TrimStart(" async ");
-        }
-
-        typePathBuffer = typePathBuffer.EndsWith('?')
+        string typePathBuffer = typePath.EndsWith('?')
             ? typePathBuffer = TransformKeyword(typePath.TrimEnd('?')).AddEnd('?')
             : typePathBuffer = TransformKeyword(typePath);
 
@@ -245,7 +235,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
         // To be more friendly, let's be kind and use C# keywords.
         //x (name, nameSpace) = ToKeyword(name, nameSpace);
-        return (name, nameSpace, genTypes, nullability, isAsync);
+        return (name, nameSpace, genTypes, nullability);
     }
 
     private static string TransformKeyword(string keyword)
@@ -278,10 +268,6 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     private string GetFullPath()
     {
         var buffer = new StringBuilder();
-        if (this._data.IsAsync)
-        {
-            _ = buffer.Append(" async ");
-        }
         if (!this.NameSpace.IsNullOrEmpty())
         {
             _ = buffer.Append(CultureInfo.CurrentCulture, $"{this.NameSpace}.");

@@ -16,4 +16,10 @@ public sealed class ButtonElement : HtmlElement<ButtonElement>
 
         return result;
     }
+
+    public static ButtonElement GetBlazorClickCodeStatement(string buttonName, string caption, string? handlerParameter)
+    {
+        var result = New(caption, ("name", buttonName), ("@onclick", $"{buttonName}_OnClick({handlerParameter})"));
+        return result;
+    }
 }
