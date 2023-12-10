@@ -8,12 +8,12 @@ public static partial class SqlStatementBuilder
     public static string Build([DisallowNull] this IUpdateStatement statement, string indent = "    ")
     {
         Check.MutBeNotNull(statement?.TableName);
-        Check.MustBe(statement.ColumnsValue?.Count > 0);
+        Check.MustBe(statement.Values?.Count > 0);
 
         var result = new StringBuilder($"UPDATE {AddBrackets(statement.TableName)} ");
 
         Func<object, string> format = statement.ForceFormatValues ? FormatValue : cv => cv?.ToString() ?? DBNull.Value.ToString();
-        var keyValues = statement.ColumnsValue.Select(kv => $"{AddBrackets(kv.Key)} = {format(kv.Value)}").Merge(", ");
+        var keyValues = statement.Values.Select(kv => $"{AddBrackets(kv.Key)} = {format(kv.Value)}").Merge(", ");
         _ = AddClause($"SET {keyValues}", indent, result);
 
         if (!statement.WhereClause.IsNullOrEmpty())
@@ -30,7 +30,7 @@ public static partial class SqlStatementBuilder
 
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, string column, object value)
     {
-        statement.ArgumentNotNull().ColumnsValue.Add(column.ArgumentNotNull(), value);
+        statement.ArgumentNotNull().Values.Add(column.ArgumentNotNull(), value);
         return statement;
     }
 
@@ -62,7 +62,7 @@ public static partial class SqlStatementBuilder
 
     private class UpdateStatement : IUpdateStatement
     {
-        public Dictionary<string, object> ColumnsValue { get; } = [];
+        public IDictionary<string, object> Values { get; } = new Dictionary<string, object>();
         public bool ForceFormatValues { get; set; } = true;
         public bool ReturnId { get; set; }
         public string? Schema { get; set; }

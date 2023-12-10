@@ -2,5 +2,5 @@
 
 public interface IUpdateStatement : IStatementOnTable, IWhereClause, ICommandStatement
 {
-    Dictionary<string, object> ColumnsValue { get; }
+    IDictionary<string, object> Values { get; }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -439,6 +440,7 @@ public static class ObjectHelper
     public static TSelf Parse<TSelf>(this string input, IFormatProvider? formatProvider = null)
         where TSelf : IParsable<TSelf> => TSelf.Parse(input, formatProvider);
 
+    [DebuggerStepThrough]
     public static dynamic props(this object o) =>
         _propsExpando.GetOrCreateValue(o);
 

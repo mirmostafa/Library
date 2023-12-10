@@ -11,15 +11,18 @@ public partial class SqlStatementBuilder
         Check.MustHaveAny(statement.Values);
 
         var result = new StringBuilder($"INSERT INTO {AddBrackets(statement.TableName)}");
-        _ = AddClause($"({statement.Values.Select(x => AddBrackets(x.Key)).Merge(", ")})", indent, result);
+        _ = AddClause($"({statement.Values.Select(x => AddBrackets(x.Key.NotNull())).Merge(", ")})", indent, result);
+        string clause;
         if (!statement.ForceFormatValues)
         {
-            _ = AddClause($"VALUES ({statement.Values.Select(x => x.Value?.ToString() ?? DBNull.Value.ToString()).Merge(", ")})", indent, result);
+            clause = $"VALUES ({statement.Values.Select(x => x.Value.NotNull().ToString()!).Merge(", ")})";
+            
         }
         else
         {
-            _ = AddClause($"VALUES ({statement.Values.Select(x => FormatValue(x.Value)).Merge(", ")})", indent, result);
+            clause = $"VALUES ({statement.Values.Select(x => FormatValue(x.Value.NotNull())).Merge(", ")})";
         }
+        _ = AddClause(clause, indent, result);
 
         if (statement.ReturnId)
         {
@@ -34,16 +37,16 @@ public partial class SqlStatementBuilder
     public static IInsertStatement Into([DisallowNull] this IInsertStatement statement, string tableName) =>
         statement.With(x => x.TableName = tableName);
 
-    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params (string ColumnName, object? Value)[] values) =>
+    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params (string ColumnName, object Value)[] values) =>
         statement.With(x => x.Values(values.Select(x => new KeyValuePair<string, object?>(x.ColumnName, x.Value))));
 
-    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, IEnumerable<(string ColumnName, object? Value)> values) =>
+    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, IEnumerable<(string ColumnName, object Value)> values) =>
         statement.Values(values.ToArray());
 
     public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, IEnumerable<KeyValuePair<string, object?>> values) =>
         statement.Values(values.ToArray());
 
-    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params KeyValuePair<string, object?>[] values) =>
+    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params KeyValuePair<string, object>[] values) =>
         statement.With(x => x.Values.AddRange(values));
 
     private struct InsertStatement : IInsertStatement
@@ -56,6 +59,6 @@ public partial class SqlStatementBuilder
         public bool ReturnId { get; set; }
         public string? Schema { get; set; }
         public string TableName { get; set; } = null!;
-        public IDictionary<string, object?> Values { get; } = new Dictionary<string, object?>();
+        public IDictionary<string, object> Values { get; } = new Dictionary<string, object>();
     }
 }

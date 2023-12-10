@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -64,6 +65,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
         return true;
     }
 
+    [DebuggerStepThrough]
     public override bool TrySetMember(SetMemberBinder binder, object? value)
     {
         if (binder is null)
