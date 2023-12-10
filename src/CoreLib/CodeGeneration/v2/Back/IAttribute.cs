@@ -8,7 +8,7 @@ public interface ICodeGenAttribute
     static ICodeGenAttribute New(TypePath name) =>
         new CodeGenAttribute(name);
 
-    static ICodeGenAttribute New(string name, IEnumerable<(string Name, string Value)> properties) =>
+    static ICodeGenAttribute New(TypePath name, IEnumerable<(string Name, string Value)> properties) =>
         new CodeGenAttribute(name, properties);
 }
 
