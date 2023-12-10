@@ -2,8 +2,8 @@
 
 public static class SqlTypeHelper
 {
-    public static string FormatDate(DateTime date) => 
-        date.ToString("yyyy-MM-dd HH:mm:ss");
+    public static string FormatDate(DateTime? date) =>
+        date is { } d ? d.ToString("yyyy-MM-dd HH:mm:ss") : DBNull.Value.ToString();
 
     public static string NetTypeToSqlType(Type type) =>
             type.Name switch
