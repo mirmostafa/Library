@@ -761,6 +761,7 @@ public static class EnumerableHelper
     public static IEnumerable<T> Flatten<T>([DisallowNull] IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren) =>
         roots.SelectAllChildren(getChildren);
 
+    [Obsolete("Please use `Fluent()`, instead.", true)]
     public static TCollection FluentAdd<TCollection, T>(this TCollection collection, T item)
             where TCollection : ICollection<T>
     {
@@ -1758,4 +1759,7 @@ public static class EnumerableHelper
             yield return enumerator.Current;
         }
     }
+
+    public static IFluentList<FluentList<TItem>, TItem> AsFluent<TItem>(this IList<TItem> list)
+        => FluentList<TItem>.Create(list);
 }

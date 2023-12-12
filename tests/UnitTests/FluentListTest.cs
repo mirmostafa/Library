@@ -1,4 +1,5 @@
 ﻿using Library.Collections;
+using Library.Types;
 
 namespace UnitTests;
 
@@ -7,60 +8,130 @@ namespace UnitTests;
 [Trait("Category", nameof(FluentList<int>))]
 public sealed class FluentListTest
 {
-    private static readonly Action<int> _emptyIntAction = x => { };
-    private static readonly Func<int, int> _selfIntFunc = x => x;
-    private readonly FluentList<int> _list;
-
-    public FluentListTest() 
-        => this._list = FluentList<int>.Create(Enumerable.Range(0, 10));
-
     [Fact]
-    public void AddTest()
-        => this._list.Cast().To<IList<int>>().Add(5);
-
-    [Fact]
-    public void ClearTest()
-        => this._list.Clear();
-
-    [Fact]
-    public void ContainsTest()
-        => Assert.True(this._list.Contains(4).Result);
-
-    [Fact]
-    public void CountTest()
-        => Assert.Equal(10, this._list.Count);
-
-    [Fact]
-    public void CreateTest()
+    public void AddAndCount()
     {
-        _ = FluentList<int>.Create();
-        _ = FluentList<int>.Create(this._list);
+        var list = new FluentList<int>().Add(1000);
+        Assert.Equal(1, list.Count);
+        Assert.Equal(1000, list[0]);
+
+        _ = list.Add(2000).Add(3000);
+        Assert.Equal(3, list.Count);
+        Assert.Equal(1000, list[0]);
+        Assert.Equal(2000, list[1]);
+        Assert.Equal(3000, list[2]);
     }
 
     [Fact]
-    public void IndexerTest()
-        => Assert.Equal(5, this._list[5]);
-
-    [Fact]
-    public void IndexOfTest()
+    public void AddTestUsingObjectInitializer()
     {
-        var (_, result) = this._list.IndexOf(5);
-        Assert.Equal(5, result);
+        var list = new FluentList<int>
+        {
+            1000, 2000, 3000
+        };
+        Assert.Equal(1000, list[0]);
+        Assert.Equal(2000, list[1]);
+        Assert.Equal(3000, list[2]);
     }
 
     [Fact]
-    public void InsertTest()
-        => this._list.Insert(5, 5);
+    public void AsList()
+    {
+        var list = new List<int>().AsFluent().Add(1000).Add(2000).AsList();
+        Assert.True(list is not null);
+        Assert.Equal(2, list.Count);
+        Assert.Contains(2000, list);
+    }
 
     [Fact]
-    public void IterationTest()
-        => this._list.ForEach(_emptyIntAction);
+    public void Build()
+    {
+        var list = new List<int>().AsFluent().Add(1000).Add(2000).Build();
+        Assert.True(list is not null);
+        Assert.Equal(2, list.Count);
+        Assert.Contains(2000, list);
+    }
 
     [Fact]
-    public void RemoveAtTest()
-        => this._list.RemoveAt(5);
+    public void Clear()
+    {
+        var list = new FluentList<int>().Add(1000).Add(2000).Add(3000).Clear();
+        Assert.Equal(0, list.Count);
+    }
 
     [Fact]
-    public void RemoveTest()
-        => this._list.Remove(5);
+    public void Contains()
+    {
+        var list = new FluentList<int>().Add(1000).Add(2000).Add(3000);
+        var has2000 = list.Contains(1000).Result;
+        Assert.True(has2000);
+        var has4000 = list.Contains(4000).Result;
+        Assert.False(has4000);
+    }
+
+    [Fact]
+    public void Create()
+    {
+        var empty = FluentList<int>.Create();
+        Assert.Empty(empty);
+
+        var list = FluentList<int>.Create([1000, 2000, 3000]);
+        Assert.NotEmpty(list);
+    }
+
+    [Fact]
+    public void ExplicitCast()
+    {
+        var list = new List<int>
+        {
+            1000, 2000
+        };
+        var fluent = list.AsFluent().Add(3000).Add(4000);
+        list = fluent;
+        Assert.True(list is not null);
+        Assert.Equal(4, list.Count);
+        Assert.Contains(2000, list);
+    }
+
+    [Fact]
+    public void Indexer()
+    {
+        var list = new FluentList<int>().Add(1000).Add(2000).Add(3000);
+        Assert.Equal(3000, list[2]);
+        list[2] = 4000;
+        Assert.Equal(4000, list[2]);
+    }
+
+    [Fact]
+    public void IndexOf()
+    {
+        var list = new FluentList<int>().Add(1000).Add(2000).Add(3000);
+        Assert.Equal(1, list.IndexOf(2000).Result);
+    }
+
+    [Fact]
+    public void Insert()
+    {
+        var list = new FluentList<int>().Add(1000).Add(2000).Add(3000).Insert(2, 4000);
+        Assert.Equal(2, list.IndexOf(4000).Result);
+        Assert.Equal(3, list.IndexOf(3000).Result);
+    }
+
+    [Fact]
+    public void Iteration()
+        => new FluentList<int>().Add(1000).Add(2000).Add(3000).ForEach(Actions.Empty<int>());
+
+    [Fact]
+    public void Remove()
+    {
+        var list = new FluentList<int>().Add(1000).Add(2000).Add(3000).Remove(2000).List;
+        Assert.False(list.Contains(2000).Result);
+    }
+
+    [Fact]
+    public void RemoveAt()
+    {
+        var list = new FluentList<int>().Add(1000).Add(2000).Add(3000).RemoveAt(1);
+        Assert.Equal(3000, list[1]);
+    }
 }

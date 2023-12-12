@@ -14,3 +14,14 @@ public static class Actions
     public static void Void()
     { }
 }
+
+public static class Funcs
+{
+    [return: MaybeNull]
+    public static Func<TResult?> Empty<TResult>() =>
+        () => default;
+
+    [return: MaybeNull]
+    public static Func<T?> SelfEmpty<T>() =>
+        () => default;
+}

@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 
+using Library.Collections;
 using Library.Validations;
 
 namespace Library.Helpers;
@@ -110,11 +111,9 @@ public static class FluencyHelper
     }
 
     public static Fluency<TList> Items<TList, TItem>(this Fluency<TList> list, in Func<TItem, TItem> action, Func<IEnumerable<TItem>, TList> convert)
-        where TList : IEnumerable<TItem>
-    {
+        where TList : IEnumerable<TItem> =>
         //return new Fluency<TList>(convert(iterate(list.Value, action)));
-        return new Fluency<TList>(convert.ArgumentNotNull()(list.GetValue().Select(action)));
-    }
+        new(convert.ArgumentNotNull()(list.GetValue().Select(action)));
 
     public static (TInstance Instance, TResult Result) Result<TInstance, TResult>(this Fluency<TInstance> instance, in Func<TResult> func) =>
         (instance.GetValue(), func.Invoke());
