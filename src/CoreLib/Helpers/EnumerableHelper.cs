@@ -337,7 +337,7 @@ public static class EnumerableHelper
 
     // Check if the count of elements in the ICollection is not zero.
     public static IFluentList<FluentList<TItem>, TItem> AsFluent<TItem>(this IList<TItem> list) =>
-        FluentList<TItem>.Create(list);
+            FluentList<TItem>.Create(list);
 
     // Check if the length of the array is not zero or null.
     /// <summary>
