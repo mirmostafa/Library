@@ -29,7 +29,7 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
     {
         Node<T?>? buffer = null;
         EnumerableHelper.BuildTree<(T Value, string? Display), Node<T>>(
-            EnumerableHelper.Iterate(getRoot())!
+            EnumerableHelper.AsEnumerable(getRoot())!
             , raw => new(raw.Value, raw.Display)
             , raw => getChildren(raw), raw => buffer = new(raw.Value, raw.Display)
             , (p, c) => p.AddChild(c));
@@ -40,7 +40,7 @@ public sealed class Node<T> : IEquatable<Node<T>>, IEquatable<T>, IHasChildren<N
     {
         var result = Node<T>.Empty;
         EnumerableHelper.BuildTree<T, Node<T>>(
-            EnumerableHelper.Iterate(getRoot())!
+            EnumerableHelper.AsEnumerable(getRoot())!
             , raw => new(raw)
             , raw => getChildren(raw), raw => result = raw!
             , (p, c) => p.AddChild(c));

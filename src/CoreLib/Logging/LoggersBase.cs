@@ -48,5 +48,8 @@ public abstract class LoggersBase<TMessage>(IEnumerable<ILogger<TMessage>> logge
     }
 
     public new bool Remove(ILogger<TMessage> item)
-        => base.Remove(item).Result;
+    {
+        base.Remove(item);
+        return true;
+    }
 }

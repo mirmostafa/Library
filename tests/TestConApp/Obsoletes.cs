@@ -83,7 +83,7 @@ internal partial class Obsoletes
                         flow => Task.FromResult(move(flow)),
                         display,
                         display);
-        WriteLine("End.");
+        WriteLine($"End.");
 
         static (int Current, MoveDirection Direction) move((int Current, IEnumerable<(int State, MoveDirection Direction)>) flow)
         {
@@ -121,7 +121,7 @@ internal partial class Obsoletes
 
     public static void WatchHardDisk()
     {
-        var watchers = Drive.GetDrives().Select(watch).CreateIterator(x => WriteLine($"Watching {x.Path}")).ToList();
+        var watchers = Drive.GetDrives().Select(watch).Iterate(x => WriteLine($"Watching {x.Path}")).ToList();
         WriteLine("Ready");
 
         While(() => ReadKey().Key != ConsoleKey.X);

@@ -179,7 +179,7 @@ public static class SourceCodeHelpers
 
     [return: NotNull]
     public static Codes ToCodes(this Code code) =>
-        new(code.Cast().ToEnumerable<Code>());
+        new(code.Cast().AsEnumerable<Code>());
 
     public static Result<Codes> ToCodesResult(this Result<Code> code) =>
         Result<Codes>.From(code.ArgumentNotNull(), code.Value.ToCodes());

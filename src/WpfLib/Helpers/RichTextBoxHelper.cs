@@ -41,14 +41,14 @@ public static class RichTextBoxHelper
             var preprocessors = new[] { @"#region", @"#endregion" };
             if (line.CurrentLine.Trim().StartsWith("///"))
             {
-                return (true, EnumerableHelper.Iterate(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DarkGreen }));
+                return (true, EnumerableHelper.AsEnumerable(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DarkGreen }));
             }
             else
             {
                 return line.CurrentLine.Trim().StartsWith("//")
-                    ? ((bool Found, IEnumerable<Inline>? Inline)?)(true, EnumerableHelper.Iterate(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DimGray }))
+                    ? ((bool Found, IEnumerable<Inline>? Inline)?)(true, EnumerableHelper.AsEnumerable(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DimGray }))
                     : line.CurrentLine.Trim().StartsWithAny(preprocessors)
-                                    ? (true, EnumerableHelper.Iterate(new Run(line.CurrentLine) { Foreground = Brushes.Gray }))
+                                    ? (true, EnumerableHelper.AsEnumerable(new Run(line.CurrentLine) { Foreground = Brushes.Gray }))
                                     : null;
             }
         }
@@ -136,13 +136,13 @@ public static class RichTextBoxHelper
 
                         var genParamInlines = Found
                             ? Inlines
-                            : EnumerableHelper.Iterate(new Run(genParam));
+                            : EnumerableHelper.AsEnumerable(new Run(genParam));
                         var genClassInlines = genClassFormatResult.Found
                             ? genClassFormatResult.Inlines
-                            : EnumerableHelper.Iterate(new Run(genClass));
+                            : EnumerableHelper.AsEnumerable(new Run(genClass));
 
-                        var open = EnumerableHelper.Iterate(new Run("<"));
-                        var close = EnumerableHelper.Iterate(new Run(">"));
+                        var open = EnumerableHelper.AsEnumerable(new Run("<"));
+                        var close = EnumerableHelper.AsEnumerable(new Run(">"));
 
                         var result = (new[] { genClassInlines!, open, genParamInlines!, close }).SelectAll();
                         inlines.AddRange(result);

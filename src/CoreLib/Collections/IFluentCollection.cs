@@ -26,5 +26,5 @@ public interface IFluentCollection<TSelf, TItem> : IEnumerable<TItem>, IEnumerab
 
     TSelf CopyTo(TItem[] array, int arrayIndex);
 
-    (TSelf List, bool Result) Remove(TItem item);
+    TSelf Remove(TItem item);
 }

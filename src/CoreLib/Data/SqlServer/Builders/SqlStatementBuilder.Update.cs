@@ -37,14 +37,14 @@ public static partial class SqlStatementBuilder
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, params (string Column, object Value)[] columnsValue)
     {
         _ = statement.ArgumentNotNull();
-        _ = columnsValue.CreateIterator(cv => statement.Set(cv.Column, cv.Value)).Build();
+        _ = columnsValue.Iterate(cv => statement.Set(cv.Column, cv.Value)).Build();
         return statement;
     }
 
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, IEnumerable<(string Column, object Value)> columnsValue)
     {
         _ = statement.ArgumentNotNull();
-        _ = columnsValue.CreateIterator(cv => statement.Set(cv.Column, cv.Value)).Build();
+        _ = columnsValue.Iterate(cv => statement.Set(cv.Column, cv.Value)).Build();
         return statement;
     }
 

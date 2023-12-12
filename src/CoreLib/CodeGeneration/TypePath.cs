@@ -54,7 +54,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     public string NameSpace => this._data.NameSpace;
 
     public static string Combine(in string? part1, params string?[] parts) =>
-        StringHelper.Merge(EnumerableHelper.Iterate(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
+        StringHelper.Merge(EnumerableHelper.AsEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
 
     [return: NotNullIfNotNull(nameof(typePath))]
     public static string? GetName(in string? typePath) =>

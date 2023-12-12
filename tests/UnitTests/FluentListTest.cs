@@ -124,7 +124,7 @@ public sealed class FluentListTest
     [Fact]
     public void Remove()
     {
-        var list = new FluentList<int>().Add(1000).Add(2000).Add(3000).Remove(2000).List;
+        var list = new FluentList<int>().Add(1000).Add(2000).Add(3000).Remove(2000);
         Assert.False(list.Contains(2000).Result);
     }
 
