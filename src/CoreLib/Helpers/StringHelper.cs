@@ -979,7 +979,7 @@ public static class StringHelper
             : (s => string.Concat(separator, s));
 
         // Create an iterator for the source using the specified operation and then merge the results.
-        return source.CreateIterator(item => operate(item)).Merge().RemoveEnd(separator?.Length ?? 0);
+        return source.Iterate(item => operate(item)).Merge().RemoveEnd(separator?.Length ?? 0);
     }
 
     /// <summary>

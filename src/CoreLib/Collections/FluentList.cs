@@ -1,4 +1,6 @@
-﻿namespace Library.Collections;
+﻿using Library.Validations;
+
+namespace Library.Collections;
 
 public sealed class FluentList<TItem> : FluentListBase<TItem, FluentList<TItem>>, IFluentList<FluentList<TItem>, TItem>
 {
@@ -42,10 +44,9 @@ public sealed class FluentList<TItem> : FluentListBase<TItem, FluentList<TItem>>
     /// <returns>A new FluentList containing the items from the given IEnumerable.</returns>
     public static FluentList<TItem> Create(IEnumerable<TItem> list) =>
         new(list);
-
     /// <summary>
     /// Converts a FluentList to a List.
     /// </summary>
     public static implicit operator List<TItem>(in FluentList<TItem> fluentList) =>
-        fluentList.AsList();
+        fluentList.ArgumentNotNull().AsList();
 }

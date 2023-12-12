@@ -81,7 +81,7 @@ public class Result<TValue> : ResultBase
         in object? status,
         in string? message,
         in (object Id, object Error) error) =>
-        new(value, false, status, message, EnumerableHelper.Iterate(error), null);
+        new(value, false, status, message, EnumerableHelper.AsEnumerable(error), null);
 
     /// <summary>
     /// Creates a failure result with the specified message, exception and value.

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 
 using Library.Validations;
 
@@ -32,6 +33,14 @@ public static class Caster
     public static T? As<T>([DisallowNull] this ICastable o) where T : class =>
         o.Value as T;
 
+    public static IEnumerable<T> AsEnumerable<T>(this ICastable o) =>
+        EnumerableHelper.AsEnumerable(o.To<T>());
+
+    [Pure]
+    [return: NotNull]
+    public static IEnumerable<T?> AsEnumerable<T>(this ICastable<T> o) =>
+        o == null ? Enumerable.Empty<T>() : EnumerableHelper.AsEnumerable(o.Value);
+
     /// <summary>
     /// The entry of casting operations.
     /// </summary>
@@ -39,7 +48,8 @@ public static class Caster
     /// <returns>A new Castable object.</returns>
     public static ICastable Cast(this object? obj)
         => new Castable(obj);
-    public static ICastable<T> Safe<T>(this ICastable o, T? obj)
+
+    public static ICastable<T> CastSafe<T>(this T? obj)
         => new Castable<T>(obj);
 
     [return: NotNullIfNotNull(nameof(defaultValue))]
@@ -58,6 +68,9 @@ public static class Caster
     /// </summary>
     public static IEnumerable<T> OfType<T>(IEnumerable items)
         => items.OfType<T>();
+
+    public static ICastable<T> Safe<T>(this ICastable o, T? obj)
+                    => new Castable<T>(obj);
 
     /// <summary>
     /// Casts the given object to the specified type.
@@ -99,9 +112,6 @@ public static class Caster
         return result;
     }
 
-    public static IEnumerable<T> ToEnumerable<T>(this ICastable o) =>
-        EnumerableHelper.Iterate(o.To<T>());
-
     /// <summary>
     /// Converts the specified object to an integer.
     /// </summary>
@@ -142,7 +152,7 @@ public static class Caster
     /// <param name="o">The object to convert.</param>
     /// <returns>A long that represents the value of the specified object.</returns>
     public static long ToLong([DisallowNull] this ICastable o)
-            => Convert.ToInt64(o.Value);
+        => Convert.ToInt64(o.Value);
 
     /// <summary>
     /// Filters a sequence of items to return only those of type T.

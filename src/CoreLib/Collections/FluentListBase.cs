@@ -64,8 +64,8 @@ public abstract class FluentListBase<TItem, TList> : IFluentList<TList, TItem>, 
     public TList Insert(int index, TItem item) =>
         this.This.Fluent(() => this._list.Insert(index, item));
 
-    public (TList List, bool Result) Remove(TItem item) =>
-        (this.This, this._list.Remove(item));
+    public TList Remove(TItem item) =>
+        this.This.Fluent(this._list.Remove(item));
 
     public TList RemoveAt(int index) =>
         this.This.Fluent(() => this._list.RemoveAt(index));

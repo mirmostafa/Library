@@ -83,7 +83,7 @@ public static class EnumerableHelper
         return list; // Return the updated collection with added items.
     }
 
-    public static void AddRange<TList, TItem>([DisallowNull] this TList list, params TItem[] items)
+    public static TList AddRange<TList, TItem>([DisallowNull] this TList list, params TItem[] items)
         where TList : ICollection<TItem>
     {
         if (items?.Any() is true)
@@ -94,6 +94,20 @@ public static class EnumerableHelper
                 list.Add(item);
             }
         }
+        return list;
+    }
+    public static TList RemoveRange<TList, TItem>([DisallowNull] this TList list, params TItem[] items)
+        where TList : ICollection<TItem>
+    {
+        if (items?.Any() is true)
+        {
+            // Iterate through each item in the 'items' enumerable and add it to the collection.
+            foreach (var item in items)
+            {
+                list.Remove(item);
+            }
+        }
+        return list;
     }
 
     /// <summary>
@@ -285,7 +299,7 @@ public static class EnumerableHelper
     /// <returns>True if the IList contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>([DisallowNull] this IList<T> source) =>
-        source?.Count > 0; // Check if the count of elements in the IList is not zero or null.
+        source?.Count > 0;
 
     /// <summary>
     /// Determines whether any element exists in the given array.
@@ -295,7 +309,7 @@ public static class EnumerableHelper
     /// <returns>True if the array contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this T[] source) =>
-        source?.Length > 0; // Check if the length of the array is not zero or null.
+        source?.Length > 0;
 
     /// <summary>
     /// Determines whether any element exists in the given ICollection.
@@ -304,8 +318,28 @@ public static class EnumerableHelper
     /// <returns>True if the ICollection contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any<T>(this ICollection source) =>
-        source?.Count > 0; // Check if the count of elements in the ICollection is not zero.
+        source?.Count > 0;
 
+    /// <summary>
+    /// Converts a single item into an IEnumerable of that item.
+    /// </summary>
+    /// <param name="item">The item to convert.</param>
+    /// <returns>An IEnumerable containing the item.</returns>
+    /// <remarks>
+    /// This code creates an IEnumerable of type T and returns the item passed in as an argument.
+    /// </remarks>
+    [return: NotNull]
+    public static IEnumerable<T> AsEnumerable<T>(T item)
+    {
+        //The yield keyword is used to return the item passed in as an argument.
+        yield return item;
+    }
+
+    // Check if the count of elements in the ICollection is not zero.
+    public static IFluentList<FluentList<TItem>, TItem> AsFluent<TItem>(this IList<TItem> list) =>
+            FluentList<TItem>.Create(list);
+
+    // Check if the length of the array is not zero or null.
     /// <summary>
     /// Get a <see cref="Span{T}"/> view over a <see cref="List{T}"/>'s data. Items should not be
     /// added or removed from the <see cref="List{T}"/> while the <see cref="Span{T}"/> is in use.
@@ -314,6 +348,7 @@ public static class EnumerableHelper
     public static Span<TItem> AsSpan<TItem>(this List<TItem> list) =>
         CollectionsMarshal.AsSpan(list);
 
+    // Check if the count of elements in the IList is not zero or null.
     /// <summary>
     /// Converts an IEnumerable to a Span.
     /// </summary>
@@ -448,7 +483,7 @@ public static class EnumerableHelper
         // Select each element with its index, then group elements by the calculated chunk index.
         source.Select((x, i) => new { Index = i, Value = x })
               .GroupBy(x => x.Index / chunkSize)
-              .Select(x => x.Select(v => v.Value)); // Select values within each chunk group.
+              .Select(x => x.Select(v => v.Value));
 
     /// <summary>
     /// Clears the specified collection and adds the specified item to it.
@@ -465,6 +500,7 @@ public static class EnumerableHelper
         return collection;
     }
 
+    // Select values within each chunk group.
     /// <summary>
     /// Clears the list and adds a range of items to it.
     /// </summary>
@@ -585,98 +621,6 @@ public static class EnumerableHelper
     }
 
     /// <summary>
-    /// Applies a folder function to each item in the IEnumerable and returns the result.
-    /// </summary>
-    /// <param name="items">The IEnumerable to fold.</param>
-    /// <param name="folder">The folder function to apply.</param>
-    /// <param name="initialValue">The initial value to use.</param>
-    /// <returns>The result of the fold.</returns>
-    public static IEnumerable<T> CreateIterator<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
-    {
-        Check.MustBeArgumentNotNull(items);
-        var buffer = items;
-
-        foreach (var item in buffer)
-        {
-            action?.Invoke(item);
-            yield return item;
-        }
-    }
-
-    /// <summary>
-    /// Executes an action for each item in the IEnumerable.
-    /// </summary>
-    /// <typeparam name="T">The type of the items in the IEnumerable.</typeparam>
-    /// <typeparam name="TResult">The type of the result.</typeparam>
-    /// <param name="items">The IEnumerable to iterate over.</param>
-    /// <param name="action">The action to execute for each item.</param>
-    /// <returns>An IEnumerable containing the results of the action.</returns>
-    public static IEnumerable<TResult> CreateIterator<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
-    {
-        Check.MustBeArgumentNotNull(items);
-        Check.MustBeArgumentNotNull(action);
-        return iterate(items, action);
-
-        static IEnumerable<TResult> iterate(IEnumerable<T> items, Func<T, TResult> action)
-        {
-            foreach (var item in items)
-            {
-                yield return action(item);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and applies an action to
-    /// each item.
-    /// </summary>
-    /// <typeparam name="TItem">The type of the items in the <see cref="IAsyncEnumerableTItem"/>.</typeparam>
-    /// <param name="asyncItems">The <see cref="IAsyncEnumerableTItem"/> to iterate over.</param>
-    /// <param name="action">The action to apply to each item.</param>
-    /// <param name="cancellationToken">
-    /// A <see cref="CancellationToken"/> to observe while waiting for the task to complete.
-    /// </param>
-    /// <returns>
-    /// An <see cref="IAsyncEnumerableTItem"/> containing the results of applying the action to each item.
-    /// </returns>
-    public static async IAsyncEnumerable<TItem> CreateIteratorAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        Check.MustBeArgumentNotNull(asyncItems);
-        Check.MustBeArgumentNotNull(action);
-
-        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
-        {
-            yield return action(item);
-        }
-    }
-
-    //public static (TItems Items, IEnumerable<TResult> Results) ForEach<TItems, TItem, TResult>([DisallowNull] this TItems items, [DisallowNull] Func<TItem, TResult> action)
-    //    where TItems: IEnumerable<TItem>
-    //{
-    //    return (items, items.ForEach(action));
-    //}
-    /// <summary>
-    /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and performs an action
-    /// on each item.
-    /// </summary>
-    /// <typeparam name="TItem">The type of the items in the <see cref="IAsyncEnumerableTItem"/>.</typeparam>
-    /// <param name="asyncItems">The <see cref="IAsyncEnumerableTItem"/> to iterate over.</param>
-    /// <param name="action">The action to perform on each item.</param>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to observe.</param>
-    /// <returns>The <see cref="IAsyncEnumerableTItem"/>.</returns>
-    public static async IAsyncEnumerable<TItem> CreateIteratorAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        Check.MustBeArgumentNotNull(asyncItems);
-        Check.MustBeArgumentNotNull(action);
-
-        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
-        {
-            action(item);
-            yield return item;
-        }
-    }
-
-    /// <summary>
     /// Returns an empty IEnumerable if the given IEnumerable is null, otherwise returns the given IEnumerable.
     /// </summary>
     [return: NotNull]
@@ -697,7 +641,7 @@ public static class EnumerableHelper
     public static Dictionary<TKey, TValue?> DictionaryFromKeys<TKey, TValue>(IEnumerable<TKey> keys, TValue? defaultValue = default)
         where TKey : notnull =>
         // Create a new dictionary by selecting key-value pairs from the keys sequence with default values.
-        new(keys.CreateIterator(x => new KeyValuePair<TKey, TValue?>(x, defaultValue)));
+        new(keys.Iterate(x => new KeyValuePair<TKey, TValue?>(x, defaultValue)));
 
     /// <summary>
     /// Creates an empty array.
@@ -705,7 +649,7 @@ public static class EnumerableHelper
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static T[] EmptyArray<T>() =>
-        Array.Empty<T>();
+        [];
 
     /// <summary>
     /// Compares two IEnumerable objects for equality.
@@ -759,11 +703,11 @@ public static class EnumerableHelper
     }
 
     public static IEnumerable<T> Flatten<T>([DisallowNull] IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren) =>
-        roots.SelectAllChildren(getChildren);
+            roots.SelectAllChildren(getChildren);
 
     [Obsolete("Please use `Fluent()`, instead.", true)]
     public static TCollection FluentAdd<TCollection, T>(this TCollection collection, T item)
-            where TCollection : ICollection<T>
+                where TCollection : ICollection<T>
     {
         collection.Add(item);
         return collection;
@@ -778,7 +722,7 @@ public static class EnumerableHelper
     /// <returns>A read-only list of the items.</returns>
     [return: NotNull]
     public static void ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action) =>
-        _ = items.CreateIterator(action).Build();
+        _ = items.Iterate(action).Build();
 
     /// <summary>
     /// Recursively iterates through a tree of objects, performing an action on each node.
@@ -806,7 +750,7 @@ public static class EnumerableHelper
 
         //For each child node, perform the child action and recursively call the method on the child node
         _ = (getChildren?.Invoke(root)
-            .CreateIterator(c =>
+            .Iterate(c =>
             {
                 childAction?.Invoke(c, root);
                 ForEach(c, getChildren, rootAction, childAction);
@@ -863,7 +807,7 @@ public static class EnumerableHelper
     /// item and its count.
     /// </summary>
     public static IEnumerable<(T Item, int Count)> GroupCounts<T>(in IEnumerable<T> items) =>
-        items.GroupBy(x => x).CreateIterator(x => (x.Key, x.Count()));
+        items.GroupBy(x => x).Iterate(x => (x.Key, x.Count()));
 
     /// <summary>
     /// Finds the duplicates in a given IEnumerable of type T.
@@ -1013,23 +957,50 @@ public static class EnumerableHelper
         (items1 == null && items2 == null) || (items1 != null && items2 != null && (items1.Equals(items2) || items1.SequenceEqual(items2)));
 
     /// <summary>
-    /// Converts a single item into an IEnumerable of that item.
+    /// Applies a folder function to each item in the IEnumerable and returns the result.
     /// </summary>
-    /// <param name="item">The item to convert.</param>
-    /// <returns>An IEnumerable containing the item.</returns>
-    /// <remarks>
-    /// This code creates an IEnumerable of type T and returns the item passed in as an argument.
-    /// </remarks>
-    [return: NotNull]
-    public static IEnumerable<T> Iterate<T>(T item)
+    /// <param name="items">The IEnumerable to fold.</param>
+    /// <param name="folder">The folder function to apply.</param>
+    /// <param name="initialValue">The initial value to use.</param>
+    /// <returns>The result of the fold.</returns>
+    public static IEnumerable<T> Iterate<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
-        //The yield keyword is used to return the item passed in as an argument.
-        yield return item;
+        Check.MustBeArgumentNotNull(items);
+        var buffer = items;
+
+        foreach (var item in buffer)
+        {
+            action?.Invoke(item);
+            yield return item;
+        }
+    }
+
+    /// <summary>
+    /// Executes an action for each item in the IEnumerable.
+    /// </summary>
+    /// <typeparam name="T">The type of the items in the IEnumerable.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="items">The IEnumerable to iterate over.</param>
+    /// <param name="action">The action to execute for each item.</param>
+    /// <returns>An IEnumerable containing the results of the action.</returns>
+    public static IEnumerable<TResult> Iterate<T, TResult>([DisallowNull] this IEnumerable<T> items, [DisallowNull] Func<T, TResult> action)
+    {
+        Check.MustBeArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(action);
+        return iterate(items, action);
+
+        static IEnumerable<TResult> iterate(IEnumerable<T> items, Func<T, TResult> action)
+        {
+            foreach (var item in items)
+            {
+                yield return action(item);
+            }
+        }
     }
 
     [return: NotNull]
     public static IEnumerable<T> Iterate<T>(params T[] items) =>
-            items.Iterate();
+                items.Iterate();
 
     /// <summary>
     /// Creates an IEnumerable from a given IEnumerable.
@@ -1074,6 +1045,56 @@ public static class EnumerableHelper
     }
 
     /// <summary>
+    /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and applies an action to
+    /// each item.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items in the <see cref="IAsyncEnumerableTItem"/>.</typeparam>
+    /// <param name="asyncItems">The <see cref="IAsyncEnumerableTItem"/> to iterate over.</param>
+    /// <param name="action">The action to apply to each item.</param>
+    /// <param name="cancellationToken">
+    /// A <see cref="CancellationToken"/> to observe while waiting for the task to complete.
+    /// </param>
+    /// <returns>
+    /// An <see cref="IAsyncEnumerableTItem"/> containing the results of applying the action to each item.
+    /// </returns>
+    public static async IAsyncEnumerable<TItem> IterateAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Func<TItem, TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Check.MustBeArgumentNotNull(asyncItems);
+        Check.MustBeArgumentNotNull(action);
+
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            yield return action(item);
+        }
+    }
+
+    //public static (TItems Items, IEnumerable<TResult> Results) ForEach<TItems, TItem, TResult>([DisallowNull] this TItems items, [DisallowNull] Func<TItem, TResult> action)
+    //    where TItems: IEnumerable<TItem>
+    //{
+    //    return (items, items.ForEach(action));
+    //}
+    /// <summary>
+    /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and performs an action
+    /// on each item.
+    /// </summary>
+    /// <typeparam name="TItem">The type of the items in the <see cref="IAsyncEnumerableTItem"/>.</typeparam>
+    /// <param name="asyncItems">The <see cref="IAsyncEnumerableTItem"/> to iterate over.</param>
+    /// <param name="action">The action to perform on each item.</param>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/> to observe.</param>
+    /// <returns>The <see cref="IAsyncEnumerableTItem"/>.</returns>
+    public static async IAsyncEnumerable<TItem> IterateAsync<TItem>([DisallowNull] this IAsyncEnumerable<TItem> asyncItems, Action<TItem> action, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Check.MustBeArgumentNotNull(asyncItems);
+        Check.MustBeArgumentNotNull(action);
+
+        await foreach (var item in asyncItems.WithCancellation(cancellationToken))
+        {
+            action(item);
+            yield return item;
+        }
+    }
+
+    /// <summary>
     /// Projects each element of an IEnumerable sequence into a new form using the specified mapping function.
     /// </summary>
     /// <typeparam name="TSource">The type of elements in the source sequence.</typeparam>
@@ -1089,7 +1110,7 @@ public static class EnumerableHelper
     /// producing a new sequence of elements of type TResult.
     /// </remarks>
     public static IEnumerable<TResult> Map<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> mapper) =>
-        source.CreateIterator(mapper);
+        source.Iterate(mapper);
 
     /// <summary>
     /// Merges multiple IEnumerable sequences into a single IEnumerable sequence.
@@ -1137,6 +1158,8 @@ public static class EnumerableHelper
     /// </remarks>
     public static T Pop<T>(this IList<T> list, int index = -1)
     {
+        Check.MustBeArgumentNotNull(list);
+
         // Calculate the actual index based on the input index, considering negative values.
         var i = index >= 0 ? index : list.Count + index;
 
@@ -1291,6 +1314,20 @@ public static class EnumerableHelper
     public static IEnumerable<TSource> RemoveNulls<TSource>(this IEnumerable<TSource> source)
         where TSource : class => RemoveDefaults(source);
 
+    public static TList RemoveRange<TList, TItem>([DisallowNull] this TList list, in IEnumerable<TItem> items)
+        where TList : ICollection<TItem>
+    {
+        if (items?.Any() is true)
+        {
+            // Iterate through each item in the 'items' enumerable and add it to the collection.
+            foreach (var item in items)
+            {
+                _ = list.Remove(item);
+            }
+        }
+        return list; // Return the updated collection with added items.
+    }
+
     /// <summary>
     /// Generates a sequence that contains a specified value repeated a specified number of times.
     /// </summary>
@@ -1345,7 +1382,7 @@ public static class EnumerableHelper
     {
         foreach (var value in values)
         {
-            foreach (var item in value.CreateIterator(selector))
+            foreach (var item in value.Iterate(selector))
             {
                 yield return item;
             }
@@ -1519,7 +1556,7 @@ public static class EnumerableHelper
     /// <param name="item">The item to create an array from.</param>
     /// <returns>An array containing the item.</returns>
     public static T[] ToArray<T>(T item) =>
-        Iterate(item).ToArray();
+        AsEnumerable(item).ToArray();
 
     /// <summary>
     /// Converts an enumerable collection of key-value pairs into a dictionary.
@@ -1759,7 +1796,4 @@ public static class EnumerableHelper
             yield return enumerator.Current;
         }
     }
-
-    public static IFluentList<FluentList<TItem>, TItem> AsFluent<TItem>(this IList<TItem> list)
-        => FluentList<TItem>.Create(list);
 }
