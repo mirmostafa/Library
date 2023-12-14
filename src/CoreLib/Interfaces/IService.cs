@@ -161,6 +161,7 @@ public interface IDbEntityToViewModelConverter<out TViewModel, in TDbEntity>
     /// <param name="entities">The entity.</param>
     /// <returns></returns>
     //IEnumerable<TViewModel?> ToViewModel(IEnumerable<TDbEntity?> entities);
+    [return: NotNull]
     IEnumerable<TViewModel?> ToViewModel(IEnumerable<TDbEntity?> entities) =>
         entities.Select(ToViewModel);
 
