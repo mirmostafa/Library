@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using System.Collections;
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -14,6 +15,10 @@ namespace Library.Validations;
 [StackTraceHidden]
 public static class ValidationExtensions
 {
+    public static ValidationResultSet<TValue> Any<TValue>(this ValidationResultSet<TValue> vrs, Func<Exception> onError = null)
+            where TValue : IEnumerable =>
+            vrs.InnerAddRule(x => x, [DebuggerStepThrough] (_) => vrs.Value.Any(), onError, () => new NoItemValidationException(vrs._valueName));
+
     /// <summary>
     /// Checks that the specified value is not null and returns it. Throws an exception if the value
     /// is null.
@@ -32,7 +37,7 @@ public static class ValidationExtensions
     /// </summary>
     [MemberNotNull(nameof(ValidationResultSet<TValue>.Value))]
     public static ValidationResultSet<TValue> ArgumentNotNull<TValue>(this ValidationResultSet<TValue> vrs, Func<Exception> onError = null) =>
-        vrs.InnerAddRule(x => x, [DebuggerStepThrough](_) => vrs.Value is not null, onError, () => new ArgumentNullException(vrs._valueName));
+        vrs.InnerAddRule(x => x, [DebuggerStepThrough] (_) => vrs.Value is not null, onError, () => new ArgumentNullException(vrs._valueName));
 
     /// <summary> Traverses the rules and create a fail <code>Result<TValue></code>, at first broken
     /// rule . Otherwise created a succeed result. </summary>

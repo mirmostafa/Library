@@ -96,19 +96,6 @@ public static class EnumerableHelper
         }
         return list;
     }
-    public static TList RemoveRange<TList, TItem>([DisallowNull] this TList list, params TItem[] items)
-        where TList : ICollection<TItem>
-    {
-        if (items?.Any() is true)
-        {
-            // Iterate through each item in the 'items' enumerable and add it to the collection.
-            foreach (var item in items)
-            {
-                list.Remove(item);
-            }
-        }
-        return list;
-    }
 
     /// <summary>
     /// Adds a range of items to an ObservableCollection.
@@ -149,29 +136,7 @@ public static class EnumerableHelper
         }
         return list;
     }
-
-    /// <summary>
-    /// Adds a range of items to the <see cref="IFluentListTFluentList, TItem"/>.
-    /// </summary>
-    /// <typeparam name="TFluentList">The type of the fluent list.</typeparam>
-    /// <typeparam name="TItem">The type of the item.</typeparam>
-    /// <param name="list">The list.</param>
-    /// <param name="items">The items to add.</param>
-    /// <returns>The list.</returns>
-    public static IFluentList<TFluentList, TItem> AddRange<TFluentList, TItem>([DisallowNull] this IFluentList<TFluentList, TItem> list, IEnumerable<TItem>? items)
-            where TFluentList : IFluentList<TFluentList, TItem>
-    {
-        Check.MustBeArgumentNotNull(list);
-        if (items?.Any() is true)
-        {
-            foreach (var item in items)
-            {
-                _ = list.Add(item);
-            }
-        }
-        return list;
-    }
-
+    
     /// <summary>
     /// Adds a range of items to an ICollection asynchronously.
     /// </summary>
@@ -335,9 +300,8 @@ public static class EnumerableHelper
         yield return item;
     }
 
-    // Check if the count of elements in the ICollection is not zero.
-    public static IFluentList<FluentList<TItem>, TItem> AsFluent<TItem>(this IList<TItem> list) =>
-            FluentList<TItem>.Create(list);
+    public static FluentList<TItem> AsFluent<TItem>(this IList<TItem> list) =>
+        FluentList<TItem>.New(list);
 
     // Check if the length of the array is not zero or null.
     /// <summary>
@@ -1313,6 +1277,20 @@ public static class EnumerableHelper
     /// </summary>
     public static IEnumerable<TSource> RemoveNulls<TSource>(this IEnumerable<TSource> source)
         where TSource : class => RemoveDefaults(source);
+
+    public static TList RemoveRange<TList, TItem>([DisallowNull] this TList list, params TItem[] items)
+                                                                                                                                                                                                                                                                                                                    where TList : ICollection<TItem>
+    {
+        if (items?.Any() is true)
+        {
+            // Iterate through each item in the 'items' enumerable and add it to the collection.
+            foreach (var item in items)
+            {
+                _ = list.Remove(item);
+            }
+        }
+        return list;
+    }
 
     public static TList RemoveRange<TList, TItem>([DisallowNull] this TList list, in IEnumerable<TItem> items)
         where TList : ICollection<TItem>

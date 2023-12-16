@@ -2,7 +2,7 @@
 
 public static partial class SqlStatementBuilder
 {
-    private static string AddBrackets(in string entity)
+    public static string AddBrackets(in string entity)
     {
         var entities = entity.Split('.').Compact();
         var result = entities.Select(e =>

@@ -78,18 +78,19 @@ public static class QueryableHelper
     /// <param name="paging">The paging parameters.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A paged list of items.</returns>
-    public static async Task<PagingResult<T>> ToListPagingAsync<T>(this IQueryable<T> query, PagingParams? paging, CancellationToken cancellationToken = default)
+    public static async Task<PagingResult<T>> ToListPagingAsync<T>(this IQueryable<T> query, PagingParams paging, CancellationToken cancellationToken = default)
     {
-        var total = await query.CountAsync(cancellationToken: cancellationToken);
-
-        if (paging is null or { PageSize: null or 0 })
+        
+        if (paging.PageSize is null or 0)
         {
             var dbNoPagingResult = await query.ToListAsync(cancellationToken: cancellationToken);
-            return new(dbNoPagingResult, total);
+            var t = await query.CountAsync(cancellationToken: cancellationToken);
+            return new(dbNoPagingResult, t);
         }
 
         Check.MustBe(paging.PageIndex >= 0, () => new ArgumentOutOfRangeException(nameof(paging)));
 
+        var total = await query.CountAsync(cancellationToken: cancellationToken);
         var skip = paging.PageIndex * paging.PageSize.Value;
         var take = paging.PageSize.Value;
         var dbResult = await query.Take(take..skip).ToListAsync(cancellationToken: cancellationToken);

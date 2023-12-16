@@ -69,4 +69,16 @@ public abstract class FluentListBase<TItem, TList> : IFluentList<TList, TItem>, 
 
     public TList RemoveAt(int index) =>
         this.This.Fluent(() => this._list.RemoveAt(index));
+
+    public TList AddRange(IEnumerable<TItem>? items)
+    {
+        if (items?.Any() is true)
+        {
+            foreach (var item in items)
+            {
+                _ = this.Add(item);
+            }
+        }
+        return this.This;
+    }
 }

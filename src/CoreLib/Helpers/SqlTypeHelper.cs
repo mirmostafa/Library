@@ -2,8 +2,18 @@
 
 public static class SqlTypeHelper
 {
-    public static string FormatDate(DateTime? date) =>
-        date is { } d ? d.ToString("yyyy-MM-dd HH:mm:ss") : DBNull.Value.ToString();
+    public static string FormatDate(DateTime? date, string onNull = "null") =>
+        ObjectHelper.IsDbNull(date) ? onNull : date.Value.ToString("yyyy-MM-dd HH:mm:ss");
+
+    public static string FormatDate(object? date, string onNull = "null") =>
+        date switch
+        {
+            DateTime dt => FormatDate(dt),
+            DateOnly d => FormatDate(d.ToDateTime(TimeOnly.MinValue)),
+            TimeOnly t => FormatDate(DateOnly.MinValue.ToDateTime(t)),
+            null => FormatDate((DateTime?)date, onNull),
+            _ => throw new NotImplementedException(),
+        };
 
     public static string NetTypeToSqlType(Type type) =>
             type.Name switch
