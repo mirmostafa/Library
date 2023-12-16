@@ -13,7 +13,7 @@ namespace Library.Helpers;
 public static class DbContextHelper
 {
     public static IDbContextTransaction BeginTransaction(this DbContext dbContext)
-        => dbContext.Database.BeginTransaction();
+        => dbContext.ArgumentNotNull().Database.BeginTransaction();
 
     /// <summary>
     /// Asynchronously starts a new transaction.
@@ -44,7 +44,7 @@ public static class DbContextHelper
     /// If the <see cref="CancellationToken"/> is canceled.
     /// </exception>
     public static Task<IDbContextTransaction> BeginTransactionAsync(this DbContext dbContext, CancellationToken cancellationToken = default)
-        => dbContext.Database.BeginTransactionAsync(cancellationToken);
+        => dbContext.ArgumentNotNull().Database.BeginTransactionAsync(cancellationToken);
 
     /// <summary>
     /// Commits the transaction asynchronously.
@@ -56,7 +56,8 @@ public static class DbContextHelper
     {
         try
         {
-            await dbContext.Database.CommitTransactionAsync(cancellationToken);
+            Check.MustBeArgumentNotNull(dbContext);
+            await dbContext.ArgumentNotNull().Database.CommitTransactionAsync(cancellationToken);
             return Result.Success;
         }
         catch (Exception ex)
@@ -160,6 +161,7 @@ public static class DbContextHelper
             where TDbContext : notnull, DbContext
             where TEntity : class, IIdenticalEntity<long>
     {
+        Check.MustBeArgumentNotNull(entities);
         foreach (var entity in entities)
         {
             _ = dbContext.Detach(entity);
@@ -219,6 +221,7 @@ public static class DbContextHelper
             where TDbContext : notnull, DbContext
             where TEntity : class, IIdenticalEntity<long>
     {
+        Check.MustBeArgumentNotNull(dbContext);
         var result = dbContext.GetLocalEntry(entity);
         if (result is null or { State: EntityState.Detached })
         {
@@ -368,6 +371,9 @@ public static class DbContextHelper
             where TDbContext : DbContext
             where TEntity : class, new()
     {
+        Check.MustBeArgumentNotNull(dbContext);
+        Check.MustBeArgumentNotNull(setEntityId);
+
         var entity = new TEntity();
         setEntityId(entity);
         _ = dbContext.Remove(entity);
@@ -444,9 +450,12 @@ public static class DbContextHelper
     /// <param name="detach">Whether to detach the entity from the context.</param>
     /// <returns>The database context.</returns>
     public static DbContext RemoveById<TDbContext, TEntity, TId>([DisallowNull] DbContext dbContext, [DisallowNull] TId id, bool detach = false)
-            where TEntity : class, IIdenticalEntity<TId>, new()
-            where TId : notnull
-            => RemoveById<TEntity, TId>(dbContext, new[] { id }, detach);
+        where TEntity : class, IIdenticalEntity<TId>, new()
+        where TId : notnull=> 
+        RemoveById<TEntity, TId>(dbContext, new[] { id }, detach);
+    public static DbContext RemoveById<TDbContext, TEntity>([DisallowNull] DbContext dbContext, [DisallowNull] Guid id, bool detach = false)
+        where TEntity : class, IIdenticalEntity<Guid>, new() =>
+        RemoveById<TEntity, Guid>(dbContext, new[] { id }, detach);
 
     /// <summary>
     /// Resets the changes of the given DbContext and optionally disposes the current transaction.
@@ -458,6 +467,7 @@ public static class DbContextHelper
     public static TDbContext ResetChanges<TDbContext>(this TDbContext dbContext, bool disposeTransaction = true)
             where TDbContext : DbContext
     {
+        Check.MustBeArgumentNotNull(dbContext);
         dbContext.ChangeTracker.Clear();
         return disposeTransaction ? DisposeCurrentTransaction(dbContext) : dbContext;
     }
@@ -488,6 +498,7 @@ public static class DbContextHelper
         // Try to save changes to the database
         try
         {
+            Check.MustBeArgumentNotNull(dbContext);
             // Create a success result with the number of changes saved
             var result = Result<int>.CreateSuccess(await dbContext.SaveChangesAsync(cancellationToken));
             return result;
@@ -514,6 +525,7 @@ public static class DbContextHelper
             bool isModified = true)
             where TEntity : class
     {
+        Check.MustBeArgumentNotNull(entityEntry);
         if (entityEntry is not null)
         {
             entityEntry.Property(propertyExpression).IsModified = isModified;
@@ -602,7 +614,8 @@ public static class DbContextHelper
     private static TDbContext DisposeCurrentTransaction<TDbContext>([DisallowNull] this TDbContext dbContext)
             where TDbContext : DbContext
     {
-        dbContext.ArgumentNotNull().Database?.CurrentTransaction?.Dispose();
+        Check.MustBeArgumentNotNull(dbContext);
+        dbContext.Database?.CurrentTransaction?.Dispose();
         return dbContext;
     }
 }
