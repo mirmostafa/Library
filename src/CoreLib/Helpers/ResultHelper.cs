@@ -31,9 +31,9 @@ public static class ResultHelper
     public static TResult BreakOnFail<TResult>(this TResult result)
         where TResult : ResultBase
     {
-        if (!result)
+        if (!result.IsSucceed)
         {
-            CodeHelper.Break();
+            Break();
         }
         return result;
     }
@@ -78,7 +78,7 @@ public static class ResultHelper
 
     public static TResult IfFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
-        if (result == false)
+        if (result?.IsSucceed == false)
         {
             action(result);
         }
@@ -87,11 +87,11 @@ public static class ResultHelper
     }
 
     public static TResult IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
-        => result == true ? next() : result;
+        => result?.IsSucceed == true ? next() : result;
 
     public static TResult IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
-        if (result == true)
+        if (result?.IsSucceed == true)
         {
             action(result);
         }

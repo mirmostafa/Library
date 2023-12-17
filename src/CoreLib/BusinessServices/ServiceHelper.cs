@@ -471,9 +471,9 @@ public static class ServiceHelper
 
         //! Log result of manipulation
         var result = getResult(saveResult, (model, entity));
-        if (persist && result)
+        if (persist)
         {
-            if (result)
+            if (result.IsSucceed)
             {
                 logger?.Debug($"Manipulation ended successfully. Entity: {nameof(TDbEntity)}, Action:{nameof(manipulate)}");
             }

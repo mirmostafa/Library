@@ -5,13 +5,13 @@ public static class SqlTypeHelper
     public static string FormatDate(DateTime? date, string onNull = "null") =>
         ObjectHelper.IsDbNull(date) ? onNull : date.Value.ToString("yyyy-MM-dd HH:mm:ss");
 
-    public static string FormatDate(object? date, string onNull = "null") =>
-        date switch
+    public static string FormatDate(object? data, string onNull = "null") =>
+        data switch
         {
             DateTime dt => FormatDate(dt),
             DateOnly d => FormatDate(d.ToDateTime(TimeOnly.MinValue)),
             TimeOnly t => FormatDate(DateOnly.MinValue.ToDateTime(t)),
-            null => FormatDate((DateTime?)date, onNull),
+            null => FormatDate((DateTime?)data, onNull),
             _ => throw new NotImplementedException(),
         };
 

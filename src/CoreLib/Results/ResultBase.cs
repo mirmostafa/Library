@@ -48,8 +48,8 @@ public abstract class ResultBase(
     public object? Status { get; init; } = status;
     public bool? Succeed { get; init; } = succeed;
 
-    public static implicit operator bool(ResultBase result) =>
-        result.NotNull().IsSucceed;
+    //public static implicit operator bool(ResultBase result) =>
+    //    result.NotNull().IsSucceed;
 
     /// <summary>
     /// Indicates whether the current object is equal to another object of the same type.
