@@ -1162,7 +1162,7 @@ public static class EnumerableHelper
         var result = dic.TryGetValue(key);
 
         // If the key was found in the dictionary:
-        if (result)
+        if (result.IsSucceed)
         {
             // Remove the key-value pair from the dictionary.
             _ = dic.Remove(key);
