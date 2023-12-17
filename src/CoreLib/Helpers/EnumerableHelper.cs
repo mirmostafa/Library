@@ -136,7 +136,7 @@ public static class EnumerableHelper
         }
         return list;
     }
-    
+
     /// <summary>
     /// Adds a range of items to an ICollection asynchronously.
     /// </summary>
