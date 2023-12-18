@@ -26,7 +26,7 @@ public sealed class ValidationResultSet<TValue>(TValue value, CheckBehavior beha
         source.Build();
 
     public static implicit operator TValue(ValidationResultSet<TValue> source) =>
-        source.Value;
+        source.NotNull().Value;
 }
 
 /// <summary>

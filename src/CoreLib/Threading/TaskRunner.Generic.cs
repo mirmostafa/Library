@@ -4,27 +4,27 @@ using Library.Validations;
 
 namespace Library.Threading;
 
-public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<TArg?>>
+public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Result<TState?>>
 {
-    private readonly List<Func<TArg, CancellationToken, Task<TArg>>> _funcList = new();
-    private readonly Func<CancellationToken, Task<TArg>> _start;
+    private readonly List<Func<TState, CancellationToken, Task<TState>>> _funcList = new();
+    private readonly Func<CancellationToken, Task<TState>> _start;
 
-    private TaskRunner([DisallowNull] Func<CancellationToken, Task<TArg>> start) =>
+    private TaskRunner([DisallowNull] Func<CancellationToken, Task<TState>> start) =>
         this._start = start.ArgumentNotNull();
 
-    public static TaskRunner<TArg> StartWith(Func<CancellationToken, Task<TArg>> start) =>
+    public static TaskRunner<TState> StartWith(Func<CancellationToken, Task<TState>> start) =>
         new(start);
 
-    public static TaskRunner<TArg> StartWith(Func<Task<TArg>> start) =>
+    public static TaskRunner<TState> StartWith(Func<Task<TState>> start) =>
         StartWith(c => start());
 
-    public static TaskRunner<TArg> StartWith(Func<TArg> start) =>
+    public static TaskRunner<TState> StartWith(Func<TState> start) =>
         StartWith(c => Task.FromResult(start()));
 
-    public static TaskRunner<TArg> StartWith(TArg state) =>
+    public static TaskRunner<TState> StartWith(TState state) =>
         StartWith(c => Task.FromResult(state));
 
-    public TaskRunner<TArg> Then([DisallowNull] Func<TArg, CancellationToken, Task<TArg>> func)
+    public TaskRunner<TState> Then([DisallowNull] Func<TState, CancellationToken, Task<TState>> func)
     {
         CheckIfNotRunning();
 
@@ -33,8 +33,8 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
         return this;
     }
 
-    public TaskRunner<TArg> Then([DisallowNull] Func<TArg, CancellationToken, Task> func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, t) =>
+    public TaskRunner<TState> Then([DisallowNull] Func<TState, CancellationToken, Task> func) =>
+        this.Then(new Func<TState, CancellationToken, Task<TState>>(async (x, t) =>
         {
             if (!t.IsCancellationRequested)
             {
@@ -44,11 +44,11 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
             return x;
         }));
 
-    public TaskRunner<TArg> Then(Func<TArg, Task<TArg>> func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, _) => func(x)));
+    public TaskRunner<TState> Then(Func<TState, Task<TState>> func) =>
+        this.Then(new Func<TState, CancellationToken, Task<TState>>((x, _) => func(x)));
 
-    public TaskRunner<TArg> Then(Func<TArg, Task> func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, t) =>
+    public TaskRunner<TState> Then(Func<TState, Task> func) =>
+        this.Then(new Func<TState, CancellationToken, Task<TState>>(async (x, t) =>
         {
             if (!t.IsCancellationRequested)
             {
@@ -58,8 +58,8 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
             return x;
         }));
 
-    public TaskRunner<TArg> Then(Func<Task> func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, t) =>
+    public TaskRunner<TState> Then(Func<Task> func) =>
+        this.Then(new Func<TState, CancellationToken, Task<TState>>(async (x, t) =>
         {
             if (!t.IsCancellationRequested)
             {
@@ -69,8 +69,8 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
             return x;
         }));
 
-    public TaskRunner<TArg> Then(Func<CancellationToken, Task> func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>(async (x, t) =>
+    public TaskRunner<TState> Then(Func<CancellationToken, Task> func) =>
+        this.Then(new Func<TState, CancellationToken, Task<TState>>(async (x, t) =>
         {
             if (!t.IsCancellationRequested)
             {
@@ -80,8 +80,8 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
             return x;
         }));
 
-    public TaskRunner<TArg> Then(Action<TArg> func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, t) =>
+    public TaskRunner<TState> Then(Action<TState> func) =>
+        this.Then(new Func<TState, CancellationToken, Task<TState>>((x, t) =>
         {
             if (!t.IsCancellationRequested)
             {
@@ -91,11 +91,11 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
             return Task.FromResult(x);
         }));
 
-    public TaskRunner<TArg> Then(Func<TArg, TArg> func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, t) => Task.FromResult(func(x))));
+    public TaskRunner<TState> Then(Func<TState, TState> func) =>
+        this.Then(new Func<TState, CancellationToken, Task<TState>>((x, t) => Task.FromResult(func(x))));
 
-    public TaskRunner<TArg> Then(Action func) =>
-        this.Then(new Func<TArg, CancellationToken, Task<TArg>>((x, t) =>
+    public TaskRunner<TState> Then(Action func) =>
+        this.Then(new Func<TState, CancellationToken, Task<TState>>((x, t) =>
         {
             if (!t.IsCancellationRequested)
             {
@@ -105,21 +105,21 @@ public sealed class TaskRunner<TArg> : TaskRunnerBase<TaskRunner<TArg?>, Result<
             return Task.FromResult(x);
         }));
 
-    protected override Result<TArg?> GetErrorResult(Exception exception) =>
-        Result<TArg?>.CreateFailure(exception);
+    protected override Result<TState?> GetErrorResult(Exception exception) =>
+        Result<TState?>.CreateFailure(exception);
 
-    protected override async Task<Result<TArg?>> OnRunningAsync(CancellationToken token)
+    protected override async Task<Result<TState?>> OnRunningAsync(CancellationToken token)
     {
         var state = await this._start(token);
         foreach (var func in this._funcList.Compact())
         {
             if (token.IsCancellationRequested)
             {
-                return Result<TArg?>.CreateFailure(new OperationCanceledException(token), state);
+                return Result<TState?>.CreateFailure(new OperationCanceledException(token), state);
             }
 
             state = await func(state, token);
         }
-        return Result<TArg?>.CreateSuccess(state);
+        return Result<TState?>.CreateSuccess(state);
     }
 }
