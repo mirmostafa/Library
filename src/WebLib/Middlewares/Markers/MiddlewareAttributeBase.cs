@@ -1,6 +1,5 @@
-﻿namespace Library.Web.Middlewares.Markers
+﻿namespace Library.Web.Middlewares.Markers;
+
+public abstract class MiddlewareAttributeBase : Attribute
 {
-    public abstract class MiddlewareAttributeBase : Attribute
-    {
-    }
 }

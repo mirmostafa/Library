@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿namespace Library.Web.Middlewares.Markers;
 
-namespace Library.Web.Middlewares.Markers
+public interface IInfraMiddleware
 {
-    internal interface IInfraMiddleware
-    {
-#if !DEBUG
-        [System.Diagnostics.DebuggerStepThrough]
-#endif
-        Task Invoke(HttpContext httpContext);
-    }
+    Task Invoke(HttpContext httpContext);
 }
