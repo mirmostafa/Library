@@ -1,4 +1,6 @@
-﻿using Library.EventsArgs;
+﻿using System.Diagnostics;
+
+using Library.EventsArgs;
 
 namespace Library.Threading.MultistepProgress;
 
@@ -13,8 +15,10 @@ public interface IProgressReport
 
     void End(in ProgressData? description = null);
 
+    [DebuggerStepThrough]
     void Report(in ProgressData description);
 
+    [DebuggerStepThrough]
     void Report(int max, int current, in string? description, in object? sender = null) =>
         this.Report(new(max, current, description, sender));
 }
@@ -28,6 +32,7 @@ internal sealed class ProgressReport : IProgressReport
     public void End(in ProgressData? progress) =>
         this.Ended?.Invoke(this, new(progress));
 
+    [DebuggerStepThrough]
     public void Report(in ProgressData progress)
         => this.Reported?.Invoke(this, new(progress));
 }
