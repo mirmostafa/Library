@@ -4,10 +4,9 @@ using Library.Validations;
 
 namespace Library.CodeGeneration.v2.Back;
 
-public interface IMember : IValidatable
+public interface IMember : IValidatable, IHasAttributes
 {
     AccessModifier AccessModifier { get; }
-    IList<ICodeGenAttribute> Attributes { get; }
     InheritanceModifier InheritanceModifier { get; }
     string Name { get; }
 }

@@ -10,3 +10,8 @@ public interface IHasGenericTypes
 {
     ISet<IGenericType> GenericTypes { get; }
 }
+
+public interface IHasAttributes
+{
+    IList<ICodeGenAttribute> Attributes { get; }
+}
