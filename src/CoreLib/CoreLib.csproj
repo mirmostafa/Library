@@ -55,6 +55,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Collections\Generic\" />
+	  <Folder Include="Security\" />
 	</ItemGroup>
 
 </Project>
