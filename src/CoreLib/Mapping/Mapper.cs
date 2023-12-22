@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 
+using Library.DesignPatterns.Markers;
 using Library.Interfaces;
 using Library.Validations;
 
@@ -8,6 +9,7 @@ namespace Library.Mapping;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
+[Stateless]
 public sealed class Mapper : IMapper
 {
     [return: MaybeNull]
