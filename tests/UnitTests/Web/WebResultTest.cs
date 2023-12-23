@@ -2,7 +2,7 @@
 
 using Library.Web.Results;
 
-namespace UnitTests;
+namespace UnitTests.Web;
 
 [Trait("Category", nameof(Library.Web.Results))]
 [Trait("Category", nameof(ApiResult))]

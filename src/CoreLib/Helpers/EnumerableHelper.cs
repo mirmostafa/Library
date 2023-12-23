@@ -1591,6 +1591,10 @@ public static class EnumerableHelper
         return result;
     }
 
+    public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<(TKey, TValue)> values)
+        where TKey : notnull =>
+        new(values.Select(x => new KeyValuePair<TKey, TValue>(x.Item1, x.Item2)));
+
     public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> items)
     {
         if (items?.Any() != true)

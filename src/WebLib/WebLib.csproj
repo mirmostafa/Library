@@ -16,4 +16,8 @@
         <ProjectReference Include="..\CqrsLib\CqrsLib.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Security\Identity\Model\Tokens\" />
+    </ItemGroup>
+
 </Project>
