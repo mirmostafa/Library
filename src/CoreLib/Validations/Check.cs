@@ -53,7 +53,7 @@ public sealed class Check
         return Result<IEnumerable<string?>?>.CreateSuccess(items);
     }
 
-    public static Result<TValue> IfArgumentIsNull<TValue>(in TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
+    public static Result<TValue> IfArgumentIsNull<TValue>([NotNull][AllowNull] in TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
         If(obj, obj is null, () => new NullValueValidationException(argName!));
 
     public static Result<TValue> IfIsNull<TValue>(in TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>
