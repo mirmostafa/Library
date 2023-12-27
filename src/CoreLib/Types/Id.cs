@@ -44,10 +44,12 @@ public readonly struct Id(IdType value) :
     /// </summary>
     /// <value>The unique identifier.</value>
     public IdType Value { get; } = value;
+
 #if USE_LONG_ID
     public static Id MaxValue { get; } = IdType.MaxValue;
     public static Id MinValue { get; } = IdType.MinValue;
 #endif
+
     /// <summary>
     /// Creates a new Id the by the specific identifier.
     /// </summary>
@@ -398,11 +400,10 @@ public readonly struct Id(IdType value) :
     /// </summary>
     /// <returns>The default value of IdType</returns>
     private static Id GetDefaultValue()
-        => typeof(IdType) == typeof(Guid)
-                ? Guid.Empty.Cast().To<Id>()
-                : typeof(IdType) == typeof(long)
-                    ? 0.Cast().To<Id>()
-                    : default;
+        => new(default);
+
+    public static explicit operator string?(Id? id) 
+        => id?.Value.ToString();
 
     /// <summary>
     /// Gets the debugger display.
