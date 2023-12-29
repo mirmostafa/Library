@@ -30,7 +30,7 @@ public static class DI
         _ = _serviceProvider.NotNull(() => new LibraryException($"{nameof(DI)} not initiated."));
 
         LibLogger.Debug($"Requested service: {typeof(T)}", typeof(DI));
-        return _serviceProvider.GetService<T>().NotNull(() => new ObjectNotFoundException($"Unable to resolve service for type {typeof(T)}."));
+        return _serviceProvider.GetService<T>().NotNull(() => new ObjectNotFoundException($"Service for type {typeof(T)}."));
     }
 
     /// <summary>

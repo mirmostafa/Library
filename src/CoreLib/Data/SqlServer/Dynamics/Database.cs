@@ -34,7 +34,7 @@ public sealed class Database : SqlObject<Database, Server>
         {
             name = new SqlConnectionStringBuilder(connectionString).InitialCatalog;
         }
-        Check.MustBeNotNull(name, () => new ObjectNotFoundException("Cannot detect database name"));
+        Check.MustBeNotNull(name, () => new ObjectNotFoundException("Database"));
 
         return GetDatabasesCore(connectionString).FirstOrDefault(db => db.Name == name);
     }

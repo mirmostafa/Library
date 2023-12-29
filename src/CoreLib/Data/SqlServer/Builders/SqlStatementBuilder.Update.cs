@@ -7,7 +7,7 @@ public static partial class SqlStatementBuilder
 {
     public static string Build([DisallowNull] this IUpdateStatement statement, string indent = "    ")
     {
-        Check.MutBeNotNull(statement?.TableName);
+        Check.MustBeNotNull(statement?.TableName);
         Check.MustBe(statement.Values?.Count > 0);
 
         var result = new StringBuilder($"UPDATE {AddBrackets(statement.TableName)} ");

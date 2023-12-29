@@ -7,7 +7,7 @@ public partial class SqlStatementBuilder
 {
     public static string Build([DisallowNull] this IInsertStatement statement, string indent = "    ")
     {
-        Check.MutBeNotNull(statement?.TableName);
+        Check.MustBeNotNull(statement?.TableName);
         Check.MustHaveAny(statement.Values);
 
         var result = new StringBuilder($"INSERT INTO {AddBrackets(statement.TableName)}");

@@ -403,7 +403,7 @@ public static class ServiceHelper
         where TDbEntity : class, IIdenticalEntity<TId>
         where TId : notnull
     {
-        Checker.MutBeNotNull(manipulate);
+        Checker.MustBeNotNull(manipulate);
         Checker.MustBeNotNull(convertToEntity);
         //! Check that all arguments are not null
         if (!Checker.IfArgumentIsNull(model).TryParse(out var res1))

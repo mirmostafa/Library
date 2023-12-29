@@ -212,7 +212,7 @@ public static class ObjectHelper
         return field switch
         {
             not null => field.GetValue(obj)!.Cast().To<TFieldType>(),
-            null => throw new ObjectNotFoundException("Field not found")
+            null => throw new ObjectNotFoundException("Field")
         };
     }
 
