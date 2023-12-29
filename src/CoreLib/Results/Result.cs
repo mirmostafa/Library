@@ -1,7 +1,12 @@
-﻿using Library.DesignPatterns.Markers;
+﻿using System.Diagnostics;
+
+using Library.DesignPatterns.Markers;
 using Library.Interfaces;
 
 namespace Library.Results;
+
+[DebuggerStepThrough]
+[StackTraceHidden]
 
 [Immutable]
 [Fluent]

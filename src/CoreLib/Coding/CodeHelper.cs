@@ -28,21 +28,6 @@ public static class CodeHelper
     public static T Break<T>() =>
         throw new BreakException();
 
-    public static Result<TValue> TryResult<TValue>(Func<Result<TValue>> method, Func<TValue> getDefaultValue) =>
-                InnerCall(method, getDefaultValue);
-
-    public static Result<IEnumerable<TValue>> TryResult<TValue>(Func<Result<IEnumerable<TValue>>> method) =>
-            InnerCall(method, Enumerable.Empty<TValue>);
-
-    public static Result<IEnumerable<TValue>> TryResult<TValue, TArg>(Func<TArg, Result<IEnumerable<TValue>>> method, TArg arg) =>
-        InnerCall(method, arg, Enumerable.Empty<TValue>);
-
-    public static Result<IEnumerable<TValue>> TryResult<TValue, TArg>(Func<TArg, IEnumerable<TValue>> method, TArg arg) =>
-        InnerCall(method, arg, Enumerable.Empty<TValue>);
-
-    public static Result<TResult> TryResult<TResult, TArg>(Func<TArg, TResult> method, TArg arg, Func<TResult> getDefaultValue) =>
-        InnerCall(method, arg, getDefaultValue);
-
     /// <summary>
     /// Executes the given action and returns a Result object indicating success or failure.
     /// </summary>
@@ -101,6 +86,28 @@ public static class CodeHelper
         catch (Exception ex)
         {
             return Result<TResult?>.CreateFailure(ex.GetBaseException().Message, defaultResult);
+        }
+    }
+
+    /// <summary>
+    /// Executes a function asynchronously and returns a Result object with the result of the
+    /// function or an error message.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="func">The function to execute.</param>
+    /// <param name="defaultResult">The default result to return in case of an error.</param>
+    /// <returns>A Result object with the result of the function or an error message.</returns>
+    public static async Task<Result> CatchResultAsync(Func<Task<Result>> func)
+    {
+        Check.MustBeArgumentNotNull(func);
+        try
+        {
+            var result = await func();
+            return result;
+        }
+        catch (Exception ex)
+        {
+            return Result.CreateFailure(ex);
         }
     }
 
@@ -548,6 +555,21 @@ public static class CodeHelper
         result = o!;
         return result != null;
     }
+
+    public static Result<TValue> TryResult<TValue>(Func<Result<TValue>> method, Func<TValue> getDefaultValue) =>
+                                                                                                                                                InnerCall(method, getDefaultValue);
+
+    public static Result<IEnumerable<TValue>> TryResult<TValue>(Func<Result<IEnumerable<TValue>>> method) =>
+            InnerCall(method, Enumerable.Empty<TValue>);
+
+    public static Result<IEnumerable<TValue>> TryResult<TValue, TArg>(Func<TArg, Result<IEnumerable<TValue>>> method, TArg arg) =>
+        InnerCall(method, arg, Enumerable.Empty<TValue>);
+
+    public static Result<IEnumerable<TValue>> TryResult<TValue, TArg>(Func<TArg, IEnumerable<TValue>> method, TArg arg) =>
+        InnerCall(method, arg, Enumerable.Empty<TValue>);
+
+    public static Result<TResult> TryResult<TResult, TArg>(Func<TArg, TResult> method, TArg arg, Func<TResult> getDefaultValue) =>
+        InnerCall(method, arg, getDefaultValue);
 
     /// <summary>
     /// Invokes an action on an instance and returns the instance.
