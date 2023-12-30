@@ -144,7 +144,7 @@ public sealed class Toast
     {
         if (this._toastNotifier is not null)
         {
-            Throw(new ValidationException("Cannot be changed."));
+            CodeHelper.Throw(new ValidationException("Cannot be changed."));
         }
     }
 }

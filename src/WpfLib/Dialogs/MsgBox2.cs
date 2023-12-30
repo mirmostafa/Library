@@ -656,7 +656,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         if (wnd is not null)
         {
             opacity = wnd.Opacity;
-            _ = Catch(() => Animations.FadeOut(wnd, .75));
+            _ = CodeHelper.Catch(() => Animations.FadeOut(wnd, .75));
         }
 
         try
@@ -668,7 +668,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
         {
             if (wnd is not null)
             {
-                _ = Catch(() => Animations.FadeIn(wnd, opacity));
+                _ = CodeHelper.Catch(() => Animations.FadeIn(wnd, opacity));
             }
         }
     }
@@ -881,7 +881,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
                             onIterating(dlg, item);
                         }
                     });
-                    _ = Catch(() => dlg.Set(prograssValue: ++index));
+                    _ = global::Library.Coding.CodeHelper.Catch(() => dlg.Set(prograssValue: ++index));
                     onEachIterated?.Invoke(index);
                     if (cancelled(dlg, isCancelled))
                     {
@@ -904,7 +904,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
                     }
 
                     onIterating(dlg, item);
-                    _ = Catch(() => dlg.Set(prograssValue: ++index));
+                    _ = global::Library.Coding.CodeHelper.Catch(() => dlg.Set(prograssValue: ++index));
                     onEachIterated?.Invoke(index);
                     if (cancelled(dlg, isCancelled))
                     {
@@ -978,7 +978,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
 
                           onIterating(dlg, isCancelled, isInBackground, item);
                       });
-                    _ = Catch(() => dlg.Set(prograssValue: ++index));
+                    _ = global::Library.Coding.CodeHelper.Catch(() => dlg.Set(prograssValue: ++index));
                     onEachIterated?.Invoke(index);
                     if (cancelled(dlg, isCancelled, tasks))
                     {
@@ -1001,7 +1001,7 @@ public sealed class MsgBox2 : InternalMessageBox2, IMessageNotifyProvider
                     }
 
                     onIterating(dlg, isCancelled, isInBackground, item);
-                    _ = Catch(() => dlg.Set(prograssValue: ++index));
+                    _ = global::Library.Coding.CodeHelper.Catch(() => dlg.Set(prograssValue: ++index));
                     onEachIterated?.Invoke(index);
                     if (cancelled(dlg, isCancelled))
                     {

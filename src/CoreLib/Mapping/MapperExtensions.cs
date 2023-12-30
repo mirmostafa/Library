@@ -17,5 +17,5 @@ public static class MapperExtensions
         => entity.Fluent(action);
 
     public static TEntity? ForMemberIfNotNull<TEntity>(TEntity? entity, Action<TEntity> action)
-            => Functional.IfTrue(entity is not null && action is not null, () => entity.Fluent(action));
+            => CodeHelper.IfTrue<Fluency<TEntity>>(entity is not null && action is not null, () => entity.Fluent<TEntity>(action));
 }

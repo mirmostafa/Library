@@ -5,7 +5,6 @@ global using Library.Coding;
 global using Library.Helpers;
 
 global using static Library.Coding.CodeHelper;
-global using static Library.Coding.Functional;
 
 global using Checker = Library.Validations.Check;
 global using IMsLogger = Microsoft.Extensions.Logging.ILogger;

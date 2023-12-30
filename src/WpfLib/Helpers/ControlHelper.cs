@@ -173,8 +173,7 @@ public static class ControlHelper
         item.BringIntoView();
     }
 
-    public static void Flick(FrameworkElement element, int duration = 500) =>
-            Catch(() => Animations.Flick(element, duration));
+    public static void Flick(FrameworkElement element, int duration = 500) => CodeHelper.Catch(() => Animations.Flick(element, duration));
 
     public static IEnumerable<TreeViewItem> GetAllItems([DisallowNull] this TreeView tree) =>
             EnumerableHelper.SelectAllChildren(tree.Items.Cast<TreeViewItem>(), item => item.Items.Cast<TreeViewItem>());

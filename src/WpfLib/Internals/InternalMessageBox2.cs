@@ -74,7 +74,7 @@ public abstract class InternalMessageBox2
                 };
             }
 
-            result.Opened += (e1, e2) => Catch(() =>
+            result.Opened += (e1, e2) => CodeHelper.Catch(() =>
             {
                 result.Icon = icon;
                 if (!result.FooterText.IsNullOrEmpty())

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 
+using Library.Types;
 using Library.Validations;
 
 namespace Library.CodeGeneration.Models;

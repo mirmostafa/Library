@@ -330,8 +330,8 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
 
         this.CurrentOperationIncreasing(desc);
         var ex = timeout == default
-            ? Functional.Catch(op)
-            : Task.Factory.StartNew(() => Functional.Catch(op), this._cancellationTokenSource!.Token).Result;
+            ? CodeHelper.Catch(op)
+            : Task.Factory.StartNew(() => CodeHelper.Catch(op), this._cancellationTokenSource!.Token).Result;
         if (ex != null)
         {
             this.ExceptionHandling.HandleException(this, ex);
