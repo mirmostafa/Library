@@ -30,7 +30,7 @@ public static class Functional
         in ExceptionHandling? handling = null,
         in bool throwException = false)
     {
-        _ = tryMethod.ArgumentNotNull(nameof(tryMethod));
+        Check.MustBeArgumentNotNull(tryMethod);
 
         handling?.Reset();
         try
@@ -219,6 +219,16 @@ public static class Functional
         }
     }
 
+    public static IEnumerable<T> For<T>(int max, Func<int, T> selector)
+    {
+        Check.MustBeArgumentNotNull(selector);
+
+        for (var i = 0; i < max; i++)
+        {
+            yield return selector(i);
+        }
+    }
+
     public static TInstance ForEach<TInstance, Item>(in TInstance @this, IEnumerable<Item>? items, in Action<Item> action)
     {
         if (items is null || action is null)
@@ -394,14 +404,4 @@ public static class Functional
             action?.Invoke();
         }
     }
-    public static IEnumerable<T> For<T>(int max, Func<int, T> selector)
-    {
-        Check.MustBeArgumentNotNull(selector);
-
-        for (var i = 0; i < max; i++)
-        {
-            yield return selector(i);
-        }
-    }
-
 }

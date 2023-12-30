@@ -67,6 +67,20 @@ public static class CodeHelper
         }
     }
 
+    public static Result<IEnumerable<TResult>> CatchResult<TResult, TArg>(Func<TArg, IEnumerable<TResult>> method, TArg arg)
+    {
+        Check.MustBeArgumentNotNull(method);
+        try
+        {
+            var result = method(arg);
+            return Result<IEnumerable<TResult>>.CreateSuccess(result);
+        }
+        catch (Exception ex)
+        {
+            return Result<IEnumerable<TResult>>.CreateFailure(ex, Enumerable.Empty<TResult>());
+        }
+    }
+
     /// <summary>
     /// Executes a function asynchronously and returns a Result object with the result of the
     /// function or an error message.
@@ -127,10 +141,9 @@ public static class CodeHelper
 
     public static Func<TResult2> Compose<TArgs, TResult2>(TArgs args, Func<TArgs, TResult2> func)
     {
-        var create = () => args;
-        Check.MustBeArgumentNotNull(create);
         Check.MustBeArgumentNotNull(func);
         return [DebuggerStepThrough] () => func(create());
+        TArgs create() => args;
     }
 
     /// <summary>
@@ -470,6 +483,7 @@ public static class CodeHelper
     /// Whether to parse the previous frame if the current one is null.
     /// </param>
     /// <returns>The method base of the caller.</returns>
+    [Obsolete("Subject to remove", true)]
     public static MethodBase? GetCallerMethod(in int index, bool parsePrevIfNull)
     {
         // Create a new StackTrace object
@@ -508,6 +522,7 @@ public static class CodeHelper
     /// Gets the current method.
     /// </summary>
     /// <returns></returns>
+    [Obsolete("Subject to remove", true)]
     public static MethodBase? GetCurrentMethod()
         => GetCallerMethod();
 
@@ -516,6 +531,7 @@ public static class CodeHelper
     /// </summary>
     /// <param name="tryFunc">The try function.</param>
     /// <returns><c>true</c> if the specified tryFunc has exception; otherwise, <c>false</c>.</returns>
+    [Obsolete("Subject to remove", true)]
     public static bool HasException(in Action tryFunc)
         => Catch(tryFunc) is not null;
 
@@ -547,29 +563,9 @@ public static class CodeHelper
     /// <summary>
     /// Extension method to convert a Task of type TValue to a Task of type Void.
     /// </summary>
+    [Obsolete("Subject to remove", true)]
     public static Task ToVoidAsync<TValue>(this Task<TValue> task) =>
         task;
-
-    public static bool TryNotNull<T>(T? o, [NotNullIfNotNull(nameof(o))] out T result)
-    {
-        result = o!;
-        return result != null;
-    }
-
-    public static Result<TValue> TryResult<TValue>(Func<Result<TValue>> method, Func<TValue> getDefaultValue) =>
-                                                                                                                                                InnerCall(method, getDefaultValue);
-
-    public static Result<IEnumerable<TValue>> TryResult<TValue>(Func<Result<IEnumerable<TValue>>> method) =>
-            InnerCall(method, Enumerable.Empty<TValue>);
-
-    public static Result<IEnumerable<TValue>> TryResult<TValue, TArg>(Func<TArg, Result<IEnumerable<TValue>>> method, TArg arg) =>
-        InnerCall(method, arg, Enumerable.Empty<TValue>);
-
-    public static Result<IEnumerable<TValue>> TryResult<TValue, TArg>(Func<TArg, IEnumerable<TValue>> method, TArg arg) =>
-        InnerCall(method, arg, Enumerable.Empty<TValue>);
-
-    public static Result<TResult> TryResult<TResult, TArg>(Func<TArg, TResult> method, TArg arg, Func<TResult> getDefaultValue) =>
-        InnerCall(method, arg, getDefaultValue);
 
     /// <summary>
     /// Invokes an action on an instance and returns the instance.
@@ -591,47 +587,5 @@ public static class CodeHelper
         var result = await instanceAsync;
         action?.Invoke(result);
         return result;
-    }
-
-    private static Result<TResult> InnerCall<TResult>(Func<Result<TResult>> method, Func<TResult> getDefaultValue)
-    {
-        Check.MustBeArgumentNotNull(method);
-        try
-        {
-            var result = method();
-            return result;
-        }
-        catch (Exception ex)
-        {
-            return Result<TResult>.CreateFailure(ex, getDefaultValue.ArgumentNotNull()());
-        }
-    }
-
-    private static Result<TResult> InnerCall<TResult, TArg>(Func<TArg, Result<TResult>> method, TArg arg, Func<TResult> getDefaultValue)
-    {
-        Check.MustBeArgumentNotNull(method);
-        try
-        {
-            var result = method(arg);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            return Result<TResult>.CreateFailure(ex, getDefaultValue.ArgumentNotNull()());
-        }
-    }
-
-    private static Result<TResult> InnerCall<TResult, TArg>(Func<TArg, TResult> method, TArg arg, Func<TResult> getDefaultValue)
-    {
-        Check.MustBeArgumentNotNull(method);
-        try
-        {
-            var result = method(arg);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            return Result<TResult>.CreateFailure(ex, getDefaultValue.ArgumentNotNull()());
-        }
     }
 }
