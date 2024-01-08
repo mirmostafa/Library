@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
@@ -11,8 +12,8 @@ using Library.Windows;
 
 namespace Library.Helpers;
 
-//[DebuggerStepThrough]
-//[StackTraceHidden]
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class ResultHelper
 {
     /// <summary>

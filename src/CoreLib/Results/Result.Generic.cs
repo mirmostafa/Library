@@ -102,6 +102,10 @@ public class Result<TValue> : ResultBase
     public static Result<TValue?> CreateFailure(in Exception error) =>
         CreateFailure(default, error, null);
 
+    public static Result<TValue?> CreateFailure<TException>()
+        where TException : Exception, new() =>
+        CreateFailure(default, new TException(), null);
+
     /// <summary>
     /// Creates a Result with a failure status and an Exception.
     /// </summary>
