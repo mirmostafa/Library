@@ -7,7 +7,6 @@ namespace Library.Results;
 
 [DebuggerStepThrough]
 [StackTraceHidden]
-
 [Immutable]
 [Fluent]
 public sealed class Result : ResultBase
@@ -56,7 +55,7 @@ public sealed class Result : ResultBase
     public static Result Success => _success ??= CreateSuccess();
 
     public static Result Add(Result left, Result right) =>
-        left + right;
+            left + right;
 
     /// <summary>
     /// Creates a new Result object with a failure status.
@@ -68,6 +67,10 @@ public sealed class Result : ResultBase
     /// <returns>A new Result object with a failure status.</returns>
     public static Result CreateFailure(in object? status = null, in string? message = null, in IEnumerable<(object Id, object Error)>? errors = null, in IEnumerable<object>? extraData = null) =>
         new(false, status, message, errors: errors, extraData);
+
+    public static Result CreateFailure<TException>()
+        where TException : Exception, new() =>
+        CreateFailure(new TException());
 
     /// <summary>
     /// Creates a new Result object with a failure status and the specified message and errors.

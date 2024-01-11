@@ -91,7 +91,7 @@ public class Result<TValue> : ResultBase
     /// <param name="value">The value.</param>
     /// <returns>A failure result.</returns>
     public static Result<TValue?> CreateFailure(in string message, in Exception ex, in TValue? value) =>
-        CreateFailure(value, ex, message);
+        CreateFailure(value, null, message, error: (-1, ex));
 
     /// <summary>
     /// Creates a Result with a failure status and an Exception.
@@ -100,11 +100,11 @@ public class Result<TValue> : ResultBase
     /// <param name="value">The value to be stored in the Result.</param>
     /// <returns>A Result with a failure status and an Exception.</returns>
     public static Result<TValue?> CreateFailure(in Exception error) =>
-        CreateFailure(default, error, null);
+        CreateFailure(default, null, null, error: (-1, error));
 
     public static Result<TValue?> CreateFailure<TException>()
         where TException : Exception, new() =>
-        CreateFailure(default, new TException(), null);
+        CreateFailure(new TException());
 
     /// <summary>
     /// Creates a Result with a failure status and an Exception.

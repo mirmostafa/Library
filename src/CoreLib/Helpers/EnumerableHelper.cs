@@ -1106,6 +1106,21 @@ public static class EnumerableHelper
     public static IEnumerable<T> Merge<T>(IEnumerable<T> enumerable1, IEnumerable<T> enumerable2) =>
         [.. enumerable1, .. enumerable2];
 
+    public static T Merge<T>(this IEnumerable<T> source, Func<T, T, T> merger)
+    {
+        Check.MustBeArgumentNotNull(source);
+        Check.MustBeArgumentNotNull(merger);
+        Check.MustHaveAny(source);
+
+        var buffer = source.ToImmutableArray();
+        var result = buffer.First();
+        foreach (var item in buffer.Skip(1))
+        {
+            result = merger(result, item);
+        }
+        return result;
+    }
+
     /// <summary>
     /// Removes and returns the element at the specified index from the list.
     /// </summary>

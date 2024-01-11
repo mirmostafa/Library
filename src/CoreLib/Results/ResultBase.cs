@@ -29,6 +29,8 @@ public abstract class ResultBase(
         init => this._errors = value;
     }
 
+    public Exception? Exception => this.Errors.FirstOrDefault().Error?.Cast().As<Exception>();
+
     [NotNull]
     public ImmutableArray<object> ExtraData => this._extraData ??= ImmutableArray.Create<object>();
 
@@ -57,14 +59,14 @@ public abstract class ResultBase(
     /// <param name="other">An object to compare with this instance.</param>
     /// <returns>A value that indicates the relative order of the objects being compared.</returns>
     public virtual bool Equals(ResultBase? other) =>
-        other is not null && this.Status == other.Status;
+        other is not null && this.GetHashCode() == other.GetHashCode();
 
     /// <summary>
     /// Serves as the default hash function.
     /// </summary>
     /// <returns>The hash code for the current instance.</returns>
     public override int GetHashCode() =>
-        HashCode.Combine(this.Status, this.Message);
+        HashCode.Combine(this.IsSucceed, this.Status, this.Message);
 
     [return: NotNull]
     public IEnumerable<(object Id, object Error)>? SelectAllErrors() =>
