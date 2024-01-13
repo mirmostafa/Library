@@ -95,7 +95,7 @@ public static class ValidationExtensions
     /// Adds a rule to the ValidationResultSet to check if the value is not null.
     /// </summary>
     public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs) =>
-        vrs.InnerAddRule(x => x, _ => vrs.Value is not null, null, () => new NullValueValidationException(vrs._valueName));
+        vrs.InnerAddRule(x => x, [DebuggerStepThrough] (_) => vrs.Value is not null, null, () => new NullValueValidationException(vrs._valueName));
 
     public static ValidationResultSet<TValue> NotNull<TValue>(this ValidationResultSet<TValue> vrs, Func<Exception> onError) =>
         vrs.InnerAddRule(x => x, _ => vrs.Value is not null, onError, () => new NullValueValidationException(vrs._valueName));
