@@ -5,7 +5,7 @@ using Library.Results;
 namespace UnitTests;
 
 [Trait("Category", nameof(Library.Coding))]
-[Trait("Category", nameof(Functional))]
+[Trait("Category", nameof(CodeHelper))]
 public sealed class FunctionalTest
 {
     private static readonly Action<int> _emptyIntAction = x => { };
@@ -31,7 +31,7 @@ public sealed class FunctionalTest
         var actual = CatchResult(() => five / zero);
 
         // Assert Assert
-        Assert.False(actual);
+        Assert.False(actual.IsSucceed);
         _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Status);
     }
 
@@ -47,7 +47,7 @@ public sealed class FunctionalTest
         var actual = CatchResult(act);
 
         // Assert Assert
-        Assert.False(actual);
+        Assert.False(actual.IsSucceed);
         _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Status);
     }
 
@@ -63,7 +63,7 @@ public sealed class FunctionalTest
         var actual = CatchResult(act);
 
         // Assert
-        Assert.True(actual);
+        Assert.True(actual.IsSucceed);
     }
 
     [Fact]
@@ -93,7 +93,7 @@ public sealed class FunctionalTest
         var actual = await CatchResultAsync(act);
 
         // Assert
-        Assert.True(actual);
+        Assert.True(actual.IsSucceed);
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public sealed class FunctionalTest
         var actual = await CatchResultAsync(act);
 
         // Assert
-        Assert.True(actual);
+        Assert.True(actual.IsSucceed);
         Assert.Equal(5, actual.Value);
     }
 

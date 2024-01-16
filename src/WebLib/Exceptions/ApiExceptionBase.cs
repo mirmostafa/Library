@@ -1,11 +1,10 @@
 ﻿using System.Net;
-using System.Web.Http;
 
 using Library.Exceptions;
 
 namespace Library.Web.Exceptions;
 
-public abstract class ApiExceptionBase : HttpResponseException, IApiException
+public abstract class ApiExceptionBase : Exception, IApiException
 {
     protected ApiExceptionBase(HttpResponseMessage message) : base(message) => 
         this.Message = message?.ToString() ?? string.Empty;

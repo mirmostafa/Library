@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -1551,29 +1552,29 @@ public static class EnumerableHelper
     public static T[] ToArray<T>(T item) =>
         AsEnumerable(item).ToArray();
 
-    /// <summary>
-    /// Converts an enumerable collection of key-value pairs into a dictionary.
-    /// </summary>
-    /// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
-    /// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
-    /// <param name="pairs">An enumerable collection of key-value pairs to convert.</param>
-    /// <returns>
-    /// A dictionary containing the key-value pairs from the input collection, or null if the input
-    /// is null.
-    /// </returns>
-    public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
-        where TKey : notnull
-    {
-        // Check if the input collection of key-value pairs is null, if so, return null.
-        if (pairs is null)
-        {
-            return null;
-        }
+    ///// <summary>
+    ///// Converts an enumerable collection of key-value pairs into a dictionary.
+    ///// </summary>
+    ///// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
+    ///// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
+    ///// <param name="pairs">An enumerable collection of key-value pairs to convert.</param>
+    ///// <returns>
+    ///// A dictionary containing the key-value pairs from the input collection, or null if the input
+    ///// is null.
+    ///// </returns>
+    //public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
+    //    where TKey : notnull
+    //{
+    //    // Check if the input collection of key-value pairs is null, if so, return null.
+    //    if (pairs is null)
+    //    {
+    //        return null;
+    //    }
 
-        // Use LINQ's ToDictionary method to convert the key-value pairs into a dictionary. The
-        // lambda expressions specify how to extract keys and values from the pairs.
-        return pairs.ToDictionary(pair => pair.Key, pair => pair.Value) ?? [];
-    }
+    //    // Use LINQ's ToDictionary method to convert the key-value pairs into a dictionary. The
+    //    // lambda expressions specify how to extract keys and values from the pairs.
+    //    return pairs.ToDictionary(pair => pair.Key, pair => pair.Value) ?? [];
+    //}
 
     /// <summary>
     /// Converts a list to a dictionary using a selector function to extract the key-value pairs.

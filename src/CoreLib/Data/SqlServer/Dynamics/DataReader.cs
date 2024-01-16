@@ -1,19 +1,15 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Dynamic;
 
 using Library.Validations;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public sealed class DataReader : SqlObject<DataReader, Database>, IDisposable
+public sealed class DataReader(SqlDataReader sqlDataReader, Database owner, string name, string connectionString) : SqlObject<DataReader, Database>(owner, name, connectionString: connectionString), IDisposable
 {
-    public DataReader(SqlDataReader sqlDataReader, Database owner, string name, string connectionString)
-        : base(owner, name, connectionString: connectionString) =>
-        this.SqlDataReader = sqlDataReader ?? throw new ArgumentNullException(nameof(sqlDataReader));
-
     public object this[string index] => this.SqlDataReader[index];
 
-    private SqlDataReader SqlDataReader { get; }
+    private SqlDataReader SqlDataReader { get; } = sqlDataReader ?? throw new ArgumentNullException(nameof(sqlDataReader));
 
     public void Dispose()
     {

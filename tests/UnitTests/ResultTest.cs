@@ -35,7 +35,7 @@ public sealed class ResultTest
             .IfSucceed(() => Check(true, "2"))
             .IfSucceed(() => Check(false, "3"))
             .IfSucceed(() => Check(false, "4"));
-        Assert.False(actual);
+        Assert.False(actual.IsSucceed);
         Assert.Equal("3", actual.Message);
     }
 
@@ -46,7 +46,7 @@ public sealed class ResultTest
             .IfSucceed(() => Check(true, "2"))
             .IfSucceed(() => Check(true, "3"))
             .IfSucceed(() => Check(true, "4"));
-        Assert.True(actual);
+        Assert.True(actual.IsSucceed);
         Assert.Equal("4", actual.Message);
     }
 

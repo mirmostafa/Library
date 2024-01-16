@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Net.NetworkInformation;
+using System.Numerics;
 
 using Library.DesignPatterns.Markers;
 using Library.Interfaces;

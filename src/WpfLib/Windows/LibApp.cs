@@ -51,7 +51,7 @@ public abstract class LibApp : Bases.ApplicationBase
                 _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message ?? "Operation canceled by user.", owner(ex));
                 break;
 
-            case System.Data.SqlClient.SqlException ex when ex.Message?.Contains("A transport-level error has occurred when receiving results from the server") ?? false:
+            case Microsoft.Data.SqlClient.SqlException ex when ex.Message?.Contains("A transport-level error has occurred when receiving results from the server") ?? false:
                 this.Logger.Fatal(ex.GetFullMessage(), sender: ex.Source ?? title);
                 _ = MsgBox2.Error("Error on connecting to database", text: ex.Message, detailsExpandedText: "Make sure SQL Server service is up and function, and the database exists.");
                 break;

@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
-
-using Library.Data.SqlServer;
+﻿using Library.Data.SqlServer;
 using Library.Data.SqlServer.Builders.Bases;
 using Library.Validations;
 
@@ -112,19 +109,19 @@ public static partial class SqlStatementBuilder
         return result;
     }
 
-    public static TStatementOnTable SetSchema<TStatementOnTable>([DisallowNull] this TStatementOnTable statement, string? schema) where TStatementOnTable : IStatementOnTable=> 
+    public static TStatementOnTable SetSchema<TStatementOnTable>([DisallowNull] this TStatementOnTable statement, string? schema) where TStatementOnTable : IStatementOnTable =>
         statement.ArgumentNotNull().With(x => x.Schema = schema);
 
     public static ISelectStatement SetTopCount([DisallowNull] this ISelectStatement statement, int? topCount) =>
         statement.ArgumentNotNull().With(x => x.TopCount = topCount);
 
-    public static ISelectStatement Star([DisallowNull] this ISelectStatement statement)=> 
+    public static ISelectStatement Star([DisallowNull] this ISelectStatement statement) =>
         statement.ArgumentNotNull().Fluent(statement.Columns.Clear).GetValue();
 
-    public static ISelectStatement Where([DisallowNull] this ISelectStatement statement, string? whereClause)=> 
+    public static ISelectStatement Where([DisallowNull] this ISelectStatement statement, string? whereClause) =>
         statement.ArgumentNotNull().With(x => x.WhereClause = whereClause);
 
-    public static ISelectStatement WithNoLock(this ISelectStatement statement, bool withNoLock = true)=> 
+    public static ISelectStatement WithNoLock(this ISelectStatement statement, bool withNoLock = true) =>
         statement.With(x => x.WithNoLock = withNoLock);
 
     private struct SelectStatement : ISelectStatement

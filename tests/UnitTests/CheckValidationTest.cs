@@ -94,7 +94,7 @@ public sealed class CheckValidationTest
     {
         var result = Check.IfArgumentIsNull(this._string_null);
 
-        Assert.False(result);
+        Assert.False(result.IsSucceed);
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public sealed class CheckValidationTest
     {
         string a = null;
         var result = Check.If(a is null, () => new ValidationException());
-        Assert.False(result);
+        Assert.False(result.IsSucceed);
         _ = Assert.IsType<ValidationException>(result.Status);
     }
 
@@ -111,7 +111,7 @@ public sealed class CheckValidationTest
     {
         var a = 5;
         var result = Check.If(a == 5, () => this._string_sample1);
-        Assert.False(result);
+        Assert.False(result.IsSucceed);
     }
 
     [Fact]
@@ -119,6 +119,6 @@ public sealed class CheckValidationTest
     {
         var notOk = true;
         var result = Check.If(notOk);
-        Assert.False(result);
+        Assert.False(result.IsSucceed);
     }
 }

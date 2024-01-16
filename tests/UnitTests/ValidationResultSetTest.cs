@@ -117,7 +117,7 @@ public sealed class ValidationResultSetTest
             //.NotBiggerThan(x => x.Age, 20)
             .Build();
         arg = check;
-        Assert.True(check);
+        Assert.True(check.IsSucceed);
     }
 
     [Fact]

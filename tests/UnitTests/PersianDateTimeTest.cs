@@ -136,7 +136,7 @@ public sealed class PersianDateTimeTest
         var result = PersianDateTime.Validate(input);
 
         // Assert
-        Assert.False(result);
+        Assert.False(result.IsSucceed);
     }
 
     [Fact]
@@ -149,7 +149,7 @@ public sealed class PersianDateTimeTest
         var result = PersianDateTime.Validate(input);
 
         // Assert
-        Assert.False(result);
+        Assert.False(result.IsSucceed);
     }
 
     [Theory]
@@ -171,7 +171,7 @@ public sealed class PersianDateTimeTest
         var result = PersianDateTime.Validate(input);
 
         // Assert
-        Assert.True(result);
+        Assert.True(result.IsSucceed);
         Assert.Equal(input, result.Value);
     }
 }

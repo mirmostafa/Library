@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 
 using Library.DesignPatterns.Markers;
 using Library.Results;
