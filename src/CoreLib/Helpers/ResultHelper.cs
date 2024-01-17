@@ -1,13 +1,12 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Xml.Serialization;
 
 using Library.Exceptions;
 using Library.Interfaces;
 using Library.Logging;
 using Library.Results;
-using Library.Types;
+using Library.Validations;
 using Library.Windows;
 
 namespace Library.Helpers;
@@ -32,7 +31,7 @@ public static class ResultHelper
     public static TResult BreakOnFail<TResult>(this TResult result)
         where TResult : ResultBase
     {
-        if (!result.IsSucceed)
+        if (result?.IsSucceed is not true)
         {
             Break();
         }
@@ -57,18 +56,18 @@ public static class ResultHelper
     }
 
     public static void Deconstruct(this Result result, out bool isSucceed, out string message) =>
-            (isSucceed, message) = (result.IsSucceed, result.Message?.ToString() ?? string.Empty);
+            (isSucceed, message) = (result.ArgumentNotNull().IsSucceed, result.Message?.ToString() ?? string.Empty);
 
     public static void Deconstruct<TValue>(this Result<TValue> result, out bool IsSucceed, out TValue Value) =>
-        (IsSucceed, Value) = (result.IsSucceed, result.Value);
+        (IsSucceed, Value) = (result.ArgumentNotNull().IsSucceed, result.Value);
 
-    public static void End([DisallowNull] this Result result) =>
-        Actions.Void();
+    public static void End([DisallowNull] this Result _)
+    { }
 
-    public static void End<TValue>([DisallowNull] this Result<TValue> result) =>
-        Actions.Void();
+    public static void End<TValue>([DisallowNull] this Result<TValue> _)
+    { }
 
-    public static Task EndAsync(this Task<Result> resultAsync) =>
+    public static Task EndAsync(this Task<Result> _) =>
         Task.CompletedTask;
 
     public static async Task<TValue> GetValueAsync<TValue>(this Task<Result<TValue>> taskResult)
@@ -77,24 +76,27 @@ public static class ResultHelper
         return result.Value;
     }
 
-    public static TResult IfFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    [return: NotNullIfNotNull(nameof(Result))]
+    public static TResult? IfFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
         if (result?.IsSucceed == false)
         {
-            action(result);
+            action.ArgumentNotNull()(result);
         }
 
         return result;
     }
 
-    public static TResult IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
-        => result?.IsSucceed == true ? next() : result;
+    [return: NotNullIfNotNull(nameof(Result))]
+    public static TResult? IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
+        => result?.IsSucceed == true ? next.ArgumentNotNull()() : result;
 
-    public static TResult IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    [return: NotNullIfNotNull(nameof(Result))]
+    public static TResult? IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
         if (result?.IsSucceed == true)
         {
-            action(result);
+            action.ArgumentNotNull()(result);
         }
 
         return result;
@@ -103,6 +105,9 @@ public static class ResultHelper
     public static TResult LogDebug<TResult>(this TResult result, ILogger logger, [CallerMemberName] object? sender = null, DateTime? time = null)
                         where TResult : ResultBase
     {
+        Check.MustBeArgumentNotNull(result);
+        Check.MustBeArgumentNotNull(logger);
+
         if (result.IsSucceed)
         {
             logger.Debug(result, sender, time);
@@ -117,14 +122,10 @@ public static class ResultHelper
 
     public static TResult OnDone<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
+        Check.MustBeArgumentNotNull(action);
+
         action(result);
         return result;
-    }
-
-    public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath)
-    {
-        Checker.MustBeArgumentNotNull(filePath);
-        return result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
     }
 
     /// <summary>
@@ -194,6 +195,8 @@ public static class ResultHelper
 
     public static async Task<Result<TValue1>> ToResultAsync<TValue, TValue1>(this Task<Result<TValue>> resultTask, Func<TValue, TValue1> getNewValue)
     {
+        Check.MustBeArgumentNotNull(getNewValue);
+
         var result = await resultTask;
         var value1 = getNewValue(result);
         return Result<TValue1>.From(result, value1);
@@ -217,7 +220,7 @@ public static class ResultHelper
     /// </remarks>
     public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase =>
         (result = input).IsSucceed;
-    
+
     //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
     //x public static async Task<bool> TryParseAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
     //x     => (result = await input).IsSucceed;
@@ -228,10 +231,10 @@ public static class ResultHelper
     /// <param name="errors">The errors to add to the Result.</param>
     /// <returns>A new instance of the Result class with the specified errors.</returns>
     public static Result WithError(this ResultBase result, params (object Id, object Error)[] errors) =>
-        new(result) { Errors = errors.ToImmutableArray() };
+        new(result) { Errors = [.. errors] };
 
     public static Result WithError(this ResultBase result, IEnumerable<(object Id, object Error)> errors) =>
-        new(result) { Errors = errors.ToImmutableArray() };
+        new(result) { Errors = [.. errors] };
 
     public static Result WithSucceed(this ResultBase result, bool? succeed) =>
         new(result) { Succeed = succeed };

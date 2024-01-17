@@ -1,4 +1,6 @@
-﻿namespace Library.Helpers;
+﻿using Library.Validations;
+
+namespace Library.Helpers;
 
 public static class SqlTypeHelper
 {
@@ -16,7 +18,7 @@ public static class SqlTypeHelper
         };
 
     public static string NetTypeToSqlType(Type type) =>
-            type.Name switch
+            type?.Name switch
             {
                 "Int16" => "smallint",
                 "Int32" => "int",

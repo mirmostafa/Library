@@ -10,19 +10,19 @@ public static class NumberHelper
 
     [Obsolete("Use `System.Nullable<T>.GetValueOrDefault()` instead.", true)]
     public static long IfNull(this long? value, long defaultValue) =>
-            value ?? defaultValue;
+        value ?? defaultValue;
 
     /// <summary>
     /// Checks if a given integer is between two other integers.
     /// </summary>
-    public static bool IsBetween(this int num, in int min, in int max)
-        => num >= min && num <= max;
+    public static bool IsBetween(this int num, in int min, in int max) =>
+        num >= min && num <= max;
 
     public static bool IsNullOrZero(this int? number) =>
-            number is null or 0;
+        number is null or 0;
 
     public static bool IsNullOrZero(params int?[] numbers) =>
-            numbers.All(IsNullOrZero);
+        numbers.All(IsNullOrZero);
 
     /// <summary>
     /// Checks if a given number is a prime number.
@@ -75,8 +75,8 @@ public static class NumberHelper
     /// <param name="min">The minimum value of the random numbers.</param>
     /// <param name="max">The maximum value of the random numbers.</param>
     /// <returns>A sequence of random numbers within the specified range.</returns>
-    public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null)
-        => Enumerable.Range(0, count).Select(_ => InnerRandomizerMethod(min, max)());
+    public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null) =>
+        Range(0, count).Select(_ => InnerRandomizerMethod(min, max)());
 
     /// <summary>
     /// Generates a sequence of integers within a specified range.
@@ -109,13 +109,7 @@ public static class NumberHelper
             yield return i;
         }
     }
-
-    /// <summary>
-    /// Generates a sequence of integers from 0 to the specified end value, with a specified step.
-    /// </summary>
-    public static IEnumerable<int> Range(int end, int step = 1) =>
-        Range(0, end, step);
-
+    
     /// <summary>
     /// Converts a string to a cultural number based on the specified language and corrects Persian
     /// characters if needed.

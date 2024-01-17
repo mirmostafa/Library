@@ -467,7 +467,7 @@ public static partial class AdoHelper
     /// <param name="columnTitle">The column title.</param>
     /// <returns><c>true</c> if the column is null or empty; otherwise, <c>false</c> .</returns>
     public static bool IsNullOrEmpty(this DataRow row, string columnTitle)
-        => row is null || row[columnTitle] is null || StringHelper.IsEmpty(row[columnTitle].ToString()) || row[columnTitle] == DBNull.Value;
+        => row is null || row[columnTitle] is null || StringHelper.IsNullOrEmpty(row[columnTitle].ToString()) || row[columnTitle] == DBNull.Value;
 
     /// <summary>
     /// Selects the specified table.

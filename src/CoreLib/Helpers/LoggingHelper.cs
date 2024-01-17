@@ -15,8 +15,8 @@ public static class LoggingHelper
     /// <param name="message">The message.</param>
     /// <param name="sender">The sender.</param>
     /// <param name="time">The time.</param>
-    public static void Debug(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
-            => container?.Logger?.Debug(message, sender, time);
+    public static void Debug(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null) =>
+        container?.Logger?.Debug(message, sender, time);
 
     /// <summary>
     /// Logs an error message to the logger container.
@@ -25,8 +25,8 @@ public static class LoggingHelper
     /// <param name="message">The message to log.</param>
     /// <param name="sender">The sender of the message.</param>
     /// <param name="time">The time of the message.</param>
-    public static void Error(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null)
-        => container?.Logger?.Debug(message, sender, time);
+    public static void Error(this ILoggerContainer container, [DisallowNull] object message, [CallerMemberName] object? sender = null, DateTime? time = null) =>
+        container?.Logger?.Debug(message, sender, time);
 
     /// <summary>
     /// Logs an informational message to the logger associated with the specified container.

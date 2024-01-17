@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
-using Library.Interfaces;
 using Library.Results;
 using Library.Types;
 using Library.Validations;
@@ -16,7 +15,7 @@ namespace Library.Helpers;
 
 public static class ObjectHelper
 {
-    private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
+    private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = [];
 
     /// <summary>
     /// Checks the database null.
@@ -27,7 +26,7 @@ public static class ObjectHelper
     /// <param name="converter">The converter.</param>
     /// <returns></returns>
     public static T CheckDbNull<T>(in object? o, in T defaultValue, in Func<object, T> converter)
-        => IsDbNull(o) ? defaultValue : converter.Invoke(o);
+        => IsDbNull(o) ? defaultValue : converter.ArgumentNotNull().Invoke(o);
 
     /// <summary>
     /// Determines whether an object contains properties that implement a specified interface.
@@ -208,7 +207,7 @@ public static class ObjectHelper
     /// <returns></returns>
     public static TFieldType GetField<TFieldType>(in object? obj, string fieldName)
     {
-        var field = obj?.GetType().GetFields().FirstOrDefault(fld => string.Compare(fld.Name, fieldName, StringComparison.Ordinal) == 0);
+        var field = obj?.GetType().GetFields().FirstOrDefault(fld => string.Equals(fld.Name, fieldName, StringComparison.Ordinal));
         return field switch
         {
             not null => field.GetValue(obj)!.Cast().To<TFieldType>(),
@@ -279,7 +278,7 @@ public static class ObjectHelper
 
         var property = obj.GetType()
             .GetProperties()
-            .FirstOrDefault(prop => string.Compare(prop.Name, propName, StringComparison.Ordinal) == 0);
+            .FirstOrDefault(prop => string.Equals(prop.Name, propName, StringComparison.Ordinal));
         return property is not null ? (TPropertyType?)property.GetValue(obj, null) : default;
     }
 
@@ -298,7 +297,7 @@ public static class ObjectHelper
                 : BindingFlags.Default);
         }
 
-        var property = properties.FirstOrDefault(prop => string.Compare(prop.Name, propName, StringComparison.Ordinal) == 0);
+        var property = properties.FirstOrDefault(prop => string.Equals(prop.Name, propName, StringComparison.Ordinal));
         return property is not null ? (TPropertyType?)property.GetValue(obj, null) : default;
     }
 
@@ -379,7 +378,7 @@ public static class ObjectHelper
     /// <returns><c>true</c> if [is database null] [the specified o]; otherwise, <c>false</c>.</returns>
     public static bool IsDbNull([NotNullWhen(false)] in object? o)
         => o is null or DBNull;
-    
+
     /// <summary>
     /// Checks if a given struct is equal to its default value.
     /// </summary>

@@ -3,13 +3,27 @@
 namespace Library.Helpers;
 
 /// <summary>
-/// Provides helper methods for converting between PersianDayOfWeek and DayOfWeek, and for checking if a PersianDayOfWeek is a holiday.
+/// Provides helper methods for converting between PersianDayOfWeek and DayOfWeek, and for checking
+/// if a PersianDayOfWeek is a holiday.
 /// </summary>
 /// <returns>
-/// Methods for converting between PersianDayOfWeek and DayOfWeek, and for checking if a PersianDayOfWeek is a holiday.
+/// Methods for converting between PersianDayOfWeek and DayOfWeek, and for checking if a
+/// PersianDayOfWeek is a holiday.
 /// </returns>
 public static class GlobalizationHelper
 {
+    /// <summary>
+    /// Checks if the given PersianDayOfWeek is a holiday.
+    /// </summary>
+    /// <param name="dow">The PersianDayOfWeek to check.</param>
+    /// <returns>True if the given PersianDayOfWeek is a holiday, false otherwise.</returns>
+    public static bool IsPersianHoliday(this PersianDayOfWeek dow) =>
+        dow switch
+        {
+            PersianDayOfWeek.Jomeh or PersianDayOfWeek.Shanbeh => true,
+            _ => false,
+        };
+
     /// <summary>
     /// Converts a PersianDayOfWeek to a DayOfWeek.
     /// </summary>
@@ -44,18 +58,5 @@ public static class GlobalizationHelper
             DayOfWeek.Friday => PersianDayOfWeek.Jomeh,
             DayOfWeek.Saturday => PersianDayOfWeek.Shanbeh,
             _ => throw new NotImplementedException(),
-        };
-
-    /// <summary>
-    /// Checks if the given PersianDayOfWeek is a holiday.
-    /// </summary>
-    /// <param name="dow">The PersianDayOfWeek to check.</param>
-    /// <returns>True if the given PersianDayOfWeek is a holiday, false otherwise.</returns>
-    public static bool IsPersianHoliday(this PersianDayOfWeek dow) =>
-        dow switch
-        {
-            PersianDayOfWeek.Jomeh => true,
-            PersianDayOfWeek.Shanbeh => true,
-            _ => false,
         };
 }

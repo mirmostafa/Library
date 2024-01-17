@@ -80,8 +80,7 @@ public static class QueryableHelper
     /// <returns>A paged list of items.</returns>
     public static async Task<PagingResult<T>> ToListPagingAsync<T>(this IQueryable<T> query, PagingParams paging, CancellationToken cancellationToken = default)
     {
-        
-        if (paging.PageSize is null or 0)
+        if (paging?.PageSize is null or 0)
         {
             var dbNoPagingResult = await query.ToListAsync(cancellationToken: cancellationToken);
             var t = await query.CountAsync(cancellationToken: cancellationToken);

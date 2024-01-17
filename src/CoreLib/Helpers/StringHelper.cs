@@ -43,7 +43,7 @@ public static class StringHelper
     [Pure]
     [return: NotNull]
     public static string? Add(this string? str, in string? s) =>
-        string.Concat(str, s);
+        string.Concat(s, str);
 
     /// <summary>
     /// Adds the given string to the end of the current string.
@@ -88,9 +88,11 @@ public static class StringHelper
     /// </returns>
     public static IEnumerable<int> AllIndexesOf(this string str, string value, bool ignoreCase = false)
     {
+        Check.MustBeArgumentNotNull(str);
+        Check.MustBeArgumentNotNull(value);
         // Prepare the source string and the search string according to the ignoreCase flag.
-        var buffer = ignoreCase ? str.ArgumentNotNull().ToLower(CultureInfo.CurrentCulture) : str.ArgumentNotNull();
-        var stat = ignoreCase ? value.ArgumentNotNull().ToLower(CultureInfo.CurrentCulture) : value.ArgumentNotNull();
+        var buffer = ignoreCase ? str.ToLower(CultureInfo.CurrentCulture) : str;
+        var stat = ignoreCase ? value.ToLower(CultureInfo.CurrentCulture) : value;
 
         // Initialize variables for tracking indexes and search position.
         var result = 0;
@@ -128,7 +130,6 @@ public static class StringHelper
                 _ = sb.Append(line);
             }
         }
-
         return sb;
     }
 
@@ -148,7 +149,7 @@ public static class StringHelper
     public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, IEnumerable<string>? lines)
     {
         Check.MustBeArgumentNotNull(sb);
-        if (lines?.Any() == true)
+        if (lines != null)
         {
             foreach (var line in lines)
             {
@@ -171,7 +172,7 @@ public static class StringHelper
         value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
 
     public static string Build(this StringBuilder sb) =>
-            sb.ArgumentNotNull().ToString();
+        sb.ArgumentNotNull().ToString();
 
     /// <summary>
     /// Checks if all characters in the given string are valid according to the given validation function.
@@ -563,7 +564,7 @@ public static class StringHelper
     [Pure]
     public static IEnumerable<string> GroupBy(this IEnumerable<char> chars, char separator)
     {
-        StringBuilder buffer = new();
+        var buffer = new StringBuilder();
         foreach (var c in chars)
         {
             if (c == separator)
@@ -630,7 +631,7 @@ public static class StringHelper
     [Pure]
     [return: NotNullIfNotNull(nameof(defaultValue))]
     public static string? IfNullOrEmpty(this string? str, string? defaultValue) =>
-        string.IsNullOrEmpty(str) ? defaultValue : str;
+        str.IsNullOrEmpty() ? defaultValue : str;
 
     /// <summary>
     /// Gets the index of the specified item in the given enumerable of strings.
@@ -725,15 +726,6 @@ public static class StringHelper
     [Pure]
     public static bool IsDigitOrControl(this char key)
         => char.IsDigit(key) || char.IsControl(key);
-
-    /// <summary>
-    /// Checks if the given string is empty.
-    /// </summary>
-    /// <param name="s">The string to check.</param>
-    /// <returns>True if the string is empty, false otherwise.</returns>
-    [Pure]
-    public static bool IsEmpty([NotNullWhen(false)] in string? s)
-        => s?.Length is 0;
 
     /// <summary>
     /// Checks if the given character is an English letter.
