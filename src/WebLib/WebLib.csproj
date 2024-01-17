@@ -8,19 +8,7 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Exceptions\**" />
-    <Content Remove="Exceptions\**" />
-    <EmbeddedResource Remove="Exceptions\**" />
-    <None Remove="Exceptions\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.2.0" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CoreLib\CoreLib.csproj" />
     <ProjectReference Include="..\CqrsLib\CqrsLib.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Security\Identity\Model\Tokens\" />
   </ItemGroup>
 </Project>

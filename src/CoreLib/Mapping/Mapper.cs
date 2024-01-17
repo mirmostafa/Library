@@ -32,6 +32,7 @@ public sealed class Mapper : IMapper
         return result;
     }
 
+    [return: NotNullIfNotNull(nameof(source))]
     public TDestination? Map<TDestination>(in IConvertible<TDestination> source)
         where TDestination : class
         => source?.Convert();
@@ -105,6 +106,7 @@ public sealed class Mapper : IMapper
             return null;
         }
         Check.MustBeArgumentNotNull(destination);
+        Check.MustBeArgumentNotNull(onlyProps);
 
         var justProps = onlyProps(destination).GetType().GetProperties().Select(x => x.Name).ToArray();
         var dstProps = typeof(TDestination).GetProperties();
@@ -144,4 +146,11 @@ public sealed class Mapper : IMapper
             }
         }
     }
+}
+
+internal sealed class ConvertMapperToConverter<TSelf, TDestination, TMapper>(TSelf self, [DisallowNull] TMapper mapper) : IConvertible<TDestination?>
+    where TMapper : IMappable<TSelf, TDestination>
+{
+    public TDestination? Convert()
+        => mapper.Map(self);
 }

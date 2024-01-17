@@ -34,10 +34,3 @@ public interface IMapper
 
     TDestination? MapOnly<TDestination>(in object source, in TDestination destination, in Func<TDestination, object> onlyProps) where TDestination : class;
 }
-
-internal sealed class ConvertMapperToConverter<TSelf, TDestination, TMapper>(TSelf self, [DisallowNull] TMapper mapper) : IConvertible<TDestination?>
-    where TMapper : IMappable<TSelf, TDestination>
-{
-    public TDestination? Convert()
-        => mapper.Map(self);
-}

@@ -1234,6 +1234,8 @@ public static class EnumerableHelper
     /// <returns>The reduced value.</returns>
     public static T? Reduce<T>(this IEnumerable<T?> items, Func<(T? Result, T? Item), T?> reducer)
     {
+        Check.MustBeArgumentNotNull(items);
+        Check.MustBeArgumentNotNull(reducer);
         T? result = default;
         foreach (var item in items)
         {
@@ -1340,6 +1342,9 @@ public static class EnumerableHelper
     /// <returns>The result of the actions.</returns>
     public static void RunAllWhile(this IEnumerable<Action> actions, Func<bool> predicate)
     {
+        Check.MustBeArgumentNotNull(actions);
+        Check.MustBeArgumentNotNull(predicate);
+
         foreach (var action in actions)
         {
             if (!predicate())
@@ -1358,6 +1363,8 @@ public static class EnumerableHelper
     /// <returns>A sequence containing all elements of the input sequences.</returns>
     public static IEnumerable<T> SelectAll<T>(this IEnumerable<IEnumerable<T>> values)
     {
+        Check.MustBeArgumentNotNull(values);
+
         foreach (var value in values)
         {
             foreach (var item in value)
@@ -1374,6 +1381,8 @@ public static class EnumerableHelper
     /// <returns>A sequence containing all elements of the input sequences.</returns>
     public static IEnumerable<TDestination> SelectAll<TSource, TDestination>(this IEnumerable<IEnumerable<TSource>> values, Func<TSource, TDestination> selector)
     {
+        Check.MustBeArgumentNotNull(values);
+
         foreach (var value in values)
         {
             foreach (var item in value.Iterate(selector))
@@ -1392,6 +1401,9 @@ public static class EnumerableHelper
     /// <returns>An enumerable of all elements.</returns>
     public static IEnumerable<T> SelectAllChildren<T>([DisallowNull] this IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)
     {
+        Check.MustBeArgumentNotNull(roots);
+        Check.MustBeArgumentNotNull(getChildren);
+
         foreach (var root in roots)
         {
             yield return root; // Yield the current root element
@@ -1417,6 +1429,9 @@ public static class EnumerableHelper
     /// element of source.</returns>
     public static async IAsyncEnumerable<TResult> SelectAsync<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, Task<TResult>> selectorAsync)
     {
+        Check.MustBeArgumentNotNull(source);
+        Check.MustBeArgumentNotNull(selectorAsync);
+
         foreach (var item in source)
         {
             yield return await selectorAsync(item);
@@ -1597,6 +1612,7 @@ public static class EnumerableHelper
         {
             return [];
         }
+        Check.MustBeArgumentNotNull(selector);
 
         var result = new Dictionary<TKey, TValue>();
         foreach (var item in list)
@@ -1669,12 +1685,8 @@ public static class EnumerableHelper
     /// <typeparam name="T">The type of elements in the IEnumerable.</typeparam>
     /// <param name="items">The IEnumerable to convert.</param>
     /// <returns>An ImmutableArray containing the elements of the IEnumerable.</returns>
-    public static ImmutableArray<T> ToImmutableArray<T>(IEnumerable<T> items)
-    {
-        var builder = ImmutableArray.CreateBuilder<T>();
-        builder.AddRange(items);
-        return builder.ToImmutable();
-    }
+    public static ImmutableArray<T> ToImmutableArray<T>(IEnumerable<T> items) =>
+        [.. items];
 
     /// <summary>
     /// Converts an IAsyncEnumerable to a List.
@@ -1744,7 +1756,7 @@ public static class EnumerableHelper
         TryMethodResult<int>.TryParseResult(source.TryGetNonEnumeratedCount(out var count), count);
 
     public static TryMethodResult<TValue> TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key)
-        where TKey : notnull => TryMethodResult<TValue>.TryParseResult(dic.TryGetValue(key, out var value), value);
+        where TKey : notnull => TryMethodResult<TValue>.TryParseResult(dic.ArgumentNotNull().TryGetValue(key, out var value), value);
 
     /// <summary>
     /// Asynchronously filters a sequence of values based on a predicate.

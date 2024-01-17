@@ -1,29 +1,16 @@
 ﻿using System.Globalization;
 
+using Library.Validations;
+
 namespace Library.Helpers;
 
 public static class CultureInfoHelper
 {
-    /// <summary>
-    /// The weekday/weekend state for a given day.
-    /// </summary>
-    public enum WeekdayState
-    {
-        /// <summary>
-        /// A work day.
-        /// </summary>
-        Workday,
+    private static readonly char[] _dash = ['-'];
 
-        /// <summary>
-        /// A weekend.
-        /// </summary>
-        Weekend,
+    private static readonly char[] separator = new[] { '(', ')' };
 
-        /// <summary>
-        /// Morning is a workday, afternoon is the start of the weekend.
-        /// </summary>
-        WorkdayMorning
-    }
+    private static readonly char[] separatorArray = new[] { ',' };
 
     /// <summary>
     /// Returns the English version of the country name. Extracted from the CultureInfo.EnglishName.
@@ -33,8 +20,9 @@ public static class CultureInfoHelper
     public static string GetCountryEnglishName(this CultureInfo ci)
     //This code is used to get the English name of a country from a CultureInfo object.
     {
+        Check.MustBeArgumentNotNull(ci);
         //Split the EnglishName property of the CultureInfo object into an array of strings, removing any empty entries
-        var parts = ci.EnglishName.Split(new[] { '(', ')' }, StringSplitOptions.RemoveEmptyEntries);
+        var parts = ci.EnglishName.Split(separator, StringSplitOptions.RemoveEmptyEntries);
         //If the array has fewer than two elements, return the EnglishName property
         if (parts.Length < 2)
         {
@@ -42,7 +30,7 @@ public static class CultureInfoHelper
         }
 
         //Split the second element of the array into an array of strings, removing any empty entries
-        parts = parts[1].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        parts = parts[1].Split(separatorArray, StringSplitOptions.RemoveEmptyEntries);
         //Return the last element of the array, trimmed of any whitespace
         return parts[^1].Trim();
     }
@@ -53,7 +41,7 @@ public static class CultureInfoHelper
     /// <param name="ci">The CultureInfo this object.</param>
     /// <returns>The English version of the language name.</returns>
     public static string GetLanguageEnglishName(this CultureInfo ci)
-        => ci.EnglishName.Split(new[] { '(' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+        => ci.ArgumentNotNull().EnglishName.Split(new[] { '(' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
 
     /// <summary>
     /// Gets the weekday state for the given culture and day of week.
@@ -62,7 +50,7 @@ public static class CultureInfoHelper
     /// <param name="day">The day of week.</param>
     /// <returns>The weekday state.</returns>
     public static WeekdayState GetWeekdayState(this CultureInfo ci, DayOfWeek day)
-            => GetCountryAbbreviation(ci) switch
+            => GetCountryAbbreviation(ci.ArgumentNotNull()) switch
             {
                 "DZ" // Algeria
              or "BH" // Bahrain
@@ -87,11 +75,14 @@ public static class CultureInfoHelper
                   => day is DayOfWeek.Thursday or DayOfWeek.Friday
                          ? WeekdayState.Weekend
                          : WeekdayState.Workday,
+                "AF" when day is DayOfWeek.Thursday or DayOfWeek.Friday // Afghanistan
+                    => WeekdayState.Weekend,
                 "AF" // Afghanistan
-             or "IR" when day == DayOfWeek.Thursday // Iran
-                  => WeekdayState.WorkdayMorning,
+                    => WeekdayState.Workday,
+                "IR" when day is DayOfWeek.Thursday or DayOfWeek.Friday // Iran
+                  => WeekdayState.Weekend,
                 "IR" // Iran
-                  => day == DayOfWeek.Friday ? WeekdayState.Weekend : WeekdayState.Workday,
+                  => WeekdayState.Workday,
                 "BN" // Brunei Darussalam
                   => day is DayOfWeek.Friday or DayOfWeek.Sunday
                             ? WeekdayState.Weekend
@@ -112,5 +103,26 @@ public static class CultureInfoHelper
     /// <param name="ci">The CultureInfo object.</param>
     /// <returns>The country abbreviation.</returns>
     private static string GetCountryAbbreviation(CultureInfo ci)
-        => ci.Name.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries)[^1];
+        => ci.Name.Split(_dash, StringSplitOptions.RemoveEmptyEntries)[^1];
+
+    /// <summary>
+    /// The weekday/weekend state for a given day.
+    /// </summary>
+    public enum WeekdayState
+    {
+        /// <summary>
+        /// A work day.
+        /// </summary>
+        Workday,
+
+        /// <summary>
+        /// A weekend.
+        /// </summary>
+        Weekend,
+
+        /// <summary>
+        /// Morning is a workday, afternoon is the start of the weekend.
+        /// </summary>
+        WorkdayMorning
+    }
 }

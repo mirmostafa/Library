@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Security.Claims;
+﻿using System.Security.Claims;
+
 using Library.Validations;
 
-namespace Library.Security.Claims;
+namespace Library.Web.Security.Claims;
 
 public interface IClaim
 {

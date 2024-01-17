@@ -2,13 +2,12 @@
 using System.ComponentModel;
 
 using Library.Globalization.Attributes;
-using Library.Helpers;
 using Library.Validations;
 
 namespace Library.Helpers;
 
 /// <summary>
-///     A utility to do some common tasks about enumerations
+/// A utility to do some common tasks about enumerations
 /// </summary>
 public static class EnumHelper
 {
@@ -62,9 +61,9 @@ public static class EnumHelper
 
     /// <summary>
     /// </summary>
-    /// <param name="value"> </param>
-    /// <typeparam name="TAttribute"> </typeparam>
-    /// <returns> </returns>
+    /// <param name="value"></param>
+    /// <typeparam name="TAttribute"></typeparam>
+    /// <returns></returns>
     public static TAttribute? GetItemAttribute<TAttribute>(Enum? value)
         where TAttribute : Attribute => GetItemAttributes<TAttribute>(value)?.FirstOrDefault();
 

@@ -54,9 +54,9 @@ public static class DbContextHelper
     /// <returns>The result of the operation.</returns>
     public static async Task<Result> CommitTransactionAsync(this DbContext dbContext, CancellationToken cancellationToken = default)
     {
+        Check.MustBeArgumentNotNull(dbContext);
         try
         {
-            Check.MustBeArgumentNotNull(dbContext);
             await dbContext.ArgumentNotNull().Database.CommitTransactionAsync(cancellationToken);
             return Result.Success;
         }
@@ -451,8 +451,9 @@ public static class DbContextHelper
     /// <returns>The database context.</returns>
     public static DbContext RemoveById<TDbContext, TEntity, TId>([DisallowNull] DbContext dbContext, [DisallowNull] TId id, bool detach = false)
         where TEntity : class, IIdenticalEntity<TId>, new()
-        where TId : notnull=> 
+        where TId : notnull =>
         RemoveById<TEntity, TId>(dbContext, new[] { id }, detach);
+
     public static DbContext RemoveById<TDbContext, TEntity>([DisallowNull] DbContext dbContext, [DisallowNull] Guid id, bool detach = false)
         where TEntity : class, IIdenticalEntity<Guid>, new() =>
         RemoveById<TEntity, Guid>(dbContext, new[] { id }, detach);

@@ -11,7 +11,6 @@ var ctorBody = @$"
      this.Name = name;
      this.{TypeMemberNameHelper.ToFieldName("age")} = age;
      ";
-var ns = RoslynHelper.CreateNamespace("Test.Dtos");
 var personType = new TypePath("PersonDto");
 var personDto = RoslynHelper.CreateType(personType)
     .AddField(new(TypeMemberNameHelper.ToFieldName("lastName"), TypePath.New<string>()), out var lastNameField)
@@ -22,12 +21,13 @@ var personDto = RoslynHelper.CreateType(personType)
     .AddMethod(new RosMethodInfo(null, personType, "SetAge", new[] { (TypePath.New<int>(), "age") }, setAgeMethodBody))
     ;
 
-ns = ns.AddType(personDto);
+var ns = RoslynHelper.CreateNamespace("Test.Dtos")
+    .AddType(personDto);
 
 var root = RoslynHelper.CreateRoot()
-    .AddUsingNameSpace("System")
-    .AddUsingNameSpace("System.Linq")
-    .AddUsingNameSpace("System.Threading")
+    .AddUsingNameSpace(nameof(System))
+    .AddUsingNameSpace(nameof(System.Linq))
+    .AddUsingNameSpace(nameof(System.Threading))
     .AddNameSpace(ns);
 WriteLine(root.GenerateCode());
 

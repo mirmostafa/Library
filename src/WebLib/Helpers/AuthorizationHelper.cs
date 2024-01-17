@@ -1,9 +1,10 @@
 ﻿using Library.Security.Claims;
 using Library.Security.Identity.Authorization;
 using Library.Validations;
+
 using Microsoft.AspNetCore.Authorization;
 
-namespace Library.Helpers;
+namespace Library.Web.Helpers;
 
 public static class AuthorizationHelper
 {

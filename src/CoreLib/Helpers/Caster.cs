@@ -162,6 +162,10 @@ public static class Caster
     /// <returns>An <see cref="IEnumerableT"/> containing only those items of type T.</returns>
     public static IEnumerable<T> TypeOf<T>(IEnumerable items)
     {
+        if (items is null)
+        {
+            yield break;
+        }
         foreach (var item in items)
         {
             if (TypeOf<T>(item) is { } result)
@@ -176,7 +180,7 @@ public static class Caster
     /// the specified type.
     /// </summary>
     public static T? TypeOf<T>(object obj)
-            => obj.GetType() == typeof(T) ? (T)obj : default;
+            => obj?.GetType() == typeof(T) ? (T)obj : default;
 
     /// <summary>
     /// Filters a sequence of items and returns only those of type T.
@@ -185,6 +189,10 @@ public static class Caster
     /// <returns>An IEnumerable of type T containing the filtered items.</returns>
     public static IEnumerable<T> WhereIs<T>(IEnumerable items)
     {
+        if (items is null)
+        {
+            yield break;
+        }
         foreach (var item in items)
         {
             if (item is T result)

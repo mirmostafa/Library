@@ -1,51 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <AssemblyName>Library.Core</AssemblyName>
-    <RootNamespace>Library</RootNamespace>
-    <Configurations>Debug;Release;Debug Unit Test</Configurations>
-    <EnablePreviewFeatures>true</EnablePreviewFeatures>
-    <LangVersion>Preview</LangVersion>
-    <TargetFramework>net8.0</TargetFramework>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unit Test|AnyCPU'">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants />
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <WarningLevel>0</WarningLevel>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="CodeGeneration\HtmlGeneration\**" />
-    <Compile Remove="Primitives\**" />
-    <EmbeddedResource Remove="CodeGeneration\HtmlGeneration\**" />
-    <EmbeddedResource Remove="Primitives\**" />
-    <None Remove="CodeGeneration\HtmlGeneration\**" />
-    <None Remove="Primitives\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove=".gitignore" />
-    <None Remove="README.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Collections\Generic\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.1" />
-    <PackageReference Include="System.CodeDom" Version="8.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.1" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<AssemblyName>Library.Core</AssemblyName>
+		<RootNamespace>Library</RootNamespace>
+		<Configurations>Debug;Release;Debug Unit Test</Configurations>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+		<LangVersion>Preview</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<WarningLevel>4</WarningLevel>
+		<DebugType>portable</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Unit Test|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<WarningLevel>4</WarningLevel>
+		<DebugType>portable</DebugType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DefineConstants />
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<WarningLevel>0</WarningLevel>
+		<DebugType>portable</DebugType>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="CodeGeneration\HtmlGeneration\**" />
+		<Compile Remove="Primitives\**" />
+		<EmbeddedResource Remove="CodeGeneration\HtmlGeneration\**" />
+		<EmbeddedResource Remove="Primitives\**" />
+		<None Remove="CodeGeneration\HtmlGeneration\**" />
+		<None Remove="Primitives\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove=".gitignore" />
+		<None Remove="README.md" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Collections\Generic\" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.1" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.1" />
+		<PackageReference Include="System.CodeDom" Version="8.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="8.0.1" />
+	</ItemGroup>
 </Project>

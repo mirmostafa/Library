@@ -1,30 +1,36 @@
-﻿using System.Net;
-
-using Library.Exceptions;
+﻿using Library.Exceptions;
 
 namespace Library.Web.Exceptions;
 
-public abstract class ApiExceptionBase : Exception, IApiException
+[Serializable]
+public abstract class ApiExceptionBase : ExceptionBase, IApiException
 {
-    protected ApiExceptionBase(HttpResponseMessage message) : base(message) => 
+    protected ApiExceptionBase(string? message) : base(message) =>
         this.Message = message?.ToString() ?? string.Empty;
 
     protected ApiExceptionBase(int? statusCode = null, string? message = null, object? owner = null)
-        : base((HttpStatusCode?)statusCode ?? HttpStatusCode.BadRequest)
+        : this(message)
     {
         this.Message = message ?? string.Empty;
         this.StatusCode = statusCode;
         this.Owner = owner;
     }
 
-    public string? Details { get; set; }
+    protected ApiExceptionBase()
+        : this(string.Empty)
+    {
+    }
+
+    protected ApiExceptionBase(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 
     string? IException.Instruction { get; }
 
     /// <inheritdoc/>
     public override string Message { get; }
 
-    public object? Owner { get; set; }
+    public new object? Owner { get; set; }
     public int? StatusCode { get; }
-    public string? Title { get; }
+    public new string? Title { get; }
 }

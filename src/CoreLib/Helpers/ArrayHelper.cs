@@ -14,7 +14,7 @@ public static class ArrayHelper
         //If the array is empty, return a new array with the item
         if (IsNullOrEmpty(array))
         {
-            return new T[] { item };
+            return [item];
         }
         //Create a new array with one more element than the original array
         var result = new T[array.Length + 1];
@@ -31,9 +31,7 @@ public static class ArrayHelper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="array">The array to check.</param>
-    /// <returns>
-    /// True if the array is null or empty, false otherwise.
-    /// </returns>
-    private static bool IsNullOrEmpty<T>([NotNullWhen(true)] this T[] array)
-            => array is null or { Length: 0 };
+    /// <returns>True if the array is null or empty, false otherwise.</returns>
+    public static bool IsNullOrEmpty<T>([NotNullWhen(true)] this T[] array)
+        => array is null or { Length: 0 };
 }

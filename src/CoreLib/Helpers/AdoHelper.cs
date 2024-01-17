@@ -1,9 +1,10 @@
 using System.Data;
-using Microsoft.Data.SqlClient;
 using System.Globalization;
 
 using Library.Results;
 using Library.Validations;
+
+using Microsoft.Data.SqlClient;
 
 namespace Library.Helpers;
 
