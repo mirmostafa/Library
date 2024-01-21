@@ -496,12 +496,12 @@ public static partial class AdoHelper
 
         var type = typeof(T);
         var properties = type.GetProperties();
-        var columnNames = table.Columns.Cast<DataColumn>().Select(col => col.ColumnName.ToLowerInvariant());
+        var columnNames = table.Columns.Cast<DataColumn>().Compact().Select(col => col.ColumnName?.ToUpperInvariant());
         foreach (var row in table.Select())
         {
             var t = new T();
             var row1 = row;
-            foreach (var property in properties.Where(property => columnNames.Contains(property.Name.ToLowerInvariant()))
+            foreach (var property in properties.Where(property => columnNames.Contains(property.Name?.ToUpperInvariant()))
                 .Where(property => row1[property.Name] is not null && row1[property.Name] != DBNull.Value))
             {
                 property.SetValue(t, row[property.Name], Array.Empty<object>());

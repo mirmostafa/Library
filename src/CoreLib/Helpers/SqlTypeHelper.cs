@@ -1,6 +1,4 @@
-﻿using Library.Validations;
-
-namespace Library.Helpers;
+﻿namespace Library.Helpers;
 
 public static class SqlTypeHelper
 {

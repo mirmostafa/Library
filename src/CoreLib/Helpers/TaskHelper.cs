@@ -20,13 +20,13 @@ public static class TaskHelper
         }
         else
         {
-            await Task.Factory.StartNew(action, token);
+            await Task.Factory.StartNew(action, token, TaskCreationOptions.None, TaskScheduler.Default);
         }
     }
 
     /// <summary>
-    /// Creates a task that will complete when all of the <see cref="Task"/>
-    /// objects in an array have completed.
+    /// Creates a task that will complete when all of the <see cref="Task"/> objects in an array
+    /// have completed.
     /// </summary>
     /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
@@ -36,8 +36,8 @@ public static class TaskHelper
         => await WhenAllAsync(tasks.ToArray());
 
     /// <summary>
-    /// Creates a task that will complete when all of the <see cref="Task"/>
-    /// objects in an array have completed.
+    /// Creates a task that will complete when all of the <see cref="Task"/> objects in an array
+    /// have completed.
     /// </summary>
     /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
@@ -52,14 +52,13 @@ public static class TaskHelper
         }
         catch (Exception)
         {
-            //ignore
+            return Enumerable.Empty<TResult>();
         }
-        throw allTasks.Exception ?? throw new Exception("This can't possibly happen");
     }
 
     /// <summary>
-    /// Creates a task that will complete when all of the <see cref="Task"/>
-    /// objects in an array have completed.
+    /// Creates a task that will complete when all of the <see cref="Task"/> objects in an array
+    /// have completed.
     /// </summary>
     /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
@@ -69,8 +68,8 @@ public static class TaskHelper
         => await WhenAllAsync(tasks.ToArray());
 
     /// <summary>
-    /// Creates a task that will complete when all of the <see cref="Task"/>
-    /// objects in an array have completed.
+    /// Creates a task that will complete when all of the <see cref="Task"/> objects in an array
+    /// have completed.
     /// </summary>
     /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
@@ -87,6 +86,5 @@ public static class TaskHelper
         {
             //ignore
         }
-        throw allTasks.Exception ?? throw new Exception("This can't possibly happen");
     }
 }
