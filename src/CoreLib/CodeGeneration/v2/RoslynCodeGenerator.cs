@@ -40,6 +40,11 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
                 rosType = rosType.AddBase(baseType.FullName);
                 root = baseType.GetNameSpaces().SelectImmutable((ns, r) => r.AddUsingNameSpace(ns), root);
             }
+            foreach (var attribute in type.Attributes)
+            {
+                rosType = rosType.AttributeLists
+
+            }
             foreach (var member in type.Members.Compact())
             {
                 (var codeMember, root) = member switch
