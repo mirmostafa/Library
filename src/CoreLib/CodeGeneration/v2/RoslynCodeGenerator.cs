@@ -13,7 +13,7 @@ namespace Library.CodeGeneration.v2;
 
 public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
 {
-    public string Generate(IProperty property)
+    public static string Generate(IProperty property)
     {
         Check.MustBeArgumentNotNull(property);
 
@@ -40,10 +40,14 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
                 rosType = rosType.AddBase(baseType.FullName);
                 root = baseType.GetNameSpaces().SelectImmutable((ns, r) => r.AddUsingNameSpace(ns), root);
             }
-            foreach (var attribute in type.Attributes)
+            foreach (var attribute in type.Attributes.Compact())
             {
-                rosType = rosType.AttributeLists
-
+                var attributeType = TypePath.New(attribute.Name);
+                foreach (var ns in attributeType.GetNameSpaces().Compact())
+                {
+                    root = root.AddUsingNameSpace(ns);
+                }
+                rosType = rosType.AddAttribute(attributeType.Name, attribute.Properties.Select(x => (x.Name, x.Value)));
             }
             foreach (var member in type.Members.Compact())
             {
@@ -54,6 +58,15 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
                     IProperty prop => CreateRosProperty(root, prop),
                     _ => throw new NotImplementedException(),
                 };
+                foreach (var attribute in member.Attributes)
+                {
+                    var attributeType = TypePath.New(attribute.Name);
+                    foreach (var ns in attributeType.GetNameSpaces().Compact())
+                    {
+                        root = root.AddUsingNameSpace(ns);
+                    }
+                    codeMember = codeMember.AddAttribute(attributeType.Name, attribute.Properties.Select(x => (x.Name, x.Value)));
+                }
                 rosType = rosType.AddMembers(codeMember);
             }
             rosNameSpace = rosNameSpace.AddType(rosType);

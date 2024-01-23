@@ -15,6 +15,7 @@ using MethodParameterInfo = (Library.CodeGeneration.TypePath Type, string Name);
 using PropertyAccessorInfo = (bool Has, System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.CSharp.SyntaxKind>? AccessModifiers);
 using RosClass = Microsoft.CodeAnalysis.CSharp.Syntax.ClassDeclarationSyntax;
 using RosFld = Microsoft.CodeAnalysis.CSharp.Syntax.FieldDeclarationSyntax;
+using RosMember = Microsoft.CodeAnalysis.CSharp.Syntax.MemberDeclarationSyntax;
 using RosMethod = Microsoft.CodeAnalysis.CSharp.Syntax.BaseMethodDeclarationSyntax;
 using RosProp = Microsoft.CodeAnalysis.CSharp.Syntax.PropertyDeclarationSyntax;
 
@@ -22,6 +23,49 @@ namespace Library.Helpers.CodeGen;
 
 public static class RoslynHelper
 {
+    public static RosClass AddAttribute(this RosClass member, string attributeName, IEnumerable<(string? propName, string propValue)>? properties = null)
+    {
+        Check.MustBeArgumentNotNull(member);
+        Check.MustBeArgumentNotNull(attributeName);
+
+        var attributeArgumentList = AttributeArgumentList();
+        if (properties != null)
+        {
+            foreach (var (propName, propValue) in properties)
+            {
+                var nameEquals = propName == null ? default : NameEquals(propName);
+                var stringLiteral = LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(propValue));
+                var attributeArgument = AttributeArgument(nameEquals, null, stringLiteral);
+                attributeArgumentList = attributeArgumentList.AddArguments(attributeArgument);
+            }
+        }
+
+        var attributeList = AttributeList(SingletonSeparatedList(Attribute(IdentifierName(attributeName), attributeArgumentList)));
+
+        return member.WithAttributeLists(member.AttributeLists.Add(attributeList));
+    }
+    public static RosMember AddAttribute(this RosMember member, string attributeName, IEnumerable<(string? propName, string propValue)>? properties = null)
+    {
+        Check.MustBeArgumentNotNull(member);
+        Check.MustBeArgumentNotNull(attributeName);
+
+        var attributeArgumentList = AttributeArgumentList();
+        if (properties != null)
+        {
+            foreach (var (propName, propValue) in properties)
+            {
+                var nameEquals = propName == null ? default : NameEquals(propName);
+                var stringLiteral = LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(propValue));
+                var attributeArgument = AttributeArgument(nameEquals, null, stringLiteral);
+                attributeArgumentList = attributeArgumentList.AddArguments(attributeArgument);
+            }
+        }
+
+        var attributeList = AttributeList(SingletonSeparatedList(Attribute(IdentifierName(attributeName), attributeArgumentList)));
+
+        return member.WithAttributeLists(member.AttributeLists.Add(attributeList));
+    }
+
     public static RosClass AddBase(this RosClass type, string baseClassName)
     {
         Checker.MustBeArgumentNotNull(type);
