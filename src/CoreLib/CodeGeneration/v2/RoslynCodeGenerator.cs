@@ -13,7 +13,7 @@ namespace Library.CodeGeneration.v2;
 
 public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
 {
-    public static string Generate(IProperty property)
+    public string Generate(IProperty property)
     {
         Check.MustBeArgumentNotNull(property);
 

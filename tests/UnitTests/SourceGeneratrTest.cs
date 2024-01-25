@@ -16,7 +16,7 @@ public sealed class SourceGeneratorTest(ITestOutputHelper output)
     {
         var prop = new CodeGenProperty("FirstName", typeof(string));
         prop.Attributes.Add(ICodeGenAttribute.New(typeof(RequiredAttribute)));
-        
+
         var codegen = new RoslynCodeGenerator();
         var code = codegen.Generate(prop);
         output.WriteLine(code);

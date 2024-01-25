@@ -34,9 +34,9 @@ public static class PersianTools
     #endregion Fields
 
     /// <summary>
-    ///     Gets the Persian digits.
+    /// Gets the Persian digits.
     /// </summary>
-    /// <value> The Persian digits. </value>
+    /// <value>The Persian digits.</value>
     public static IEnumerable<(char English, char Persian)> Digits
     {
         get
@@ -74,12 +74,12 @@ public static class PersianTools
     };
 
     /// <summary>
-    ///     Gets the name of the month.
+    /// Gets the name of the month.
     /// </summary>
-    /// <param name="month"> The month. </param>
-    /// <param name="language"> The language. </param>
-    /// <param name="longName"> if set to <c> true </c> [long name]. </param>
-    /// <returns> </returns>
+    /// <param name="month">The month.</param>
+    /// <param name="language">The language.</param>
+    /// <param name="longName">if set to <c>true</c> [long name].</param>
+    /// <returns></returns>
     public static string GetMonthName(in int month, in Language language, in bool longName) => month switch
     {
         1 => language switch
@@ -158,10 +158,10 @@ public static class PersianTools
     };
 
     /// <summary>
-    ///     Gets the parts.
+    /// Gets the parts.
     /// </summary>
-    /// <param name="persianDate"> The Persian date. </param>
-    /// <returns> </returns>
+    /// <param name="persianDate">The Persian date.</param>
+    /// <returns></returns>
     public static (int year, int month, int day) GetParts(in string persianDate)
     {
         var parts = persianDate.Split('/')
@@ -170,7 +170,7 @@ public static class PersianTools
                 s = s.Trim();
                 if (s.Contains(' '))
                 {
-                    s = s[..s.IndexOf(" ", StringComparison.Ordinal)];
+                    s = s[..s.IndexOf(' ')];
                 }
 
                 return Convert.ToInt32(s);
@@ -189,35 +189,35 @@ public static class PersianTools
     }
 
     /// <summary>
-    ///     Gets the Persian date parts.
+    /// Gets the Persian date parts.
     /// </summary>
-    /// <param name="date"> The date. </param>
-    /// <returns> </returns>
+    /// <param name="date">The date.</param>
+    /// <returns></returns>
     public static (int Year, int Month, int Day) GetPersianDateParts(in DateTime date)
         => (GetPersianYear(date), GetPersianMonth(date), GetPersianDayOfMonth(date));
 
     /// <summary>
-    ///     Gets the Persian day of month.
+    /// Gets the Persian day of month.
     /// </summary>
-    /// <param name="dateTime"> The date time. </param>
-    /// <returns> </returns>
+    /// <param name="dateTime">The date time.</param>
+    /// <returns></returns>
     public static int GetPersianDayOfMonth(this DateTime dateTime)
         => _persianCalendar.GetDayOfMonth(dateTime);
 
     /// <summary>
-    ///     Gets the Persian days count in month.
+    /// Gets the Persian days count in month.
     /// </summary>
-    /// <param name="year"> The year. </param>
-    /// <param name="month"> The month. </param>
-    /// <returns> </returns>
+    /// <param name="year">The year.</param>
+    /// <param name="month">The month.</param>
+    /// <returns></returns>
     public static int GetPersianDaysCountInMonth(in int year, in int month)
         => _persianCalendar.GetDaysInMonth(year, month);
 
     /// <summary>
-    ///     Gets the Persian first day of month.
+    /// Gets the Persian first day of month.
     /// </summary>
-    /// <param name="current"> The current. </param>
-    /// <returns> </returns>
+    /// <param name="current">The current.</param>
+    /// <returns></returns>
     public static DateTime GetPersianFirstDayOfMonth(this DateTime current)
     {
         while (GetPersianDayOfMonth(current) is not 1)
@@ -229,33 +229,36 @@ public static class PersianTools
     }
 
     /// <summary>
-    ///     Gets the Persian month.
+    /// Gets the Persian month.
     /// </summary>
-    /// <param name="dateTime"> The date time. </param>
-    /// <returns> </returns>
+    /// <param name="dateTime">The date time.</param>
+    /// <returns></returns>
     public static int GetPersianMonth(this DateTime dateTime)
         => _persianCalendar.GetMonth(dateTime);
 
     /// <summary>
-    ///     Gets the Persian year.
+    /// Gets the Persian year.
     /// </summary>
-    /// <param name="dateTime"> The date time. </param>
-    /// <returns> </returns>
+    /// <param name="dateTime">The date time.</param>
+    /// <returns></returns>
     public static int GetPersianYear(this DateTime dateTime)
         => _persianCalendar.GetYear(dateTime);
 
+    public static object GetWeekDayName(DateTime dateTime) 
+        => dateTime.DayOfWeek.ToPersianString();
+
     /// <summary>
-    ///     Converts to Persian string.
+    /// Converts to Persian string.
     /// </summary>
-    /// <param name="year"> The year. </param>
-    /// <param name="month"> The month. </param>
-    /// <param name="day"> The day. </param>
-    /// <param name="hour"> The hour. </param>
-    /// <param name="minute"> The minute. </param>
-    /// <param name="second"> The second. </param>
-    /// <param name="format"> The format. </param>
-    /// <param name="language"> The language. </param>
-    /// <returns> </returns>
+    /// <param name="year">The year.</param>
+    /// <param name="month">The month.</param>
+    /// <param name="day">The day.</param>
+    /// <param name="hour">The hour.</param>
+    /// <param name="minute">The minute.</param>
+    /// <param name="second">The second.</param>
+    /// <param name="format">The format.</param>
+    /// <param name="language">The language.</param>
+    /// <returns></returns>
     public static string PersianDateToPersianString(int? year,
         int? month,
         int? day,
@@ -267,10 +270,10 @@ public static class PersianTools
         => Reformat(year, month, day, hour, minute, second, format, language);
 
     /// <summary>
-    ///     Re-formats the Persian string.
+    /// Re-formats the Persian string.
     /// </summary>
-    /// <param name="persianDate"> The Persian date. </param>
-    /// <returns> </returns>
+    /// <param name="persianDate">The Persian date.</param>
+    /// <returns></returns>
     public static string ReformatPersian(string persianDate)
     {
         (var year, var month, var day) = GetParts(persianDate);
@@ -278,10 +281,10 @@ public static class PersianTools
     }
 
     /// <summary>
-    ///     Converts to datetime.
+    /// Converts to datetime.
     /// </summary>
-    /// <param name="persianDateText"> The Persian date text. </param>
-    /// <returns> </returns>
+    /// <param name="persianDateText">The Persian date text.</param>
+    /// <returns></returns>
     public static DateTime ToDateTime(in string persianDateText)
     {
         (var year, var month, var day) = GetParts(persianDateText);
@@ -289,7 +292,7 @@ public static class PersianTools
     }
 
     /// <summary>
-    ///     Converts Persian number to English number.
+    /// Converts Persian number to English number.
     /// </summary>
     /// <param name="persianNumber">The Persian number.</param>
     /// <returns></returns>
@@ -308,18 +311,18 @@ public static class PersianTools
     }
 
     /// <summary>
-    ///     Translates to Persian.
+    /// Translates to Persian.
     /// </summary>
-    /// <param name="day"> The day. </param>
-    /// <returns> </returns>
-    public static string ToPersian(DayOfWeek day) => 
+    /// <param name="day">The day.</param>
+    /// <returns></returns>
+    public static string ToPersian(DayOfWeek day) =>
         PersianDateTime.PersianWeekDays.FirstOrDefault(d => d.Day == day).Name;
 
     /// <summary>
-    ///     Converts datetime to Persian date.
+    /// Converts datetime to Persian date.
     /// </summary>
-    /// <param name="date"> The date. </param>
-    /// <returns> </returns>
+    /// <param name="date">The date.</param>
+    /// <returns></returns>
     public static string ToPersianDate(this DateTime date)
     {
         (var year, var month, var day) = GetPersianDateParts(date);
@@ -330,10 +333,10 @@ public static class PersianTools
         => new(dateTime);
 
     /// <summary>
-    ///     Converts to Persian day of week.
+    /// Converts to Persian day of week.
     /// </summary>
-    /// <param name="dow"> The dow. </param>
-    /// <returns> </returns>
+    /// <param name="dow">The dow.</param>
+    /// <returns></returns>
     public static PersianDayOfWeek ToPersianDayOfWeek(this DayOfWeek dow)
         => (PersianDayOfWeek)dow;
 

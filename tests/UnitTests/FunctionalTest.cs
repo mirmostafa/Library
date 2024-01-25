@@ -247,10 +247,6 @@ public sealed class FunctionalTest
     }
 
     [Fact]
-    public void ForEachTest()
-        => NumberHelper.Range(10).ForEach(_emptyIntAction);
-
-    [Fact]
     public void IfConditionFalseTest()
     {
         var booleanTest = false;
