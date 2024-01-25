@@ -348,6 +348,11 @@ public static class StringHelper
     public static int CountOf(this string str, char c, int index = 0)
         => str?.Skip(index).Count(x => x == c) ?? 0;
 
+    public static int CountOf(this string input, in string substring)
+            => input.IsNullOrEmpty() || substring.IsNullOrEmpty()
+                ? 0
+                : (input.Length - input.Replace(substring, "").Length) / substring.Length;
+
     /// <summary>
     /// Checks if the string ends with any of the items in the given array.
     /// </summary>
@@ -1465,11 +1470,9 @@ public static class StringHelper
     /// <summary>
     /// This method tries to get the count of a given character in a string from a given index.
     /// </summary>
-    public static TryMethodResult<int> TryCountOf(this string str, char c, int index) =>
-        CatchFunc(() => str.CountOf(c, index)).Fluent().WithNew(x => TryMethodResult<int>.TryParseResult(x.Exception is null, x.Result));
-
-    public static int CountOf(this string input, in string substring) 
-        => input.IsNullOrEmpty() || substring.IsNullOrEmpty()
-            ? 0
-            : (input.Length - input.Replace(substring, "").Length) / substring.Length;
+    public static TryMethodResult<int> TryCountOf(this string str, char c, int index)
+    {
+        var executeResult = CatchFunc(() => str.CountOf(c, index));
+        return TryMethodResult<int>.TryParseResult(executeResult.Exception is null, executeResult.Result);
+    }
 }
