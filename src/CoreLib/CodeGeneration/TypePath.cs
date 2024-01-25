@@ -91,10 +91,6 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         new(fullPath, generics, isNullable);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in TypePath typePath) =>
-        new(typePath.ArgumentNotNull().FullPath);
-
-    [return: NotNull]
     public static TypePath New<T>(in IEnumerable<string>? generics = null) =>
         new(typeof(T).FullName!, generics);
 
@@ -299,4 +295,12 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         }
         return buffer.ToString();
     }
+}
+
+public static class TypePathHelper
+{
+    public static TypePath WrapWithTask(string path) =>
+        TypePath.New(typeof(Task<>), [path]);
+    public static TypePath WrapWithIEnumetable(string path) =>
+        TypePath.New(typeof(IEnumerator<>), [path]);
 }
