@@ -38,7 +38,7 @@ public static class MethodExtensions
     public static IEnumerable<string> GetNameSpaces(this IMethod method)
     {
         Check.MustBeArgumentNotNull(method);
-        return new HashSet<string>(gather(method)).ToEnumerable();
+        return new HashSet<string>(gather(method)).AsEnumerable();
 
         static IEnumerable<string> gather(IMethod method)
         {

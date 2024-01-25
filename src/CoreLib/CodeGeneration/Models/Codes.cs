@@ -12,7 +12,6 @@ namespace Library.CodeGeneration.Models;
 public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(items.ToList())
     , IEnumerable<Code?>
     , IAdditionOperators<Codes, Codes, Codes>
-    , IIndexable<Language, IEnumerable<Code>>
     , IIndexable<string, Code?>
     , INew<Codes, IEnumerable<Code>>
     , IEmpty<Codes>
@@ -36,7 +35,7 @@ public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(
     /// <summary>
     /// Represents an empty instance of Codes class.
     /// </summary>
-    public static Codes Empty { get; } = _empty ??= NewEmpty();
+    public static new Codes Empty { get; } = _empty ??= NewEmpty();
 
     /// <summary>
     /// Gets the Code item with the specified name.
@@ -44,13 +43,6 @@ public sealed class Codes(IEnumerable<Code?> items) : ReadOnlyCollection<Code?>(
     /// <param name="name">The name of the Code item.</param>
     /// <returns>The Code item with the specified name. If no such item exists, returns null.</returns>
     public Code? this[string name] => this.SingleOrDefault(x => x?.Name == name);
-
-    /// <summary>
-    /// Gets all the Code items with the specified language.
-    /// </summary>
-    /// <param name="language">The language of the Code items.</param>
-    /// <returns>All the Code items with the specified language.</returns>
-    public IEnumerable<Code> this[Language language] => this.Where(x => x?.Language == language).Compact();
 
     /// <summary>
     /// Combines two Codes instances into one.

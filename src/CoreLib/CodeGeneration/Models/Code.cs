@@ -104,28 +104,16 @@ public class Code([DisallowNull] in string name, [DisallowNull] in Language lang
     public static bool operator !=(Code? left, Code? right) =>
         !(left == right);
 
-    public static bool operator <(Code left, Code right)
-    {
-        return ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
-    }
+    public static bool operator <(Code left, Code right) => left is null ? right is not null : left.CompareTo(right) < 0;
 
-    public static bool operator <=(Code left, Code right)
-    {
-        return ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
-    }
+    public static bool operator <=(Code left, Code right) => left is null || left.CompareTo(right) <= 0;
 
     public static bool operator ==(Code? left, Code? right) =>
                 left?.Equals(right) ?? (right is null);
 
-    public static bool operator >(Code left, Code right)
-    {
-        return !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
-    }
+    public static bool operator >(Code left, Code right) => left is not null && left.CompareTo(right) > 0;
 
-    public static bool operator >=(Code left, Code right)
-    {
-        return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
-    }
+    public static bool operator >=(Code left, Code right) => left is null ? right is null : left.CompareTo(right) >= 0;
 
     public int CompareTo(Code? other) =>
         other is null ? 1 : other.Name.CompareTo(this.Name);
@@ -174,12 +162,13 @@ public static class SourceCodeHelpers
 
     public static Codes ToCodes(this IEnumerable<Code> codes) =>
         new(codes);
+
     public static Codes ToCodes(this IEnumerable<Codes> codes) =>
          new(codes);
 
     [return: NotNull]
     public static Codes ToCodes(this Code code) =>
-        new(code.Cast().AsEnumerable<Code>());
+        new(EnumerableHelper.ToEnumerable(code));
 
     public static Result<Codes> ToCodesResult(this Result<Code> code) =>
         Result<Codes>.From(code.ArgumentNotNull(), code.Value.ToCodes());

@@ -1627,16 +1627,9 @@ public static class EnumerableHelper
         where TKey : notnull =>
         new(values.Select(x => new KeyValuePair<TKey, TValue>(x.Item1, x.Item2)));
 
-    public static IEnumerable<T> ToEnumerable<T>(this IEnumerable<T> items)
+    public static IEnumerable<T> ToEnumerable<T>(T item)
     {
-        if (items?.Any() != true)
-        {
-            yield break;
-        }
-        foreach (var item in items)
-        {
-            yield return item;
-        }
+        yield return item;
     }
 
     /// <summary> Converts a Dictionary<TKey, TValue> to an IEnumerable of key-value pairs.
