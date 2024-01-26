@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
+using Library.CodeGeneration;
 using Library.CodeGeneration.v2.Front;
 using Library.CodeGeneration.v2.Front.HtmlGeneration;
 using Library.DesignPatterns.StateMachine;
+using Library.Helpers.CodeGen;
 using Library.IO;
 using Library.Logging;
 
@@ -136,4 +138,36 @@ internal partial class Obsoletes
                 .OnDeleted((_, e) => _logger.Log($"{e.Item.FullName} deleted.", format: LogFormat.FORMAT_SHORT))
                 .Start();
     }
+
+    static void TestRoslynCodeGenerator()
+    {
+        var setAgeMethodBody = @"
+     this._age = age;
+     return this;
+     ";
+        var ctorBody = @$"
+     this.Name = name;
+     this.{TypeMemberNameHelper.ToFieldName("age")} = age;
+     ";
+        var personType = new TypePath("PersonDto");
+        var personDto = RoslynHelper.CreateType(personType)
+            .AddField(new(TypeMemberNameHelper.ToFieldName("lastName"), TypePath.New<string>()), out var lastNameField)
+            .AddConstructor(new[] { (TypePath.New<string>(), "name"), (TypePath.New<int>(), "age") }, ctorBody)
+            .AddProperty<string>("Name")
+            .AddPropertyWithBackingField(new("LastName", TypePath.New<string>()), lastNameField)
+            .AddPropertyWithBackingField(new("Age", TypePath.New<int>(), setAccessor: (false, null)))
+            .AddMethod(new RosMethodInfo(null, personType, "SetAge", new[] { (TypePath.New<int>(), "age") }, setAgeMethodBody))
+            ;
+
+        var ns = RoslynHelper.CreateNamespace("Test.Dtos")
+            .AddType(personDto);
+
+        var root = RoslynHelper.CreateRoot()
+            .AddUsingNameSpace(nameof(System))
+            .AddUsingNameSpace(nameof(System.Linq))
+            .AddUsingNameSpace(nameof(System.Threading))
+            .AddNameSpace(ns);
+        WriteLine(root.GenerateCode());
+    }
+
 }
