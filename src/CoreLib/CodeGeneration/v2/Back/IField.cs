@@ -10,16 +10,13 @@ public interface IField : IMember
     bool IsReadOnly { get; }
 
     TypePath Type { get; }
-
-    static IField New(string name, TypePath type, AccessModifier accessModifier = DefaultAccessModifier)
-        => new Field(name, type, accessModifier);
 }
 
 [Immutable]
 public sealed class Field : Member, IField
 {
-    public Field(string name, TypePath type, AccessModifier accessModifier = IField.DefaultAccessModifier)
-        : base(name)
+    public Field(string name, TypePath type)
+        :base(name)
     {
         this.Type = type;
         this.AccessModifier = accessModifier;

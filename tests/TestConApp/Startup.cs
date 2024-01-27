@@ -1,8 +1,4 @@
-﻿using Library.CodeGeneration;
-using Library.CodeGeneration.v2;
-using Library.CodeGeneration.v2.Back;
-
-Initialize();
+﻿Initialize();
 
 INamespace.New("GSTech.Dtos")
     .AddType(IClass.New("PersonDto")
