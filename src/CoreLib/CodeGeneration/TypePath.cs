@@ -12,21 +12,21 @@ namespace Library.CodeGeneration;
 public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
 {
     private static readonly (Type Type, string Keyword)[] _primitiveTypes = [
-        (typeof(string), "string"),
+        (typeof(int), "int"),
+        (typeof(long), "long"),
         (typeof(byte), "byte"),
-        (typeof(sbyte), "sbyte"),
         (typeof(char), "char"),
         (typeof(bool), "bool"),
         (typeof(uint), "uint"),
         (typeof(nint), "nint"),
+        (typeof(float), "float"),
         (typeof(nuint), "nuint"),
         (typeof(short), "short"),
-        (typeof(ushort), "ushort"),
-        (typeof(int), "int"),
-        (typeof(long), "long"),
-        (typeof(float), "float"),
-        (typeof(decimal), "decimal"),
+        (typeof(sbyte), "sbyte"),
         (typeof(double), "double"),
+        (typeof(string), "string"),
+        (typeof(ushort), "ushort"),
+        (typeof(decimal), "decimal"),
         ];
 
     private readonly TypeData _data = Parse(fullPath, generics, isNullable);
@@ -72,17 +72,19 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
     [return: NotNull]
     public static IEnumerable<string>? GetNameSpaces(in string? typePath) =>
-        typePath == null ? Enumerable.Empty<string>() : New(typePath).GetNameSpaces();
+        typePath == null ? [] : New(typePath).GetNameSpaces();
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
     public static implicit operator string?(in TypePath? typeInfo) =>
         typeInfo?.FullPath;
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
+    [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "<Pending>")]
     public static implicit operator TypePath?(in string? typeInfo) =>
         typeInfo.IsNullOrEmpty() ? null : new(typeInfo);
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
+    [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "<Pending>")]
     public static implicit operator TypePath?(in Type? typeInfo) =>
         typeInfo == null ? null : New(typeInfo);
 
@@ -184,9 +186,9 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         Check.MustBe(generics?.All(x => !x.IsNullOrEmpty()) ?? true, () => "Generic types cannot be null or empty.");
 
         // Initializations
-        var typePathBuffer = typePath;
+        var typePathBuffer = typePath.ArgumentNotNull();
 
-        var isAsync = typePathBuffer.StartsWith(" async ");
+        var isAsync = typePathBuffer.StartsWith(" async ", StringComparison.InvariantCulture);
         if (isAsync)
         {
             typePathBuffer = typePathBuffer.TrimStart(" async ");

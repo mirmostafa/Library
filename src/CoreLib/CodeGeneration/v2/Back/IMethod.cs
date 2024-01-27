@@ -11,6 +11,20 @@ public interface IMethod : IMember, IHasGenericTypes
     bool IsExtension { get; }
     ISet<(TypePath Type, string Name)> Parameters { get; }
     TypePath? ReturnType { get; }
+
+    static IMember New(string name, string? body = null, IEnumerable<(TypePath Type, string Name)>? parameters = null, TypePath? returnType = null)
+    {
+        var result = new Method(name)
+        {
+            Body = body,
+            ReturnType = returnType
+        };
+        if (parameters?.Any() == true)
+        {
+            _ = result.Parameters.AddRange(parameters);
+        }
+        return result;
+    }
 }
 
 [Immutable]

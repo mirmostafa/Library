@@ -1,14 +1,21 @@
 ﻿using Library.DesignPatterns.Markers;
+using Library.Helpers.CodeGen;
 using Library.Validations;
 
 namespace Library.CodeGeneration.v2.Back;
 
-public interface IProperty:IMember
+public interface IProperty : IMember
 {
     string? BackingFieldName { get; }
     PropertyAccessor? Getter { get; }
     PropertyAccessor? Setter { get; }
     TypePath Type { get; }
+
+    public static IProperty New(string name, TypePath type)
+        => new CodeGenProperty(name, type);
+
+    public static IProperty New(string name, TypePath type, string? backingFieldName)
+        => new CodeGenProperty(name, type, backingField: backingFieldName ?? TypeMemberNameHelper.ToFieldName(name));
 }
 
 public class CodeGenProperty : Member, IProperty
@@ -25,6 +32,12 @@ public class CodeGenProperty : Member, IProperty
         this.Type = type.ArgumentNotNull();
         this.AccessModifier = modifier;
         this.InheritanceModifier = inheritanceModifier;
+        this.BackingFieldName = backingField;
+        if (!backingField.IsNullOrEmpty())
+        {
+            setter ??= new();
+            getter ??= new();
+        }
         this.Setter = setter;
         this.Getter = getter;
     }

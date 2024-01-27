@@ -139,7 +139,7 @@ internal partial class Obsoletes
                 .Start();
     }
 
-    static void TestRoslynCodeGenerator()
+    public static void TestRoslynCodeGenerator()
     {
         var setAgeMethodBody = @"
      this._age = age;

@@ -1,4 +1,5 @@
-﻿using Library.DesignPatterns.Markers;
+﻿using Library.CodeGeneration.Models;
+using Library.DesignPatterns.Markers;
 using Library.Results;
 using Library.Validations;
 
@@ -61,4 +62,11 @@ public static class NamSpaceExtensions
         nameSpaces.Distinct().Compact().ForEach(x => ns.UsingNamespaces.Add(x));
         return ns;
     }
+
+    public static Result<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns, TCodeGeneratorEngine engine)
+        where TCodeGeneratorEngine : ICodeGeneratorEngine => engine.Generate(ns);
+
+    public static Result<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns)
+        where TCodeGeneratorEngine : ICodeGeneratorEngine, new() 
+        => GenerateCode(ns, new TCodeGeneratorEngine());
 }
