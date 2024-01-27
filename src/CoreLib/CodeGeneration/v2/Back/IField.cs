@@ -11,7 +11,7 @@ public interface IField : IMember
 
     TypePath Type { get; }
 
-    static IField New(string name, TypePath type, AccessModifier accessModifier = DefaultAccessModifier)
+    static IField New(string name, TypePath type, AccessModifier accessModifier = IField.DefaultAccessModifier)
         => new Field(name, type, accessModifier);
 }
 
