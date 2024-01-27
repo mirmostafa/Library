@@ -120,10 +120,10 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
 
     private static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) CreateRosProperty(CompilationUnitSyntax root, IProperty member)
     {
-        var prop = RoslynHelper.CreateProperty(new(member.Name, member.Type, (IEnumerable<SyntaxKind>?)GeneratorHelper.ToModifiers(member.AccessModifier, member.InheritanceModifier),
-            (member.Getter is not null, GeneratorHelper.ToModifiers(member.Getter?.AccessModifier, null)),
-            (member.Setter is not null, GeneratorHelper.ToModifiers(member.Setter?.AccessModifier, null))
-            ));
+        var propertyInfo = new RosPropertyInfo(member.Name, member.Type, (IEnumerable<SyntaxKind>?)GeneratorHelper.ToModifiers(member.AccessModifier, member.InheritanceModifier), (member.Getter is not null, GeneratorHelper.ToModifiers(member.Getter?.AccessModifier, null)), (member.Setter is not null, GeneratorHelper.ToModifiers(member.Setter?.AccessModifier, null)));
+        var prop = member.BackingFieldName.IsNullOrEmpty()
+            ? RoslynHelper.CreateProperty(propertyInfo)
+            : RoslynHelper.CreatePropertyWithBackingField(propertyInfo, new RosFieldInfo(member.BackingFieldName, member.Type)).Property;
         member.Type.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
         var result = AddAttributes(prop, root, member);
         return result;

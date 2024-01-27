@@ -1,8 +1,12 @@
-﻿using Library.CodeGeneration;
+﻿using System.Diagnostics;
+
+using Library.CodeGeneration;
 using Library.Validations;
 
 namespace Library.Helpers.CodeGen;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class TypeMemberNameHelper
 {
     public static string FixVariableName(in string memberName)
@@ -21,21 +25,21 @@ public static class TypeMemberNameHelper
     public static string ToArgName(in string name)
     {
         var buffer = Initialize(name);
-        var result = $"{buffer[Range.EndAt(1)].ToLower()}{buffer[1..]}";
+        var result = $"{buffer[Range.EndAt(1)].ToLower(System.Globalization.CultureInfo.CurrentCulture)}{buffer[1..]}";
         return FixVariableName(result);
     }
 
     public static string ToFieldName(in string name)
     {
         var buffer = Initialize(name);
-        var result = $"_{buffer[Range.EndAt(1)].ToLower()}{buffer[1..]}";
+        var result = $"_{buffer[Range.EndAt(1)].ToLower(System.Globalization.CultureInfo.CurrentCulture)}{buffer[1..]}";
         return FixVariableName(result);
     }
 
     public static string ToPropName(in string name)
     {
         var buffer = Initialize(name);
-        var result = $"{buffer[Range.EndAt(1)].ToUpper()}{buffer[1..]}";
+        var result = $"{buffer[Range.EndAt(1)].ToUpper(System.Globalization.CultureInfo.CurrentCulture)}{buffer[1..]}";
         return FixVariableName(result);
     }
 

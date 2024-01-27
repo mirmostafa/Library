@@ -4,19 +4,25 @@ namespace Library.CodeGeneration.v2.Back;
 
 public interface IField : IMember
 {
+    [Obsolete("Use AccessModifier, instead.", true)]
     bool IsReadOnly { get; }
     TypePath Type { get; }
+
+    static IField New(string name, TypePath type, AccessModifier accessModifier = AccessModifier.Private | AccessModifier.ReadOnly)
+        => new Field(name, type, accessModifier);
 }
 
 [Immutable]
 public sealed class Field : Member, IField
 {
-    public Field(string name, TypePath type)
-        :base(name)
+    public Field(string name, TypePath type, AccessModifier accessModifier = AccessModifier.Private | AccessModifier.ReadOnly)
+        : base(name)
     {
         this.Type = type;
-        this.AccessModifier = AccessModifier.Private | AccessModifier.ReadOnly;
+        this.AccessModifier = accessModifier;
     }
+
+    [Obsolete("Use AccessModifier, instead.", true)]
     public bool IsReadOnly { get; init; }
     public TypePath Type { get; }
 }
