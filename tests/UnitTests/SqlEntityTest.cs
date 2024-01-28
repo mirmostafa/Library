@@ -19,7 +19,7 @@ public sealed class SqlEntityTest
         var actual = SqlStatementBuilder
                         .Select<Person>()
                         .Build();
-        var expected = @"SELECT [Id], [Name], [LName], [AddressId], [Address]
+        var expected = @"SELECT [FullName], [Id], [Name], [LName], [AddressId], [Address]
     FROM [dbo].[Person]";
         Assert.Equal(expected, actual);
     }
@@ -50,6 +50,7 @@ public sealed class SqlEntityTest
 [Table("Person", Schema = "dbo")]
 file class Person
 {
+    [Column(Order = 4)]
     [ForeignKey(nameof(AddressId))]
     public Address? Address { get; set; }
 

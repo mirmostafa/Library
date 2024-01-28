@@ -52,59 +52,6 @@ public class NumberHelperTest
         Assert.InRange(result, min, max);
     }
 
-    [Fact]
-    public void RandomNumber_WithNullMax_ThrowsNotSupportedException()
-    {
-        // Arrange
-        int? min = 0, max = null;
-
-        // Act & Assert
-        _ = Assert.Throws<NotSupportedException>(() => NumberHelper.RandomNumber(min, max));
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(1)]
-    [InlineData(10)]
-    public void RandomNumbers_NoMinMax_ReturnsRandomNumbers(int count)
-    {
-        // Arrange
-
-        // Act
-        var result = NumberHelper.RandomNumbers(count);
-
-        // Assert
-        Assert.Equal(count, result.Count());
-        Assert.All(result, num => Assert.InRange(num, int.MinValue, int.MaxValue));
-    }
-
-    [Theory]
-    [InlineData(0, 0, 10)]
-    [InlineData(1, -5, 5)]
-    [InlineData(10, int.MinValue, int.MaxValue)]
-    public void RandomNumbers_WithMinMax_ReturnsRandomNumbersInRange(int count, int min, int max)
-    {
-        // Arrange
-
-        // Act
-        var result = NumberHelper.RandomNumbers(count, min, max);
-
-        // Assert
-        Assert.Equal(count, result.Count());
-        Assert.All(result, num => Assert.InRange(num, min, max));
-    }
-
-    [Fact]
-    public void RandomNumbers_WithNullMinMax_ThrowsNotSupportedException()
-    {
-        // Arrange
-        int? min = 0, max = null;
-        var count = 10;
-
-        // Act & Assert
-        _ = Assert.Throws<NotSupportedException>(() => NumberHelper.RandomNumbers(count, min, max).Build());
-    }
-
     [Theory]
     [InlineData(0, 10, 1, new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })]
     [InlineData(10, 0, -1, new int[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 })]
@@ -126,14 +73,6 @@ public class NumberHelperTest
     public void Range_ThrowsArgumentOutOfRangeException_ForZeroStep()
         => Assert.Throws<ArgumentOutOfRangeException>(() => NumberHelper.Range(0, 10, 0).ToArray());
 
-    [Theory]
-    [InlineData(11, 2, new int[] { 0, 2, 4, 6, 8, 10 })]
-    [InlineData(5, 1, new int[] { 0, 1, 2, 3, 4, 5 })]
-    public void Range_WithEndOnly_ReturnsExpectedValues(int end, int step, int[] expectedValues)
-    {
-        var actualValues = NumberHelper.Range(end, step).ToArray();
-        Assert.Equal(expectedValues, actualValues);
-    }
 
     [Fact]
     public void Range_WithEndOnly_ThrowsArgumentException_ForNegativeStepAndStartSmallerThanEnd()

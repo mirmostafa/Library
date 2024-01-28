@@ -132,7 +132,7 @@ public static partial class SqlStatementBuilder
             this.WhereClause = this.OrderByColumn = null;
         }
 
-        public IList<string> Columns { get; } = new List<string>();
+        public IList<string> Columns { get; } = [];
         public string? OrderByColumn { get; set; }
         public OrderByDirection OrderByDirection { get; set; } = OrderByDirection.None;
         public string? Schema { get; set; }

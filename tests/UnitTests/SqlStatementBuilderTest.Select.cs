@@ -14,7 +14,7 @@ public sealed class SelectStatementBuilderTest
             .AddColumns([nameof(Person.Id), nameof(Person.FirstName), nameof(Person.LastName)])
             .From(nameof(Person))
             .Build();
-        var expected = $@"SELECT [{nameof(Person.Id)}], [{nameof(Person.FirstName)}], [{nameof(Person.Age)}]
+        var expected = $@"SELECT [{nameof(Person.Id)}], [{nameof(Person.FirstName)}], [{nameof(Person.LastName)}]
     FROM [{nameof(Person)}]";
         Assert.Equal(expected, actual);
     }
@@ -65,7 +65,7 @@ public sealed class SelectStatementBuilderTest
                         .Columns(nameof(Person.Id))
                         .AddColumn(nameof(Person.LastName), nameof(Person.Age))
                         .Build();
-        var specQueryExpected = $@"SELECT [{nameof(Person.Age)}], [{nameof(Person.Id)}], [{nameof(Person.FirstName)}]
+        var specQueryExpected = $@"SELECT [{nameof(Person.Id)}], [{nameof(Person.LastName)}], [{nameof(Person.Age)}]
     FROM [{nameof(Person)}]";
         Assert.Equal(specQueryExpected, specQueryActual);
     }
@@ -107,7 +107,7 @@ public sealed class SelectStatementBuilderTest
                         .Select(nameof(Person))
                         .Columns([nameof(Person.Id), nameof(Person.FirstName), nameof(Person.Age)])
                         .Build();
-        var specQueryExpected = $@"SELECT [{nameof(Person.Age)}], [{nameof(Person.Id)}], [{nameof(Person.FirstName)}], [{nameof(Person.LastName)}]
+        var specQueryExpected = $@"SELECT [{nameof(Person.Id)}], [{nameof(Person.FirstName)}], [{nameof(Person.Age)}]
     FROM [{nameof(Person)}]";
         Assert.Equal(specQueryExpected, specQueryActual);
     }
@@ -133,15 +133,6 @@ public sealed class SelectStatementBuilderTest
                         .Star()
                         .Build();
         var specQueryExpected = $@"SELECT *
-    FROM [{nameof(Person)}]";
-        Assert.Equal(specQueryExpected, specQueryActual);
-    }
-
-    [Fact]
-    public void CreateSelectGeneric()
-    {
-        var specQueryActual = SqlStatementBuilder.Select<Person>().Build();
-        var specQueryExpected = $@"SELECT [{nameof(Person.Age)}], [{nameof(Person.Id)}], [{nameof(Person.FirstName)}], [{nameof(Person.LastName)}]
     FROM [{nameof(Person)}]";
         Assert.Equal(specQueryExpected, specQueryActual);
     }

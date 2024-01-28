@@ -76,7 +76,7 @@ public static class NumberHelper
     /// <param name="max">The maximum value of the random numbers.</param>
     /// <returns>A sequence of random numbers within the specified range.</returns>
     public static IEnumerable<int> RandomNumbers(int count, int? min = null, int? max = null) =>
-        Range(0, count).Select(_ => InnerRandomizerMethod(min, max)());
+        Range(1, count).Select(_ => InnerRandomizerMethod(min, max)());
 
     /// <summary>
     /// Generates a sequence of integers within a specified range.

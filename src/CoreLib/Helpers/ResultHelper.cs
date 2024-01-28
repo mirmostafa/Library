@@ -87,12 +87,12 @@ public static class ResultHelper
         return result;
     }
 
-    [return: NotNullIfNotNull(nameof(Result))]
-    public static TResult? IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
+    [return: NotNullIfNotNull(nameof(result))]
+    public static TResult? IfSucceed<TResult>(this TResult? result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
         => result?.IsSucceed == true ? next.ArgumentNotNull()() : result;
 
-    [return: NotNullIfNotNull(nameof(Result))]
-    public static TResult? IfSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    [return: NotNullIfNotNull(nameof(result))]
+    public static TResult? IfSucceed<TResult>(this TResult? result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
         if (result?.IsSucceed == true)
         {

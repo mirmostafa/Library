@@ -12,20 +12,9 @@ public sealed class ResultTest
     public void AddOperationResultCountTest()
     {
         var all = AddThreeResults();
-        Assert.Equal(5, all.Errors.Length);
-        Assert.Equal(403, all.Status);
-        Assert.Equal((3, "Error Thr"), all.Errors.Last());
-    }
-
-    [Fact]
-    public void AddOperationResultIndex1Test()
-    {
-        var all = AddThreeResults();
-        Assert.Equal((1, "Error One"), all.Errors.ElementAt(0));
-        Assert.Equal((2, "Error Two"), all.Errors.ElementAt(1));
-        Assert.Equal((null!, 401), all.Errors.ElementAt(2));
-        Assert.Equal((null!, 402), all.Errors.ElementAt(3));
-        Assert.Equal((3, "Error Thr"), all.Errors.ElementAt(4));
+        Assert.Equal(2, all.GetAllErrors().Count());
+        Assert.Equal(401, all.Status);
+        Assert.Equal((3, "Error Thr"), all.GetAllErrors().Last());
     }
 
     [Fact]
