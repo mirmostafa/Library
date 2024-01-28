@@ -1,5 +1,4 @@
-﻿using Library.Data.Markers;
-using Library.Results;
+﻿using Library.Results;
 
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -41,7 +40,7 @@ public interface IAsyncPagingRead<TViewModel, in TId>
     /// <param name="paging">The paging parameters.</param>
     /// <param name="token">The cancellation token.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    Task<PagingResult<TViewModel>> GetAllAsync(PagingParams paging, CancellationToken token = default);
+    AsyncPagingResult<TViewModel> GetAllAsync(PagingParams paging, CancellationToken token = default);
 
     /// <summary>
     /// Asynchronously retrieves a view model by its ID.
@@ -68,6 +67,7 @@ public interface IAsyncRead<TViewModel, in TId>
     /// </param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task<IReadOnlyList<TViewModel>> GetAllAsync(CancellationToken token = default);
+    //IAsyncEnumerable<TViewModel> GetAllAsync(CancellationToken token = default);
 
     /// <summary>
     /// Asynchronously retrieves a view model by its ID.
@@ -162,7 +162,7 @@ public interface IDbEntityToViewModelConverter<out TViewModel, in TDbEntity>
     /// <returns></returns>
     //IEnumerable<TViewModel?> ToViewModel(IEnumerable<TDbEntity?> entities);
     IEnumerable<TViewModel?> ToViewModel(IEnumerable<TDbEntity?> entities) =>
-        entities.Select(ToViewModel);
+        entities.Select(this.ToViewModel);
 
     /// <summary>
     /// Create a new model from the database entity.
@@ -257,7 +257,7 @@ public interface IViewModelToDbEntityConverter<in TViewModel, out TDbEntity>
     /// <param name="models">The model.</param>
     /// <returns></returns>
     IEnumerable<TDbEntity?> ToDbEntity(IEnumerable<TViewModel?> models) =>
-        models.Select(ToDbEntity);
+        models.Select(this.ToDbEntity);
 
     /// <summary>
     /// Converts the model to database entity.
@@ -277,7 +277,9 @@ public record PagingParams(in int PageIndex = 0, in int? PageSize = null);
 /// </summary>
 /// <typeparam name="T"></typeparam>
 /// <seealso cref="System.IEquatable&lt;Library.Interfaces.PagingResult&lt;T&gt;&gt;"/>
+
 public record PagingResult<T>(IReadOnlyList<T> Result, in long TotalCount);
+public record AsyncPagingResult<T>(IAsyncEnumerable<T> Result, in long TotalCount);
 
 public interface IAsyncCreator<TViewModel>
 {

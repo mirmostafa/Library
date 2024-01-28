@@ -52,11 +52,11 @@ public static class ControlHelper
     }
 
     public static TTreeView BindItems<TTreeView>(this TTreeView treeView, IEnumerable? items)
-            where TTreeView : TreeView => BindItems<TTreeView, TreeViewItem>(treeView, items);
+        where TTreeView : TreeView => BindItems<TTreeView, TreeViewItem>(treeView, items);
 
     public static TItemsControl BindItems<TItemsControl, THeaderedItemsControl>(this TItemsControl treeView, IEnumerable? items)
-            where TItemsControl : ItemsControl
-            where THeaderedItemsControl : HeaderedItemsControl, new()
+        where TItemsControl : ItemsControl
+        where THeaderedItemsControl : HeaderedItemsControl, new()
     {
         Check.MustBeArgumentNotNull(treeView);
 
@@ -112,6 +112,8 @@ public static class ControlHelper
 
     public static void BindItemsSource([DisallowNull] this ItemsControl itemsControl, IEnumerable items, string? displayMemberPath = null)
     {
+        Check.MustBeArgumentNotNull(itemsControl);
+
         itemsControl.Rebind(ItemsControl.ItemsSourceProperty);
         itemsControl.ItemsSource = null;
         itemsControl.ItemsSource = items;
@@ -202,7 +204,7 @@ public static class ControlHelper
     }
 
     public static IEnumerable<TControl> GetChildren<TControl>(this Visual visual, bool loopThrough = true)
-            where TControl : class => visual.ArgumentNotNull(nameof(visual)).GetChildren(loopThrough).OfType<TControl>();
+        => visual.ArgumentNotNull().GetChildren(loopThrough).OfType<TControl>();
 
     public static IEnumerable<Visual> GetChildren(this Visual visual, bool loopThrough = true)
     {
@@ -443,7 +445,7 @@ public static class ControlHelper
     }
 
     public static void Rebind(this DependencyObject target, in DependencyProperty dependencyProperty)
-            => BindingOperations.GetBindingExpressionBase(target, dependencyProperty)?.UpdateTarget();
+        => BindingOperations.GetBindingExpressionBase(target, dependencyProperty)?.UpdateTarget();
 
     public static void Rebind(this TextBox target)
         => Rebind(target, TextBox.TextProperty);
@@ -658,17 +660,17 @@ public static class ControlHelper
         Animations.AnimateDouble(pb, RangeBase.ValueProperty, pb.Value, step, 100);
     }
 
-    public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, Action viewModel_PropertyChanged)
+    public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, Action viewModelPropertyChanged)
         where TPage : LibPageBase, IStatefulPage
         where TViewModel : class, INotifyPropertyChanged =>
-        SetViewModelByDataContext(page, value, (_, _) => viewModel_PropertyChanged?.Invoke());
+        SetViewModelByDataContext(page, value, (_, _) => viewModelPropertyChanged?.Invoke());
 
-    public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, Action<string?> viewModel_PropertyChanged)
+    public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, Action<string?> viewModelPropertyChanged)
         where TPage : LibPageBase, IStatefulPage
         where TViewModel : class, INotifyPropertyChanged =>
-        SetViewModelByDataContext(page, value, (_, e) => viewModel_PropertyChanged?.Invoke(e.PropertyName));
+        SetViewModelByDataContext(page, value, (_, e) => viewModelPropertyChanged?.Invoke(e.PropertyName));
 
-    public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, PropertyChangedEventHandler? viewModel_PropertyChanged = null)
+    public static TPage SetViewModelByDataContext<TPage, TViewModel>(this TPage page, TViewModel? value, PropertyChangedEventHandler? viewModelPropertyChanged = null)
         where TPage : LibPageBase, IStatefulPage
         where TViewModel : class, INotifyPropertyChanged
     {
@@ -678,17 +680,17 @@ public static class ControlHelper
             return page;
         }
 
-        if (old != null && viewModel_PropertyChanged != null)
+        if (old != null && viewModelPropertyChanged != null)
         {
-            old.PropertyChanged -= viewModel_PropertyChanged;
+            old.PropertyChanged -= viewModelPropertyChanged;
         }
 
         page.DataContext = value;
         if (value != null)
         {
-            if (viewModel_PropertyChanged != null)
+            if (viewModelPropertyChanged != null)
             {
-                value.PropertyChanged += viewModel_PropertyChanged;
+                value.PropertyChanged += viewModelPropertyChanged;
             }
             else
             {
