@@ -1,6 +1,7 @@
 ﻿using Library.CodeGeneration;
 using Library.CodeGeneration.v2;
 using Library.CodeGeneration.v2.Back;
+using Library.Helpers.ConsoleHelper;
 
 Initialize();
 
@@ -13,3 +14,6 @@ INamespace.New("GSTech.Dtos")
         )
     .GenerateCode<RoslynCodeGenerator>()
     .WriteLine();
+
+List<int> list = new List<int>().AsFluent().Add(5).Add(2).Add(3);
+DumpListLine(list);

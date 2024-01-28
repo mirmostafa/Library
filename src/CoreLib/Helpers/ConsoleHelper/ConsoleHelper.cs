@@ -24,6 +24,16 @@ public static class ConsoleHelper
         LibLogger.Debug("Configured.", nameof(ConsoleHelper));
     }
 
+    public static T DumpListLine<T>(T t)
+        where T : IEnumerable
+    {
+        foreach (var item in t)
+        {
+            Console.WriteLine(item);
+        }
+        return t;
+    }
+
     public static T DumpLine<T>(T t)
     {
         if (t == null)
