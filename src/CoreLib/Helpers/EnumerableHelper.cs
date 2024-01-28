@@ -304,6 +304,9 @@ public static class EnumerableHelper
     public static FluentList<TItem> AsFluent<TItem>(this IList<TItem> list) =>
         FluentList<TItem>.New(list);
 
+    public static FluentListWrapper<TItem, TList> AsFluent<TItem, TList>(this TList list) where TList : IList<TItem> =>
+        new(list);
+
     // Check if the length of the array is not zero or null.
     /// <summary>
     /// Get a <see cref="Span{T}"/> view over a <see cref="List{T}"/>'s data. Items should not be
