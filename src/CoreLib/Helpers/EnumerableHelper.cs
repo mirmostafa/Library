@@ -616,6 +616,66 @@ public static class EnumerableHelper
     public static T[] EmptyArray<T>() =>
         [];
 
+    public static IEnumerable<TResult> Enumerate<T, TResult>(this IEnumerable<T> values, Func<T, TResult> action, CancellationToken token = default)
+    {
+        Check.MustBeArgumentNotNull(action);
+        if (values?.Any() != true)
+        {
+            yield break;
+        }
+
+        using var enumerator = values.GetEnumerator();
+        while (enumerator.MoveNext() && !token.IsCancellationRequested)
+        {
+            yield return action(enumerator.Current);
+        }
+    }
+
+    public static void Enumerate<T>(this IEnumerable<T> values, Action<T> action, CancellationToken token = default)
+    {
+        Check.MustBeArgumentNotNull(action);
+        if (values?.Any() != true)
+        {
+            return;
+        }
+
+        using var enumerator = values.GetEnumerator();
+        while (enumerator.MoveNext() && !token.IsCancellationRequested)
+        {
+            action(enumerator.Current);
+        }
+    }
+
+    public static async Task EnumerateAsync<T>(this IEnumerable<T> values, Func<T, CancellationToken, Task> action, CancellationToken token = default)
+    {
+        Check.MustBeArgumentNotNull(action);
+        if (values?.Any() != true)
+        {
+            return;
+        }
+
+        using var enumerator = values.GetEnumerator();
+        while (enumerator.MoveNext() && !token.IsCancellationRequested)
+        {
+            await action(enumerator.Current, token);
+        }
+    }
+
+    public static async IAsyncEnumerable<TResult> EnumerateAsync<T, TResult>(this IEnumerable<T> values, Func<T, CancellationToken, Task<TResult>> action, [EnumeratorCancellation] CancellationToken token = default)
+    {
+        Check.MustBeArgumentNotNull(action);
+        if (values?.Any() != true)
+        {
+            yield break;
+        }
+
+        using var enumerator = values.GetEnumerator();
+        while (enumerator.MoveNext() && !token.IsCancellationRequested)
+        {
+            yield return await action(enumerator.Current, token);
+        }
+    }
+
     /// <summary>
     /// Compares two IEnumerable objects for equality.
     /// </summary>
@@ -1709,7 +1769,7 @@ public static class EnumerableHelper
     [return: NotNull]
     public static async Task<List<TItem>> ToListCompactAsync<TItem>(this IAsyncEnumerable<TItem?>? asyncItems, CancellationToken cancellationToken = default)
     {
-        var result = await (asyncItems is null ? empty() : data()).ToListAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+        var result = await (asyncItems is null ? empty() : data()).ToListAsync(cancellationToken: cancellationToken);
         return result!;
         IAsyncEnumerable<TItem> empty() => EmptyAsyncEnumerable<TItem>.Empty;
         IAsyncEnumerable<TItem> data() => WhereAsync(asyncItems!, x => x is not null, cancellationToken)!;

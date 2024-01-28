@@ -138,5 +138,5 @@ public sealed class Result : ResultBase
         this.Equals(obj as Result);
 
     public override int GetHashCode() =>
-        base.GetHashCode();
+            base.GetHashCode();
 }

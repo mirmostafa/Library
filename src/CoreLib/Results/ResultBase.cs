@@ -25,14 +25,14 @@ public abstract class ResultBase(
     [NotNull]
     public ImmutableArray<(object Id, object Error)> Errors
     {
-        get => this._errors ??= ImmutableArray.Create<(object, object)>();
+        get => this._errors ??= [];
         init => this._errors = value;
     }
 
     public Exception? Exception => this.Errors.FirstOrDefault().Error?.Cast().As<Exception>();
 
     [NotNull]
-    public ImmutableArray<object> ExtraData => this._extraData ??= ImmutableArray.Create<object>();
+    public ImmutableArray<object> ExtraData => this._extraData ??= [];
 
     public ResultBase? InnerResult { get; init; } = innerResult;
 
@@ -61,21 +61,23 @@ public abstract class ResultBase(
     public virtual bool Equals(ResultBase? other) =>
         other is not null && this.GetHashCode() == other.GetHashCode();
 
+    [return: NotNull]
+    public IEnumerable<(object Id, object Error)>? GetAllErrors() =>
+        this.IterateOnAll<IEnumerable<(object, object)>>(x => x.Errors).SelectAll();
+
+    [return: NotNull]
+    public IEnumerable<object> GetAllExtraData() =>
+        this.IterateOnAll<IEnumerable<object>>(x => x.ExtraData).SelectAll();
+
+    public object? GetError() => 
+        this.GetAllErrors().FirstOrDefault().Error;
+
     /// <summary>
     /// Serves as the default hash function.
     /// </summary>
     /// <returns>The hash code for the current instance.</returns>
     public override int GetHashCode() =>
         HashCode.Combine(this.IsSucceed, this.Status, this.Message);
-
-    [return: NotNull]
-    public IEnumerable<(object Id, object Error)>? SelectAllErrors() =>
-        this.IterateOnAll<IEnumerable<(object, object)>>(x => x.Errors).SelectAll();
-
-    [return: NotNull]
-    public IEnumerable<object> SelectAllExtraData() =>
-        this.IterateOnAll<IEnumerable<object>>(x => x.ExtraData).SelectAll();
-
     /// <summary>
     /// Generates a string representation of the result object.
     /// </summary>
@@ -102,12 +104,11 @@ public abstract class ResultBase(
 
     private IEnumerable<T> IterateOnAll<T>(Func<ResultBase, T> selector)
     {
-        yield return selector(this);
-        var innerResult = this.InnerResult;
-        while (innerResult != null)
+        var buffer = this;
+        while (buffer != null)
         {
-            yield return selector(innerResult);
-            innerResult = innerResult.InnerResult;
+            yield return selector(buffer);
+            buffer = buffer.InnerResult;
         }
     }
 }

@@ -43,7 +43,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Any_ReturnsFalse_WhenSourceIsEmpty()
+    public void AnyReturnsFalseWhenSourceIsEmpty()
     {
         // Arrange
         IEnumerable source = Array.Empty<int>();
@@ -56,7 +56,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Any_ReturnsFalse_WhenSourceIsNull()
+    public void AnyReturnsFalseWhenSourceIsNull()
     {
         // Arrange
         IEnumerable? source = null;
@@ -69,7 +69,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Any_ReturnsTrue_WhenSourceIsNotNullAndNotEmpty()
+    public void AnyReturnsTrueWhenSourceIsNotNullAndNotEmpty()
     {
         // Arrange
         IEnumerable source = new[] { 1, 2, 3 };
@@ -82,7 +82,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Build_ReturnsReadOnlyList()
+    public void BuildReturnsReadOnlyList()
     {
         // Arrange
         var items = new List<int> { 1, 2, 3 };
@@ -96,7 +96,7 @@ public sealed class EnumerableHelperTest
 
     [Theory]
     [InlineData(new[] { 1, 2, 3 })]
-    public void Copy_ArrayWithElements_ReturnsCopyOfArray<T>(T[] array)
+    public void CopyArrayWithElementsReturnsCopyOfArray<T>(T[] array)
     {
         // Arrange
 
@@ -110,7 +110,7 @@ public sealed class EnumerableHelperTest
 
     [Theory]
     [InlineData(new int[0])]
-    public void Copy_EmptyArray_ReturnsEmptyArray<T>(T[] array)
+    public void CopyEmptyArrayReturnsEmptyArray<T>(T[] array)
     {
         // Arrange
 
@@ -126,7 +126,7 @@ public sealed class EnumerableHelperTest
     [InlineData(new string[] { "a", "b", "c" }, new string[] { "a", "b" }, false)]
     [InlineData(new int[] { 10, 20, 30 }, new int[] { 10, 20, 30 }, true)]
     [InlineData(new int[] { 10, 20, 30 }, new int[] { 10, 20 }, false)]
-    public void Copy_StringArray_CompareCopiedArrays<T>(T[] source, T[] destination, bool expected)
+    public void CopyStringArrayCompareCopiedArrays<T>(T[] source, T[] destination, bool expected)
     {
         // Arrange
 
@@ -146,7 +146,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Copy_StringArray_ReturnsCopyOfStringArray()
+    public void CopyStringArrayReturnsCopyOfStringArray()
     {
         // Arrange
         var array = new[] { "foo", "bar", "baz" };
@@ -162,6 +162,64 @@ public sealed class EnumerableHelperTest
     [Fact]
     public void CountNotEnumeratedTest()
         => Assert.Equal(6, this._names.CountNotEnumerated());
+
+    [Fact]
+    public void EnumerateWithCancelledToken()
+    {
+        // Arrange
+        IEnumerable<int> values = [1, 2, 3];
+        static int action(int x) => x * 2;
+        using var tokenSource = new CancellationTokenSource();
+        tokenSource.Cancel();
+
+        // Act
+        var result = values.Enumerate(action, tokenSource.Token);
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void EnumerateWithEmptyList()
+    {
+        // Arrange
+        IEnumerable<int> values = [];
+        static int action(int x) => x * 2;
+
+        // Act
+        var result = values.Enumerate(action);
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void EnumerateWithNullValues()
+    {
+        // Arrange
+        IEnumerable<int>? values = null;
+        static int action(int x) => x * 2;
+
+        // Act
+        var result = values!.Enumerate(action);
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void EnumerateWithValidInput()
+    {
+        // Arrange
+        IEnumerable<int> values = [1, 2, 3];
+        static int action(int x) => x * 2;
+
+        // Act
+        var result = values.Enumerate(action).ToList();
+
+        // Assert
+        Assert.Equal([2, 4, 6], result);
+    }
 
     [Theory]
     [InlineData(new[] { 1, 2, 3 }, new[] { 1, 2, 3 }, false, true)]
@@ -199,7 +257,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void FindDuplicatesOnNonDistinctList_Test()
+    public void FindDuplicatesOnNonDistinctListTest()
     {
         // Arrange
         var list = new List<int> { 1, 2, 3, 4, 2 };
@@ -213,7 +271,46 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void IsSame_ReturnsFalseForDifferentCollections()
+    public void IndexesOfReturnsCorrectIndexes()
+    {
+        // Arrange
+        var items = new List<int> { 1, 2, 3, 2, 4, 2 };
+
+        // Act
+        var result = items.IndexesOf(2);
+
+        // Assert
+        Assert.Equal([1, 3, 5], result);
+    }
+
+    [Fact]
+    public void IndexesOfReturnsCorrectIndexesForNullItem()
+    {
+        // Arrange
+        var items = new List<string?> { "hello", null, "world", null, null };
+
+        // Act
+        var result = items.IndexesOf(null);
+
+        // Assert
+        Assert.Equal([1, 3, 4], result);
+    }
+
+    [Fact]
+    public void IndexesOfReturnsEmptyForNonexistentItem()
+    {
+        // Arrange
+        var items = new List<int> { 1, 2, 3, 4 };
+
+        // Act
+        var result = items.IndexesOf(5);
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public void IsSameReturnsFalseForDifferentCollections()
     {
         // Arrange
         var items1 = new List<int> { 1, 2, 3 };
@@ -227,7 +324,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void IsSame_ReturnsFalseForOneNullCollection()
+    public void IsSameReturnsFalseForOneNullCollection()
     {
         // Arrange
         var items1 = new List<int> { 1, 2, 3 };
@@ -241,7 +338,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void IsSame_ReturnsTrueForEqualCollections()
+    public void IsSameReturnsTrueForEqualCollections()
     {
         // Arrange
         var items1 = new List<int> { 1, 2, 3 };
@@ -255,7 +352,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void IsSame_ReturnsTrueForNullCollections()
+    public void IsSameReturnsTrueForNullCollections()
     {
         // Arrange
         List<int>? items1 = null;
@@ -272,7 +369,7 @@ public sealed class EnumerableHelperTest
     [InlineData(new[] { 1, 2, 3, 4, 5 }, -1, 5, new[] { 1, 2, 3, 4 })]
     [InlineData(new[] { 1, 2, 3, 4, 5 }, -3, 3, new[] { 1, 2, 4, 5 })]
     [InlineData(new[] { "A", "B", "C" }, -2, "B", new[] { "A", "C" })]
-    public void Pop_RemovesAndReturnsElementAtSpecifiedIndex_NegativeIndex<T>(T[] input, int index, T expected, T[] remaining)
+    public void PopRemovesAndReturnsElementAtSpecifiedIndexNegativeIndex<T>(T[] input, int index, T expected, T[] remaining)
     {
         // Arrange
         var list = new List<T>(input);
@@ -289,7 +386,7 @@ public sealed class EnumerableHelperTest
     [Theory]
     [InlineData(new[] { 1, 2, 3, 4, 5 }, 2, 3, new[] { 1, 2, 4, 5 })]
     [InlineData(new[] { "A", "B", "C" }, 1, "B", new[] { "A", "C" })]
-    public void Pop_RemovesAndReturnsElementAtSpecifiedIndex_PositiveIndex<T>(T[] input, int index, T expected, T[] remaining)
+    public void PopRemovesAndReturnsElementAtSpecifiedIndexPositiveIndex<T>(T[] input, int index, T expected, T[] remaining)
     {
         // Arrange
         var list = new List<T>(input);
@@ -306,7 +403,7 @@ public sealed class EnumerableHelperTest
     [Theory]
     [InlineData(new[] { 1, 2, 3, 4, 5 }, 5, new[] { 1, 2, 3, 4 })]
     [InlineData(new[] { "A", "B", "C" }, "C", new[] { "A", "B" })]
-    public void Pop_RemovesAndReturnsLastElement<T>(T[] input, T expected, T[] remaining)
+    public void PopRemovesAndReturnsLastElement<T>(T[] input, T expected, T[] remaining)
     {
         // Arrange
         var list = new List<T>(input);
@@ -323,7 +420,7 @@ public sealed class EnumerableHelperTest
     [Theory]
     [InlineData(new[] { 1, 2, 3, 4, 5 }, 10)]
     [InlineData(new[] { "A", "B", "C" }, 5)]
-    public void Pop_RemovesAndReturnsLastElement_WhenIndexIsGreaterThanListLength<T>(T[] input, int index)
+    public void PopRemovesAndReturnsLastElementWhenIndexIsGreaterThanListLength<T>(T[] input, int index)
     {
         // Arrange
         var list = new List<T>(input);
@@ -374,8 +471,20 @@ public sealed class EnumerableHelperTest
         Assert.Equal(expected, actual);
     }
 
+    [Theory]
+    [InlineData("John", 5)]
+    [InlineData(3000, 2999)]
+    public void RepeatTest(object item, int count)
+    {
+        var actual = EnumerableHelper.Repeat(item, count).ToArray();
+        for (var i = 0; i < count; i++)
+        {
+            Assert.Equal(item, actual[i]);
+        }
+    }
+
     [Fact]
-    public void RunAllWhile_Test()
+    public void RunAllWhileTest()
     {
         // Arrange
         var actions = new List<Action>
@@ -400,7 +509,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Slice_EndIndex()
+    public void SliceEndIndex()
     {
         // Assign
         var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
@@ -414,7 +523,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Slice_Full()
+    public void SliceFull()
     {
         // Assign
         var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
@@ -428,21 +537,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Slice_ReverseArray()
-    {
-        // Assign
-        var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
-        var expected = new[] { "Sister 3", "Sister 2", "Sister 1", "Me", "Mom", "Dad" };
-
-        // Act
-        var actual = myFamily.Slice(steps: -1);
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public void Slice_FullCopyArray()
+    public void SliceFullCopyArray()
     {
         // Assign
         var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
@@ -456,7 +551,21 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Slice_StartIndex()
+    public void SliceReverseArray()
+    {
+        // Assign
+        var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
+        var expected = new[] { "Sister 3", "Sister 2", "Sister 1", "Me", "Mom", "Dad" };
+
+        // Act
+        var actual = myFamily.Slice(steps: -1);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void SliceStartIndex()
     {
         // Assign
         var myFamily = new[] { "Dad", "Mom", "Me", "Sister 1", "Sister 2", "Sister 3" };
@@ -485,13 +594,121 @@ public sealed class EnumerableHelperTest
         var list = new List<int>(input);
 
         // Call the static method and assert the result
-        Assert.Equal(expected, list.AsSpan().ToArray());
+        Assert.Equal(expected, [.. list]);
     }
 
     [Theory]
     [MemberData(nameof(TestCompactData))]
     public void TestCompact(IEnumerable<object?>? input, IEnumerable<object> expected)
         => Assert.Equal(expected, input.Compact());
+
+    [Fact]
+    public async Task TestEnumerateAsyncWithCancelledToken()
+    {
+        // Arrange
+        IEnumerable<int> values = [1, 2, 3];
+        static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
+        var tokenSource = new CancellationTokenSource();
+        tokenSource.Cancel();
+
+        // Act
+        await values.EnumerateAsync(action, tokenSource.Token).ConfigureAwait(false);
+
+        // Assert No assertions needed here because the method does not return anything.
+    }
+
+    [Fact]
+    public async Task TestEnumerateAsyncWithEmptyList()
+    {
+        // Arrange
+        IEnumerable<int> values = [];
+        static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
+
+        // Act
+        await values.EnumerateAsync(action).ConfigureAwait(false);
+
+        // Assert No assertions needed here because the method does not return anything.
+    }
+
+    [Fact]
+    public async Task TestEnumerateAsyncWithNullValues()
+    {
+        // Arrange
+        IEnumerable<int>? values = null;
+        static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
+
+        // Act
+        await values.EnumerateAsync(action).ConfigureAwait(false);
+
+        // Assert No assertions needed here because the method does not return anything.
+    }
+
+    [Fact]
+    public async Task TestEnumerateAsyncWithValidInput()
+    {
+        // Arrange
+        IEnumerable<int> values = [1, 2, 3];
+        static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
+
+        // Act
+        await values.EnumerateAsync(action).ConfigureAwait(false);
+
+        // Assert No assertions needed here because the method does not return anything.
+    }
+
+    [Fact]
+    public void TestEnumerateWithCancelledToken()
+    {
+        // Arrange
+        IEnumerable<int> values = [1, 2, 3];
+        static void action(int x) => Console.WriteLine(x * 2);
+        var tokenSource = new CancellationTokenSource();
+        tokenSource.Cancel();
+
+        // Act
+        values.Enumerate(action, tokenSource.Token);
+
+        // Assert No assertions needed here because the method does not return anything.
+    }
+
+    [Fact]
+    public void TestEnumerateWithEmptyList()
+    {
+        // Arrange
+        IEnumerable<int> values = [];
+        static void action(int x) => Console.WriteLine(x * 2);
+
+        // Act
+        values.Enumerate(action);
+
+        // Assert No assertions needed here because the method does not return anything.
+    }
+
+    [Fact]
+    public void TestEnumerateWithNullValues()
+    {
+        // Arrange
+        IEnumerable<int>? values = null;
+        static void action(int x) => Console.WriteLine(x * 2);
+
+        // Act
+        values.Enumerate(action);
+
+        // Assert No assertions needed here because the method does not return anything.
+    }
+
+    [Fact]
+    public void TestEnumerateWithValidInput()
+    {
+        // Arrange
+        IEnumerable<int> values = [1, 2, 3];
+        static void action(int x) => Console.WriteLine(x * 2);
+
+        // Act
+        values.Enumerate(action);
+
+        // Assert No assertions needed here because the method does not return anything.
+    }
 
     [Theory]
     [InlineData(3)]
@@ -530,56 +747,6 @@ public sealed class EnumerableHelperTest
             {
                 Assert.Fail($"Expected value was: {count}. But actual value is: {index}");
             }
-        }
-    }
-
-    [Fact]
-    public void IndexesOf_ReturnsCorrectIndexes()
-    {
-        // Arrange
-        var items = new List<int> { 1, 2, 3, 2, 4, 2 };
-
-        // Act
-        var result = items.IndexesOf(2);
-
-        // Assert
-        Assert.Equal(new[] { 1, 3, 5 }, result);
-    }
-
-    [Fact]
-    public void IndexesOf_ReturnsEmptyForNonexistentItem()
-    {
-        // Arrange
-        var items = new List<int> { 1, 2, 3, 4 };
-
-        // Act
-        var result = items.IndexesOf(5);
-
-        // Assert
-        Assert.Empty(result);
-    }
-
-    [Fact]
-    public void IndexesOf_ReturnsCorrectIndexesForNullItem()
-    {
-        // Arrange
-        var items = new List<string?> { "hello", null, "world", null, null };
-
-        // Act
-        var result = items.IndexesOf(null);
-
-        // Assert
-        Assert.Equal(new[] { 1, 3, 4 }, result);
-    }
-    [Theory]
-    [InlineData("John", 5)]
-    [InlineData(3000, 2999)]
-    public void RepeatTest(object item, int count)
-    {
-        var actual = EnumerableHelper.Repeat(item, count).ToArray();
-        for (var i = 0; i < count; i++)
-        {
-            Assert.Equal(item, actual[i]);
         }
     }
 }

@@ -22,7 +22,7 @@ public sealed class ValidationResultSetTest
             .ArgumentNotNull()
             .NotNullOrEmpty(x => x.FirstName)
             .Build();
-        _ = Assert.Single(result.Errors);
+        _ = Assert.Single(result.GetAllErrors());
     }
 
     [Fact]

@@ -32,7 +32,7 @@ public sealed class FunctionalTest
 
         // Assert Assert
         Assert.False(actual.IsSucceed);
-        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Status);
+        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.GetError());
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public sealed class FunctionalTest
 
         // Assert Assert
         Assert.False(actual.IsSucceed);
-        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Status);
+        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.GetError());
     }
 
     [Fact]

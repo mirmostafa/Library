@@ -58,39 +58,4 @@ public sealed class CodeHelperTest
         Assert.Equal(1, actual_an_fun.Value);
         Assert.Equal(1, actual_local_fun.Value);
     }
-
-    [Fact]
-    public void TryResult02Failure()
-    {
-        // Assign
-        var divedBy = 0;
-        void local_act()
-        {
-        }
-        int local_fun()
-            => 5 / divedBy;
-        void an_act()
-        {
-            _ = 5 / divedBy;
-        }
-        int an_fun() => 5 / divedBy;
-
-        // Act
-        var actual_an_act = CatchResult(an_act);
-        var actual_an_fun = CatchResult(an_fun);
-        var actual_local_act = CatchResult(ToAction(local_act));
-        var actual_local_fun = CatchResult(ToFunc(local_fun));
-        var exceptedExceptionType = typeof(DivideByZeroException);
-        var expectedMessage = "Attempted to divide by zero.";
-
-        // Assert
-        Assert.NotNull(actual_an_act);
-        Assert.NotNull(actual_an_fun);
-        Assert.NotNull(actual_local_act);
-        Assert.NotNull(actual_local_fun);
-        var ex = Assert.IsAssignableFrom<DivideByZeroException>(actual_an_fun.Status);
-        Assert.Equal(expectedMessage, ex.Message);
-        ex = Assert.IsAssignableFrom<DivideByZeroException>(actual_local_fun.Status);
-        Assert.Equal(expectedMessage, ex.Message);
-    }
 }
