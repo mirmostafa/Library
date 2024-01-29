@@ -2,15 +2,15 @@
 
 public static class SqlTypeHelper
 {
-    public static string FormatDate(DateTime date, string onNull = "NULL", bool isForInterpolation = true)
+    public static string FormatDate(DateTime date, string onNull = "NULL", bool isForInterpolation = false)
         => date == default || DBNull.Value.Equals(date)
             ? onNull
             : isForInterpolation ? $"{date:yyyy-MM-dd HH:mm:ss}" : $"'{date:yyyy-MM-dd HH:mm:ss}'";
 
-    public static string FormatDate(this DateTime? date, string onNull = "NULL", bool isForInterpolation = true)
+    public static string FormatDate(this DateTime? date, string onNull = "NULL", bool isForInterpolation = false)
         => (date == null || DBNull.Value.Equals(date)) ? onNull : FormatDate(date.Value, onNull, isForInterpolation);
 
-    public static string FormatDate(object? data, string onNull = "null", bool isForInterpolation = true)
+    public static string FormatDate(object? data, string onNull = "null", bool isForInterpolation = false)
         => data switch
         {
             DateTime dt => FormatDate(dt, onNull, isForInterpolation),
