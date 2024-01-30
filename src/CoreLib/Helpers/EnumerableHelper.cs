@@ -527,7 +527,7 @@ public static class EnumerableHelper
         items?
              .Where([DebuggerStepThrough] (x) => x is not null)
              .Select([DebuggerStepThrough] (x) => x!)
-        ?? Enumerable.Empty<TSource>();
+        ?? [];
 
     /// <summary>
     /// Checks if the given IEnumerable contains a key-value pair with the specified key.
