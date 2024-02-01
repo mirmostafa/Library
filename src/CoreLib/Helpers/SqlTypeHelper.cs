@@ -2,16 +2,21 @@
 
 public static class SqlTypeHelper
 {
-    public static string FormatDate(DateTime? date, string onNull = "null") =>
-        ObjectHelper.IsDbNull(date) ? onNull : date.Value.ToString("yyyy-MM-dd HH:mm:ss");
+    public static string FormatDate(DateTime date, string onNull = "NULL", bool isForInterpolation = false)
+        => date == default || DBNull.Value.Equals(date)
+            ? onNull
+            : isForInterpolation ? $"{date:yyyy-MM-dd HH:mm:ss}" : $"'{date:yyyy-MM-dd HH:mm:ss}'";
 
-    public static string FormatDate(object? data, string onNull = "null") =>
-        data switch
+    public static string FormatDate(this DateTime? date, string onNull = "NULL", bool isForInterpolation = false)
+        => (date == null || DBNull.Value.Equals(date)) ? onNull : FormatDate(date.Value, onNull, isForInterpolation);
+
+    public static string FormatDate(object? data, string onNull = "null", bool isForInterpolation = false)
+        => data switch
         {
-            DateTime dt => FormatDate(dt),
-            DateOnly d => FormatDate(d.ToDateTime(TimeOnly.MinValue)),
-            TimeOnly t => FormatDate(DateOnly.MinValue.ToDateTime(t)),
-            null => FormatDate((DateTime?)data, onNull),
+            DateTime dt => FormatDate(dt, onNull, isForInterpolation),
+            DateOnly d => FormatDate(d.ToDateTime(TimeOnly.MinValue), onNull, isForInterpolation),
+            TimeOnly t => FormatDate(DateOnly.MinValue.ToDateTime(t), onNull, isForInterpolation),
+            null => FormatDate((DateTime?)data, onNull, isForInterpolation),
             _ => throw new NotImplementedException(),
         };
 
@@ -33,7 +38,7 @@ public static class SqlTypeHelper
     /// <param name="typeName">The SQL type name to be converted.</param>
     /// <returns>The corresponding .NET Type for the given SQL type name.</returns>
     public static Type SqlTypeToNetType(string typeName) =>
-        typeName?.ToLower() switch
+        typeName?.ToLower(System.Globalization.CultureInfo.CurrentCulture) switch
         {
             "smallint" => typeof(short), // Map "smallint" to short.
             "int" => typeof(int), // Map "int" to int.

@@ -12,6 +12,20 @@ namespace Library.Mapping;
 [Stateless]
 public sealed class Mapper : IMapper
 {
+    private static readonly HashSet<CustomMapper> _customMappers = [];
+
+    public IMapper ConfigureMapFor<TSource, TDestination>(Func<TSource, TDestination> customMapper)
+    {
+        _ = _customMappers.Add(CustomMapper.New(customMapper));
+        return this;
+    }
+
+    public IMapper ConfigureMapFor<TSource, TDestination>(Func<TDestination> customMapper)
+    {
+        _ = _customMappers.Add(CustomMapper.New<TSource, TDestination>(customMapper));
+        return this;
+    }
+
     [return: MaybeNull]
     public TDestination Map<TDestination>(in object source, in TDestination destination)
         where TDestination : class
@@ -37,9 +51,6 @@ public sealed class Mapper : IMapper
         where TDestination : class
         => source?.Convert();
 
-    public TDestination Map<TDestination>(in object source) where TDestination : class, new()
-        => this.Map(source, new TDestination())!;
-
     public TDestination Map<TSelf, TDestination, TMapper>(TSelf source)
         where TMapper : IMappable<TSelf, TDestination>, new()
         where TDestination : class, new()
@@ -52,8 +63,38 @@ public sealed class Mapper : IMapper
     public TDestination? Map<TSource, TDestination>(in TSource? source, in TDestination destination)
         where TDestination : class => this.MapExcept<TDestination>(source, destination, default!);
 
+    [return: NotNull]
+    public TDestination Map<TDestination>(in object source)
+    {
+        var destinationType = typeof(TDestination);
+        var customMapper = FindCustomMapper(source.GetType(), destinationType, 1);
+        if (customMapper != null)
+        {
+            return (TDestination)customMapper.Map.DynamicInvoke(source)!;
+        }
+        var ctor = destinationType.GetConstructor([]);
+        if (ctor != null)
+        {
+            var destination = (TDestination)ctor.Invoke([]);
+            return Copy(source, destination)!;
+        }
+        throw new NotSupportedException();
+    }
+
+    [return: NotNullIfNotNull(nameof(destination))]
+    public TDestination? Map<TDestination>(object source, in TDestination destination)
+    {
+        var customMapper = FindCustomMapper(source.GetType(), typeof(TDestination), 2);
+        return customMapper != null
+            ? (TDestination?)customMapper.Map.DynamicInvoke(source, destination)
+            : Copy(source, destination);
+    }
+
+    public TDestination Map<TDestination>(in object source, Func<TDestination> getDestination)
+        => Copy(source, getDestination());
+
     public TDestination? MapExcept<TDestination>(in object? source, in TDestination destination, in Func<TDestination, object>? except)
-        where TDestination : class
+                    where TDestination : class
     {
         if (source is null)
         {
@@ -125,9 +166,8 @@ public sealed class Mapper : IMapper
     public TDestination? MapOnly<TSource, TDestination>(in TSource source, in TDestination destination, in Func<TDestination, object> onlyProps) where TDestination : class => throw new NotImplementedException();
 
     internal static void Copy<TDestination>(object source, TDestination destination, PropertyInfo dstProp)
-            where TDestination : class
     {
-        var mapping = dstProp.GetCustomAttribute<MappingAttribute>()?.MapFrom;
+        var mapping = dstProp.GetCustomAttribute<PropertyMappingAttribute>()?.MapFrom;
         var name = (mapping is { } info) && (info.SourceClassName is null || info.SourceClassName == typeof(TDestination).Name)
                 ? info.SourcePropertyName ?? dstProp.Name
                 : dstProp.Name;
@@ -146,6 +186,19 @@ public sealed class Mapper : IMapper
             }
         }
     }
+
+    private static TDestination Copy<TDestination>(object source, TDestination destination)
+    {
+        var destProps = typeof(TDestination).GetProperties().Compact();
+        foreach (var prop in destProps)
+        {
+            Copy<TDestination>(source, destination, prop);
+        }
+        return destination;
+    }
+
+    private static CustomMapper? FindCustomMapper(Type sourceType, Type destinationType, int paramsCount)
+            => _customMappers.FirstOrDefault(x => x == (sourceType, destinationType, paramsCount));
 }
 
 internal sealed class ConvertMapperToConverter<TSelf, TDestination, TMapper>(TSelf self, [DisallowNull] TMapper mapper) : IConvertible<TDestination?>
