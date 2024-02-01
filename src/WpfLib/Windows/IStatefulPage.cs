@@ -12,5 +12,5 @@ public interface IAsyncSavePage
     /// Saves the data asynchronously.
     /// </summary>
     /// <returns></returns>
-    Task<Result> SaveDbAsync();
+    Task<Result> SaveToDbAsync();
 }

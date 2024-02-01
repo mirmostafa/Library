@@ -17,7 +17,7 @@ public interface IMapper
 
     IMapper ConfigureMapFor<TSource, TDestination>(Func<TDestination> customMapper);
 
-    TDestination Map<TDestination>(in object source)
+    TDestination Map<TDestination>(in object source);
 
     [return: NotNullIfNotNull(nameof(source))]
     TDestination? Map<TSource, TDestination>(in TSource source, in TDestination destination) where TDestination : class;
