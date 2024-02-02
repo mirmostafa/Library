@@ -12,9 +12,7 @@ namespace Library.Interfaces;
 /// <typeparam name="TId">The type of the identifier.</typeparam>
 /// <seealso cref="IAsyncRead&lt;TViewModel, TId&gt;"/>
 /// <seealso cref="IAsyncWrite&lt;TViewModel, TId&gt;"/>
-public interface IAsyncCrud<TViewModel, TId> : IAsyncRead<TViewModel, TId>, IAsyncWrite<TViewModel, TId>
-{
-}
+public interface IAsyncCrud<TViewModel, TId> : IAsyncRead<TViewModel, TId>, IAsyncWrite<TViewModel, TId>;
 
 /// <summary>
 /// Represents an interface for an asynchronous CRUD service that provides read and write operations
@@ -23,9 +21,7 @@ public interface IAsyncCrud<TViewModel, TId> : IAsyncRead<TViewModel, TId>, IAsy
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <seealso cref="IAsyncRead&lt;TViewModel, TId&gt;"/>
 /// <seealso cref="IAsyncWrite&lt;TViewModel, TId&gt;"/>
-public interface IAsyncCrud<TViewModel> : IAsyncRead<TViewModel>, IAsyncWrite<TViewModel>
-{
-}
+public interface IAsyncCrud<TViewModel> : IAsyncRead<TViewModel>, IAsyncWrite<TViewModel>;
 
 /// <summary>
 /// Interface for an asynchronous read paging service.
@@ -54,8 +50,7 @@ public interface IAsyncPagingRead<TViewModel, in TId>
 /// <summary>
 /// Represents an asynchronous read paging service for a specific type of view model.
 /// </summary>
-public interface IAsyncPagingRead<TViewModel> : IAsyncPagingRead<TViewModel, long>
-{ }
+public interface IAsyncPagingRead<TViewModel> : IAsyncPagingRead<TViewModel, long>;
 
 public interface IAsyncRead<TViewModel, in TId>
 {
@@ -67,6 +62,7 @@ public interface IAsyncRead<TViewModel, in TId>
     /// </param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     Task<IReadOnlyList<TViewModel>> GetAllAsync(CancellationToken token = default);
+
     //IAsyncEnumerable<TViewModel> GetAllAsync(CancellationToken token = default);
 
     /// <summary>
@@ -82,15 +78,13 @@ public interface IAsyncRead<TViewModel, in TId>
 /// A standardizer for services to read data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
-public interface IAsyncRead<TViewModel> : IAsyncRead<TViewModel, long>
-{ }
+public interface IAsyncRead<TViewModel> : IAsyncRead<TViewModel, long>;
 
 public interface IAsyncSaveChanges
 {
     /// <summary>
     /// Saves the data asynchronously.
     /// </summary>
-    /// <returns></returns>
     Task<Result<int>> SaveChangesAsync(CancellationToken token = default);
 }
 
@@ -103,9 +97,7 @@ public interface IAsyncTransactional
     Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
 }
 
-public interface IAsyncTransactionSave : IAsyncTransactional, IAsyncSaveChanges, IResetChanges
-{
-}
+public interface IAsyncTransactionSave : IAsyncTransactional, IAsyncSaveChanges, IResetChanges;
 
 /// <summary>
 /// A standardizer for services to write data asynchronously.
@@ -117,15 +109,12 @@ public interface IAsyncWrite<TViewModel, TId>
     /// <summary>
     /// Deletes an entity asynchronously.
     /// </summary>
-    /// <param name="id">The identifier.</param>
-    /// <returns></returns>
     Task<Result> DeleteAsync(TViewModel model, bool persist = true, CancellationToken token = default);
 
     /// <summary>
     /// Inserts an entity asynchronously.
     /// </summary>
     /// <param name="model">The model.</param>
-    /// <returns></returns>
     Task<Result<TViewModel>> InsertAsync(TViewModel model, bool persist = true, CancellationToken token = default);
 
     /// <summary>
@@ -133,7 +122,6 @@ public interface IAsyncWrite<TViewModel, TId>
     /// </summary>
     /// <param name="id">The identifier.</param>
     /// <param name="model">The model.</param>
-    /// <returns></returns>
     Task<Result<TViewModel>> UpdateAsync(TId id, TViewModel model, bool persist = true, CancellationToken token = default);
 }
 
@@ -141,12 +129,9 @@ public interface IAsyncWrite<TViewModel, TId>
 /// A standardizer for services to write data asynchronously.
 /// </summary>
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
-public interface IAsyncWrite<TViewModel> : IAsyncWrite<TViewModel, long>
-{ }
+public interface IAsyncWrite<TViewModel> : IAsyncWrite<TViewModel, long>;
 
-public interface IBusinessService : IService
-{
-}
+public interface IBusinessService : IService;
 
 /// <summary>
 /// Database entity to view model converter
@@ -159,7 +144,6 @@ public interface IDbEntityToViewModelConverter<out TViewModel, in TDbEntity>
     /// Creates a set of models from the database entity.
     /// </summary>
     /// <param name="entities">The entity.</param>
-    /// <returns></returns>
     //IEnumerable<TViewModel?> ToViewModel(IEnumerable<TDbEntity?> entities);
     IEnumerable<TViewModel?> ToViewModel(IEnumerable<TDbEntity?> entities) =>
         entities.Select(this.ToViewModel);
@@ -168,7 +152,6 @@ public interface IDbEntityToViewModelConverter<out TViewModel, in TDbEntity>
     /// Create a new model from the database entity.
     /// </summary>
     /// <param name="entity">The entity.</param>
-    /// <returns></returns>
     [return: NotNullIfNotNull(nameof(entity))]
     TViewModel? ToViewModel(TDbEntity? entity);
 }
@@ -179,27 +162,23 @@ public interface IHierarchicalDbEntityActor<TDbEntity>
     /// Gets the all child entities of specific entity asynchronously.
     /// </summary>
     /// <param name="entity">The entity.</param>
-    /// <returns></returns>
     IAsyncEnumerable<TDbEntity> GetChildEntitiesAsync(TDbEntity entity, CancellationToken token = default);
 
     /// <summary>
     /// Gets the child entities by a specific identifier asynchronously.
     /// </summary>
     /// <param name="parentId">The parent identifier.</param>
-    /// <returns></returns>
     IAsyncEnumerable<TDbEntity> GetChildEntitiesByIdAsync(long parentId, CancellationToken token = default);
 
     /// <summary>
     /// Gets the parent entity asynchronously.
     /// </summary>
     /// <param name="childId">The child identifier.</param>
-    /// <returns></returns>
     Task<TDbEntity?> GetParentEntityAsync(long childId, CancellationToken token = default);
 
     /// <summary>
     /// Gets the root entities asynchronously.
     /// </summary>
-    /// <returns></returns>
     IAsyncEnumerable<TDbEntity> GetRootEntitiesAsync(CancellationToken token = default);
 }
 
@@ -209,20 +188,17 @@ public interface IHierarchicalViewModelActor<TViewModel>
     /// Gets the child models.
     /// </summary>
     /// <param name="model">The model.</param>
-    /// <returns></returns>
     IEnumerable<TViewModel> GetChildModels(in TViewModel model);
 
     /// <summary>
     /// Gets the parent model.
     /// </summary>
     /// <param name="model">The model.</param>
-    /// <returns></returns>
     TViewModel GetParentModel(in TViewModel model);
 
     /// <summary>
     /// Gets the root models.
     /// </summary>
-    /// <returns></returns>
     IEnumerable<TViewModel> GetRootModels();
 }
 
@@ -240,9 +216,7 @@ public interface IResetChanges
 /// <summary>
 /// A base interface for all services declared in the application
 /// </summary>
-public interface IService
-{
-}
+public interface IService;
 
 /// <summary>
 /// View model to database entity converter.
@@ -255,7 +229,6 @@ public interface IViewModelToDbEntityConverter<in TViewModel, out TDbEntity>
     /// Converts the models to database entities.
     /// </summary>
     /// <param name="models">The model.</param>
-    /// <returns></returns>
     IEnumerable<TDbEntity?> ToDbEntity(IEnumerable<TViewModel?> models) =>
         models.Select(this.ToDbEntity);
 
@@ -263,20 +236,11 @@ public interface IViewModelToDbEntityConverter<in TViewModel, out TDbEntity>
     /// Converts the model to database entity.
     /// </summary>
     /// <param name="model">The model.</param>
-    /// <returns></returns>
     [return: NotNullIfNotNull(nameof(model))]
     TDbEntity? ToDbEntity(TViewModel? model);
 }
 
-/// <summary>
-/// </summary>
-/// <seealso cref="IEquatable&lt;PagingParams&gt;"/>
 public record PagingParams(in int PageIndex = 0, in int? PageSize = null);
-
-/// <summary>
-/// </summary>
-/// <typeparam name="T"></typeparam>
-/// <seealso cref="System.IEquatable&lt;Library.Interfaces.PagingResult&lt;T&gt;&gt;"/>
 
 public record PagingResult<T>(IReadOnlyList<T> Result, in long TotalCount);
 public record AsyncPagingResult<T>(IAsyncEnumerable<T> Result, in long TotalCount);

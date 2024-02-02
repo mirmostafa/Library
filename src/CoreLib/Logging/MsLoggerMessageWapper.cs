@@ -13,10 +13,7 @@ public interface IMsLoggerMessageWrapper
     void Warn(string log);
 }
 
-public sealed class MsLoggerMessageWrapper : MsLoggerMessageWrapperBase<MsLoggerMessageWrapper>, IMsLoggerMessageWrapper
+public sealed class MsLoggerMessageWrapper(IMsLogger logger, string? name = null, int? eventId = null)
+    : MsLoggerMessageWrapperBase<MsLoggerMessageWrapper>(logger, name ?? CodeHelper.GetCallerMethodName() ?? Assembly.GetExecutingAssembly().GetName().Name ?? string.Empty, eventId ?? 0), IMsLoggerMessageWrapper
 {
-    public MsLoggerMessageWrapper(IMsLogger logger, string? name = null, int? eventId = null)
-        : base(logger, name ?? CodeHelper.GetCallerMethodName() ?? Assembly.GetExecutingAssembly().GetName().Name ?? string.Empty, eventId ?? 0)
-    {
-    }
 }

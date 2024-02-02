@@ -3,7 +3,8 @@
 namespace Library.Logging;
 
 /// <summary>
-/// FastLoggerBase is an abstract class that implements the ILogger interface and provides a base implementation for logging.
+/// FastLoggerBase is an abstract class that implements the ILogger interface and provides a base
+/// implementation for logging.
 /// </summary>
 public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
 {
@@ -18,7 +19,7 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
     private Action<LogRecord<TLogMessage>> _traceAction = null!;
     private Action<LogRecord<TLogMessage>> _warnAction = null!;
 
-    public FastLoggerBase()
+    protected FastLoggerBase()
         => this._logAction = this.Log;
 
     public bool IsEnabled
@@ -58,7 +59,7 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
 
     public void Log(LogRecord<TLogMessage> logRecord)
     {
-        if (!this.IsEnabled || (logRecord.Message is null) || !logRecord.ArgumentNotNull().Level.MeetsLevel(this.LogLevel))
+        if (!this.IsEnabled || (logRecord.ArgumentNotNull().Message is null) || !logRecord.Level.MeetsLevel(this.LogLevel))
         {
             return;
         }
@@ -80,8 +81,8 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
         => (sender, level) switch
         {
             (not null, _) => sender,
-            (_, LogLevel.Debug or LogLevel.Trace) => CodeHelper.GetCallerMethod(3)?.Name,
-            (_, _) => CodeHelper.GetCallerMethod(3)?.DeclaringType?.Name,
+            (_, LogLevel.Debug or LogLevel.Trace) => GetCallerMethod(3)?.Name,
+            (_, _) => GetCallerMethod(3)?.DeclaringType?.Name,
         };
 
     private void ResetAction()

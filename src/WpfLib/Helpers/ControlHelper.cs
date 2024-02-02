@@ -285,7 +285,7 @@ public static class ControlHelper
     public static TModel? GetModel<TModel>(this TreeViewItem? item)
         where TModel : class => item?.DataContext.Cast().As<TModel>();
 
-    public static TModel? GetModelFromNewValue<TModel>(this RoutedPropertyChangedEventArgs<object> newValue)
+    public static TModel? GetModel<TModel>(this RoutedPropertyChangedEventArgs<object> newValue)
                 where TModel : class => newValue.Cast().As<TreeViewItem>()?.DataContext.Cast().As<TModel>();
 
     public static TParent? GetParentByType<TParent>(this DependencyObject depObj)
