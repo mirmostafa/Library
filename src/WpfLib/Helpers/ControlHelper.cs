@@ -51,8 +51,8 @@ public static class ControlHelper
         return itemsControl;
     }
 
-    public static TTreeView BindItems<TTreeView>(this TTreeView treeView, IEnumerable? items)
-        where TTreeView : TreeView => BindItems<TTreeView, TreeViewItem>(treeView, items);
+    public static TTreeView BindItems<TTreeView>(this TTreeView treeView, IEnumerable? items) where TTreeView : TreeView
+        => BindItems<TTreeView, TreeViewItem>(treeView, items);
 
     public static TItemsControl BindItems<TItemsControl, THeaderedItemsControl>(this TItemsControl treeView, IEnumerable? items)
         where TItemsControl : ItemsControl
@@ -285,8 +285,8 @@ public static class ControlHelper
     public static TModel? GetModel<TModel>(this TreeViewItem? item)
         where TModel : class => item?.DataContext.Cast().As<TModel>();
 
-    public static TModel? GetModel<TModel>(this RoutedPropertyChangedEventArgs<object> newValue)
-                where TModel : class => newValue.Cast().As<TreeViewItem>()?.DataContext.Cast().As<TModel>();
+    public static TModel? GetModel<TModel>(this RoutedPropertyChangedEventArgs<object> e)
+        where TModel : class => e?.NewValue.Cast().As<TreeViewItem>()?.DataContext.Cast().As<TModel>();
 
     public static TParent? GetParentByType<TParent>(this DependencyObject depObj)
             where TParent : DependencyObject
