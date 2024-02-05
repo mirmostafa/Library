@@ -61,7 +61,7 @@ public sealed class Mapper : IMapper
     }
 
     public TDestination? Map<TSource, TDestination>(in TSource? source, in TDestination destination)
-        where TDestination : class => this.MapExcept<TDestination>(source, destination, default!);
+        where TDestination : class => this.MapExcept<TDestination>(source, destination, default);
 
     [return: NotNull]
     public TDestination Map<TDestination>(in object source)

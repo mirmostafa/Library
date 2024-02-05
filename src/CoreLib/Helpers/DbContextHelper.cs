@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics;
+using System.Linq.Expressions;
 
 using Library.Data.Markers;
 using Library.Results;
@@ -10,6 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Library.Helpers;
 
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class DbContextHelper
 {
     public static IDbContextTransaction BeginTransaction(this DbContext dbContext)
@@ -345,17 +348,20 @@ public static class DbContextHelper
     /// <param name="entity">The entity.</param>
     /// <returns>The state of the entity.</returns>
     public static EntityState? GetStateOf<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
-            where TDbContext : notnull, DbContext
-            where TEntity : class, IIdenticalEntity<long>
-            => GetLocalEntry(dbContext, entity)?.State;
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<long>
+        => GetLocalEntry(dbContext, entity)?.State;
 
     /// <summary>
     /// ReAttach method for a generic TDbContext and TEntity.
     /// </summary>
     public static (TDbContext DbContext, EntityEntry<TEntity> Entry) ReAttach<TDbContext, TEntity>([DisallowNull] this TDbContext dbContext, [DisallowNull] in TEntity entity)
-            where TDbContext : notnull, DbContext
-            where TEntity : class, IIdenticalEntity<long>
-            => (dbContext, dbContext.Detach(entity).Attach(entity));
+        where TDbContext : notnull, DbContext
+        where TEntity : class, IIdenticalEntity<long>
+    {
+        var entry = dbContext.Detach(entity).Attach(entity);
+        return (dbContext, entry);
+    }
 
     /// <summary>
     /// Removes an entity from the database asynchronously.
@@ -368,8 +374,8 @@ public static class DbContextHelper
     /// <param name="detach">Whether to detach the entity.</param>
     /// <returns>The database context.</returns>
     public static async Task<TDbContext> RemoveByEntityAsync<TDbContext, TEntity>([DisallowNull] TDbContext dbContext, [DisallowNull] Action<TEntity> setEntityId, bool persist = true, bool detach = false)
-            where TDbContext : DbContext
-            where TEntity : class, new()
+        where TDbContext : DbContext
+        where TEntity : class, new()
     {
         Check.MustBeArgumentNotNull(dbContext);
         Check.MustBeArgumentNotNull(setEntityId);
