@@ -1,12 +1,11 @@
-﻿using Library.Exceptions;
-using Library.Results;
+﻿using Library.Results;
 using Library.Validations;
 
 namespace Library.Threading;
 
 public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Result<TState?>>
 {
-    private readonly List<Func<TState, CancellationToken, Task<TState>>> _funcList = new();
+    private readonly List<Func<TState, CancellationToken, Task<TState>>> _funcList = [];
     private readonly Func<CancellationToken, Task<TState>> _start;
 
     private TaskRunner([DisallowNull] Func<CancellationToken, Task<TState>> start) =>
@@ -26,7 +25,7 @@ public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Res
 
     public TaskRunner<TState> Then([DisallowNull] Func<TState, CancellationToken, Task<TState>> func)
     {
-        CheckIfNotRunning();
+        this.CheckIfNotRunning();
 
         Checker.MustBeArgumentNotNull(func);
         this._funcList.Add(func);
@@ -120,6 +119,8 @@ public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Res
 
             state = await func(state, token);
         }
-        return Result<TState?>.CreateSuccess(state);
+        return state is Result<TState?> result
+            ? result
+            : Result<TState?>.CreateSuccess(state);
     }
 }

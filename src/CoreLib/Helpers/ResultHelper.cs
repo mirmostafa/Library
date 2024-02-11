@@ -87,9 +87,49 @@ public static class ResultHelper
         return result;
     }
 
+    public static async Task<TResult> IfFailure<TResult>(this Task<TResult> result, [DisallowNull] Action next) where TResult : ResultBase
+    {
+        var r = await result;
+        if (r.IsFailure)
+        {
+            next.ArgumentNotNull()();
+        }
+
+        return r;
+    }
+
+    public static async Task<TResult> IfFailure<TResult>(this Task<TResult> result, [DisallowNull] Action<TResult> next) where TResult : ResultBase
+    {
+        var r = await result;
+        if (r.IsFailure)
+        {
+            next.ArgumentNotNull()(r);
+        }
+
+        return r;
+    }
+
+    public static async Task<TResult> IfFailure<TResult>(this Task<TResult> result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
+    {
+        var r = await result;
+        return r.IsFailure ? next.ArgumentNotNull()() : r;
+    }
+
+    public static async Task<TResult> IfFailure<TResult>(this Task<TResult> result, [DisallowNull] Func<TResult, TResult> next) where TResult : ResultBase
+    {
+        var r = await result;
+        return r.IsFailure ? next.ArgumentNotNull()(r) : r;
+    }
+
     [return: NotNullIfNotNull(nameof(result))]
     public static TResult? IfSucceed<TResult>(this TResult? result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
         => result?.IsSucceed == true ? next.ArgumentNotNull()() : result;
+
+    public static async Task<TResult> IfSucceed<TResult>(this Task<TResult> result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
+    {
+        var r = await result;
+        return r.IsSucceed ? next.ArgumentNotNull()() : r;
+    }
 
     [return: NotNullIfNotNull(nameof(result))]
     public static TResult? IfSucceed<TResult>(this TResult? result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
@@ -100,6 +140,12 @@ public static class ResultHelper
         }
 
         return result;
+    }
+
+    public static async Task<TResult> IfSucceedAsync<TResult>(this Task<TResult> result, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : ResultBase
+    {
+        var r = await result;
+        return r.IsSucceed ? await next.ArgumentNotNull()(r, token) : r;
     }
 
     public static TResult LogDebug<TResult>(this TResult result, ILogger logger, [CallerMemberName] object? sender = null, DateTime? time = null)
@@ -191,6 +237,23 @@ public static class ResultHelper
             Details: @this.ToString().Remove(@this.Message).Trim(),
             Level: @this.IsSucceed ? MessageLevel.Info : MessageLevel.Error,
             Owner: owner);
+    }
+
+    [return: NotNull]
+    public static Result<TValue> ToNotNullValue<TValue>(this Result<TValue?> result)
+        where TValue : class
+    {
+        Check.MustBeNotNull(result?.Value);
+        return result!;
+    }
+
+    [return: NotNull]
+    public static async Task<Result<TValue>> ToNotNullValue<TValue>(this Task<Result<TValue?>> result)
+        where TValue : class
+    {
+        var r = await result;
+        Check.MustBeNotNull(r?.Value);
+        return r!;
     }
 
     public static async Task<Result<TValue1>> ToResultAsync<TValue, TValue1>(this Task<Result<TValue>> resultTask, Func<TValue, TValue1> getNewValue)
