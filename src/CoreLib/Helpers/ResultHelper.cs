@@ -77,6 +77,17 @@ public static class ResultHelper
     }
 
     [return: NotNullIfNotNull(nameof(Result))]
+    public static TResult? IfFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action action) where TResult : ResultBase
+    {
+        if (result?.IsSucceed == false)
+        {
+            action.ArgumentNotNull()();
+        }
+
+        return result;
+    }
+
+    [return: NotNullIfNotNull(nameof(Result))]
     public static TResult? IfFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
     {
         if (result?.IsSucceed == false)
@@ -141,6 +152,11 @@ public static class ResultHelper
 
         return result;
     }
+
+    public static async Task<TResult?> IfSucceedAsync<TResult>(this TResult? result, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : ResultBase
+        => result?.IsSucceed == true
+            ? await next.ArgumentNotNull()(result, token)
+            : result;
 
     public static async Task<TResult> IfSucceedAsync<TResult>(this Task<TResult> result, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : ResultBase
     {
@@ -264,6 +280,9 @@ public static class ResultHelper
         var value1 = getNewValue(result);
         return Result<TValue1>.From(result, value1);
     }
+
+    public static async Task<Result> ToResultAsync<TValue>(this Task<Result<TValue>> resultTask)
+        => await resultTask;
 
     /// <summary>
     /// Tries to parse the input object as a <typeparamref name="TResult"/> object and retrieves the result.

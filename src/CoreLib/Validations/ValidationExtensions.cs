@@ -11,8 +11,8 @@ using Library.Results;
 
 namespace Library.Validations;
 
-//[DebuggerStepThrough]
-//[StackTraceHidden]
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class ValidationExtensions
 {
     public static ValidationResultSet<TValue> Any<TValue>(this ValidationResultSet<TValue> vrs, Func<Exception> onError = null)
