@@ -1,4 +1,6 @@
-﻿using Library.Results;
+﻿#pragma warning disable CA1040 // Avoid empty interfaces
+
+using Library.Results;
 
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -90,11 +92,11 @@ public interface IAsyncSaveChanges
 
 public interface IAsyncTransactional
 {
-    Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+    Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken token = default);
 
-    Task<Result> CommitTransactionAsync(CancellationToken cancellationToken = default);
+    Task<Result> CommitTransactionAsync(CancellationToken token = default);
 
-    Task RollbackTransactionAsync(CancellationToken cancellationToken = default);
+    Task RollbackTransactionAsync(CancellationToken token = default);
 }
 
 public interface IAsyncTransactionSave : IAsyncTransactional, IAsyncSaveChanges, IResetChanges;
@@ -249,3 +251,5 @@ public interface IAsyncCreator<TViewModel>
 {
     Task<TViewModel> CreateAsync(CancellationToken token = default);
 }
+
+#pragma warning restore CA1040 // Avoid empty interfaces
