@@ -1,8 +1,11 @@
-﻿using Library.Results;
+﻿using System.Diagnostics;
+
+using Library.Results;
 using Library.Validations;
 
 namespace Library.Threading;
 
+[DebuggerStepThrough, StackTraceHidden]
 public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Result<TState?>>
 {
     private readonly List<Func<TState, CancellationToken, Task<TState>>> _funcList = [];
@@ -21,7 +24,7 @@ public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Res
         StartWith(c => Task.FromResult(start()));
 
     public static TaskRunner<TState> StartWith(TState state) =>
-        StartWith(c => Task.FromResult(state));
+        StartWith([DebuggerStepThrough, StackTraceHidden](_) => Task.FromResult(state));
 
     public TaskRunner<TState> Then([DisallowNull] Func<TState, CancellationToken, Task<TState>> func)
     {
@@ -47,7 +50,7 @@ public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Res
         this.Then(new Func<TState, CancellationToken, Task<TState>>((x, _) => func(x)));
 
     public TaskRunner<TState> Then(Func<TState, Task> func) =>
-        this.Then(new Func<TState, CancellationToken, Task<TState>>(async (x, t) =>
+        this.Then(new Func<TState, CancellationToken, Task<TState>>([DebuggerStepThrough, StackTraceHidden] async (x, t) =>
         {
             if (!t.IsCancellationRequested)
             {
