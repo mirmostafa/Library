@@ -13,7 +13,7 @@ public static class WpfResultHelper
     {
         var res = result.ThrowOnFail(owner, instruction);
         var text = res.Message.IfNullOrEmpty(successMessage);
-        MsgBox2.Inform(instruction, text ?? "The operation successfully is done.");
+        MsgBox2.Inform(instruction, text ?? "The operation is successfully done.");
 
         return res;
     }
