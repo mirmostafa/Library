@@ -36,7 +36,7 @@ public sealed class EnumerableHelperTest
     [InlineData(new[] { 1, 2, 3 }, null, new[] { 1, 2, 3 })]
     [InlineData(null, new[] { 1, 2, 3 }, new[] { 1, 2, 3 })]
     [InlineData(new[] { 1, 2, 3 }, new[] { 4, 5, 6 }, new[] { 1, 2, 3, 4, 5, 6 })]
-    public void AddRangeImmutedTest(IEnumerable<int> source, IEnumerable<int> items, IEnumerable<int> expected)
+    public void AddRangeImmutedTest(IEnumerable<int>? source, IEnumerable<int>? items, IEnumerable<int> expected)
     {
         var actual = EnumerableHelper.AddRangeImmuted(source, items);
         Assert.Equal(expected, actual);
@@ -592,9 +592,9 @@ public sealed class EnumerableHelperTest
     {
         // Create a list from the input array
         var list = new List<int>(input);
-
+        Span<int> span = [.. list];
         // Call the static method and assert the result
-        Assert.Equal(expected, [.. list]);
+        Assert.Equal(expected, span);
     }
 
     [Theory]
