@@ -210,8 +210,8 @@ public static class EnumerableHelper
         var itemArray = items.ArgumentNotNull().ToArray();
         return itemArray switch
         {
-        [] => defaultValue, // Return the default value if the array is empty.
-        [var item] => item, // Return the single item if there's only one element.
+            [] => defaultValue, // Return the default value if the array is empty.
+            [var item] => item, // Return the single item if there's only one element.
             { Length: 2 } => aggregator.ArgumentNotNull()(itemArray.First(), itemArray.Last()), // Aggregate two elements using the aggregator function.
             [var item, .. var others] => aggregator(item, Aggregate(others, aggregator, defaultValue)) // Recursively aggregate remaining elements.
         };
