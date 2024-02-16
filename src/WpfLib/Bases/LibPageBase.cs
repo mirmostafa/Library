@@ -1,4 +1,5 @@
-﻿using Library.Wpf.Markers;
+﻿using Library.ComponentModel;
+using Library.Wpf.Markers;
 using Library.Wpf.Windows.Input.Commands;
 
 namespace Library.Wpf.Bases;
@@ -61,7 +62,9 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
         try
         {
             this.BeginInit();
-            this.BindingData?.Invoke(this, EventArgs.Empty);
+            if(BindingData!=null)
+                this.BindingData(this, EventArgs.Empty);
+            else
             await this.OnBindDataAsync();
         }
         catch
@@ -94,8 +97,13 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
     /// <summary>
     /// Called when [bind data asynchronous].
     /// </summary>
-    protected virtual Task OnBindDataAsync()
-        => Task.CompletedTask;
+    protected virtual async Task OnBindDataAsync()
+    {
+        foreach (var ctrl in this.GetChildren<IAsyncBindable>())
+        {
+            await ctrl.BindAsync();
+        }
+    }
 
     protected override void OnInitialized(EventArgs e)
         => base.OnInitialized(e);
