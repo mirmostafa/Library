@@ -1,0 +1,13 @@
+<Project>
+	<PropertyGroup>
+		<NoWarn>$(NoWarn);IDE0045</NoWarn>
+		<NoWarn>$(NoWarn);CA1031</NoWarn>
+		<NoWarn>$(NoWarn);CA1304</NoWarn>
+		<NoWarn>$(NoWarn);CA1305</NoWarn>
+		<NoWarn>$(NoWarn);CA1307</NoWarn>
+		<NoWarn>$(NoWarn);CA1310</NoWarn>
+		<NoWarn>$(NoWarn);CA1311</NoWarn>
+		<NoWarn>$(NoWarn);CA2007</NoWarn>
+		<NoWarn>$(NoWarn);CA2225</NoWarn>
+	</PropertyGroup>
+</Project>
