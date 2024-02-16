@@ -1,4 +1,6 @@
-﻿using Library.Validations;
+﻿using Library.Exceptions;
+using Library.Results;
+using Library.Validations;
 
 namespace Library.Helpers;
 
@@ -86,5 +88,51 @@ public static class TaskHelper
         {
             //ignore
         }
+    }
+
+    public static async Task<Result> RunAllAsync(this IEnumerable<Func<Task<Result>>> funcs, CancellationToken token)
+    {
+        Check.MustBeArgumentNotNull(funcs);
+
+        var result = Result.Success;
+        foreach (var func in funcs)
+        {
+            if (token.IsCancellationRequested)
+            {
+                result = Result.CreateFailure<OperationCancelledException>();
+                break;
+            }
+
+            var current = await func();
+            if (current.IsFailure)
+            {
+                result = current;
+                break;
+            }
+        }
+        return result;
+    }
+    
+    public static async Task<Result> RunAllAsync<TState>(this IEnumerable<Func<TState, Task<Result>>> funcs, TState initiaState, CancellationToken token = default)
+    {
+        Check.MustBeArgumentNotNull(funcs);
+
+        var result = Result.Success;
+        foreach (var func in funcs)
+        {
+            if (token.IsCancellationRequested)
+            {
+                result = Result.CreateFailure<OperationCancelledException>();
+                break;
+            }
+
+            var current = await func(initiaState);
+            if (current.IsFailure)
+            {
+                result = current;
+                break;
+            }
+        }
+        return result;
     }
 }

@@ -443,7 +443,7 @@ public static class DbContextHelper
     /// <returns>The database context.</returns>
     public static DbContext RemoveById<TEntity>([DisallowNull] this DbContext dbContext, [DisallowNull] long id, bool detach = false)
             where TEntity : class, IIdenticalEntity<long>, new()
-            => RemoveById<TEntity>(dbContext, new[] { id }, detach);
+            => RemoveById<TEntity>(dbContext, [id], detach);
 
     /// <summary>
     /// Removes an entity from the database by its Id.
@@ -458,11 +458,11 @@ public static class DbContextHelper
     public static DbContext RemoveById<TDbContext, TEntity, TId>([DisallowNull] DbContext dbContext, [DisallowNull] TId id, bool detach = false)
         where TEntity : class, IIdenticalEntity<TId>, new()
         where TId : notnull =>
-        RemoveById<TEntity, TId>(dbContext, new[] { id }, detach);
+        RemoveById<TEntity, TId>(dbContext, [id], detach);
 
     public static DbContext RemoveById<TDbContext, TEntity>([DisallowNull] DbContext dbContext, [DisallowNull] Guid id, bool detach = false)
         where TEntity : class, IIdenticalEntity<Guid>, new() =>
-        RemoveById<TEntity, Guid>(dbContext, new[] { id }, detach);
+        RemoveById<TEntity, Guid>(dbContext, [id], detach);
 
     /// <summary>
     /// Resets the changes of the given DbContext and optionally disposes the current transaction.
@@ -490,7 +490,7 @@ public static class DbContextHelper
     /// Saves changes to the database asynchronously for the given entity entry.
     /// </summary>
     public static Task<Result<int>> SaveChangesResultAsync(this EntityEntry entityEntry, CancellationToken cancellationToken = default)
-            => entityEntry?.Context.SaveChangesResultAsync(cancellationToken)!;
+        => entityEntry?.Context.SaveChangesResultAsync(cancellationToken)!;
 
     /// <summary> Saves changes to the database and returns a Result<int> containing the number of
     /// changes saved or an exception message and the exception itself. </summary> <param
@@ -502,18 +502,14 @@ public static class DbContextHelper
     {
         Check.MustBeArgumentNotNull(dbContext);
 
-        // Try to save changes to the database
         try
         {
-            Check.MustBeArgumentNotNull(dbContext);
-            // Create a success result with the number of changes saved
-            var result = Result<int>.CreateSuccess(await dbContext.SaveChangesAsync(cancellationToken));
+            var saveResult = await dbContext.SaveChangesAsync(cancellationToken);
+            var result = Result<int>.CreateSuccess(saveResult);
             return result;
         }
-        // Catch any exceptions that occur
         catch (Exception ex)
         {
-            // Create a failure result with the exception message and the exception itself
             var result = Result<int>.CreateFailure(ex);
             return result;
         }

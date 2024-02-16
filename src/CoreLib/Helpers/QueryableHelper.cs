@@ -22,11 +22,11 @@ public static class QueryableHelper
     /// A task that represents the asynchronous operation. The task result contains the first
     /// element in the sequence, or default(TResult) if the sequence contains no elements.
     /// </returns>
-    public static Task<TResult?> FirstOrDefaultLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock)
+    public static Task<TResult?> FirstOrDefaultLockAsync<TResult>(this IQueryable<TResult> query, IAsyncLock asyncLock, CancellationToken cancellationToken = default)
     {
         Check.MustBeArgumentNotNull(query);
         Check.MustBeArgumentNotNull(asyncLock);
-        return asyncLock.LockAsync(async () => await query.FirstOrDefaultAsync());
+        return asyncLock.LockAsync(async () => await query.FirstOrDefaultAsync(cancellationToken));
     }
 
     /// <summary>

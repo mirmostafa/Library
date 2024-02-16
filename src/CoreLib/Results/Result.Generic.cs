@@ -13,6 +13,7 @@ namespace Library.Results;
 /// </summary>
 /// <typeparam name="TValue">The type of the encapsulated value.</typeparam>
 [SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "<Pending>")]
+[DebuggerStepThrough, StackTraceHidden]
 [Immutable]
 [Fluent]
 public class Result<TValue> : ResultBase

@@ -5,6 +5,7 @@ using Library.Validations;
 
 namespace Library.Results;
 
+[DebuggerStepThrough]
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public abstract class ResultBase(
     in bool? succeed = null,

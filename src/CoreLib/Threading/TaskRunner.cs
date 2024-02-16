@@ -5,7 +5,7 @@ using Library.Results;
 
 namespace Library.Threading;
 
-[DebuggerStepThrough, StackTraceHidden]
+//[DebuggerStepThrough, StackTraceHidden]
 public sealed class TaskRunner : TaskRunnerBase<TaskRunner, Result>
 {
     private readonly List<Func<CancellationToken, Task>> _funcList = new();
