@@ -1,9 +1,12 @@
-﻿using Library.Exceptions;
+﻿using System.Diagnostics;
+
+using Library.Exceptions;
 using Library.Results;
 using Library.Validations;
 
 namespace Library.Helpers;
 
+[DebuggerStepThrough, StackTraceHidden]
 public static class TaskHelper
 {
     /// <summary>
