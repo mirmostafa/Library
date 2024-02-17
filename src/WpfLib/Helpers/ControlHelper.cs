@@ -691,6 +691,7 @@ public static class ControlHelper
             if (viewModelPropertyChanged != null)
             {
                 value.PropertyChanged += viewModelPropertyChanged;
+                viewModelPropertyChanged(page, new PropertyChangedEventArgs(nameof(page.DataContext)));
             }
             else
             {
