@@ -1,10 +1,13 @@
-﻿using Library.Data.Markers;
+﻿using System.Diagnostics;
+
+using Library.Data.Markers;
 using Library.Validations;
 
 namespace Library.Mapping;
 
 public static class MapperExtensions
 {
+    [DebuggerStepThrough]
     public static TEntity ForMember<TEntity>(this TEntity entity, in Action<TEntity> action)
         where TEntity : IEntity
     {
