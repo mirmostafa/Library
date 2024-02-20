@@ -22,7 +22,7 @@ public sealed class Result : ResultBase
     private static Result? _failed;
     private static Result? _succeed;
 
-    public Result(
+    internal Result(
         in bool? succeed = null,
         in string? message = null,
         in IEnumerable<Exception>? errors = null,
@@ -114,7 +114,8 @@ public sealed class Result : ResultBase
         Result<TValue>.From(result, value);
 
     // <summary>
-    /// Creates a new empty Result object. </summary>
+    /// Creates a new empty Result object.
+    /// </summary>
     public static Result NewEmpty() =>
         new();
 
