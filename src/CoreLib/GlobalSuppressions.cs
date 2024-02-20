@@ -5,5 +5,7 @@
 
 
 
+
 [assembly: SuppressMessage("Reliability", "CA2007:Consider calling ConfigureAwait on the awaited task", Justification = "<Pending>", Scope = "module")]
 [assembly: SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "<Pending>", Scope = "module")]
+[assembly: SuppressMessage("Design", "CA1000:Do not declare static members on generic types", Justification = "<Pending>", Scope = "module")]
