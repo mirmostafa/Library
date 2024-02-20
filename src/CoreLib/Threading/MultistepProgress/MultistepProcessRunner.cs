@@ -11,7 +11,7 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IProgress
 {
     private readonly object? _owner = owner;
     private readonly IProgressReport _reporter = reporter;
-    private readonly List<StepInfo<TState>> _stepsList = new();
+    private readonly List<StepInfo<TState>> _stepsList = [];
     private readonly IProgressReport _subReporter = subReporter ?? IProgressReport.New();
     private int _current;
     private bool _isRunning;
@@ -67,7 +67,7 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IProgress
     {
         if (cancellationToken.IsCancellationRequested)
         {
-            return Result<TState>.CreateFailure(this._state, new OperationCanceledException(cancellationToken))!;
+            return Result.Fail<TState>(this._state)!;
         }
         this.CheckOperationRunning();
 
@@ -95,7 +95,7 @@ public sealed class MultistepProcessRunner<TState>(in TState state, in IProgress
                 result = add(result, this._state);
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    return result + Result.CreateFailure(new OperationCanceledException(cancellationToken));
+                    return result + Result.Fail(new OperationCanceledException(cancellationToken));
                 }
             }
             return result;

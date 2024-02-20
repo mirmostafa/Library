@@ -56,7 +56,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
 
         var code = codeUnit.GenerateCode();
         var result = setStaticIfRequired(nameSpace, code);
-        return Result<string>.CreateSuccess(result);
+        return Result.Success<string>(result);
 
         static TypeAttributes toTypeAttributes(AccessModifier accessModifier, InheritanceModifier inheritanceModifier)
         {

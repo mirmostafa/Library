@@ -26,5 +26,5 @@ public abstract class Member : IMember
         this.OnValidate();
 
     protected virtual Result OnValidate() =>
-        Result.Success;
+        Result.Succeed;
 }

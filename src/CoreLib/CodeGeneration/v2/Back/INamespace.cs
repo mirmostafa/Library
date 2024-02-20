@@ -26,11 +26,11 @@ public sealed class Namespace(string name) : INamespace
     {
         if (this.UsingNamespaces.Any(x => x.IsNullOrEmpty()))
         {
-            return Result.CreateFailure(message: "Using namespace cannot be empty.");
+            return Result.Fail(message: "Using namespace cannot be empty.");
         }
         if (this.Types.Any(x => x == null))
         {
-            return Result.CreateFailure(message: "Type cannot be empty.");
+            return Result.Fail(message: "Type cannot be empty.");
         }
         foreach (var type in this.Types)
         {
@@ -39,7 +39,7 @@ public sealed class Namespace(string name) : INamespace
                 return vr;
             }
         }
-        return Result.Success;
+        return Result.Succeed;
     }
 }
 

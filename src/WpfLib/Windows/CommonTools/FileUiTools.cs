@@ -41,7 +41,7 @@ public static class FileUiTools
                             break;
 
                         case TaskDialogResult.Cancel:
-                            return Result.CreateFailure(new OperationCanceledException());
+                            return Result.Fail(new OperationCanceledException());
 
                         case TaskDialogResult.Yes:
                             break;
@@ -51,14 +51,14 @@ public static class FileUiTools
                             break;
 
                         default:
-                            return Result.CreateFailure(new InvalidOperationException());
+                            return Result.Fail(new InvalidOperationException());
                     }
                 }
                 File.Delete(filePath);
             }
             File.WriteAllText(filePath, fileText);
         }
-        return Result.Success;
+        return Result.Succeed;
 
         static TaskDialogResult askToSkipOrReplace(string? title, string filePath)
         {

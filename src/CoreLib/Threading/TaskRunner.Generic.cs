@@ -108,7 +108,7 @@ public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Res
         }));
 
     protected override Result<TState?> GetErrorResult(Exception exception) =>
-        Result<TState?>.CreateFailure(exception);
+        Result.Fail<TState?>(exception);
 
     protected override async Task<Result<TState?>> OnRunningAsync(CancellationToken token)
     {
@@ -117,11 +117,11 @@ public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Res
         {
             if (token.IsCancellationRequested)
             {
-                return Result<TState?>.CreateFailure(new OperationCanceledException(token), state);
+                return Result.Fail<TState?>(state, new OperationCanceledException(token));
             }
 
             state = await func(state, token);
         }
-        return Result<TState?>.CreateSuccess(state);
+        return Result.Success<TState?>(state);
     }
 }

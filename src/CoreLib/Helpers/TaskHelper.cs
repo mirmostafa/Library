@@ -97,12 +97,12 @@ public static class TaskHelper
     {
         Check.MustBeArgumentNotNull(funcs);
 
-        var result = Result.Success;
+        var result = Result.Succeed;
         foreach (var func in funcs)
         {
             if (token.IsCancellationRequested)
             {
-                result = Result.CreateFailure<OperationCancelledException>();
+                result = Result.Fail<OperationCancelledException>();
                 break;
             }
 
@@ -120,12 +120,12 @@ public static class TaskHelper
     {
         Check.MustBeArgumentNotNull(funcs);
 
-        var result = Result.Success;
+        var result = Result.Succeed;
         foreach (var func in funcs)
         {
             if (token.IsCancellationRequested)
             {
-                result = Result.CreateFailure<OperationCancelledException>();
+                result = Result.Fail<OperationCancelledException>();
                 break;
             }
 

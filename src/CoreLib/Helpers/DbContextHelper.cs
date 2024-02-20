@@ -61,11 +61,11 @@ public static class DbContextHelper
         try
         {
             await dbContext.ArgumentNotNull().Database.CommitTransactionAsync(cancellationToken);
-            return Result.Success;
+            return Result.Succeed;
         }
         catch (Exception ex)
         {
-            return Result.CreateFailure(ex.GetBaseException().Message, ex);
+            return Result.Fail(ex.GetBaseException().Message, ex);
         }
     }
 
@@ -505,12 +505,12 @@ public static class DbContextHelper
         try
         {
             var saveResult = await dbContext.SaveChangesAsync(cancellationToken);
-            var result = Result<int>.CreateSuccess(saveResult);
+            var result = Result.Success<int>(saveResult);
             return result;
         }
         catch (Exception ex)
         {
-            var result = Result<int>.CreateFailure(ex);
+            var result = Result.Fail<int>(ex);
             return result;
         }
     }

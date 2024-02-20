@@ -9,13 +9,13 @@ namespace Library.Web.Results;
 public class ApiResult : ResultBase, IApiResult
 {
     public ApiResult(int? statusCode = null, string? message = null)
-        : base(null, statusCode, message, innerResult: null) { }
+        : base(null, message, innerResult: null) { this.Status = statusCode; }
 
     public ApiResult(HttpStatusCode? statusCode = null, string? message = null)
-        : base(null, statusCode?.Cast().ToInt(), message, innerResult: null) { }
+        : base(null, message, innerResult: null) { this.Status = statusCode; }
 
-    public ApiResult(in bool? Succeed = null, in object? Status = null, in string? Message = null, in IEnumerable<(object Id, object Error)>? Errors = null, in IEnumerable<object>? extraData = null)
-        : base(Succeed, Status, Message, Errors, extraData, innerResult: null)
+    public ApiResult(in bool? Succeed = null, in object? Status = null, in string? Message = null, in IEnumerable<Exception>? Errors = null, in IEnumerable<object>? extraData = null)
+        : base(Succeed, Message, Errors, extraData)
     {
     }
 
@@ -26,7 +26,7 @@ public class ApiResult : ResultBase, IApiResult
         => New(System.Net.HttpStatusCode.BadRequest, message);
 
     public static explicit operator HttpStatusCode?(ApiResult result)
-        => result.HttpStatusCode;
+        => result?.HttpStatusCode??null;
 
     public static ApiResult New(int statusCode, string? message = null)
         => new(statusCode, message);
@@ -45,4 +45,7 @@ public class ApiResult : ResultBase, IApiResult
 
     public static ApiResult Unauthorized(string? message = null)
         => New(System.Net.HttpStatusCode.Unauthorized, message);
+
+    public object? Status { get; init; }
+
 }

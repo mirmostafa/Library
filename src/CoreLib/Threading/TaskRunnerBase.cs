@@ -35,7 +35,7 @@ public abstract class TaskRunnerBase<TSelf, TResult>
             this.IsRunning = true;
             if (token.IsCancellationRequested)
             {
-                return Result<TResult>.CreateFailure(new OperationCanceledException(token), default!);
+                return Result.Fail<TResult>(default!, new OperationCanceledException(token));
             }
 
             result = await this.OnRunningAsync(token);

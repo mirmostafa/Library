@@ -26,16 +26,16 @@ public sealed class Check
     public static Check That => _that ??= new();
 
     public static Result If(in bool notOk, in Func<string> getErrorMessage) =>
-        notOk ? Result.CreateFailure(message: getErrorMessage()) : Result.CreateSuccess();
+        notOk ? Result.Fail(message: getErrorMessage()) : Result.Success();
 
     public static Result If(in bool notOk) =>
-        notOk ? Result.Failure : Result.Success;
+        notOk ? Result.Failed : Result.Succeed;
 
     public static Result If(in bool notOk, in Func<Exception> getErrorMessage) =>
-        notOk ? Result.CreateFailure(getErrorMessage()) : Result.CreateSuccess();
+        notOk ? Result.Fail(getErrorMessage()) : Result.Success();
 
     public static Result<TValue> If<TValue>(in TValue value, in bool notOk, in Func<Exception> getErrorMessage) =>
-        notOk ? Result<TValue>.CreateFailure(getErrorMessage(), value) : Result<TValue>.CreateSuccess(value);
+        notOk ? Result.Fail<TValue>(value, getErrorMessage()) : Result.Success<TValue>(value);
 
     public static Result<IEnumerable<string?>?> IfAnyNull(in IEnumerable<string?>? items)
     {
@@ -50,7 +50,7 @@ public sealed class Check
             }
         }
 
-        return Result<IEnumerable<string?>?>.CreateSuccess(items);
+        return Result.Success<IEnumerable<string?>?>(items);
     }
 
     public static Result<TValue> IfArgumentIsNull<TValue>([NotNull][AllowNull] in TValue obj, [CallerArgumentExpression(nameof(obj))] string? argName = null) =>

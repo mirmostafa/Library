@@ -15,10 +15,10 @@ public static class UiUtility
         page.NotNull().IsViewModelChanged
         ? MsgBox2.AskWithCancel(ask) switch
         {
-            TaskDialogResult.Cancel or TaskDialogResult.Close => Result.Failure,
+            TaskDialogResult.Cancel or TaskDialogResult.Close => Result.Failed,
             TaskDialogResult.Yes => await page.SaveToDbAsync(),
-            TaskDialogResult.No => Result.Success,
-            _ => Result.Failure
+            TaskDialogResult.No => Result.Succeed,
+            _ => Result.Failed
         }
-        : Result.Success;
+        : Result.Succeed;
 }

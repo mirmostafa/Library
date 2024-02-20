@@ -1278,11 +1278,11 @@ public static class EnumerableHelper
             _ = dic.Remove(result.Key);
 
             // Create a success result containing the removed key-value pair.
-            return Result<KeyValuePair<TKey, TValue>>.CreateSuccess(result);
+            return Result.Success<KeyValuePair<TKey, TValue>>(result);
         }
 
         // If the dictionary was empty, return a failure result.
-        return Result<KeyValuePair<TKey, TValue>>.CreateFailure();
+        return Result.Fail<KeyValuePair<TKey, TValue>>();
     }
 
     /// <summary>

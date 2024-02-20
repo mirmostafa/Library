@@ -95,8 +95,8 @@ public abstract class ApiControllerBase : ControllerBase
         {
             null => this.NoCotent(result),
             //x IEnumerable items when !items.Any() => this.NoCotent(result),
-            StandardResult { IsSucceed: true } res => this.Succees(result),
-            StandardResult { IsFailure: true } res => this.Fail(res.Status?.Cast().ToInt(), res.Message, result),
+            StandardResult { IsSucceed: true } => this.Succees(result),
+            StandardResult { IsFailure: true } res => this.Fail((int)HttpStatusCode.InternalServerError, res.Message, result),
             _ => this.Succees(result),
         };
 }

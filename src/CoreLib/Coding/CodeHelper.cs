@@ -77,11 +77,11 @@ public static class CodeHelper
         try
         {
             await action();
-            return Result.CreateSuccess();
+            return Result.Success();
         }
         catch (Exception ex)
         {
-            return Result.CreateFailure(error: ex);
+            return Result.Fail(error: ex);
         }
     }
 
@@ -89,11 +89,11 @@ public static class CodeHelper
     {
         try
         {
-            return Result<TResult?>.CreateSuccess(await action());
+            return Result.Success<TResult?>(await action());
         }
         catch (Exception ex)
         {
-            return Result<TResult?>.CreateFailure(error: ex);
+            return Result.Fail<TResult?>(error: ex);
         }
     }
 
@@ -163,11 +163,11 @@ public static class CodeHelper
         try
         {
             action();
-            return Result.Success;
+            return Result.Succeed;
         }
         catch (Exception ex)
         {
-            return Result.CreateFailure(ex.GetBaseException().Message, ex);
+            return Result.Fail(ex.GetBaseException().Message, ex);
         }
     }
 
@@ -183,11 +183,11 @@ public static class CodeHelper
         Check.MustBeArgumentNotNull(action);
         try
         {
-            return Result<TResult>.CreateSuccess(action());
+            return Result.Success<TResult>(action());
         }
         catch (Exception ex)
         {
-            return Result<TResult?>.CreateFailure(ex.GetBaseException().Message, ex, defaultResult)!;
+            return Result.Fail<TResult?>(ex.GetBaseException().Message, ex, defaultResult)!;
         }
     }
 
@@ -197,11 +197,11 @@ public static class CodeHelper
         try
         {
             var result = method(arg);
-            return Result<IEnumerable<TResult>>.CreateSuccess(result);
+            return Result.Success<IEnumerable<TResult>>(result);
         }
         catch (Exception ex)
         {
-            return Result<IEnumerable<TResult>>.CreateFailure(ex, Enumerable.Empty<TResult>());
+            return Result.Fail<IEnumerable<TResult>>(Enumerable.Empty<TResult>(), ex);
         }
     }
 
@@ -219,11 +219,11 @@ public static class CodeHelper
         try
         {
             var result = await func();
-            return Result<TResult?>.CreateSuccess(result);
+            return Result.Success<TResult?>(result);
         }
         catch (Exception ex)
         {
-            return Result<TResult?>.CreateFailure(ex.GetBaseException().Message, defaultResult);
+            return Result.Fail<TResult?>(ex.GetBaseException().Message, defaultResult);
         }
     }
 
@@ -245,7 +245,7 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result.CreateFailure(ex);
+            return Result.Fail(ex);
         }
     }
 
@@ -255,11 +255,11 @@ public static class CodeHelper
         try
         {
             await func();
-            return Result.Success;
+            return Result.Succeed;
         }
         catch (Exception ex)
         {
-            return Result.CreateFailure(ex);
+            return Result.Fail(ex);
         }
     }
 

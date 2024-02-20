@@ -5,18 +5,10 @@ public sealed class TryMethodResult
 {
     private TryMethodResult(
     in bool? succeed = null,
-    in object? status = null,
     in string? message = null,
-    in IEnumerable<(object Id, object Error)>? errors = null,
+    in IEnumerable<Exception>? errors = null,
     in IEnumerable<object>? extraData = null)
-    : base(succeed, status, message, errors, extraData, innerResult: null) { }
-
-    private TryMethodResult(
-    in Exception exception,
-    in string? message = null,
-    in IEnumerable<(object Id, object Error)>? errors = null,
-    in IEnumerable<object>? extraData = null)
-    : base(false, exception, message, errors, extraData, innerResult: null) { }
+    : base(succeed, message, errors, extraData, innerResult: null) { }
 
     /// <summary>
     /// Creates a new TryMethodResult with a given value, status, message, errors, and extra data.
@@ -29,19 +21,15 @@ public sealed class TryMethodResult
     /// <returns>
     /// A new TryMethodResult with the given value, status, message, errors, and extra data.
     /// </returns>
-    public static TryMethodResult CreateFailure(
-        in object? status = null,
+    public static TryMethodResult Fail(
         in string? message = null,
-        in IEnumerable<(object Id, object Error)>? errors = null,
+        in IEnumerable<Exception>? errors = null,
         in IEnumerable<object>? extraData = null)
-        => new(false, status, message, errors, extraData);
+        => new(false, message, errors, extraData);
 
-    public static TryMethodResult CreateFailure(
-        in Exception exception,
-        in string? message = null,
-        in IEnumerable<(object Id, object Error)>? errors = null,
-        in IEnumerable<object>? extraData = null)
-        => new(exception, message, errors, extraData);
+    public static TryMethodResult Fail(
+        in Exception exception)
+        => new(false, errors: [exception]);
 
     /// <summary>
     /// Creates a new TryMethodResult with the given value, status, message, errors, and extraData.
@@ -52,12 +40,11 @@ public sealed class TryMethodResult
     /// <param name="errors">The errors of the TryMethodResult.</param>
     /// <param name="extraData">The extraData of the TryMethodResult.</param>
     /// <returns>A new TryMethodResult with the given value, status, message, errors, and extraData.</returns>
-    public static TryMethodResult CreateSuccess(
-        in object? status = null,
+    public static TryMethodResult Success(
         in string? message = null,
-        in IEnumerable<(object Id, object Error)>? errors = null,
+        in IEnumerable<Exception>? errors = null,
         in IEnumerable<object>? extraData = null) =>
-        new(true, status, message, errors, extraData);
+        new(true, message, errors, extraData);
 
     public static explicit operator bool(TryMethodResult result) =>
         result.IsSucceed;
@@ -74,45 +61,42 @@ public sealed class TryMethodResult
 
 public sealed class TryMethodResult<TValue>(in TValue? value,
     in bool? succeed = null,
-    in object? status = null,
     in string? message = null,
-    in IEnumerable<(object Id, object Error)>? errors = null,
+    in IEnumerable<Exception>? errors = null,
     in IEnumerable<object>? ExtraData = null)
-    : Result<TValue?>(value, succeed, status, message, errors, ExtraData)
+    : Result<TValue?>(value, succeed, message, errors, ExtraData)
 {
     /// <summary>
     /// Creates a new TryMethodResult with a given value, status, message, errors, and extra data.
     /// </summary>
     /// <param name="value">The value of the TryMethodResult.</param>
-    /// <param name="status">The status of the TryMethodResult.</param>
     /// <param name="message">The message of the TryMethodResult.</param>
     /// <param name="errors">The errors of the TryMethodResult.</param>
     /// <param name="extraData">The extra data of the TryMethodResult.</param>
+    /// 
     /// <returns>
     /// A new TryMethodResult with the given value, status, message, errors, and extra data.
     /// </returns>
-    public static new TryMethodResult<TValue?> CreateFailure(in TValue? value = default,
-        in object? status = null,
+    public static TryMethodResult<TValue?> CreateFailure(in TValue? value = default,
         in string? message = null,
-        in IEnumerable<(object Id, object Error)>? errors = null,
+        in IEnumerable<Exception>? errors = null,
         in IEnumerable<object>? extraData = null)
-        => new(value, false, status, message, errors, extraData);
+        => new(value, false, message, errors, extraData);
 
     /// <summary>
     /// Creates a new TryMethodResult with the given value, status, message, errors, and extraData.
     /// </summary>
     /// <param name="value">The value of the TryMethodResult.</param>
-    /// <param name="status">The status of the TryMethodResult.</param>
     /// <param name="message">The message of the TryMethodResult.</param>
     /// <param name="errors">The errors of the TryMethodResult.</param>
     /// <param name="extraData">The extraData of the TryMethodResult.</param>
+    /// 
     /// <returns>A new TryMethodResult with the given value, status, message, errors, and extraData.</returns>
-    public static new TryMethodResult<TValue> CreateSuccess(in TValue value,
-        in object? status = null,
+    public static TryMethodResult<TValue> CreateSuccess(in TValue value,
         in string? message = null,
-        in IEnumerable<(object Id, object Error)>? errors = null,
+        in IEnumerable<Exception>? errors = null,
         in IEnumerable<object>? extraData = null) =>
-        new(value, true, status, message, errors, extraData);
+        new(value, true, message, errors, extraData);
 
     public static explicit operator bool(TryMethodResult<TValue?> result) =>
         result.IsSucceed;

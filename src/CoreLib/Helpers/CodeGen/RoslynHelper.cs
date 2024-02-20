@@ -227,12 +227,12 @@ public static class RoslynHelper
         {
             var result = string.IsNullOrEmpty(options.OutputFile) ? compilation.Emit(Stream.Null) : compilation.Emit(options.OutputFile);
             return result.Success
-                ? Result.Success
-                : Result.CreateFailure(errors: result.Diagnostics.Select(x => ((object)x.Id, (object)x.GetMessage())));
+                ? Result.Succeed
+                : Result.Fail(extraData: (IEnumerable<object>?)result.Diagnostics.Select(x => ((object)x.Id, (object)x.GetMessage())));
         }
         catch (Exception ex)
         {
-            return Result.CreateFailure(ex);
+            return Result.Fail(ex);
         }
     }
 

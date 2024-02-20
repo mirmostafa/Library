@@ -61,8 +61,8 @@ public static class IdentityHelper
 
     public static Results.Result ToResult(this IdentityResult identityResult, string? successMessage = null, string? errorMessage = null) =>
             identityResult.ArgumentNotNull().Succeeded
-            ? Results.Result.CreateSuccess(message: successMessage)
-            : Results.Result.CreateFailure(message: errorMessage, errors: identityResult.Errors.ToResultErrors());
+            ? Results.Result.Success(message: successMessage)
+            : Results.Result.Fail(message: errorMessage, extraData: identityResult.Errors);
 
     public static Results.Result<TValue?> ToResult<TValue>(
         this IdentityResult identityResult,
@@ -71,8 +71,8 @@ public static class IdentityHelper
         string? successMessage = null,
         string? errorMessage = null) =>
         identityResult.ArgumentNotNull().Succeeded
-            ? Results.Result<TValue?>.CreateSuccess(value, message: successMessage)
-            : Results.Result<TValue>.CreateFailure(message: errorMessage, errors: identityResult.Errors.ToResultErrors());
+            ? Results.Result.Success<TValue>(value, message: successMessage)
+            : Results.Result.Fail<TValue>(message: errorMessage);
 
     public static async Task<Results.Result> ToResultAsync(this Task<IdentityResult> identityResult, string? successMessage = null, string? errorMessage = null) =>
         ToResult(await identityResult, successMessage, errorMessage);

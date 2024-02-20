@@ -67,5 +67,5 @@ public sealed class HostDialog
         => this.Fluent(this._dialogBox.OnValidate = onValidation);
 
     public Result Show()
-        => this._dialogBox.ShowDialog() is true ? Result.Success : Result.Failure;
+        => this._dialogBox.ShowDialog() is true ? Result.Succeed : Result.Failed;
 }

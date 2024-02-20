@@ -673,11 +673,11 @@ public static partial class AdoHelper
         try
         {
             await conn.EnsureClosedAsync(c => c.OpenAsync());
-            return TryMethodResult.CreateSuccess();
+            return TryMethodResult.Success();
         }
         catch (Exception ex)
         {
-            return TryMethodResult.CreateFailure(ex);
+            return TryMethodResult.Fail(ex);
         }
     }
 }

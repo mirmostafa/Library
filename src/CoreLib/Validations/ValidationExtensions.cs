@@ -240,7 +240,7 @@ public static class ValidationExtensions
 
                 // Depending on the behavior parameter, take the appropriate action
                 var exception = onError();
-                var errorResult = Result<TValue>.CreateFailure(value, errors: [(-1, exception)]);
+                var errorResult = Result.Fail<TValue>(value);
                 switch (behavior)
                 {
                     // Combine all errors

@@ -8,29 +8,30 @@ namespace Library.Results;
 [DebuggerStepThrough]
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public abstract class ResultBase(
-    in bool? succeed = null,
-    in object? status = null,
+    in bool? isSucceed = null,
+
     in string? message = null,
-    in IEnumerable<(object Id, object Error)>? errors = null,
+    in IEnumerable<Exception>? errors = null,
     in IEnumerable<object>? extraData = null, ResultBase? innerResult = null)
 {
-    private ImmutableArray<(object Id, object Error)>? _errors = errors?.ToImmutableArray();
+    private readonly bool? _isSucceed = isSucceed;
+    private ImmutableArray<Exception>? _errors = errors?.ToImmutableArray();
 
     private ImmutableArray<object>? _extraData = extraData?.ToImmutableArray();
 
     protected ResultBase(ResultBase result)
-        : this(result.ArgumentNotNull().Succeed, result.Status, result.Message, result.Errors, result.ExtraData, result.InnerResult)
+        : this(result.ArgumentNotNull().IsSucceed, result.Message, result.Errors, result.ExtraData, result.InnerResult)
     {
     }
 
     [NotNull]
-    public ImmutableArray<(object Id, object Error)> Errors
+    public ImmutableArray<Exception> Errors
     {
         get => this._errors ??= [];
         init => this._errors = value;
     }
 
-    public Exception? Exception => this.Errors.FirstOrDefault().Error?.Cast().As<Exception>();
+    public Exception? Exception => Errors.FirstOrDefault();
 
     [NotNull]
     public ImmutableArray<object> ExtraData => this._extraData ??= [];
@@ -45,14 +46,13 @@ public abstract class ResultBase(
     /// <summary>
     /// Checks if the operation was successful by checking the Succeed flag, Status and Errors.
     /// </summary>
-    public virtual bool IsSucceed => this.Succeed ?? ((this.Status is null or 0 or 200) && (!this.Errors.Any()));
+    public virtual bool IsSucceed
+    {
+        get => this._isSucceed ?? !this.Errors.Any();
+        init => this._isSucceed = value;
+    }
 
     public string? Message { get; init; } = message;
-    public object? Status { get; init; } = status;
-    public bool? Succeed { get; init; } = succeed;
-
-    //public static implicit operator bool(ResultBase result) =>
-    //    result.NotNull().IsSucceed;
 
     /// <summary>
     /// Indicates whether the current object is equal to another object of the same type.
@@ -63,42 +63,26 @@ public abstract class ResultBase(
         other is not null && this.GetHashCode() == other.GetHashCode();
 
     [return: NotNull]
-    public IEnumerable<(object Id, object Error)>? GetAllErrors() =>
-        this.IterateOnAll<IEnumerable<(object, object)>>(x => x.Errors).SelectAll();
+    public IEnumerable<Exception>? GetAllErrors() =>
+        this.IterateOnAll<IEnumerable<Exception>>(x => x.Errors).SelectAll();
 
     [return: NotNull]
     public IEnumerable<object> GetAllExtraData() =>
         this.IterateOnAll<IEnumerable<object>>(x => x.ExtraData).SelectAll();
-
-    public object? GetError() => 
-        this.GetAllErrors().FirstOrDefault().Error;
 
     /// <summary>
     /// Serves as the default hash function.
     /// </summary>
     /// <returns>The hash code for the current instance.</returns>
     public override int GetHashCode() =>
-        HashCode.Combine(this.IsSucceed, this.Status, this.Message);
+        HashCode.Combine(this.IsSucceed, this.Message);
     /// <summary>
     /// Generates a string representation of the result object.
     /// </summary>
     /// <returns>A string representation of the result object.</returns>
-    public override string ToString()
-    {
-        if (!this.Message.IsNullOrEmpty())
-        {
-            return this.Message;
-        }
-        if (this.Status?.ToString() is { } status)
-        {
-            return status;
-        }
-        else if (this.Errors.FirstOrDefault().Error?.ToString() is { } error)
-        {
-            return error;
-        }
-        return $"IsSucceed: {this.IsSucceed}";
-    }
+    public override string ToString() => !this.Message.IsNullOrEmpty()
+            ? this.Message
+            : this.Errors.FirstOrDefault()?.ToString() is { } error ? error : $"IsSucceed: {this.IsSucceed}";
 
     private string GetDebuggerDisplay() =>
         this.ToString();

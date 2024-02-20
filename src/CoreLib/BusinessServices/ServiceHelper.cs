@@ -70,7 +70,7 @@ public static class ServiceHelper
 
         // Log the deletion
         logger?.Info($"Deleted {nameof(TDbEntity)}, id={id}");
-        return Result.Success;
+        return Result.Succeed;
     }
 
     /// <summary>
@@ -197,7 +197,7 @@ public static class ServiceHelper
             dbContext,
             model,
             convert,
-            (x, _) => validator != null ? Task.FromResult(validator(x)) : Task.FromResult(Result<TViewModel>.CreateSuccess(x)),
+            (x, _) => validator != null ? Task.FromResult(validator(x)) : Task.FromResult(Result.Success<TViewModel>(x)),
             dbContext.NotNull().Add,
             null,
             persist,
@@ -342,7 +342,7 @@ public static class ServiceHelper
             Action<TViewModel, TDbEntity>? onCommitted = null, CancellationToken cancellationToken = default)
         where TDbEntity : class, IIdenticalEntity<long>
         where TService : IAsyncWrite<TViewModel>, IAsyncSaveChanges
-        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, (x, _) => validator != null ? validator(x).ToAsync() : Result<TViewModel>.CreateSuccess(x).ToAsync(), dbContext.Attach, onCommitting, persist, (true, null), service.SaveChangesAsync, onCommitted, logger, cancellationToken);
+        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, (x, _) => validator != null ? validator(x).ToAsync() : Result.Success<TViewModel>(x).ToAsync(), dbContext.Attach, onCommitting, persist, (true, null), service.SaveChangesAsync, onCommitted, logger, cancellationToken);
 
     /// <summary>
     /// Updates an entity in the database asynchronously.
@@ -468,7 +468,7 @@ public static class ServiceHelper
         }
         else
         {
-            saveResult = Result<int>.CreateSuccess(-1);
+            saveResult = Result.Success<int>(-1);
         }
 
         //! Log result of manipulation
@@ -636,7 +636,7 @@ public static class ServiceHelper
         // If persist is false, return a success result with -1
         if (!persist)
         {
-            return Result<int>.CreateSuccess(-1);
+            return Result.Success<int>(-1);
         }
 
         // If a transaction is provided, commit it

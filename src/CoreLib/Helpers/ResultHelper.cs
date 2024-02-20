@@ -312,14 +312,11 @@ public static class ResultHelper
     /// </summary>
     /// <param name="errors">The errors to add to the Result.</param>
     /// <returns>A new instance of the Result class with the specified errors.</returns>
-    public static Result WithError(this ResultBase result, params (object Id, object Error)[] errors) =>
+    public static Result WithError(this ResultBase result, params Exception[] errors) =>
         new(result) { Errors = [.. errors] };
 
-    public static Result WithError(this ResultBase result, IEnumerable<(object Id, object Error)> errors) =>
+    public static Result WithError(this ResultBase result, IEnumerable<Exception> errors) =>
         new(result) { Errors = [.. errors] };
-
-    public static Result WithSucceed(this ResultBase result, bool? succeed) =>
-        new(result) { Succeed = succeed };
 
     public static Result<TNewValue> WithValue<TNewValue>(this ResultBase result, in TNewValue newValue) =>
         new(result, newValue);
@@ -344,27 +341,15 @@ public static class ResultHelper
         }
 
         Exception exception;
-        var error = result.Errors.Select(x => x.Error).FirstOrDefault();
+        var error = result.Errors.FirstOrDefault();
 
         if (!result.Message.IsNullOrEmpty())
         {
             exception = new CommonException(result.Message) { Instruction = instruction }.With(x => x.Source = owner?.ToString());
         }
-        else if (result.Status is Exception ex1)
-        {
-            exception = ex1.With(x => x.Source = owner?.ToString());
-        }
-        else if (result.Status is string s1)
-        {
-            exception = new CommonException(s1) { Instruction = instruction }.With(x => x.Source = owner?.ToString());
-        }
         else if (error is Exception ex)
         {
             exception = ex.With(x => x.Source = owner?.ToString());
-        }
-        else if (error is string s)
-        {
-            exception = new CommonException(s) { Instruction = instruction }.With(x => x.Source = owner?.ToString());
         }
         else
         {
