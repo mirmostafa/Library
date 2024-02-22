@@ -20,7 +20,6 @@ public class Result<TValue> : ResultBase
     , IAdditionOperators<Result<TValue>, Result<TValue>, Result<TValue>>
     , IEquatable<Result<TValue>>
     , ICombinable<Result<TValue>>
-    , ICombinable<Result, Result<TValue>>
     , INew<Result<TValue>, Result<TValue>>
 {
     public Result(
@@ -34,11 +33,11 @@ public class Result<TValue> : ResultBase
         this.Value = value;
 
     public Result(ResultBase original, TValue value)
-        : base(original) =>
-        this.Value = value;
+        : base(original)
+        => this.Value = value;
 
     //! Incomplete Abstraction 👃
-    //x public static Result<TValue?> Failure => _failure ??= CreateFailure();
+    //x public static Result<TValue?> Failure => _failure ??= Fail();
 
     public TValue Value
     {
@@ -48,15 +47,6 @@ public class Result<TValue> : ResultBase
         [StackTraceHidden]
         [DebuggerStepThrough]
         init;
-    }
-
-    public static Result<TValue> Combine(IEnumerable<Result<TValue>> results) =>
-            results.Combine();
-
-    public static Result<TValue> From(in Result result, in TValue value)
-    {
-        Check.MustBeArgumentNotNull(result);
-        return new(value, result.IsSucceed, result.Message, result.Errors, result.ExtraData);
     }
 
     public static implicit operator Result(Result<TValue> result)
@@ -74,9 +64,6 @@ public class Result<TValue> : ResultBase
     [DebuggerStepThrough]
     public static implicit operator TValue(Result<TValue> result) =>
         result.ArgumentNotNull().Value;
-
-    public static Result<TValue> New(Result<TValue> arg) =>
-        new(arg, arg.ArgumentNotNull().Value);
 
     public static Result<TValue> operator +(Result<TValue> left, Result right)
     {
@@ -116,4 +103,6 @@ public class Result<TValue> : ResultBase
 
     public override string ToString() =>
         this.IsFailure ? base.ToString() : this.Value?.ToString() ?? base.ToString();
+    public static Result<TValue> New(Result<TValue> arg)
+        => new(arg, arg.Value);
 }

@@ -488,7 +488,7 @@ public static class ServiceHelper
 
         //! Helper function to return result
         static Result<ManipulationResult<TViewModel, TDbEntity?>> getResult(Result result, ManipulationResult<TViewModel, TDbEntity?> entity = default)
-            => Result<ManipulationResult<TViewModel, TDbEntity?>>.From(result, entity);
+            => Result.From<ManipulationResult<TViewModel, TDbEntity?>>(result, entity);
     }
 
     #endregion CRUD

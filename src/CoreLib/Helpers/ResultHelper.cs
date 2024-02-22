@@ -278,7 +278,7 @@ public static class ResultHelper
 
         var result = await resultTask;
         var value1 = getNewValue(result);
-        return Result<TValue1>.From(result, value1);
+        return Result.From<TValue1>(result, value1);
     }
 
     public static async Task<Result> ToResultAsync<TValue>(this Task<Result<TValue>> resultTask)

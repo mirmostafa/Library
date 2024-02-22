@@ -3,6 +3,7 @@ using System.Numerics;
 
 using Library.DesignPatterns.Markers;
 using Library.Interfaces;
+using Library.Validations;
 
 namespace Library.Results;
 
@@ -111,7 +112,7 @@ public sealed class Result : ResultBase
         b ? Succeed : Failed;
 
     public static Result<TValue> From<TValue>(Result result, TValue value) =>
-        Result<TValue>.From(result, value);
+        Result.From<TValue>(result, value);
 
     // <summary>
     /// Creates a new empty Result object.
@@ -219,4 +220,13 @@ public sealed class Result : ResultBase
         in IEnumerable<Exception>? errors = null,
         in IEnumerable<object>? extraData = null) =>
         new(value, true, message, errors, extraData);
+
+    public static Result<TValue> From<TValue>(in Result result, in TValue value)
+    {
+        Check.MustBeArgumentNotNull(result);
+        return new(value, result.IsSucceed, result.Message, result.Errors, result.ExtraData);
+    }
+
+    public static Result<TValue> New<TValue>(Result<TValue> arg) =>
+        new(arg, arg.ArgumentNotNull().Value);
 }

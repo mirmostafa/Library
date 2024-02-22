@@ -24,6 +24,6 @@ public static class CodeGeneratorExtensions
 
         var statement = codeGenerator.Generate(nameSpace);
         var code = new Code(name, language, RoslynHelper.ReformatCode(statement), isPartial, fileName);
-        return Result<Code>.From(statement, code);
+        return Result.From<Code>(statement, code);
     }
 }

@@ -171,7 +171,7 @@ public static class SourceCodeHelpers
         new(EnumerableHelper.ToEnumerable(code));
 
     public static Result<Codes> ToCodesResult(this Result<Code> code) =>
-        Result<Codes>.From(code.ArgumentNotNull(), code.Value.ToCodes());
+        Result.From<Codes>(code.ArgumentNotNull(), code.Value.ToCodes());
 
     public static Code WithStatement(this Code code, [DisallowNull] string statement) =>
         new(code) { Statement = statement };

@@ -301,7 +301,7 @@ public static class CodeHelper
             var result = create();
             return result.IsSucceed
                 ? func(result.Value)
-                : onFail?.Invoke(result) ?? Result<TResult2>.From(result, default!);
+                : onFail?.Invoke(result) ?? Result.From<TResult2>(result, default!);
         };
     }
 
