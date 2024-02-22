@@ -307,17 +307,6 @@ public static class ResultHelper
     //x public static async Task<bool> TryParseAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
     //x     => (result = await input).IsSucceed;
 
-    /// <summary>
-    /// Creates a new instance of the Result class with the specified errors.
-    /// </summary>
-    /// <param name="errors">The errors to add to the Result.</param>
-    /// <returns>A new instance of the Result class with the specified errors.</returns>
-    public static Result WithError(this ResultBase result, params Exception[] errors) =>
-        new(result) { Errors = [.. errors] };
-
-    public static Result WithError(this ResultBase result, IEnumerable<Exception> errors) =>
-        new(result) { Errors = [.. errors] };
-
     public static Result<TNewValue> WithValue<TNewValue>(this ResultBase result, in TNewValue newValue) =>
         new(result, newValue);
 

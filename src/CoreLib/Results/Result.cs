@@ -32,7 +32,7 @@ public sealed class Result : ResultBase
     {
     }
 
-    public Result(ResultBase origin)
+    internal Result(ResultBase origin)
         : base(origin)
     {
     }
@@ -55,7 +55,16 @@ public sealed class Result : ResultBase
     /// <returns>A new instance of the Result class representing a successful operation.</returns>
     public static Result Succeed => _succeed ??= Success();
 
-    public static Result Add(Result left, Result right)
+    public static explicit operator Result(bool b) =>
+        b ? Succeed : Failed;
+
+    public static Result operator +(Result left, Result right) =>
+        new(left) { InnerResult = right };
+
+    public static Result operator +(Result left, ResultBase right) =>
+        new(left) { InnerResult = right };
+
+    public static Result Add(in Result left, in Result right)
         => left + right;
 
     /// <summary>
@@ -108,23 +117,14 @@ public sealed class Result : ResultBase
     public static Result Success(in object? status = null, in string? message = null) =>
         new(true, message);
 
-    public static explicit operator Result(bool b) =>
-        b ? Succeed : Failed;
-
     public static Result<TValue> From<TValue>(Result result, TValue value) =>
-        Result.From<TValue>(result, value);
+        From(result, value);
 
     // <summary>
     /// Creates a new empty Result object.
     /// </summary>
     public static Result NewEmpty() =>
         new();
-
-    public static Result operator +(Result left, Result right) =>
-        new(left) { InnerResult = right };
-
-    public static Result operator +(Result left, ResultBase right) =>
-        new(left) { InnerResult = right };
 
     public Result Combine(Result obj) =>
         this + obj;
@@ -170,15 +170,6 @@ public sealed class Result : ResultBase
         new(value, false, message, EnumerableHelper.AsEnumerable(error), null);
 
     /// <summary>
-    /// Creates a failure result with the specified message, exception and value.
-    /// </summary>
-    /// <param name="message">The message.</param>
-    /// <param name="ex">The exception.</param>
-    /// <param name="value">The value.</param>
-    /// <returns>A failure result.</returns>
-    public static Result<TValue?> Fail<TValue>(in string message, in Exception ex, in TValue? value) => Fail<TValue>(value, message, error: ex);
-
-    /// <summary>
     /// Creates a Result with a failure status and an Exception.
     /// </summary>
     /// <param name="error">The Exception to be stored in the Result.</param>
@@ -195,7 +186,8 @@ public sealed class Result : ResultBase
     /// <param name="value">The value to be stored in the Result.</param>
     /// <param name="error">The Exception to be stored in the Result.</param>
     /// <returns>A Result with a failure status and an Exception.</returns>
-    public static Result<TValue> Fail<TValue>(in TValue value, in Exception error) => Fail<TValue>(value, null, error: error)!;
+    public static Result<TValue> Fail<TValue>(in TValue value, in Exception error)
+        => Fail<TValue>(value, null, error: error)!;
 
     /// <summary>
     /// Creates a Result with a failure status and an Exception.
@@ -203,7 +195,8 @@ public sealed class Result : ResultBase
     /// <param name="message">The message to be stored in the Result.</param>
     /// <param name="value">The value to be stored in the Result.</param>
     /// <returns>A Result with a failure status and an Exception.</returns>
-    public static Result<TValue?> Fail<TValue>(in string message, in TValue? value) => Fail<TValue>(value, message);
+    public static Result<TValue?> Fail<TValue>(in string message, in TValue? value)
+        => Fail<TValue>(value, message);
 
     /// <summary>
     /// Creates a new successful Result with the given value, status, message, errors and extra data.

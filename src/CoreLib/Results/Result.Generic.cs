@@ -103,6 +103,8 @@ public class Result<TValue> : ResultBase
 
     public override string ToString() =>
         this.IsFailure ? base.ToString() : this.Value?.ToString() ?? base.ToString();
-    public static Result<TValue> New(Result<TValue> arg)
-        => new(arg, arg.Value);
+    
+    [return: NotNullIfNotNull(nameof(arg))]
+    public static Result<TValue>? New(Result<TValue>? arg)
+        => arg == null?default: new(arg, arg.Value);
 }
