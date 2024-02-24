@@ -13,7 +13,6 @@ namespace Library.Results;
 [Fluent]
 public sealed class Result : ResultBase
     , IEmpty<Result>
-    , IAdditionOperators<Result, Result, Result>
     , IAdditionOperators<Result, ResultBase, Result>
     , IEquatable<Result>
     , ICombinable<Result>
@@ -57,9 +56,6 @@ public sealed class Result : ResultBase
 
     public static explicit operator Result(bool b) =>
         b ? Succeed : Failed;
-
-    public static Result operator +(Result left, Result right) =>
-        new(left) { InnerResult = right };
 
     public static Result operator +(Result left, ResultBase right) =>
         new(left) { InnerResult = right };
