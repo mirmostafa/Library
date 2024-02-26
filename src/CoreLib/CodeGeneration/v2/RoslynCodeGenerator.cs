@@ -58,15 +58,6 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
                     IProperty prop => CreateRosProperty(root, prop),
                     _ => throw new NotImplementedException(),
                 };
-                //foreach (var attribute in member.Attributes)
-                //{
-                //    var attributeType = TypePath.New(attribute.Name);
-                //    foreach (var ns in attributeType.GetNameSpaces().Compact())
-                //    {
-                //        root = root.AddUsingNameSpace(ns);
-                //    }
-                //    codeMember = codeMember.AddAttribute(attributeType.Name, attribute.Properties.Select(x => (x.Name, x.Value)));
-                //}
                 rosType = rosType.AddMembers(codeMember);
             }
             rosNameSpace = rosNameSpace.AddType(rosType);
