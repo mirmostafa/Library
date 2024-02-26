@@ -13,5 +13,5 @@ public interface IHasGenericTypes
 
 public interface IHasAttributes
 {
-    IList<ICodeGenAttribute> Attributes { get; }
+    ISet<ICodeGenAttribute> Attributes { get; }
 }

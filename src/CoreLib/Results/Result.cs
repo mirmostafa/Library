@@ -114,7 +114,7 @@ public sealed class Result : ResultBase
         new(true, message);
 
     public static Result<TValue> From<TValue>(Result result, TValue value) =>
-        From(result, value);
+        new(result, value);
 
     // <summary>
     /// Creates a new empty Result object.

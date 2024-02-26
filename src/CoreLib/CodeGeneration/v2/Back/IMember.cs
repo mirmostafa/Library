@@ -18,7 +18,7 @@ public abstract class Member : IMember
         this.Name = name.ArgumentNotNull();
 
     public virtual AccessModifier AccessModifier { get; init; } = AccessModifier.Public;
-    public IList<ICodeGenAttribute> Attributes { get; } = new List<ICodeGenAttribute>();
+    public ISet<ICodeGenAttribute> Attributes { get; } = new HashSet<ICodeGenAttribute>();
     public virtual InheritanceModifier InheritanceModifier { get; init; }
     public virtual string Name { get; }
 
