@@ -748,38 +748,39 @@ public static class ControlHelper
         }
     }
 
-    public static TreeView FilterTreeView(
-        this TreeView treeView,
-        string? filterText,
-        Func<TreeViewItem, string?> getItemText,
-        ItemCollection? roots = null,
-        StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNullIfNotNull(nameof(source))]
+    [return: NotNullIfNotNull(nameof(defaultItems))]
+    public static ItemCollection? IfNull(this ItemCollection? source, ItemCollection? defaultItems)
+        => source ?? defaultItems;
+
+    [return: NotNullIfNotNull(nameof(treeView))]
+    public static TreeView? FilterTreeView(
+        this TreeView? treeView,
+        in string? filterText,
+        in Func<TreeViewItem, string?> getItemText,
+        in ItemCollection? roots = null,
+        in StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
     {
-        Check.MustBeArgumentNotNull(treeView);
         Check.MustBeArgumentNotNull(getItemText);
 
-        var theRoots = roots == null ? treeView.Items.Cast<TreeViewItem>() : roots.Cast<TreeViewItem>();
-        foreach (var item in theRoots)
+        var theRoots = roots.IfNull(treeView.ArgumentNotNull().Items).Cast<TreeViewItem?>();
+        foreach (var item in theRoots.Compact())
         {
             item.Visibility = Visibility.Visible;
-            filterTreeViewItems(item, filterText);
+            filterTreeViewItems(item, filterText, getItemText, stringComparison);
         }
         return treeView;
 
-        void filterTreeViewItems(TreeViewItem item, string? filterText)
+        static void filterTreeViewItems(in TreeViewItem item, in string? filterText, in Func<TreeViewItem, string?> getItemText, in StringComparison stringComparison)
         {
-            if (filterText.IsNullOrEmpty() || getItemText(item)?.IndexOf(filterText, stringComparison) >= 0)
-            {
-                item.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                item.Visibility = Visibility.Collapsed;
-            }
+            item.Visibility = filterText.IsNullOrEmpty() || getItemText(item)?.IndexOf(filterText, stringComparison) >= 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             foreach (TreeViewItem child in item.Items)
             {
-                filterTreeViewItems(child, filterText);
+                filterTreeViewItems(child, filterText, getItemText, stringComparison);
             }
         }
     }

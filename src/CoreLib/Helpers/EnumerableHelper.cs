@@ -523,11 +523,11 @@ public static class EnumerableHelper
     /// Returns an IEnumerable of non-null elements from the given IEnumerable of nullable elements.
     /// </summary>
     [return: NotNull]
-    public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items) where TSource : class =>
-        items?
-             .Where([DebuggerStepThrough] (x) => x is not null)
-             .Select([DebuggerStepThrough] (x) => x!)
-        ?? [];
+    public static IEnumerable<TSource> Compact<TSource>(this IEnumerable<TSource?>? items) where TSource : class 
+        => items ?
+            .Where([DebuggerStepThrough] (x) => x is not null)
+            .Select([DebuggerStepThrough] (x) => x!)
+           ?? [];
 
     /// <summary>
     /// Checks if the given IEnumerable contains a key-value pair with the specified key.
