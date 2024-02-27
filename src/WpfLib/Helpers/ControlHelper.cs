@@ -125,8 +125,8 @@ public static class ControlHelper
         return itemsControl;
     }
 
-    public static Selector BindItemsSourceToEnum<TEnum>(this Selector selector, TEnum? selectedItem = null) where TEnum : struct =>
-                BindItemsSource(selector, Enum.GetValues(typeof(TEnum)), null, selectedItem);
+    public static Selector BindItemsSourceToEnum<TEnum>(this Selector selector, TEnum? selectedItem = null) where TEnum : struct
+        => BindItemsSource(selector, Enum.GetValues(typeof(TEnum)), null, selectedItem);
 
     public static TreeViewItem BindNewTreeViewItem(object dataContext, string? header = null) =>
             new TreeViewItem().BindDataContext(dataContext, header);
@@ -745,6 +745,42 @@ public static class ControlHelper
         if (displayMemberPath is not null)
         {
             selector.DisplayMemberPath = displayMemberPath;
+        }
+    }
+
+    public static TreeView FilterTreeView(
+        this TreeView treeView,
+        string? filterText,
+        Func<TreeViewItem, string?> getItemText,
+        ItemCollection? roots = null,
+        StringComparison stringComparison = StringComparison.OrdinalIgnoreCase)
+    {
+        Check.MustBeArgumentNotNull(treeView);
+        Check.MustBeArgumentNotNull(getItemText);
+
+        var theRoots = roots == null ? treeView.Items.Cast<TreeViewItem>() : roots.Cast<TreeViewItem>();
+        foreach (var item in theRoots)
+        {
+            item.Visibility = Visibility.Visible;
+            filterTreeViewItems(item, filterText);
+        }
+        return treeView;
+
+        void filterTreeViewItems(TreeViewItem item, string? filterText)
+        {
+            if (filterText.IsNullOrEmpty() || getItemText(item)?.IndexOf(filterText, stringComparison) >= 0)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                item.Visibility = Visibility.Collapsed;
+            }
+
+            foreach (TreeViewItem child in item.Items)
+            {
+                filterTreeViewItems(child, filterText);
+            }
         }
     }
 }
