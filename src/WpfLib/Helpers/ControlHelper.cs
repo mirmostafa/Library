@@ -110,7 +110,7 @@ public static class ControlHelper
         return selector;
     }
 
-    public static void BindItemsSource([DisallowNull] this ItemsControl itemsControl, IEnumerable items, string? displayMemberPath = null)
+    public static TreeView BindItemsSource([DisallowNull] this TreeView itemsControl, IEnumerable items, string? displayMemberPath = null)
     {
         Check.MustBeArgumentNotNull(itemsControl);
 
@@ -122,6 +122,7 @@ public static class ControlHelper
             itemsControl.DisplayMemberPath = displayMemberPath;
         }
         itemsControl.Rebind(ItemsControl.ItemsSourceProperty);
+        return itemsControl;
     }
 
     public static Selector BindItemsSourceToEnum<TEnum>(this Selector selector, TEnum? selectedItem = null) where TEnum : struct =>
@@ -283,7 +284,7 @@ public static class ControlHelper
             where TPage : IStatefulPage => page.IsViewModelChanged;
 
     public static TModel? GetModel<TModel>(this TreeViewItem? item)
-        where TModel : class => item?.DataContext.Cast().As<TModel>();
+        where TModel : class => item?.DataContext as TModel;
 
     public static TModel? GetModel<TModel>(this RoutedPropertyChangedEventArgs<object> e)
         where TModel : class => e?.NewValue.Cast().As<TreeViewItem>()?.DataContext.Cast().As<TModel>();
@@ -461,7 +462,7 @@ public static class ControlHelper
         element.DataContext = dataContext;
     }
 
-    public static void RebindItemsSource(this TreeView control)
+    public static TreeView RebindItemsSource(this TreeView control)
     {
         Check.MustBeArgumentNotNull(control);
 
@@ -471,17 +472,21 @@ public static class ControlHelper
         control.ItemsSource = null;
         control.ItemsSource = itemsSource;
         _ = control.SetSelectedItem(selectedItem);
+        return control;
     }
 
-    public static void Refresh(this UIElement uiElement)
+    [return: NotNullIfNotNull(nameof(uiElement))]
+    public static TUIElement? Refresh<TUIElement>(this TUIElement? uiElement)
+        where TUIElement : UIElement
     {
         //uiElement?.Dispatcher.Invoke(Methods.Empty, DispatcherPriority.Render);
         uiElement?.UpdateLayout();
         uiElement?.InvalidateVisual();
+        return uiElement;
     }
 
     public static IEnumerable<dynamic>? RetrieveCheckedItems(this MultiSelector dg)
-            => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.Cast().As<dynamic>()).Compact();
+        => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.Cast().As<dynamic>()).Compact();
 
     public static IEnumerable<TItem>? RetrieveCheckedItems<TItem>(this MultiSelector dg)
             => dg?.Items.Cast<dynamic>().Where(item => item.IsChecked == true).Cast<object>().Select(item => item.Cast().To<TItem>());
