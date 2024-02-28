@@ -66,13 +66,13 @@ public static class IdentityHelper
 
     public static Results.Result<TValue?> ToResult<TValue>(
         this IdentityResult identityResult,
-        TValue value,
+        TValue? value,
         int errorCode = -1,
         string? successMessage = null,
         string? errorMessage = null) =>
         identityResult.ArgumentNotNull().Succeeded
-            ? Results.Result.Success<TValue>(value, message: successMessage)
-            : Results.Result.Fail<TValue>(message: errorMessage);
+            ? Results.Result.Success(value, message: successMessage)
+            : Results.Result.Fail<TValue>();
 
     public static async Task<Results.Result> ToResultAsync(this Task<IdentityResult> identityResult, string? successMessage = null, string? errorMessage = null) =>
         ToResult(await identityResult, successMessage, errorMessage);

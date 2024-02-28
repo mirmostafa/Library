@@ -201,7 +201,7 @@ public static class CodeHelper
         }
         catch (Exception ex)
         {
-            return Result.Fail<IEnumerable<TResult>>(Enumerable.Empty<TResult>(), ex);
+            return Result.Fail<IEnumerable<TResult>>(ex, Enumerable.Empty<TResult>());
         }
     }
 

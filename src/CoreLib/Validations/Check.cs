@@ -35,7 +35,7 @@ public sealed class Check
         notOk ? Result.Fail(getErrorMessage()) : Result.Success();
 
     public static Result<TValue> If<TValue>(in TValue value, in bool notOk, in Func<Exception> getErrorMessage) =>
-        notOk ? Result.Fail<TValue>(value, getErrorMessage()) : Result.Success<TValue>(value);
+        notOk ? Result.Fail<TValue>(getErrorMessage(), value) : Result.Success<TValue>(value);
 
     public static Result<IEnumerable<string?>?> IfAnyNull(in IEnumerable<string?>? items)
     {

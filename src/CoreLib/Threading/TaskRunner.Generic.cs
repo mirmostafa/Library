@@ -117,7 +117,7 @@ public sealed class TaskRunner<TState> : TaskRunnerBase<TaskRunner<TState?>, Res
         {
             if (token.IsCancellationRequested)
             {
-                return Result.Fail<TState?>(state, new OperationCanceledException(token));
+                return Result.Fail<TState?>(new OperationCanceledException(token), state);
             }
 
             state = await func(state, token);
