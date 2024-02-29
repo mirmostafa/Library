@@ -62,7 +62,7 @@ public static class IdentityHelper
     public static Results.Result ToResult(this IdentityResult identityResult, string? successMessage = null, string? errorMessage = null) =>
             identityResult.ArgumentNotNull().Succeeded
             ? Results.Result.Success(message: successMessage)
-            : Results.Result.Fail(message: errorMessage, extraData: identityResult.Errors);
+            : Results.Result.Fail(message: errorMessage);
 
     public static Results.Result<TValue?> ToResult<TValue>(
         this IdentityResult identityResult,

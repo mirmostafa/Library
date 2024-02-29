@@ -1,13 +1,10 @@
 ﻿using Library.CodeGeneration;
 using Library.DesignPatterns.Markers;
-using Library.Helpers.Models;
-using Library.Results;
 using Library.Validations;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -114,12 +111,12 @@ public static class RoslynHelper
     }
 
     public static CompilationUnitSyntax AddNameSpace(this CompilationUnitSyntax root, BaseNamespaceDeclarationSyntax nameSpace) =>
-        root.ArgumentNotNull().WithMembers(SingletonList<MemberDeclarationSyntax>(nameSpace));
+        root.ArgumentNotNull().WithMembers(SingletonList<RosMember>(nameSpace));
 
     public static CompilationUnitSyntax AddNameSpace(this CompilationUnitSyntax root, string nameSpaceName, out BaseNamespaceDeclarationSyntax nameSpace)
     {
         nameSpace = CreateNamespace(nameSpaceName);
-        return root.ArgumentNotNull().WithMembers(SingletonList<MemberDeclarationSyntax>(nameSpace));
+        return root.ArgumentNotNull().WithMembers(SingletonList<RosMember>(nameSpace));
     }
 
     public static RosClass AddProperty<TPropertyType>(this RosClass type, string name, bool hasSetAccessor = true, bool hasGetAccessor = true) =>
@@ -205,42 +202,6 @@ public static class RoslynHelper
         var usingDirective = UsingDirective(ParseName(usingNamespace));
         return nameSpace.AddUsings(usingDirective);
     }
-
-    public static Result CompileOnFly(CompileOnFlyOptionsBase options)
-    {
-        var source = options switch
-        {
-            CompileOnFlyByFileOptions file => File.ReadAllText(file.SourceFile),
-            CompileOnFlyBySourceOptions src => src.Source,
-            _ => throw new NotImplementedException(),
-        };
-        var parsedSyntaxTree = ParseSyntaxTree(SourceText.From(source, Encoding.UTF8), CSharpParseOptions.Default.WithLanguageVersion(LanguageVersion.Latest));
-        _ = options.FrameworkReferences.Add("mscorlib");
-        _ = options.FrameworkReferences.Add("System");
-        _ = options.FrameworkReferences.Add("System.Core.dll");
-        var defaultReferences = options.FrameworkReferences.Select(x => MetadataReference.CreateFromFile(x));
-        var defaultCompilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
-            .WithOverflowChecks(options.WithOverflowChecks)
-            .WithOptimizationLevel(options.IsReleaseMode ? OptimizationLevel.Release : OptimizationLevel.Debug);
-        var compilation = CSharpCompilation.Create($"{Guid.NewGuid}.dll", [parsedSyntaxTree], defaultReferences, defaultCompilationOptions);
-        try
-        {
-            var result = string.IsNullOrEmpty(options.OutputFile) ? compilation.Emit(Stream.Null) : compilation.Emit(options.OutputFile);
-            return result.Success
-                ? Result.Succeed
-                : Result.Fail(extraData: (IEnumerable<object>?)result.Diagnostics.Select(x => ((object)x.Id, (object)x.GetMessage())));
-        }
-        catch (Exception ex)
-        {
-            return Result.Fail(ex);
-        }
-    }
-
-    public static Result CompileOnFlyByFile(string inputFile, string? outputFile = null) =>
-        CompileOnFly(new CompileOnFlyByFileOptions(inputFile, outputFile));
-
-    public static Result CompileOnFlyBySource(string source, string? outputFile = null) =>
-        CompileOnFly(new CompileOnFlyBySourceOptions(source, outputFile));
 
     public static RosMethod CreateConstructor(string className, IEnumerable<SyntaxKind>? modifiers = null, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null)
     {
@@ -369,7 +330,7 @@ public static class RoslynHelper
     {
         Checker.MustBeArgumentNotNull(typeName?.Name);
 
-        modifiers ??= new[] { SyntaxKind.PublicKeyword, SyntaxKind.SealedKeyword };
+        modifiers ??= [SyntaxKind.PublicKeyword, SyntaxKind.SealedKeyword];
         return ClassDeclaration(typeName.Name).WithModifiers(modifiers.ToSyntaxTokenList());
     }
 
@@ -561,7 +522,7 @@ internal static partial class Helpers
     {
         var tokenList = new SyntaxTokenList();
 
-        foreach (var kind in syntaxKinds ?? Enumerable.Empty<SyntaxKind>())
+        foreach (var kind in syntaxKinds ?? [])
         {
             var token = Token(kind);
             tokenList = tokenList.Add(token);

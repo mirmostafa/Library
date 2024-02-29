@@ -5,22 +5,19 @@ using Library.Validations;
 
 namespace Library.Results;
 
-[DebuggerStepThrough]
+[DebuggerStepThrough, StackTraceHidden]
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public abstract class ResultBase(
     in bool? isSucceed = null,
-
     in string? message = null,
     in IEnumerable<Exception>? errors = null,
-    in IEnumerable<object>? extraData = null, ResultBase? innerResult = null)
+    ResultBase? innerResult = null) : IResult
 {
     private readonly bool? _isSucceed = isSucceed;
     private ImmutableArray<Exception>? _errors = errors?.ToImmutableArray();
 
-    private ImmutableArray<object>? _extraData = extraData?.ToImmutableArray();
-
     protected ResultBase(ResultBase result)
-        : this(result.ArgumentNotNull().IsSucceed, result.Message, result.Errors, result.ExtraData, result.InnerResult)
+        : this(result.ArgumentNotNull().IsSucceed, result.Message, result.Errors, result.InnerResult)
     {
     }
 
@@ -31,10 +28,7 @@ public abstract class ResultBase(
         init => this._errors = value;
     }
 
-    public Exception? Exception => Errors.FirstOrDefault();
-
-    [NotNull]
-    public ImmutableArray<object> ExtraData => this._extraData ??= [];
+    public Exception? Exception => this.Errors.FirstOrDefault();
 
     public ResultBase? InnerResult { get; init; } = innerResult;
 
@@ -62,20 +56,13 @@ public abstract class ResultBase(
     public virtual bool Equals(ResultBase? other) =>
         other is not null && this.GetHashCode() == other.GetHashCode();
 
-    [return: NotNull]
-    public IEnumerable<Exception>? GetAllErrors() =>
-        this.IterateOnAll<IEnumerable<Exception>>(x => x.Errors).SelectAll();
-
-    [return: NotNull]
-    public IEnumerable<object> GetAllExtraData() =>
-        this.IterateOnAll<IEnumerable<object>>(x => x.ExtraData).SelectAll();
-
     /// <summary>
     /// Serves as the default hash function.
     /// </summary>
     /// <returns>The hash code for the current instance.</returns>
     public override int GetHashCode() =>
         HashCode.Combine(this.IsSucceed, this.Message);
+
     /// <summary>
     /// Generates a string representation of the result object.
     /// </summary>
@@ -86,14 +73,4 @@ public abstract class ResultBase(
 
     private string GetDebuggerDisplay() =>
         this.ToString();
-
-    private IEnumerable<T> IterateOnAll<T>(Func<ResultBase, T> selector)
-    {
-        var buffer = this;
-        while (buffer != null)
-        {
-            yield return selector(buffer);
-            buffer = buffer.InnerResult;
-        }
-    }
 }

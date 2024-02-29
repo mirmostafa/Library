@@ -15,7 +15,7 @@ namespace Library.Results;
 [DebuggerStepThrough, StackTraceHidden]
 [Immutable]
 [Fluent]
-public class Result<TValue> : ResultBase
+public class Result<TValue> : ResultBase, IResult<TValue>
     , IAdditionOperators<Result<TValue>, Result, Result<TValue>>
     , IAdditionOperators<Result<TValue>, Result<TValue>, Result<TValue>>
     , IEquatable<Result<TValue>>
@@ -27,9 +27,8 @@ public class Result<TValue> : ResultBase
         in bool? succeed = null,
         in string? message = null,
         in IEnumerable<Exception>? errors = null,
-        in IEnumerable<object>? extraData = null,
         in ResultBase? innerResult = null)
-        : base(succeed, message, errors, extraData, innerResult) =>
+        : base(succeed, message, errors, innerResult) =>
         this.Value = value;
 
     public Result(ResultBase original, TValue value)
@@ -41,29 +40,25 @@ public class Result<TValue> : ResultBase
 
     public TValue Value
     {
-        [StackTraceHidden]
-        [DebuggerStepThrough]
         get;
-        [StackTraceHidden]
-        [DebuggerStepThrough]
         init;
     }
 
     public static implicit operator Result(Result<TValue> result)
     {
         Check.MustBeArgumentNotNull(result);
-        return new(result.IsSucceed, result.Message, result.Errors, result.ExtraData);
+        return new(result.IsSucceed, result.Message, result.Errors);
     }
 
-    [StackTraceHidden]
-    [DebuggerStepThrough]
     public static implicit operator Result<TValue>(TValue value) =>
         new(value);
 
-    [StackTraceHidden]
-    [DebuggerStepThrough]
     public static implicit operator TValue(Result<TValue> result) =>
         result.ArgumentNotNull().Value;
+
+    [return: NotNullIfNotNull(nameof(arg))]
+    public static Result<TValue>? New(Result<TValue>? arg)
+        => arg == null ? default : new(arg, arg.Value);
 
     public static Result<TValue> operator +(Result<TValue> left, Result right)
     {
@@ -103,8 +98,4 @@ public class Result<TValue> : ResultBase
 
     public override string ToString() =>
         this.IsFailure ? base.ToString() : this.Value?.ToString() ?? base.ToString();
-    
-    [return: NotNullIfNotNull(nameof(arg))]
-    public static Result<TValue>? New(Result<TValue>? arg)
-        => arg == null?default: new(arg, arg.Value);
 }

@@ -70,6 +70,10 @@ public static class ResultHelper
     public static Task EndAsync(this Task<Result> _) =>
         Task.CompletedTask;
 
+    [return: NotNull]
+    public static IEnumerable<Exception>? GetAllErrors(this IResult result)
+        => result.IterateOnAll<IEnumerable<Exception>>(x => x.Errors).SelectAll();
+
     public static async Task<TValue> GetValueAsync<TValue>(this Task<Result<TValue>> taskResult)
     {
         var result = await taskResult;
@@ -346,5 +350,15 @@ public static class ResultHelper
         }
 
         throw exception;
+    }
+
+    private static IEnumerable<T> IterateOnAll<T>(this IResult result, Func<IResult, T> selector)
+    {
+        var buffer = result;
+        while (buffer != null)
+        {
+            yield return selector(buffer);
+            buffer = buffer.InnerResult;
+        }
     }
 }

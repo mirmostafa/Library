@@ -15,7 +15,7 @@ public class ApiResult : ResultBase, IApiResult
         : base(null, message, innerResult: null) { this.Status = statusCode; }
 
     public ApiResult(in bool? Succeed = null, in object? Status = null, in string? Message = null, in IEnumerable<Exception>? Errors = null, in IEnumerable<object>? extraData = null)
-        : base(Succeed, Message, Errors, extraData)
+        : base(Succeed, Message, Errors)
     {
     }
 

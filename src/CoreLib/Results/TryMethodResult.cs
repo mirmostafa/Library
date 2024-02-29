@@ -8,7 +8,7 @@ public sealed class TryMethodResult
     in string? message = null,
     in IEnumerable<Exception>? errors = null,
     in IEnumerable<object>? extraData = null)
-    : base(succeed, message, errors, extraData, innerResult: null) { }
+    : base(succeed, message, errors, innerResult: null) { }
 
     /// <summary>
     /// Creates a new TryMethodResult with a given value, status, message, errors, and extra data.
