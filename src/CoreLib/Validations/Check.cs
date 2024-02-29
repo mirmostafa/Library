@@ -26,7 +26,7 @@ public sealed class Check
     public static Check That => _that ??= new();
 
     public static Result If(in bool notOk, in Func<string> getErrorMessage) =>
-        notOk ? Result.Fail(message: getErrorMessage()) : Result.Success();
+        notOk ? Result.Fail(getErrorMessage()) : Result.Success();
 
     public static Result If(in bool notOk) =>
         notOk ? Result.Failed : Result.Succeed;

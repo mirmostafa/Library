@@ -53,9 +53,9 @@ public sealed class Result : ResultBase, IResult
     public static Result Fail(in string? message, in IEnumerable<Exception>? errors)
         => new(false, message, errors);
 
-    //public static Result Fail<TException>()
-    //    where TException : Exception, new()
-    //    => Fail(new TException());
+    public static Result Fail<TException>()
+        where TException : Exception, new()
+        => Fail(new TException());
 
     public static Result Fail(in string? message, in Exception error)
         => Fail(message, [error]);

@@ -30,7 +30,7 @@ public sealed class Namespace(string name) : INamespace
         }
         if (this.Types.Any(x => x == null))
         {
-            return Result.Fail(message: "Type cannot be empty.");
+            return Result.Fail("Type cannot be empty.");
         }
         foreach (var type in this.Types)
         {
