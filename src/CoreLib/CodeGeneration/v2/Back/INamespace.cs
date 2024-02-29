@@ -26,7 +26,7 @@ public sealed class Namespace(string name) : INamespace
     {
         if (this.UsingNamespaces.Any(x => x.IsNullOrEmpty()))
         {
-            return Result.Fail(message: "Using namespace cannot be empty.");
+            return Result.Fail("Using namespace cannot be empty.");
         }
         if (this.Types.Any(x => x == null))
         {

@@ -62,9 +62,8 @@ public sealed class TryMethodResult
 public sealed class TryMethodResult<TValue>(in TValue? value,
     in bool? succeed = null,
     in string? message = null,
-    in IEnumerable<Exception>? errors = null,
-    in IEnumerable<object>? ExtraData = null)
-    : Result<TValue?>(value, succeed, message, errors, ExtraData)
+    in IEnumerable<Exception>? errors = null)
+    : Result<TValue?>(value, succeed, message, errors)
 {
     /// <summary>
     /// Creates a new TryMethodResult with a given value, status, message, errors, and extra data.
@@ -72,16 +71,15 @@ public sealed class TryMethodResult<TValue>(in TValue? value,
     /// <param name="value">The value of the TryMethodResult.</param>
     /// <param name="message">The message of the TryMethodResult.</param>
     /// <param name="errors">The errors of the TryMethodResult.</param>
-    /// <param name="extraData">The extra data of the TryMethodResult.</param>
+    /// 
     /// 
     /// <returns>
     /// A new TryMethodResult with the given value, status, message, errors, and extra data.
     /// </returns>
-    public static TryMethodResult<TValue?> CreateFailure(in TValue? value = default,
+    public static TryMethodResult<TValue?> Fail(in TValue? value = default,
         in string? message = null,
-        in IEnumerable<Exception>? errors = null,
-        in IEnumerable<object>? extraData = null)
-        => new(value, false, message, errors, extraData);
+        in IEnumerable<Exception>? errors = null)
+        => new(value, false, message, errors);
 
     /// <summary>
     /// Creates a new TryMethodResult with the given value, status, message, errors, and extraData.
@@ -96,7 +94,7 @@ public sealed class TryMethodResult<TValue>(in TValue? value,
         in string? message = null,
         in IEnumerable<Exception>? errors = null,
         in IEnumerable<object>? extraData = null) =>
-        new(value, true, message, errors, extraData);
+        new(value, true, message, errors);
 
     public static explicit operator bool(TryMethodResult<TValue?> result) =>
         result.IsSucceed;

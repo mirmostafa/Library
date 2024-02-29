@@ -121,7 +121,7 @@ public sealed class IpAddress([DisallowNull] in string ip) :
         }
         catch (Exception ex)
         {
-            return TryMethodResult<IpAddress>.CreateFailure();
+            return TryMethodResult<IpAddress>.Fail();
         }
     }
 
