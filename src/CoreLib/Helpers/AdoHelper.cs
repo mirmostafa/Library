@@ -38,21 +38,15 @@ public static partial class AdoHelper
     /// </returns>
     public static T CheckDbNull<T>(this SqlDataReader reader, string columnName, T defaultValue, Func<object, T> converter)
     {
-        // Check if the SqlDataReader is not null and not closed.
-        if (reader is not null and { IsClosed: false })
-        {
-            // Retrieve the value from the SqlDataReader using the columnName.
-            var value = reader[columnName];
+        Check.MustBeArgumentNotNull(reader);
+        Check.MustBeArgumentNotNull(columnName);
 
-            // Use the ObjectHelper.CheckDbNull method to check for DBNull and provide a default
-            // value if needed.
-            return ObjectHelper.CheckDbNull(value, defaultValue, converter);
-        }
-        else
-        {
-            // Throw an ArgumentNullException if the SqlDataReader is null or closed.
-            throw new ArgumentNullException(nameof(reader));
-        }
+        // Retrieve the value from the SqlDataReader using the columnName.
+        var value = reader[columnName];
+
+        // Use the ObjectHelper.CheckDbNull method to check for DBNull and provide a default
+        // value if needed.
+        return ObjectHelper.CheckDbNull(value, defaultValue, converter);
     }
 
     public static SqlCommand CreateCommand(this SqlConnection connection, string commandText, Action<SqlParameterCollection>? fillParams = null)

@@ -71,7 +71,7 @@ public sealed class Result : ResultBase, IResult
     public static Result<TValue?> Fail<TValue>(in TValue? value,
         in string? message,
         in Exception error)
-        => new(value, false, message, EnumerableHelper.AsEnumerable(error));
+        => new(value, false, message, [error]);
 
     public static Result<TValue?> Fail<TValue>(in Exception error)
         => Fail<TValue>(default, null, error);

@@ -17,7 +17,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.BusinessServices;
 
-[DebuggerStepThrough, StackTraceHidden]
 public static class ServiceHelper
 {
     #region CRUD
@@ -639,23 +638,30 @@ public static class ServiceHelper
             return Result.Success<int>(-1);
         }
 
-        // If a transaction is provided, commit it
-        if (transaction is not null)
+        try
         {
-            await transaction.CommitAsync(token);
+            // If a transaction is provided, commit it
+            if (transaction is not null)
+            {
+                await transaction.CommitAsync(token);
+            }
+
+            // Save the changes and store the result
+            var result = await service.SaveChangesAsync(token);
+
+            // If the result is successful, reset the changes
+            if (result.IsSucceed)
+            {
+                service.ResetChanges();
+            }
+
+            // Return the result
+            return result;
         }
-
-        // Save the changes and store the result
-        var result = await service.SaveChangesAsync(token);
-
-        // If the result is successful, reset the changes
-        if (result.IsSucceed)
+        catch (DbUpdateConcurrencyException ex)
         {
-            service.ResetChanges();
+            return Result.Fail<int>(ex);
         }
-
-        // Return the result
-        return result;
     }
 
     #endregion Save & Submit Changes
