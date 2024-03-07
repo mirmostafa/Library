@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Wpf.Windows;
 
-public abstract class LibApp : Bases.ApplicationBase
+public abstract class LibApp : Bases.ApplicationBase, ILoggerContainer
 {
     protected LibApp()
     {
@@ -29,6 +29,8 @@ public abstract class LibApp : Bases.ApplicationBase
     public static FastLogger AppLogger => Current.Cast().To<LibApp>().Logger;
 
     public FastLogger Logger { get; }
+
+    ILogger ILoggerContainer.Logger => this.Logger;
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
     public string? Title => ApplicationTitle;

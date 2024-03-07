@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 
-using Library.Extensions.Options;
 using Library.Logging;
 using Library.Validations;
 
@@ -101,7 +100,7 @@ public static class ConsoleHelper
     }
 }
 
-public sealed class ConsoleHelperOptions : IOptions
+public sealed class ConsoleHelperOptions 
 {
     internal ConsoleHelperOptions()
     {

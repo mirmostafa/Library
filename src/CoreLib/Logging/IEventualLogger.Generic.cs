@@ -10,5 +10,5 @@ public interface IEventualLogger<TLogMessage> : ILogger<TLogMessage>
     /// <summary>
     /// Event raised when a log message is created.
     /// </summary>
-    event EventHandler<ItemActedEventArgs<TLogMessage>>? Logging;
+    event EventHandler<ItemActedEventArgs<LogRecord<TLogMessage>>>? Logging;
 }

@@ -1,13 +1,12 @@
-﻿using Library.Extensions.Options;
-using Library.Validations;
+﻿using Library.Validations;
 
 using Microsoft.Extensions.Logging;
 
 namespace Library.Logging;
 
-public sealed class MsLoggerMessageWrapperOptions : IOptions;
+public sealed class MsLoggerMessageWrapperOptions;
 
-public abstract class MsLoggerMessageWrapperBase<TMsLoggerMessageWrapper> : IConfigurable<TMsLoggerMessageWrapper, MsLoggerMessageWrapperOptions>
+public abstract class MsLoggerMessageWrapperBase<TMsLoggerMessageWrapper>
     where TMsLoggerMessageWrapper : MsLoggerMessageWrapperBase<TMsLoggerMessageWrapper>
 {
     protected readonly Action<IMsLogger, string, Exception?> _debug;

@@ -7,8 +7,4 @@ namespace Library.Logging;
 /// </summary>
 public sealed class FastLogger : FastLoggerBase<object>, IEventualLogger
 {
-    public event EventHandler<ItemActedEventArgs<object>>? Logging;
-
-    protected override void OnLogging(LogRecord<object> logRecord)
-        => this.Logging?.Invoke(logRecord.Sender, new ItemActedEventArgs<object>(logRecord));
 }

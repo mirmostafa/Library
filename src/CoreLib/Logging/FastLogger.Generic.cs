@@ -1,4 +1,5 @@
-﻿using Library.Validations;
+﻿using Library.EventsArgs;
+using Library.Validations;
 
 namespace Library.Logging;
 
@@ -8,6 +9,9 @@ namespace Library.Logging;
 /// </summary>
 public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
 {
+    public event EventHandler<ItemActedEventArgs<LogRecord<TLogMessage>>>? Logging;
+
+
     private readonly Action<LogRecord<TLogMessage>> _emptyAction = _ => { };
     private readonly Action<LogRecord<TLogMessage>> _logAction;
     private Action<LogRecord<TLogMessage>> _debugAction = null!;
@@ -75,7 +79,8 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
     public void Warn(TLogMessage message, object? sender = null, DateTime? time = null)
         => this._warnAction?.Invoke(new(message, LogLevel.Warning, ProcessSender(sender, LogLevel.Warning), time));
 
-    protected abstract void OnLogging(LogRecord<TLogMessage> logRecord);
+    protected virtual void OnLogging(LogRecord<TLogMessage> logRecord)
+        => this.Logging?.Invoke(logRecord?.Sender, new(logRecord!));
 
     private static object? ProcessSender(object? sender, LogLevel level)
         => (sender, level) switch
