@@ -529,12 +529,9 @@ public static class DbContextHelper
             where TEntity : class
     {
         Check.MustBeArgumentNotNull(entityEntry);
-        if (entityEntry is not null)
-        {
-            entityEntry.Property(propertyExpression).IsModified = isModified;
-        }
 
-        return entityEntry!;
+        entityEntry.Property(propertyExpression).IsModified = isModified;
+        return entityEntry;
     }
 
     /// <summary>
