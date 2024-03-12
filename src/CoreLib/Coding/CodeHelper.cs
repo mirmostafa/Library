@@ -28,6 +28,7 @@ public static class CodeHelper
     [DoesNotReturn]
     public static T Break<T>() =>
         throw new BreakException();
+
     /// <summary>
     /// Executes the specified try method and catches any exceptions that occur.
     /// </summary>
@@ -74,6 +75,8 @@ public static class CodeHelper
 
     public static async Task<Result> CatchAsync(Func<Task> action)
     {
+        Check.MustBeArgumentNotNull(action);
+
         try
         {
             await action();
@@ -176,32 +179,32 @@ public static class CodeHelper
     /// </summary>
     /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="action">The action to execute.</param>
-    /// <param name="defaultResult">The default result to return if an exception is thrown.</param>
+    /// <param name="onErrorResult">The default result to return if an exception is thrown.</param>
     /// <returns>A <see cref="ResultTResult"/>.</returns>
-    public static Result<TResult> CatchResult<TResult>([DisallowNull] in Func<TResult> action, TResult? defaultResult = default)
+    public static Result<TResult?> CatchResult<TResult>([DisallowNull] in Func<TResult> action, TResult? onErrorResult = default)
     {
         Check.MustBeArgumentNotNull(action);
         try
         {
-            return Result.Success<TResult>(action());
+            return Result.Success(action());
         }
         catch (Exception ex)
         {
-            return Result.Fail<TResult?>(defaultResult, ex.GetBaseException().Message, ex)!;
+            return Result.Fail<TResult?>(onErrorResult, ex.GetBaseException().Message, ex)!;
         }
     }
 
-    public static Result<IEnumerable<TResult>> CatchResult<TResult, TArg>(Func<TArg, IEnumerable<TResult>> method, TArg arg)
+    public static Result<IEnumerable<TResult?>?> CatchResult<TResult, TArg>(Func<TArg, IEnumerable<TResult?>> method, TArg arg)
     {
         Check.MustBeArgumentNotNull(method);
         try
         {
             var result = method(arg);
-            return Result.Success<IEnumerable<TResult>>(result);
+            return Result.Success(result);
         }
         catch (Exception ex)
         {
-            return Result.Fail<IEnumerable<TResult>>(ex, Enumerable.Empty<TResult>());
+            return Result.Fail<IEnumerable<TResult?>>(ex);
         }
     }
 
@@ -240,8 +243,7 @@ public static class CodeHelper
         Check.MustBeArgumentNotNull(func);
         try
         {
-            var result = await func();
-            return result;
+            return await func();
         }
         catch (Exception ex)
         {
@@ -603,24 +605,24 @@ public static class CodeHelper
         }
     }
 
-    public static TInstance For<TInstance, Item>(in TInstance @this, IEnumerable<Item>? items, in Action<(Item Item, int Index)> action, Func<int, int>? getNext = null)
+    public static TInstance For<TInstance, TItem>(in TInstance @this, IEnumerable<TItem>? items, in Action<(TItem Item, int Index)> action, Func<int, int>? getNext = null)
     {
         var act = action;
-        For(items, (Item item, int index) => act((item, index)), getNext);
+        For(items, (TItem item, int index) => act((item, index)), getNext);
         return @this;
     }
 
-    public static TInstance For<TInstance, Item>(in TInstance @this, IEnumerable<Item>? items, in Action<Item, int> action, Func<int, int>? getNext = null)
+    public static TInstance For<TInstance, TItem>(in TInstance @this, IEnumerable<TItem>? items, in Action<TItem, int> action, Func<int, int>? getNext = null)
     {
         var act = action;
-        For(items, (Item item, int index) => act(item, index), getNext);
+        For(items, (TItem item, int index) => act(item, index), getNext);
         return @this;
     }
 
-    public static void For<Item>(IEnumerable<Item>? items, in Action<(Item Item, int Index)> action, Func<int, int>? getNext = null)
+    public static void For<TItem>(IEnumerable<TItem>? items, in Action<(TItem Item, int Index)> action, Func<int, int>? getNext = null)
     {
         var act = action;
-        For(items, (Item item, int index) => act((item, index)), getNext);
+        For(items, (TItem item, int index) => act((item, index)), getNext);
     }
 
     /// <summary>
@@ -628,11 +630,11 @@ public static class CodeHelper
     /// <code>for</code>
     /// keyword.
     /// </summary>
-    /// <typeparam name="Item">The type of the items in the IEnumerable.</typeparam>
+    /// <typeparam name="TItem">The type of the items in the IEnumerable.</typeparam>
     /// <param name="items">The IEnumerable of items.</param>
     /// <param name="action">The action to execute for each item.</param>
     /// <param name="getNext">A function to get the next index.</param>
-    public static void For<Item>(IEnumerable<Item>? items, in Action<Item, int> action, Func<int, int>? getNext = null)
+    public static void For<TItem>(IEnumerable<TItem>? items, in Action<TItem, int> action, Func<int, int>? getNext = null)
     {
         //If the action is null, return
         if (action is null || items is not null)
@@ -644,7 +646,7 @@ public static class CodeHelper
         getNext ??= i => ++i;
 
         //If the items are an array, loop through the array and execute the action
-        if (items is Item[] arr)
+        if (items is TItem[] arr)
         {
             for (var i = 0; i < arr.Length; i = getNext(i))
             {
@@ -652,7 +654,7 @@ public static class CodeHelper
             }
         }
         //If the items are a list, loop through the list and execute the action
-        else if (items is IList<Item> list)
+        else if (items is IList<TItem> list)
         {
             for (var i = 0; i < list.Count; i = getNext(i))
             {
