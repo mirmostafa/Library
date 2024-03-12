@@ -505,7 +505,7 @@ public static class DbContextHelper
         try
         {
             var saveResult = await dbContext.SaveChangesAsync(cancellationToken);
-            var result = Result.Success<int>(saveResult);
+            var result = Result.Success(saveResult);
             return result;
         }
         catch (Exception ex)
@@ -513,6 +513,17 @@ public static class DbContextHelper
             var result = Result.Fail<int>(ex);
             return result;
         }
+    }
+
+    public static EntityEntry<TEntity> SetEntryModified<TEntity>(
+            this EntityEntry<TEntity> entityEntry
+            bool isModified = true)
+            where TEntity : class
+    {
+        Check.MustBeArgumentNotNull(entityEntry);
+        entityEntry.State = isModified ? EntityState.Modified : EntityState.Unchanged;
+
+        return entityEntry;
     }
 
     /// <summary>
