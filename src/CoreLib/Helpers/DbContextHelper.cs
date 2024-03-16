@@ -516,7 +516,7 @@ public static class DbContextHelper
     }
 
     public static EntityEntry<TEntity> SetEntryModified<TEntity>(
-            this EntityEntry<TEntity> entityEntry
+            this EntityEntry<TEntity> entityEntry,
             bool isModified = true)
             where TEntity : class
     {
