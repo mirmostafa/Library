@@ -102,7 +102,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
     private static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) CreateRosMethod(CompilationUnitSyntax root, IMethod method, string className)
     {
         var modifiers = GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier);
-        var result = method.IsConstructor
+        var result = method.IsConstructor || method.Name == className
             ? RoslynHelper.CreateConstructor(TypePath.GetName(className), modifiers, method.Parameters, method.Body)
             : RoslynHelper.CreateMethod(new(modifiers, method.ReturnType, method.Name, method.Parameters, method.Body, method.IsExtension));
         method.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));

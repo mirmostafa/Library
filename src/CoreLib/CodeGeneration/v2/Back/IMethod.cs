@@ -30,7 +30,7 @@ public interface IMethod : IMember, IHasGenericTypes
 [Immutable]
 public sealed class Method(string name) : Member(name), IMethod
 {
-    public string? Body { get; init; }
+    public string? Body { get; set; }
     public ISet<IGenericType> GenericTypes { get; } = new HashSet<IGenericType>();
     public bool IsConstructor { get; init; }
     public bool IsExtension { get; init; }

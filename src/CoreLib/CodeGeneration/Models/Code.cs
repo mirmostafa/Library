@@ -168,7 +168,7 @@ public static class SourceCodeHelpers
 
     [return: NotNull]
     public static Codes ToCodes(this Code code) =>
-        new(EnumerableHelper.ToEnumerable(code));
+        new(code);
 
     public static Result<Codes> ToCodesResult(this Result<Code> code) =>
         Result.From<Codes>(code.ArgumentNotNull(), code.Value.ToCodes());
