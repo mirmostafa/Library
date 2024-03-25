@@ -1,4 +1,5 @@
-﻿using Library.Wpf.Markers;
+﻿using Library.ComponentModel;
+using Library.Wpf.Markers;
 using Library.Wpf.Windows.Input.Commands;
 
 namespace Library.Wpf.Bases;
@@ -15,22 +16,23 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
     public event EventHandler? BindingData;
 
     public LibPageBase()
-        => this.Loaded += this.LibPage_LoadedAsync;
+    {
+        this.Loaded += this.LibPage_LoadedAsync;
+        this.Unloaded += (_, __) => this.IsUnloaded = true;
+    }
+
+    public bool IsUnloaded { get; private set; }
 
     /// <summary>
     /// Gets the command manager.
     /// </summary>
-    /// <value>
-    /// The command manager.
-    /// </value>
+    /// <value>The command manager.</value>
     protected CommandController CommandManager => this._commandManager ??= new(this);
 
     /// <summary>
     /// Gets a value indicating whether this <see cref="LibPage"/> is initializing.
     /// </summary>
-    /// <value>
-    ///   <c>true</c> if initializing; otherwise, <c>false</c>.
-    /// </value>
+    /// <value><c>true</c> if initializing; otherwise, <c>false</c>.</value>
     protected bool Initializing { get; private set; }
 
     /// <summary>
@@ -60,7 +62,9 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
         try
         {
             this.BeginInit();
-            this.BindingData?.Invoke(this, EventArgs.Empty);
+            if(BindingData!=null)
+                this.BindingData(this, EventArgs.Empty);
+            else
             await this.OnBindDataAsync();
         }
         catch
@@ -93,8 +97,13 @@ public class LibPageBase : Page, ISupportAsyncDataBinding
     /// <summary>
     /// Called when [bind data asynchronous].
     /// </summary>
-    protected virtual Task OnBindDataAsync()
-        => Task.CompletedTask;
+    protected virtual async Task OnBindDataAsync()
+    {
+        foreach (var ctrl in this.GetChildren<IAsyncBindable>())
+        {
+            await ctrl.BindAsync();
+        }
+    }
 
     protected override void OnInitialized(EventArgs e)
         => base.OnInitialized(e);

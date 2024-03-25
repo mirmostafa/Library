@@ -2,7 +2,7 @@
 using System.Windows.Data;
 
 namespace Library.Wpf.Converters;
-public class BooleanInverterConverter : IValueConverter
+public sealed class BooleanInverterConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

@@ -6,27 +6,27 @@ using Library.Web.Helpers;
 
 namespace Library.Web.Results;
 
-public record ApiResult : ResultBase, IApiResult
+public class ApiResult : ResultBase, IApiResult
 {
     public ApiResult(int? statusCode = null, string? message = null)
-        : base(null, statusCode, message) { }
+        : base(null, message, innerResult: null) { this.Status = statusCode; }
 
     public ApiResult(HttpStatusCode? statusCode = null, string? message = null)
-        : base(null, statusCode?.ToInt(), message) { }
+        : base(null, message, innerResult: null) { this.Status = statusCode; }
 
-    public ApiResult(in bool? Succeed = null, in object? Status = null, in string? Message = null, in IEnumerable<(object Id, object Error)>? Errors = null, in ImmutableDictionary<string, object>? ExtraData = null)
-        : base(Succeed, Status, Message, Errors, ExtraData)
+    public ApiResult(in bool? Succeed = null, in object? Status = null, in string? Message = null, in IEnumerable<Exception>? Errors = null, in IEnumerable<object>? extraData = null)
+        : base(Succeed, Message, Errors)
     {
     }
 
-    public HttpStatusCode? HttpStatusCode => HttpStatusCodeHelper.ToHttpStatusCode(this.Status?.ToInt());
-    public override bool IsSucceed => this.Status?.ToInt() is null or (>= 200 and < 300);
+    public HttpStatusCode? HttpStatusCode => HttpStatusCodeHelper.ToHttpStatusCode(this.Status?.Cast().ToInt());
+    public override bool IsSucceed => this.Status?.Cast().ToInt() is null or (>= 200 and < 300);
 
     public static ApiResult BadRequest(string? message = null)
         => New(System.Net.HttpStatusCode.BadRequest, message);
 
     public static explicit operator HttpStatusCode?(ApiResult result)
-        => result.HttpStatusCode;
+        => result?.HttpStatusCode??null;
 
     public static ApiResult New(int statusCode, string? message = null)
         => new(statusCode, message);
@@ -45,4 +45,7 @@ public record ApiResult : ResultBase, IApiResult
 
     public static ApiResult Unauthorized(string? message = null)
         => New(System.Net.HttpStatusCode.Unauthorized, message);
+
+    public object? Status { get; init; }
+
 }

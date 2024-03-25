@@ -3,19 +3,17 @@ using Library.EventsArgs;
 namespace Library.DesignPatterns.ExceptionHandlingPattern;
 
 /// <summary>
-///     ExceptionHandler Pattern Container
+/// ExceptionHandler Pattern Container
 /// </summary>
-/// <seealso cref="HanyCo.Mes20.Infra.DesignPatterns.ExceptionHandlingPattern.IExceptionHandlerContainer" />
+/// <seealso cref="HanyCo.Mes20.Infra.DesignPatterns.ExceptionHandlingPattern.IExceptionHandlerContainer"/>
 public class ExceptionHandlerContainer : IExceptionHandlerContainer
 {
     private ExceptionHandling? _exceptionHandling;
 
     /// <summary>
-    ///     Gets or sets the exception handling.
+    /// Gets or sets the exception handling.
     /// </summary>
-    /// <value>
-    ///     The exception handling.
-    /// </value>
+    /// <value>The exception handling.</value>
     public virtual ExceptionHandling ExceptionHandling
     {
         get => this._exceptionHandling ??= this.OnExceptionHandlingRequired();
@@ -23,7 +21,7 @@ public class ExceptionHandlerContainer : IExceptionHandlerContainer
     }
 
     /// <summary>
-    ///     Called when [exception handling required].
+    /// Called when [exception handling required].
     /// </summary>
     /// <returns></returns>
     protected virtual ExceptionHandling OnExceptionHandlingRequired()
@@ -34,12 +32,13 @@ public class ExceptionHandlerContainer : IExceptionHandlerContainer
     }
 
     /// <summary>
-    ///     Called when [exception occurred].
+    /// Called when [exception occurred].
     /// </summary>
     /// <param name="sender">The sender.</param>
     /// <param name="e">
-    ///     The <see cref="HanyCo.Mes20.Infra.EventsArgs.ExceptionOccurredEventArgs{Exception}" /> instance
-    ///     containing the event data.
+    /// The <see cref="HanyCo.Mes20.Infra.EventsArgs.ExceptionOccurredEventArgs{Exception}"/>
+    /// instance containing the event data.
     /// </param>
-    protected virtual void OnExceptionOccurred(object sender, ExceptionOccurredEventArgs<Exception> e) { }
+    protected virtual void OnExceptionOccurred(object? sender, ExceptionOccurredEventArgs<Exception> e)
+    { }
 }

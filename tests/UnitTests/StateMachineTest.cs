@@ -1,29 +1,23 @@
 ﻿using Library.DesignPatterns.StateMachine;
-using Library.Helpers.ConsoleHelper;
 
 using Xunit.Abstractions;
 
 namespace UnitTests;
 
-public class MyTestClass
+[Trait("Category", nameof(Library.DesignPatterns))]
+[Trait("Category", nameof(StateMachineManager))]
+public sealed class StateMachineTest
 {
     private readonly ITestOutputHelper _output;
 
-    public MyTestClass(ITestOutputHelper output) => this._output = output;
+    public StateMachineTest(ITestOutputHelper output)
+        => this._output = output;
 
     [Fact]
-    public void Test01()
-    {
-    }
-
-    static public IEnumerable<object[]> Data => new[] { new object[] { ConsoleKey.UpArrow }, new object[] { ConsoleKey.DownArrow }, new object[] { ConsoleKey.End } };
-
-    [Theory]
-    [MemberData(nameof(Data))]
-    public async Task StateMachineTest(ConsoleKey path)
+    public async Task StateMachineFullTest()
     {
         _ = await StateMachineManager.Dispatch(
-                        () => Task.FromResult((0, MoveDirection.Foreword)),
+                        () => Task.FromResult((0, MoveDirection.Forward)),
                         flow => Task.FromResult(move(flow)),
                         flow => Task.FromResult(move(flow)),
                         display,
@@ -32,18 +26,19 @@ public class MyTestClass
 
         (int Current, MoveDirection Direction) move((int Current, IEnumerable<(int State, MoveDirection Direction)>) flow)
         {
-            this._output.WriteLine($"Current: {flow.Current}. Press Up or Down to move foreword or backward. Or press any other key to done.");
+            this._output.WriteLine($"Current: {flow.Current}");
             MoveDirection direction;
-            switch (path)
+            var randomNumber = new Random().Next(3);
+            switch (randomNumber)
             {
-                case ConsoleKey.UpArrow:
+                case 1:
                     flow.Current++;
-                    direction = MoveDirection.Foreword;
+                    direction = MoveDirection.Forward;
                     break;
 
-                case ConsoleKey.DownArrow:
+                case 2:
                     flow.Current--;
-                    direction = MoveDirection.Backword;
+                    direction = MoveDirection.Backward;
                     break;
 
                 default:
@@ -56,8 +51,7 @@ public class MyTestClass
         Task display((int Current, IEnumerable<(int State, MoveDirection Direction)> History) flow)
         {
             this._output.WriteLine(flow.Current.ToString());
-            _ = flow.History.ForEachEager(x => this._output.WriteLine(x.ToString()));
-            _ = this._output.WriteLine();
+            flow.History.ForEach(x => this._output.WriteLine(x.ToString()));
             this._output.WriteLine("==================");
             return Task.CompletedTask;
         }

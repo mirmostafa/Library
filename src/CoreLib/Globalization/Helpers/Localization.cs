@@ -33,6 +33,7 @@ public static class Localization
     /// </summary>
     /// <param name="dateTime">The date time.</param>
     /// <returns></returns>
+    [return: NotNull]
     public static string ToLocalString(this DateTime dateTime)
         => Localizer?.ToString(dateTime) ?? dateTime.ToString(CultureInfo.CurrentCulture);
 }

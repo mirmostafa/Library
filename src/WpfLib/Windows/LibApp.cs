@@ -9,43 +9,36 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Library.Wpf.Windows;
 
-public abstract class LibApp : Bases.ApplicationBase
+public abstract class LibApp : Bases.ApplicationBase, ILoggerContainer
 {
     protected LibApp()
     {
-        SetupLogger();
-        SetupServices();
+        this.Logger = new FastLogger();
+        LibLogger.AddLogger(this.Logger);
+
+        var services = new ServiceCollection();
+        this.ConfigureServices(services);
+        var result = services.BuildServiceProvider();
+        DI.Initialize(result);
+
         AppLogger.Debug("Application constructed.");
-        return;
-
-        void SetupServices()
-        {
-            var services = new ServiceCollection();
-            this.ConfigureServices(services);
-            var result = services.BuildServiceProvider();
-            DI.Initialize(result);
-        }
-
-        void SetupLogger()
-        {
-            this.Logger = new FastLogger();
-            LibLogger.AddLogger(this.Logger);
-        }
     }
 
     public static string? ApplicationTitle => ApplicationHelper.ApplicationTitle ?? Current?.MainWindow?.Title;
 
-    public static FastLogger AppLogger => Current.To<LibApp>().Logger;
+    public static FastLogger AppLogger => Current.Cast().To<LibApp>().Logger;
 
-    public FastLogger Logger { get; private set; }
+    public FastLogger Logger { get; }
+
+    ILogger ILoggerContainer.Logger => this.Logger;
 
     [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
     public string? Title => ApplicationTitle;
 
     protected virtual void HandleException(Exception exception)
     {
-        var title = exception.As<IException>()?.Title ?? ApplicationTitle ?? exception?.GetType().Name;
-        var owner = (IException ex) => ex.Title ?? ex.Owner?.ToString() ?? title;
+        var title = exception.Cast().As<IException>()?.Title ?? ApplicationTitle ?? exception?.GetType().Name;
+        string? owner(IException ex) => ex.Title ?? ex.Owner?.ToString() ?? title;
         switch (exception)
         {
             case BreakException:
@@ -60,9 +53,20 @@ public abstract class LibApp : Bases.ApplicationBase
                 _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message ?? "Operation canceled by user.", owner(ex));
                 break;
 
+            case Microsoft.Data.SqlClient.SqlException ex when ex.Message?.Contains("A transport-level error has occurred when receiving results from the server") ?? false:
+                this.Logger.Fatal(ex.GetFullMessage(), sender: ex.Source ?? title);
+                _ = MsgBox2.Error("Error on connecting to database", text: ex.Message, detailsExpandedText: "Make sure SQL Server service is up and function, and the database exists.");
+                break;
+
             case IException ex:
-                this.Logger.Error(ex.Instruction ?? ex.Message, sender: owner(ex));
-                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, ex.Message, owner(ex), detailsExpandedText: ex.Details);
+                var message = ex.Message switch
+                {
+                    null => ex.GetBaseException()?.Message ?? string.Empty,
+                    _ when ex.Message.StartsWith("Exception of type") => ex.GetBaseException()?.Message,
+                    _ => ex.Message
+                };
+                this.Logger.Error(ex.Instruction ?? message!, sender: owner(ex));
+                _ = MsgBox2.Error(ex.Instruction ?? string.Empty, message, owner(ex), detailsExpandedText: ex.Details);
                 break;
 
             case Exception ex:
@@ -94,9 +98,9 @@ public abstract class LibApp : Bases.ApplicationBase
         AddDefaultServices(services);
         this.OnConfigureServices(services);
 
-        static void AddDefaultServices(ServiceCollection services)
-            => _ = services.AddScoped<IMapper, Mapper>()
-                           .AddScoped<ILogger>(_ => AppLogger)
-                           .AddScoped<IEventualLogger>(_ => AppLogger);
+        static void AddDefaultServices(ServiceCollection services) =>
+            _ = services.AddScoped<IMapper, Mapper>()
+                        .AddScoped<ILogger>(_ => AppLogger)
+                        .AddScoped<IEventualLogger>(_ => AppLogger);
     }
 }

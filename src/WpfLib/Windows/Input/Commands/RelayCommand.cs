@@ -2,7 +2,7 @@
 
 namespace Library.Wpf.Windows.Input.Commands;
 
-public class RelayCommand : ICommand
+public sealed class RelayCommand : ICommand
 {
     private readonly Action<object?> _Execute;
     private readonly Func<object?, bool>? _CanExecute;

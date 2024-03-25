@@ -2,6 +2,8 @@
 
     <Brush x:Key="HighlightBlockForeground">Red</Brush>
     <Brush x:Key="HeadingTextBlockFoegound">RoyalBlue</Brush>
+    <Brush x:Key="ToolbarBackground">WhiteSmoke</Brush>
+    <Brush x:Key="TipTextBlockFoegound">Maroon</Brush>
     <Brush x:Key="IsDisabledForeground">#FF6D6D6D</Brush>
     <Brush x:Key="CommandPanelBackground">#FF6D6D6D</Brush>
     <Brush x:Key="AppTitleBlockForeground">Navy</Brush>

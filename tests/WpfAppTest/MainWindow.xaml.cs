@@ -11,11 +11,11 @@ namespace WpfApp1;
 /// </summary>
 public partial class MainWindow
 {
-    public MainWindow() => this.InitializeComponent();
+    public MainWindow()
+        => this.InitializeComponent();
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        Toast2.Test();
 
     }
 

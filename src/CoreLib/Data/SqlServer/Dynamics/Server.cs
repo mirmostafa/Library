@@ -1,12 +1,12 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Dynamic;
 using Library.Data.SqlClient;
 using Library.Data.SqlServer.Dynamics.Collections;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public class Server : DynamicObject, ISqlObject
+public sealed class Server : DynamicObject, ISqlObject
 {
     private Databases _Databases;
 

@@ -2,7 +2,7 @@
 
 namespace Library.Wpf.Windows.Input.Commands;
 
-public class CommandDependencyPropertyBag<TUiElement>
+public sealed class CommandDependencyPropertyBag<TUiElement>
     where TUiElement : UIElement
 {
     private readonly Dictionary<string, LibRoutedUICommand> _bag = new();
@@ -15,7 +15,7 @@ public class CommandDependencyPropertyBag<TUiElement>
 
     public void AddCommand(LibRoutedUICommand command, string? key = null)
     {
-        Check.IfArgumentNotNull(command, nameof(command));
+        Check.MustBeArgumentNotNull(command, nameof(command));
         this._bag.Add(key ?? command.Name, command);
     }
 

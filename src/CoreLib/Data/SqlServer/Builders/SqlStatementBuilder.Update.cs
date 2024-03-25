@@ -5,51 +5,68 @@ namespace Library.Data.SqlServer;
 
 public static partial class SqlStatementBuilder
 {
-    public static IUpdateStatement Update() => new UpdateStatement();
-    public static IUpdateStatement Update([DisallowNull] string tableName)
-        => new UpdateStatement { TableName = tableName.ArgumentNotNull(nameof(tableName)) };
-    public static IUpdateStatement Table([DisallowNull] this IUpdateStatement statement, [DisallowNull] string tableName)
-        => statement.Fluent(statement.ArgumentNotNull().TableName = tableName.ArgumentNotNull()).GetValue();
-    public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, string column, object value)
-    {
-        statement.ArgumentNotNull(nameof(statement)).ColumnsValue.Add(column.ArgumentNotNull(nameof(column)), value);
-        return statement;
-    }
-    public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, params (string Column, object Value)[] columnsValue)
-    {
-        _ = nameof(statement).ArgumentNotNull(nameof(statement));
-        _ = columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value)).Build();
-        return statement;
-    }
-    public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, IEnumerable<(string Column, object Value)> columnsValue)
-    {
-        _ = nameof(statement).ArgumentNotNull(nameof(statement));
-        _ = columnsValue.ForEachItem(cv => statement.Set(cv.Column, cv.Value));
-        return statement;
-    }
-
-    public static IUpdateStatement Where([DisallowNull] this IUpdateStatement statement, string? whereClause)
-        => statement.Fluent(statement.ArgumentNotNull().WhereClause = whereClause).GetValue();
-
     public static string Build([DisallowNull] this IUpdateStatement statement, string indent = "    ")
     {
-        _ = statement.TableName.NotNull(nameof(statement.TableName));
-        Check.IfHasAny(statement.ColumnsValue, nameof(statement.ColumnsValue));
-        var result = new StringBuilder($"Update {AddBrackets(statement.TableName)}");
-        _ = AddClause($"SET ({statement.ColumnsValue.Select(cv => AddBrackets(cv.Key)).Merge(", ")})", indent, result);
-        _ = AddClause($"VALUES ({statement.ColumnsValue.Select(cv => FormatValue(cv.Value)).Merge(", ")})", indent, result);
+        Check.MustBeNotNull(statement?.TableName);
+        Check.MustBe(statement.Values?.Count > 0);
+
+        var result = new StringBuilder($"UPDATE {AddBrackets(statement.TableName)} ");
+
+        Func<object, string> format = statement.ForceFormatValues ? FormatValue : cv => cv?.ToString() ?? DBNull.Value.ToString();
+        var keyValues = statement.Values.Select(kv => $"{AddBrackets(kv.Key)} = {format(kv.Value)}").Merge(", ");
+        _ = AddClause($"SET {keyValues}", indent, result);
+
         if (!statement.WhereClause.IsNullOrEmpty())
         {
             _ = AddClause($"WHERE {statement.WhereClause}", indent, result);
         }
 
+        if (statement.ReturnId)
+        {
+            _ = result.AppendLine(";").Append("SELECT SCOPE_IDENTITY();");
+        }
         return result.ToString();
     }
 
+    public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, string column, object value)
+    {
+        statement.ArgumentNotNull().Values.Add(column.ArgumentNotNull(), value);
+        return statement;
+    }
+
+    public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, params (string Column, object Value)[] columnsValue)
+    {
+        _ = statement.ArgumentNotNull();
+        _ = columnsValue.Iterate(cv => statement.Set(cv.Column, cv.Value)).Build();
+        return statement;
+    }
+
+    public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, IEnumerable<(string Column, object Value)> columnsValue)
+    {
+        _ = statement.ArgumentNotNull();
+        _ = columnsValue.Iterate(cv => statement.Set(cv.Column, cv.Value)).Build();
+        return statement;
+    }
+
+    public static IUpdateStatement Table([DisallowNull] this IUpdateStatement statement, [DisallowNull] string tableName)
+        => statement.Fluent(statement.ArgumentNotNull().TableName = tableName.ArgumentNotNull()).GetValue();
+
+    public static IUpdateStatement Update() =>
+        new UpdateStatement();
+
+    public static IUpdateStatement Update([DisallowNull] string tableName)
+        => new UpdateStatement { TableName = tableName.ArgumentNotNull() };
+
+    public static IUpdateStatement Where([DisallowNull] this IUpdateStatement statement, string? whereClause)
+        => statement.Fluent(statement.ArgumentNotNull().WhereClause = whereClause).GetValue();
+
     private class UpdateStatement : IUpdateStatement
     {
-        public string TableName { get; set; }
-        public Dictionary<string, object> ColumnsValue { get; } = new();
+        public IDictionary<string, object> Values { get; } = new Dictionary<string, object>();
+        public bool ForceFormatValues { get; set; } = true;
+        public bool ReturnId { get; set; }
+        public string? Schema { get; set; }
+        public string TableName { get; set; } = null!;
         public string? WhereClause { get; set; }
     }
 }

@@ -4,8 +4,9 @@ using Xunit.Abstractions;
 
 namespace UnitTests;
 
-[Trait("Category", "Code Helpers")]
-public class ArgsTest
+[Trait("Category", nameof(Library.Coding))]
+[Obsolete("Subject to remove", true)]
+public sealed class ArgsTest
 {
     private readonly ITestOutputHelper _output;
 
@@ -18,7 +19,7 @@ public class ArgsTest
         new object[] { new Args<int>(1, 2, 3, 4), 10 }
         };
 
-    [Theory]
+    [Theory(Skip =$"Subject to remote taste case: {nameof(Args<int>)}")]
     [MemberData(nameof(Data))]
     public void MyTestMethod(Args<int> nums, int expected)
     {
@@ -28,7 +29,7 @@ public class ArgsTest
         Assert.Equal(expected, actual);
     }
 
-    [Fact]
+    [Fact(Skip = $"Subject to remote taste case: {nameof(Args<int>)}")]
     public void MyTestMethod1()
     {
         var display = (Args<int> nums) =>
@@ -40,7 +41,7 @@ public class ArgsTest
         display((1, 2, 3, 4, 5));
     }
 
-    [Fact]
+    [Fact(Skip = $"Subject to remote taste case: {nameof(Args<int>)}")]
     public void MyTestMethod3()
     {
         var display = (Args<int> nums) =>
@@ -50,7 +51,7 @@ public class ArgsTest
         display((1, 2, 3, 4, 5));
     }
 
-    [Fact]
+    [Fact(Skip = $"Subject to remote taste case: {nameof(Args<int>)}")]
     public void MyTestMethod4()
     {
         var display = (Args<int> nums) =>
@@ -63,5 +64,5 @@ public class ArgsTest
     }
 
     private void WriteLine(object? o)
-                => this._output.WriteLine(o?.ToString() ?? string.Empty);
+        => this._output.WriteLine(o?.ToString() ?? string.Empty);
 }

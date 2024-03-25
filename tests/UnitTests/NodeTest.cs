@@ -2,13 +2,19 @@
 
 using Library.Collections;
 
+using Xunit.Abstractions;
+
 namespace UnitTests;
 
 
-public class NodeTestClass
+[Trait("Category", nameof(Library.Collections))]
+[Trait("Category", nameof(Node<string>))]
+public sealed class NodeTest
 {
     private readonly string[] _array = new string[10];
-    public NodeTestClass()
+    private readonly ITestOutputHelper _output;
+
+    public NodeTest(ITestOutputHelper output)
     {
         _array[0] = "00";
         _array[1] = "0001";
@@ -20,12 +26,13 @@ public class NodeTestClass
         _array[7] = "000202";
         _array[8] = "000301";
         _array[9] = "00020201";
+        this._output = output;
     }
 
     [Fact]
     public void FlattenTest()
     {
         var node = Node<string>.Create(() => _array[0], s => _array.Where(x => x.StartsWith(s) && x.Length == s.Length + 2));
-        Debug.WriteLine(node);
+        _output.WriteLine(node);
     }
 }

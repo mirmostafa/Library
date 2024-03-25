@@ -40,14 +40,14 @@ public interface IResetable
     void Reset();
 }
 
-public interface IUnidirectionalViewModel<TViewModel>
-{
-    TViewModel ViewModel { get; }
-}
-
 public interface IResetable<T>
 {
     T Reset();
+}
+
+public interface IUnidirectionalViewModel<TViewModel>
+{
+    TViewModel ViewModel { get; }
 }
 
 public interface ISupportReadOnly

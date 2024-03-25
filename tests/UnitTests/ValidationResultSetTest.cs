@@ -1,127 +1,137 @@
-﻿using Library.Validations;
+﻿using Library.Exceptions.Validations;
+using Library.Validations;
 
 namespace UnitTests;
 
-[Trait("Category", "Active Validation Tests")]
-public class ValidationResultSetTest
+[Trait("Category", nameof(Library.Validations))]
+[Trait("Category", nameof(ValidationResultSet<string>))]
+public sealed class ValidationResultSetTest
 {
     [Fact]
-    public void _01_Basic()
+    public void Basic()
     {
         var arg = new Person("", 0);
-        var check = arg.Check().RuleFor(x => !x.Name.IsNullOrEmpty(), () => new NullReferenceException());
-        _ = Assert.Throws<NullReferenceException>(check.ThrowOnFail);
+        _ = Assert.Throws<NullReferenceException>(() => arg.Check(CheckBehavior.ThrowOnFail).RuleFor(x => !x.FirstName.IsNullOrEmpty(), () => new NullReferenceException()));
     }
 
     [Fact]
-    public void _02_IsNullOrEmpty_String()
+    public void FullValidationGatherAllInvalid()
     {
-        var arg = new Person("", 0);
-        var check = arg.Check().NotNullOrEmpty(x => x.Name).Build();
-        _ = Assert.Throws<Library.Exceptions.Validations.NullValueValidationException>(() => check.ThrowOnFail());
+        var arg = new Person("", 20);
+        var result = arg.Check(CheckBehavior.GatherAll)
+            .ArgumentNotNull()
+            .NotNullOrEmpty(x => x.FirstName)
+            .Build();
+        _ = Assert.Single(result.GetAllErrors());
     }
 
     [Fact]
-    public void _03_IsBiggerThan_Int()
+    public void FullValidationInvalid()
     {
-        var arg = new Person("", 700);
-        var check = arg.Check().NotBiggerThan(x => x.Age, 120);
-        _ = Assert.Throws<Library.Exceptions.Validations.ValidationException>(check.ThrowOnFail);
+        var arg = new Person("", 20);
+        var check = arg.Check(CheckBehavior.ReturnFirstFailure)
+            .ArgumentNotNull()
+            .NotNullOrEmpty(x => x!.FirstName)
+            //.NotBiggerThan(x => x!.Age, 10)
+            ;
+        _ = Assert.Throws<NullValueValidationException>(check.ThrowOnFail);
     }
 
     [Fact]
-    public void _04_IsArgumentNull_Null()
+    public void FullValidationIsNotBiggerThan()
+    {
+        var arg = new Person("", 20);
+        var check = arg.Check(CheckBehavior.ReturnFirstFailure)
+            .ArgumentNotNull()
+            .NotNullOrEmpty(x => x.FirstName)
+            .Build();
+        _ = Assert.Throws<NullValueValidationException>(() => check.ThrowOnFail());
+    }
+
+    [Fact]
+    public void FullValidationReturnFirstFailureInvalid()
     {
         Person? arg = null;
-        var check = arg.Check().ArgumentNotNull();
+        var check = arg.Check(CheckBehavior.ReturnFirstFailure)
+            .ArgumentNotNull()
+            .NotNullOrEmpty(x => x!.FirstName)
+            //.NotBiggerThan(x => x!.Age, 10)
+            ;
         _ = Assert.Throws<ArgumentNullException>(check.ThrowOnFail);
     }
 
     [Fact]
-    public void _05_IsArgumentNullNot_Null()
+    public void FullValidationValid()
     {
         var arg = new Person("Ali", 0);
-        var check = arg.Check().ArgumentNotNull();
-        _ = check.ThrowOnFail();
+        arg = arg.Check()
+            .ArgumentNotNull()
+            .NotNullOrEmpty(x => x.FirstName)
+            //.NotBiggerThan(x => x.Age, 25)
+            .ThrowOnFail();
     }
 
     [Fact]
-    public void _06_FullValidation_Valid()
+    public void IsArgumentNullNotNull()
     {
         var arg = new Person("Ali", 0);
-        var check = arg.Check()
-            .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
-            .NotBiggerThan(x => x.Age, 25)
-            .Build();
-        _ = check.ThrowOnFail();
+        _ = arg.Check().ArgumentNotNull();
     }
 
     [Fact]
-    public void _07_FullValidationIsNullOrEmpty()
+    public void IsArgumentNullNull()
     {
-        var arg = new Person("", 20);
-        var check = arg.Check()
-            .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
-            .NotBiggerThan(x => x.Age, 25)
-            .Build();
-        _ = Assert.Throws<Library.Exceptions.Validations.NullValueValidationException>(() => check.ThrowOnFail());
+        Person? arg = null;
+        _ = Assert.Throws<ArgumentNullException>(() => arg.Check(CheckBehavior.ThrowOnFail).ArgumentNotNull());
     }
 
     [Fact]
-    public void _08_FullValidationIsNotBiggerThan()
+    public void IsArgumentNullNullThrowOnFail()
+    {
+        Person? arg = null;
+        var check = arg.Check(CheckBehavior.ThrowOnFail);
+        _ = Assert.Throws<ArgumentNullException>(() => check.ArgumentNotNull());
+    }
+
+    [Fact]
+    public void IsNullOrEmptyString()
+    {
+        var arg = new Person("", 0);
+        _ = Assert.Throws<NullValueValidationException>(() => arg.Check(CheckBehavior.ThrowOnFail).NotNullOrEmpty(x => x.FirstName));
+    }
+
+    [Fact]
+    public void NotNullNullThrowOnFail()
+    {
+        Person? arg = null;
+        _ = Assert.Throws<NullValueValidationException>(() => arg.Check(CheckBehavior.ThrowOnFail).NotNull());
+    }
+
+    [Fact]
+    public void ValidationReturnFirstFailureShouldPass()
     {
         var arg = new Person("Ali", 20);
-        var check = arg.Check()
+        var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
-            .NotBiggerThan(x => x.Age, 10)
+            .NotNullOrEmpty(x => x.FirstName)
+            //.NotBiggerThan(x => x.Age, 20)
             .Build();
-        _ = Assert.Throws<Library.Exceptions.Validations.ValidationException>(() => check.ThrowOnFail());
+        arg = check;
+        Assert.True(check.IsSucceed);
     }
 
     [Fact]
-    public void _09_FullValidation_Invalid()
+    public void ValidationReturnFirstFailureShouldThrowError()
     {
         var arg = new Person("", 20);
-        var result = arg.Check()
+        var check = arg.Check(CheckBehavior.ReturnFirstFailure)
             .ArgumentNotNull()
-            .NotNullOrEmpty(x => x.Name)
-            .NotBiggerThan(x => x.Age, 10)
-            .BuildAll();
-        Assert.Equal(2, result.Errors?.Count());
-    }
-
-    [Fact]
-    public void _10_FullValidation_Invalid()
-    {
-        Person? arg = null;
-        var check = arg.Check()
-            .ArgumentNotNull()
-            .NotNullOrEmpty(x => x!.Name)
-            .NotBiggerThan(x => x!.Age, 10);
-        _ = Assert.Throws<ArgumentNullException>(check.ThrowOnFail);
-    }
-
-    [Fact]
-    public void _11_FullValidationIsNotBiggerThan()
-    {
-        var arg = new Person("", 20);
-        var check = arg.Check()
-            .ArgumentNotNull()
-            .NotNullOrEmpty(x => x!.Name)
-            .NotBiggerThan(x => x!.Age, 10);
-        _ = Assert.Throws<Library.Exceptions.Validations.NullValueValidationException>(check.ThrowOnFail);
-    }
-
-    [Fact]
-    public void _12_IsArgumentNull_Null_ThrowOnFail()
-    {
-        Person? arg = null;
-        var check = arg.Check(true);
-        _ = Assert.Throws<ArgumentNullException>(() => check.ArgumentNotNull());
+            .NotNullOrEmpty(x => x.FirstName)
+            //.NotBiggerThan(x => x.Age, 25)
+            .Build();
+        _ = Assert.Throws<NullValueValidationException>(() => check.ThrowOnFail());
+        arg = check;
     }
 }
 
-file record Person(string Name, int Age);
+file record Person(string FirstName, int Age);

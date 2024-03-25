@@ -1,28 +1,28 @@
 ﻿namespace Library.Exceptions;
 
 [Serializable]
-public abstract class DatabaseUpdateExceptionBase : ExceptionBase
+public abstract class DatabaseExceptionBase : ExceptionBase
 {
-    protected DatabaseUpdateExceptionBase()
+    protected DatabaseExceptionBase()
     {
     }
 
-    protected DatabaseUpdateExceptionBase(string message)
+    protected DatabaseExceptionBase(string message)
         : base(message)
     {
     }
 
-    protected DatabaseUpdateExceptionBase(string message, Exception innerException)
+    protected DatabaseExceptionBase(string message, Exception innerException)
         : base(message, innerException)
     {
     }
 
-    protected DatabaseUpdateExceptionBase(string message, string? instruction = null, string? title = null, string? details = null, Exception? inner = null, object? owner = null)
+    protected DatabaseExceptionBase(string message, string? instruction = null, string? title = null, string? details = null, Exception? inner = null, object? owner = null)
         : base(message, instruction, title, details, inner, owner)
     {
     }
 
-    protected DatabaseUpdateExceptionBase(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext)
+    protected DatabaseExceptionBase(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext)
         : base(serializationInfo, streamingContext)
     {
 
@@ -30,7 +30,7 @@ public abstract class DatabaseUpdateExceptionBase : ExceptionBase
 }
 
 [Serializable]
-public sealed class DatabaseUpdateException : DatabaseUpdateExceptionBase, IException
+public sealed class DatabaseUpdateException : DatabaseExceptionBase, IException
 {
     public DatabaseUpdateException()
     {

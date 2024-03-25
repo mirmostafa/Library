@@ -4,23 +4,34 @@ using System.ComponentModel;
 
 namespace Library.Collections;
 
-public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColletionWrapper<T>>, IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable, IReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged, INotifyPropertyChanging
+[Obsolete("Subject to remove")]
+public class ObservableCollectionWrapper<T> : FluentListBase<T, ObservableCollectionWrapper<T>>, IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable, IReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged, INotifyPropertyChanging
 {
-    protected ObservableColletionWrapper(IList<T> list) : base(list)
+    public event NotifyCollectionChangedEventHandler? CollectionChanged;
+
+    //public bool IsReadOnly => this._set.IsReadOnly;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    //public int Count => this._set.Count;
+    public event PropertyChangingEventHandler? PropertyChanging;
+
+    protected ObservableCollectionWrapper(IList<T> list) : base(list)
     {
     }
 
-    protected ObservableColletionWrapper(IEnumerable<T> list) : base(list)
+    protected ObservableCollectionWrapper(IEnumerable<T> list) : base(list)
     {
     }
 
-    protected ObservableColletionWrapper(int capacity) : base(capacity)
+    protected ObservableCollectionWrapper(int capacity) : base(capacity)
     {
     }
 
-    protected ObservableColletionWrapper()
+    protected ObservableCollectionWrapper()
     {
     }
+
+    public bool IsReadOnly { get; }
 
     public new T this[int index]
     {
@@ -33,14 +44,6 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
             this.OnCountPropertyChanged();
         }
     }
-
-    //public int Count => this._set.Count;
-
-    //public bool IsReadOnly => this._set.IsReadOnly;
-
-    public event NotifyCollectionChangedEventHandler? CollectionChanged;
-    public event PropertyChangedEventHandler? PropertyChanged;
-    public event PropertyChangingEventHandler? PropertyChanging;
 
     public new void Add(T item)
     {
@@ -55,7 +58,7 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
         if (this.Count != 0)
         {
             this.OnCountPropertyChanging();
-            var oldItems = this.ToList();
+            var oldItems = Enumerable.ToList(this);
             _ = base.Clear();
             this.OnCollectionChanged(ObservableHashSetSingletons._noItems, oldItems);
             this.OnCountPropertyChanged();
@@ -63,9 +66,15 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
     }
 
     public new bool Contains(T item) => base.Contains(item).Result;
+
     public new void CopyTo(T[] array, int arrayIndex) => base.CopyTo(array, arrayIndex);
+
     public new IEnumerator<T> GetEnumerator() => base.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this).GetEnumerator();
+
     public new int IndexOf(T item) => base.IndexOf(item).Result;
+
     public new void Insert(int index, T item)
     {
         this.OnCountPropertyChanging();
@@ -73,6 +82,7 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
         this.OnCollectionChanged(NotifyCollectionChangedAction.Add, item);
         this.OnCountPropertyChanged();
     }
+
     public new bool Remove(T item)
     {
         if (!this.Contains(item))
@@ -95,21 +105,19 @@ public class ObservableColletionWrapper<T> : FluentListBase<T, ObservableColleti
         this.OnCountPropertyChanged();
     }
 
-    IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this).GetEnumerator();
+    protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e) => this.CollectionChanged?.Invoke(this, e);
 
-    private void OnCountPropertyChanging() => this.OnPropertyChanging(ObservableHashSetSingletons._countPropertyChanging);
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => this.PropertyChanged?.Invoke(this, e);
+
+    protected virtual void OnPropertyChanging(PropertyChangingEventArgs e) => this.PropertyChanging?.Invoke(this, e);
 
     private void OnCollectionChanged(NotifyCollectionChangedAction action, object? item) => this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item));
 
     private void OnCollectionChanged(IList newItems, IList oldItems) => this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItems, oldItems));
 
-    protected virtual void OnPropertyChanging(PropertyChangingEventArgs e) => this.PropertyChanging?.Invoke(this, e);
-
     private void OnCountPropertyChanged() => this.OnPropertyChanged(ObservableHashSetSingletons._countPropertyChanged);
 
-    protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e) => this.CollectionChanged?.Invoke(this, e);
-
-    protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) => this.PropertyChanged?.Invoke(this, e);
+    private void OnCountPropertyChanging() => this.OnPropertyChanging(ObservableHashSetSingletons._countPropertyChanging);
 }
 
 internal static class ObservableHashSetSingletons

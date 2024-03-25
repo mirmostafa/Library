@@ -1,4 +1,6 @@
-﻿namespace Library.Security.Claims;
+﻿using Library.Web.Security.Claims;
+
+namespace Library.Security.Claims;
 public static class LibCrudClaims
 {
     public const string READ_CLAIM_TYPE = "ReadClaim";

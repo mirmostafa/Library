@@ -1,26 +1,30 @@
-﻿using Library.Validations;
+﻿using Library.EventsArgs;
+using Library.Validations;
 
 namespace Library.Logging;
 
+/// <summary>
+/// FastLoggerBase is an abstract class that implements the ILogger interface and provides a base
+/// implementation for logging.
+/// </summary>
 public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
 {
+    public event EventHandler<ItemActedEventArgs<LogRecord<TLogMessage>>>? Logging;
+
+
     private readonly Action<LogRecord<TLogMessage>> _emptyAction = _ => { };
     private readonly Action<LogRecord<TLogMessage>> _logAction;
-    private bool _isEnabled = true;
-    private LogLevel _logLevel = LogLevel.Normal;
-    private Action<LogRecord<TLogMessage>> _traceAction = null!;
     private Action<LogRecord<TLogMessage>> _debugAction = null!;
     private Action<LogRecord<TLogMessage>> _errorAction = null!;
     private Action<LogRecord<TLogMessage>> _fatalAction = null!;
     private Action<LogRecord<TLogMessage>> _infoAction = null!;
+    private bool _isEnabled = true;
+    private LogLevel _logLevel = LogLevel.Normal;
+    private Action<LogRecord<TLogMessage>> _traceAction = null!;
     private Action<LogRecord<TLogMessage>> _warnAction = null!;
 
     protected FastLoggerBase()
-    {
-        this._logAction = this.Log;
-        this.IsEnabled = true;
-        this.LogLevel = LogLevel.Normal;
-    }
+        => this._logAction = this.Log;
 
     public bool IsEnabled
     {
@@ -31,6 +35,7 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
             this.ResetAction();
         }
     }
+
     public LogLevel LogLevel
     {
         get => this._logLevel;
@@ -41,31 +46,24 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
         }
     }
 
-    private static object? ProcessSender(object? sender, LogLevel level)
-        => (sender, level) switch
-        {
-            (not null, _) => sender,
-            (_, LogLevel.Debug or LogLevel.Trace) => CodeHelper.GetCallerMethod(3)?.Name,
-            (_, _) => CodeHelper.GetCallerMethod(3)?.DeclaringType?.Name,
-        };
+    public void Debug(TLogMessage message, object? sender = null, DateTime? time = null)
+        => this._debugAction?.Invoke(new(message, LogLevel.Debug, ProcessSender(sender, LogLevel.Debug), time));
+
+    public void Error(TLogMessage message, object? sender = null, DateTime? time = null)
+        => this._errorAction?.Invoke(new(message, LogLevel.Error, ProcessSender(sender, LogLevel.Error), time));
+
+    public void Fatal(TLogMessage message, object? sender = null, DateTime? time = null)
+        => this._fatalAction?.Invoke(new(message, LogLevel.Fatal, ProcessSender(sender, LogLevel.Fatal), time));
 
     public void Info(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._infoAction(new(message, LogLevel.Info, ProcessSender(sender, LogLevel.Info), time));
-    public void Warn(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._warnAction(new(message, LogLevel.Warning, ProcessSender(sender, LogLevel.Warning), time));
-    public void Error(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._errorAction(new(message, LogLevel.Error, ProcessSender(sender, LogLevel.Error), time));
-    public void Fatal(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._fatalAction(new(message, LogLevel.Fatal, ProcessSender(sender, LogLevel.Fatal), time));
-    public void Debug(TLogMessage message, object? sender = null, DateTime? time = null)
-        => this._debugAction(new(message, LogLevel.Debug, ProcessSender(sender, LogLevel.Debug), time));
-    public void Trace(TLogMessage message, object? sender = null, DateTime? time = null, string? stackTrace = null)
-        => this._traceAction(new(message, LogLevel.Trace, ProcessSender(sender, LogLevel.Trace), time, stackTrace));
-    public void Log(TLogMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
-        => this.Log(new(message, level, ProcessSender(sender, level), time, stackTrace));
+        => this._infoAction?.Invoke(new(message, LogLevel.Info, ProcessSender(sender, LogLevel.Info), time));
+
+    public void Log(TLogMessage message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = LogFormat.FORMAT_DEFAULT)
+        => this.Log(new(message, level, ProcessSender(sender, level), time, stackTrace, format));
+
     public void Log(LogRecord<TLogMessage> logRecord)
     {
-        if (!this.IsEnabled || !logRecord.ArgumentNotNull(nameof(logRecord)).Level.MeetsLevel(this.LogLevel) || (logRecord.Message is null))
+        if (!this.IsEnabled || (logRecord.ArgumentNotNull().Message is null) || !logRecord.Level.MeetsLevel(this.LogLevel))
         {
             return;
         }
@@ -73,7 +71,24 @@ public abstract class FastLoggerBase<TLogMessage> : ILogger<TLogMessage>
         this.OnLogging(logRecord);
     }
 
-    protected abstract void OnLogging(LogRecord<TLogMessage> logRecord);
+    //x public void Log([DisallowNull] TLogMessage message, LogLevel level = LogLevel.Info, [CallerMemberName] object? sender = null, DateTime? time = null, string? stackTrace = null) => throw new NotImplementedException();
+
+    public void Trace(TLogMessage message, object? sender = null, DateTime? time = null, string? stackTrace = null)
+            => this._traceAction?.Invoke(new(message, LogLevel.Trace, ProcessSender(sender, LogLevel.Trace), time, stackTrace));
+
+    public void Warn(TLogMessage message, object? sender = null, DateTime? time = null)
+        => this._warnAction?.Invoke(new(message, LogLevel.Warning, ProcessSender(sender, LogLevel.Warning), time));
+
+    protected virtual void OnLogging(LogRecord<TLogMessage> logRecord)
+        => this.Logging?.Invoke(logRecord?.Sender, new(logRecord!));
+
+    private static object? ProcessSender(object? sender, LogLevel level)
+        => (sender, level) switch
+        {
+            (not null, _) => sender,
+            (_, LogLevel.Debug or LogLevel.Trace) => GetCallerMethod(3)?.Name,
+            (_, _) => GetCallerMethod(3)?.DeclaringType?.Name,
+        };
 
     private void ResetAction()
     {

@@ -1,61 +1,131 @@
-﻿//using System;
+﻿using System.Diagnostics;
+using System.Numerics;
 
-//using Library.Dynamic;
-//using Library.Interfaces;
-//using Library.Validations;
-//using Library.Windows;
+using Library.DesignPatterns.Markers;
+using Library.Interfaces;
 
-//namespace Library.Results;
+namespace Library.Results;
 
-//public record Result : ResultBase, IEmpty<Result>
-//{
-//    private static readonly dynamic _staticFields = new Expando();
+[DebuggerStepThrough]
+[StackTraceHidden]
+[Immutable]
+[Fluent]
+public sealed class Result : ResultBase, IResult
+    , IEmpty<Result>
+    , IAdditionOperators<Result, ResultBase, Result>
+    , IEquatable<Result>
+    , ICombinable<Result>
+    , ICombinable<ResultBase, Result>
+{
+    private static Result? _empty;
+    private static Result? _failed;
+    private static Result? _succeed;
 
-//    public Result(in object? status = null, in NotificationMessage? fullMessage = null)
-//        : base(status, fullMessage) { }
+    internal Result(
+        in bool? succeed = null,
+        in string? message = null,
+        in IEnumerable<Exception>? errors = null,
+        in ResultBase? innerResult = null) : base(succeed, message, errors, innerResult)
+    {
+    }
 
-//    public static Result Empty { get; } = _staticFields.Empty ??= NewEmpty();
+    internal Result(ResultBase origin)
+        : base(origin)
+    {
+    }
 
-//    public static Result Fail => _staticFields.Fail ??= CreateFail();
+    public static Result Empty => _empty ??= NewEmpty();
+    public static Result Failed => _failed ??= Fail();
+    public static Result Succeed => _succeed ??= Success();
 
-//    public static Result Success => _staticFields.Success ??= CreateSuccess();
+    public static Result Add(in Result left, in Result right)
+        => left + right;
 
-//    public static Result CreateFail(in string? message = null, in object? error = null)
-//        => new(error ?? -1, message) { IsSucceed = false };
+    public static explicit operator Result(bool b)
+        => b ? Succeed : Failed;
 
-//    public static Result CreateFail(in NotificationMessage? message, in object? error = null)
-//        => new(error ?? -1, message) { IsSucceed = false };
+    public static Result Fail()
+            => new(false);
 
-//    public static Result CreateFail(in string message, in string instruction, in string tiltle, in string details, in object? error = null)
-//        => new(error, new NotificationMessage(message, instruction, tiltle, details)) { IsSucceed = false };
+    public static Result Fail(in string? message)
+        => Fail(message, []);
 
-//    public static Result CreateSuccess(in NotificationMessage? fullMessage = null, in object? status = null)
-//        => new(status, fullMessage) { IsSucceed = true };
+    public static Result Fail(in string? message, in IEnumerable<Exception>? errors)
+        => new(false, message, errors);
 
-//    public static explicit operator Result(bool b)
-//        => b ? Success : Fail;
+    public static Result Fail<TException>()
+        where TException : Exception, new()
+        => Fail(new TException());
 
-//    public static Result From([DisallowNull] in ResultBase other)
-//        => Add(other, new Result());
+    public static Result Fail(in string? message, in Exception error)
+        => Fail(message, [error]);
 
-//    public static Result From([DisallowNull] in Result @this, in Result other)
-//        => Add(@this, other);
+    public static Result Fail(in Exception error)
+        => Fail(message: null, error);
 
-//    public static implicit operator bool(Result result)
-//        => result.NotNull().IsSucceed;
+    public static Result<TValue?> Fail<TValue>(in TValue? value,
+        in string? message,
+        in IEnumerable<Exception>? errors)
+        => new(value, false, message, errors);
 
-//    public static Result New()
-//        => new();
+    public static Result<TValue?> Fail<TValue>(in TValue? value,
+        in string? message,
+        in Exception error)
+        => new(value, false, message, [error]);
 
-//    public static Result NewEmpty()
-//        => New();
+    public static Result<TValue?> Fail<TValue>(in Exception error)
+        => Fail<TValue>(default, null, error);
 
-//    public static Result operator +(Result left, Result right)
-//        => left.With(right);
+    public static Result<TValue?> Fail<TValue, TException>() where TException : Exception, new()
+        => Fail<TValue>(new TException());
 
-//    public Task<Result> ToAsync()
-//        => Task.FromResult(this);
+    public static Result<TValue?> Fail<TValue>(in Exception error, in TValue? value)
+        => Fail(value, null, error)!;
 
-//    public Result With(in Result other)
-//        => Result.From(this, other);
-//}
+    public static Result<TValue?> Fail<TValue>(in string message)
+        => Fail<TValue>(default, message, []);
+
+    public static Result<TValue?> Fail<TValue>(in string message, in TValue? value)
+        => Fail<TValue>(value, message, []);
+
+    public static Result<TValue?> Fail<TValue>(in TValue? value = default)
+        => Fail<TValue?>(value, null, []);
+
+    public static Result<TValue> From<TValue>(in Result result, in TValue value)
+        => new(result, value);
+
+    public static Result NewEmpty()
+        => new();
+
+    public static Result operator +(Result left, ResultBase right)
+        => new(left) { InnerResult = right };
+
+    public static Result Success(in object? status = null, in string? message = null)
+        => new(true, message);
+
+    public static Result<TValue?> Success<TValue>(in TValue? value,
+        in string? message = null,
+        in IEnumerable<Exception>? errors = null,
+        in IEnumerable<object>? extraData = null)
+        => new(value, true, message, errors);
+
+    public Result Combine(Result obj)
+        => this + obj;
+
+    public Result Combine(ResultBase obj)
+        => this + obj;
+
+    public bool Equals(Result? other)
+        => other is not null && other == this;
+
+    public override bool Equals(object? obj)
+        => this.Equals(obj as Result);
+
+    public override int GetHashCode()
+        => base.GetHashCode();
+
+    public static class Factory
+    {
+        //public IResult Get
+    }
+}

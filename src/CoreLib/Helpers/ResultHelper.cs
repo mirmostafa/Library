@@ -1,52 +1,177 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Xml;
-using System.Xml.Serialization;
 
-using Library.Exceptions.Validations;
+using Library.Exceptions;
+using Library.Interfaces;
 using Library.Logging;
 using Library.Results;
 using Library.Validations;
+using Library.Windows;
 
 namespace Library.Helpers;
 
-[DebuggerStepThrough]
-[StackTraceHidden]
 public static class ResultHelper
 {
+    /// <summary>
+    /// Asynchronously awaits a task of type TResult and returns the result, breaking on failure.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="task">The task to await.</param>
+    /// <returns>The result of the task, breaking on failure.</returns>
     public static async Task<TResult> BreakOnFail<TResult>(this Task<TResult> task)
-        where TResult : Result
+        where TResult : ResultBase
     {
         var result = await task;
         return result.BreakOnFail();
     }
 
     public static TResult BreakOnFail<TResult>(this TResult result)
-        where TResult : Result
+        where TResult : ResultBase
     {
-        if (!result)
+        if (result?.IsSucceed is not true)
         {
-            CodeHelper.Break();
+            Break();
         }
         return result;
     }
 
-    public static TResult Check<TResult>([DisallowNull] this TResult result, [DisallowNull] in Func<bool> predicate, in object? errorMessage, object? errorId = null) where TResult : ResultBase
-        => InnerCheck(result, predicate(), errorMessage, errorId);
-
-    public static TResult Check<TResult>([DisallowNull] this TResult result, bool condition, in object? errorMessage, object? errorId = null) where TResult : ResultBase
-        => InnerCheck(result, condition, errorMessage, errorId);
-
-    public static TResult Check<TResult>([DisallowNull] this TResult result, [DisallowNull] in Func<(bool Condition, object? ErrorMessage)> getErrorInfo, object? errorId = null)
-        where TResult : ResultBase
+    [return: NotNullIfNotNull(nameof(results))]
+    public static TResult? Combine<TResult>(this IEnumerable<TResult> results)
+        where TResult : ResultBase, INew<TResult, TResult>, ICombinable<TResult>
     {
-        var (condition, errorMessage) = getErrorInfo();
-        return InnerCheck(result, condition, errorMessage, errorId);
+        if (results == null || !results.Any())
+        {
+            return null;
+        }
+        var buffer = results.ToImmutableArray();
+        var result = TResult.New(buffer.First());
+        foreach (var item in buffer.Skip(1))
+        {
+            result = result.Combine(item);
+        }
+        return result;
+    }
+
+    public static void Deconstruct(this Result result, out bool isSucceed, out string message) =>
+            (isSucceed, message) = (result.ArgumentNotNull().IsSucceed, result.Message?.ToString() ?? string.Empty);
+
+    public static void Deconstruct<TValue>(this Result<TValue> result, out bool IsSucceed, out TValue Value) =>
+        (IsSucceed, Value) = (result.ArgumentNotNull().IsSucceed, result.Value);
+
+    public static void End([DisallowNull] this Result _)
+    { }
+
+    public static void End<TValue>([DisallowNull] this Result<TValue> _)
+    { }
+
+    public static Task EndAsync(this Task<Result> _) =>
+        Task.CompletedTask;
+
+    [return: NotNull]
+    public static IEnumerable<Exception>? GetAllErrors(this IResult result)
+        => result.IterateOnAll<IEnumerable<Exception>>(x => x.Errors).SelectAll();
+
+    public static async Task<TValue> GetValueAsync<TValue>(this Task<Result<TValue>> taskResult)
+    {
+        var result = await taskResult;
+        return result.Value;
+    }
+
+    [return: NotNullIfNotNull(nameof(Result))]
+    public static TResult? IfFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action action) where TResult : ResultBase
+    {
+        if (result?.IsSucceed == false)
+        {
+            action.ArgumentNotNull()();
+        }
+
+        return result;
+    }
+
+    [return: NotNullIfNotNull(nameof(Result))]
+    public static TResult? IfFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    {
+        if (result?.IsSucceed == false)
+        {
+            action.ArgumentNotNull()(result);
+        }
+
+        return result;
+    }
+
+    public static async Task<TResult> IfFailure<TResult>(this Task<TResult> result, [DisallowNull] Action next) where TResult : ResultBase
+    {
+        var r = await result;
+        if (r.IsFailure)
+        {
+            next.ArgumentNotNull()();
+        }
+
+        return r;
+    }
+
+    public static async Task<TResult> IfFailure<TResult>(this Task<TResult> result, [DisallowNull] Action<TResult> next) where TResult : ResultBase
+    {
+        var r = await result;
+        if (r.IsFailure)
+        {
+            next.ArgumentNotNull()(r);
+        }
+
+        return r;
+    }
+
+    public static async Task<TResult> IfFailure<TResult>(this Task<TResult> result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
+    {
+        var r = await result;
+        return r.IsFailure ? next.ArgumentNotNull()() : r;
+    }
+
+    public static async Task<TResult> IfFailure<TResult>(this Task<TResult> result, [DisallowNull] Func<TResult, TResult> next) where TResult : ResultBase
+    {
+        var r = await result;
+        return r.IsFailure ? next.ArgumentNotNull()(r) : r;
+    }
+
+    [return: NotNullIfNotNull(nameof(result))]
+    public static TResult? IfSucceed<TResult>(this TResult? result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
+        => result?.IsSucceed == true ? next.ArgumentNotNull()() : result;
+
+    public static async Task<TResult> IfSucceed<TResult>(this Task<TResult> result, [DisallowNull] Func<TResult> next) where TResult : ResultBase
+    {
+        var r = await result;
+        return r.IsSucceed ? next.ArgumentNotNull()() : r;
+    }
+
+    [return: NotNullIfNotNull(nameof(result))]
+    public static TResult? IfSucceed<TResult>(this TResult? result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    {
+        if (result?.IsSucceed == true)
+        {
+            action.ArgumentNotNull()(result);
+        }
+
+        return result;
+    }
+
+    public static async Task<TResult?> IfSucceedAsync<TResult>(this TResult? result, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : ResultBase
+        => result?.IsSucceed == true
+            ? await next.ArgumentNotNull()(result, token)
+            : result;
+
+    public static async Task<TResult> IfSucceedAsync<TResult>(this Task<TResult> result, [DisallowNull] Func<TResult, CancellationToken, Task<TResult>> next, CancellationToken token = default) where TResult : ResultBase
+    {
+        var r = await result;
+        return r.IsSucceed ? await next.ArgumentNotNull()(r, token) : r;
     }
 
     public static TResult LogDebug<TResult>(this TResult result, ILogger logger, [CallerMemberName] object? sender = null, DateTime? time = null)
-        where TResult : ResultBase
+                        where TResult : ResultBase
     {
+        Check.MustBeArgumentNotNull(result);
+        Check.MustBeArgumentNotNull(logger);
+
         if (result.IsSucceed)
         {
             logger.Debug(result, sender, time);
@@ -59,39 +184,60 @@ public static class ResultHelper
         return result;
     }
 
-    public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Func<TResult> next) where TResult : ResultBase 
-        => result == true ? next() : result;
+    public static TResult OnDone<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
+    {
+        Check.MustBeArgumentNotNull(action);
 
-    public static TResult OnSucceed<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
-    {
-        if (result == true)
-            action(result);
-        return result;
-    }
-    public static TResult OnFailure<TResult>([DisallowNull] this TResult result, [DisallowNull] Action<TResult> action) where TResult : ResultBase
-    {
-        if (result == false)
-            action(result);
+        action(result);
         return result;
     }
 
-    public static Result<Stream> SerializeToXmlFile<T>(this Result<Stream> result, string filePath)
-    {
-        Validations.Check.IfArgumentNotNull(filePath);
-        return result.Fluent(() => new XmlSerializer(typeof(T)).Serialize(result.Value, filePath));
-    }
+    /// <summary>
+    /// Throws an exception if the given Result is not successful.
+    /// </summary>
+    /// <param name="result">The Result to check.</param>
+    /// <param name="owner">The object that is throwing the exception.</param>
+    /// <param name="instruction">The instruction that is throwing the exception.</param>
+    /// <returns>The given Result.</returns>
+    public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null) =>
+        InnerThrowOnFail(result, owner, instruction);
 
-    public static Result ThrowOnFail([DisallowNull] this Result result, object? owner = null, string? instruction = null)
-        => InnerThrowOnFail(result, owner, instruction);
-
+    /// <summary>
+    /// Throws an exception if the given result is not successful.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
+    /// <param name="result">The result to check.</param>
+    /// <param name="owner">The owner of the result.</param>
+    /// <param name="instruction">The instruction associated with the result.</param>
+    /// <returns>The given result.</returns>
     public static TResult ThrowOnFail<TResult>([DisallowNull] this TResult result, object? owner = null, string? instruction = null) where TResult : ResultBase
         => InnerThrowOnFail(result, owner, instruction);
 
+    /// <summary>
+    /// Throws an exception if the given <see cref="ResultTValue"/> is a failure.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="result">The <see cref="ResultTValue"/> to check.</param>
+    /// <param name="owner">The object that is responsible for the operation.</param>
+    /// <param name="instruction">The instruction that is responsible for the operation.</param>
+    /// <returns>The given <see cref="ResultTValue"/>.</returns>
     public static Result<TValue> ThrowOnFail<TValue>([DisallowNull] this Result<TValue> result, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(result, owner, instruction);
 
+    /// <summary>
+    /// Throws an exception if the result of the provided Task is a failure.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the value.</typeparam>
+    /// <param name="resultAsync">The result to check.</param>
+    /// <param name="owner">The owner of the result.</param>
+    /// <param name="instruction">The instruction associated with the result.</param>
+    /// <returns>The result of the provided Task.</returns>
     public static async Task<Result<TValue>> ThrowOnFailAsync<TValue>(this Task<Result<TValue>> resultAsync, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(await resultAsync, owner, instruction);
+
+    public static async Task<TResult> ThrowOnFailAsync<TResult>(this Task<TResult> resultAsync, object? owner = null, string? instruction = null)
+        where TResult : ResultBase =>
+        InnerThrowOnFail(await resultAsync, owner, instruction);
 
     public static async Task<Result> ThrowOnFailAsync(this Task<Result> resultAsync, object? owner = null, string? instruction = null)
         => InnerThrowOnFail(await resultAsync, owner, instruction);
@@ -99,69 +245,118 @@ public static class ResultHelper
     public static Task<TResult> ToAsync<TResult>(this TResult result) where TResult : ResultBase
         => Task.FromResult(result);
 
-    public static Result<Stream> ToFile(this Result<Stream> result, string filePath, FileMode fileMode = FileMode.Create)
+    public static NotificationMessage ToNotificationMessage(this ResultBase @this, string? title = null, object? owner = null, string? instruction = null)
     {
-        Validations.Check.IfArgumentNotNull(filePath);
-        var stream = result.Value;
-        using var fileStream = new FileStream(filePath, fileMode, FileAccess.Write);
-        stream.CopyTo(fileStream);
+        Checker.MustBeArgumentNotNull(@this);
+        return new NotificationMessage(
+            Text: @this.Message ?? string.Empty,
+            Instruction: instruction,
+            Title: title,
+            Details: @this.ToString().Remove(@this.Message).Trim(),
+            Level: @this.IsSucceed ? MessageLevel.Info : MessageLevel.Error,
+            Owner: owner);
+    }
 
-        return result;
+    [return: NotNull]
+    public static Result<TValue> ToNotNullValue<TValue>(this Result<TValue?> result)
+        where TValue : class
+    {
+        Check.MustBeNotNull(result?.Value);
+        return result!;
+    }
+
+    [return: NotNull]
+    public static async Task<Result<TValue>> ToNotNullValue<TValue>(this Task<Result<TValue?>> result)
+        where TValue : class
+    {
+        var r = await result;
+        Check.MustBeNotNull(r?.Value);
+        return r!;
     }
 
     public static async Task<Result<TValue1>> ToResultAsync<TValue, TValue1>(this Task<Result<TValue>> resultTask, Func<TValue, TValue1> getNewValue)
     {
+        Check.MustBeArgumentNotNull(getNewValue);
+
         var result = await resultTask;
         var value1 = getNewValue(result);
-        return Result<TValue1>.From(result, value1);
+        return Result.From<TValue1>(result, value1);
     }
 
-    public static Result<StreamWriter> ToStreamWriter(this Result<Stream> result)
-        => new(new(result.Value));
+    public static async Task<Result> ToResultAsync<TValue>(this Task<Result<TValue>> resultTask)
+        => await resultTask;
 
-    public static Result<string> ToText(this Result<Stream> result)
-    {
-        var stream = result.Value;
-        using var reader = new StreamReader(stream);
-        return new(reader.ReadToEnd());
-    }
+    /// <summary>
+    /// Tries to parse the input object as a <typeparamref name="TResult"/> object and retrieves the result.
+    /// </summary>
+    /// <typeparam name="TResult">The type of <see cref="ResultBase"/> to parse the input as.</typeparam>
+    /// <param name="input">The input object to parse.</param>
+    /// <param name="result">
+    /// When this method returns, contains the parsed <typeparamref name="TResult"/> object if
+    /// successful, or the default value if parsing fails.
+    /// </param>
+    /// <returns>
+    /// <c>true</c> if the parsing is successful and the result is a success, <c>false</c> otherwise.
+    /// </returns>
+    /// <remarks>
+    /// The method sets the <paramref name="result"/> parameter to the parsed object and checks if
+    /// the parsing is successful by evaluating <see cref="ResultBase.IsSucceed"/>.
+    /// </remarks>
+    public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase =>
+        (result = input).IsSucceed;
 
-    public static Result<XmlWriter> ToXmlWriter(this Result<Stream> result, bool indent = true)
-        => new(XmlWriter.Create(result.ToStreamWriter(), new XmlWriterSettings { Indent = indent }));
+    //! Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
+    //x public static async Task<bool> TryParseAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
+    //x     => (result = await input).IsSucceed;
 
-    public static bool TryParse<TResult>([DisallowNull] this TResult input, [NotNull] out TResult result) where TResult : ResultBase
-        => (result = input.ArgumentNotNull()).IsSucceed;
+    public static Result<TNewValue> WithValue<TNewValue>(this ResultBase result, in TNewValue newValue) =>
+        new(result, newValue);
 
-    //!? Compiler Error CS1988: Async methods cannot have `ref`, `in` or `out` parameters
-    ////public static async Task<bool> TryAsync<TResult>([DisallowNull] this Task<TResult> input, out TResult result) where TResult : ResultBase
-    ////    => (result = await input).IsSucceed;
-
-    private static TResult InnerCheck<TResult>(TResult result, bool condition, object? errorMessage, object errorId)
-            where TResult : ResultBase => condition
-            ? (result with
-            {
-                Succeed = null,
-                Errors = EnumerableHelper.ToEnumerable((errorId, errorMessage ?? string.Empty))
-            })
-            : result;
+    /// <summary>
+    /// Creates a new instance of the <see cref="Result{TValue}"/> class with the specified value.
+    /// </summary>
+    /// <param name="value">The value to set.</param>
+    /// <returns>
+    /// A new instance of the <see cref="Result{TValue}"/> class with the specified value.
+    /// </returns>
+    public static Result<TValue> WithValue<TValue>(this Result<TValue> result, in TValue value) =>
+        new(result, value);
 
     private static TResult InnerThrowOnFail<TResult>([DisallowNull] TResult result, object? owner, string? instruction = null)
         where TResult : ResultBase
     {
-        Validations.Check.IfArgumentNotNull(result);
+        Checker.MustBeArgumentNotNull(result);
         if (result.IsSucceed)
         {
             return result;
         }
 
-        var exception =
-            result.Errors?.Select(x => x.Error).Cast<Exception>().FirstOrDefault()
-            ?? result.Status switch
-            {
-                Exception ex => ex.With(x => x.Source = owner?.ToString()),
-                _ => new ValidationException(result.ToString(), instruction ?? result.Message, owner: owner)
-            };
-        Throw(exception);
-        return result;
+        Exception exception;
+        var error = result.Errors.FirstOrDefault();
+
+        if (!result.Message.IsNullOrEmpty())
+        {
+            exception = new CommonException(result.Message) { Instruction = instruction }.With(x => x.Source = owner?.ToString());
+        }
+        else if (error is Exception ex)
+        {
+            exception = ex.With(x => x.Source = owner?.ToString());
+        }
+        else
+        {
+            exception = new CommonException(result.ToNotificationMessage(owner: owner, instruction: instruction)).With(x => x.Source = owner?.ToString());
+        }
+
+        throw exception;
+    }
+
+    private static IEnumerable<T> IterateOnAll<T>(this IResult result, Func<IResult, T> selector)
+    {
+        var buffer = result;
+        while (buffer != null)
+        {
+            yield return selector(buffer);
+            buffer = buffer.InnerResult;
+        }
     }
 }

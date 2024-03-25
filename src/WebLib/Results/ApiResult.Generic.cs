@@ -4,7 +4,7 @@ using Library.Validations;
 
 namespace Library.Web.Results;
 
-public record ApiResult<T> : ApiResult, IApiResult<T>
+public class ApiResult<T> : ApiResult, IApiResult<T>
 {
     public ApiResult(int? httpStatusCode = null, string? message = null, T? value = default)
         : base(httpStatusCode, message) => this.Value = value;
@@ -20,7 +20,7 @@ public record ApiResult<T> : ApiResult, IApiResult<T>
     {
         get
         {
-            Check.If(this.IsSucceed);
+            Check.MustBe(this.IsSucceed);
 
             return this._value;
         }
@@ -28,12 +28,12 @@ public record ApiResult<T> : ApiResult, IApiResult<T>
     }
 
     public static ApiResult<T> Ok(T value, string? message = null)
-        => new(System.Net.HttpStatusCode.OK.ToInt(), message) { Value = value };
+        => new(System.Net.HttpStatusCode.OK.Cast().ToInt(), message) { Value = value };
 
     public static ApiResult<T?> New(int? statusCode = null, string? message = null, T? value = default)
         => new(statusCode, message, value);
     public static ApiResult<T?> New(HttpStatusCode? statusCode = null, string? message = null, T? value = default)
-        => new(statusCode?.ToInt(), message, value);
+        => new(statusCode?.Cast().ToInt(), message, value);
 
     public static explicit operator T?(ApiResult<T> result) => result.Value;
 }

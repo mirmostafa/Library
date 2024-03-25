@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -29,7 +30,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
         get => this.Properties.TryGetValue(propName, out var value) ? value : null;
         set
         {
-            Check.IfArgumentNotNull(propName);
+            Check.MustBeArgumentNotNull(propName);
 
             if (this.Properties.ContainsKey(propName))
             {
@@ -53,7 +54,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     public void GetObjectData(SerializationInfo info, StreamingContext context)
     {
-        Check.IfArgumentNotNull(info, nameof(info));
+        Check.MustBeArgumentNotNull(info, nameof(info));
 
         this.FillByProperties(info, context);
     }
@@ -64,6 +65,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
         return true;
     }
 
+    [DebuggerStepThrough]
     public override bool TrySetMember(SetMemberBinder binder, object? value)
     {
         if (binder is null)
@@ -77,7 +79,7 @@ public class Expando : DynamicObject, ISerializable, INotifyPropertyChanged
 
     protected virtual void FillByProperties(SerializationInfo info, StreamingContext context)
     {
-        if (info is not null && this.Properties.Any())
+        if (info is not null && this.Properties.Count != 0)
         {
             foreach (var (key, value) in this.Properties)
             {

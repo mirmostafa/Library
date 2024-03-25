@@ -5,7 +5,7 @@ using Library.Validations;
 
 namespace Library.CodeGeneration.v2.Front.HtmlGeneration;
 
-public class TableElement : HtmlElement<TableElement>, ISelfCoder
+public sealed class TableElement : HtmlElement<TableElement>, ISelfCoder
 {
     public TableElement() : base("table")
     {

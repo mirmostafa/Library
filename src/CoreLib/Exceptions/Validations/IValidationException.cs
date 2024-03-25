@@ -1,5 +1,4 @@
-﻿
-namespace Library.Exceptions.Validations;
+﻿namespace Library.Exceptions.Validations;
 
 public interface IValidationException : IException
 {

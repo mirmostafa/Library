@@ -4,27 +4,39 @@ namespace Library.Logging;
 
 public sealed class TextWriterLogger : FastLoggerBase<string>, ILogger
 {
-    public TextWriterLogger()
-    {
-    }
+    private string? _defaultFormat;
 
     public TextWriterLogger(IEnumerable<TextWriter> writers)
-        => this.Writers.AddRange(ToAction(writers.ArgumentNotNull(nameof(writers)).Compact()));
+        => this.Writers.AddRange(ToAction(writers.ArgumentNotNull().Compact()));
+
     public TextWriterLogger(params TextWriter[] writers)
-        => this.Writers.AddRange(ToAction(writers.ArgumentNotNull(nameof(writers)).Compact()));
+        => this.Writers.AddRange(ToAction(writers.ArgumentNotNull().Compact()));
 
     public TextWriterLogger(IEnumerable<Action<string>> writers)
-        => this.Writers.AddRange(writers.ArgumentNotNull(nameof(writers)).Compact());
+        => this.Writers.AddRange(writers.ArgumentNotNull().Compact());
+
     public TextWriterLogger(params Action<string>[] writers)
-        => this.Writers.AddRange(writers.ArgumentNotNull(nameof(writers)).Compact());
+        => this.Writers.AddRange(writers.ArgumentNotNull().Compact());
 
     private List<Action<string>> Writers { get; } = new();
 
-    private static Action<string> ToAction(TextWriter writer)
-        => writer.WriteLine;
+    public TextWriterLogger Add(params TextWriter[] writers)
+    {
+        this.Writers.AddRange(ToAction(writers.ArgumentNotNull().Compact()));
+        return this;
+    }
 
-    private static IEnumerable<Action<string>> ToAction(IEnumerable<TextWriter> writers)
-        => writers.Select(ToAction);
+    public TextWriterLogger Add(params Action<string>[] writers)
+    {
+        this.Writers.AddRange(writers.ArgumentNotNull().Compact());
+        return this;
+    }
+
+    public void Log(object message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null, string? format = null)
+        => base.Log(message?.ToString() ?? string.Empty, level, sender, time, stackTrace, format ?? this._defaultFormat);
+
+    public TextWriterLogger SetDefaultFormat(string? format)
+        => this.With(x => x._defaultFormat = format);
 
     protected override void OnLogging(LogRecord<string> logRecord)
     {
@@ -35,18 +47,9 @@ public sealed class TextWriterLogger : FastLoggerBase<string>, ILogger
         }
     }
 
-    public TextWriterLogger Add(params TextWriter[] writers)
-    {
-        this.Writers.AddRange(ToAction(writers.ArgumentNotNull(nameof(writers)).Compact()));
-        return this;
-    }
+    private static Action<string> ToAction(TextWriter writer)
+        => writer.WriteLine;
 
-    public TextWriterLogger Add(params Action<string>[] writers)
-    {
-        this.Writers.AddRange(writers.ArgumentNotNull(nameof(writers)).Compact());
-        return this;
-    }
-
-    public void Log(object message, LogLevel level = LogLevel.Info, object? sender = null, DateTime? time = null, string? stackTrace = null)
-        => base.Log(message?.ToString() ?? string.Empty, level, sender, time, stackTrace);
+    private static IEnumerable<Action<string>> ToAction(IEnumerable<TextWriter> writers)
+        => writers.Select(ToAction);
 }

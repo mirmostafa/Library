@@ -1,32 +1,18 @@
-﻿namespace Library.CodeGeneration.v2.Back;
+﻿using Library.DesignPatterns.Markers;
 
-public interface IClass : IType
+namespace Library.CodeGeneration.v2.Back;
+
+public interface IClass : IType, IHasGenericTypes
 {
-    static IClass New(string name)
-        => new Class(name);
+    bool IsStatic { get; }
 
-    IClass AddProperty(string propertyName, Type type);
+    static IClass New(string name) =>
+        new Class(name);
 }
 
-internal class Class : IClass
+[Immutable]
+public sealed class Class(string name) : TypeBase(name), IClass
 {
-    public Class(string name) => this.Name = name;
-
-    public ISet<IAttribute> Attributes { get; } = new HashSet<IAttribute>();
-
-    public ISet<string>? BaseTypeNames { get; } = new HashSet<string>();
-
-    public MemberPrefixes MemberPrefixes { get; set; } = MemberPrefixes.None;
-
-    public ISet<IMember> Members { get; } = new HashSet<IMember>();
-
-    public string Name { get; }
-
-    public ISet<string> UsingNamespaces { get; } = new HashSet<string>();
-
-    public IClass AddProperty(string propertyName, Type type)
-    {
-        _ = this.Members.Add(IProperty.New(propertyName, type!.FullName!));
-        return this;
-    }
+    public ISet<IGenericType> GenericTypes { get; } = new HashSet<IGenericType>();
+    public bool IsStatic { get; init; }
 }

@@ -2,9 +2,10 @@
 
 public interface IBuilder<out TResult>
 {
-    TResult BuildAll();
+    TResult Build();
 }
 
+[Obsolete("Not recommended by Functional Programming")]
 public interface IBuilder
 {
     void Build();
@@ -15,6 +16,7 @@ public interface IBuilder<in TArgs, out TResult>
     TResult Build(TArgs args);
 }
 
+[Obsolete("Not recommended by Functional Programming")]
 public interface IBuilderExtender<in TThis>
 {
     static abstract void Build(TThis @this);

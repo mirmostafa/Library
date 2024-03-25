@@ -42,7 +42,7 @@ public class LibCommandBinding : CommandBinding
 
     protected virtual void OnCaptionChanged()
     {
-        if (this.Command.As<RoutedUICommand>() is { } command)
+        if (this.Command.Cast().As<RoutedUICommand>() is { } command)
         {
             command.Text = this.CommandText;
         }

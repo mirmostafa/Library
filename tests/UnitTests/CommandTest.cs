@@ -2,7 +2,8 @@
 
 namespace UnitTests;
 
-public class CommandTest
+[Trait("Category", nameof(Library.DesignPatterns))]
+public sealed class CommandTest
 {
     [Theory]
     [InlineData(1, 2, 3)]
@@ -45,19 +46,19 @@ public class CommandTest
     }
 }
 
-file record Adder(int X, int Y) : ICommand<int>
+readonly file record struct Adder(int X, int Y) : ICommand<int>
 {
     public int Execute() => this.X + this.Y;
 }
-file record Subtractor(int X, int Y) : ICommand<int>
+readonly file record struct Subtractor(int X, int Y) : ICommand<int>
 {
     public int Execute() => this.X - this.Y;
 }
-file record Multiplier(int X, int Y) : ICommand<int>
+readonly file record struct Multiplier(int X, int Y) : ICommand<int>
 {
     public int Execute() => this.X * this.Y;
 }
-file record Divider(int X, int Y) : ICommand<int>
+readonly file record struct Divider(int X, int Y) : ICommand<int>
 {
     public int Execute() => this.X / this.Y;
 }

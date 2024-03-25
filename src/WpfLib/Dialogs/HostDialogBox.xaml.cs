@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+
 using Library.Results;
 using Library.Wpf.Helpers;
 //using ClientType = System.Windows.Controls.UserControl;
@@ -80,8 +81,8 @@ internal partial class HostDialogBox
             ? this.OnValidate(this.ClientUi!)
             : this.ClientUi switch
             {
-                IValidator validatable => validatable.Validate(),
-                IAsyncValidator asyncValidatable => await asyncValidatable.ValidateAsync(),
+                IValidatable validatable => validatable.Validate(),
+                IAsyncValidatable asyncValidatable => await asyncValidatable.ValidateAsync(),
                 _ => Result.Empty,
             };
         validation.ThrowOnFail(this.Title);

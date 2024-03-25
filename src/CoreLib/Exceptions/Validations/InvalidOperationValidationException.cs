@@ -24,4 +24,8 @@ public sealed class InvalidOperationValidationException : ValidationExceptionBas
     public InvalidOperationValidationException(string message, string? instruction = null, string? title = null, string? details = null, Exception? inner = null, object? owner = null) : base(message, instruction, title, details, inner, owner)
     {
     }
+
+    [DoesNotReturn]
+    public static T Throw<T>() =>
+        throw new InvalidOperationValidationException();
 }

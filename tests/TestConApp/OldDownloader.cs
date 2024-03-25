@@ -25,18 +25,18 @@ public static class OldDownloader
                                           in string destinationFolderPath,
                                           in int numberOfParallelDownloads = 0,
                                           in bool validateSSL = false,
-                                          in IProgressiveReport<string>? main = null,
-                                          in Func<IProgressiveReport<string>>? subReportCreator = null,
+                                          in ProgressiveReport? main = null,
+                                          in Func<ProgressiveReport>? subReportCreator = null,
                                           in CancellationToken? cancellationToken = null)
     {
         var token = cancellationToken ?? CancellationToken.None;
-        var subCreator = subReportCreator ?? (() => IProgressiveReport<string>.Empty);
+        var subCreator = subReportCreator ?? (() => ProgressiveReport.Empty);
         if (!validateSSL)
         {
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
         }
 
-        main?.Report("Initializing", 1, 3);
+        main?.Report(1, 3, "Initializing");
         var startTime = DateTime.Now;
         var downloadThreadsCount = handleNumberOfParallelDownloads(numberOfParallelDownloads);
         var tempFilesDictionary = new ConcurrentDictionary<int, string>();
@@ -47,29 +47,29 @@ public static class OldDownloader
         };
         if (token.IsCancellationRequested)
         {
-            main?.Report("Downloading is cancelled.", 3, 3);
+            main?.Report(3, 3, "Downloading is cancelled.");
             return result;
         }
 
-        main?.Report("Downloading", 2, 3);
+        main?.Report(2, 3, "Downloading");
         result.ParallelDownloads = parallelDownload(fileUrl, downloadThreadsCount, tempFilesDictionary, result.Size, token);
         if (token.IsCancellationRequested)
         {
-            main?.Report("Downloading is cancelled.", 3, 3);
+            main?.Report(3, 3, "Downloading is cancelled.");
             return result;
         }
 
-        main?.Report("Merging chunks", 3, 3);
+        main?.Report(3, 3, "Merging chunks");
         using var destinationFileStream = createDestinationFile(result.FilePath);
         mergeChunks(destinationFileStream, tempFilesDictionary);
         result.TimeTaken = DateTime.Now.Subtract(startTime);
         if (token.IsCancellationRequested)
         {
-            main?.Report("Downloading is cancelled.", 3, 3);
+            main?.Report(3, 3, "Downloading is cancelled.");
             return result;
         }
 
-        main?.Report("Downloading is done.", 3, 3);
+        main?.Report(3, 3, "Downloading is done.");
         return result;
 
         #region Local Methods

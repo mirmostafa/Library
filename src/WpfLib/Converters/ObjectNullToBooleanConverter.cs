@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 namespace Library.Wpf.Converters;
 
-public class ObjectNullToBooleanConverter : IValueConverter
+public sealed class ObjectNullToBooleanConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         //! parameter says that value has the direct result, or must be reversed.

@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics;
+using System.Security.Claims;
+
 using Library.Coding;
 using Library.EventsArgs;
 
@@ -13,42 +15,16 @@ public abstract class MiddlewareBase
 
     protected ClaimsPrincipal? User { get; private set; }
 
-    [System.Diagnostics.DebuggerStepThrough]
+    //[DebuggerStepThrough]
     public async Task Invoke(HttpContext httpContext)
     {
-        CodeHelper.CatchResult(async () => await initialize(httpContext));
-        await executing(httpContext);
-        await executed(httpContext);
-        return;
-
-        async Task executing(HttpContext httpContext)
+        var onExecutingEventArgs = new ItemActingEventArgs<HttpContext>(httpContext);
+        await this.OnExecutingAsync(onExecutingEventArgs);
+        if (!onExecutingEventArgs.Handled)
         {
-            var onExecutingEventArgs = new ItemActingEventArgs<HttpContext?>(httpContext);
-            await this.OnExecutingAsync(onExecutingEventArgs);
-            if (!onExecutingEventArgs.Handled)
-            {
-                await this._next(httpContext);
-            }
-        }
-
-        async Task executed(HttpContext httpContext)
-        {
-            var onExecutedEventArgs = new ItemActedEventArgs<HttpContext?>(httpContext);
-            await this.OnExecutedAsync(onExecutedEventArgs);
-        }
-
-        async Task initialize(HttpContext httpContext)
-        {
-            this.User = httpContext?.User;
-            await this.OnInitializeAsync(httpContext);
+            await this._next(httpContext);
         }
     }
 
-    protected virtual async Task OnInitializeAsync(HttpContext? httpContext)
-        => await Task.CompletedTask;
-
-    protected virtual async Task OnExecutedAsync(ItemActedEventArgs<HttpContext?> e)
-        => await Task.CompletedTask;
-
-    protected abstract Task OnExecutingAsync(ItemActingEventArgs<HttpContext?> e);
+    protected abstract Task OnExecutingAsync(ItemActingEventArgs<HttpContext> e);
 }

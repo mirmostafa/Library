@@ -1,12 +1,12 @@
 namespace Library.DesignPatterns.ExceptionHandlingPattern.Handlers;
 
 /// <summary>
-///     Extensions for ExceptionHandling Pattern
+/// Extensions for ExceptionHandling Pattern
 /// </summary>
 public static class ExceptionHandlingExtensions
 {
     /// <summary>
-    ///     Handles the exception.
+    /// Handles the exception.
     /// </summary>
     /// <typeparam name="TException">The type of the exception.</typeparam>
     /// <param name="exceptionHandling">The exception handling.</param>
@@ -15,7 +15,7 @@ public static class ExceptionHandlingExtensions
         where TException : Exception => exceptionHandling.HandleException(ex);
 
     /// <summary>
-    ///     Handles the exception.
+    /// Handles the exception.
     /// </summary>
     /// <typeparam name="TException">The type of the exception.</typeparam>
     /// <param name="exceptionHandling">The exception handling.</param>
@@ -25,7 +25,7 @@ public static class ExceptionHandlingExtensions
         where TException : Exception => exceptionHandling.HandleException(sender, ex);
 
     /// <summary>
-    ///     Resets the specified exception handling.
+    /// Resets the specified exception handling.
     /// </summary>
     /// <typeparam name="TException">The type of the exception.</typeparam>
     /// <param name="exceptionHandling">The exception handling.</param>
@@ -33,7 +33,7 @@ public static class ExceptionHandlingExtensions
         where TException : Exception => exceptionHandling.Reset();
 
     /// <summary>
-    ///     Sets the sender.
+    /// Sets the sender.
     /// </summary>
     /// <typeparam name="TException">The type of the exception.</typeparam>
     /// <param name="exceptionHandling">The exception handling.</param>

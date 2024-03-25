@@ -8,7 +8,10 @@ using UnitTests.Models;
 namespace UnitTests;
 
 
-public class SqlEntityTest
+[Trait("Category", nameof(Library.Data.SqlServer))]
+[Trait("Category", nameof(SqlStatementBuilder))]
+[Trait("Category", nameof(SqlEntity))]
+public sealed class SqlEntityTest
 {
     [Fact]
     public void CreateSelectByEntityTest()
@@ -16,7 +19,7 @@ public class SqlEntityTest
         var actual = SqlStatementBuilder
                         .Select<Person>()
                         .Build();
-        var expected = @"SELECT [Id], [Name], [LName], [AddressId], [Address]
+        var expected = @"SELECT [FullName], [Id], [Name], [LName], [AddressId], [Address]
     FROM [dbo].[Person]";
         Assert.Equal(expected, actual);
     }
@@ -47,6 +50,7 @@ public class SqlEntityTest
 [Table("Person", Schema = "dbo")]
 file class Person
 {
+    [Column(Order = 4)]
     [ForeignKey(nameof(AddressId))]
     public Address? Address { get; set; }
 

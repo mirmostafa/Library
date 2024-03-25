@@ -2,7 +2,7 @@
 using Library.Validations;
 
 namespace Library.Web.Api;
-public class WebApiCreator
+public sealed class WebApiCreator
 {
     public WebApiCreator(WebApplication? app = null, IEnumerable<string>? args = null) =>
         this.App = GetApp(app) ?? WebApplication.CreateBuilder(args?.ToArray() ?? Array.Empty<string>()).Build();
@@ -26,8 +26,8 @@ public class WebApiCreator
 
     public WebApiCreator Create(in HttpMethod method, in string route, in Delegate body)
     {
-        Check.IfArgumentNotNull(route);
-        Check.IfArgumentNotNull(body);
+        Check.MustBeArgumentNotNull(route);
+        Check.MustBeArgumentNotNull(body);
 
         _ = method switch
         {

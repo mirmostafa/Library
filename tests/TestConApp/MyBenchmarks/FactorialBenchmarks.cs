@@ -6,7 +6,7 @@ using BenchmarkDotNet.Attributes;
 namespace ConAppTest.MyBenchmarks;
 
 [MemoryDiagnoser(false)]
-public class FactorialBenchmarks : IBenchmark<FactorialBenchmarks>
+public sealed class FactorialBenchmarks : IBenchmark<FactorialBenchmarks>
 {
     [Params(40, 4_000)]
     public int Number { get; set; }

@@ -102,7 +102,7 @@ internal class EnableThemingInScope : IDisposable
                         dwFlags = ACTCTX_FLAG_ASSEMBLY_DIRECTORY_VALID
                     };
 
-                    // Note this will fail gracefully if file specified
+                    // This will fail gracefully if file specified
                     // by manifestLoc doesn't exist.
                     hActCtx = CreateActCtx(ref enableThemingActivationContext);
                     contextCreationSucceeded = hActCtx != new IntPtr(-1);

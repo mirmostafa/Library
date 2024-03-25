@@ -7,11 +7,9 @@ public interface IExceptionHandlerContainer<TException>
     where TException : Exception
 {
     /// <summary>
-    ///     Gets the exception handling.
+    /// Gets the exception handling.
     /// </summary>
-    /// <value>
-    ///     The exception handling.
-    /// </value>
+    /// <value>The exception handling.</value>
     ExceptionHandling<TException> ExceptionHandling { get; }
 }
 
@@ -20,10 +18,8 @@ public interface IExceptionHandlerContainer<TException>
 public interface IExceptionHandlerContainer
 {
     /// <summary>
-    ///     Gets the exception handling.
+    /// Gets the exception handling.
     /// </summary>
-    /// <value>
-    ///     The exception handling.
-    /// </value>
+    /// <value>The exception handling.</value>
     ExceptionHandling ExceptionHandling { get; }
 }

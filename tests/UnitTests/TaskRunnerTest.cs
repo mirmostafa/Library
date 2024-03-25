@@ -1,9 +1,10 @@
-﻿using Library.Threading.MultistepProgress;
+﻿using Library.Threading;
 
 namespace UnitTests;
 
-
-public class TaskRunnerTest
+[Trait("Category", nameof(Library.Coding))]
+[Trait("Category", nameof(TaskRunner))]
+public sealed class TaskRunnerTest
 {
     [Theory]
     [InlineData(5, 5, 15)]
@@ -12,13 +13,13 @@ public class TaskRunnerTest
     [InlineData(-5, 5, 5)]
     public async void SimpleTest1(int initialValue, int steps, int expected)
     {
-        var add5 = (int x) => x + steps;
-        var init = () => initialValue;
-        var actual = await TaskRunner<int>.New()
-            .StartWith(init)
+        var actual = await TaskRunner<int>.StartWith(init)
             .Then(add5)
             .Then(add5)
             .RunAsync();
-        Assert.Equal(expected, actual);
+        Assert.Equal(expected, actual.Value);
+
+        int add5(int x) => x + steps;
+        int init() => initialValue;
     }
 }

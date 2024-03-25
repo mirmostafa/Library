@@ -7,9 +7,8 @@ namespace Library.Helpers;
 public static class ImageHelper
 {
     /// <summary>
-    /// تهیه تصویر بند انگشتی از یک تصویر
-    /// بنداگشتی با حداکثر اندازه ۹۶ در ۹۶ تولید می شود
-    /// اگر تصویر کوچکتر از ۹۶ باشد به ۹۶ می رسد و اگر بزرگتر باشد به این اندازه کوچک می شود
+    /// تهیه تصویر بند انگشتی از یک تصویر بنداگشتی با حداکثر اندازه ۹۶ در ۹۶ تولید می شود اگر تصویر
+    /// کوچکتر از ۹۶ باشد به ۹۶ می رسد و اگر بزرگتر باشد به این اندازه کوچک می شود
     /// </summary>
     /// <param name="imageData"></param>
     /// <returns></returns>
@@ -32,6 +31,79 @@ public static class ImageHelper
         img.Save(ms, ImageFormat.Png);
 
         return ms.ToArray();
+    }
+
+    public static byte[] ConvertToTransparent(byte[] bytes, Color color)
+    {
+        byte[] converted;
+        using (var convertedSignature = new MemoryStream())
+        {
+            using (var frame = new Bitmap(new MemoryStream(bytes)))
+            {
+                frame.MakeTransparent(color);
+                frame.Save(convertedSignature, ImageFormat.Png);
+            }
+            converted = convertedSignature.ToArray();
+        }
+        return converted;
+    }
+
+    public static ImageCodecInfo? GetEncoder(ImageFormat format)
+        => ImageCodecInfo
+                    .GetImageDecoders()
+                    .FirstOrDefault(codec => codec.FormatID == format.Guid);
+
+    public static byte[] GetImagePage(byte[] inputImage, int pageNumber, int? pageDpi, long? quality)
+    {
+        using var stream = new MemoryStream(inputImage);
+        using var image = Image.FromStream(stream);
+        int frameCount;
+        try
+        {
+            frameCount = image.GetFrameCount(FrameDimension.Page);
+        }
+        catch (Exception)
+        {
+            var dimension = new FrameDimension(image.FrameDimensionsList[0]);
+            frameCount = image.GetFrameCount(dimension);
+        }
+        if (frameCount > 1)
+        {
+            _ = image.SelectActiveFrame(FrameDimension.Page, pageNumber - 1);
+        }
+        quality ??= 100;
+
+        using var ms = new MemoryStream();
+        if (quality.Value is < 100 and >= 0)
+        {
+            var myEncoderParameters = new EncoderParameters(1);
+            var jpgEncoder = GetEncoder(ImageFormat.Jpeg);
+
+            // Create an Encoder object based on the GUID for the Quality parameter category.
+            var myEncoder = System.Drawing.Imaging.Encoder.Quality;
+            var myEncoderParameter = new EncoderParameter(myEncoder, quality.Value);
+            myEncoderParameters.Param[0] = myEncoderParameter;
+            if (jpgEncoder is null)
+            {
+                throw new();
+            }
+
+            image.Save(ms, jpgEncoder, myEncoderParameters);
+        }
+        else
+        {
+            image.Save(ms, ImageFormat.Jpeg);
+        }
+
+        var array = ms.ToArray();
+        return array;
+    }
+
+    public static int GetNumberOfPages(byte[] content)
+    {
+        using var stream = new MemoryStream(content);
+        using var fromStream = Image.FromStream(stream);
+        return fromStream.GetFrameCount(FrameDimension.Page);
     }
 
     public static byte[] GetThumbnail(byte[] value, int thumbWidth = 96)
@@ -117,6 +189,22 @@ public static class ImageHelper
         return thumbValue;
     }
 
+    public static bool IsImageFile(byte[] content)
+    {
+        try
+        {
+            using var stream = new MemoryStream(content);
+            using (Image.FromStream(stream))
+            {
+            }
+            return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+
     [Obsolete]
     public static byte[] ScaleImage(byte[] signature, int width, int height, Rectangle destRect)
     {
@@ -140,101 +228,6 @@ public static class ImageHelper
         }
         return scaled;
     }
-
-    public static byte[] ConvertToTransparent(byte[] bytes, Color color)
-    {
-        byte[] converted;
-        using (var convertedSignature = new MemoryStream())
-        {
-            using (var frame = new Bitmap(new MemoryStream(bytes)))
-            {
-                frame.MakeTransparent(color);
-                frame.Save(convertedSignature, ImageFormat.Png);
-            }
-            converted = convertedSignature.ToArray();
-        }
-        return converted;
-    }
-
-    public static int GetNumberOfPages(byte[] content)
-    {
-        using var stream = new MemoryStream(content);
-        using var fromStream = Image.FromStream(stream);
-        return fromStream.GetFrameCount(FrameDimension.Page);
-    }
-
-    public static bool IsImageFile(byte[] content)
-    {
-        try
-        {
-            using (var stream = new MemoryStream(content))
-            {
-                using (Image.FromStream(stream))
-                {
-                }
-            }
-            return true;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
-
-    public static byte[] GetImagePage(byte[] inputImage, int pageNumber, int? pageDpi, long? quality)
-    {
-        using var stream = new MemoryStream(inputImage);
-        using var image = Image.FromStream(stream);
-        int frameCount;
-        try
-        {
-            frameCount = image.GetFrameCount(FrameDimension.Page);
-        }
-        catch (Exception)
-        {
-            var dimension = new FrameDimension(image.FrameDimensionsList[0]);
-            frameCount = image.GetFrameCount(dimension);
-        }
-        if (frameCount > 1)
-        {
-            _ = image.SelectActiveFrame(FrameDimension.Page, pageNumber - 1);
-        }
-        if (quality == null)
-        {
-            quality = 100;
-        }
-
-        using var ms = new MemoryStream();
-        if (quality.Value is < 100 and >= 0)
-        {
-            var myEncoderParameters = new EncoderParameters(1);
-            var jpgEncoder = GetEncoder(ImageFormat.Jpeg);
-
-            // Create an Encoder object based on the GUID
-            // for the Quality parameter category.
-            var myEncoder = System.Drawing.Imaging.Encoder.Quality;
-            var myEncoderParameter = new EncoderParameter(myEncoder, quality.Value);
-            myEncoderParameters.Param[0] = myEncoderParameter;
-            if (jpgEncoder is null)
-            {
-                throw new();
-            }
-
-            image.Save(ms, jpgEncoder, myEncoderParameters);
-        }
-        else
-        {
-            image.Save(ms, ImageFormat.Jpeg);
-        }
-
-        var array = ms.ToArray();
-        return array;
-    }
-
-    public static ImageCodecInfo? GetEncoder(ImageFormat format)
-        => ImageCodecInfo
-                    .GetImageDecoders()
-                    .FirstOrDefault(codec => codec.FormatID == format.Guid);
 }
 
 public static class ImageUtilities
@@ -253,10 +246,7 @@ public static class ImageUtilities
         get
         {
             //if the quick lookup isn't initialised, initialise it
-            if (_encoders == null)
-            {
-                _encoders = new Dictionary<string, ImageCodecInfo>();
-            }
+            _encoders ??= [];
 
             //if there are no codecs, try loading them
             if (_encoders.Count == 0)
@@ -275,6 +265,27 @@ public static class ImageUtilities
             //return the lookup
             return _encoders;
         }
+    }
+
+    /// <summary>
+    /// Returns the image codec with the given mime type
+    /// </summary>
+    public static ImageCodecInfo? GetEncoderInfo(string mimeType)
+    {
+        //do a case insensitive search for the mime type
+        var lookupKey = mimeType.ToLower();
+
+        //the codec to return, default to null
+        ImageCodecInfo? foundCodec = null;
+
+        //if we have the encoder, get it to return
+        if (Encoders.TryGetValue(lookupKey, out var value))
+        {
+            //pull the codec from the lookup
+            foundCodec = value;
+        }
+
+        return foundCodec;
     }
 
     /// <summary>
@@ -311,8 +322,7 @@ public static class ImageUtilities
     /// </summary>
     /// <param name="path">Path to which the image would be saved.</param>
     /// <param name="image"></param>
-    /// <param name="quality">An integer from 0 to 100, with 100 being the
-    /// highest quality</param>
+    /// <param name="quality">An integer from 0 to 100, with 100 being the highest quality</param>
     /// <exception cref="ArgumentOutOfRangeException">
     /// An invalid value was entered for image quality.
     /// </exception>
@@ -338,26 +348,5 @@ public static class ImageUtilities
         encoderParams.Param[0] = qualityParam;
         //save the image using the codec and the parameters
         image.Save(path, jpegCodec, encoderParams);
-    }
-
-    /// <summary>
-    /// Returns the image codec with the given mime type
-    /// </summary>
-    public static ImageCodecInfo? GetEncoderInfo(string mimeType)
-    {
-        //do a case insensitive search for the mime type
-        var lookupKey = mimeType.ToLower();
-
-        //the codec to return, default to null
-        ImageCodecInfo? foundCodec = null;
-
-        //if we have the encoder, get it to return
-        if (Encoders.ContainsKey(lookupKey))
-        {
-            //pull the codec from the lookup
-            foundCodec = Encoders[lookupKey];
-        }
-
-        return foundCodec;
     }
 }

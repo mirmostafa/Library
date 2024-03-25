@@ -1,7 +1,7 @@
 namespace Library.Data.SqlServer.Dynamics;
 
-public class ForeignKeyInfo
+public sealed class ForeignKeyInfo
 {
-    public string ReferencedColumn { get; set; }
-    public string ReferencedTable { get; set; }
+    public string? ReferencedColumn { get; set; }
+    public string? ReferencedTable { get; set; }
 }

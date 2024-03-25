@@ -1,11 +1,12 @@
 ﻿using System.Collections;
+
 using Library.DesignPatterns.Markers;
 
 namespace Library.Collections;
 
 [Fluent]
-public interface IFluentCollection<TList, TItem> : IEnumerable<TItem>, IEnumerable
-    where TList : IFluentCollection<TList, TItem>
+public interface IFluentCollection<TSelf, TItem> : IEnumerable<TItem>, IEnumerable
+    where TSelf : IFluentCollection<TSelf, TItem>
 {
     int Count
     {
@@ -17,13 +18,13 @@ public interface IFluentCollection<TList, TItem> : IEnumerable<TItem>, IEnumerab
         get;
     }
 
-    TList Add(TItem item);
+    TSelf Add(TItem item);
 
-    TList Clear();
+    TSelf Clear();
 
-    (TList List, bool Result) Contains(TItem item);
+    (TSelf List, bool Result) Contains(TItem item);
 
-    TList CopyTo(TItem[] array, int arrayIndex);
+    TSelf CopyTo(TItem[] array, int arrayIndex);
 
-    (TList List, bool Result) Remove(TItem item);
+    TSelf Remove(TItem item);
 }

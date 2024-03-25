@@ -2,11 +2,15 @@
 
 public interface ISelectStatement : IStatementOnTable, IWhereClause
 {
-    List<string> Columns { get; }
+    IList<string> Columns { get; }
+
+    int? TopCount { get; set; }
 
     string? OrderByColumn { get; set; }
 
     OrderByDirection OrderByDirection { get; set; }
+
+    bool WithNoLock { get; set; }
 
     //! For .NET 8.0
     //? static implicit operator string(in ISelectStatement statement)

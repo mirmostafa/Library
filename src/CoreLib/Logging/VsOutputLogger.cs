@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics;
 
-using Library.Helpers;
-
 namespace Library.Logging;
 
 public sealed class VsOutputLogger : FastLoggerBase<object>, ILogger
@@ -17,6 +15,6 @@ public sealed class VsOutputLogger : FastLoggerBase<object>, ILogger
     protected override void OnLogging(LogRecord<object> logRecord)
     {
         var message = logRecord.Reformat();
-        Debugger.Log(logRecord.Level.ToInt(), logRecord.Sender?.ToString(), message);
+        Debugger.Log(logRecord.Level.Cast().ToInt(), logRecord.Sender?.ToString(), message);
     }
 }

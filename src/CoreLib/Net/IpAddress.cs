@@ -1,4 +1,6 @@
-﻿using System.Net.NetworkInformation;
+﻿using System.Collections.Immutable;
+using System.Net.NetworkInformation;
+using System.Numerics;
 
 using Library.DesignPatterns.Markers;
 using Library.Interfaces;
@@ -8,65 +10,55 @@ using Library.Validations;
 namespace Library.Net;
 
 [Immutable]
-public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, IParsable<IpAddress>, IAdditionOperators<IpAddress, IpAddress, IpAddress>
+[Serializable]
+public sealed class IpAddress([DisallowNull] in string ip) :
+    IComparable<IpAddress>, IEquatable<IpAddress>, IParsable<IpAddress>,
+    IAdditionOperators<IpAddress, IpAddress, IpAddress>,
+    IMinMaxValue<IpAddress>
 {
-    private readonly int[] _parts;
+    public static readonly IpAddress MaxValue = Parse("255.255.255.255");
+    public static readonly IpAddress MinValue = Parse("0.0.0.0");
 
-    private IpAddress([DisallowNull] in string ip)
-    {
-        _ = Validate(ip).ThrowOnFail();
-        this._parts = Split(ip);
-    }
+    private readonly ImmutableArray<int> _segments = Validate(ip).ThrowOnFail().Value!.Split('.').Select(s => s.Cast().ToInt()).ToImmutableArray();
 
-    public int this[in int index] => this._parts[index];
+    static IpAddress IMinMaxValue<IpAddress>.MaxValue => MaxValue;
+    static IpAddress IMinMaxValue<IpAddress>.MinValue => MinValue;
+    public int this[in int index] => this._segments[index];
 
-    public static string Format(in string ip)
-    {
-        _ = Validate(ip).ThrowOnFail();
-        return Merge(Split(ip));
-    }
-
-    public static IpAddress? GetCurrentIp()
-            => Dns.GetHostIpAddress();
+    public static IpAddress GetCurrentIp()
+        => Dns.GetHostIpAddress();
 
     public static IpAddress GetLocalHost()
         => Parse("127.0.0.1");
 
     public static IEnumerable<IpAddress> GetRange(IpAddress start, IpAddress end)
     {
-        var current = start;
-        while (current.CompareTo(end) == -1)
+        var x = start;
+        while (x < end)
         {
-            yield return current = current.GetNext();
-            ;
+            yield return x;
+            x = x.Add(1);
         }
     }
 
     public static IEnumerable<IpAddress> GetRange(string start, string end)
-        => GetRange(new IpAddress(start.ArgumentNotNull()), new IpAddress(end.ArgumentNotNull()));
+        => GetRange(new IpAddress(start), new IpAddress(end));
 
     [return: NotNullIfNotNull(nameof(ipAddress))]
-    public static implicit operator string?(in IpAddress? ipAddress)
-        => ipAddress?.ToString();
+    public static implicit operator string?(in IpAddress? ipAddress) =>
+        ipAddress?.ToString();
 
-    public static bool IsValid(in string ip)
-        => Validate(ip).IsSucceed;
+    public static bool IsValid(in string ip) =>
+        Validate(ip).IsSucceed;
 
-    public static bool operator !=(in IpAddress left, IpAddress right)
-        => !Equals(left, right);
+    public static bool operator !=(in IpAddress left, IpAddress right) =>
+        !Equals(left, right);
 
-    public static IpAddress operator +(IpAddress left, IpAddress right)
-    {
-        var parts = new int[3];
-        for (var i = 0; i < 3; i++)
-        {
-            parts[i] = left._parts[i] + right._parts[i];
-        }
-        return new(Merge(parts));
-    }
+    public static IpAddress operator +(IpAddress left, IpAddress right) =>
+        left.Add(right);
 
     public static bool operator <(in IpAddress left, IpAddress right)
-            => left is null ? right is not null : left.CompareTo(right) < 0;
+        => left is null ? right is not null : left.CompareTo(right) < 0;
 
     public static bool operator <=(in IpAddress left, IpAddress right)
         => left is null || left.CompareTo(right) <= 0;
@@ -88,55 +80,48 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
 
     public static PingReply Ping(in string hostNameOrAddress, TimeSpan timeout)
     {
-        Check.IfArgumentNotNull(hostNameOrAddress);
-
+        Check.MustBeArgumentNotNull(hostNameOrAddress);
+        LibLogger.Debug($"Ping {hostNameOrAddress}");
         using var ping = new Ping();
-        return ping.Send(hostNameOrAddress, timeout.TotalMilliseconds.ToInt());
+        return ping.Send(hostNameOrAddress, timeout.TotalMilliseconds.Cast().ToInt());
     }
 
     public static PingReply Ping(in string hostNameOrAddress)
     {
-        Check.IfArgumentNotNull(hostNameOrAddress);
-
+        Check.MustBeArgumentNotNull(hostNameOrAddress);
+        LibLogger.Debug($"Ping {hostNameOrAddress}");
         using var ping = new Ping();
         return ping.Send(hostNameOrAddress);
     }
 
-    [return: NotNull]
-    public static string Resolve([DisallowNull] in string ip)
+    public static bool TryParse([DisallowNull] in string ip, [MaybeNullWhen(false)] out IpAddress? result)
     {
-        _ = Validate(ip).ThrowOnFail();
-        return System.Net.Dns.GetHostEntry(ip).HostName;
-    }
-
-    public static int[] Split(in IpAddress ipAddress)
-        => ipAddress._parts;
-
-    public static bool TryParse([DisallowNull] in string ip, out IpAddress? result)
-    {
-        Check.IfArgumentNotNull(ip);
+        if (ip.IsNullOrEmpty())
+        {
+            result = default;
+            return false;
+        }
         try
         {
-            result = new IpAddress(ip);
+            result = Parse(ip);
             return true;
         }
         catch
         {
-            result = null;
+            result = default;
             return false;
         }
     }
 
-    public static TryMethodResult<IpAddress> TryParse([DisallowNull] in string ip)
+    public static TryMethodResult<IpAddress?> TryParse([DisallowNull] in string ip)
     {
-        Check.IfArgumentNotNull(ip);
         try
         {
-            return TryMethodResult<IpAddress>.CreateSuccess(new IpAddress(ip));
+            return TryMethodResult<IpAddress>.CreateSuccess(new IpAddress(ip))!;
         }
         catch (Exception ex)
         {
-            return TryMethodResult<IpAddress>.CreateFail(status: ex);
+            return TryMethodResult<IpAddress>.Fail();
         }
     }
 
@@ -159,33 +144,60 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
     }
 
-    public static Result Validate(in string ip)
-        => ip.ArgumentNotNull().Split('.').Check()
-             .RuleFor(x => x.Length != 4, () => "Parameter cannot be cast to IpAddress")
-             .RuleFor(x => x.Any(part => !part.IsInteger()), () => "Parameter cannot be cast to IpAddress")
-             .RuleFor(x => x.Any(part => !part.ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
-             .BuildAll();
+    public static Result<string?> Validate([NotNull] in string? ip)
+        => ip.ArgumentNotNull().Split('.').Compact()
+             .Check()
+             .RuleFor(x => x.Count() == 4, () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.All(seg => seg.IsInteger()), () => "Parameter cannot be cast to IpAddress")
+             .RuleFor(x => x.All(seg => seg.Cast().ToInt().IsBetween(0, 255)), () => "Parameter cannot be cast to IpAddress")
+             .Build().WithValue(ip);
+
+    public IpAddress Add(int i)
+        => new(Merge(AddNumberToSegmentArray(this._segments, i)));
+
+    public IpAddress Add(in IpAddress ip)
+        => new(Merge(AddIpAddressSegmentArray(this._segments, ip._segments)));
 
     /// <summary>
-    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// Compares the current instance with another object of the same type and returns an integer
+    /// that indicates whether the current instance precedes, follows, or occurs in the same
+    /// position in the sort order as the other object.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>
     /// <returns>
-    /// A value that indicates the relative order of the objects being compared. The return value has these meanings:
-    /// <list type="table"><listheader><term> Value</term><description> Meaning</description></listheader><item><term> Less than zero</term><description> This instance precedes <paramref name="other" /> in the sort order.</description></item><item><term> Zero</term><description> This instance occurs in the same position in the sort order as <paramref name="other" />.</description></item><item><term> Greater than zero</term><description> This instance follows <paramref name="other" /> in the sort order.</description></item></list>
+    /// A value that indicates the relative order of the objects being compared. The return value
+    /// has these meanings:
+    /// <list type="table">
+    /// <listheader>
+    /// <term>Value</term>
+    /// <description>Meaning</description>
+    /// </listheader>
+    /// <item>
+    /// <term>Less than zero</term>
+    /// <description>This instance precedes <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// <item>
+    /// <term>Zero</term>
+    /// <description>
+    /// This instance occurs in the same position in the sort order as <paramref name="other"/>.
+    /// </description>
+    /// </item>
+    /// <item>
+    /// <term>Greater than zero</term>
+    /// <description>This instance follows <paramref name="other"/> in the sort order.</description>
+    /// </item>
+    /// </list>
     /// </returns>
     public int CompareTo(IpAddress? other)
-        => other is null ? -1 : Merge(this._parts).Replace(".", "").ToLong().CompareTo(Merge(other._parts).Replace(".", "").ToLong());
+        => other is null ? -1 : Merge(this._segments).Replace(".", "").Cast().ToLong().CompareTo(Merge(other._segments).Replace(".", "").Cast().ToLong());
 
     /// <summary>
-    ///     Indicates whether the current object is equal to another object of the same type.
+    /// Indicates whether the current object is equal to another object of the same type.
     /// </summary>
     /// <returns>
-    ///     true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.
+    /// true if the current object is equal to the <paramref name="other"/> parameter; otherwise, false.
     /// </returns>
-    /// <param name="other">
-    ///     An object to compare with this object.
-    /// </param>
+    /// <param name="other">An object to compare with this object.</param>
     public bool Equals(IpAddress? other)
     {
         if (other is null)
@@ -206,65 +218,30 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         => this.ToString().Equals(ip, StringComparison.Ordinal);
 
     /// <summary>
-    ///     Determines whether the specified <see cref="T:System.Object" /> is equal to the current
-    ///     <see cref="T:System.Object" />.
+    /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
     /// </summary>
     /// <returns>
-    ///     true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />;
-    ///     otherwise, false.
+    /// true if the specified <see cref="T:System.Object"/> is equal to the current <see
+    /// cref="T:System.Object"/>; otherwise, false.
     /// </returns>
-    /// <param name="obj">
-    ///     The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Object" />.
-    /// </param>
+    /// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>.</param>
     /// <exception cref="T:System.NullReferenceException">
-    ///     The <paramref name="obj" /> parameter is null.
+    /// The <paramref name="obj"/> parameter is null.
     /// </exception>
     /// <filterpriority>2</filterpriority>
     public override bool Equals(object? obj)
         => obj is IpAddress ip && this.Equals(ip);
 
     public string Format()
-        => Merge(this._parts);
+        => Merge(this._segments);
 
     /// <summary>
-    ///     Serves as a hash function for a particular type.
+    /// Serves as a hash function for a particular type.
     /// </summary>
-    /// <returns>
-    ///     A hash code for the current <see cref="T:System.Object" />.
-    /// </returns>
+    /// <returns>A hash code for the current <see cref="T:System.Object"/>.</returns>
     /// <filterpriority>2</filterpriority>
     public override int GetHashCode()
-        => this._parts.GetHashCode();
-
-    public IpAddress GetNext()
-    {
-        var result = FromIp(this);
-        result._parts[3]++;
-        if (result._parts[3] == 256)
-        {
-            result._parts[2]++;
-            result._parts[3] = 0;
-        }
-        if (result._parts[2] == 256)
-        {
-            result._parts[1]++;
-            result._parts[2] = 0;
-        }
-        if (result._parts[1] == 256)
-        {
-            result._parts[0]++;
-            result._parts[1] = 0;
-        }
-        if (result._parts[0] == 256)
-        {
-            result._parts[0] = result._parts[1] = result._parts[2] = result._parts[3] = 0;
-        }
-
-        return result;
-    }
-
-    public bool IsBetween(in IEnumerable<IpAddress> ipAddresses)
-        => ipAddresses.Any(ip => ip.Equals(this));
+        => this._segments.GetHashCode();
 
     public bool IsInRange(in IpAddress min, in IpAddress max)
         => this.CompareTo(min.ArgumentNotNull()) < 0 || this.CompareTo(max.ArgumentNotNull()) > 0;
@@ -275,19 +252,27 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
     public PingReply Ping()
         => Ping(this.ToString());
 
+    [return: NotNull]
     public string Resolve()
-        => Resolve(this.ToString());
+        => System.Net.Dns.GetHostEntry(this).HostName;
 
     /// <summary>
-    ///     Returns a <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.
+    /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
     /// </summary>
-    /// <returns>
-    ///     A <see cref="T:System.String" /> that represents the current <see cref="T:System.Object" />.
-    /// </returns>
+    /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.</returns>
     /// <filterpriority>2</filterpriority>
     [return: NotNull]
     public override string ToString()
-        => Merge(this._parts);
+        => Merge(this._segments);
+
+    /// <summary>
+    /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.
+    /// </summary>
+    /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:System.Object"/>.</returns>
+    /// <filterpriority>2</filterpriority>
+    [return: NotNull]
+    public string ToString(string format)
+        => Merge(this._segments, format);
 
     public bool TryResolve(out string? computerName)
     {
@@ -303,12 +288,38 @@ public sealed class IpAddress : IComparable<IpAddress>, IEquatable<IpAddress>, I
         }
     }
 
-    private static IpAddress FromIp(in IpAddress ip)
-            => new(ip.ToString());
+    private static ImmutableArray<int> AddIpAddressSegmentArray(ImmutableArray<int> segment1, ImmutableArray<int> segment2)
+    {
+        var result = new int[4];
+        var carry = 0;
 
-    private static string Merge(in int[] parts)
-        => $"{parts[0]:000}.{parts[1]:000}.{parts[2]:000}.{parts[3]:000}";
+        for (var i = 3; i >= 0; i--)
+        {
+            var sum = segment1[i] + segment2[i] + carry;
+            result[i] = sum % 256;
+            carry = sum / 256;
+        }
 
-    private static int[] Split(in string ip)
-        => ip.Split('.').Select(s => s.ToInt()).ToArray();
+        return result.ToImmutableArray();
+    }
+
+    private static ImmutableArray<int> AddNumberToSegmentArray(ImmutableArray<int> segment, int number)
+    {
+        var result = segment.ToArray();
+        result[0] += number / 256 / 256 / 256 % 256;
+        result[1] += number / 256 / 256 % 256;
+        result[2] += number / 256 % 256;
+        result[3] += number % 256;
+
+        for (var i = 3; i > 0; i--)
+        {
+            result[i - 1] += segment[i] / 256;
+            result[i] %= 256;
+        }
+
+        return result.ToImmutableArray();
+    }
+
+    private static string Merge(in ImmutableArray<int> segments, string format = "0")
+        => $"{segments[0].ToString(format)}.{segments[1].ToString(format)}.{segments[2].ToString(format)}.{segments[3].ToString(format)}";
 }

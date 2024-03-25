@@ -4,16 +4,113 @@ using Library.Results;
 
 namespace UnitTests;
 
-[Trait("Category", "Code Helpers")]
-public class FunctionalTest
+[Trait("Category", nameof(Library.Coding))]
+[Trait("Category", nameof(CodeHelper))]
+public sealed class FunctionalTest
 {
     private static readonly Action<int> _emptyIntAction = x => { };
     private static readonly Func<int> _returnsTwo = () => 2;
     private record EmptyRecord();
 
     [Fact]
-    public void BreakTest()
+    public void Break_Generic()
+        => Assert.Throws<BreakException>(() => Break<int>());
+
+    [Fact]
+    public void Break_Should_Return_BreakException()
         => Assert.Throws<BreakException>(Break);
+
+    [Fact]
+    public void CatchResult_Failure()
+    {
+        // Arrange
+        var five = 1;
+        var zero = 0;
+
+        // Act
+        var actual = CatchResult(() => five / zero);
+
+        // Assert Assert
+        Assert.False(actual.IsSucceed);
+        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Exception);
+    }
+
+    [Fact]
+    public void CatchResult_Generic_Failure()
+    {
+        // Arrange
+        var five = 1;
+        var zero = 0;
+        void act() => _ = five / zero;
+
+        // Act
+        var actual = CatchResult(act);
+
+        // Assert Assert
+        Assert.False(actual.IsSucceed);
+        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Exception);
+    }
+
+    [Fact]
+    public void CatchResult_Generic_Success()
+    {
+        // Arrange
+        var five = 5;
+        var zero = 0;
+        void act() => _ = five + zero;
+
+        // Act
+        var actual = CatchResult(act);
+
+        // Assert
+        Assert.True(actual.IsSucceed);
+    }
+
+    [Fact]
+    public void CatchResult_Success()
+    {
+        // Arrange
+        var five = 5;
+        var zero = 0;
+
+        // Act
+        var actual = CatchResult(() => five + zero);
+
+        // Assert
+        Assert.True(actual.IsSucceed);
+        Assert.Equal(5, actual.Value);
+    }
+
+    [Fact]
+    public async void CatchResultAsync_Generic_Success()
+    {
+        // Arrange
+        var five = 5;
+        var zero = 0;
+        Task<int> act() => Task.Run(() => _ = five + zero);
+
+        // Act
+        var actual = await CatchResultAsync(act);
+
+        // Assert
+        Assert.True(actual.IsSucceed);
+    }
+
+    [Fact]
+    public async void CatchResultAsync_Success()
+    {
+        // Arrange
+        var five = 5;
+        var zero = 0;
+        Task<int> act() => Task.Run(() => _ = five + zero);
+
+        // Act
+        var actual = await CatchResultAsync(act);
+
+        // Assert
+        Assert.True(actual.IsSucceed);
+        Assert.Equal(5, actual.Value);
+    }
 
     [Fact]
     public void Composition_AddTest1()
@@ -78,15 +175,38 @@ public class FunctionalTest
     }
 
     [Fact]
+    public void Composition_PlugLoggerTest()
+    {
+        var initialValue = () => 5;
+        var add = (int x) => x + 5;
+        var sub = (int x) => x - 5;
+        var mul = (int x) => x * 5;
+        var div = (int x) => x / 5;
+        var log = (string x) => Console.WriteLine(x);
+
+        var process = initialValue.Compose(log, "Starting")   // > x = 5
+            .Compose(add).Compose(log, x => $"Step 1 - {x}")  // > x = 10
+            .Compose(sub).Compose(log, x => $"Step 2 - {x}")  // > x = 5
+            .Compose(mul).Compose(log, x => $"Step 3 - {x}")  // > x = 25
+            .Compose(div).Compose(log, x => $"Step 4 - {x}")  // > x = 5
+            .Compose(log, x => $"Final value: {x}");
+
+        var result = process();
+
+        Assert.Equal(5, result);
+    }
+
+    [Fact]
     public void Composition_ResultTest()
     {
-        var start = () => Result<int>.CreateSuccess(5);
-        var step = (int x) => Result<int>.CreateSuccess(x + 1);
-        var err = (int x) => Result<int>.CreateFailure(value: x);
-        var fail = (Result<int> x) => x;
+        var start = () => Result.Success(5);
+        var step = (int x) => Result.Success(x + 1);
+        var err = (int x) => Result.Fail(value: x);
+        var getArgs = (Result<int> x) => x;
 
-        var actual = start.Compose(step, fail).Compose(step, fail).Compose(err, fail).Compose(step, fail).Compose(step, fail)();
-        Assert.Equal(7, actual);
+        var campsite = start.Compose(step, getArgs).Compose(step, getArgs).Compose(err, getArgs).Compose(step, getArgs).Compose(step, getArgs);
+        var actual = campsite();
+        Assert.Equal(7, actual.Value);
     }
 
     [Fact]
@@ -123,15 +243,20 @@ public class FunctionalTest
     {
         _ = this.Fluent(Methods.Empty);
         var two = 2.Fluent(() => { });
-        Assert.Equal(2, two.Value);
+        Assert.Equal(2, two.GetValue());
     }
 
     [Fact]
-    public void ForEachTest() 
-        => Enumerable.Range(1, 1).ForEach(_emptyIntAction);
+    public void IfConditionFalseTest()
+    {
+        var booleanTest = false;
+        var falseResult = booleanTest.IfFalse(() => "false");
+
+        Assert.Equal("false", falseResult);
+    }
 
     [Fact]
-    public void IfConditionTest()
+    public void IfConditionTrueTest()
     {
         var booleanTest = true;
         var trueResult = booleanTest.IfTrue(() => "true");
@@ -139,31 +264,11 @@ public class FunctionalTest
     }
 
     [Fact]
-    public void IfConditionTest2()
-    {
-        var booleanTest = false;
-        var falseResult = booleanTest.IfFalse(() => "false");
-        _ = booleanTest.IfFalse(Methods.Empty);
-
-        Assert.Equal("false", falseResult);
-    }
-
-    [Fact]
-    public void ListTest()
-    {
-        var list = List(5, 6, 7);
-        _ = Assert.IsAssignableFrom<List<int>>(list);
-        Assert.Equal(3, list.Count);
-        Assert.Equal(6, list[1]);
-        Assert.Equal(7, list[2]);
-    }
-
-    [Fact]
-    public void LockTest() 
+    public void LockTest()
         => Lock(this, Methods.Empty);
 
     [Fact]
-    public void NewTest() 
+    public void NewTest()
         => New<EmptyRecord>();
 
     [Fact]

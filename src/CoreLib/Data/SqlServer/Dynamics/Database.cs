@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Dynamic;
 
 using Library.Data.SqlServer.Builders;
@@ -10,7 +10,7 @@ using Library.Validations;
 
 namespace Library.Data.SqlServer.Dynamics;
 
-public class Database : SqlObject<Database, Server>
+public sealed class Database : SqlObject<Database, Server>
 {
     private IEnumerable<DataRow>? _allParams;
     private StoredProcedures? _storedProcedures;
@@ -29,18 +29,18 @@ public class Database : SqlObject<Database, Server>
 
     public static Database? GetDatabase(in string connectionString, string? name = null)
     {
-        Check.IfArgumentNotNull(connectionString);
+        Check.MustBeArgumentNotNull(connectionString);
         if (name.IsNullOrEmpty())
         {
             name = new SqlConnectionStringBuilder(connectionString).InitialCatalog;
         }
-        Check.NotNull(name, () => new ObjectNotFoundException("Cannot detect database name"));
+        Check.MustBeNotNull(name, () => new ObjectNotFoundException("Database"));
 
         return GetDatabasesCore(connectionString).FirstOrDefault(db => db.Name == name);
     }
 
-    public static async Task<Database?> GetDatabaseAsync(string connectionString, string? name = null)
-        => await Task.Run(() => GetDatabase(connectionString, name));
+    public static async Task<Database?> GetDatabaseAsync(string connectionString, string? name = null, CancellationToken cancellationToken = default)
+        => await Task.Run(() => GetDatabase(connectionString, name), cancellationToken);
 
     public static Databases GetDatabases(string connectionString)
         => GetDatabasesCore(connectionString);
@@ -49,7 +49,7 @@ public class Database : SqlObject<Database, Server>
         => GetDatabasesCore(ConnectionStringBuilder.Build(datasource, username, password));
 
     public int GetTablesCount()
-        => this.GetSql().ExecuteScalarQuery("SELECT COUNT(name) FROM sys.tables")!.ToInt();
+        => this.GetSql().ExecuteScalarQuery("SELECT COUNT(name) FROM sys.tables")!.Cast().ToInt();
 
     public override bool TryGetMember(GetMemberBinder binder, out object? result)
     {
@@ -68,7 +68,7 @@ public class Database : SqlObject<Database, Server>
 
     private static IEnumerable<Database> GatherDatabases(string connectionString, string databases)
     {
-        Check.IfArgumentNotNull(connectionString);
+        Check.MustBeArgumentNotNull(connectionString);
 
         var builder = new SqlConnectionStringBuilder(connectionString);
         var rows = GetDataRows(connectionString, databases);

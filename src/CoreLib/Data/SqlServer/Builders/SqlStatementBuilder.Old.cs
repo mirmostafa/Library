@@ -2,6 +2,6 @@ namespace Library.Data.SqlServer;
 
 public partial class SqlStatementBuilder
 {
-    public static string CreateSelect([DisallowNull] string tablename, params string[] columns)
-        => Select().Columns(columns).From(tablename).Build();
+    public static string CreateSelect([DisallowNull] string tableName, params string[] columns)
+        => Select().Columns(columns).From(tableName).Build();
 }

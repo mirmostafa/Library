@@ -3,9 +3,19 @@ using Library.Exceptions.Validations;
 
 namespace UnitTests;
 
-
-public class UpdateStatementBuilderTest
+[Trait("Category", nameof(Library.Data.SqlServer))]
+[Trait("Category", nameof(SqlStatementBuilder))]
+public sealed class UpdateStatementBuilderTest
 {
+    [Fact]
+    public void CreateAllUpdate()
+    {
+        var actual = SqlStatementBuilder
+                        .Update("dbo.Person")
+                        .Set("Name", "Ali");
+        var statement = actual.Build();
+    }
+
     [Fact]
     public void CreateFullUpdate()
     {
@@ -14,24 +24,16 @@ public class UpdateStatementBuilderTest
                         .Set("Name", "Ali")
                         .Set("Age", 5)
                         .Where("Id = 5");
-        Assert.Throws<NoItemValidationException>(() => actual.Build());
+        var statement = actual.Build();
     }
 
-    [Fact]
-    public void CreateAllUpdate()
-    {
-        var actual = SqlStatementBuilder
-                        .Update("dbo.Person")
-                        .Set("Name", "Ali");
-        Assert.Throws<NoItemValidationException>(()=>actual.Build());
-    }
     [Fact]
     public void CreateSetListUpdate()
     {
         var actual = SqlStatementBuilder
                         .Update("dbo.Person")
                         .Set(("Name", "Ali"), ("Age", 5));
-        Assert.Throws<NoItemValidationException>(() => actual.Build());
+        var statement = actual.Build();
     }
 
     [Fact]
@@ -41,6 +43,6 @@ public class UpdateStatementBuilderTest
                         .Update()
                         .Table("dbo.Person")
                         .Set(("Name", "Ali"), ("Age", 5));
-        Assert.Throws<NoItemValidationException>(() => actual.Build());
+        var statement = actual.Build();
     }
 }

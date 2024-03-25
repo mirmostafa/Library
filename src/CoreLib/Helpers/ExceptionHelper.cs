@@ -10,15 +10,16 @@ public static class ExceptionHelper
         {
             return null;
         }
+        Check.MustBeArgumentNotNull(format);
 
         var message = format(exception);
         var inner = GetFullMessage(exception.InnerException, format, separator);
         return inner == null ? message : $"{message}{separator}{inner}";
     }
 
-    public static string GetFullMessage(this Exception? exception, bool inculdeStackTrace = false)
+    public static string GetFullMessage(this Exception? exception, bool includeStackTrace = false)
     {
-        Action<Exception, StringBuilder> addStackTrace = inculdeStackTrace
+        Action<Exception, StringBuilder> addStackTrace = includeStackTrace
             ? ((ex, sb) =>
             {
                 _ = sb.AppendLine($"Source: {ex.GetBaseException().Source}")
@@ -40,7 +41,7 @@ public static class ExceptionHelper
         {
             return string.Empty;
         }
-        Check.IfArgumentNotNull(exceptionFormatter, nameof(exceptionFormatter));
+        Check.MustBeArgumentNotNull(exceptionFormatter, nameof(exceptionFormatter));
         var result = new StringBuilder();
         var buffer = exception;
         while (buffer is not null)

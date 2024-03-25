@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -6,7 +7,7 @@ using System.Runtime.CompilerServices;
 using Library.DesignPatterns.Creational;
 using Library.DesignPatterns.Creational.Exceptions;
 using Library.Exceptions;
-using Library.Interfaces;
+using Library.Results;
 using Library.Types;
 using Library.Validations;
 
@@ -14,41 +15,41 @@ namespace Library.Helpers;
 
 public static class ObjectHelper
 {
-    private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = new();
+    private static readonly ConditionalWeakTable<object, Dynamic.Expando> _propsExpando = [];
 
     /// <summary>
     /// Checks the database null.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    /// <param name="o">           The o.</param>
+    /// <param name="o">The o.</param>
     /// <param name="defaultValue">The default value.</param>
-    /// <param name="converter">   The converter.</param>
+    /// <param name="converter">The converter.</param>
     /// <returns></returns>
-    public static T CheckDbNull<T>(in object o, in T defaultValue, in Func<object, T> converter)
-        => IsDbNull(o) ? defaultValue : converter.Invoke(o);
+    public static T CheckDbNull<T>(in object? o, in T defaultValue, in Func<object, T> converter)
+        => IsDbNull(o) ? defaultValue : converter.ArgumentNotNull().Invoke(o);
 
     /// <summary>
-    /// Composes the specified objects.
+    /// Determines whether an object contains properties that implement a specified interface.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="values">The values.</param>
-    /// <returns></returns>
-    public static T ComposeByType<T>(this IEnumerable<T> values)
-            where T : IMergable<T>, IEmpty<T>
-    {
-        var result = T.Empty;
-        foreach (var value in values)
-        {
-            result = value.Merge(result);
-        }
-        return result;
-    }
+    /// <param name="obj">The object to check for properties implementing the interface.</param>
+    /// <param name="type">The interface type to check for.</param>
+    /// <returns>
+    /// True if the object has properties implementing the specified interface, otherwise false.
+    /// </returns>
+    public static bool Contains(in object? obj, Type type)
+        => obj is not null && obj.GetType()
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .Any(property =>
+                    property.PropertyType.FindInterfaces(
+                        (m, filterCriteria) => m.FullName == type.FullName, // Check if the interface's full name matches the specified type's full name.
+                        null)
+                    .Any()); // Check if any interface implementation matches the specified type.
 
     /// <summary>
     /// Generates the lazy singleton instance.
     /// </summary>
     /// <typeparam name="TSingleton">The type of the singleton.</typeparam>
-    /// <param name="createInstance">    The create instance.</param>
+    /// <param name="createInstance">The create instance.</param>
     /// <param name="initializeInstance">The initialize instance.</param>
     /// <returns></returns>
     public static Lazy<TSingleton> GenerateLazySingletonInstance<TSingleton>(
@@ -61,7 +62,7 @@ public static class ObjectHelper
     /// Generates a singleton instance of a class (Must be cached by the owner class).
     /// </summary>
     /// <typeparam name="TSingleton">The type of class which is being instantiated.</typeparam>
-    /// <param name="createInstance">    A delegate to be used for getting an instance of</param>
+    /// <param name="createInstance">A delegate to be used for getting an instance of</param>
     /// <param name="initializeInstance">The instance initializer.</param>
     /// <returns></returns>
     /// <exception cref="SingletonException">
@@ -74,7 +75,8 @@ public static class ObjectHelper
     /// an instance of TSingleton./&gt; After generating instance, searches for a method named:
     /// "InitializeComponents". If found will be called.
     /// </remarks>
-    public static TSingleton? GenerateSingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null, Action<TSingleton>? initializeInstance = null)
+    [return: NotNull]
+    public static TSingleton GenerateSingletonInstance<TSingleton>(Func<TSingleton>? createInstance = null, Action<TSingleton>? initializeInstance = null)
         where TSingleton : class, ISingleton<TSingleton>
     {
         //! If (T) has implemented CreateInstance as a static method, use it to create an instance
@@ -90,19 +92,13 @@ public static class ObjectHelper
             var constructor = typeof(TSingleton).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic,
                 null,
                 EnumerableHelper.EmptyArray<Type>(),
-                EnumerableHelper.EmptyArray<ParameterModifier>());
-            if (constructor is null)
-            {
-                throw new SingletonException(
-                    $"The class must have a static method: \"{typeof(TSingleton)} CreateInstance()\" or a private/protected parameter-less constructor.");
-            }
-
+                EnumerableHelper.EmptyArray<ParameterModifier>()) ?? throw new SingletonException($"""The class must have a static method: "{typeof(TSingleton)} CreateInstance()" or a private/protected parameter-less constructor.""");
             result = constructor.Invoke(EnumerableHelper.EmptyArray<object>()) as TSingleton;
 
             //! Just to make sure that the code will work.
             if (result is null)
             {
-                return null;
+                throw new SingletonException("Couldn't create instance.");
             }
         }
 
@@ -119,9 +115,9 @@ public static class ObjectHelper
     /// Gets the attribute.
     /// </summary>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
-    /// <param name="value">       The value.</param>
+    /// <param name="value">The value.</param>
     /// <param name="defaultValue">The default value.</param>
-    /// <param name="inherited">   if set to <c>true</c> [inherited].</param>
+    /// <param name="inherited">if set to <c>true</c> [inherited].</param>
     /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(in object value,
         in TAttribute? defaultValue = null,
@@ -133,25 +129,24 @@ public static class ObjectHelper
     }
 
     /// <summary>
-    /// Gets the attribute.
+    /// Gets the specified attribute from the given property.
     /// </summary>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
     /// <param name="property">The property.</param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException">property</exception>
+    /// <returns>The attribute.</returns>
     public static TAttribute? GetAttribute<TAttribute>(in PropertyInfo property)
         where TAttribute : Attribute =>
         property is null
                 ? throw new ArgumentNullException(nameof(property))
-                : property.GetCustomAttributes(typeof(TAttribute), true).FirstOrDefault().As<TAttribute>();
+                : property.GetCustomAttributes(typeof(TAttribute), true).FirstOrDefault().Cast().As<TAttribute>();
 
     /// <summary>
     /// Gets the attribute.
     /// </summary>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
-    /// <param name="type">        The type.</param>
+    /// <param name="type">The type.</param>
     /// <param name="defaultValue">The default value.</param>
-    /// <param name="inherited">   if set to <c>true</c> [inherited].</param>
+    /// <param name="inherited">if set to <c>true</c> [inherited].</param>
     /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(in Type type,
         in TAttribute? defaultValue = null,
@@ -168,14 +163,11 @@ public static class ObjectHelper
     /// <typeparam name="TType">The type of the type.</typeparam>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
     /// <param name="defaultValue">The default value.</param>
-    /// <param name="inherited">   if set to <c>true</c> [inherited].</param>
+    /// <param name="inherited">if set to <c>true</c> [inherited].</param>
     /// <returns></returns>
     public static TAttribute? GetAttribute<TType, TAttribute>(in TAttribute? defaultValue, in bool inherited)
         where TAttribute : Attribute
-    {
-        var attributes = typeof(TType).GetCustomAttributes(typeof(TAttribute), inherited);
-        return attributes.Length > 0 ? (TAttribute)attributes[0] : defaultValue;
-    }
+        => typeof(TType).GetCustomAttributes(typeof(TAttribute), inherited).Cast<TAttribute>().FirstOrDefault();
 
     /// <summary>
     /// Gets the attribute.
@@ -185,16 +177,13 @@ public static class ObjectHelper
     /// <returns></returns>
     public static TAttribute? GetAttribute<TType, TAttribute>()
         where TAttribute : Attribute
-    {
-        var attributes = typeof(TType).GetCustomAttributes(typeof(TAttribute), false);
-        return attributes.Length > 0 ? (TAttribute)attributes[0] : null;
-    }
+        => typeof(TType).GetCustomAttributes(typeof(TAttribute), false).Cast<TAttribute>().FirstOrDefault();
 
     /// <summary>
     /// Gets the attribute.
     /// </summary>
     /// <typeparam name="TAttribute">The type of the attribute.</typeparam>
-    /// <param name="value">    The value.</param>
+    /// <param name="value">The value.</param>
     /// <param name="inherited">if set to <c>true</c> [inherited].</param>
     /// <returns></returns>
     public static TAttribute? GetAttribute<TAttribute>(in object value, in bool inherited)
@@ -213,38 +202,41 @@ public static class ObjectHelper
     /// Gets the field.
     /// </summary>
     /// <typeparam name="TFieldType">The type of the field type.</typeparam>
-    /// <param name="obj">      The object.</param>
+    /// <param name="obj">The object.</param>
     /// <param name="fieldName">Name of the field.</param>
     /// <returns></returns>
     public static TFieldType GetField<TFieldType>(in object? obj, string fieldName)
     {
-        var field = obj?.GetType().GetFields().FirstOrDefault(fld => string.Compare(fld.Name, fieldName, StringComparison.Ordinal) == 0);
+        var field = obj?.GetType().GetFields().FirstOrDefault(fld => string.Equals(fld.Name, fieldName, StringComparison.Ordinal));
         return field switch
         {
-            not null => field.GetValue(obj)!.To<TFieldType>(),
-            null => throw new ObjectNotFoundException("Field not found")
+            not null => field.GetValue(obj)!.Cast().To<TFieldType>(),
+            null => throw new ObjectNotFoundException("Field")
         };
     }
 
-    public static int GetHashCode(object o, params object[] properties) =>
-            properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
+    /// <summary>
+    /// Calculates the hash code of an object and its properties.
+    /// </summary>
+    public static int GetHashCode(object o, params object[] properties)
+        => properties.Aggregate(o.GetHashCode(), (hash, property) => hash ^ property.GetHashCode());
 
     /// <summary>
-    /// Gets the method.
+    /// Gets a method from an object using the specified name and binding flags.
     /// </summary>
     /// <typeparam name="TDelegate">The type of the delegate.</typeparam>
-    /// <param name="obj">         The object.</param>
-    /// <param name="name">        The name.</param>
+    /// <param name="obj">The object.</param>
+    /// <param name="name">The name of the method.</param>
     /// <param name="bindingFlags">The binding flags.</param>
-    /// <returns></returns>
+    /// <returns>The delegate for the method, or null if the method was not found.</returns>
     public static TDelegate? GetMethod<TDelegate>([DisallowNull] in object obj,
         [DisallowNull] in string name,
         BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance)
         where TDelegate : class
     {
-        var methodInfo = obj.ArgumentNotNull(nameof(obj)).GetType().GetMethod(name, bindingFlags);
+        var methodInfo = obj.ArgumentNotNull().GetType().GetMethod(name, bindingFlags);
         return methodInfo is not null
-            ? Cast.As<TDelegate>(Delegate.CreateDelegate(typeof(TDelegate), obj, methodInfo))
+            ? Delegate.CreateDelegate(typeof(TDelegate), obj, methodInfo).Cast().As<TDelegate>()
             : null;
     }
 
@@ -252,8 +244,8 @@ public static class ObjectHelper
     /// Gets the method.
     /// </summary>
     /// <typeparam name="TDelegate">The type of the delegate.</typeparam>
-    /// <param name="objType">     Type of the object.</param>
-    /// <param name="name">        The name.</param>
+    /// <param name="objType">Type of the object.</param>
+    /// <param name="name">The name.</param>
     /// <param name="bindingFlags">The binding flags.</param>
     /// <returns></returns>
     public static TDelegate? GetMethod<TDelegate>(in Type objType,
@@ -263,7 +255,7 @@ public static class ObjectHelper
     {
         var methodInfo = objType.GetMethod(name, bindingFlags);
         return methodInfo is not null
-            ? Cast.As<TDelegate>(Delegate.CreateDelegate(typeof(TDelegate), null, methodInfo))
+            ? Delegate.CreateDelegate(typeof(TDelegate), null, methodInfo).Cast().As<TDelegate>()
             : null;
     }
 
@@ -271,13 +263,13 @@ public static class ObjectHelper
     /// Gets the property.
     /// </summary>
     /// <typeparam name="TPropertyType">The type of the property type.</typeparam>
-    /// <param name="obj">           The object.</param>
-    /// <param name="propName">      Name of the property.</param>
+    /// <param name="obj">The object.</param>
+    /// <param name="propName">Name of the property.</param>
     /// <param name="eventNoDefault">The event no default.</param>
     /// <returns></returns>
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, string propName, in int eventNoDefault)
     {
-        _ = obj.ArgumentNotNull(nameof(obj));
+        _ = obj.ArgumentNotNull();
 
         if (eventNoDefault != 0)
         {
@@ -286,40 +278,37 @@ public static class ObjectHelper
 
         var property = obj.GetType()
             .GetProperties()
-            .FirstOrDefault(prop => string.Compare(prop.Name, propName, StringComparison.Ordinal) == 0);
+            .FirstOrDefault(prop => string.Equals(prop.Name, propName, StringComparison.Ordinal));
         return property is not null ? (TPropertyType?)property.GetValue(obj, null) : default;
     }
 
-    public static PropertyInfo? GetProp<TDeclaringType>(string propName)
-        => typeof(TDeclaringType).GetProperty(propName);
-
-    /// <summary>
-    /// Gets the property.
-    /// </summary>
-    /// <typeparam name="TPropertyType">The type of the property type.</typeparam>
-    /// <param name="obj">           The object.</param>
-    /// <param name="propName">      Name of the property.</param>
-    /// <param name="searchPrivates">if set to <c>true</c> [search privates].</param>
-    /// <returns></returns>
+    /// <summary> Gets the value of a property of a given object. </summary> <typeparam
+    /// name="TPropertyType">The type of the property.</typeparam> <param name="obj">The
+    /// object.</param> <param name="propName">The name of the property.</param> <param
+    /// name="searchPrivates">Whether to search
     public static TPropertyType? GetProp<TPropertyType>([DisallowNull] in object obj, [DisallowNull] string propName, bool searchPrivates = false)
     {
-        var type = obj.ArgumentNotNull(nameof(obj)).GetType();
+        var type = obj.ArgumentNotNull().GetType();
         var properties = type.GetProperties();
-        if (!properties.Any())
+        if (properties.Length == 0)
         {
             properties = type.GetProperties(searchPrivates
-                ? BindingFlags.Instance | BindingFlags.Static |
-                  BindingFlags.Public | BindingFlags.NonPublic
+                ? BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic
                 : BindingFlags.Default);
         }
 
-        var property = properties.FirstOrDefault(prop => string.Compare(prop.Name, propName, StringComparison.Ordinal) == 0);
+        var property = properties.FirstOrDefault(prop => string.Equals(prop.Name, propName, StringComparison.Ordinal));
         return property is not null ? (TPropertyType?)property.GetValue(obj, null) : default;
     }
 
     public static object? GetProp([DisallowNull] in object obj, in string propName, bool searchPrivates = false)
         => GetProp<object>(obj, propName, searchPrivates);
 
+    /// <summary>
+    /// Gets the properties of an object as a list of tuples.
+    /// </summary>
+    /// <param name="obj">The object to get the properties from.</param>
+    /// <returns>A read-only list of tuples containing the name and value of each property.</returns>
     public static IEnumerable<(string Name, object Value)> GetProperties(object obj)
     {
         var result = new List<(string, object)>();
@@ -361,65 +350,55 @@ public static class ObjectHelper
             : propInfo;
     }
 
-    public static bool HasAttribute<TType, TAttribute>() where TAttribute : Attribute
-            => HasAttribute<TAttribute>(typeof(Type));
-
-    public static bool HasAttribute<TAttribute>(Type type)
-        where TAttribute : Attribute
-    {
-        var attributes = type.GetCustomAttributes(typeof(TAttribute), false);
-        return attributes.Length > 0;
-    }
-
-    public static bool Implements([DisallowNull] in object obj, Type type)
-        => obj.GetType()
-            .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-            .Any(property => property.PropertyType.FindInterfaces((m, filterCriteria) => m.FullName == type.FullName, null).Any());
+    public static bool HasAttribute<TType, TAttribute>(bool inherit)
+        where TAttribute : Attribute => HasAttribute<TAttribute>(typeof(Type), inherit);
 
     /// <summary>
-    /// Get the index of range.
+    /// Checks if the given type has an attribute of type TAttribute.
     /// </summary>
-    /// <typeparam name="TSource">The type of the source.</typeparam>
-    /// <param name="item"> The item.</param>
-    /// <param name="range">The range.</param>
-    /// <returns></returns>
-    public static int? IndexOf<TSource>(in TSource item, params TSource[] range)
-    {
-        var result = Array.IndexOf(range, item);
-        return result == -1 ? default(int?) : result;
-    }
+    /// <typeparam name="TAttribute">The type of attribute to check for.</typeparam>
+    /// <param name="type">The type to check.</param>
+    /// <returns>True if the type has an attribute of type TAttribute, false otherwise.</returns>
+    public static bool HasAttribute<TAttribute>(Type type, bool inherit)
+        where TAttribute : Attribute => type.GetCustomAttribute<TAttribute>(inherit) != null;
 
     /// <summary>
-    /// Determines whether [is database null] [the specified object].
+    /// Checks if the given type has an attribute of type TAttribute.
+    /// </summary>
+    /// <typeparam name="TAttribute">The type of attribute to check for.</typeparam>
+    /// <param name="type">The type to check.</param>
+    /// <returns>True if the type has an attribute of type TAttribute, false otherwise.</returns>
+    public static bool HasAttribute<TAttribute>(Type type)
+        where TAttribute : Attribute => type.GetCustomAttribute<TAttribute>() != null;
+
+    /// <summary>
+    /// Determines whether [is database null] [the specified o].
     /// </summary>
     /// <param name="o">The o.</param>
     /// <returns><c>true</c> if [is database null] [the specified o]; otherwise, <c>false</c>.</returns>
-    public static bool IsDbNull(in object? o)
-        => o switch
-        {
-            null => true,
-            DBNull => true,
-            _ => false
-        };
+    public static bool IsDbNull([NotNullWhen(false)] in object? o)
+        => o is null or DBNull;
 
     /// <summary>
-    /// Determines whether the specified value is default (null or zero or ...).
+    /// Checks if a given struct is equal to its default value.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="value">The value.</param>
-    /// <returns><c>true</c> if the specified value is default; otherwise, <c>false</c>.</returns>
-    public static bool IsDefault<T>(in T value)
-        => value?.Equals(default(T)) ?? true;
+    public static bool IsDefault<TStruct>(this TStruct @struct) where TStruct : struct
+        => @struct.Equals(default(TStruct));
 
     /// <summary>
-    /// Determines whether the specified item is in range.
+    /// Determines whether an instance of a specified type can be assigned to a variable of the
+    /// current type.
     /// </summary>
-    /// <typeparam name="TSource">The type of the source.</typeparam>
-    /// <param name="item"> The item.</param>
-    /// <param name="range">The range.</param>
-    /// <returns><c>true</c> if the specified item is in; otherwise, <c>false</c>.</returns>
-    public static bool IsIn<TSource>(in TSource item, params TSource[] range)
-        => range.Contains(item);
+    /// <param name="obj">The object.</param>
+    /// <param name="type">The type.</param>
+    /// <returns>
+    /// <c>true</c> if [is inherited or implemented] [the specified object]; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool IsInheritedOrImplemented(in object? obj, [DisallowNull] in Type type)
+        => obj != null && type.ArgumentNotNull().IsAssignableFrom(obj.GetType());
+
+    public static bool IsInheritedOrImplemented<T>(in object? obj)
+        => IsInheritedOrImplemented(obj, typeof(T));
 
     /// <summary>
     /// Determines whether the specified value is null.
@@ -429,40 +408,44 @@ public static class ObjectHelper
     public static bool IsNull([NotNullWhen(false)] in object? value)
         => value is null;
 
-    public static bool IsNull<TStruct>(this TStruct @struct) where TStruct : struct
-        => @struct.Equals(default(TStruct));
-
+    /// <summary>
+    /// Checks if the given Guid is null or empty.
+    /// </summary>
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid? guid)
         => guid is null || guid == Guid.Empty;
 
+    /// <summary>
+    /// Checks if the given Guid is null or empty.
+    /// </summary>
     public static bool IsNullOrEmpty([NotNullWhen(false)] this Guid guid)
         => guid == Guid.Empty;
 
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id)
-        => id == Guid.Empty;
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this Id id) =>
+        id.Equals(Guid.Empty) || id.Equals(0);
+
+    public static bool IsSetMethodInit([DisallowNull] this PropertyInfo propertyInfo)
+    {
+        Check.MustBeArgumentNotNull(propertyInfo?.SetMethod);
+        return propertyInfo.SetMethod.ReturnParameter.GetRequiredCustomModifiers().Contains(typeof(IsExternalInit));
+    }
 
     /// <summary>
-    /// Determines whether [is null or empty string] [the specified value].
+    /// Parses the specified input string into an object of type TSelf, using the specified format provider.
     /// </summary>
-    /// <param name="value">The value.</param>
-    /// <returns><c>true</c> if [is null or empty string] [the specified value]; otherwise, <c>false</c>.</returns>
-    public static bool IsNullOrEmptyString([NotNullWhen(false)] in object value)
-        => string.IsNullOrEmpty(Cast.ToString(value));
+    /// <typeparam name="TSelf">The type of the self.</typeparam>
+    /// <param name="input">The input string to parse.</param>
+    /// <param name="formatProvider">The format provider.</param>
+    /// <returns>An object of type TSelf.</returns>
+    public static TSelf Parse<TSelf>(this string input, IFormatProvider? formatProvider = null)
+        where TSelf : IParsable<TSelf> => TSelf.Parse(input, formatProvider);
 
-    public static dynamic props(this object o)
-        => _propsExpando.GetOrCreateValue(o);
-
-    public static IEnumerable<T> Repeat<T>(T value, int count)
-    {
-        for (var i = 0; i < count; i++)
-        {
-            yield return value;
-        }
-    }
+    [DebuggerStepThrough]
+    public static dynamic props(this object o) =>
+        _propsExpando.GetOrCreateValue(o);
 
     public static void SetField([DisallowNull] in object obj, in string fieldName, in object value)
     {
-        Check.IfArgumentNotNull(obj);
+        Check.MustBeArgumentNotNull(obj);
         obj.GetType().GetField(fieldName)?.SetValue(obj, value);
     }
 
@@ -472,6 +455,11 @@ public static class ObjectHelper
         property?.SetValue(obj, value, null);
     }
 
-    public static TResult Map<TSource, TResult>(this TSource obj, Func<TSource, TResult> mapper)
-        => mapper(obj);
+    /// <summary> Tries to parse the specified input string into an object of type TSelf, which
+    /// implements IParsable<TSelf>. </summary> <typeparam name="TSelf">The type of the object to
+    /// parse.</typeparam> <param name="input">The input string to parse.</param> <param
+    /// name="formatProvider">The format provider to use for parsing.</param> <returns>A
+    /// TryMethodResult containing the result of the parse operation.</returns>
+    public static TryMethodResult<TSelf> TryParse<TSelf>(this string input, IFormatProvider? formatProvider = null)
+        where TSelf : IParsable<TSelf> => TryMethodResult<TSelf>.TryParseResult(TSelf.TryParse(input, formatProvider, out var result), result);
 }

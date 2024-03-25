@@ -1,12 +1,18 @@
-﻿using Library.Data.Markers;
+﻿using System;
+
+using Library.Data.Markers;
 using Library.Mapping;
 
 using UnitTests.Models;
 
+using Xunit;
+
 namespace UnitTests;
 
 
-public class MapperTest
+[Trait("Category", nameof(Library.Mapping))]
+[Trait("Category", nameof(Mapper))]
+public sealed class MapperTest
 {
     [Fact]
     public void RecordMappingTest()
@@ -43,4 +49,9 @@ public class MapperTest
     }
 }
 
+file record Person(string Name, int Age);
+file class PersonMapper
+{
+
+}
 file record StudentRecord(string Name, int Age, string? Major) : IEntity;

@@ -1,11 +1,12 @@
 ﻿using System.Collections;
+
 using Library.DesignPatterns.Markers;
 
 namespace Library.Collections;
 
 [Fluent]
-public interface IFluentList<TList, TItem> : IFluentCollection<TList, TItem>, IEnumerable<TItem>, IEnumerable//, IFluentList<TItem>
-    where TList : IFluentList<TList, TItem>
+public interface IFluentList<TSelf, TItem> : IFluentCollection<TSelf, TItem>, IEnumerable<TItem>, IEnumerable
+    where TSelf : IFluentList<TSelf, TItem>
 {
     TItem this[int index]
     {
@@ -13,9 +14,9 @@ public interface IFluentList<TList, TItem> : IFluentCollection<TList, TItem>, IE
         set;
     }
 
-    (TList List, int Result) IndexOf(TItem item);
+    (TSelf List, int Result) IndexOf(TItem item);
 
-    TList Insert(int index, TItem item);
+    TSelf Insert(int index, TItem item);
 
-    TList RemoveAt(int index);
+    TSelf RemoveAt(int index);
 }

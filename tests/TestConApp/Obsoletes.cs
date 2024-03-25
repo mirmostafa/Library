@@ -1,19 +1,42 @@
-﻿#pragma warning disable IDE0051 // Remove unused private members
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 
+using Library.CodeGeneration;
 using Library.CodeGeneration.v2.Front;
 using Library.CodeGeneration.v2.Front.HtmlGeneration;
-using Library.DesignPatterns;
 using Library.DesignPatterns.StateMachine;
-using Library.Helpers;
+using Library.Helpers.CodeGen;
 using Library.IO;
+using Library.Logging;
 
-using Microsoft.Extensions.Logging;
-
-namespace ConAppTest;
+namespace TestConApp;
 
 internal partial class Obsoletes
 {
+    private static readonly ILogger _logger = ConsoleServices.Logger;
+
+    public static void ConstantExpectedTest([ConstantExpected(Max = 10)] int a) => Console.WriteLine(a);
+
+    public static IEnumerable<long> Fibonacci(long count)
+    {
+        return FibonacciRecursiveIterator(count, 0L, 1L);
+
+        static IEnumerable<long> FibonacciRecursiveIterator(long count, long a, long b)
+        {
+            if (count <= 0)
+            {
+                yield break;
+            }
+
+            yield return a;
+
+            foreach (var number in FibonacciRecursiveIterator(count - 1, b, a + b))
+            {
+                yield return number;
+            }
+        }
+    }
+
     public static void HtmlCodeGenerationTest()
     {
         var div = new DivElement()
@@ -35,8 +58,8 @@ internal partial class Obsoletes
         WriteLine(div.ToHtml());
     }
 
-    private static IEnumerable<TResult> SimdActor<T1, T2, TResult>(
-        IEnumerable<T1> left, IEnumerable<T2> right, Func<Vector<T1>, Vector<T2>, Vector<TResult>> actor, long count)
+    public static IEnumerable<TResult> SimdActor<T1, T2, TResult>(
+            IEnumerable<T1> left, IEnumerable<T2> right, Func<Vector<T1>, Vector<T2>, Vector<TResult>> actor, long count)
         where T1 : struct
         where T2 : struct
         where TResult : struct
@@ -54,15 +77,15 @@ internal partial class Obsoletes
         return result;
     }
 
-    private static async Task StateMachineTest()
+    public static async Task StateMachineTest()
     {
         _ = await StateMachineManager.Dispatch(
-                        () => Task.FromResult((0, MoveDirection.Foreword)),
+                        () => Task.FromResult((0, MoveDirection.Forward)),
                         flow => Task.FromResult(move(flow)),
                         flow => Task.FromResult(move(flow)),
                         display,
                         display);
-        WriteLine("End.");
+        WriteLine($"End.");
 
         static (int Current, MoveDirection Direction) move((int Current, IEnumerable<(int State, MoveDirection Direction)>) flow)
         {
@@ -73,12 +96,12 @@ internal partial class Obsoletes
             {
                 case ConsoleKey.UpArrow:
                     flow.Current++;
-                    direction = MoveDirection.Foreword;
+                    direction = MoveDirection.Forward;
                     break;
 
                 case ConsoleKey.DownArrow:
                     flow.Current--;
-                    direction = MoveDirection.Backword;
+                    direction = MoveDirection.Backward;
                     break;
 
                 default:
@@ -91,30 +114,60 @@ internal partial class Obsoletes
         static Task display((int Current, IEnumerable<(int State, MoveDirection Direction)> History) flow)
         {
             WriteLine(flow.Current);
-            _ = flow.History.ForEachEager(x => Write(x));
+            flow.History.ForEach(x => Write(x));
             WriteLine();
             WriteLine("==================");
             return Task.CompletedTask;
         }
     }
 
-    private static void WatchHardDisk()
+    public static void WatchHardDisk()
     {
-        Thread.Sleep(50);
-        var watchers = Drive.GetDrives().Select(getWatcher).ForEach(x => WriteLine($"Watching {x.Path}")).ToList();
+        var watchers = Drive.GetDrives().Select(watch).Iterate(x => WriteLine($"Watching {x.Path}")).ToList();
         WriteLine("Ready");
-        _ = ReadKey();
-        WriteLine("Closing...");
-        _ = watchers.ForEachEager(x => x.Dispose());
 
-        static Library.IO.FileSystemWatcher getWatcher(Drive drive)
-            => Library.IO.FileSystemWatcher.Start(drive, includeSubdirectories: true,
-                onChanged: e => _logger.Log($"{e.Item.FullName} changed."),
-                onCreated: e => _logger.Log($"{e.Item.FullName} created."),
-                onDeleted: e => _logger.Log($"{e.Item.FullName} deleted."),
-                onRenamed: e => _logger.Log($"in {e.Item.FullPath} : {e.Item.OldName} renamed to {e.Item.NewName}."));
+        While(() => ReadKey().Key != ConsoleKey.X);
+        WriteLine("Closing...");
+        watchers.ForEach(x => x.Dispose());
+
+        static Library.IO.FileSystemWatcher watch(Drive drive)
+            => Library.IO.FileSystemWatcher.New(drive, includeSubdirectories: true)
+                .OnCreated((_, e) => _logger.Log($"{e.Item.FullName} created.", format: LogFormat.FORMAT_SHORT))
+                .OnChanged((_, e) => _logger.Log($"{e.Item.FullName} changed.", format: LogFormat.FORMAT_SHORT))
+                .OnRenamed((_, e) => _logger.Log($"in {e.Item.FullPath} : {e.Item.OldName} renamed to {e.Item.NewName}.", format: LogFormat.FORMAT_SHORT))
+                .OnDeleted((_, e) => _logger.Log($"{e.Item.FullName} deleted.", format: LogFormat.FORMAT_SHORT))
+                .Start();
     }
 
-    private static readonly Library.Logging.ILogger _logger = ConsoleServices.Logger;
+    public static void TestRoslynCodeGenerator()
+    {
+        var setAgeMethodBody = @"
+     this._age = age;
+     return this;
+     ";
+        var ctorBody = @$"
+     this.Name = name;
+     this.{TypeMemberNameHelper.ToFieldName("age")} = age;
+     ";
+        var personType = new TypePath("PersonDto");
+        var personDto = RoslynHelper.CreateType(personType)
+            .AddField(new(TypeMemberNameHelper.ToFieldName("lastName"), TypePath.New<string>()), out var lastNameField)
+            .AddConstructor(new[] { (TypePath.New<string>(), "name"), (TypePath.New<int>(), "age") }, ctorBody)
+            .AddProperty<string>("Name")
+            .AddPropertyWithBackingField(new("LastName", TypePath.New<string>()), lastNameField)
+            .AddPropertyWithBackingField(new("Age", TypePath.New<int>(), setAccessor: (false, null)))
+            .AddMethod(new RosMethodInfo(null, personType, "SetAge", new[] { (TypePath.New<int>(), "age") }, setAgeMethodBody))
+            ;
+
+        var ns = RoslynHelper.CreateNamespace("Test.Dtos")
+            .AddType(personDto);
+
+        var root = RoslynHelper.CreateRoot()
+            .AddUsingNameSpace(nameof(System))
+            .AddUsingNameSpace(nameof(System.Linq))
+            .AddUsingNameSpace(nameof(System.Threading))
+            .AddNameSpace(ns);
+        WriteLine(root.GenerateCode());
+    }
+
 }
-#pragma warning restore IDE0051 // Remove unused private members

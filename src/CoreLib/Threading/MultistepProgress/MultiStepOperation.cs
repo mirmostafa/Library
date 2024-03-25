@@ -1,12 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-using Library;
 using Library.DesignPatterns.ExceptionHandlingPattern;
 using Library.Exceptions;
-
-
-using Library.Threading.MultistepProgress;
 using Library.Validations;
 
 namespace Library.Threading.MultistepProgress;
@@ -24,8 +20,6 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
     private double _mainStepIndex;
     private long _mainStepsCount;
     private TaskScheduler? _scheduler;
-
-    //private TaskScheduler _scheduler;
 
     public event EventHandler? CurrentOperationCanceled;
 
@@ -197,15 +191,15 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
     public void EndCurrentOperation(object? description = null, bool succeed = true)
         => CurrentOperationEnded?.Invoke(this, new MultiStepEndedLogEventArgs(description, succeed, this.IsCancellationRequested));
 
-    public void RunCurrentSteps(IEnumerable<Action> actions, string? currentOperationDescriptiondescription = null, TimeSpan timeout = default)
-        => this.RunCurrentSteps(actions.ToDictionary<Action, Action, string?>(action => action, action => null), currentOperationDescriptiondescription, timeout);
+    public void RunCurrentSteps(IEnumerable<Action> actions, string? currentOperationDescription = null, TimeSpan timeout = default)
+        => this.RunCurrentSteps(actions.ToDictionary<Action, Action, string?>(action => action, action => null), currentOperationDescription, timeout);
 
-    public void RunCurrentSteps(IEnumerable<KeyValuePair<Action, string?>> actions, string? currentOperationDescriptiondescription = null,
+    public void RunCurrentSteps(IEnumerable<KeyValuePair<Action, string?>> actions, string? currentOperationDescription = null,
         TimeSpan timeout = default)
     {
         var steps = actions.Select(action => new Action(() => this.DoSteps(action.Key, action.Value, timeout))).ToList();
 
-        this.ResetCurrentOperation(currentOperationDescriptiondescription);
+        this.ResetCurrentOperation(currentOperationDescription);
         this.SetCurrentStepsCount(steps.Count);
         steps.RunAllWhile(() => !this.IsCancellationRequested);
         this.EndCurrentOperation();
@@ -214,7 +208,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
     public Task Start()
     {
         this.InitializeMainOperationSteps();
-        if (!this._steps.Any())
+        if (this._steps.Count == 0)
         {
             throw new Exception();
         }
@@ -227,7 +221,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
         this.OnMainOperationStarted(new MultiStepStartedLogEventArgs(this.MainStepsCount));
         Task task;
         this._scheduler = Task.Factory.Scheduler;
-        if (noPriorities.Any())
+        if (noPriorities.Count != 0)
         {
             task = Task.Run(() =>
             {
@@ -276,7 +270,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
                 task = task.ContinueWith(_ =>
                 {
                     this.MainStepIndex = index;
-                    _ = (Task)stepGroup.ForEach(step =>
+                    _ = (Task)stepGroup.Iterate(step =>
                     {
                         if (this.IsCancellationRequested)
                         {
@@ -321,7 +315,6 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
 
     protected void CancelCurrentOperation() => this.CurrentOperationCanceled?.Invoke(this, EventArgs.Empty);
 
-    //this.Log(description);
     protected virtual void CurrentOperationIncreasing(string? description = null, object? moreInfo = null)
     {
         this.CurrentStepIndex++;
@@ -337,8 +330,8 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
 
         this.CurrentOperationIncreasing(desc);
         var ex = timeout == default
-            ? Functional.Catch(op)
-            : Task.Factory.StartNew(() => Functional.Catch(op), this._cancellationTokenSource!.Token).Result;
+            ? CodeHelper.Catch(op)
+            : Task.Factory.StartNew(() => CodeHelper.Catch(op), this._cancellationTokenSource!.Token).Result;
         if (ex != null)
         {
             this.ExceptionHandling.HandleException(this, ex);
@@ -430,7 +423,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
 
     private void Dispose(bool disposing)
     {
-        _ = this.ThrowIfDisposed(this._isDisposed);
+        Check.ThrowIfDisposed(this, this._isDisposed);
 
         if (!disposing)
         {
@@ -450,9 +443,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
         this.MainStepIndex = 0;
     }
 
-    private sealed class MultiStepOperationImpl : MultiStepOperation
+    private sealed class MultiStepOperationImpl(MultiStepOperationStepCollection steps) : MultiStepOperation(steps)
     {
-        public MultiStepOperationImpl(MultiStepOperationStepCollection steps)
-            : base(steps) { }
     }
 }

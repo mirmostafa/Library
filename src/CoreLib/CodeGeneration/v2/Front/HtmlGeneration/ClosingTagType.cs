@@ -2,7 +2,6 @@
 
 public enum ClosingTagType
 {
-    Full,
     Slash,
-    None
+    Full,
 }

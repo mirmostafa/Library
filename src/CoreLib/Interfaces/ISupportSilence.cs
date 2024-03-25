@@ -1,4 +1,4 @@
-﻿using Library.Validations;
+﻿using System.Diagnostics.Contracts;
 
 namespace Library.Interfaces;
 
@@ -9,6 +9,17 @@ public interface ISupportSilence
 
 public static class SupportSilenceHelper
 {
-    public static Fluency<TSupportSilence> SetEnableRaisingEvents<TSupportSilence>(this TSupportSilence obj, bool value)
-        where TSupportSilence : ISupportSilence => obj.NotNull().Fluent(() => obj.IsEnabledRaisingEvents = value);
+    [Pure]
+    [return: NotNullIfNotNull(nameof(obj))]
+    [return: MaybeNull]
+    public static TSupportSilence SetEnableRaisingEvents<TSupportSilence>(this TSupportSilence obj, bool value)
+        where TSupportSilence : ISupportSilence
+    {
+        if (obj != null)
+        {
+            obj.IsEnabledRaisingEvents = value;
+        }
+
+        return obj;
+    }
 }

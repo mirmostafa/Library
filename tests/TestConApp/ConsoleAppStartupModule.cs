@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 using Library.Logging;
 
-namespace ConAppTest;
+namespace TestConApp;
 
 public static class ConsoleServices
 {
@@ -12,10 +12,10 @@ public static class ConsoleServices
     [ModuleInitializer]
     [EditorBrowsable(EditorBrowsableState.Never)]
     [Browsable(false)]
-    public static void Startup()    
+    public static void Startup()
         => Logger = new Loggers()
         {
             new VsOutputLogger(),
-            new TextWriterLogger(Console.Out)
+            new TextWriterLogger(Out)
         };
 }

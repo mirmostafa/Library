@@ -1,6 +1,6 @@
 namespace Library.Data.SqlServer.Dynamics;
 
-public class Column : SqlObject<Column, Table>, IEquatable<Column>
+public sealed class Column : SqlObject<Column, Table>, IEquatable<Column>
 {
     public Column(Table owner, string name, string connectionString)
         : base(owner, name, connectionString: connectionString)

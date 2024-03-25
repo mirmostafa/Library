@@ -51,5 +51,5 @@ public abstract class HtmlElement<TSelf> : IParentHtmlElement
     }
 
     protected virtual TSelf This()
-        => this.To<TSelf>();
+        => this.Cast().To<TSelf>();
 }

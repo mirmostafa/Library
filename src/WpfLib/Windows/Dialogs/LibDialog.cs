@@ -1,5 +1,5 @@
 ﻿namespace Library.Wpf.Windows.Dialogs;
 
-public class LibDialog : LibWindow
+public sealed class LibDialog : LibWindow
 {
 }

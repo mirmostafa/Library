@@ -17,7 +17,7 @@ public class ItemActedEventArgs<TItem> : EventArgs
     public TItem Item { get; init; }
 }
 
-public class InitialItemEventArgs<TItem> : EventArgs
+public sealed class InitialItemEventArgs<TItem> : EventArgs
 {
     /// <summary>
     ///     Initializes a new instance of the <see cref="InitialItemEventArgs{TItem}" /> class.

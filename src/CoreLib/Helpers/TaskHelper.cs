@@ -1,13 +1,23 @@
-﻿namespace Library.Helpers;
+﻿using System.Diagnostics;
 
+using Library.Exceptions;
+using Library.Results;
+using Library.Validations;
+
+namespace Library.Helpers;
+
+[DebuggerStepThrough, StackTraceHidden]
 public static class TaskHelper
 {
-    public static async void InvokeAsync(this Action? action, TaskScheduler? scheduler = null, CancellationToken token = default)
+    /// <summary>
+    /// Invokes an action asynchronously.
+    /// </summary>
+    /// <param name="action">The action to invoke.</param>
+    /// <param name="scheduler">The scheduler to use for the task.</param>
+    /// <param name="token">The cancellation token to use for the task.</param>
+    public static async void InvokeAsync(this Action action, TaskScheduler? scheduler = null, CancellationToken token = default)
     {
-        if (action == null)
-        {
-            return;
-        }
+        Check.MustBeArgumentNotNull(action);
 
         if (scheduler != null)
         {
@@ -15,28 +25,15 @@ public static class TaskHelper
         }
         else
         {
-            await Task.Factory.StartNew(action, token);
-        }
-    }
-
-    public static Task<TResult> WaitAsync<TResult>(this Task<TResult> task, TimeSpan timeout, Func<Exception> getExceptionOnTimeout)
-    {
-        try
-        {
-            return task.WaitAsync(timeout);
-        }
-        catch (TimeoutException ex)
-        {
-            _ = getExceptionOnTimeout?.Invoke() ?? ex;
-            throw ex;
+            await Task.Factory.StartNew(action, token, TaskCreationOptions.None, TaskScheduler.Default);
         }
     }
 
     /// <summary>
-    /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
-    /// objects in an array have completed.
+    /// Creates a task that will complete when all of the <see cref="Task"/> objects in an array
+    /// have completed.
     /// </summary>
-    /// <remarks>Returns all the excpetions occurred, if any</remarks>
+    /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
     /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
@@ -44,10 +41,10 @@ public static class TaskHelper
         => await WhenAllAsync(tasks.ToArray());
 
     /// <summary>
-    /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
-    /// objects in an array have completed.
+    /// Creates a task that will complete when all of the <see cref="Task"/> objects in an array
+    /// have completed.
     /// </summary>
-    /// <remarks>Returns all the excpetions occurred, if any</remarks>
+    /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
     /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
@@ -60,16 +57,15 @@ public static class TaskHelper
         }
         catch (Exception)
         {
-            //ignore
+            return Enumerable.Empty<TResult>();
         }
-        throw allTasks.Exception ?? throw new Exception("This can't possibly happen");
     }
 
     /// <summary>
-    /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
-    /// objects in an array have completed.
+    /// Creates a task that will complete when all of the <see cref="Task"/> objects in an array
+    /// have completed.
     /// </summary>
-    /// <remarks>Returns all the excpetions occurred, if any</remarks>
+    /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
     /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
@@ -77,10 +73,10 @@ public static class TaskHelper
         => await WhenAllAsync(tasks.ToArray());
 
     /// <summary>
-    /// Creates a task that will complete when all of the <see cref="System.Threading.Tasks.Task"/>
-    /// objects in an array have completed.
+    /// Creates a task that will complete when all of the <see cref="Task"/> objects in an array
+    /// have completed.
     /// </summary>
-    /// <remarks>Returns all the excpetions occurred, if any</remarks>
+    /// <remarks>Returns all the exceptions occurred, if any</remarks>
     /// <typeparam name="TResult">The type of the completed task.</typeparam>
     /// <param name="tasks">The tasks to wait on for completion.</param>
     /// <returns>A task that represents the completion of all of the supplied tasks.</returns>
@@ -95,6 +91,51 @@ public static class TaskHelper
         {
             //ignore
         }
-        throw allTasks.Exception ?? throw new Exception("This can't possibly happen");
+    }
+
+    public static async Task<Result> RunAllAsync(this IEnumerable<Func<Task<Result>>> funcs, CancellationToken token)
+    {
+        Check.MustBeArgumentNotNull(funcs);
+
+        var result = Result.Succeed;
+        foreach (var func in funcs)
+        {
+            if (token.IsCancellationRequested)
+            {
+                result = Result.Fail<OperationCancelledException>();
+                break;
+            }
+
+            var current = await func();
+            if (current.IsFailure)
+            {
+                result = current;
+                break;
+            }
+        }
+        return result;
+    }
+    
+    public static async Task<Result> RunAllAsync<TState>(this IEnumerable<Func<TState, Task<Result>>> funcs, TState initiaState, CancellationToken token = default)
+    {
+        Check.MustBeArgumentNotNull(funcs);
+
+        var result = Result.Succeed;
+        foreach (var func in funcs)
+        {
+            if (token.IsCancellationRequested)
+            {
+                result = Result.Fail<OperationCancelledException>();
+                break;
+            }
+
+            var current = await func(initiaState);
+            if (current.IsFailure)
+            {
+                result = current;
+                break;
+            }
+        }
+        return result;
     }
 }

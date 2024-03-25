@@ -12,9 +12,9 @@ public static class StateMachineManager
         Func<(TState? Current, IEnumerable<(TState State, MoveDirection Direction)> History), Task>? done = null,
         Stack<(TState State, MoveDirection Direction)>? history = null)
     {
-        Check.IfArgumentNotNull(start);
-        Check.IfArgumentNotNull(moveNext);
-        Check.IfArgumentNotNull(moveBack);
+        Check.MustBeArgumentNotNull(start);
+        Check.MustBeArgumentNotNull(moveNext);
+        Check.MustBeArgumentNotNull(moveBack);
 
         history ??= new();
         history.Clear();
@@ -31,23 +31,13 @@ public static class StateMachineManager
             }
             history.Push(flow);
             await proc((flow.State, history));
-            switch (flow.Direction)
+            
+            return flow.Direction switch
             {
-                case MoveDirection.Foreword:
-                    {
-                        var current = await moveNext((flow.State, history));
-                        return await moveAsync(current);
-                    }
-
-                case MoveDirection.Backword:
-                    {
-                        var current = await moveBack((flow.State, history));
-                        return await moveAsync(current);
-                    }
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(flow), flow.Direction, $"{nameof(flow.Direction)} is out of range.");
-            }
+                MoveDirection.Forward => await moveAsync(await moveNext((flow.State, history))),
+                MoveDirection.Backward => await moveAsync(await moveBack((flow.State, history))),
+                _ => throw new ArgumentOutOfRangeException(nameof(flow), flow.Direction, $"{nameof(flow.Direction)} is out of range.")
+            };
         }
     }
 

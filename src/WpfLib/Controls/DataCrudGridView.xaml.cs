@@ -4,27 +4,28 @@ using Library.Data.Models;
 using Library.EventsArgs;
 
 namespace Library.Wpf.Controls;
+
 /// <summary>
 /// Interaction logic for DataCrudGridView.xaml
 /// </summary>
 public partial class DataCrudGridView : UserControl
 {
-    public event EventHandler<ItemActingEventArgs<IEnumerable<IDataColumnBindingInfo>>> ColumnBind;
-    public event EventHandler<ItemActingEventArgs<ICollection<object>?>> DataBind;
-    public event EventHandler<ItemActingEventArgs<object>> ItemAdd;
-    public event EventHandler<ItemActingEventArgs<IEnumerable<object>>> ItemRemove;
+    public event EventHandler<ItemActingEventArgs<IEnumerable<IDataColumnBindingInfo>>>? ColumnBind;
 
-    public ICollection<object> ViewModel
-    {
-        get => (this.DataContext ??= new List<object>()).To<IList<object>>();
-        set => this.DataContext = value;
-    }
+    public event EventHandler<ItemActingEventArgs<ICollection<object>?>>? DataBind;
+
+    public event EventHandler<ItemActingEventArgs<object>>? ItemAdd;
+
+    public event EventHandler<ItemActingEventArgs<IEnumerable<object>>>? ItemRemove;
 
     public DataCrudGridView() =>
         this.InitializeComponent();
 
-    private void DataCrudGridView_Loaded(object sender, RoutedEventArgs e) =>
-        this.Fluent().IfTrue(!ControlHelper.IsDesignTime(), () => this.BindData());
+    public ICollection<object> ViewModel
+    {
+        get => (this.DataContext ??= new List<object>()).Cast().To<IList<object>>();
+        set => this.DataContext = value;
+    }
 
     [MemberNotNullWhen(true, nameof(ViewModel))]
     private bool BindData()
@@ -33,7 +34,7 @@ public partial class DataCrudGridView : UserControl
 
         bool initializeColumns()
         {
-            if (this.DataGrid.Columns.Any())
+            if (this.DataGrid.Columns.Count != 0)
             {
                 return true;
             }
@@ -63,6 +64,30 @@ public partial class DataCrudGridView : UserControl
     private DataCrudGridView BindDataGrid() =>
         this.Fluent(this.DataGrid.BindItemsSource(this.ViewModel));
 
+    private void DataCrudGridView_Loaded(object sender, RoutedEventArgs e) =>
+                this.Fluent().IfTrue(!ControlHelper.IsDesignTime(), () => this.BindData());
+
+    private void DeleteItemsButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (this.ViewModel is null)
+        {
+            return;
+        }
+
+        if (this.DataGrid.SelectedItems.Count == 0)
+        {
+            throw new Exceptions.Validations.NoItemValidationException("New item selected.");
+        }
+        var itemRemoveArgs = new ItemActingEventArgs<IEnumerable<object>>(this.DataGrid.SelectedItems.Cast<object>());
+        this.ItemRemove?.Invoke(this, itemRemoveArgs);
+        if (itemRemoveArgs.Handled)
+        {
+            return;
+        }
+
+        _ = this.BindDataGrid();
+    }
+
     private void NewItemButton_Click(object sender, RoutedEventArgs e)
     {
         if (this.ViewModel is null)
@@ -77,27 +102,6 @@ public partial class DataCrudGridView : UserControl
             return;
         }
         this.ViewModel.Add(itemAddEventArg.Item);
-        _ = this.BindDataGrid();
-    }
-
-    private void DeleteItemsButton_Click(object sender, RoutedEventArgs e)
-    {
-        if (this.ViewModel is null)
-        {
-            return;
-        }
-
-        if (!this.DataGrid.SelectedItems.Any())
-        {
-            throw new Exceptions.Validations.NoItemValidationException("New item selected.");
-        }
-        var itemRemoveArgs = new ItemActingEventArgs<IEnumerable<object>>(this.DataGrid.SelectedItems.Cast<object>());
-        this.ItemRemove?.Invoke(this, itemRemoveArgs);
-        if (itemRemoveArgs.Handled)
-        {
-            return;
-        }
-
         _ = this.BindDataGrid();
     }
 }

@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Documents;
 using System.Windows.Media;
 
+using Library.CodeGeneration;
 using Library.CodeGeneration.Models;
 
 namespace Library.Wpf.Helpers;
@@ -20,8 +21,8 @@ public static class RichTextBoxHelper
         var detectedTypes = new List<string>();
         var keyWordRules = new (string[] Keys, Brush Brush)[]
         {
-            (new[] { "void","using", "short", "int", "get", "set", "string", "public","protected","private", "sealed", "partial", "class", "namespace", "async", "await", "throw", "new", "this","override","var" }, Brushes.Blue),
-            (new[] { "Guid", "Byte", "Int16","Int32", "Int64", "Single", "String", "DateTime","IEnumerable", "Task" }, Brushes.DarkGreen),
+            (LanguageKeywords.Keywords, Brushes.Blue),
+            (LanguageKeywords.PrimitiveTypes, Brushes.DarkGreen),
             (new[]{"ICommandProcessor", "IEnumerable", "IQueryProcessor"}, Brushes.Green)
         };
         var genericRegExes = new[]
@@ -40,19 +41,15 @@ public static class RichTextBoxHelper
             var preprocessors = new[] { @"#region", @"#endregion" };
             if (line.CurrentLine.Trim().StartsWith("///"))
             {
-                return (true, EnumerableHelper.ToEnumerable(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DarkGreen }));
-            }
-            else if (line.CurrentLine.Trim().StartsWith("//"))
-            {
-                return (true, EnumerableHelper.ToEnumerable(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DimGray }));
-            }
-            else if (line.CurrentLine.Trim().StartsWithAny(preprocessors))
-            {
-                return (true, EnumerableHelper.ToEnumerable(new Run(line.CurrentLine) { Foreground = Brushes.Gray }));
+                return (true, EnumerableHelper.AsEnumerable(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DarkGreen }));
             }
             else
             {
-                return null;
+                return line.CurrentLine.Trim().StartsWith("//")
+                    ? ((bool Found, IEnumerable<Inline>? Inline)?)(true, EnumerableHelper.AsEnumerable(new Italic(new Run(line.CurrentLine)) { Foreground = Brushes.DimGray }))
+                    : line.CurrentLine.Trim().StartsWithAny(preprocessors)
+                                    ? (true, EnumerableHelper.AsEnumerable(new Run(line.CurrentLine) { Foreground = Brushes.Gray }))
+                                    : null;
             }
         }
         (bool Found, IEnumerable<Inline>? Inline)? wordProcess((string CurrentWord, string? PrevWord) word)
@@ -102,7 +99,7 @@ public static class RichTextBoxHelper
                     inlines.Add(new Run(" "));
                 }
 
-                return (inlines.Any(), inlines);
+                return (inlines.Count != 0, inlines);
 
                 static bool processKeywordRules((string[] Keys, Brush Brush)[] keyWordRules, string curr, List<Inline> inlines)
                 {
@@ -139,13 +136,13 @@ public static class RichTextBoxHelper
 
                         var genParamInlines = Found
                             ? Inlines
-                            : EnumerableHelper.ToEnumerable(new Run(genParam));
+                            : EnumerableHelper.AsEnumerable(new Run(genParam));
                         var genClassInlines = genClassFormatResult.Found
                             ? genClassFormatResult.Inlines
-                            : EnumerableHelper.ToEnumerable(new Run(genClass));
+                            : EnumerableHelper.AsEnumerable(new Run(genClass));
 
-                        var open = EnumerableHelper.ToEnumerable(new Run("<"));
-                        var close = EnumerableHelper.ToEnumerable(new Run(">"));
+                        var open = EnumerableHelper.AsEnumerable(new Run("<"));
+                        var close = EnumerableHelper.AsEnumerable(new Run(">"));
 
                         var result = (new[] { genClassInlines!, open, genParamInlines!, close }).SelectAll();
                         inlines.AddRange(result);
@@ -208,11 +205,11 @@ public static class RichTextBoxHelper
             Func<(string CurrentLine, string? PrevLine), (bool Found, IEnumerable<Inline>? Inline)?> lineProcessor,
         Func<(string currentWork, string? PrevWord), (bool Found, IEnumerable<Inline>? Inline)?> wordProcessor)
     {
-        Check.IfArgumentNotNull(text);
-        Check.IfArgumentNotNull(lineProcessor);
-        Check.IfArgumentNotNull(wordProcessor);
+        Check.MustBeArgumentNotNull(text);
+        Check.MustBeArgumentNotNull(lineProcessor);
+        Check.MustBeArgumentNotNull(wordProcessor);
 
-        var lines = text.Separate("\r\n");
+        var lines = text.Split("\r\n");
         string? prevLine = null;
         foreach (var line in lines)
         {

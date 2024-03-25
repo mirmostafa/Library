@@ -1,6 +1,9 @@
-﻿namespace Library.DesignPatterns;
+﻿using Library.DesignPatterns.Markers;
 
-public class Monad<TValue>
+namespace Library.DesignPatterns;
+
+[Immutable]
+public sealed class Monad<TValue>
 {
     private readonly TValue? _value;
 

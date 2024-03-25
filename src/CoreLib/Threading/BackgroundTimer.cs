@@ -5,7 +5,8 @@ namespace Library.Threading;
 
 [Immutable]
 [Fluent]
-public class BackgroundTimer : ILoggerContainer
+[Obsolete("Subject to delete.", true)]
+public sealed class BackgroundTimer : ILoggerContainer
 {
     private readonly CancellationTokenSource _cancellationSource;
     private readonly ILogger _Logger;
@@ -33,7 +34,7 @@ public class BackgroundTimer : ILoggerContainer
 
     public Action Action { get; }
     public TimeSpan Interval { get; }
-    ILogger ILoggerContainer.Logger => _Logger;
+    ILogger ILoggerContainer.Logger => this._Logger;
     public string? Name { get; }
 
     public static BackgroundTimer New([DisallowNull] in Action action, [DisallowNull] in TimeSpan interval, string? name = null, CancellationTokenSource? cancellationSource = null)
@@ -59,18 +60,17 @@ public class BackgroundTimer : ILoggerContainer
         }
 
         LibLogger.Info($"Starting…", sender: this);
-        async Task DoStart()
+        this._timerTask = doStart();
+        LibLogger.Debug($"Started.", sender: this);
+        return this;
+
+        async Task doStart()
         {
             try
             {
                 using var timer = new PeriodicTimer(this.Interval);
-                while (this._cancellationSource.IsCancellationRequested || await timer.WaitForNextTickAsync(this._cancellationSource.Token))
+                while (!this._cancellationSource.IsCancellationRequested || await timer.WaitForNextTickAsync(this._cancellationSource.Token))
                 {
-                    if (this._cancellationSource.IsCancellationRequested)
-                    {
-                        break;
-                    }
-
                     lock (this)
                     {
                         try
@@ -98,9 +98,6 @@ public class BackgroundTimer : ILoggerContainer
                 this._isDone = true;
             }
         }
-        this._timerTask = DoStart();
-        LibLogger.Debug($"Started.", sender: this);
-        return this;
     }
 
     public async Task<BackgroundTimer> StopAsync()
@@ -130,6 +127,7 @@ public class BackgroundTimer : ILoggerContainer
         => $"{nameof(BackgroundTimer)}[{this.Name}]";
 }
 
+[Obsolete("Subject to delete.", true)]
 public static class BackgroundTimerExtensions
 {
     public static BackgroundTimer Sleep(this BackgroundTimer instance, TimeSpan wait)

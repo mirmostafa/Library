@@ -1,14 +1,15 @@
 ﻿namespace UnitTests;
 
-[Trait("Category", "Helpers")]
-[Trait("Category", "Code Helpers")]
-public class CastTest
+[Trait("Category", nameof(Library.Coding))]
+[Trait("Category", nameof(Caster))]
+[Trait("Category", nameof(ICastable))]
+public sealed class CastTest
 {
     [Fact]
     public void AsTest1()
     {
         Student p = new();
-        var s = p.As<Person>();
+        var s = p.Cast().As<Person>();
         Assert.NotNull(s);
     }
 
@@ -16,13 +17,11 @@ public class CastTest
     public void AsTest2()
     {
         Person p = new();
-        var s = p.As<Student>();
+        var s = p.Cast().As<Student>();
         Assert.Null(s);
     }
 }
 
-file class Person
-{ }
+file record Person;
 
-file class Student : Person
-{ }
+file record Student : Person { }

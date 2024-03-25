@@ -2,7 +2,7 @@
 
 namespace Library.DesignPatterns.Behavioral.Observation;
 
-public class ObservableObject<TValue>
+public sealed class ObservableObject<TValue>
 {
     public event EventHandler<ItemActingEventArgs<TValue?>>? Changing;
     public event EventHandler<ItemActedEventArgs<TValue?>>? Changed;
@@ -24,10 +24,10 @@ public class ObservableObject<TValue>
         }
     }
 
-    protected ItemActingEventArgs<TValue?> OnChanging(ItemActingEventArgs<TValue?> e)
+    private ItemActingEventArgs<TValue?> OnChanging(ItemActingEventArgs<TValue?> e)
         => e.Fluent(() => Changing?.Invoke(this, e));
 
-    protected void OnChanged(ItemActedEventArgs<TValue?> e)
+    private void OnChanged(ItemActedEventArgs<TValue?> e)
         => Changed?.Invoke(this, e);
 }
 
