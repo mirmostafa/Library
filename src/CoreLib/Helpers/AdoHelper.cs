@@ -18,9 +18,9 @@ public static partial class AdoHelper
     /// </summary>
     /// <param name="conn">The SqlConnection to check.</param>
     /// <returns>True if the SqlConnection can connect, false otherwise.</returns>
-    public static async Task<bool> CanConnectAsync(this SqlConnection conn)
+    public static async Task<bool> CanConnectAsync(this SqlConnection conn, CancellationToken cancellationToken = default)
     {
-        var result = await conn.TryConnectAsync();
+        var result = await conn.TryConnectAsync(cancellationToken: cancellationToken);
         return result.IsSucceed;
     }
 
@@ -44,8 +44,8 @@ public static partial class AdoHelper
         // Retrieve the value from the SqlDataReader using the columnName.
         var value = reader[columnName];
 
-        // Use the ObjectHelper.CheckDbNull method to check for DBNull and provide a default
-        // value if needed.
+        // Use the ObjectHelper.CheckDbNull method to check for DBNull and provide a default value
+        // if needed.
         return ObjectHelper.CheckDbNull(value, defaultValue, converter);
     }
 
@@ -102,7 +102,7 @@ public static partial class AdoHelper
 
     public static async Task<TResult> EnsureClosedAsync<TResult>(this SqlConnection connection,
             Func<SqlConnection, Task<TResult>> actionAsync,
-            bool openConnection = false)
+            bool openConnection = false, CancellationToken cancellationToken = default)
     {
         Check.MustBeArgumentNotNull(connection);
         Check.MustBeArgumentNotNull(actionAsync);
@@ -111,20 +111,20 @@ public static partial class AdoHelper
         {
             if (openConnection)
             {
-                await connection.OpenAsync();
+                await connection.OpenAsync(cancellationToken);
             }
 
             return await actionAsync(connection);
         }
         finally
         {
-            connection.Close();
+            await connection.CloseAsync();
         }
     }
 
     public static async Task EnsureClosedAsync(this SqlConnection connection,
-            Func<SqlConnection, Task> actionAsync,
-            bool openConnection = false)
+            Func<SqlConnection, CancellationToken, Task> actionAsync,
+            bool openConnection = false, CancellationToken cancellationToken = default)
     {
         Check.MustBeArgumentNotNull(connection);
         Check.MustBeArgumentNotNull(actionAsync);
@@ -133,14 +133,14 @@ public static partial class AdoHelper
         {
             if (openConnection)
             {
-                await connection.OpenAsync();
+                await connection.OpenAsync(cancellationToken);
             }
 
-            await actionAsync(connection);
+            await actionAsync(connection, cancellationToken);
         }
         finally
         {
-            connection.Close();
+            await connection.CloseAsync();
         }
     }
 
@@ -160,14 +160,14 @@ public static partial class AdoHelper
     public static async Task<TResult> ExecuteAsync<TResult>(this SqlConnection connection,
             Func<SqlCommand, Task<TResult>> executeAsync,
             string sql,
-            Action<SqlParameterCollection>? fillParams = null)
+            Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
     {
         Check.MustBeArgumentNotNull(connection);
         Check.MustBeArgumentNotNull(executeAsync);
         Check.MustBeArgumentNotNull(sql);
 
         using var command = connection.CreateCommand(sql, fillParams);
-        return await connection.EnsureClosedAsync(conn => executeAsync(command), true);
+        return await connection.EnsureClosedAsync(conn => executeAsync(command), true, cancellationToken: cancellationToken);
     }
 
     public static int ExecuteNonQuery(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null)
@@ -210,7 +210,7 @@ public static partial class AdoHelper
     public static async Task<SqlDataReader> ExecuteReaderAsync(this SqlConnection connection,
             string sql,
             Action<SqlParameterCollection>? fillParams = null,
-            CommandBehavior behavior = CommandBehavior.Default)
+            CommandBehavior behavior = CommandBehavior.Default, CancellationToken cancellationToken = default)
     {
         using var command = connection.CreateCommand(sql, fillParams);
         connection.StateChange += (_, e) =>
@@ -220,15 +220,15 @@ public static partial class AdoHelper
                 command?.Dispose();
             }
         };
-        connection.Open();
-        return await command.ExecuteReaderAsync(behavior);
+        await connection.CloseAsync();
+        return await command.ExecuteReaderAsync(behavior, cancellationToken);
     }
 
     public static object ExecuteScalar(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null)
             => connection.Execute(cmd => cmd.ExecuteScalar(), sql, fillParams);
 
-    public static async Task<object?> ExecuteScalarAsync(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null)
-            => await connection.ExecuteAsync(cmd => cmd.ExecuteScalarAsync(), sql, fillParams);
+    public static async Task<object?> ExecuteScalarAsync(this SqlConnection connection, string sql, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
+            => await connection.ExecuteAsync(cmd => cmd.ExecuteScalarAsync(), sql, fillParams, cancellationToken: cancellationToken);
 
     public static object? ExecuteStoredProcedure(this SqlConnection connection,
             string spName,
@@ -498,7 +498,7 @@ public static partial class AdoHelper
             foreach (var property in properties.Where(property => columnNames.Contains(property.Name?.ToUpperInvariant()))
                 .Where(property => row1[property.Name] is not null && row1[property.Name] != DBNull.Value))
             {
-                property.SetValue(t, row[property.Name], Array.Empty<object>());
+                property.SetValue(t, row[property.Name], []);
             }
 
             yield return t;
@@ -662,11 +662,11 @@ public static partial class AdoHelper
     /// </summary>
     /// <param name="conn">The SqlConnection to connect to.</param>
     /// <returns>An exception if the connection fails, otherwise null.</returns>
-    public static async Task<TryMethodResult> TryConnectAsync(this SqlConnection conn)
+    public static async Task<TryMethodResult> TryConnectAsync(this SqlConnection conn, CancellationToken cancellationToken = default)
     {
         try
         {
-            await conn.EnsureClosedAsync(c => c.OpenAsync());
+            await conn.EnsureClosedAsync((c, t) => c.OpenAsync(t), cancellationToken: cancellationToken);
             return TryMethodResult.Success();
         }
         catch (Exception ex)

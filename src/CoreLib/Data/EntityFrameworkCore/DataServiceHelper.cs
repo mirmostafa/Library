@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 
-using Library.Data.EntityFrameworkCore;
 using Library.Data.Markers;
 using Library.Interfaces;
 using Library.Logging;
@@ -14,10 +13,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Library.BusinessServices;
+namespace Library.Data.EntityFrameworkCore;
 
-[Obsolete($"Use {nameof(DataServiceHelper)}, instead.", true)]
-public static class ServiceHelper
+public static class DataServiceHelper
 {
     #region CRUD
 
@@ -85,7 +83,7 @@ public static class ServiceHelper
     public static Task<IReadOnlyList<TViewModel>> GetAllAsync<TViewModel, TDbEntity>(this IAsyncRead<TViewModel> service, [DisallowNull] DbContext dbContext, Func<IEnumerable<TDbEntity?>, IEnumerable<TViewModel?>> toViewModel, AsyncLock asyncLock)
         where TDbEntity : class
         where TViewModel : class
-        => GetAllAsync(service, dbContext.ArgumentNotNull().Set<TDbEntity>(), toViewModel, asyncLock);
+        => service.GetAllAsync(dbContext.ArgumentNotNull().Set<TDbEntity>(), toViewModel, asyncLock);
 
     /// <summary>
     /// Retrieves a list of view models from the given queryable of database entities.
@@ -123,7 +121,7 @@ public static class ServiceHelper
     public static Task<TViewModel?> GetByIdAsync<TViewModel, TDbEntity>(this IAsyncRead<TViewModel> service, long id, [DisallowNull] DbContext dbContext, Func<TDbEntity?, TViewModel?> toViewModel, AsyncLock asyncLock)
         where TDbEntity : class, IIdenticalEntity<long>
         where TViewModel : class
-        => GetByIdAsync(service, id, dbContext.ArgumentNotNull().Set<TDbEntity>(), toViewModel, asyncLock);
+        => service.GetByIdAsync(id, dbContext.ArgumentNotNull().Set<TDbEntity>(), toViewModel, asyncLock);
 
     /// <summary>
     /// Retrieves an entity from the database by its Id and converts it to a ViewModel.
@@ -341,7 +339,7 @@ public static class ServiceHelper
             Action<TViewModel, TDbEntity>? onCommitted = null, CancellationToken cancellationToken = default)
         where TDbEntity : class, IIdenticalEntity<long>
         where TService : IAsyncWrite<TViewModel>, IAsyncSaveChanges
-        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, (x, _) => validator != null ? validator(x).ToAsync() : Result.Success<TViewModel>(x).ToAsync(), dbContext.Attach, onCommitting, persist, (true, null), service.SaveChangesAsync, onCommitted, logger, cancellationToken);
+        => InnerManipulate<TViewModel, TDbEntity, long>(dbContext, model, convert, (x, _) => validator != null ? validator(x).ToAsync() : Result.Success(x).ToAsync(), dbContext.Attach, onCommitting, persist, (true, null), service.SaveChangesAsync, onCommitted, logger, cancellationToken);
 
     /// <summary>
     /// Updates an entity in the database asynchronously.
@@ -453,7 +451,7 @@ public static class ServiceHelper
                 }
                 saveResult = await (saveChanges is not null
                     ? saveChanges(cancellationToken)
-                    : CodeHelper.CatchResultAsync(() => dbContext.SaveChangesAsync(cancellationToken)));
+                    : CatchResultAsync(() => dbContext.SaveChangesAsync(cancellationToken)));
                 if (saveResult.IsSucceed && onCommitted is not null)
                 {
                     onCommitted(model, entity);
@@ -467,7 +465,7 @@ public static class ServiceHelper
         }
         else
         {
-            saveResult = Result.Success<int>(-1);
+            saveResult = Result.Success(-1);
         }
 
         //! Log result of manipulation
@@ -487,7 +485,7 @@ public static class ServiceHelper
 
         //! Helper function to return result
         static Result<ManipulationResult<TViewModel, TDbEntity?>> getResult(Result result, ManipulationResult<TViewModel, TDbEntity?> entity = default)
-            => Result.From<ManipulationResult<TViewModel, TDbEntity?>>(result, entity);
+            => Result.From(result, entity);
     }
 
     #endregion CRUD
@@ -635,7 +633,7 @@ public static class ServiceHelper
         // If persist is false, return a success result with -1
         if (!persist)
         {
-            return Result.Success<int>(-1);
+            return Result.Success(-1);
         }
 
         try
@@ -683,8 +681,6 @@ public static class ServiceHelper
 /// <typeparam name="TViewModel">The type of the view model.</typeparam>
 /// <typeparam name="TDbEntity">The type of the database entity.</typeparam>
 /// <returns>A manipulation result containing a view model and a database entity.</returns>
-
-[Obsolete($"Use {nameof(Library.Data.EntityFrameworkCore.DataServiceHelper)}, instead.", true)]
 public record struct ManipulationResult<TViewModel, TDbEntity>(in TViewModel Model, in TDbEntity Entity)
 {
     public static implicit operator (TViewModel Model, TDbEntity? Entity)(ManipulationResult<TViewModel, TDbEntity> value) => (value.Model, value.Entity);

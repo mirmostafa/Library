@@ -32,7 +32,7 @@ public sealed class FunctionalTest
 
         // Assert Assert
         Assert.False(actual.IsSucceed);
-        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.GetError());
+        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Exception);
     }
 
     [Fact]
@@ -48,7 +48,7 @@ public sealed class FunctionalTest
 
         // Assert Assert
         Assert.False(actual.IsSucceed);
-        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.GetError());
+        _ = Assert.IsAssignableFrom<DivideByZeroException>(actual.Exception);
     }
 
     [Fact]
@@ -199,9 +199,9 @@ public sealed class FunctionalTest
     [Fact]
     public void Composition_ResultTest()
     {
-        var start = () => Result<int>.CreateSuccess(5);
-        var step = (int x) => Result<int>.CreateSuccess(x + 1);
-        var err = (int x) => Result<int>.CreateFailure(value: x);
+        var start = () => Result.Success(5);
+        var step = (int x) => Result.Success(x + 1);
+        var err = (int x) => Result.Fail(value: x);
         var getArgs = (Result<int> x) => x;
 
         var campsite = start.Compose(step, getArgs).Compose(step, getArgs).Compose(err, getArgs).Compose(step, getArgs).Compose(step, getArgs);

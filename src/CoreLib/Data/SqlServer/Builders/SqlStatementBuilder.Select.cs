@@ -112,7 +112,7 @@ public static partial class SqlStatementBuilder
     public static TStatementOnTable SetSchema<TStatementOnTable>([DisallowNull] this TStatementOnTable statement, string? schema) where TStatementOnTable : IStatementOnTable =>
         statement.ArgumentNotNull().With(x => x.Schema = schema);
 
-    public static ISelectStatement SetTopCount([DisallowNull] this ISelectStatement statement, int? topCount) =>
+    public static ISelectStatement Top([DisallowNull] this ISelectStatement statement, int? topCount) =>
         statement.ArgumentNotNull().With(x => x.TopCount = topCount);
 
     public static ISelectStatement Star([DisallowNull] this ISelectStatement statement) =>

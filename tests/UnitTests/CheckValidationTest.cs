@@ -30,7 +30,7 @@ public sealed class CheckValidationTest
         string a = null;
         var result = Check.If(a is null, () => new ValidationException());
         Assert.False(result.IsSucceed);
-        _ = Assert.IsType<ValidationException>(result.Errors[0].Error);
+        _ = Assert.IsType<ValidationException>(result.Exception);
     }
 
     [Fact]
