@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace UnitTests;
 
@@ -32,6 +33,106 @@ public sealed class EnumerableHelperTest
         Assert.Equal(expected_dic1_count, dic1.Count);
     }
 
+    [Fact]
+    public void AddRange_EmptyCollection_ReturnsSameList()
+    {
+        // Arrange
+        var list = new List<int>();
+        var emptyCollection = Enumerable.Empty<int>();
+
+        // Act
+        var result = EnumerableHelper.AddRange(list, emptyCollection);
+
+        // Assert
+        Assert.Same(list, result);
+        Assert.Empty(list);
+    }
+
+    [Fact]
+    public void AddRange_EmptyCollection_ReturnsSameObservableCollection()
+    {
+        // Arrange
+        var list = new ObservableCollection<int>();
+        var emptyCollection = Enumerable.Empty<int>();
+
+        // Act
+        var result = list.AddRange(emptyCollection);
+
+        // Assert
+        Assert.Same(list, result);
+        Assert.Empty(list);
+    }
+
+    [Fact]
+    public void AddRange_ExistingList_AddsItemsToExistingList()
+    {
+        // Arrange
+        var existingList = new List<int> { 1, 2, 3 };
+        var itemsToAdd = new List<int> { 4, 5 };
+
+        // Act
+        var result = EnumerableHelper.AddRange(existingList, itemsToAdd);
+
+        // Assert
+        Assert.Same(existingList, result);
+        Assert.Equal(5, existingList.Count);
+        Assert.Contains(4, existingList);
+        Assert.Contains(5, existingList);
+    }
+
+    [Fact]
+    public void AddRange_ExistingList_AddsItemsToExistingObservableCollection()
+    {
+        // Arrange
+        var existingList = new ObservableCollection<int> { 1, 2, 3 };
+        var itemsToAdd = new List<int> { 4, 5 };
+
+        // Act
+        var result = existingList.AddRange(itemsToAdd);
+
+        // Assert
+        Assert.Same(existingList, result);
+        Assert.Equal(5, existingList.Count);
+        Assert.Contains(4, existingList);
+        Assert.Contains(5, existingList);
+    }
+
+    [Fact]
+    public void AddRange_NonEmptyCollection_AddsItemsToList2()
+    {
+        // Arrange
+        var list = new List<string>();
+        var itemsToAdd = new List<string> { "apple", "banana", "cherry" };
+
+        // Act
+        var result = EnumerableHelper.AddRange(list, itemsToAdd);
+
+        // Assert
+        Assert.Same(list, result);
+        Assert.Equal(3, list.Count);
+        Assert.Contains("apple", list);
+        Assert.Contains("banana", list);
+        Assert.Contains("cherry", list);
+    }
+
+    [Fact]
+    public void AddRange_NonEmptyCollection_AddsItemsToObservableCollection()
+    {
+        // Arrange
+        var list = new ObservableCollection<string>();
+        var itemsToAdd = new List<string> { "apple", "banana", "cherry" };
+
+        // Act
+        var result = list.AddRange(itemsToAdd);
+
+        // Assert
+        Assert.Same(list, result);
+        Assert.Equal(3, list.Count);
+        Assert.Contains("apple", list);
+        Assert.Contains("banana", list);
+        Assert.Contains("cherry", list);
+    }
+
     [Theory]
     [InlineData(null, null, new int[0])]
     [InlineData(new[] { 1, 2, 3 }, null, new[] { 1, 2, 3 })]
@@ -41,6 +142,48 @@ public sealed class EnumerableHelperTest
     {
         var actual = EnumerableHelper.AddRangeImmuted(source, items);
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Aggregate_EmptyCollection_ReturnsDefaultValue()
+    {
+        // Arrange
+        var emptyCollection = Enumerable.Empty<int>();
+        var defaultValue = 0; // Example default value
+
+        // Act
+        var result = emptyCollection.Aggregate((a, b) => a + b, defaultValue);
+
+        // Assert
+        Assert.Equal(defaultValue, result);
+    }
+
+    [Fact]
+    public void Aggregate_MultipleItemsCollection_AppliesAggregatorRecursively()
+    {
+        // Arrange
+        var multipleItemsCollection = new List<int> { 1, 2, 3, 4, 5 }; // Example multiple items
+        var defaultValue = 0; // Example default value
+
+        // Act
+        var result = multipleItemsCollection.Aggregate((a, b) => a + b, defaultValue); // Example aggregator function
+
+        // Assert
+        Assert.Equal(15, result); // Expected result: 1 + 2 + 3 + 4 + 5
+    }
+
+    [Fact]
+    public void Aggregate_SingleItemCollection_ReturnsSameItem()
+    {
+        // Arrange
+        var singleItemCollection = new List<int> { 42 }; // Example single item
+        var defaultValue = 0; // Example default value
+
+        // Act
+        var result = singleItemCollection.Aggregate((a, b) => a + b, defaultValue);
+
+        // Assert
+        Assert.Equal(singleItemCollection[0], result);
     }
 
     [Fact]
@@ -93,6 +236,56 @@ public sealed class EnumerableHelperTest
 
         // Assert
         Assert.Equal(items.Count, result.Count);
+    }
+
+    [Fact]
+    public void ClearAndAdd_DefaultValueList_AddsItemToDefaultList()
+    {
+        // Arrange
+        var defaultValueList = new List<double> { 1.5, 2.5 };
+        var itemToAdd = 3.0; // Example item
+
+        // Act
+        var result = defaultValueList.ClearAndAdd(itemToAdd);
+
+        // Assert
+        Assert.Same(defaultValueList, result);
+        Assert.Equal(1, defaultValueList.Count);
+        Assert.Contains(itemToAdd, defaultValueList);
+    }
+
+    [Fact]
+    public void ClearAndAdd_EmptyList_AddsItemToList()
+    {
+        // Arrange
+        var emptyList = new List<int>();
+        var itemToAdd = 42; // Example item
+
+        // Act
+        var result = emptyList.ClearAndAdd(itemToAdd);
+
+        // Assert
+        Assert.Same(emptyList, result);
+        Assert.Single(emptyList);
+        Assert.Equal(itemToAdd, emptyList[0]);
+    }
+
+    [Fact]
+    public void ClearAndAdd_ExistingList_AddsItemToExistingList()
+    {
+        // Arrange
+        var existingList = new List<string> { "apple", "banana" };
+        var itemToAdd = "cherry"; // Example item
+
+        // Act
+        var actual = existingList.ClearAndAdd(itemToAdd);
+
+        var expected = new[] { itemToAdd };
+
+        // Assert
+        Assert.Same(expected, actual);
+        Assert.Single(existingList);
+        Assert.Contains(itemToAdd, existingList);
     }
 
     [Theory]
@@ -269,6 +462,54 @@ public sealed class EnumerableHelperTest
 
         // Assert
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    [Trait("Category", nameof(EnumerableHelper.Index))]
+    public void Index_ReturnsEmptySequenceForNullInput()
+    {
+        // Arrange
+        IEnumerable<int>? items = null;
+
+        // Act
+        var result = items.Index().ToList();
+
+        // Assert
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    [Trait("Category", nameof(EnumerableHelper.Index))]
+    public void Index_ReturnsSequenceWithCorrectIndicesForMultipleItems()
+    {
+        // Arrange
+        var items = new List<int> { 1, 2, 3, 4, 5 };
+
+        // Act
+        var result = items.Index().ToList();
+
+        // Assert
+        Assert.Equal(5, result.Count);
+        Assert.Equal((0, 1), result[0]);
+        Assert.Equal((1, 2), result[1]);
+        Assert.Equal((2, 3), result[2]);
+        Assert.Equal((3, 4), result[3]);
+        Assert.Equal((4, 5), result[4]);
+    }
+
+    [Fact]
+    [Trait("Category", nameof(EnumerableHelper.Index))]
+    public void Index_ReturnsSequenceWithSingleItemForSingleItemInput()
+    {
+        // Arrange
+        var items = new List<int> { 42 };
+
+        // Act
+        var result = items.Index().ToList();
+
+        // Assert
+        Assert.Single(result);
+        Assert.Equal((0, 42), result[0]);
     }
 
     [Fact]
@@ -482,6 +723,19 @@ public sealed class EnumerableHelperTest
         {
             Assert.Equal(item, actual[i]);
         }
+    }
+
+    [Fact]
+    public void ReturnsEmptySequenceForEmptyInput()
+    {
+        // Arrange
+        var items = Enumerable.Empty<int>();
+
+        // Act
+        var result = items.Index();
+
+        // Assert
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -749,193 +1003,5 @@ public sealed class EnumerableHelperTest
                 Assert.Fail($"Expected value was: {count}. But actual value is: {index}");
             }
         }
-    }
-
-    [Fact]
-    public void AddRange_EmptyCollection_ReturnsSameObservableCollection()
-    {
-        // Arrange
-        var list = new ObservableCollection<int>();
-        var emptyCollection = Enumerable.Empty<int>();
-
-        // Act
-        var result = list.AddRange(emptyCollection);
-
-        // Assert
-        Assert.Same(list, result);
-        Assert.Empty(list);
-    }
-
-    [Fact]
-    public void AddRange_NonEmptyCollection_AddsItemsToObservableCollection()
-    {
-        // Arrange
-        var list = new ObservableCollection<string>();
-        var itemsToAdd = new List<string> { "apple", "banana", "cherry" };
-
-        // Act
-        var result = list.AddRange(itemsToAdd);
-
-        // Assert
-        Assert.Same(list, result);
-        Assert.Equal(3, list.Count);
-        Assert.Contains("apple", list);
-        Assert.Contains("banana", list);
-        Assert.Contains("cherry", list);
-    }
-
-    [Fact]
-    public void AddRange_ExistingList_AddsItemsToExistingObservableCollection()
-    {
-        // Arrange
-        var existingList = new ObservableCollection<int> { 1, 2, 3 };
-        var itemsToAdd = new List<int> { 4, 5 };
-
-        // Act
-        var result = existingList.AddRange(itemsToAdd);
-
-        // Assert
-        Assert.Same(existingList, result);
-        Assert.Equal(5, existingList.Count);
-        Assert.Contains(4, existingList);
-        Assert.Contains(5, existingList);
-    }
-
-    [Fact]
-    public void AddRange_EmptyCollection_ReturnsSameList()
-    {
-        // Arrange
-        var list = new List<int>();
-        var emptyCollection = Enumerable.Empty<int>();
-
-        // Act
-        var result = EnumerableHelper.AddRange(list, emptyCollection);
-
-        // Assert
-        Assert.Same(list, result);
-        Assert.Empty(list);
-    }
-    [Fact]
-    public void AddRange_NonEmptyCollection_AddsItemsToList2()
-    {
-        // Arrange
-        var list = new List<string>();
-        var itemsToAdd = new List<string> { "apple", "banana", "cherry" };
-
-        // Act
-        var result = EnumerableHelper.AddRange(list, itemsToAdd);
-
-        // Assert
-        Assert.Same(list, result);
-        Assert.Equal(3, list.Count);
-        Assert.Contains("apple", list);
-        Assert.Contains("banana", list);
-        Assert.Contains("cherry", list);
-    }
-    
-    [Fact]
-    public void AddRange_ExistingList_AddsItemsToExistingList()
-    {
-        // Arrange
-        var existingList = new List<int> { 1, 2, 3 };
-        var itemsToAdd = new List<int> { 4, 5 };
-
-        // Act
-        var result = EnumerableHelper.AddRange(existingList, itemsToAdd);
-
-        // Assert
-        Assert.Same(existingList, result);
-        Assert.Equal(5, existingList.Count);
-        Assert.Contains(4, existingList);
-        Assert.Contains(5, existingList);
-    }
-
-    [Fact]
-    public void Aggregate_EmptyCollection_ReturnsDefaultValue()
-    {
-        // Arrange
-        var emptyCollection = Enumerable.Empty<int>();
-        var defaultValue = 0; // Example default value
-
-        // Act
-        var result = emptyCollection.Aggregate((a, b) => a + b, defaultValue);
-
-        // Assert
-        Assert.Equal(defaultValue, result);
-    }
-
-    [Fact]
-    public void Aggregate_SingleItemCollection_ReturnsSameItem()
-    {
-        // Arrange
-        var singleItemCollection = new List<int> { 42 }; // Example single item
-        var defaultValue = 0; // Example default value
-
-        // Act
-        var result = singleItemCollection.Aggregate((a, b) => a + b, defaultValue);
-
-        // Assert
-        Assert.Equal(singleItemCollection[0], result);
-    }
-    
-    [Fact]
-    public void Aggregate_MultipleItemsCollection_AppliesAggregatorRecursively()
-    {
-        // Arrange
-        var multipleItemsCollection = new List<int> { 1, 2, 3, 4, 5 }; // Example multiple items
-        var defaultValue = 0; // Example default value
-
-        // Act
-        var result = multipleItemsCollection.Aggregate((a, b) => a + b, defaultValue); // Example aggregator function
-
-        // Assert
-        Assert.Equal(15, result); // Expected result: 1 + 2 + 3 + 4 + 5
-    }
-    [Fact]
-    public void ClearAndAdd_EmptyList_AddsItemToList()
-    {
-        // Arrange
-        var emptyList = new List<int>();
-        var itemToAdd = 42; // Example item
-
-        // Act
-        var result = emptyList.ClearAndAdd(itemToAdd);
-
-        // Assert
-        Assert.Same(emptyList, result);
-        Assert.Single(emptyList);
-        Assert.Equal(itemToAdd, emptyList[0]);
-    }
-    [Fact]
-    public void ClearAndAdd_ExistingList_AddsItemToExistingList()
-    {
-        // Arrange
-        var existingList = new List<string> { "apple", "banana" };
-        var itemToAdd = "cherry"; // Example item
-
-        // Act
-        var actual = existingList.ClearAndAdd(itemToAdd);
-
-        var expected = new[] { itemToAdd };
-
-        // Assert
-        Assert.Same(expected, actual);
-        Assert.Equal(3, existingList.Count);
-        Assert.Contains(itemToAdd, existingList);
-    }
-    [Fact]
-    public void ClearAndAdd_DefaultValueList_AddsItemToDefaultList()
-    {
-        // Arrange
-        var defaultValueList = new List<double> { 1.5, 2.5 };
-        var itemToAdd = 3.0; // Example item
-
-        // Act
-        var result = defaultValueList.ClearAndAdd(itemToAdd);
-
-        // Assert
-        Assert.Same(defaultValueList, result);
-        Assert.Equal(1, defaultValueList.Count);
-        Assert.Contains(itemToAdd, defaultValueList);
     }
 }

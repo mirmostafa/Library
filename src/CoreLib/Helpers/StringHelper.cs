@@ -168,7 +168,7 @@ public static class StringHelper
     /// </summary>
     [Pure]
     [return: NotNullIfNotNull(nameof(value))]
-    public static string ArabicCharsToPersian(this string value) =>
+    public static string ArabicCharsToPersian(string value) =>
         value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
 
     public static string Build(this StringBuilder sb) =>

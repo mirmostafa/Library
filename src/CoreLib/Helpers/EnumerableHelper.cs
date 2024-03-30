@@ -721,7 +721,7 @@ public static class EnumerableHelper
     /// </remarks>
     public static IEnumerable<T> FindDuplicates<T>(this IEnumerable<T> source)
     {
-        var buffer = new HashSet<T>(); // Initialize a HashSet to store unique elements.
+        var buffer = new HashSet<T>();
 
         // Use the LINQ Where operator to filter elements that have already been added to the HashSet.
         return source.Where([DebuggerStepThrough] (x) => !buffer.Add(x));
@@ -901,6 +901,27 @@ public static class EnumerableHelper
     /// </summary>
     public static IEnumerable<T?> IfEmpty<T>(this IEnumerable<T?>? items, [DisallowNull] IEnumerable<T?> defaultValues) =>
         items?.Any() is true ? items : defaultValues;
+    
+    /// <summary>
+    /// This method returns a sequence of items along with their index.
+    /// </summary>
+    /// <typeparam name="TItem">The type of items in the sequence.</typeparam>
+    /// <param name="items">The sequence of items to be indexed.</param>
+    /// <returns>A sequence of tuples, each containing the index and the corresponding item.</returns>
+    public static IEnumerable<(int Index, TItem Item)> Index<TItem>(this IEnumerable<TItem>? items)
+    {
+        if (items?.Any() is not true)
+        {
+            yield break;
+        }
+
+        var index = 0;
+        foreach (var item in items)
+        {
+            yield return (index, item);
+            index++;
+        }
+    }
 
     /// <summary>
     /// Returns an enumerable of indexes at which a specified item appears in the source sequence.
