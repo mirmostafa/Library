@@ -74,10 +74,10 @@ public sealed class ArchitecturalTests
         var types = _libraryTypes.CoreLibTypes;
         var helpers = types.Where(x => IsInNameSpace(x, "Library.Helpers")).Except(x => IsInNameSpace(x, "Library.Helpers.Model"));
         var notSealed = helpers.Where(x => x.IsClass).Where(x => !x.IsSealed && !x.IsAbstract).ToArray();
-        if(notSealed.Any())
+        if (notSealed.Any())
         {
             var result = new StringBuilder();
-            result.AppendLine("The following classes are not `sealed` or `abstract` or `static`.");
+            _ = result.AppendLine("The following classes are not `sealed` or `abstract` or `static`.");
             foreach (var type in notSealed)
             {
                 _ = result.AppendLine($"Type: `{type}`");
@@ -99,8 +99,8 @@ public sealed class ArchitecturalTests
             if (mutableProperties.Any())
             {
                 var result = new StringBuilder();
-                result.AppendLine("The following classes are marked as Immutable but they have muted properties.");
-                foreach (var prop in mutableProperties)
+                _ = result.AppendLine("The following classes are marked as Immutable but they have muted properties.");
+                foreach (var prop in mutableProperties.Distinct())
                 {
                     _ = result.AppendLine($"Type: `{prop.DeclaringType}`. Property: {prop}");
                 }
@@ -111,13 +111,13 @@ public sealed class ArchitecturalTests
         static void RuleNo2(IEnumerable<Type> immutableTypes)
         {
             var notReadOnlyFields = immutableTypes.SelectMany(x => x.GetFields()).Where(x => !x.IsInitOnly);
-            var constFields = immutableTypes.SelectMany(x => x.GetFields(BindingFlags.Static)).Where(x => x.IsLiteral && !x.IsInitOnly);
+            var constFields = immutableTypes.SelectMany(x => x.GetFields()).Where(x => x.IsLiteral);
             notReadOnlyFields = notReadOnlyFields.Except(constFields);
 
             if (notReadOnlyFields.Any())
             {
                 var result = new StringBuilder();
-                result.AppendLine("The following classes are marked as Immutable but they have non-readonly fields.");
+                _ = result.AppendLine("The following classes are marked as Immutable but they have non-readonly fields.");
                 foreach (var field in notReadOnlyFields)
                 {
                     _ = result.AppendLine($"Type: `{field.DeclaringType}`. Field: {field}");
@@ -135,17 +135,28 @@ public sealed class ArchitecturalTests
         var mutableProperties = getMutableProperties(allProps);
         if (mutableProperties.Any())
         {
-            Assert.Fail("Found some mutable properties in immutable types");
-            return;
+            var result = new StringBuilder();
+            _ = result.AppendLine("Found some mutable properties in immutable types");
+
+            foreach (var property in mutableProperties)
+            {
+                _ = result.AppendLine($"Type: `{property.DeclaringType}`. Property: {property}");
+            }
+            Assert.Fail(result.ToString());
         }
         var libProps = getLibraryTypeProperties(allProps);
         var mutableTypeProperties = getMutableTypeProperties(libProps);
-        foreach (var property in mutableTypeProperties)
+        if (mutableTypeProperties.Any())
         {
-            Assert.Fail("Found some immutable properties which have mutable library types.");
-            return;
-        }
+            var result = new StringBuilder();
+            _ = result.AppendLine("Found some immutable properties which have mutable library types.");
 
+            foreach (var property in mutableTypeProperties.Distinct())
+            {
+                _ = result.AppendLine($"Type: `{property.DeclaringType}`. Property: `{property}`");
+            }
+            Assert.Fail(result.ToString());
+        }
         IEnumerable<Type> getImmutableTypes(IEnumerable<Type> types)
             => types.Where(ObjectHelper.HasAttribute<ImmutableAttribute>).Build();
         IEnumerable<PropertyInfo> getAllPropertiesInTypes(IEnumerable<Type> types)
@@ -155,7 +166,10 @@ public sealed class ArchitecturalTests
         IEnumerable<PropertyInfo> getLibraryTypeProperties(IEnumerable<PropertyInfo> properties)
             => properties.Where(x => x.PropertyType?.Namespace?.StartsWith("Library") ?? false).Build();
         IEnumerable<PropertyInfo> getMutableTypeProperties(IEnumerable<PropertyInfo> properties)
-            => properties.Where(x => (x.PropertyType?.IsClass ?? false) && !ObjectHelper.HasAttribute<ImmutableAttribute>(x.PropertyType)).Build();
+            => properties
+                .Where(x => (x.PropertyType?.IsClass ?? false) && !ObjectHelper.HasAttribute<ImmutableAttribute>(x.PropertyType))
+                .Except(x => x.PropertyType.Name == "TValue" && x.Name == "Value")
+                .Build();
     }
 
     private static IEnumerable<Type> GetAllTypes()

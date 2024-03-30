@@ -27,7 +27,6 @@ public interface IMethod : IMember, IHasGenericTypes
     }
 }
 
-[Immutable]
 public sealed class Method(string name) : Member(name), IMethod
 {
     public string? Body { get; set; }

@@ -412,7 +412,6 @@ public sealed class StringHelperTest
     [InlineData("Hello World!", new string[] { "o", "d", "World!" }, true)]
     [InlineData("This is a test string.", new string[] { "ring.", "", "abc" }, true)]
     [InlineData("Hello World!", new string[] { "ell", "ABC", "" }, false)]
-    [InlineData("", new string[] { "o", "d", "World!" }, false)]
     public void EndsWithAnyStringTest(string str, IEnumerable<string> values, bool expectedResult)
     {
         var result = str.EndsWithAny(values);

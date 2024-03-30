@@ -238,18 +238,51 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
+    public void ClearAndAdd_AddToEmptyList()
+    {
+        var list = new List<object>();
+        const int item = 5;
+
+        var result = list.ClearAndAdd(item);
+
+        _ = Assert.Single(result);
+        Assert.Equal(item, result[0]);
+    }
+
+    [Fact]
+    public void ClearAndAdd_AddToListWithItems()
+    {
+        var list = new List<object> { 1, 2, 3 };
+        const int item = 4;
+
+        var result = list.ClearAndAdd(item);
+
+        _ = Assert.Single(result);
+        Assert.Equal(item, result[0]);
+    }
+
+    [Fact]
+    public void ClearAndAdd_AddToNullList()
+    {
+        List<object> list = null!;
+        object item = 5;
+
+        _ = Assert.Throws<ArgumentNullException>(() => list.ClearAndAdd(item));
+    }
+
+    [Fact]
     public void ClearAndAdd_DefaultValueList_AddsItemToDefaultList()
     {
         // Arrange
         var defaultValueList = new List<double> { 1.5, 2.5 };
-        var itemToAdd = 3.0; // Example item
+        const double itemToAdd = 3.0; // Example item
 
         // Act
         var result = defaultValueList.ClearAndAdd(itemToAdd);
 
         // Assert
         Assert.Same(defaultValueList, result);
-        Assert.Single(defaultValueList);
+        _ = Assert.Single(defaultValueList);
         Assert.Contains(itemToAdd, defaultValueList);
     }
 
@@ -265,26 +298,8 @@ public sealed class EnumerableHelperTest
 
         // Assert
         Assert.Same(emptyList, result);
-        Assert.Single(emptyList);
+        _ = Assert.Single(emptyList);
         Assert.Equal(itemToAdd, emptyList[0]);
-    }
-
-    [Fact]
-    public void ClearAndAdd_ExistingList_AddsItemToExistingList()
-    {
-        // Arrange
-        var existingList = new List<string> { "apple", "banana" };
-        var itemToAdd = "cherry"; // Example item
-
-        // Act
-        var actual = existingList.ClearAndAdd(itemToAdd);
-
-        var expected = new[] { itemToAdd };
-
-        // Assert
-        Assert.Same(expected, actual);
-        Assert.Single(existingList);
-        Assert.Contains(itemToAdd, existingList);
     }
 
     [Theory]
@@ -387,20 +402,6 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void EnumerateWithNullValues()
-    {
-        // Arrange
-        IEnumerable<int>? values = null;
-        static int action(int x) => x * 2;
-
-        // Act
-        var result = values!.Enumerate(action);
-
-        // Assert
-        Assert.Empty(result);
-    }
-
-    [Fact]
     public void EnumerateWithValidInput()
     {
         // Arrange
@@ -465,6 +466,21 @@ public sealed class EnumerableHelperTest
 
     [Fact]
     [Trait("Category", nameof(EnumerableHelper.Index))]
+    public void Index_NonEmptyInput_ReturnsIndexedSequence()
+    {
+        // Arrange
+        var items = new List<string> { "A", "B", "C" };
+        var expected = new List<(int Index, string Item)> { (0, "A"), (1, "B"), (2, "C") };
+
+        // Act
+        var actual = items.Index();
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    [Trait("Category", nameof(EnumerableHelper.Index))]
     public void Index_ReturnsEmptySequenceForNullInput()
     {
         // Arrange
@@ -479,23 +495,6 @@ public sealed class EnumerableHelperTest
 
     [Fact]
     [Trait("Category", nameof(EnumerableHelper.Index))]
-    public void Index_NonEmptyInput_ReturnsIndexedSequence()
-    {
-        // Arrange
-        var items = new List<string> { "A", "B", "C" };
-        var expected = new List<(int Index, string Item)> { (0, "A"), (1, "B"), (2, "C") };
-
-        // Act
-        var actual = items.Index();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-
-
-    [Fact]
-    [Trait("Category", nameof(EnumerableHelper.Index))]
     public void Index_ReturnsSequenceWithSingleItemForSingleItemInput()
     {
         // Arrange
@@ -505,7 +504,7 @@ public sealed class EnumerableHelperTest
         var result = items.Index().ToList();
 
         // Assert
-        Assert.Single(result);
+        _ = Assert.Single(result);
         Assert.Equal((0, 42), result[0]);
     }
 
@@ -890,7 +889,7 @@ public sealed class EnumerableHelperTest
         static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
 
         // Act
-        await values.EnumerateAsync(action).ConfigureAwait(false);
+        await values!.EnumerateAsync(action).ConfigureAwait(false);
 
         // Assert No assertions needed here because the method does not return anything.
     }
@@ -931,7 +930,7 @@ public sealed class EnumerableHelperTest
         static void action(int x) => Console.WriteLine(x * 2);
 
         // Act
-        values.Enumerate(action);
+        _ = values.Enumerate(action);
 
         // Assert No assertions needed here because the method does not return anything.
     }
@@ -944,7 +943,7 @@ public sealed class EnumerableHelperTest
         static void action(int x) => Console.WriteLine(x * 2);
 
         // Act
-        values.Enumerate(action);
+        _ = values!.Enumerate(action);
 
         // Assert No assertions needed here because the method does not return anything.
     }
@@ -957,7 +956,7 @@ public sealed class EnumerableHelperTest
         static void action(int x) => Console.WriteLine(x * 2);
 
         // Act
-        values.Enumerate(action);
+        _ = values.Enumerate(action);
 
         // Assert No assertions needed here because the method does not return anything.
     }

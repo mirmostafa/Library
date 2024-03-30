@@ -1,12 +1,14 @@
 ﻿using System.Collections.Immutable;
 using System.Diagnostics;
 
+using Library.DesignPatterns.Markers;
 using Library.Validations;
 
 namespace Library.Results;
 
 [DebuggerStepThrough, StackTraceHidden]
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
+[Immutable]
 public abstract class ResultBase(
     in bool? isSucceed = null,
     in string? message = null,
