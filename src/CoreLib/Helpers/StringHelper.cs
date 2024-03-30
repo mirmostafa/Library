@@ -15,8 +15,8 @@ namespace Library.Helpers;
 /// <summary>
 /// A utility to do some common tasks about strings
 /// </summary>
-//[DebuggerStepThrough]
-//[StackTraceHidden]
+[DebuggerStepThrough]
+[StackTraceHidden]
 public static class StringHelper
 {
     private static readonly char[] _standardSeparators = ['\0', '\n', '\r', '\t', '_', '-'];
@@ -119,6 +119,7 @@ public static class StringHelper
     public static bool AnyCharInString(this string str, in string range) =>
         !string.IsNullOrEmpty(str) && range.Any(str.Contains);
 
+    [return: NotNull]
     public static StringBuilder AppendAll([DisallowNull] this StringBuilder sb, IEnumerable<string> lines)
     {
         Check.MustBeArgumentNotNull(sb);
@@ -133,28 +134,39 @@ public static class StringHelper
         return sb;
     }
 
+    [return: NotNull]
     public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> format) =>
         sb.AppendAll(items.Select(format));
 
+    [return: NotNull]
     public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, int, string> format)
     {
-        var index = 0;
-        foreach (var item in items)
+        if (items?.Any() is not true)
         {
-            _ = sb.Append(format(item, index++));
+            return sb;
+        }
+        Check.MustBeArgumentNotNull(sb);
+        Check.MustBeArgumentNotNull(format);
+
+        foreach (var data in items.Index())
+        {
+            _ = sb.Append(format(data.Item, data.Index));
         }
         return sb;
     }
 
+    [return: NotNull]
     public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, IEnumerable<string>? lines)
     {
-        Check.MustBeArgumentNotNull(sb);
-        if (lines != null)
+        if (lines?.Any() is not true)
         {
-            foreach (var line in lines)
-            {
-                _ = sb.AppendLine(line);
-            }
+            return sb;
+        }
+
+        Check.MustBeArgumentNotNull(sb);
+        foreach (var line in lines)
+        {
+            _ = sb.AppendLine(line);
         }
 
         return sb;
@@ -207,7 +219,7 @@ public static class StringHelper
     [Pure]
     [return: NotNull]
     public static IEnumerable<string> Compact(this IEnumerable<string?>? strings) =>
-        (strings?.Where([StackTraceHidden][DebuggerStepThrough] (item) => !item.IsNullOrEmpty()).Select(s => s!)) ?? Enumerable.Empty<string>();
+        (strings?.Where([StackTraceHidden][DebuggerStepThrough] (item) => !item.IsNullOrEmpty()).Select(s => s!)) ?? [];
 
     /// <summary>
     /// Compares two strings and returns an integer that indicates their relative position in the
@@ -258,26 +270,17 @@ public static class StringHelper
     /// <param name="str">The string to search for.</param>
     /// <param name="ignoreCase">Whether to ignore case when searching.</param>
     /// <returns>True if the string is present in the array, false otherwise.</returns>
-    public static bool Contains(this IEnumerable<string> array, string str, bool ignoreCase)
+    public static bool Contains(this IEnumerable<string?> array, string? str, bool ignoreCase = false)
     {
-        foreach (var s in array)
+        if (array == null)
         {
-            if (ignoreCase)
-            {
-                if (string.Equals(s, str, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                if (s == str)
-                {
-                    return true;
-                }
-            }
+            return false;
         }
-        return false;
+        Func<string?, bool> equals = ignoreCase
+            ? s => string.Equals(s, str, StringComparison.OrdinalIgnoreCase)
+            : s => s == str;
+
+        return array.Any(equals);
     }
 
     /// <summary>
@@ -288,6 +291,12 @@ public static class StringHelper
     /// <returns>True if the string contains any of the strings in the array, false otherwise.</returns>
     public static bool ContainsAny(this string str, in IEnumerable<string> array)
     {
+        Check.MustBeArgumentNotNull(str);
+        if (array is null)
+        {
+            return false;
+        }
+
         foreach (var item in array)
         {
             if (str.Contains(item))
@@ -297,32 +306,6 @@ public static class StringHelper
         }
         return false;
     }
-
-    public static bool ContainsAny(this string str, in IEnumerable<string> items, out string found)
-    {
-        foreach (var item in items)
-        {
-            if (str.Contains(item))
-            {
-                found = item;
-                return true;
-            }
-        }
-        found = string.Empty;
-        return false;
-    }
-
-    /// <summary>
-    /// Checks if a string contains any of the characters in the given array.
-    /// </summary>
-    public static bool ContainsAny(this string str, IEnumerable<char> array)
-        => array.Any(str.Contains);
-
-    /// <summary>
-    /// Checks if a string contains a target string, ignoring case.
-    /// </summary>
-    public static bool ContainsOf(this string str, in string target)
-        => str.Contains(target.ToLower(CultureInfo.CurrentCulture), StringComparison.CurrentCultureIgnoreCase);
 
     /// <summary>
     /// Converts a string to Google Standard Encoding.
@@ -338,20 +321,20 @@ public static class StringHelper
     /// <summary>
     /// Converts Arabic characters to Persian characters in a given string.
     /// </summary>
-    public static string CorrectUnicodeProblem(in string text) =>
-        ArabicCharsToPersian(text);
+    public static string CorrectUnicodeProblem(in string text)
+        => ArabicCharsToPersian(text);
 
     /// <summary>
     /// Counts the number of occurrences of a specified character in a string, starting from a
     /// specified index.
     /// </summary>
-    public static int CountOf(this string str, char c, int index = 0)
-        => str?.Skip(index).Count(x => x == c) ?? 0;
+    public static int CountOf(this string? str, char c, int startIndex = 0)
+        => str?.Skip(startIndex).Count(x => x == c) ?? 0;
 
     public static int CountOf(this string input, in string substring)
-            => input.IsNullOrEmpty() || substring.IsNullOrEmpty()
-                ? 0
-                : (input.Length - input.Replace(substring, "").Length) / substring.Length;
+        => !input.IsNullOrEmpty() && !substring.IsNullOrEmpty()
+            ? (input.Length - input.Replace(substring, "").Length) / substring.Length
+            : 0;
 
     /// <summary>
     /// Checks if the string ends with any of the items in the given array.
@@ -366,9 +349,11 @@ public static class StringHelper
     /// <summary>
     /// Checks if the given string ends with any of the strings in the given IEnumerable.
     /// </summary>
-    [Pure]
     public static bool EndsWithAny(this string str, in IEnumerable<string> values)
-        => values.Compact().Any(str.EndsWith);
+    {
+        Check.MustBeArgumentNotNull(str);
+        return values.Compact().Any(str.EndsWith);
+    }
 
     /// <summary>
     /// Checks if the string ends with any of the elements in the specified array.

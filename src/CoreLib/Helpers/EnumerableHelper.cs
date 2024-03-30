@@ -918,8 +918,7 @@ public static class EnumerableHelper
         var index = 0;
         foreach (var item in items)
         {
-            yield return (index, item);
-            index++;
+            yield return (index++, item);
         }
     }
 
