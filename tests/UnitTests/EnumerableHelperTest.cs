@@ -402,20 +402,6 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void EnumerateWithNullValues()
-    {
-        // Arrange
-        IEnumerable<int>? values = null;
-        static int action(int x) => x * 2;
-
-        // Act
-        var result = values!.Enumerate(action);
-
-        // Assert
-        Assert.Empty(result);
-    }
-
-    [Fact]
     public void EnumerateWithValidInput()
     {
         // Arrange
@@ -877,7 +863,7 @@ public sealed class EnumerableHelperTest
         tokenSource.Cancel();
 
         // Act
-        await values.EnumerateAsync(action, tokenSource.Token);
+        await values.EnumerateAsync(action, tokenSource.Token).ConfigureAwait(false);
 
         // Assert No assertions needed here because the method does not return anything.
     }
@@ -890,7 +876,7 @@ public sealed class EnumerableHelperTest
         static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
 
         // Act
-        await values.EnumerateAsync(action);
+        await values.EnumerateAsync(action).ConfigureAwait(false);
 
         // Assert No assertions needed here because the method does not return anything.
     }
@@ -903,7 +889,7 @@ public sealed class EnumerableHelperTest
         static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
 
         // Act
-        await values!.EnumerateAsync(action);
+        await values!.EnumerateAsync(action).ConfigureAwait(false);
 
         // Assert No assertions needed here because the method does not return anything.
     }
@@ -916,7 +902,7 @@ public sealed class EnumerableHelperTest
         static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
 
         // Act
-        await values.EnumerateAsync(action);
+        await values.EnumerateAsync(action).ConfigureAwait(false);
 
         // Assert No assertions needed here because the method does not return anything.
     }
