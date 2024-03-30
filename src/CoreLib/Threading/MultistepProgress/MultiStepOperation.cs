@@ -270,7 +270,7 @@ public abstract class MultiStepOperation : IDisposable, IExceptionHandlerContain
                 task = task.ContinueWith(_ =>
                 {
                     this.MainStepIndex = index;
-                    _ = (Task)stepGroup.Iterate(step =>
+                    _ = (Task)stepGroup.Enumerate(step =>
                     {
                         if (this.IsCancellationRequested)
                         {

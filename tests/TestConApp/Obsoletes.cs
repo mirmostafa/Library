@@ -123,7 +123,7 @@ internal partial class Obsoletes
 
     public static void WatchHardDisk()
     {
-        var watchers = Drive.GetDrives().Select(watch).Iterate(x => WriteLine($"Watching {x.Path}")).ToList();
+        var watchers = Drive.GetDrives().Select(watch).Enumerate(x => WriteLine($"Watching {x.Path}")).ToList();
         WriteLine("Ready");
 
         While(() => ReadKey().Key != ConsoleKey.X);

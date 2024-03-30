@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace UnitTests;
 
@@ -8,7 +7,7 @@ namespace UnitTests;
 [Trait("Category", nameof(EnumerableHelper))]
 public sealed class EnumerableHelperTest
 {
-    private readonly string[] _names = ["Nick", "Mike", "John", "Leyla", "David", "Damian"];
+    private static readonly string[] _names = ["Nick", "Mike", "John", "Leyla", "David", "Damian"];
 
     public static TheoryData<IEnumerable<object?>?, IEnumerable<object>> TestCompactData =>
         new()
@@ -20,7 +19,7 @@ public sealed class EnumerableHelperTest
         };
 
     [Fact]
-    public void AddImmutedToKeyValuePairTest()
+    public void AddImmuted_KeyValuePairTest()
     {
         var dic = new List<int> { 0, 1, 2, 3, 4, };
         var dic1 = dic.AddImmuted(5);
@@ -138,7 +137,7 @@ public sealed class EnumerableHelperTest
     [InlineData(new[] { 1, 2, 3 }, null, new[] { 1, 2, 3 })]
     [InlineData(null, new[] { 1, 2, 3 }, new[] { 1, 2, 3 })]
     [InlineData(new[] { 1, 2, 3 }, new[] { 4, 5, 6 }, new[] { 1, 2, 3, 4, 5, 6 })]
-    public void AddRangeImmutedTest(IEnumerable<int>? source, IEnumerable<int>? items, IEnumerable<int> expected)
+    public void AddRangeImmuted_Basic(IEnumerable<int>? source, IEnumerable<int>? items, IEnumerable<int> expected)
     {
         var actual = EnumerableHelper.AddRangeImmuted(source, items);
         Assert.Equal(expected, actual);
@@ -187,7 +186,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void AnyReturnsFalseWhenSourceIsEmpty()
+    public void Any_ReturnsFalseWhenSourceIsEmpty()
     {
         // Arrange
         IEnumerable source = Array.Empty<int>();
@@ -200,7 +199,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void AnyReturnsFalseWhenSourceIsNull()
+    public void Any_ReturnsFalseWhenSourceIsNull()
     {
         // Arrange
         IEnumerable? source = null;
@@ -213,7 +212,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void AnyReturnsTrueWhenSourceIsNotNullAndNotEmpty()
+    public void Any_ReturnsTrueWhenSourceIsNotNullAndNotEmpty()
     {
         // Arrange
         IEnumerable source = new[] { 1, 2, 3 };
@@ -226,7 +225,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void BuildReturnsReadOnlyList()
+    public void Build_ReturnsReadOnlyList()
     {
         // Arrange
         var items = new List<int> { 1, 2, 3 };
@@ -250,7 +249,7 @@ public sealed class EnumerableHelperTest
 
         // Assert
         Assert.Same(defaultValueList, result);
-        Assert.Equal(1, defaultValueList.Count);
+        Assert.Single(defaultValueList);
         Assert.Contains(itemToAdd, defaultValueList);
     }
 
@@ -290,7 +289,7 @@ public sealed class EnumerableHelperTest
 
     [Theory]
     [InlineData(new[] { 1, 2, 3 })]
-    public void CopyArrayWithElementsReturnsCopyOfArray<T>(T[] array)
+    public void Copy_ArrayWithElementsReturnsCopyOfArray<T>(T[] array)
     {
         // Arrange
 
@@ -304,7 +303,7 @@ public sealed class EnumerableHelperTest
 
     [Theory]
     [InlineData(new int[0])]
-    public void CopyEmptyArrayReturnsEmptyArray<T>(T[] array)
+    public void Copy_EmptyArrayReturnsEmptyArray<T>(T[] array)
     {
         // Arrange
 
@@ -320,7 +319,7 @@ public sealed class EnumerableHelperTest
     [InlineData(new string[] { "a", "b", "c" }, new string[] { "a", "b" }, false)]
     [InlineData(new int[] { 10, 20, 30 }, new int[] { 10, 20, 30 }, true)]
     [InlineData(new int[] { 10, 20, 30 }, new int[] { 10, 20 }, false)]
-    public void CopyStringArrayCompareCopiedArrays<T>(T[] source, T[] destination, bool expected)
+    public void Copy_StringArrayCompareCopiedArrays<T>(T[] source, T[] destination, bool expected)
     {
         // Arrange
 
@@ -340,7 +339,7 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void CopyStringArrayReturnsCopyOfStringArray()
+    public void Copy_StringArrayReturnsCopyOfStringArray()
     {
         // Arrange
         var array = new[] { "foo", "bar", "baz" };
@@ -354,11 +353,11 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void CountNotEnumeratedTest()
-        => Assert.Equal(6, this._names.CountNotEnumerated());
+    public void CountNotEnumerated_Basic()
+        => Assert.Equal(6, _names.CountNotEnumerated());
 
     [Fact]
-    public void EnumerateWithCancelledToken()
+    public void Enumerate_WithCancelledToken()
     {
         // Arrange
         IEnumerable<int> values = [1, 2, 3];
@@ -472,30 +471,28 @@ public sealed class EnumerableHelperTest
         IEnumerable<int>? items = null;
 
         // Act
-        var result = items.Index().ToList();
+        var actual = items.Index().ToList();
 
         // Assert
-        Assert.Empty(result);
+        Assert.Empty(actual);
     }
 
     [Fact]
     [Trait("Category", nameof(EnumerableHelper.Index))]
-    public void Index_ReturnsSequenceWithCorrectIndicesForMultipleItems()
+    public void Index_NonEmptyInput_ReturnsIndexedSequence()
     {
         // Arrange
-        var items = new List<int> { 1, 2, 3, 4, 5 };
+        var items = new List<string> { "A", "B", "C" };
+        var expected = new List<(int Index, string Item)> { (0, "A"), (1, "B"), (2, "C") };
 
         // Act
-        var result = items.Index().ToList();
+        var actual = items.Index();
 
         // Assert
-        Assert.Equal(5, result.Count);
-        Assert.Equal((0, 1), result[0]);
-        Assert.Equal((1, 2), result[1]);
-        Assert.Equal((2, 3), result[2]);
-        Assert.Equal((3, 4), result[3]);
-        Assert.Equal((4, 5), result[4]);
+        Assert.Equal(expected, actual);
     }
+
+
 
     [Fact]
     [Trait("Category", nameof(EnumerableHelper.Index))]
@@ -611,7 +608,7 @@ public sealed class EnumerableHelperTest
     [InlineData(new[] { 1, 2, 3, 4, 5 }, -1, 5, new[] { 1, 2, 3, 4 })]
     [InlineData(new[] { 1, 2, 3, 4, 5 }, -3, 3, new[] { 1, 2, 4, 5 })]
     [InlineData(new[] { "A", "B", "C" }, -2, "B", new[] { "A", "C" })]
-    public void PopRemovesAndReturnsElementAtSpecifiedIndexNegativeIndex<T>(T[] input, int index, T expected, T[] remaining)
+    public void Pop_RemovesAndReturnsElementAtSpecifiedIndexNegativeIndex<T>(T[] input, int index, T expected, T[] remaining)
     {
         // Arrange
         var list = new List<T>(input);
@@ -628,7 +625,7 @@ public sealed class EnumerableHelperTest
     [Theory]
     [InlineData(new[] { 1, 2, 3, 4, 5 }, 2, 3, new[] { 1, 2, 4, 5 })]
     [InlineData(new[] { "A", "B", "C" }, 1, "B", new[] { "A", "C" })]
-    public void PopRemovesAndReturnsElementAtSpecifiedIndexPositiveIndex<T>(T[] input, int index, T expected, T[] remaining)
+    public void Pop_RemovesAndReturnsElementAtSpecifiedIndexPositiveIndex<T>(T[] input, int index, T expected, T[] remaining)
     {
         // Arrange
         var list = new List<T>(input);
@@ -976,7 +973,7 @@ public sealed class EnumerableHelperTest
         var index = 0;
 
         // Act
-        foreach (var name in this._names.WithCancellation(cts.Token))
+        foreach (var name in _names.WithCancellation(cts.Token))
         {
             if (index == count)
             {
@@ -989,11 +986,11 @@ public sealed class EnumerableHelperTest
         }
 
         // Assert
-        if (count > this._names.Length)
+        if (count > _names.Length)
         {
-            if (index != this._names.Length)
+            if (index != _names.Length)
             {
-                Assert.Fail($"Expected value was: {this._names.Length}. But actual value is: {index}");
+                Assert.Fail($"Expected value was: {_names.Length}. But actual value is: {index}");
             }
         }
         else

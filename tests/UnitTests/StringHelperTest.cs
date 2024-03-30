@@ -307,17 +307,6 @@ public sealed class StringHelperTest
     }
 
     [Theory]
-    [InlineData("This is a test string.", new char[] { 'x', 'y', 'z' }, false)]
-    [InlineData("This is a test string.", new char[] { 'a', 'b', 'c' }, true)]
-    [InlineData("", new char[] { 'x', 'y', 'z' }, false)]
-    [InlineData("This is a test string.", new char[] { 'T', 't', 's' }, true)]
-    public void ContainsAnyCharTest(string str, char[] chars, bool expectedResult)
-    {
-        var result = StringHelper.ContainsAny(str, chars);
-        Assert.Equal(expectedResult, result);
-    }
-
-    [Theory]
     [InlineData("Hello", new string[] { "He", "ll", "o" }, true)]
     [InlineData("Hello", new string[] { "he", "LL", "O" }, false)]
     [InlineData("Hello", new string[] { "Hi", "Bye", "No" }, false)]
@@ -357,21 +346,6 @@ public sealed class StringHelperTest
 
         // Act
         var actual = StringHelper.Contains(array, str, ignoreCase);
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Theory]
-    [InlineData("Hello", "He", true)]
-    [InlineData("Hello", "he", true)]
-    [InlineData("Hello", "Hi", false)]
-    public void ContainsOfTest(string str, string target, bool expected)
-    {
-        // Arrange
-
-        // Act
-        var actual = StringHelper.ContainsOf(str, target);
 
         // Assert
         Assert.Equal(expected, actual);

@@ -18,7 +18,7 @@ public sealed class ValidationResultSet<TValue>(TValue value, CheckBehavior beha
     internal readonly string _valueName = valueName;
 
     public IEnumerable<(Func<TValue, bool> IsValid, Func<Exception> OnError)> Rules => 
-        this.RuleList.Iterate();
+        this.RuleList.Enumerate();
 
     public TValue Value { get; } = value;
 

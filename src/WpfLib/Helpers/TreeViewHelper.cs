@@ -117,7 +117,7 @@ public static class TreeViewHelper
     public static TTreeView SetSelectedItemIndex<TTreeView>(this TTreeView treeView, int index)
         where TTreeView : TreeView =>
         treeView.Fluent(treeView.Items
-             .Iterate()
+             .Enumerate()
              .ElementAt(index).Cast().As<TreeViewItem>().NotNull(() => "TreeView has not items, or the items are not `TreeViewItem`.")
              .IsSelected = true);
 }

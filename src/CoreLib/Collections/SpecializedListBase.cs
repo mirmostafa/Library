@@ -77,7 +77,7 @@ public abstract class SpecializedListBase<TItem, TEnumerable> : ReadOnlySpeciali
     //    => this.InnetList.RemoveAt(index);
 
     protected IList<TItem?> AsList()
-        => this.InnerList.Iterate().ToList();
+        => this.InnerList.Enumerate().ToList();
 
     protected virtual void OnInserting(int index, TItem? item)
     { }
