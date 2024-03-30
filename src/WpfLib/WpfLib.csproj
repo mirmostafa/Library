@@ -1,28 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <UseWPF>true</UseWPF>
-    <Configurations>Debug;Release;Debug Unit Test</Configurations>
-    <RootNamespace>Library.Wpf</RootNamespace>
-    <GenerateDocumentationFile>False</GenerateDocumentationFile>
-    <Product>Library</Product>
-    <MinimumPlatformVersion>7.0</MinimumPlatformVersion>
-    <TargetFramework>net8.0-windows</TargetFramework>
-    <AssemblyName>Library.Wpf</AssemblyName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants />
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove=".gitignore" />
-    <None Remove="LICENSE" />
-    <None Remove="README.md" />
-    <None Remove="Themes\DefaultTheme.xaml.old" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft-Windows10-APICodePack-Core" Version="1.1.8" />
-    <PackageReference Include="Microsoft.DependencyValidation.Analyzers" Version="0.11.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CoreLib\CoreLib.csproj" />
-  </ItemGroup>
+	<PropertyGroup>
+		<UseWPF>true</UseWPF>
+		<Configurations>Debug;Release;Debug Unit Test</Configurations>
+		<RootNamespace>Library.Wpf</RootNamespace>
+		<GenerateDocumentationFile>False</GenerateDocumentationFile>
+		<Product>Library</Product>
+		<MinimumPlatformVersion>7.0</MinimumPlatformVersion>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<AssemblyName>Library.Wpf</AssemblyName>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DefineConstants />
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove=".gitignore" />
+		<None Remove="LICENSE" />
+		<None Remove="README.md" />
+		<None Remove="Themes\DefaultTheme.xaml.old" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft-Windows10-APICodePack-Core" />
+		<PackageReference Include="Microsoft.DependencyValidation.Analyzers" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\CoreLib\CoreLib.csproj" />
+	</ItemGroup>
 </Project>
