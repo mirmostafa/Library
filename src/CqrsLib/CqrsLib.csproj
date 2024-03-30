@@ -23,8 +23,8 @@
 		<Configurations>Debug;Release;Debug Unit Test</Configurations>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Autofac" Version="8.0.0" />
-		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="Autofac" />
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\CoreLib\CoreLib.csproj" />
