@@ -117,6 +117,33 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         }
     }
 
+    public async Task ExecuteTransactionalCommandAsync(string cmdText, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
+    {
+        await using var connection = new SqlConnection(this.ConnectionString);
+        await connection.OpenAsync(cancellationToken);
+        var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+        await using var command = new SqlCommand(cmdText.NotNull(), connection, transaction) { CommandTimeout = connection.ConnectionTimeout };
+        fillParams?.Invoke(command.Parameters);
+        try
+        {
+            if (executor != null)
+            {
+                executor(command);
+            }
+            else
+            {
+                _ = command.ExecuteNonQuery();
+            }
+
+            transaction.Commit();
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
+    }
+
     public DataSet FillDataSet(string query) =>
         Execute(this.ConnectionString, conn => conn.FillDataSet(query));
 
