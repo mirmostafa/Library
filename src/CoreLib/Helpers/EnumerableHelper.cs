@@ -570,9 +570,17 @@ public static class EnumerableHelper
     /// <typeparam name="T">The type of elements in the list.</typeparam>
     /// <param name="array">The IList to copy elements from.</param>
     /// <returns>An immutable list containing elements from the original IList.</returns>
-    public static ImmutableList<T> CopyImmutable<T>(this IList<T> array) =>
-        // Convert the IList to an IEnumerable and then create an immutable list from it.
-        array.Enumerate().ToImmutableList();
+    public static ImmutableList<T> CopyImmutable<T>(this IList<T> array)
+        => array.Enumerate().ToImmutableList();
+
+    public static int Count<TItem>(IEnumerable<TItem> items)
+        => items switch
+        {
+            Array x => x.Length,
+            ICollection x => x.Count,
+            ICollection<TItem> x => x.Count,
+            _ => items.Count()
+        };
 
     /// <summary> Counts the number of elements in a sequence that are not enumerated. </summary>
     /// <typeparam name="T">The type of the elements of source.</typeparam> <param name="source">The
@@ -718,8 +726,6 @@ public static class EnumerableHelper
     /// Applies a folder function to each item in the IEnumerable and returns the result.
     /// </summary>
     /// <param name="items">The IEnumerable to fold.</param>
-    /// <param name="folder">The folder function to apply.</param>
-    /// <param name="initialValue">The initial value to use.</param>
     /// <returns>The result of the fold.</returns>
     public static IEnumerable<T> Enumerate<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action)
     {
@@ -840,7 +846,7 @@ public static class EnumerableHelper
     /// Returns an IEnumerable of TItem from the source IEnumerable, excluding any items that match
     /// the given exclude Func.
     /// </summary>
-    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude) 
+    public static IEnumerable<TItem> Exclude<TItem>(this IEnumerable<TItem> source, Func<TItem, bool> exclude)
         => source.Where(x => !exclude(x));
 
     /// <summary>
@@ -1485,7 +1491,6 @@ public static class EnumerableHelper
     /// Gets all elements from a given root element and its children using a provided function.
     /// </summary>
     /// <typeparam name="T">The type of the elements.</typeparam>
-    /// <param name="getRootElements">A function to get the root elements.</param>
     /// <param name="getChildren">A function to get the children of an element.</param>
     /// <returns>An enumerable of all elements.</returns>
     public static IEnumerable<T> SelectAllChildren<T>([DisallowNull] this IEnumerable<T> roots, [DisallowNull] Func<T, IEnumerable<T>?> getChildren)

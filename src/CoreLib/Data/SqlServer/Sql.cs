@@ -1,5 +1,6 @@
 using System.Data;
 
+using Library.CodeGeneration;
 using Library.Dynamic;
 using Library.Interfaces;
 using Library.Results;
@@ -14,19 +15,27 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
     public static object DefaultLogSender { get; } = nameof(Sql);
     public string ConnectionString { get; } = connectionString.ArgumentNotNull();
 
-    public static Task<bool> CanConnectAsync(string? connectionString, CancellationToken cancellationToken = default)
+    public static async Task<bool> CanConnectAsync(string? connectionString, CancellationToken cancellationToken = default)
     {
-        using var conn = new SqlConnection(connectionString);
-        return conn.CanConnectAsync(cancellationToken: cancellationToken);
+        await using var conn = new SqlConnection(connectionString);
+        return await conn.CanConnectAsync(cancellationToken: cancellationToken);
     }
 
-    public static Sql New(string arg) =>
-        new(arg);
-
-    public static Task<TryMethodResult> TryConnectAsync(string? connectionString, CancellationToken cancellationToken = default)
+    public static (TypePath Type, string Name)? FindIdColumn<TEntity>()
     {
-        using var conn = new SqlConnection(connectionString);
-        return conn.TryConnectAsync(cancellationToken: cancellationToken);
+        var idColumn = Array.Find(typeof(TEntity).GetProperties(), x => x.Name.EqualsTo("Id"));
+        return idColumn == null
+            ? default
+            : (idColumn.PropertyType, idColumn.Name);
+    }
+
+    public static Sql New(string arg)
+        => new(arg);
+
+    public static async Task<TryMethodResult> TryConnectAsync(string? connectionString, CancellationToken cancellationToken = default)
+    {
+        await using var conn = new SqlConnection(connectionString);
+        return await conn.TryConnectAsync(cancellationToken: cancellationToken);
     }
 
     public void ExecuteCommand(string cmdText, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null)

@@ -20,10 +20,10 @@ public partial class SqlStatementBuilder
         Check.MustBeArgumentNotNull(type);
 
         var tableAttribute = type.GetCustomAttribute<TableAttribute>();
-        
+
         var schema = tableAttribute?.Schema;
         var tableName = tableAttribute?.Name ?? type.Name;
-        var columns = type.GetProperties().Select(x =>
+        var columns = type.GetProperties().Where(x => x.GetCustomAttribute<NotMappedAttribute>() == null).Select(x =>
         {
             string name;
             TypePath type;
