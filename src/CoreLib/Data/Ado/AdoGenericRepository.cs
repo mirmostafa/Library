@@ -1,7 +1,6 @@
 ﻿using Library.Data.SqlServer;
 using Library.Interfaces;
 using Library.Results;
-using Library.Types;
 using Library.Validations;
 
 namespace Library.Data.Ado;
@@ -17,11 +16,15 @@ public sealed class AdoGenericRepository<TEntity, TId> : AdoRepositoryBase, IAsy
     {
     }
 
-    public Task<Result> DeleteAsync(TEntity model, bool persist = true, CancellationToken token = default)
+    public async Task<Result> DeleteAsync(TEntity model, bool persist = true, CancellationToken token = default)
     {
-        var idColumn = Sql.FindIdColumn<TEntity>();
-        Check.MustBeArgumentNotNull(idColumn);
-        this.Sql.ExecuteNonQuery("")
+        Check.MustBeArgumentNotNull(model);
+        var table = Sql.GetTable<TEntity>();
+        var idColumn = table.IdColumn().NotNull(() => "ID column not found.").Value;
+        var id = model.GetType().GetProperty(idColumn.Name)!.GetValue(model);
+        var query = SqlStatementBuilder.Delete(table.Name()).Where($"{table.IdColumn()} = {id}").Build();
+        _ = await this.Sql.ExecuteNonQueryAsync(query, cancellationToken: token);
+        return Result.Succeed;
     }
 
     public async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken token = default)

@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Reflection;
 
 using Library.CodeGeneration;
 using Library.Dynamic;
@@ -22,15 +24,62 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
     }
 
     public static (TypePath Type, string Name)? FindIdColumn<TEntity>()
+        => FindIdColumn(typeof(TEntity));
+
+    public static (TypePath Type, string Name)? FindIdColumn(in Type entityType)
     {
-        var idColumn = Array.Find(typeof(TEntity).GetProperties(), x => x.Name.EqualsTo("Id"));
+        Check.MustBeArgumentNotNull(entityType);
+        var idColumn = Array.Find(entityType.GetProperties(), x => x.Name.EqualsTo("Id"));
         return idColumn == null
             ? default
             : (idColumn.PropertyType, idColumn.Name);
     }
 
+    public static (Func<string?> Schema, Func<string> Name, Func<IEnumerable<(string Name, TypePath Type)>> Columns, Func<(TypePath Type, string Name)?> IdColumn) GetTable<TType()
+        => GetTable(typeof(TType));
+
+    public static (Func<string?> Schema, Func<string> Name, Func<IEnumerable<(string Name, TypePath Type)>> Columns, Func<(TypePath Type, string Name)?> IdColumn) GetTable(Type tableType)
+    {
+        Check.MustBeArgumentNotNull(tableType);
+
+        string? schema()
+        {
+            var tableAttribute = tableType.GetCustomAttribute<TableAttribute>();
+            return tableAttribute?.Schema;
+        }
+        string name()
+        {
+            var tableAttribute = tableType.GetCustomAttribute<TableAttribute>();
+            return tableAttribute?.Name ?? tableType.Name;
+        }
+        IEnumerable<(string Name, TypePath Type)> columns()
+            => tableType.GetProperties()
+                .Where(x => x.GetCustomAttribute<NotMappedAttribute>() == null)
+                .Select(x =>
+                {
+                    string name;
+                    TypePath type;
+                    int order;
+                    var columnAttribute = x.GetCustomAttribute<ColumnAttribute>();
+                    if (columnAttribute is { } attrib)
+                    {
+                        name = attrib.Name ?? x.Name;
+                        type = attrib.TypeName ?? x!.DeclaringType!.FullName!;
+                        order = attrib.Order;
+                    }
+                    else
+                    {
+                        name = x.Name;
+                        type = x.PropertyType;
+                        order = 0;
+                    }
+                    return (name, type, order);
+                }).OrderBy(x => x.order).Select(x => (x.name, x.type));
+        return (Schema: schema, Name: name, Columns: columns, IdColumn: () => FindIdColumn(tableType));
+    }
+
     public static Sql New(string arg)
-        => new(arg);
+            => new(arg);
 
     public static async Task<TryMethodResult> TryConnectAsync(string? connectionString, CancellationToken cancellationToken = default)
     {
@@ -58,6 +107,12 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
     {
         var result = 0;
         this.ExecuteTransactionalCommand(sql, cmd => result = cmd.ExecuteNonQuery(), fillParams);
+        return result;
+    }
+    public async Task<int> ExecuteNonQueryAsync(string sql, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
+    {
+        var result = 0;
+        await this.ExecuteTransactionalCommandAsync(sql, cmd => result = cmd.ExecuteNonQuery(), fillParams, cancellationToken);
         return result;
     }
 
@@ -122,7 +177,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         await using var connection = new SqlConnection(this.ConnectionString);
         await connection.OpenAsync(cancellationToken);
         var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
-        await using var command = new SqlCommand(cmdText.NotNull(), connection, transaction) { CommandTimeout = connection.ConnectionTimeout };
+        await using var command = new SqlCommand(cmdText.NotNull(), connection, (SqlTransaction)transaction) { CommandTimeout = connection.ConnectionTimeout };
         fillParams?.Invoke(command.Parameters);
         try
         {
