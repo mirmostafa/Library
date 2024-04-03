@@ -35,6 +35,49 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
             : (idColumn.PropertyType, idColumn.Name);
     }
 
+    public static (Func<string?> Schema, Func<string> Name, Func<IEnumerable<(string Name, TypePath Type)>> Columns, Func<(TypePath Type, string Name)?> IdColumn) GetTable<TType>()
+        => GetTable(typeof(TType));
+
+    public static (Func<string?> Schema, Func<string> Name, Func<IEnumerable<(string Name, TypePath Type)>> Columns, Func<(TypePath Type, string Name)?> IdColumn) GetTable(Type tableType)
+    {
+        Check.MustBeArgumentNotNull(tableType);
+
+        string? schema()
+        {
+            var tableAttribute = tableType.GetCustomAttribute<TableAttribute>();
+            return tableAttribute?.Schema;
+        }
+        string name()
+        {
+            var tableAttribute = tableType.GetCustomAttribute<TableAttribute>();
+            return tableAttribute?.Name ?? tableType.Name;
+        }
+        IEnumerable<(string Name, TypePath Type)> columns()
+            => tableType.GetProperties()
+                .Where(x => x.GetCustomAttribute<NotMappedAttribute>() == null)
+                .Select(x =>
+                {
+                    string name;
+                    TypePath type;
+                    int order;
+                    var columnAttribute = x.GetCustomAttribute<ColumnAttribute>();
+                    if (columnAttribute is { } attrib)
+                    {
+                        name = attrib.Name ?? x.Name;
+                        type = attrib.TypeName ?? x!.DeclaringType!.FullName!;
+                        order = attrib.Order;
+                    }
+                    else
+                    {
+                        name = x.Name;
+                        type = x.PropertyType;
+                        order = 0;
+                    }
+                    return (name, type, order);
+                }).OrderBy(x => x.order).Select(x => (x.name, x.type));
+        return (Schema: schema, Name: name, Columns: columns, IdColumn: () => FindIdColumn(tableType));
+    }
+
     public static (Func<string?> Schema, Func<string> Name, Func<IEnumerable<(string Name, TypePath Type)>> Columns, Func<(TypePath Type, string Name)?> IdColumn) GetTable<TType()
         => GetTable(typeof(TType));
 
@@ -109,6 +152,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         this.ExecuteTransactionalCommand(sql, cmd => result = cmd.ExecuteNonQuery(), fillParams);
         return result;
     }
+
     public async Task<int> ExecuteNonQueryAsync(string sql, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
     {
         var result = 0;
@@ -129,6 +173,16 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
     {
         object? result = null;
         this.ExecuteTransactionalCommand(sql, cmd => result = cmd.ExecuteScalar(), fillParams);
+        return result;
+    }
+
+    public Task<object?> ExecuteScalarCommandAsync(string sql, CancellationToken cancellationToken = default)
+        => this.ExecuteScalarCommandAsync(sql, null, cancellationToken);
+
+    public async Task<object?> ExecuteScalarCommandAsync(string sql, Action<SqlParameterCollection>? fillParams, CancellationToken cancellationToken = default)
+    {
+        object? result = null;
+        await this.ExecuteTransactionalCommandAsync(sql, cmd => result = cmd.ExecuteScalar(), fillParams, cancellationToken);
         return result;
     }
 

@@ -16,7 +16,6 @@ public partial class SqlStatementBuilder
         if (!statement.ForceFormatValues)
         {
             clause = $"VALUES ({statement.Values.Select(x => x.Value.NotNull().ToString()!).Merge(", ")})";
-            
         }
         else
         {
@@ -31,11 +30,28 @@ public partial class SqlStatementBuilder
 
         return result.Build();
     }
+
     public static IInsertStatement Insert() =>
         new InsertStatement();
 
     public static IInsertStatement Into([DisallowNull] this IInsertStatement statement, string tableName) =>
         statement.With(x => x.TableName = tableName);
+
+    public static IInsertStatement Into<TTable>([DisallowNull] this IInsertStatement statement)
+    {
+        var table = GetTable<TTable>();
+        return Into(statement, table.Name).SetSchema(table.Schema);
+    }
+
+    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, object model)
+    {
+        Check.MustBeArgumentNotNull(statement);
+        Check.MustBeArgumentNotNull(model);
+
+        IEnumerable<(string, object)> values = model.GetType().GetProperties().Select(x => (x.Name, x.GetValue(model))).Compact(isNotNull)!;
+        return Values(statement, values);
+        static bool isNotNull((string? columnName, object? value) x) => x.columnName.IsNullOrEmpty() && x.value is not null;
+    }
 
     public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params (string ColumnName, object Value)[] values) =>
         statement.With(x => x.Values(values.Select(x => new KeyValuePair<string, object?>(x.ColumnName, x.Value))));

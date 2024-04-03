@@ -19,6 +19,15 @@ public partial class SqlStatementBuilder
     public static IDeleteStatement Delete([DisallowNull] string tableName)
         => new DeleteStatement { TableName = tableName.ArgumentNotNull() };
 
+    public static IDeleteStatement Delete(Type tableType)
+    {
+        var table = GetTable(tableType);
+        return Delete(table.Name).SetSchema(table.Schema);
+    }
+
+    public static IDeleteStatement Delete<TTable>()
+        => Delete(typeof(TTable));
+
     public static IDeleteStatement Delete()
         => new DeleteStatement();
 

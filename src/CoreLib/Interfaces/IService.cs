@@ -111,7 +111,7 @@ public interface IAsyncWrite<TViewModel, TId>
     /// <summary>
     /// Deletes an entity asynchronously.
     /// </summary>
-    Task<Result> DeleteAsync(TViewModel model, bool persist = true, CancellationToken token = default);
+    Task<Result<int>> DeleteAsync(TViewModel model, bool persist = true, CancellationToken token = default);
 
     /// <summary>
     /// Inserts an entity asynchronously.

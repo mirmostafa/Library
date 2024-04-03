@@ -11,6 +11,9 @@ public partial class SqlStatementBuilder
    public static TCommandStatement ReturnId<TCommandStatement>([DisallowNull] this TCommandStatement statement, bool returnId = true)
             where TCommandStatement : ICommandStatement => statement.With(x => x.ReturnId = returnId);
 
+    private static (string? Schema, string Name, IEnumerable<(string Name, TypePath Type)> Columns) GetTable<TTable>()
+        => GetTable(typeof(TTable));
+
     private static (string? Schema, string Name, IEnumerable<(string Name, TypePath Type)> Columns) GetTable(Type type)
     {
         var table = Sql.GetTable(type);
