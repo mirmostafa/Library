@@ -78,49 +78,6 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         return (Schema: schema, Name: name, Columns: columns, IdColumn: () => FindIdColumn(tableType));
     }
 
-    public static (Func<string?> Schema, Func<string> Name, Func<IEnumerable<(string Name, TypePath Type)>> Columns, Func<(TypePath Type, string Name)?> IdColumn) GetTable<TType()
-        => GetTable(typeof(TType));
-
-    public static (Func<string?> Schema, Func<string> Name, Func<IEnumerable<(string Name, TypePath Type)>> Columns, Func<(TypePath Type, string Name)?> IdColumn) GetTable(Type tableType)
-    {
-        Check.MustBeArgumentNotNull(tableType);
-
-        string? schema()
-        {
-            var tableAttribute = tableType.GetCustomAttribute<TableAttribute>();
-            return tableAttribute?.Schema;
-        }
-        string name()
-        {
-            var tableAttribute = tableType.GetCustomAttribute<TableAttribute>();
-            return tableAttribute?.Name ?? tableType.Name;
-        }
-        IEnumerable<(string Name, TypePath Type)> columns()
-            => tableType.GetProperties()
-                .Where(x => x.GetCustomAttribute<NotMappedAttribute>() == null)
-                .Select(x =>
-                {
-                    string name;
-                    TypePath type;
-                    int order;
-                    var columnAttribute = x.GetCustomAttribute<ColumnAttribute>();
-                    if (columnAttribute is { } attrib)
-                    {
-                        name = attrib.Name ?? x.Name;
-                        type = attrib.TypeName ?? x!.DeclaringType!.FullName!;
-                        order = attrib.Order;
-                    }
-                    else
-                    {
-                        name = x.Name;
-                        type = x.PropertyType;
-                        order = 0;
-                    }
-                    return (name, type, order);
-                }).OrderBy(x => x.order).Select(x => (x.name, x.type));
-        return (Schema: schema, Name: name, Columns: columns, IdColumn: () => FindIdColumn(tableType));
-    }
-
     public static Sql New(string arg)
             => new(arg);
 
