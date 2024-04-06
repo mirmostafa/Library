@@ -17,14 +17,10 @@ public sealed class AdoGenericRepository<TEntity> : AdoRepositoryBase<TEntity>, 
     {
     }
 
-    public Task<Result> DeleteAsync(TEntity model, bool persist = true, CancellationToken token = default)
+    public Task<Result<int>> DeleteAsync(TEntity model, bool persist = true, CancellationToken token = default)
     {
-        var idColumn = Sql.FindIdColumn<TEntity>();
-        Check.MustBeArgumentNotNull(idColumn);
-        this.Sql.ExecuteNonQuery("")
+        return OnDeleteAsync(model, persist, token);
     }
-
-    Task<Result<int>> IAsyncWrite<TEntity, long>.DeleteAsync(TEntity model, bool persist, CancellationToken token) => throw new NotImplementedException();
 
     public async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken token = default)
     {
