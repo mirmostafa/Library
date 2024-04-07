@@ -120,8 +120,12 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
     public SqlDataReader ExecuteReader(string query) =>
         new SqlConnection(this.ConnectionString).ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
 
-    public Task<SqlDataReader> ExecuteReaderAsync(string query, CancellationToken cancellationToken = default) =>
-        new SqlConnection(this.ConnectionString).ExecuteReaderAsync(query, behavior: CommandBehavior.CloseConnection, cancellationToken: cancellationToken);
+    public async Task<SqlDataReader> ExecuteReaderAsync(string query, CancellationToken cancellationToken = default)
+    {
+        await using var sqlConnection = new SqlConnection(this.ConnectionString);
+        await sqlConnection.OpenAsync(cancellationToken);
+        return await sqlConnection.ExecuteReaderAsync(query, behavior: CommandBehavior.CloseConnection, cancellationToken: cancellationToken);
+    }
 
     public object? ExecuteScalarCommand(string sql) =>
         this.ExecuteScalarCommand(sql, null);

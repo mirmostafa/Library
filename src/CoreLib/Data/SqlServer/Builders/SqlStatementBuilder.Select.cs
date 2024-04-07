@@ -57,7 +57,6 @@ public static partial class SqlStatementBuilder
         if (statement.WithNoLock)
         {
             _ = AddClause("WITH (NOLOCK)", indent, result);
-            _ = result.Append("  WITH (NOLOCK)");
         }
         return result.ToString();
     }

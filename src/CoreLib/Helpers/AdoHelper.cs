@@ -212,7 +212,7 @@ public static partial class AdoHelper
             Action<SqlParameterCollection>? fillParams = null,
             CommandBehavior behavior = CommandBehavior.Default, CancellationToken cancellationToken = default)
     {
-        using var command = connection.CreateCommand(sql, fillParams);
+        await using var command = connection.CreateCommand(sql, fillParams);
         connection.StateChange += (_, e) =>
         {
             if (e.CurrentState == ConnectionState.Closed)
@@ -220,7 +220,6 @@ public static partial class AdoHelper
                 command?.Dispose();
             }
         };
-        await connection.CloseAsync();
         return await command.ExecuteReaderAsync(behavior, cancellationToken);
     }
 
