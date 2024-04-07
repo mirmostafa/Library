@@ -1,13 +1,9 @@
 ﻿using Library.Data.SqlServer;
-using Library.Interfaces;
 using Library.Results;
-using Library.Types;
-using Library.Validations;
 
 namespace Library.Data.Ado;
 
-public sealed class AdoGenericRepository<TEntity> : AdoRepositoryBase<TEntity>, IAsyncCrud<TEntity>
-    where TEntity : new()
+public sealed class AdoGenericRepository : AdoRepositoryBase
 {
     public AdoGenericRepository(in Sql sql) : base(sql)
     {
@@ -17,24 +13,24 @@ public sealed class AdoGenericRepository<TEntity> : AdoRepositoryBase<TEntity>, 
     {
     }
 
-    public Task<Result<int>> DeleteAsync(TEntity model, bool persist = true, CancellationToken token = default)
-    {
-        return OnDeleteAsync(model, persist, token);
-    }
+    public Task<Result<int>> DeleteAsync<TEntity>(TEntity model, bool persist = true, CancellationToken token = default)
+        => this.OnDeleteAsync(model, persist, token);
 
-    public async Task<IReadOnlyList<TEntity>> GetAllAsync(CancellationToken token = default)
+    public async Task<IReadOnlyList<TEntity>> GetAllAsync<TEntity>(CancellationToken token = default)
+        where TEntity : new()
     {
-        var result = await this.OnGetAll(token).ToListAsync(token);
+        var result = await this.OnGetAll<TEntity>(token).ToListAsync(token);
         return result.AsReadOnly();
     }
 
-    public Task<TEntity?> GetByIdAsync(long id, CancellationToken token = default)
+    public Task<TEntity?> GetByIdAsync<TEntity>(long id, CancellationToken token = default)
+        where TEntity : new()
     {
         ArgumentNullException.ThrowIfNull(id);
-        return this.OnGetByIdAsync(id, token);
+        return this.OnGetByIdAsync<TEntity>(id, token);
     }
 
-    public Task<Result<TEntity>> InsertAsync(TEntity model, bool persist = true, CancellationToken token = default) => throw new NotImplementedException();
+    public Task<Result<TEntity>> InsertAsync<TEntity>(TEntity model, bool persist = true, CancellationToken token = default) => throw new NotImplementedException();
 
-    public Task<Result<TEntity>> UpdateAsync(long id, TEntity model, bool persist = true, CancellationToken token = default) => throw new NotImplementedException();
+    public Task<Result<TEntity>> UpdateAsync<TEntity>(long id, TEntity model, bool persist = true, CancellationToken token = default) => throw new NotImplementedException();
 }
