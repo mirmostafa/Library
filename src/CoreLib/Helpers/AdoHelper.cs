@@ -203,7 +203,11 @@ public static partial class AdoHelper
                 command?.Dispose();
             }
         };
-        connection.Open();
+        if (connection.State != ConnectionState.Open)
+        {
+            connection.Open();
+        }
+
         return command.ExecuteReader(behavior);
     }
 

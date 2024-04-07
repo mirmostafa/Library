@@ -122,8 +122,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
 
     public async Task<SqlDataReader> ExecuteReaderAsync(string query, CancellationToken cancellationToken = default)
     {
-        await using var sqlConnection = new SqlConnection(this.ConnectionString);
-        await sqlConnection.OpenAsync(cancellationToken);
+        var sqlConnection = new SqlConnection(this.ConnectionString);
         return await sqlConnection.ExecuteReaderAsync(query, behavior: CommandBehavior.CloseConnection, cancellationToken: cancellationToken);
     }
 
