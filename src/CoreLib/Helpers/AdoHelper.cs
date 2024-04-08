@@ -224,6 +224,11 @@ public static partial class AdoHelper
                 command?.Dispose();
             }
         };
+        if (connection.State != ConnectionState.Open)
+        {
+            await connection.OpenAsync(cancellationToken);
+        }
+
         return await command.ExecuteReaderAsync(behavior, cancellationToken);
     }
 

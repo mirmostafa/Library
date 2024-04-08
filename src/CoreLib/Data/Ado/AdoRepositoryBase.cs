@@ -121,7 +121,7 @@ public abstract class AdoRepositoryBase(in Sql sql)
         var result = new TEntity();
         foreach (var property in properties)
         {
-            property.SetValue(reader[property.Name], result);
+            property.SetValue(result, reader[property.Name]);
         }
         return result;
     }
@@ -129,8 +129,7 @@ public abstract class AdoRepositoryBase(in Sql sql)
     [return: NotNull]
     private async IAsyncEnumerable<TEntity> InnerGetAll<TEntity>([DisallowNull] string query, [DisallowNull] Func<SqlDataReader, TEntity> mapper, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        await using var reader = await this.Sql.ExecuteReaderAsync(query, cancellationToken);
-
+        var reader = await this.Sql.ExecuteReaderAsync(query, cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
         {
             yield return mapper(reader);
