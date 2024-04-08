@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Reflection;
+using System.Xml;
 
 using Library.CodeGeneration;
 using Library.Dynamic;
@@ -12,8 +13,10 @@ using Microsoft.Data.SqlClient;
 
 namespace Library.Data.SqlServer;
 
-public sealed class Sql(string connectionString) : INew<Sql, string>
+public sealed class Sql(string connectionString, Action<string>? logTo = null) : INew<Sql, string>
 {
+    private readonly Action<string>? _logTo = logTo;
+
     public static object DefaultLogSender { get; } = nameof(Sql);
     public string ConnectionString { get; } = connectionString.ArgumentNotNull();
 
@@ -79,7 +82,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
     }
 
     public static Sql New(string arg)
-            => new(arg);
+        => new(arg);
 
     public static async Task<TryMethodResult> TryConnectAsync(string? connectionString, CancellationToken cancellationToken = default)
     {
@@ -93,6 +96,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         connection.Open();
         using var command = new SqlCommand(cmdText.NotNull(), connection) { CommandTimeout = connection.ConnectionTimeout };
         fillParams?.Invoke(command.Parameters);
+        this._logTo?.Invoke(cmdText);
         if (executor != null)
         {
             executor(command);
@@ -117,12 +121,16 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         return result;
     }
 
-    public SqlDataReader ExecuteReader(string query) =>
-        new SqlConnection(this.ConnectionString).ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
+    public SqlDataReader ExecuteReader(string query)
+    {
+        this._logTo?.Invoke(query);
+        return new SqlConnection(this.ConnectionString).ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
+    }
 
     public async Task<SqlDataReader> ExecuteReaderAsync(string query, CancellationToken cancellationToken = default)
     {
         var sqlConnection = new SqlConnection(this.ConnectionString);
+        this._logTo?.Invoke(query);
         return await sqlConnection.ExecuteReaderAsync(query, behavior: CommandBehavior.CloseConnection, cancellationToken: cancellationToken);
     }
 
@@ -156,8 +164,11 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         return result;
     }
 
-    public object? ExecuteStoredProcedure(string spName, Action<SqlParameterCollection>? fillParams = null) =>
-        Execute(this.ConnectionString, conn => conn.ExecuteStoredProcedure(spName, fillParams));
+    public object? ExecuteStoredProcedure(string spName, Action<SqlParameterCollection>? fillParams = null)
+    {
+        this._logTo?.Invoke(spName);
+        return Execute(this.ConnectionString, conn => conn.ExecuteStoredProcedure(spName, fillParams));
+    }
 
     public void ExecuteTransactionalCommand(string cmdText, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null)
     {
@@ -166,6 +177,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         var transaction = connection.BeginTransaction(IsolationLevel.ReadCommitted);
         using var command = new SqlCommand(cmdText.NotNull(), connection, transaction) { CommandTimeout = connection.ConnectionTimeout };
         fillParams?.Invoke(command.Parameters);
+        this._logTo?.Invoke(cmdText);
         try
         {
             if (executor != null)
@@ -193,6 +205,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         await using var command = new SqlCommand(cmdText.NotNull(), connection, (SqlTransaction)transaction) { CommandTimeout = connection.ConnectionTimeout };
         fillParams?.Invoke(command.Parameters);
+        this._logTo?.Invoke(cmdText);
         try
         {
             if (executor != null)
@@ -213,8 +226,11 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         }
     }
 
-    public DataSet FillDataSet(string query) =>
-        Execute(this.ConnectionString, conn => conn.FillDataSet(query));
+    public DataSet FillDataSet(string query)
+    {
+        this._logTo?.Invoke(query);
+        return Execute(this.ConnectionString, conn => conn.FillDataSet(query));
+    }
 
     public DataSet FillDataSetByTableNames(params string[] tableNames)
     {
@@ -229,8 +245,11 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         return result;
     }
 
-    public DataTable FillDataTable(string query) =>
-        Execute(this.ConnectionString, conn => conn.FillDataTable(query));
+    public DataTable FillDataTable(string query)
+    {
+        this._logTo?.Invoke(query);
+        return Execute(this.ConnectionString, conn => conn.FillDataTable(query));
+    }
 
     public IEnumerable<DataTable> FillDataTables(params string[] queries)
     {
@@ -243,6 +262,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         connection.Open();
         foreach (var query in queries)
         {
+            this._logTo?.Invoke(query);
             cmd.CommandText = query;
             var dataTable = new DataTable();
             _ = da.Fill(dataTable);
@@ -254,6 +274,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         where T : new()
     {
         using var conn = new SqlConnection(this.ConnectionString);
+        this._logTo?.Invoke(query);
         return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>().FirstOrDefault();
     }
 
@@ -279,6 +300,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         using var command = this.GetCommand(query);
         fillParams?.Invoke(command.Parameters);
         await command.Connection.OpenAsync(cancellationToken);
+        this._logTo?.Invoke(query);
         result.Load(await command.ExecuteReaderAsync(cancellationToken));
         return result;
     }
@@ -289,6 +311,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         using var command = this.GetCommand(query);
         fillParams?.Invoke(command.Parameters);
         command.Connection.Open();
+        this._logTo?.Invoke(query);
         result.Load(command.ExecuteReader());
         command.Connection.Close();
 
@@ -298,6 +321,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
     public IEnumerable<T> Select<T>(string query, Func<SqlDataReader, T> rowFiller)
     {
         using var conn = new SqlConnection(this.ConnectionString);
+        this._logTo?.Invoke(query);
         return conn.Select(query, rowFiller).ToList();
     }
 
@@ -305,12 +329,14 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         where T : new()
     {
         using var conn = new SqlConnection(this.ConnectionString);
+        this._logTo?.Invoke(query);
         return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select(convertor);
     }
 
     public IEnumerable<T> Select<T>(string query, Func<T> creator)
     {
         using var conn = new SqlConnection(this.ConnectionString);
+        this._logTo?.Invoke(query);
         return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select(creator);
     }
 
@@ -318,6 +344,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         where T : new()
     {
         using var conn = new SqlConnection(this.ConnectionString);
+        this._logTo?.Invoke(query);
         return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>().ToList();
     }
 
@@ -325,6 +352,7 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
     {
         var columns = new List<string>();
         using var conn = new SqlConnection(this.ConnectionString);
+        this._logTo?.Invoke(query);
         var reader = conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
         for (var i = 0; i < reader.FieldCount; i++)
         {
@@ -343,8 +371,11 @@ public sealed class Sql(string connectionString) : INew<Sql, string>
         }
     }
 
-    public IEnumerable<dynamic> Select(string query, Func<SqlDataReader, dynamic> rowFiller) =>
-        Execute<IEnumerable<dynamic>>(this.ConnectionString, conn => conn.Select(query, rowFiller).ToList());
+    public IEnumerable<dynamic> Select(string query, Func<SqlDataReader, dynamic> rowFiller)
+    {
+        this._logTo?.Invoke(query);
+        return Execute<IEnumerable<dynamic>>(this.ConnectionString, conn => conn.Select(query, rowFiller).ToList());
+    }
 
     private static TResult Execute<TResult>(string connectionString, Func<SqlConnection, TResult> func)
     {
