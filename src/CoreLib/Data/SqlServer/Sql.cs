@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Reflection;
-using System.Xml;
 
 using Library.CodeGeneration;
 using Library.Dynamic;
@@ -115,22 +114,19 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     }
 
     public async Task<int> ExecuteNonQueryAsync(string sql, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
-    {
-        var result = 0;
-        await this.ExecuteTransactionalCommandAsync(sql, cmd => result = cmd.ExecuteNonQuery(), fillParams, cancellationToken);
-        return result;
-    }
+        => await this.ExecuteTransactionalCommandAsync<int>(sql, cmd => cmd.ExecuteNonQueryAsync(), fillParams, cancellationToken);
 
     public SqlDataReader ExecuteReader(string query)
     {
         this._logTo?.Invoke(query);
-        return new SqlConnection(this.ConnectionString).ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
+        var sqlConnection = new SqlConnection(this.ConnectionString);
+        return sqlConnection.ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
     }
 
     public async Task<SqlDataReader> ExecuteReaderAsync(string query, CancellationToken cancellationToken = default)
     {
-        var sqlConnection = new SqlConnection(this.ConnectionString);
         this._logTo?.Invoke(query);
+        var sqlConnection = new SqlConnection(this.ConnectionString);
         return await sqlConnection.ExecuteReaderAsync(query, behavior: CommandBehavior.CloseConnection, cancellationToken: cancellationToken);
     }
 
@@ -147,12 +143,8 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     public Task<object?> ExecuteScalarCommandAsync(string sql, CancellationToken cancellationToken = default)
         => this.ExecuteScalarCommandAsync(sql, null, cancellationToken);
 
-    public async Task<object?> ExecuteScalarCommandAsync(string sql, Action<SqlParameterCollection>? fillParams, CancellationToken cancellationToken = default)
-    {
-        object? result = null;
-        await this.ExecuteTransactionalCommandAsync(sql, cmd => result = cmd.ExecuteScalar(), fillParams, cancellationToken);
-        return result;
-    }
+    public async Task<object?> ExecuteScalarCommandAsync(string sql, Action<SqlParameterCollection>? fillParams, CancellationToken cancellationToken = default) 
+        => await this.ExecuteTransactionalCommandAsync(sql, cmd => cmd.ExecuteScalarAsync(), fillParams, cancellationToken);
 
     public object? ExecuteScalarQuery(string sql) =>
         this.ExecuteScalarQuery(sql, null);
@@ -198,7 +190,60 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
         }
     }
 
-    public async Task ExecuteTransactionalCommandAsync(string cmdText, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
+    //public async Task ExecuteTransactionalCommandAsync(string cmdText, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
+    //{
+    //    await using var connection = new SqlConnection(this.ConnectionString);
+    //    await connection.OpenAsync(cancellationToken);
+    //    var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+    //    await using var command = new SqlCommand(cmdText.NotNull(), connection, (SqlTransaction)transaction) { CommandTimeout = connection.ConnectionTimeout };
+    //    fillParams?.Invoke(command.Parameters);
+    //    this._logTo?.Invoke(cmdText);
+    //    try
+    //    {
+    //        if (executor != null)
+    //        {
+    //            executor(command);
+    //        }
+    //        else
+    //        {
+    //            _ = command.ExecuteNonQuery();
+    //        }
+
+    //        transaction.Commit();
+    //    }
+    //    catch
+    //    {
+    //        transaction.Rollback();
+    //        throw;
+    //    }
+    //}
+
+    public async Task<TResult> ExecuteTransactionalCommandAsync<TResult>(string cmdText, Func<SqlCommand, Task<TResult>> executeAsync, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
+    {
+        Check.MustBeArgumentNotNull(cmdText);
+        Check.MustBeArgumentNotNull(executeAsync);
+
+        await using var connection = new SqlConnection(this.ConnectionString);
+        await connection.OpenAsync(cancellationToken);
+        var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+        await using var command = new SqlCommand(cmdText.NotNull(), connection, (SqlTransaction)transaction) { CommandTimeout = connection.ConnectionTimeout };
+        fillParams?.Invoke(command.Parameters);
+        this._logTo?.Invoke(cmdText);
+        try
+        {
+            var result = await executeAsync(command);
+            await transaction.CommitAsync(cancellationToken);
+
+            return result;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+    }
+
+    public async Task ExecuteTransactionalCommandAsync(string cmdText, Func<SqlCommand, Task<int>>? executeAsync = null, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
     {
         await using var connection = new SqlConnection(this.ConnectionString);
         await connection.OpenAsync(cancellationToken);
@@ -208,20 +253,21 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
         this._logTo?.Invoke(cmdText);
         try
         {
-            if (executor != null)
+            int result;
+            if (executeAsync != null)
             {
-                executor(command);
+                result = await executeAsync(command);
             }
             else
             {
-                _ = command.ExecuteNonQuery();
+                result = await command.ExecuteNonQueryAsync(cancellationToken);
             }
 
-            transaction.Commit();
+            await transaction.CommitAsync(cancellationToken);
         }
         catch
         {
-            transaction.Rollback();
+            await transaction.RollbackAsync(cancellationToken);
             throw;
         }
     }
