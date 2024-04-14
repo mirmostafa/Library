@@ -1,6 +1,7 @@
 using System.Data;
 using System.Globalization;
 
+using Library.Data.SqlServer;
 using Library.Results;
 using Library.Validations;
 
@@ -24,7 +25,7 @@ public static class AdoHelper
         return result.IsSucceed;
     }
 
-   public static SqlCommand CreateCommand([DisallowNull] this SqlConnection connection, [DisallowNull] string commandText, Action<SqlParameterCollection>? fillParams = null)
+    public static SqlCommand CreateCommand([DisallowNull] this SqlConnection connection, [DisallowNull] string commandText, Action<SqlParameterCollection>? fillParams = null)
     {
         Check.MustBeArgumentNotNull(connection);
         Check.MustBeArgumentNotNull(commandText);
@@ -36,11 +37,21 @@ public static class AdoHelper
         return result;
     }
 
+    public static SqlCommand CreateCommand([DisallowNull] this SqlConnection conn, [DisallowNull] string sql)
+    {
+        Check.MustBeArgumentNotNull(conn);
+        Check.MustBeArgumentNotNull(sql);
+
+        var result = conn.CreateCommand();
+        result.CommandText = sql;
+        return result;
+    }
+
     public static void EnsureClosed([DisallowNull] this SqlConnection connection, [DisallowNull] Action<SqlConnection> action, bool openConnection = false)
     {
         Check.MustBeArgumentNotNull(action);
 
-        connection.EnsureClosed(c =>
+        _ = connection.EnsureClosed(c =>
                 {
                     action(c);
                     return true;
@@ -52,7 +63,7 @@ public static class AdoHelper
     {
         Check.MustBeArgumentNotNull(action);
 
-        connection.EnsureClosed(_ =>
+        _ = connection.EnsureClosed(_ =>
                 {
                     action();
                     return true;
@@ -129,32 +140,6 @@ public static class AdoHelper
         {
             await connection.CloseAsync();
         }
-    }
-
-    private static TResult Execute<TResult>([DisallowNull] this SqlConnection connection,
-            [DisallowNull] Func<SqlCommand, TResult> execute,
-            [DisallowNull] string sql,
-            Action<SqlParameterCollection>? fillParams = null)
-    {
-        Check.MustBeArgumentNotNull(connection);
-        Check.MustBeArgumentNotNull(execute);
-        Check.MustBeArgumentNotNull(sql);
-
-        using var command = connection.CreateCommand(sql, fillParams);
-        return connection.EnsureClosed(_ => execute(command), true);
-    }
-
-    private static async Task<TResult> ExecuteAsync<TResult>([DisallowNull] this SqlConnection connection,
-            [DisallowNull] Func<SqlCommand, Task<TResult>> executeAsync,
-            [DisallowNull] string sql,
-            Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
-    {
-        Check.MustBeArgumentNotNull(connection);
-        Check.MustBeArgumentNotNull(executeAsync);
-        Check.MustBeArgumentNotNull(sql);
-
-        await using var command = connection.CreateCommand(sql, fillParams);
-        return await connection.EnsureClosedAsync(_ => executeAsync(command), true, cancellationToken: cancellationToken);
     }
 
     public static int ExecuteNonQuery([DisallowNull] this SqlConnection connection, [DisallowNull] string sql, Action<SqlParameterCollection>? fillParams = null)
@@ -245,7 +230,7 @@ public static class AdoHelper
 
         return result;
     }
-    
+
     public static void ExecuteTransactional([DisallowNull] this SqlConnection connection, [DisallowNull] Action<SqlTransaction>? executionBlock)
     {
         Check.MustBeArgumentNotNull(connection);
@@ -317,11 +302,50 @@ public static class AdoHelper
         return result;
     }
 
+    public static IEnumerable<DataTable> FillDataTables([DisallowNull] this SqlConnection conn, params string[] queries)
+    {
+        Check.MustBeArgumentNotNull(queries);
+
+        using var cmd = conn.CreateCommand();
+        using var da = new SqlDataAdapter(cmd);
+
+        conn.Open();
+        foreach (var query in queries)
+        {
+            cmd.CommandText = query;
+            var dataTable = new DataTable();
+            _ = da.Fill(dataTable);
+            yield return dataTable;
+        }
+    }
+
     public static IEnumerable<DataTable> GetTables(this DataSet ds)
-        => ds is null
+            => ds is null
             ? throw new ArgumentNullException(nameof(ds))
             : ds.Tables.Cast<DataTable>();
-    
+
+    public static DataTable LoadDataTable([DisallowNull] this SqlConnection connection, [DisallowNull] string query, Action<SqlParameterCollection>? fillParams = null)
+    {
+        var result = new DataTable();
+        using var command = connection.CreateCommand(query);
+        fillParams?.Invoke(command.Parameters);
+        command.Connection.Open();
+        result.Load(command.ExecuteReader());
+        command.Connection.Close();
+
+        return result;
+    }
+
+    public static async Task<DataTable> LoadDataTableAsync([DisallowNull] this SqlConnection conn, [DisallowNull] string query, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
+    {
+        var result = new DataTable();
+        await using var command = conn.CreateCommand(query);
+        fillParams?.Invoke(command.Parameters);
+        await command.Connection.OpenAsync(cancellationToken);
+        result.Load(await command.ExecuteReaderAsync(cancellationToken));
+        return result;
+    }
+
     /// <summary>
     /// Tries to connect to a SqlConnection asynchronously.
     /// </summary>
@@ -340,5 +364,45 @@ public static class AdoHelper
         {
             return TryMethodResult.Fail(ex);
         }
+    }
+
+    private static TResult Execute<TResult>([DisallowNull] this SqlConnection connection,
+        [DisallowNull] Func<SqlCommand, TResult> execute,
+        [DisallowNull] string sql,
+        Action<SqlParameterCollection>? fillParams = null)
+    {
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(execute);
+        Check.MustBeArgumentNotNull(sql);
+
+        using var command = connection.CreateCommand(sql, fillParams);
+        return connection.EnsureClosed(_ => execute(command), true);
+    }
+
+    private static async Task<TResult> ExecuteAsync<TResult>([DisallowNull] this SqlConnection connection,
+            [DisallowNull] Func<SqlCommand, Task<TResult>> executeAsync,
+            [DisallowNull] string sql,
+            Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
+    {
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(executeAsync);
+        Check.MustBeArgumentNotNull(sql);
+
+        await using var command = connection.CreateCommand(sql, fillParams);
+        return await connection.EnsureClosedAsync(_ => executeAsync(command), true, cancellationToken: cancellationToken);
+    }
+
+    public static DataSet FillDataSetByTableNames([DisallowNull] this SqlConnection connection, params string[] tableNames)
+    {
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(tableNames);
+
+        var result = connection.FillDataSet(tableNames.Select(t => SqlStatementBuilder.CreateSelect(t)).Merge(Environment.NewLine));
+        for (var i = 0; i < tableNames.Length; i++)
+        {
+            result.Tables[i].TableName = tableNames[i];
+        }
+
+        return result;
     }
 }

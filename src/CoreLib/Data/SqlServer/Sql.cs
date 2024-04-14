@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Library.CodeGeneration;
 using Library.Dynamic;
@@ -165,18 +166,32 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     public async Task<int> ExecuteNonQueryAsync(string sql, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
         => await this.ExecuteTransactionalCommandAsync<int>(sql, cmd => cmd.ExecuteNonQueryAsync(), fillParams, cancellationToken);
 
-    public SqlDataReader ExecuteReader(string query)
+    public IEnumerable<TResult> ExecuteReader<TResult>(string query, Func<SqlDataReader, TResult> mapper)
     {
+        Check.MustBeArgumentNotNull(query);
+        Check.MustBeArgumentNotNull(mapper);
+
         this._logTo?.Invoke(query);
         var sqlConnection = new SqlConnection(this.ConnectionString);
-        return sqlConnection.ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
+        using var reader = sqlConnection.ExecuteReader(query, behavior: CommandBehavior.CloseConnection);
+        while (reader.Read())
+        {
+            yield return mapper(reader);
+        }
     }
 
-    public async Task<SqlDataReader> ExecuteReaderAsync(string query, CancellationToken cancellationToken = default)
+    public async IAsyncEnumerable<TResult> ExecuteReaderAsync<TResult>(string query, Func<SqlDataReader, TResult> mapper, [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
+        Check.MustBeArgumentNotNull(query);
+        Check.MustBeArgumentNotNull(mapper);
+
         this._logTo?.Invoke(query);
         var sqlConnection = new SqlConnection(this.ConnectionString);
-        return await sqlConnection.ExecuteReaderAsync(query, behavior: CommandBehavior.CloseConnection, cancellationToken: cancellationToken);
+        await using var reader = await sqlConnection.ExecuteReaderAsync(query, behavior: CommandBehavior.CloseConnection, cancellationToken: cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            yield return mapper(reader);
+        }
     }
 
     public object? ExecuteScalarCommand(string sql) =>
@@ -239,34 +254,6 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
         }
     }
 
-    //public async Task ExecuteTransactionalCommandAsync(string cmdText, Action<SqlCommand>? executor = null, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
-    //{
-    //    await using var connection = new SqlConnection(this.ConnectionString);
-    //    await connection.OpenAsync(cancellationToken);
-    //    var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
-    //    await using var command = new SqlCommand(cmdText.NotNull(), connection, (SqlTransaction)transaction) { CommandTimeout = connection.ConnectionTimeout };
-    //    fillParams?.Invoke(command.Parameters);
-    //    this._logTo?.Invoke(cmdText);
-    //    try
-    //    {
-    //        if (executor != null)
-    //        {
-    //            executor(command);
-    //        }
-    //        else
-    //        {
-    //            _ = command.ExecuteNonQuery();
-    //        }
-
-    //        transaction.Commit();
-    //    }
-    //    catch
-    //    {
-    //        transaction.Rollback();
-    //        throw;
-    //    }
-    //}
-
     public async Task<TResult> ExecuteTransactionalCommandAsync<TResult>(string cmdText, Func<SqlCommand, Task<TResult>> executeAsync, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
     {
         Check.MustBeArgumentNotNull(cmdText);
@@ -321,96 +308,12 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
         }
     }
 
-    public DataSet FillDataSet(string query)
-    {
-        this._logTo?.Invoke(query);
-        return Execute(this.ConnectionString, conn => conn.FillDataSet(query));
-    }
-
-    public DataSet FillDataSetByTableNames(params string[] tableNames)
-    {
-        Check.MustBeArgumentNotNull(tableNames);
-
-        var result = this.FillDataSet(tableNames.Select(t => SqlStatementBuilder.CreateSelect(t)).Merge(Environment.NewLine));
-        for (var i = 0; i < tableNames.Length; i++)
-        {
-            result.Tables[i].TableName = tableNames[i];
-        }
-
-        return result;
-    }
-
-    public DataTable FillDataTable(string query)
-    {
-        this._logTo?.Invoke(query);
-        return Execute(this.ConnectionString, conn => conn.FillDataTable(query));
-    }
-
-    public IEnumerable<DataTable> FillDataTables(params string[] queries)
-    {
-        Check.MustBeArgumentNotNull(queries);
-
-        using var connection = new SqlConnection(this.ConnectionString);
-        using var cmd = connection.CreateCommand();
-        using var da = new SqlDataAdapter(cmd);
-
-        connection.Open();
-        foreach (var query in queries)
-        {
-            this._logTo?.Invoke(query);
-            cmd.CommandText = query;
-            var dataTable = new DataTable();
-            _ = da.Fill(dataTable);
-            yield return dataTable;
-        }
-    }
-
     public T? FirstOrDefault<T>(string query)
         where T : new()
     {
         using var conn = new SqlConnection(this.ConnectionString);
         this._logTo?.Invoke(query);
         return Select<T>(conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection)).FirstOrDefault();
-    }
-
-    public SqlCommand GetCommand(string query)
-    {
-        var connection = new SqlConnection(this.ConnectionString);
-        var result = connection.CreateCommand(query);
-        result.Disposed += delegate
-        {
-            if (connection.State != ConnectionState.Closed)
-            {
-                connection.Close();
-            }
-
-            connection.Dispose();
-        };
-        return result;
-    }
-
-    public async Task<DataTable> LoadDataTableAsync(string query, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
-    {
-        var result = new DataTable();
-        await using var command = this.GetCommand(query);
-        fillParams?.Invoke(command.Parameters);
-        await command.Connection.OpenAsync(cancellationToken);
-        this._logTo?.Invoke(query);
-        result.Load(await command.ExecuteReaderAsync(cancellationToken));
-        return result;
-    }
-
-    public DataTable LoadFillDataTable(string query, Action<SqlParameterCollection>? fillParams = null)
-    {
-        var result = new DataTable();
-        using var command = this.GetCommand(query);
-        fillParams?.Invoke(command.Parameters);
-        command.Connection.Open();
-        this._logTo?.Invoke(query);
-        result.Load(command.ExecuteReader());
-        command.Connection.Close();
-
-        return result;
     }
 
     public IEnumerable<T> Select<T>(string query, Func<SqlDataReader, T> rowFiller)
@@ -488,9 +391,9 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     /// <param name="fillParams">An optional action to fill the SqlParameterCollection.</param>
     /// <returns>An IEnumerable of type T.</returns>
     private static IEnumerable<T> Select<T>([DisallowNull] SqlConnection connection,
-               [DisallowNull] string sql,
-                [DisallowNull] Func<SqlDataReader, T> rowFiller,
-                Action<SqlParameterCollection>? fillParams = null)
+        [DisallowNull] string sql,
+        [DisallowNull] Func<SqlDataReader, T> rowFiller,
+        Action<SqlParameterCollection>? fillParams = null)
     {
         Check.MustBeArgumentNotNull(connection);
 

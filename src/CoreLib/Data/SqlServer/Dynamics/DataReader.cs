@@ -1,7 +1,8 @@
-﻿using Microsoft.Data.SqlClient;
-using System.Dynamic;
+﻿using System.Dynamic;
 
 using Library.Validations;
+
+using Microsoft.Data.SqlClient;
 
 namespace Library.Data.SqlServer.Dynamics;
 
@@ -17,14 +18,6 @@ public sealed class DataReader(SqlDataReader sqlDataReader, Database owner, stri
         this.SqlDataReader.Dispose();
     }
 
-    public bool Read() => this.SqlDataReader.Read();
-
-    public IEnumerable<T> Select<T>()
-        where T : new() => this.SqlDataReader.Select<T>();
-
-    public override bool TryGetMember(GetMemberBinder binder, out object result)
-    {
-        result = this.SqlDataReader[binder.NotNull().Name];
-        return true;
-    }
+    public bool Read()
+        => this.SqlDataReader.Read();
 }

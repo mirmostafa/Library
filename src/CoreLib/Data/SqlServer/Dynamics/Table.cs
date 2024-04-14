@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Immutable;
 using System.Data;
-using Microsoft.Data.SqlClient;
 
 using Library.Data.SqlServer.Dynamics.Collections;
+
+using Microsoft.Data.SqlClient;
 
 using static Library.Data.SqlServer.SqlStatementBuilder;
 
@@ -37,13 +38,13 @@ public sealed class Table(Database owner, string name, string? schema = null, st
 
     public static ImmutableList<Column> GetTableColumns(Table owner)
     {
-        var helper = new Sql(owner.ConnectionString);
         var qColumns = string.Format(QueryBank.COLUMNS_WHERE_TABLE_NAME, owner.Name);
         var qIdentities = string.Format(QueryBank.IDENTITIES_WHERE_TABLE_NAME, owner.Name);
         var qForeignKeys = string.Format(QueryBank.FOREIGN_KEY_COLUMNS_WHERE_TABLE_NAME, owner.Name);
         var query = new[] { qColumns, qIdentities, qForeignKeys }.Merge("; ");
         var result = new List<Column>();
-        using var reader = helper.ExecuteReader(query);
+        using var conn = new SqlConnection(owner.ConnectionString);
+        using var reader = conn.ExecuteReader(query);
         while (reader.Read())
         {
             var column = new Column(default!, reader.Field("name", Convert.ToString)!, owner.ConnectionString)
@@ -211,24 +212,40 @@ public sealed class Table(Database owner, string name, string? schema = null, st
     }
 
     public DataTable ToDataTable(params string[] columns)
-        => this.GetSql().FillDataTable(CreateSelect(this.ToString(), columns));
+    {
+        using var connection = new SqlConnection(this.ConnectionString);
+        return connection.FillDataTable(CreateSelect(this.ToString(), columns));
+    }
 
-    public DataTable ToDataTableWhere([DisallowNull] string condition, params string[] columns) =>
-        this.GetSql().FillDataTable($"{CreateSelect(this.Name, columns)} WHERE {condition}");
+    public DataTable ToDataTableWhere([DisallowNull] string condition, params string[] columns)
+    {
+        using var conn = new SqlConnection(this.ConnectionString);
+        return conn.FillDataTable($"{CreateSelect(this.Name, columns)} WHERE {condition}");
+    }
 
-    public DataReader ToReader(params string[] columns) => new(
-        this.GetSql().ExecuteReader(CreateSelect(this.Name, columns)),
-        this.Owner,
-        this.Name,
-        this.ConnectionString);
+    public DataReader ToReader(params string[] columns)
+    {
+        var connection = new SqlConnection(this.ConnectionString);
+        return new(connection.ExecuteReader(CreateSelect(this.Name, columns)), this.Owner, this.Name, this.ConnectionString);
+    }
 
-    public SqlDataReader ToReaderWhere(string condition, params string[] columns) =>
-        this.GetSql().ExecuteReader($"{CreateSelect(this.Name, columns)} WHERE {condition}");
+    public SqlDataReader ToReaderWhere(string condition, params string[] columns)
+    {
+        var connection = new SqlConnection(connectionString);
+        return connection.ExecuteReader($"{CreateSelect(this.Name, columns)} WHERE {condition}");
+    }
 
-    public SqlDataReader ToSqlDataReader(params string[] columns) => this.GetSql().ExecuteReader(CreateSelect(this.ToString(), columns));
+    public SqlDataReader ToSqlDataReader(params string[] columns)
+    {
+        var connection = new SqlConnection(connectionString);
+        return connection.ExecuteReader(CreateSelect(this.ToString(), columns));
+    }
 
-    public SqlDataReader Where(string condition, params string[] columns) =>
-        this.GetSql().ExecuteReader($"{CreateSelect(this.Name, columns)} WHERE {condition}");
+    public SqlDataReader Where(string condition, params string[] columns)
+    {
+        var connection = new SqlConnection(connectionString);
+        return connection.ExecuteReader($"{CreateSelect(this.Name, columns)} WHERE {condition}");
+    }
 
     private Columns GetColumns()
     {

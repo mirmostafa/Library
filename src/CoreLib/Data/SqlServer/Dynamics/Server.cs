@@ -80,9 +80,9 @@ public sealed class Server : DynamicObject, ISqlObject
 
     protected Databases GetDatabases()
     {
-        var helper = new Sql(this.ConnectionString);
+        using var conn = new SqlConnection(this.ConnectionString);
         var items = new List<Database>();
-        using (var set = helper.FillDataSetByTableNames("sys.databases"))
+        using (var set = conn.FillDataSetByTableNames("sys.databases"))
         {
             var table = set.GetTables().First();
             Database selector(DataRow row) => new(this, row.Field<string>("name"), this.ConnectionString)

@@ -127,12 +127,6 @@ public abstract class AdoRepositoryBase(in Sql sql)
     }
 
     [return: NotNull]
-    private async IAsyncEnumerable<TEntity> ExecuteReaderAsync<TEntity>([DisallowNull] string query, [DisallowNull] Func<SqlDataReader, TEntity> mapper, [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var reader = await this.Sql.ExecuteReaderAsync(query, cancellationToken);
-        while (await reader.ReadAsync(cancellationToken))
-        {
-            yield return mapper(reader);
-        }
-    }
+    private IAsyncEnumerable<TEntity> ExecuteReaderAsync<TEntity>([DisallowNull] string query, [DisallowNull] Func<SqlDataReader, TEntity> mapper, CancellationToken cancellationToken = default)
+        => this.Sql.ExecuteReaderAsync(query, mapper, cancellationToken);
 }

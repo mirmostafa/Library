@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Data;
-using Microsoft.Data.SqlClient;
 using System.Dynamic;
+
+using Microsoft.Data.SqlClient;
 
 namespace Library.Data.SqlServer.Dynamics;
 
@@ -32,13 +33,15 @@ public abstract class SqlObject<TSqlObject, TOwner> : DynamicObject, ISqlObject
 
     protected static IEnumerable<DataRow> GetDataRows(string connectionString, string tableName)
     {
-        using var dataSet = GetSql(connectionString).FillDataSetByTableNames(tableName);
+        using var conn = new SqlConnection(connectionString);
+        using var dataSet = conn.FillDataSetByTableNames(tableName);
         return SqlObject<TSqlObject, TOwner>.GetRows(dataSet);
     }
 
     protected static IEnumerable<DataRow> GetQueryItems(string connectionString, string query)
     {
-        using var dataSet = GetSql(connectionString).FillDataSet(query);
+        using var conn = new SqlConnection(connectionString);
+        using var dataSet = conn.FillDataSet(query);
         return GetRows(dataSet);
     }
 
