@@ -83,6 +83,55 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     public static Sql New(string arg)
         => new(arg);
 
+    /// <summary>
+    /// Executes the provided converter function for each row in the IDataReader and returns an
+    /// IEnumerable of the results. Throws an ArgumentNullException if the IDataReader is null.
+    /// </summary>
+    public static IEnumerable<T> Select<T>(IDataReader reader, Func<IDataReader, T> converter)
+            where T : new()
+            => reader is not null
+                ? While(reader.Read, () => converter(reader))
+                : throw new ArgumentNullException(nameof(reader));
+
+    /// <summary>
+    /// Extension method to select data from an IDataReader into an IEnumerable of type T.
+    /// </summary>
+    public static IEnumerable<T> Select<T>([DisallowNull] IDataReader reader)
+        where T : new() => Select(reader, () => new T());
+
+    /// <summary>
+    /// Executes the specified reader and creates a collection of objects using the specified
+    /// creator function.
+    /// </summary>
+    /// <typeparam name="T">The type of the objects to create.</typeparam>
+    /// <param name="reader">The reader to execute.</param>
+    /// <param name="creator">The function used to create objects.</param>
+    /// <returns>A collection of objects created using the specified creator function.</returns>
+    public static IEnumerable<T> Select<T>([DisallowNull] IDataReader reader, [DisallowNull] Func<T> creator)
+    {
+        Check.MustBeArgumentNotNull(reader);
+        Check.MustBeArgumentNotNull(creator);
+
+        var properties = typeof(T).GetProperties();
+        var columnNames = For(reader.FieldCount, reader.GetName).Except(x => !properties.Select(x => x.Name).Contains(x));
+        while (reader.Read())
+        {
+            var t = creator();
+            foreach (var columnName in columnNames)
+            {
+                var value = reader[columnName];
+                if (value == DBNull.Value)
+                {
+                    value = null;
+                }
+
+                var property = Array.Find(properties, x => x.Name == columnName);
+                _ = Catch(() => property!.SetValue(t, value, []));
+            }
+            yield return t;
+        }
+    }
+
     public static async Task<TryMethodResult> TryConnectAsync(string? connectionString, CancellationToken cancellationToken = default)
     {
         await using var conn = new SqlConnection(connectionString);
@@ -143,7 +192,7 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     public Task<object?> ExecuteScalarCommandAsync(string sql, CancellationToken cancellationToken = default)
         => this.ExecuteScalarCommandAsync(sql, null, cancellationToken);
 
-    public async Task<object?> ExecuteScalarCommandAsync(string sql, Action<SqlParameterCollection>? fillParams, CancellationToken cancellationToken = default) 
+    public async Task<object?> ExecuteScalarCommandAsync(string sql, Action<SqlParameterCollection>? fillParams, CancellationToken cancellationToken = default)
         => await this.ExecuteTransactionalCommandAsync(sql, cmd => cmd.ExecuteScalarAsync(), fillParams, cancellationToken);
 
     public object? ExecuteScalarQuery(string sql) =>
@@ -321,7 +370,7 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     {
         using var conn = new SqlConnection(this.ConnectionString);
         this._logTo?.Invoke(query);
-        return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>().FirstOrDefault();
+        return Select<T>(conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection)).FirstOrDefault();
     }
 
     public SqlCommand GetCommand(string query)
@@ -343,7 +392,7 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     public async Task<DataTable> LoadDataTableAsync(string query, Action<SqlParameterCollection>? fillParams = null, CancellationToken cancellationToken = default)
     {
         var result = new DataTable();
-        using var command = this.GetCommand(query);
+        await using var command = this.GetCommand(query);
         fillParams?.Invoke(command.Parameters);
         await command.Connection.OpenAsync(cancellationToken);
         this._logTo?.Invoke(query);
@@ -368,7 +417,7 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     {
         using var conn = new SqlConnection(this.ConnectionString);
         this._logTo?.Invoke(query);
-        return conn.Select(query, rowFiller).ToList();
+        return Select(conn, query, rowFiller).ToList();
     }
 
     public IEnumerable<T> Select<T>(string query, Func<IDataReader, T> convertor)
@@ -376,14 +425,14 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     {
         using var conn = new SqlConnection(this.ConnectionString);
         this._logTo?.Invoke(query);
-        return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select(convertor);
+        return Select(conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection), convertor);
     }
 
     public IEnumerable<T> Select<T>(string query, Func<T> creator)
     {
         using var conn = new SqlConnection(this.ConnectionString);
         this._logTo?.Invoke(query);
-        return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select(creator);
+        return Select(conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection), creator);
     }
 
     public IEnumerable<T> Select<T>(string query)
@@ -391,7 +440,7 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     {
         using var conn = new SqlConnection(this.ConnectionString);
         this._logTo?.Invoke(query);
-        return conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection).Select<T>().ToList();
+        return Select<T>(conn.ExecuteReader(query, behavior: CommandBehavior.CloseConnection)).ToList();
     }
 
     public IEnumerable<dynamic> Select(string query)
@@ -420,12 +469,32 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
     public IEnumerable<dynamic> Select(string query, Func<SqlDataReader, dynamic> rowFiller)
     {
         this._logTo?.Invoke(query);
-        return Execute<IEnumerable<dynamic>>(this.ConnectionString, conn => conn.Select(query, rowFiller).ToList());
+        return Execute<IEnumerable<dynamic>>(this.ConnectionString, conn => Select(conn, query, rowFiller).ToList());
     }
 
     private static TResult Execute<TResult>(string connectionString, Func<SqlConnection, TResult> func)
     {
         using var conn = new SqlConnection(connectionString);
         return func(conn);
+    }
+
+    /// <summary>
+    /// Executes a SQL query and returns the result as an IEnumerable of type T.
+    /// </summary>
+    /// <typeparam name="T">The type of the result.</typeparam>
+    /// <param name="connection">The connection to the database.</param>
+    /// <param name="sql">The SQL query to execute.</param>
+    /// <param name="rowFiller">A function to fill the result from the SqlDataReader.</param>
+    /// <param name="fillParams">An optional action to fill the SqlParameterCollection.</param>
+    /// <returns>An IEnumerable of type T.</returns>
+    private static IEnumerable<T> Select<T>([DisallowNull] SqlConnection connection,
+               [DisallowNull] string sql,
+                [DisallowNull] Func<SqlDataReader, T> rowFiller,
+                Action<SqlParameterCollection>? fillParams = null)
+    {
+        Check.MustBeArgumentNotNull(connection);
+
+        var reader = connection.ExecuteReader(sql, fillParams, CommandBehavior.CloseConnection);
+        return While(reader.Read, () => rowFiller(reader), connection.Close);
     }
 }
