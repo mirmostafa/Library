@@ -10,17 +10,15 @@ namespace Library.Data.SqlServer.Dynamics;
 public abstract class SqlObject<TSqlObject, TOwner> : DynamicObject, ISqlObject
     where TSqlObject : SqlObject<TSqlObject, TOwner>
 {
-    private readonly string? _connectionString;
-
     protected SqlObject(TOwner owner, string name, string? schema = null, string? connectionString = null)
     {
         this.Owner = owner;
         this.Name = name;
-        this._connectionString = connectionString;
+        this.ConnectionString = new SqlConnectionStringBuilder(connectionString).ConnectionString;
         this.Schema = schema;
     }
 
-    public string ConnectionString => new SqlConnectionStringBuilder(this._connectionString).ConnectionString;
+    public string ConnectionString { get; }
 
     public virtual string Name { get; }
 
@@ -58,5 +56,5 @@ public abstract class SqlObject<TSqlObject, TOwner> : DynamicObject, ISqlObject
         => GetSql(this.ConnectionString);
 
     private static IEnumerable<DataRow> GetRows(DataSet ds)
-         => ds.Dispose(ds.GetTables().FirstOrDefault()?.Dispose(t => (t?.Select()))) ?? Enumerable.Empty<DataRow>();
+         => ds.Dispose(ds.GetTables().FirstOrDefault()?.Dispose(t => t?.Select())) ?? Enumerable.Empty<DataRow>();
 }
