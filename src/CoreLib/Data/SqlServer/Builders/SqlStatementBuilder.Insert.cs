@@ -50,7 +50,7 @@ public partial class SqlStatementBuilder
 
         IEnumerable<(string, object)> values = model.GetType().GetProperties().Select(x => (x.Name, x.GetValue(model))).Compact(isNotNull)!;
         return Values(statement, values);
-        static bool isNotNull((string? columnName, object? value) x) => x.columnName.IsNullOrEmpty() && x.value is not null;
+        static bool isNotNull((string? columnName, object? value) x) => x.columnName.IsNullOrEmpty() || x.value is null;
     }
 
     public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params (string ColumnName, object Value)[] values) =>

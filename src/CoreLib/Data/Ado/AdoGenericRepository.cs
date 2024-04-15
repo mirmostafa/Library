@@ -30,7 +30,10 @@ public sealed class AdoGenericRepository : AdoRepositoryBase
         return this.OnGetByIdAsync<TEntity>(id, token);
     }
 
-    public Task<Result<TEntity>> InsertAsync<TEntity>(TEntity model, bool persist = true, CancellationToken token = default) => throw new NotImplementedException();
+    public Task<Result<TEntity>> InsertAsync<TEntity>(TEntity model, bool persist = true, CancellationToken token = default)
+    {
+        return OnInsertAsync(model, persist, token);
+    }
 
     public Task<Result<TEntity>> UpdateAsync<TEntity>(long id, TEntity model, bool persist = true, CancellationToken token = default) => throw new NotImplementedException();
 }
