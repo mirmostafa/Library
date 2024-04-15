@@ -87,7 +87,7 @@ public abstract class AdoRepositoryBase(in Sql sql)
     protected virtual Task<TEntity?> OnGetByIdAsync<TEntity>(object idValue, CancellationToken cancellationToken = default)
         where TEntity : new()
     {
-        var query = Select<TEntity>().Top(1).Where($"{Sql.FindIdColumn<TEntity>()} = {idValue}").WithNoLock().Build();
+        var query = Select<TEntity>().Top(1).Where($"{Sql.FindIdColumn<TEntity>()!.Value.Name} = {idValue}").WithNoLock().Build();
         return this.ExecuteReaderAsync(query, r => Mapper<TEntity>(r, typeof(TEntity).GetProperties()), cancellationToken).FirstOrDefaultAsync();
     }
 

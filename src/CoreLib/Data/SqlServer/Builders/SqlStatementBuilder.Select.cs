@@ -39,6 +39,10 @@ public static partial class SqlStatementBuilder
             _ = result.Append(" *");
         }
         _ = AddClause($"FROM {AddBrackets($"{statement.Schema}.{statement.TableName}")}", indent, result);
+        if (statement.WithNoLock)
+        {
+            _ = AddClause("WITH (NOLOCK)", indent, result);
+        }
         if (!statement.WhereClause.IsNullOrEmpty())
         {
             _ = AddClause($"WHERE {statement.WhereClause}", indent, result);
@@ -53,10 +57,6 @@ public static partial class SqlStatementBuilder
                 OrderByDirection.Descending => " DESC",
                 _ => throw new NotImplementedException(),
             });
-        }
-        if (statement.WithNoLock)
-        {
-            _ = AddClause("WITH (NOLOCK)", indent, result);
         }
         return result.ToString();
     }
