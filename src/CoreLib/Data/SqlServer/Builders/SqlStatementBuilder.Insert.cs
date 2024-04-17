@@ -48,21 +48,21 @@ public partial class SqlStatementBuilder
         Check.MustBeArgumentNotNull(statement);
         Check.MustBeArgumentNotNull(model);
 
-        IEnumerable<(string, object)> values = model.GetType().GetProperties().Select(x => (x.Name, x.GetValue(model))).Compact(isNotNull)!;
-        return Values(statement, values);
-        static bool isNotNull((string? columnName, object? value) x) => x.columnName.IsNullOrEmpty() || x.value is null;
+        IEnumerable<(string, object?)> values = model.GetType().GetProperties().Select(x => (x.Name, x.GetValue(model)));//.Compact(isNotNull)!;
+        return Values(statement, values.Except(x => x.Item1.Equals("Id", StringComparison.OrdinalIgnoreCase)));
+        //static bool isNotNull((string? columnName, object? value) x) => x.columnName.IsNullOrEmpty() || x.value is null;
     }
 
-    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params (string ColumnName, object Value)[] values) =>
+    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params (string ColumnName, object? Value)[] values) =>
         statement.With(x => x.Values(values.Select(x => new KeyValuePair<string, object?>(x.ColumnName, x.Value))));
 
-    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, IEnumerable<(string ColumnName, object Value)> values) =>
+    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, IEnumerable<(string ColumnName, object? Value)> values) =>
         statement.Values(values.ToArray());
 
     public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, IEnumerable<KeyValuePair<string, object?>> values) =>
         statement.Values(values.ToArray());
 
-    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params KeyValuePair<string, object>[] values) =>
+    public static IInsertStatement Values([DisallowNull] this IInsertStatement statement, params KeyValuePair<string, object?>[] values) =>
         statement.With(x => x.Values.AddRange(values));
 
     private struct InsertStatement : IInsertStatement

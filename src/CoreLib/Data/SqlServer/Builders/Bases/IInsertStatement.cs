@@ -2,5 +2,5 @@
 
 public interface IInsertStatement : IStatementOnTable, ICommandStatement
 {
-    IDictionary<string, object> Values { get; }
+    IDictionary<string, object?> Values { get; }
 }
