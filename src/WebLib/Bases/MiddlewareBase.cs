@@ -1,30 +1,40 @@
-﻿using System.Diagnostics;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
-using Library.Coding;
 using Library.EventsArgs;
 
 namespace Library.Web.Bases;
 
-public abstract class MiddlewareBase
+public abstract class MiddlewareBase(RequestDelegate next)
 {
-    private readonly RequestDelegate _next;
-
-    protected MiddlewareBase(RequestDelegate next)
-        => this._next = next;
+    private readonly RequestDelegate _next = next;
 
     protected ClaimsPrincipal? User { get; private set; }
 
     //[DebuggerStepThrough]
     public async Task Invoke(HttpContext httpContext)
     {
-        var onExecutingEventArgs = new ItemActingEventArgs<HttpContext>(httpContext);
-        await this.OnExecutingAsync(onExecutingEventArgs);
-        if (!onExecutingEventArgs.Handled)
+        var onExecutingArgs = new ItemActingEventArgs<HttpContext>(httpContext);
+        await this.OnExecutingAsync(onExecutingArgs);
+        if (!onExecutingArgs.Handled)
         {
-            await this._next(httpContext);
+            try
+            {
+                await this._next(httpContext);
+            }
+            catch (Exception ex)
+            {
+                var onExceptionOccurredArgs =new ItemActedEventArgs<Exception>(ex);
+                await ExceptionOccurred(onExceptionOccurredArgs);
+            }
+            var onExecutedArgs = new ItemActedEventArgs<HttpContext>(httpContext);
+            await this.OnExecutedAsync(onExecutedArgs);
         }
     }
+
+    protected virtual Task ExceptionOccurred(ItemActedEventArgs<Exception> e) 
+        => Task.CompletedTask;
+    protected virtual Task OnExecutedAsync(ItemActedEventArgs<HttpContext> e)
+        => Task.CompletedTask;
 
     protected abstract Task OnExecutingAsync(ItemActingEventArgs<HttpContext> e);
 }
