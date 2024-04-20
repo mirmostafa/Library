@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics;
+using System.Security.Claims;
 
 using Library.EventsArgs;
 
@@ -10,7 +11,7 @@ public abstract class MiddlewareBase(RequestDelegate next)
 
     protected ClaimsPrincipal? User { get; private set; }
 
-    //[DebuggerStepThrough]
+    [DebuggerStepThrough]
     public async Task Invoke(HttpContext httpContext)
     {
         var onExecutingArgs = new ItemActingEventArgs<HttpContext>(httpContext);
@@ -23,16 +24,24 @@ public abstract class MiddlewareBase(RequestDelegate next)
             }
             catch (Exception ex)
             {
-                var onExceptionOccurredArgs =new ItemActedEventArgs<Exception>(ex);
-                await ExceptionOccurred(onExceptionOccurredArgs);
+                var onExceptionOccurredArgs = new ItemActingEventArgs<Exception>(ex);
+                await this.ExceptionOccurred(onExceptionOccurredArgs);
+                if (!onExceptionOccurredArgs.Handled)
+                {
+                    throw;
+                }
             }
-            var onExecutedArgs = new ItemActedEventArgs<HttpContext>(httpContext);
-            await this.OnExecutedAsync(onExecutedArgs);
+            finally
+            {
+                var onExecutedArgs = new ItemActedEventArgs<HttpContext>(httpContext);
+                await this.OnExecutedAsync(onExecutedArgs);
+            }
         }
     }
 
-    protected virtual Task ExceptionOccurred(ItemActedEventArgs<Exception> e) 
+    protected virtual Task ExceptionOccurred(ItemActingEventArgs<Exception> e)
         => Task.CompletedTask;
+
     protected virtual Task OnExecutedAsync(ItemActedEventArgs<HttpContext> e)
         => Task.CompletedTask;
 
