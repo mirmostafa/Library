@@ -62,7 +62,12 @@ public static class ValidationExtensions
     /// <returns>The value if it is not null.</returns>
     [return: NotNull]
     public static TValue NotNull<TValue>([NotNull] this TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null!) =>
-        InnerDefaultCheck(value).NotNull();
+        InnerDefaultCheck(value, paramName).NotNull();
+
+    [return: NotNull]
+    public static TValue NotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string paramName = null!)
+        where TValue : struct
+        => InnerDefaultCheck(value.Value, paramName).NotNull().Value;
 
     /// <summary>
     /// Checks if the given value is not null and throws an exception if it is.

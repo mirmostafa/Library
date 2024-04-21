@@ -1,19 +1,18 @@
 ﻿using System.Diagnostics;
 
 using Library.EventsArgs;
-using Library.Web.Bases;
 using Library.Web.Middlewares.Markers;
 
 namespace Library.Web.Middlewares;
 
 [MonitoringMiddleware]
-public sealed class LoggerMiddleware(RequestDelegate next, ILogger<LoggerMiddleware> logger) : MiddlewareBase(next)
+public sealed class LoggerMiddleware(RequestDelegate next, ILogger<LoggerMiddleware> logger) : Markers.IMiddleware
 {
     private readonly ILogger<LoggerMiddleware> _logger = logger;
     private readonly RequestDelegate _next = next;
 
     [DebuggerStepThrough]
-    public new async Task Invoke(HttpContext httpContext)
+    public async Task Invoke(HttpContext httpContext)
     {
         var timer = Stopwatch.StartNew();
         try
@@ -29,7 +28,7 @@ public sealed class LoggerMiddleware(RequestDelegate next, ILogger<LoggerMiddlew
         }
     }
 
-    protected override Task OnExecutingAsync(ItemActingEventArgs<HttpContext> e) => throw new NotImplementedException();
+    protected Task OnExecutingAsync(ItemActingEventArgs<HttpContext> e) => throw new NotImplementedException();
 }
 
 public static class LoggerMiddlewareExtensions

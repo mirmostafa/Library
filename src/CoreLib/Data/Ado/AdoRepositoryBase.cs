@@ -115,6 +115,23 @@ public abstract class AdoRepositoryBase(in Sql sql)
         }
     }
 
+    protected virtual async Task<Result<TEntity>> OnUpdateAsync<TEntity>(object idValue, TEntity model, bool persist = true, CancellationToken cancellationToken = default)
+    {
+        Check.MustBeArgumentNotNull(model);
+        Check.MustBe(persist, () => new NotSupportedException($"{nameof(persist)} must be true in this content."));
+        try
+        {
+            var id = Sql.FindIdColumn<TEntity>().NotNull();
+            var query = Update().Table<TEntity>().Set(model).Where($"{id.Name} = {idValue}").ReturnId().Build();
+            var dbResult = await this.Sql.ExecuteScalarCommandAsync(query, cancellationToken);
+            return Result.Success(model)!;
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(ex, model)!;
+        }
+    }
+
     private static TEntity Mapper<TEntity>(in SqlDataReader reader, in System.Reflection.PropertyInfo[] properties)
         where TEntity : new()
     {

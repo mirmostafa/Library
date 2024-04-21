@@ -48,8 +48,17 @@ public static partial class SqlStatementBuilder
         return statement;
     }
 
+    public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, [DisallowNull] object entity)
+        => Set(statement, entity.ArgumentNotNull().GetType().GetProperties().Select(p => (p.Name, p.GetValue(entity)))!);
+
     public static IUpdateStatement Table([DisallowNull] this IUpdateStatement statement, [DisallowNull] string tableName)
         => statement.Fluent(statement.ArgumentNotNull().TableName = tableName.ArgumentNotNull()).GetValue();
+
+    public static IUpdateStatement Table<TTable>([DisallowNull] this IUpdateStatement statement)
+    {
+        var table = GetTable<TTable>();
+        return Table(statement, table.Name).SetSchema(table.Schema);
+    }
 
     public static IUpdateStatement Update() =>
         new UpdateStatement();
@@ -62,11 +71,11 @@ public static partial class SqlStatementBuilder
 
     private class UpdateStatement : IUpdateStatement
     {
-        public IDictionary<string, object> Values { get; } = new Dictionary<string, object>();
         public bool ForceFormatValues { get; set; } = true;
         public bool ReturnId { get; set; }
         public string? Schema { get; set; }
         public string TableName { get; set; } = null!;
+        public IDictionary<string, object> Values { get; } = new Dictionary<string, object>();
         public string? WhereClause { get; set; }
     }
 }

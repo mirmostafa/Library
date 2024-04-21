@@ -1,6 +1,6 @@
 ﻿namespace Library.Web.Middlewares.Markers;
 
-public interface IInfraMiddleware
+public interface IMiddleware
 {
     Task Invoke(HttpContext httpContext);
 }
