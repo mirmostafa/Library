@@ -61,8 +61,8 @@ public static class ValidationExtensions
     /// <param name="paramName">The name of the argument.</param>
     /// <returns>The value if it is not null.</returns>
     [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null!) =>
-        InnerDefaultCheck(value, paramName).NotNull();
+    public static TValue NotNull<TValue>([NotNull] this TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null!)
+        => InnerDefaultCheck(value, paramName).NotNull();
 
     [return: NotNull]
     public static TValue NotNull<TValue>([NotNull] this TValue? value, [CallerArgumentExpression(nameof(value))] string paramName = null!)
@@ -78,9 +78,14 @@ public static class ValidationExtensions
     /// <param name="paramName">The name of the argument.</param>
     /// <returns>The value if it is not null.</returns>
     [return: NotNull]
-    public static TValue NotNull<TValue>([NotNull] this TValue value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string paramName = null!) =>
-        InnerDefaultCheck(value).NotNull(onErrorMessage);
+    public static TValue NotNull<TValue>([NotNull] this TValue value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string paramName = null!)
+        => InnerDefaultCheck(value).NotNull(onErrorMessage, paramName);
 
+    [return: NotNull]
+    public static TValue NotNull<TValue>([NotNull] this TValue? value, Func<string> onErrorMessage, [CallerArgumentExpression(nameof(value))] string paramName = null!)
+        where TValue : struct
+        => (TValue)InnerDefaultCheck(value).NotNull(onErrorMessage, paramName);
+   
     /// <summary>
     /// Checks if the given value is not null and throws an exception if it is.
     /// </summary>
@@ -91,7 +96,7 @@ public static class ValidationExtensions
     /// <returns>The value if it is not null.</returns>
     [return: NotNull]
     public static TValue NotNull<TValue>([NotNull] this TValue value, Func<Exception> onError, [CallerArgumentExpression(nameof(value))] string paramName = null) =>
-        InnerDefaultCheck(value).NotNull(onError);
+        InnerDefaultCheck(value).NotNull(onError, paramName);
 
     /// <summary>
     /// Adds a rule to the ValidationResultSet to check if the value is not null.
@@ -273,6 +278,14 @@ public static class ValidationExtensions
 
     private static ValidationResultSet<TValue> InnerCheck<TValue>(TValue value, CheckBehavior behavior, string paramName) =>
         new(value, behavior, paramName);
+
+    private static ValidationResultSet<TValue?> InnerCheck<TValue>(TValue? value, CheckBehavior behavior, string paramName)
+        where TValue : struct
+        => ValidationResultSet<TValue>.New(value, behavior, paramName);
+
+    private static ValidationResultSet<TValue?> InnerDefaultCheck<TValue>(TValue? value, [CallerArgumentExpression(nameof(value))] string paramName = null)
+        where TValue : struct
+        => InnerCheck(value, CheckBehavior.ThrowOnFail, paramName);
 
     private static ValidationResultSet<TValue> InnerDefaultCheck<TValue>(TValue value, [CallerArgumentExpression(nameof(value))] string paramName = null) =>
         InnerCheck(value, CheckBehavior.ThrowOnFail, paramName);

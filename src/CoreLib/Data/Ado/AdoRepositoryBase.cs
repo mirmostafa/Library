@@ -22,8 +22,7 @@ public abstract class AdoRepositoryBase(in Sql sql)
         Check.MustBeArgumentNotNull(model);
         Check.MustBe(persist, () => new NotSupportedException($"{nameof(persist)} must be true in this content."));
 
-        var keyColumn = Sql.FindIdColumn<TEntity>();
-        var idColumn = keyColumn.NotNull(() => "ID column not found.").Value;
+        var idColumn = Sql.FindIdColumn<TEntity>().NotNull(() => "ID column not found.");
         var id = model.GetType().GetProperty(idColumn.Name)!.GetValue(model);
         var query = Delete<TEntity>().Where($"{idColumn.Name} = {id}").Build();
 
@@ -98,15 +97,11 @@ public abstract class AdoRepositoryBase(in Sql sql)
 
         try
         {
+            var idColumn = Sql.FindIdColumn<TEntity>().NotNull(() => "\"Id\" field not found.");
             var query = Insert().Into<TEntity>().Values(model).ReturnId().Build();
             var dbResult = await this.Sql.ExecuteScalarCommandAsync(query, cancellationToken);
-            var idColumn = Sql.FindIdColumn<TEntity>();
-            if (idColumn is not null)
-            {
-                var id = idColumn.Value;
-                var returnedId = dbResult.Cast().ToInt();
-                model.GetType().GetProperty(id.Name)!.SetValue(model, returnedId);
-            }
+            var returnedId = dbResult.Cast().ToInt();
+            model.GetType().GetProperty(idColumn.Name)!.SetValue(model, returnedId);
             return Result.Success(model)!;
         }
         catch (Exception ex)
@@ -121,8 +116,8 @@ public abstract class AdoRepositoryBase(in Sql sql)
         Check.MustBe(persist, () => new NotSupportedException($"{nameof(persist)} must be true in this content."));
         try
         {
-            var id = Sql.FindIdColumn<TEntity>().NotNull();
-            var query = Update().Table<TEntity>().Set(model).Where($"{id.Name} = {idValue}").ReturnId().Build();
+            var idColumn = Sql.FindIdColumn<TEntity>().NotNull(() => "\"Id\" field not found.");
+            var query = Update().Table<TEntity>().Set(model).Where($"{idColumn.Name} = {idValue}").ReturnId().Build();
             var dbResult = await this.Sql.ExecuteScalarCommandAsync(query, cancellationToken);
             return Result.Success(model)!;
         }
