@@ -116,8 +116,13 @@ public abstract class AdoRepositoryBase(in Sql sql)
         Check.MustBe(persist, () => new NotSupportedException($"{nameof(persist)} must be true in this content."));
         try
         {
-            var idColumn = Sql.FindIdColumn<TEntity>().NotNull(() => "\"Id\" field not found.");
-            var query = Update().Table<TEntity>().Set(model).Where($"{idColumn.Name} = {idValue}").ReturnId().Build();
+            var idColumn = Sql.FindIdColumn<TEntity>().Value;//.NotNull(() => "\"Id\" field not found.");
+            var query = Update()
+                .Table<TEntity>()
+                .Set(model)
+                .Where($"{idColumn.Name} = {idValue}")
+                .ReturnId()
+                .Build();
             var dbResult = await this.Sql.ExecuteScalarCommandAsync(query, cancellationToken);
             return Result.Success(model)!;
         }

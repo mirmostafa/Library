@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -26,13 +27,14 @@ public sealed class Sql(string connectionString, Action<string>? logTo = null) :
         return await conn.CanConnectAsync(cancellationToken: cancellationToken);
     }
 
+    [DebuggerStepThrough, StackTraceHidden]
     public static (TypePath Type, string Name)? FindIdColumn<TEntity>()
         => FindIdColumn(typeof(TEntity));
 
     public static (TypePath Type, string Name)? FindIdColumn(in Type entityType)
     {
         Check.MustBeArgumentNotNull(entityType);
-        var idColumn = Array.Find(entityType.GetProperties(), x => x.Name.EqualsTo("Id"));
+        var idColumn = Array.Find(entityType.GetProperties(), [DebuggerStepThrough, StackTraceHidden] (x) => x.Name.EqualsTo("Id"));
         return idColumn == null
             ? default
             : (idColumn.PropertyType, idColumn.Name);

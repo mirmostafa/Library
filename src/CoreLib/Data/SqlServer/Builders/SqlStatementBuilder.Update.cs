@@ -49,7 +49,7 @@ public static partial class SqlStatementBuilder
     }
 
     public static IUpdateStatement Set([DisallowNull] this IUpdateStatement statement, [DisallowNull] object entity)
-        => Set(statement, entity.ArgumentNotNull().GetType().GetProperties().Select(p => (p.Name, p.GetValue(entity)))!);
+        => Set(statement, entity.ArgumentNotNull().GetType().GetProperties().Where(x=>x.Name != "Id").Select(p => (p.Name, p.GetValue(entity)))!);
 
     public static IUpdateStatement Table([DisallowNull] this IUpdateStatement statement, [DisallowNull] string tableName)
         => statement.Fluent(statement.ArgumentNotNull().TableName = tableName.ArgumentNotNull()).GetValue();

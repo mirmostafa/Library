@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Globalization;
 
 using Library.CodeGeneration.Models;
@@ -9,6 +10,7 @@ using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnu
 namespace Library.CodeGeneration;
 
 [Immutable]
+[DebuggerStepThrough, StackTraceHidden]
 public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
 {
     private static readonly (Type Type, string Keyword)[] _primitiveTypes = [
@@ -79,12 +81,11 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         typeInfo?.FullPath;
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
-    [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "<Pending>")]
     public static implicit operator TypePath?(in string? typeInfo) =>
         typeInfo.IsNullOrEmpty() ? null : new(typeInfo);
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
-    [SuppressMessage("Usage", "CA2225:Operator overloads have named alternates", Justification = "<Pending>")]
+    [DebuggerStepThrough, StackTraceHidden]
     public static implicit operator TypePath?(in Type? typeInfo) =>
         typeInfo == null ? null : New(typeInfo);
 
@@ -97,6 +98,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         new(typeof(T).FullName!, generics);
 
     [return: NotNull]
+    [DebuggerStepThrough, StackTraceHidden]
     public static TypePath New([DisallowNull] in Type type, in IEnumerable<string>? generics = null) =>
         new(type.ArgumentNotNull().FullName!, generics);
 
@@ -179,6 +181,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         return new(fullPath);
     }
 
+    [DebuggerStepThrough, StackTraceHidden]
     private static TypeData Parse(in string typePath, in IEnumerable<string>? generics = null, bool? isNullable = null)
     {
         // Validation checks
