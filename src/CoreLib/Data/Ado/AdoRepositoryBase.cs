@@ -17,12 +17,12 @@ public abstract class AdoRepositoryBase(in Sql sql)
 
     protected Sql Sql { get; } = sql;
 
-    protected virtual async Task<Result<int>> OnDeleteAsync<TEntity>(TEntity model, bool persist = true, CancellationToken token = default)
+    protected virtual async Task<Result> OnDeleteAsync<TEntity>(TEntity model, bool persist = true, CancellationToken token = default)
     {
         Check.MustBeArgumentNotNull(model);
         Check.MustBe(persist, () => new NotSupportedException($"{nameof(persist)} must be true in this content."));
 
-        var idColumn = Sql.FindIdColumn<TEntity>().NotNull(() => "ID column not found.");
+        var idColumn = Sql.FindIdColumn<TEntity>().Value;//.NotNull(() => "ID column not found.");
         var id = model.GetType().GetProperty(idColumn.Name)!.GetValue(model);
         var query = Delete<TEntity>().Where($"{idColumn.Name} = {id}").Build();
 
@@ -33,7 +33,7 @@ public abstract class AdoRepositoryBase(in Sql sql)
         }
         catch (Exception ex)
         {
-            return Result.Fail<int>(ex);
+            return Result.Fail(ex);
         }
     }
 

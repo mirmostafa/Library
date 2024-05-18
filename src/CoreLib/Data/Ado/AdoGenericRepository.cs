@@ -13,7 +13,7 @@ public sealed class AdoGenericRepository : AdoRepositoryBase
     {
     }
 
-    public Task<Result<int>> DeleteAsync<TEntity>(TEntity model, bool persist = true, CancellationToken token = default)
+    public Task<Result> DeleteAsync<TEntity>(TEntity model, bool persist = true, CancellationToken token = default)
         => this.OnDeleteAsync(model, persist, token);
 
     public async Task<IReadOnlyList<TEntity>> GetAllAsync<TEntity>(CancellationToken token = default)
