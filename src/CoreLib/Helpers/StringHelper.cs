@@ -367,7 +367,7 @@ public static class StringHelper
     /// </summary>
     [Pure]
     public static bool EqualsTo(this string str1, in string str, bool ignoreCase = true)
-        => str1.CompareTo(str, ignoreCase) == 0;
+        => str1?.Equals(str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) ?? (str == null);
 
     /// <summary>
     /// Checks if the given string is equal to any of the strings in the given array, with the given
