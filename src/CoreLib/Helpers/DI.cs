@@ -23,7 +23,7 @@ public static class DI
     /// <exception cref="ObjectNotFoundException">
     /// Thrown when unable to resolve service for the specified type.
     /// </exception>
-    [DebuggerStepThrough]
+    //[DebuggerStepThrough]
     [return: NotNull]
     public static T GetService<T>()
     {

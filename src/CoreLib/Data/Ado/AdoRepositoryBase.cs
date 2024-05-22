@@ -97,7 +97,7 @@ public abstract class AdoRepositoryBase(in Sql sql)
 
         try
         {
-            var idColumn = Sql.FindIdColumn<TEntity>().NotNull(() => "\"Id\" field not found.");
+            var idColumn = Sql.FindIdColumn<TEntity>().NotNull(() => "\"Id\" field not found.").Value;
             var query = Insert().Into<TEntity>().Values(model).ReturnId().Build();
             var dbResult = await this.Sql.ExecuteScalarCommandAsync(query, cancellationToken);
             var returnedId = dbResult.Cast().ToInt();
