@@ -993,21 +993,11 @@ public readonly struct PersianDateTime :
             this.Day.ToString("00"));
     }
 
-    /// <summary>
-    /// Converts the current instance to a DateTime object.
-    /// </summary>
+    /// <inheritdoc/>
     public DateTime ToDateTime()
         => this;
 
-    /// <summary>
-    /// Converts the value of this instance to an equivalent <see cref="T:System.DateTime"/> using
-    /// the specified culture-specific formatting information.
-    /// </summary>
-    /// <param name="provider">
-    /// An <see cref="T:System.IFormatProvider"/> interface implementation that supplies
-    /// culture-specific formatting information.
-    /// </param>
-    /// <returns>A <see cref="T:System.DateTime"/> instance equivalent to the value of this instance.</returns>
+    /// <inheritdoc/>
     public DateTime ToDateTime(IFormatProvider? provider)
         => this;
 
@@ -1035,10 +1025,7 @@ public readonly struct PersianDateTime :
     float IConvertible.ToSingle(IFormatProvider? provider)
         => throw GetInvalidTypeCastException();
 
-    /// <summary>
-    /// Returns a <see cref="string"/> that represents this instance.
-    /// </summary>
-    /// <returns>A <see cref="string"/> that represents this instance.</returns>
+    /// <inheritdoc/>
     public override string ToString()
         => this.ToString(ToStringFormat);
 
@@ -1072,13 +1059,7 @@ public readonly struct PersianDateTime :
         return result;
     }
 
-    /// <summary>
-    /// Converts to string.
-    /// </summary>
-    /// <param name="format">The format.</param>
-    /// <param name="formatProvider">The format provider.</param>
-    /// <returns>A <see cref="string"/> that represents this instance.</returns>
-    /// <exception cref="NotImplementedException"></exception>
+    /// <inheritdoc/>
     public string ToString(string? format, IFormatProvider? formatProvider)
         => throw new NotImplementedException();
 
