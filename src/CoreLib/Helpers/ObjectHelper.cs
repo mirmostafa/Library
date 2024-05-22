@@ -432,12 +432,12 @@ public static class ObjectHelper
     /// <summary>
     /// Parses the specified input string into an object of type TSelf, using the specified format provider.
     /// </summary>
-    /// <typeparam name="TSelf">The type of the self.</typeparam>
+    /// <typeparam name="TResult">The type of the result.</typeparam>
     /// <param name="input">The input string to parse.</param>
     /// <param name="formatProvider">The format provider.</param>
     /// <returns>An object of type TSelf.</returns>
-    public static TSelf Parse<TSelf>(this string input, IFormatProvider? formatProvider = null)
-        where TSelf : IParsable<TSelf> => TSelf.Parse(input, formatProvider);
+    public static TResult Parse<TResult>(this string s, IFormatProvider? formatProvider = null)
+        where TResult : IParsable<TResult> => TResult.Parse(s, formatProvider);
 
     [DebuggerStepThrough]
     public static dynamic props(this object o) =>
