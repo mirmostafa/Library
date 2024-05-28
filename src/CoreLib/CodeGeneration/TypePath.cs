@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -96,6 +97,22 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [return: NotNull]
     public static TypePath New<T>(in IEnumerable<string>? generics = null) =>
         new(typeof(T).FullName!, generics);
+
+    [return: NotNull]
+    public static TypePath NewTask()
+        => New(typeof(Task));
+
+    [return: NotNull]
+    public static TypePath NewTask(in TypePath generic)
+        => New(typeof(Task<>), [generic]);
+
+    [return: NotNull]
+    public static TypePath NewEnumerable(in TypePath generic)
+        => New(typeof(IEnumerable<>), [generic]);
+
+    [return: NotNull]
+    public static TypePath NewEnumerable()
+        => New(typeof(IEnumerable));
 
     [return: NotNull]
     [DebuggerStepThrough, StackTraceHidden]

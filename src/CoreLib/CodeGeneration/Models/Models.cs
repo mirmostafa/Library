@@ -2,6 +2,9 @@
 using System.Collections.ObjectModel;
 
 using Library.DesignPatterns.Markers;
+using Library.Helpers.CodeGen;
+using Library.Interfaces;
+using Library.Validations;
 
 namespace Library.CodeGeneration.Models;
 
@@ -74,33 +77,31 @@ public readonly struct FieldInfo(
 }
 
 [Immutable]
-public readonly struct MethodArgument(in TypePath type, in string name)
+public readonly struct MethodArgument(in TypePath type, in string? name) : IEquatable<MethodArgument>, INew<MethodArgument, TypePath>
 {
-    public string Name { get; } = name;
+    public string Name { get; } = name ?? TypeMemberNameHelper.ToArgName(type.ArgumentNotNull().Name);
     public TypePath Type { get; } = type;
 
+    public static MethodArgument New(TypePath arg)
+        => new(arg.ArgumentNotNull(), TypeMemberNameHelper.ToArgName(arg.Name));
+
     public static bool operator !=(MethodArgument left, MethodArgument right)
-    {
-        return !(left == right);
-    }
+            => !(left == right);
 
     public static bool operator ==(MethodArgument left, MethodArgument right)
-    {
-        return left.Equals(right);
-    }
+        => left.Equals(right);
 
-    public void Deconstruct(out TypePath type, out string name) =>
-                (type, name) = (this.Type, this.Name);
+    public void Deconstruct(out TypePath type, out string name)
+        => (type, name) = (this.Type, this.Name);
 
-    public override bool Equals(object obj)
-    {
-        throw new NotImplementedException();
-    }
+    public override bool Equals(object? obj)
+        => obj is MethodArgument ma && this.Equals(ma);
+
+    public bool Equals(MethodArgument other)
+        => this.GetHashCode() == other.GetHashCode();
 
     public override int GetHashCode()
-    {
-        throw new NotImplementedException();
-    }
+        => HashCode.Combine(this.Type, this.Name);
 }
 
 [Immutable]
