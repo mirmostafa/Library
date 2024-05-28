@@ -107,6 +107,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         => New(typeof(Task<>), [generic]);
 
     [return: NotNull]
+    public static TypePath NewTask(in TypePath generic, bool isNullable)
+        => New(typeof(Task<>).FullName!, [generic], isNullable);
+
+    [return: NotNull]
     public static TypePath NewEnumerable(in TypePath generic)
         => New(typeof(IEnumerable<>), [generic]);
 
