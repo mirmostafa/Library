@@ -96,9 +96,9 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
         static CodeTypeMember createDomMethod(CodeNamespace domNameSpace, IMethod method)
         {
             useNameSpace(domNameSpace, method.ReturnType);
-            method.Parameters.Select(x => x.Type).ForEach(x => useNameSpace(domNameSpace, x));
+            method.Arguments.Select(x => x.Type).ForEach(x => useNameSpace(domNameSpace, x));
 
-            var parameters = method.Parameters.ToArray();
+            var parameters = method.Arguments.ToArray();
             if (method.IsExtension)
             {
                 parameters[0] = ($"this {parameters[0].Type}", parameters[0].Name);

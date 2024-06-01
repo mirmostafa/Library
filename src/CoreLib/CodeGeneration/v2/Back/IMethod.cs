@@ -1,4 +1,4 @@
-﻿using Library.DesignPatterns.Markers;
+﻿using Library.CodeGeneration.Models;
 using Library.Results;
 using Library.Validations;
 
@@ -6,22 +6,22 @@ namespace Library.CodeGeneration.v2.Back;
 
 public interface IMethod : IMember, IHasGenericTypes
 {
+    ISet<MethodArgument> Arguments { get; }
     string? Body { get; }
     bool IsConstructor { get; }
     bool IsExtension { get; }
-    ISet<(TypePath Type, string Name)> Parameters { get; }
     TypePath? ReturnType { get; }
 
-    static IMember New(string name, string? body = null, IEnumerable<(TypePath Type, string Name)>? parameters = null, TypePath? returnType = null)
+    static IMethod New(string name, string? body = null, IEnumerable<MethodArgument>? arguments = null, TypePath? returnType = null)
     {
         var result = new Method(name)
         {
             Body = body,
             ReturnType = returnType
         };
-        if (parameters?.Any() == true)
+        if (arguments?.Any() == true)
         {
-            _ = result.Parameters.AddRange(parameters);
+            _ = result.Arguments.AddRange(arguments);
         }
         return result;
     }
@@ -29,24 +29,27 @@ public interface IMethod : IMember, IHasGenericTypes
 
 public sealed class Method(string name) : Member(name), IMethod
 {
+    public ISet<MethodArgument> Arguments { get; } = new HashSet<MethodArgument>();
     public string? Body { get; set; }
     public ISet<IGenericType> GenericTypes { get; } = new HashSet<IGenericType>();
     public bool IsConstructor { get; init; }
     public bool IsExtension { get; init; }
-    public ISet<(TypePath Type, string Name)> Parameters { get; } = new HashSet<(TypePath Type, string Name)>();
     public TypePath? ReturnType { get; init; }
 
     protected override Result OnValidate() =>
         this.Check()
-            .RuleFor(x => !(x.IsExtension && !x.Parameters.Any()), () => "Extension method cannot be parameterless.")
+            .RuleFor(x => !(x.IsExtension && !x.Arguments.Any()), () => "Extension method cannot be parameterless.")
             .RuleFor(x => !(x.IsConstructor && x.IsExtension), () => "Constructor cannot be extension method.")
             .Build();
 }
 
 public static class MethodExtensions
 {
-    public static TMethod AddParameter<TMethod>(this TMethod method, string Type, string Name) where TMethod : IMethod =>
-        method.Fluent(method.Parameters.Add((Type, Name)));
+    public static TMethod AddArgument<TMethod>(this TMethod method, string Type, string Name) where TMethod : IMethod
+        => AddArgument(method, new(Type, Name));
+
+    public static TMethod AddArgument<TMethod>(this TMethod method, MethodArgument argument) where TMethod : IMethod
+        => method.Fluent(method.Arguments.Add(argument));
 
     public static IEnumerable<string> GetNameSpaces(this IMethod method)
     {
@@ -63,7 +66,7 @@ public static class MethodExtensions
                 }
             }
 
-            foreach (var item in method.Parameters.Select(x => x.Type))
+            foreach (var item in method.Arguments.Select(x => x.Type))
             {
                 foreach (var ns in item.GetNameSpaces())
                 {

@@ -103,8 +103,8 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
     {
         var modifiers = GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier);
         var result = method.IsConstructor || method.Name == className
-            ? RoslynHelper.CreateConstructor(TypePath.GetName(className), modifiers, method.Parameters, method.Body)
-            : RoslynHelper.CreateMethod(new(modifiers, method.ReturnType, method.Name, method.Parameters, method.Body, method.IsExtension));
+            ? RoslynHelper.CreateConstructor(TypePath.GetName(className), modifiers, method.Arguments, method.Body)
+            : RoslynHelper.CreateMethod(new(modifiers, method.ReturnType, method.Name, method.Arguments, method.Body, method.IsExtension));
         method.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
         return (result, root);
     }
