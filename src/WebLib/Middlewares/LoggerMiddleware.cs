@@ -6,29 +6,42 @@ using Library.Web.Middlewares.Markers;
 namespace Library.Web.Middlewares;
 
 [MonitoringMiddleware]
-public sealed class LoggerMiddleware(RequestDelegate next, ILogger<LoggerMiddleware> logger) : Markers.IMiddleware
+public sealed class LoggerMiddleware : Markers.IMiddleware
 {
-    private readonly ILogger<LoggerMiddleware> _logger = logger;
-    private readonly RequestDelegate _next = next;
+    private readonly Func<HttpContext, Task> _activeInvoker;
+    private readonly ILogger<LoggerMiddleware> _logger;
+    private readonly RequestDelegate _next;
+
+    public LoggerMiddleware(RequestDelegate next, ILogger<LoggerMiddleware> logger)
+    {
+        this._logger = logger;
+        this._next = next;
+        this._activeInvoker = this._logger.IsEnabled(LogLevel.Debug) || this._logger.IsEnabled(LogLevel.Trace)
+            ? this.InvokeFull
+            : this.InvokeSimple;
+    }
 
     [DebuggerStepThrough]
-    public async Task Invoke(HttpContext httpContext)
+    public Task Invoke(HttpContext httpContext)
+        => this._activeInvoker(httpContext);
+
+    private async Task InvokeFull(HttpContext httpContext)
     {
-        var timer = Stopwatch.StartNew();
-        try
+        if (httpContext.Request.Method == "OPTIONS")
         {
-            this._logger.LogDebug("Executing {api}", httpContext.Request.Path);
             await this._next(httpContext);
             return;
         }
-        finally
-        {
-            timer.Stop();
-            this._logger.LogTrace("Executed {api} in {elapsed}", httpContext.Request.Path, timer.Elapsed);
-        }
+
+        var stopwatch = Stopwatch.StartNew();
+        this._logger.LogDebug(new EventId(this.GetHashCode(), nameof(LoggerMiddleware)), "Calling {API}", httpContext.Request.Path);
+        await this._next(httpContext);
+        stopwatch.Stop();
+        this._logger.LogTrace(new EventId(this.GetHashCode(), nameof(LoggerMiddleware)), "Called  {API} with status code: {StatusCode} in {Elapsed}", httpContext.Request.Path, httpContext.Response.StatusCode, stopwatch.Elapsed);
     }
 
-    protected Task OnExecutingAsync(ItemActingEventArgs<HttpContext> e) => throw new NotImplementedException();
+    private async Task InvokeSimple(HttpContext httpContext)
+        => await this._next(httpContext);
 }
 
 public static class LoggerMiddlewareExtensions
