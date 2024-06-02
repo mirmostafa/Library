@@ -465,7 +465,6 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    [Trait("Category", nameof(EnumerableHelper.Index))]
     public void Index_NonEmptyInput_ReturnsIndexedSequence()
     {
         // Arrange
@@ -480,7 +479,6 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    [Trait("Category", nameof(EnumerableHelper.Index))]
     public void Index_ReturnsEmptySequenceForNullInput()
     {
         // Arrange
@@ -494,7 +492,6 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    [Trait("Category", nameof(EnumerableHelper.Index))]
     public void Index_ReturnsSequenceWithSingleItemForSingleItemInput()
     {
         // Arrange
