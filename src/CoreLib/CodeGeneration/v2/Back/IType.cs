@@ -65,7 +65,7 @@ public static class TypeExtensions
         AddMember(type, members.ToArray());
 
     public static TType AddMethod<TType>(this TType type, string name, string? body = null, IEnumerable<(TypePath Type, string Name)>? parameters = null, TypePath? returnType = null) where TType : IType
-        => AddMember(type, IMethod.New(name, body, parameters, returnType));
+        => AddMember(type, IMethod.New(name, body, parameters?.Select(x => new Models.MethodArgument(x.Type, x.Name)), returnType));
 
     public static TType AddProperty<TType>(this TType type, string name, TypePath typePath) where TType : IType
             => AddMember(type, IProperty.New(name, typePath));

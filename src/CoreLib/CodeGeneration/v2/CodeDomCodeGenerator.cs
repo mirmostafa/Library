@@ -101,7 +101,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
             var parameters = method.Arguments.ToArray();
             if (method.IsExtension)
             {
-                parameters[0] = ($"this {parameters[0].Type}", parameters[0].Name);
+                parameters[0] = new Models.MethodArgument($"this {parameters[0].Type}", parameters[0].Name);
             }
 
             return CodeDomHelper.NewMethod(method.Name,
