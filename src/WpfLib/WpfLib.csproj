@@ -6,7 +6,7 @@
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 		<Product>Library</Product>
 		<MinimumPlatformVersion>7.0</MinimumPlatformVersion>
-		<TargetFramework>net8.0-windows</TargetFramework>
+		<TargetFramework>net9.0-windows</TargetFramework>
 		<AssemblyName>Library.Wpf</AssemblyName>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
