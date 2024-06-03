@@ -465,50 +465,6 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    [Trait("Category", nameof(EnumerableHelper.Index))]
-    public void Index_NonEmptyInput_ReturnsIndexedSequence()
-    {
-        // Arrange
-        var items = new List<string> { "A", "B", "C" };
-        var expected = new List<(int Index, string Item)> { (0, "A"), (1, "B"), (2, "C") };
-
-        // Act
-        var actual = items.Index();
-
-        // Assert
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    [Trait("Category", nameof(EnumerableHelper.Index))]
-    public void Index_ReturnsEmptySequenceForNullInput()
-    {
-        // Arrange
-        IEnumerable<int>? items = null;
-
-        // Act
-        var actual = items.Index().ToList();
-
-        // Assert
-        Assert.Empty(actual);
-    }
-
-    [Fact]
-    [Trait("Category", nameof(EnumerableHelper.Index))]
-    public void Index_ReturnsSequenceWithSingleItemForSingleItemInput()
-    {
-        // Arrange
-        var items = new List<int> { 42 };
-
-        // Act
-        var result = items.Index().ToList();
-
-        // Assert
-        _ = Assert.Single(result);
-        Assert.Equal((0, 42), result[0]);
-    }
-
-    [Fact]
     public void IndexesOfReturnsCorrectIndexes()
     {
         // Arrange
@@ -863,7 +819,7 @@ public sealed class EnumerableHelperTest
         tokenSource.Cancel();
 
         // Act
-        await values.EnumerateAsync(action, tokenSource.Token).ConfigureAwait(false);
+        await values.EnumerateAsync(action, tokenSource.Token);
 
         // Assert No assertions needed here because the method does not return anything.
     }
@@ -876,7 +832,7 @@ public sealed class EnumerableHelperTest
         static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
 
         // Act
-        await values.EnumerateAsync(action).ConfigureAwait(false);
+        await values.EnumerateAsync(action);
 
         // Assert No assertions needed here because the method does not return anything.
     }
@@ -889,7 +845,7 @@ public sealed class EnumerableHelperTest
         static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
 
         // Act
-        await values!.EnumerateAsync(action).ConfigureAwait(false);
+        await values!.EnumerateAsync(action);
 
         // Assert No assertions needed here because the method does not return anything.
     }
@@ -902,7 +858,7 @@ public sealed class EnumerableHelperTest
         static async Task action(int x, CancellationToken token) => await Task.Delay(1000, token).ConfigureAwait(false);
 
         // Act
-        await values.EnumerateAsync(action).ConfigureAwait(false);
+        await values.EnumerateAsync(action);
 
         // Assert No assertions needed here because the method does not return anything.
     }

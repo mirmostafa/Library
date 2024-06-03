@@ -1,12 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<AssemblyName>Library.Core</AssemblyName>
-		<RootNamespace>Library</RootNamespace>
-		<Configurations>Debug;Release;Debug Unit Test</Configurations>
-		<EnablePreviewFeatures>true</EnablePreviewFeatures>
-		<LangVersion>Preview</LangVersion>
-	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<WarningLevel>4</WarningLevel>
@@ -23,6 +15,10 @@
 		<PlatformTarget>AnyCPU</PlatformTarget>
 		<WarningLevel>0</WarningLevel>
 		<DebugType>portable</DebugType>
+	</PropertyGroup>
+	<PropertyGroup>
+	  <RootNamespace>Library</RootNamespace>
+	  <AssemblyName>Library.Core</AssemblyName>
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="CodeGeneration\HtmlGeneration\**" />

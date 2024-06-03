@@ -1051,26 +1051,6 @@ public static class EnumerableHelper
         items?.Any() is true ? items : defaultValues;
 
     /// <summary>
-    /// This method returns a sequence of items along with their index.
-    /// </summary>
-    /// <typeparam name="TItem">The type of items in the sequence.</typeparam>
-    /// <param name="items">The sequence of items to be indexed.</param>
-    /// <returns>A sequence of tuples, each containing the index and the corresponding item.</returns>
-    public static IEnumerable<(int Index, TItem Item)> Index<TItem>(this IEnumerable<TItem>? items)
-    {
-        if (items?.Any() is not true)
-        {
-            yield break;
-        }
-
-        var index = 0;
-        foreach (var item in items)
-        {
-            yield return (index++, item);
-        }
-    }
-
-    /// <summary>
     /// Returns an enumerable of indexes at which a specified item appears in the source sequence.
     /// </summary>
     /// <typeparam name="T">The type of elements in the source sequence.</typeparam>
