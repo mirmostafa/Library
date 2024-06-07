@@ -5,6 +5,12 @@ namespace Library.CodeGeneration.v2;
 
 public static class CodeGeneratorModelsExtensions
 {
+    public static IClass AddAttribute<TAttribute>([DisallowNull] this IClass model, params (string? Name, string Value)[] properties)
+    {
+        _ = model.ArgumentNotNull().Attributes.Add(ICodeGenAttribute.New(TypePath.New<TAttribute>(), properties));
+        return model;
+    }
+
     public static void AddAttribute<TAttribute>([DisallowNull] this IHasAttributes model, params (string? Name, string Value)[] properties)
         => model.ArgumentNotNull().Attributes.Add(ICodeGenAttribute.New(TypePath.New<TAttribute>(), properties));
 

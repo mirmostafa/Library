@@ -8,13 +8,13 @@ public interface ICodeGenAttribute
     static ICodeGenAttribute New(TypePath name) =>
         new CodeGenAttribute(name);
 
-    static ICodeGenAttribute New(TypePath name, IEnumerable<(string? Name, string Value)> properties) =>
+    static ICodeGenAttribute New(TypePath name, params IEnumerable<(string? Name, string Value)> properties) =>
         new CodeGenAttribute(name, properties);
 }
 
 public class CodeGenAttribute(TypePath name) : ICodeGenAttribute
 {
-    public CodeGenAttribute(TypePath name, IEnumerable<(string? Name, string Value)> properties) : this(name) =>
+    public CodeGenAttribute(TypePath name, params IEnumerable<(string? Name, string Value)> properties) : this(name) =>
         this.Properties.AddRange(properties);
 
     public TypePath Name { get; } = name;
