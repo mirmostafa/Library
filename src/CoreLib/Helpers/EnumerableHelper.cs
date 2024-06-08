@@ -170,7 +170,7 @@ public static class EnumerableHelper
     {
         return (source, items) switch
         {
-            (null, null) => Enumerable.Empty<T>(),
+            (null, null) => [],
             (_, null) => source,
             (null, _) => items,
             (_, _) => addRangeImmutedIterator(source, items)
@@ -214,11 +214,13 @@ public static class EnumerableHelper
         [var item] => item, // Return the single item if there's only one element.
             { Length: 2 } => aggregator.ArgumentNotNull()(itemArray.First(), itemArray.Last()), // Aggregate two elements using the aggregator function.
             [var item, .. var others] => aggregator(item, Aggregate(others, aggregator, defaultValue)) // Recursively aggregate remaining elements.
+,
+            _ => throw new NotImplementedException()
         };
     }
 
-    public static T Aggregate<T>(this IEnumerable<T> items, Func<(T current, T result), T> aggregator, T defaultValue) =>
-        Aggregate(items, (T curr, T res) => aggregator((curr, res)), defaultValue);
+    public static T Aggregate<T>(this IEnumerable<T> items, Func<(T current, T result), T> aggregator, T defaultValue) 
+        => Aggregate(items, (T curr, T res) => aggregator((curr, res)), defaultValue);
 
     /// <summary>
     /// Aggregates the elements of an array using addition operators and an optional default value.
@@ -264,8 +266,8 @@ public static class EnumerableHelper
     /// <param name="source">The IList to check for elements.</param>
     /// <returns>True if the IList contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Any<T>([DisallowNull] this IList<T> source) =>
-        source?.Count > 0;
+    public static bool Any<T>([DisallowNull] this IList<T> source)
+        => source?.Count > 0;
 
     /// <summary>
     /// Determines whether any element exists in the given array.
@@ -274,8 +276,8 @@ public static class EnumerableHelper
     /// <param name="source">The array to check for elements.</param>
     /// <returns>True if the array contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Any<T>(this T[] source) =>
-        source?.Length > 0;
+    public static bool Any<T>(this T[] source)
+        => source?.Length > 0;
 
     /// <summary>
     /// Determines whether any element exists in the given ICollection.
@@ -283,8 +285,8 @@ public static class EnumerableHelper
     /// <param name="source">The ICollection to check for elements.</param>
     /// <returns>True if the ICollection contains any elements, otherwise false.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Any<T>(this ICollection source) =>
-        source?.Count > 0;
+    public static bool Any<T>(this ICollection source)
+        => source?.Count > 0;
 
     /// <summary>
     /// Converts a single item into an IEnumerable of that item.
@@ -301,25 +303,25 @@ public static class EnumerableHelper
         yield return item;
     }
 
-    public static FluentList<TItem> AsFluent<TItem>(this IList<TItem> list) =>
-        FluentList<TItem>.New(list);
+    public static FluentList<TItem> AsFluent<TItem>(this IList<TItem> list)
+        => FluentList<TItem>.New(list);
 
-    // Check if the length of the array is not zero or null.
     /// <summary>
-    /// Get a <see cref="Span{T}"/> view over a <see cref="List{T}"/>'s data. Items should not be
-    /// added or removed from the <see cref="List{T}"/> while the <see cref="Span{T}"/> is in use.
+    /// Converts a List to a Span using CollectionsMarshal.
     /// </summary>
-    /// <param name="list">The list to get the data view over.</param>
-    public static Span<TItem> AsSpan<TItem>(this List<TItem> list) =>
-        CollectionsMarshal.AsSpan(list);
+    /// <typeparam name="TItem">The type of elements in the source List.</typeparam>
+    /// <param name="list">The source List to convert to a Span.</param>
+    /// <returns>A Span representing the elements of the source List.</returns>
+    public static Span<TItem> AsSpan<TItem>(this List<TItem> list)
+        => CollectionsMarshal.AsSpan(list);
 
-    // Check if the count of elements in the IList is not zero or null.
     /// <summary>
     /// Converts an IEnumerable to a Span.
     /// </summary>
-    /// <typeparam name="TItem">The type of items in the IEnumerable.</typeparam>
-    /// <param name="items">The IEnumerable to convert to a Span.</param>
-    /// <returns>A Span containing the items from the IEnumerable.</returns>
+    /// <typeparam name="TItem">The type of elements in the source IEnumerable.</typeparam>
+    /// <param name="items">The source IEnumerable to convert to a Span.</param>
+    /// <returns>A Span representing the elements of the source IEnumerable.
+    /// If the source IEnumerable is null, returns the default Span.</returns>
     public static Span<TItem> AsSpan<TItem>(this IEnumerable<TItem> items)
     {
         // Check if the input IEnumerable is null.
@@ -330,8 +332,11 @@ public static class EnumerableHelper
         }
 
         // Convert the IEnumerable to an array and create a Span from it.
-        return MemoryExtensions.AsSpan(items.ToArray());
+        return MemoryExtensions.AsSpan(items.AsArray());
     }
+
+    public static T[] AsArray<T>(this IEnumerable<T> items)
+        => items is T[] array ? array : (items?.ToArray() ?? []);
 
     /// <summary>
     /// Builds a read-only list from an enumerable.
@@ -496,8 +501,8 @@ public static class EnumerableHelper
     /// <param name="source">The IEnumerable to clear.</param>
     /// <returns>An empty IEnumerable of the specified type.</returns>
     [return: NotNull]
-    public static IEnumerable<T> ClearImmuted<T>(this IEnumerable<T>? source) =>
-        Enumerable.Empty<T>();
+    public static IEnumerable<T> ClearImmuted<T>(this IEnumerable<T>? source)
+        => [];
 
     /// <summary> Recursively collects all items in a collection of items that implement
     /// IParent<TItem>. </summary> <param name="items">The collection of items to collect.</param>
@@ -539,8 +544,8 @@ public static class EnumerableHelper
     /// <summary>
     /// Checks if the given IEnumerable contains a key-value pair with the specified key.
     /// </summary>
-    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key) =>
-        source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
+    public static bool ContainsKey<TKey, TValue>([DisallowNull] this IEnumerable<(TKey Key, TValue Value)> source, TKey key)
+        => source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).Any();
 
     /// <summary>
     /// Creates a new array by copying elements from an existing array.
@@ -567,9 +572,9 @@ public static class EnumerableHelper
     /// <typeparam name="T">The type of elements in the array.</typeparam>
     /// <param name="array">The array to copy elements from.</param>
     /// <returns>An immutable array containing elements from the original array.</returns>
-    public static ImmutableArray<T> CopyImmutable<T>(this T[] array) =>
+    public static ImmutableArray<T> CopyImmutable<T>(this T[] array)
         // Convert the array to an IEnumerable and then create an immutable array from it.
-        array.Enumerate().ToImmutableArray();
+        => array.Enumerate().ToImmutableArray();
 
     /// <summary>
     /// Creates an immutable list from an existing IList.
@@ -604,7 +609,7 @@ public static class EnumerableHelper
     /// </summary>
     [return: NotNull]
     public static IEnumerable<T> DefaultIfNull<T>(this IEnumerable<T>? items)
-        => items ?? Enumerable.Empty<T>();
+        => items ?? [];
 
     /// <summary>
     /// Creates a new <see cref="Dictionary{TKey, TValue}"/> from a sequence of keys, with an
@@ -627,8 +632,8 @@ public static class EnumerableHelper
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static T[] EmptyArray<T>() =>
-        [];
+    public static T[] EmptyArray<T>()
+        => [];
 
     public static IEnumerable<TResult> Enumerate<T, TResult>(this IEnumerable<T> values, Func<T, TResult> action, CancellationToken token = default)
     {
@@ -959,7 +964,7 @@ public static class EnumerableHelper
     /// <param name="key">The key to search for.</param>
     /// <returns>The item with the specified key.</returns>
     public static KeyValuePair<TKey, TValue> GetItemByKey<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source, TKey key)
-        => source.ArgumentNotNull().Where(x => x.Key?.Equals(key) ?? false).FirstOrDefault();
+        => source.ArgumentNotNull().FirstOrDefault(x => x.Key?.Equals(key) ?? false);
 
     /// <summary>
     /// Tries to get a value from a HashSet and returns a TryMethodResult with the result.
@@ -984,7 +989,7 @@ public static class EnumerableHelper
     /// <param name="key">The key.</param>
     /// <returns>The value.</returns>
     public static TValue GetValueByKey<TKey, TValue>(this IEnumerable<(TKey Key, TValue Value)> source, TKey key) =>
-        source.ArgumentNotNull().Where(kv => kv.Key?.Equals(key) ?? key is null).First().Value;
+        source.ArgumentNotNull().First(kv => kv.Key?.Equals(key) ?? key is null).Value;
 
     /// <summary>
     /// Groups the items in the given IEnumerable and returns a collection of tuples containing the
@@ -1799,20 +1804,20 @@ public static class EnumerableHelper
     /// <summary>
     /// Converts an IEnumerable of type T to an ObservableCollection of type T.
     /// </summary>
-    public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source) =>
-        source is ObservableCollection<T> o ? o : new(source);
+    public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> source)
+        => source is ObservableCollection<T> o ? o : new(source);
 
     /// <summary>
     /// Converts an IEnumerable to an IReadOnlyList.
     /// </summary>
-    public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items) =>
-        items is List<T> l ? l.AsReadOnly() : new List<T>(items).AsReadOnly();
+    public static IReadOnlyList<T> ToReadOnlyList<T>([DisallowNull] this IEnumerable<T> items)
+        => items is List<T> l ? l.AsReadOnly() : new List<T>(items).AsReadOnly();
 
     /// <summary>
     /// Converts an IEnumerable of type T to an IReadOnlySet of type T.
     /// </summary>
-    public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items) =>
-        ImmutableList.CreateRange(items).ToHashSet();
+    public static IReadOnlySet<T> ToReadOnlySet<T>([DisallowNull] this IEnumerable<T> items)
+        => ImmutableList.CreateRange(items).ToHashSet();
 
     /// <summary>
     /// Attempts to determine the number of elements in a sequence without forcing an enumeration.

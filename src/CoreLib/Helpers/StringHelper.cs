@@ -201,16 +201,6 @@ public static class StringHelper
         text.Any(regularValidate);
 
     /// <summary>
-    /// Compacts an array of strings by removing any empty strings.
-    /// </summary>
-    /// <param name="strings">The strings to compact.</param>
-    /// <returns>The compacted array of strings.</returns>
-    [Pure]
-    [return: NotNull]
-    public static string[] Compact(params string[] strings) =>
-        strings.Where(item => !item.IsNullOrEmpty()).ToArray();
-
-    /// <summary>
     /// Filters out null or empty strings from the given IEnumerable and returns a new IEnumerable
     /// with only non-null and non-empty strings.
     /// </summary>
@@ -674,7 +664,7 @@ public static class StringHelper
     }
 
     [Pure]
-    public static int IndexOfAny(this string s, out string foundItem, params string[] items)
+    public static int IndexOfAny(this string s, out string foundItem, params ReadOnlySpan<string> items)
     {
         foreach (var s3 in items)
         {

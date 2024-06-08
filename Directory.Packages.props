@@ -6,7 +6,6 @@
     <GenerateRequiresPreviewFeaturesAttribute>true</GenerateRequiresPreviewFeaturesAttribute>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <LangVersion>Preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <AnalysisLevel>Preview</AnalysisLevel>

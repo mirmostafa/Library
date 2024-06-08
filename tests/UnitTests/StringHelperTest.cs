@@ -1,3 +1,5 @@
+#nullable disable
+
 using System.Collections;
 
 namespace UnitTests;
@@ -12,22 +14,21 @@ public sealed class StringHelperTest
     private const string VERY_SHORT_TEXT = "text";
 
     public static IEnumerable<object[]> IfNullData =>
-        new List<object[]>
-        {
-            new object[] { null, "default value", "default value" },
-            new object[] { "", "default value", "" },
-            new object[] { "not null", "default value", "not null" },
-            new object[] { " ", "default value", " " },
-        };
+        [
+            [null!, "default value", "default value"],
+            ["", "default value", ""],
+            ["not null", "default value", "not null"],
+            [" ", "default value", " "],
+        ];
 
-    public static IEnumerable<object[]> IsNullOrEmptyData => new[]
-        {
-        new object[] { null!, true },
-        new object[] { string.Empty, true },
-        new object[] { "", true },
-        new object[] { " ", false },
-        new object[] { "Hello. My name is Mohammad", false },
-    };
+    public static IEnumerable<object[]> IsNullOrEmptyData =>
+        [
+            [null!, true],
+            [string.Empty, true],
+            ["", true],
+            [" ", false],
+            ["Hello. My name is Mohammad", false],
+        ];
 
     [Fact]
     public void Add()
@@ -43,7 +44,7 @@ public sealed class StringHelperTest
     [InlineData("Hello", 3, ' ', false, "Hello   ")]
     [InlineData("World", 2, '*', true, "**World")]
     [InlineData(null, 5, '-', false, null)]
-    public void Add_ShouldAddCharactersToString(string? input, int count, char add, bool before, string? expected)
+    public void Add_ShouldAddCharactersToString(string input, int count, char add, bool before, string expected)
     {
         // Act
         var result = input.Add(count, add, before);
@@ -82,7 +83,7 @@ public sealed class StringHelperTest
     public void Add_ShouldReturnNull_WhenStringIsNull()
     {
         // Arrange
-        string? s = null;
+        string s = null;
 
         // Act
         var result = s.Add(3);
@@ -148,7 +149,7 @@ public sealed class StringHelperTest
     [InlineData(null, null, false)]
     public void AnyCharInString(string str, string range, bool expected)
     {
-        var actual = str.AnyCharInString(range);
+        var actual = str!.AnyCharInString(range!);
         Assert.Equal(expected, actual);
     }
 
@@ -156,8 +157,8 @@ public sealed class StringHelperTest
     public void AnyCharInString_Exception()
     {
         var text = "Mohammad";
-        string? range = null;
-        _ = Assert.Throws<ArgumentNullException>(() => text.AnyCharInString(range));
+        string range = null;
+        _ = Assert.Throws<ArgumentNullException>(() => text.AnyCharInString(range!));
     }
 
     [Theory]
@@ -174,7 +175,7 @@ public sealed class StringHelperTest
     [InlineData("this is a text", true)]
     public void CheckAllValidations(string text, bool expected)
     {
-        var isLower = (char x) => x == char.ToLower(x);
+        static bool isLower(char x) => x == char.ToLower(x);
         var actual = StringHelper.CheckAllValidations(text, isLower);
         Assert.Equal(expected, actual);
     }
@@ -185,7 +186,7 @@ public sealed class StringHelperTest
     [InlineData("THIS IS A TEXT", false)]
     public void CheckAnyValidations(string text, bool expected)
     {
-        var isLower = (char x) => x == char.ToLower(x) && x != ' ';
+        static bool isLower(char x) => x == char.ToLower(x) && x != ' ';
         var actual = StringHelper.CheckAnyValidations(text, isLower);
         Assert.Equal(expected, actual);
     }
@@ -226,7 +227,7 @@ public sealed class StringHelperTest
         // Arrange
 
         // Act
-        var actual = StringHelper.ConcatAll(strings, sep);
+        var actual = StringHelper.ConcatAll(strings, sep!);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -250,12 +251,12 @@ public sealed class StringHelperTest
     public void Contains_Mine_ReturnsFalse_WhenCaseInsensitiveStringDoesNotExist()
     {
         // Arrange
-        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
-        string str = "grape";
-        bool ignoreCase = true;
+        IEnumerable<string> array = ["Apple", "Banana", "Cherry"];
+        var str = "grape";
+        var ignoreCase = true;
 
         // Act
-        bool result = array.Contains(str, ignoreCase);
+        var result = array.Contains(str, ignoreCase);
 
         // Assert
         Assert.False(result);
@@ -265,12 +266,12 @@ public sealed class StringHelperTest
     public void Contains_Mine_ReturnsFalse_WhenCaseSensitiveStringDoesNotExist()
     {
         // Arrange
-        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
-        string str = "Grape";
-        bool ignoreCase = false;
+        IEnumerable<string> array = ["Apple", "Banana", "Cherry"];
+        var str = "Grape";
+        var ignoreCase = false;
 
         // Act
-        bool result = array.Contains(str, ignoreCase);
+        var result = array.Contains(str, ignoreCase);
 
         // Assert
         Assert.False(result);
@@ -280,12 +281,12 @@ public sealed class StringHelperTest
     public void Contains_Mine_ReturnsTrue_WhenMatchingCaseInsensitiveStringExists()
     {
         // Arrange
-        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
-        string str = "banana";
-        bool ignoreCase = true;
+        IEnumerable<string> array = ["Apple", "Banana", "Cherry"];
+        var str = "banana";
+        var ignoreCase = true;
 
         // Act
-        bool result = array.Contains(str, ignoreCase);
+        var result = array.Contains(str, ignoreCase);
 
         // Assert
         Assert.True(result);
@@ -295,7 +296,7 @@ public sealed class StringHelperTest
     public void Contains_Mine_ReturnsTrue_WhenMatchingCaseSensitiveStringExists()
     {
         // Arrange
-        IEnumerable<string> array = new List<string> { "Apple", "Banana", "Cherry" };
+        IEnumerable<string> array = ["Apple", "Banana", "Cherry"];
         var str = "Banana";
         var ignoreCase = false;
 
@@ -360,7 +361,7 @@ public sealed class StringHelperTest
         // Arrange
 
         // Act
-        var actual = StringHelper.Contains(str, value, ignoreCase);
+        var actual = StringHelper.Contains(str!, value, ignoreCase);
 
         // Assert
         Assert.Equal(expected, actual);
@@ -457,7 +458,7 @@ public sealed class StringHelperTest
     [InlineData("test", 5, '-', "test-")]
     [InlineData("testtest", 5, '-', "testt")]
     [InlineData("test", 0, '-', "")]
-    public void FixSize_ReturnsCorrectValue(string? str, int maxLength, char gapChar, string? expected)
+    public void FixSize_ReturnsCorrectValue(string str, int maxLength, char gapChar, string expected)
     {
         // Act
         var actual = StringHelper.FixSize(str, maxLength, gapChar);
@@ -481,8 +482,8 @@ public sealed class StringHelperTest
     public void Format_ShouldThrowArgumentNullException_WhenFormatIsNullEmptyButArgsIsNotNull()
     {
         // Arrange
-        string? format = null;
-        object[] args = { 1, "foo" };
+        string format = null;
+        object[] args = [1, "foo"];
 
         // Act & Assert
         _ = Assert.Throws<ArgumentNullException>(() => format.Format(args));
@@ -493,7 +494,7 @@ public sealed class StringHelperTest
     {
         // Arrange
         var format = "{0} {1}"; // Missing argument for {1}
-        object[] args = { "foo" };
+        object[] args = ["foo"];
 
         // Act & Assert
         _ = Assert.Throws<FormatException>(() => format.Format(args));
@@ -504,12 +505,13 @@ public sealed class StringHelperTest
     [InlineData(LONG_TEXT, 0, '\'', NULL_CHAR, "a text")]
     [InlineData(LONG_TEXT, 1, '\'', '\'', "another text")]
     [InlineData(LONG_TEXT, 1, 'q', NULL_CHAR, null)]
-    public void GetPhrase(string? str, int index, char start, char end, string expected)
+    public void GetPhrase(string str, int index, char start, char end, string expected)
     {
         var actual = str.GetPhrase(index, start, end);
         Assert.Equal(expected, actual);
     }
 
+    [Theory]
     [InlineData(@"https://my.site.com", "://", "/", "my.site.com")]
     [InlineData(@"https://my.site.com/", "://", "/", "my.site.com")]
     [InlineData(@"https://my.site.com/clientarea.php", "://", "/", "my.site.com")]
@@ -581,7 +583,7 @@ public sealed class StringHelperTest
     [InlineData("", "default value", "")]
     [InlineData("not null", "default value", "not null")]
     [InlineData(" ", "default value", " ")]
-    public void IfNullTest1(string? s, string? value, string? expected)
+    public void IfNullTest1(string s, string value, string expected)
     {
         // Act
         var result = s.IfNull(value);
@@ -592,7 +594,7 @@ public sealed class StringHelperTest
 
     [Theory]
     [MemberData(nameof(IfNullData))]
-    public void IfNullTest2(string? s, string? value, string? expected)
+    public void IfNullTest2(string s, string value, string expected)
     {
         // Act
         var result = s.IfNull(value);
@@ -618,7 +620,7 @@ public sealed class StringHelperTest
 
     [Theory]
     [MemberData(nameof(IsNullOrEmptyData))]
-    public void IsNullOrEmptyTrue(string? text, bool expected)
+    public void IsNullOrEmptyTrue(string text, bool expected)
     {
         var actual = text.IsNullOrEmpty();
         Assert.Equal(actual, expected);
@@ -678,7 +680,7 @@ public sealed class StringHelperTest
         var result = source.Merge(separator, false);
 
         // Assert
-        Assert.True(!result.EndsWith(separator)); // Check if the separator is not at the end of the result.
+        Assert.False(result.EndsWith(separator)); // Check if the separator is not at the end of the result.
     }
 
     [Theory]
@@ -696,7 +698,7 @@ public sealed class StringHelperTest
     [InlineData(null, "value", null)]
     [InlineData("value", null, "value")]
     [InlineData(null, null, null)]
-    public void RemoveTest(string? str, string? value, string? expected)
+    public void RemoveTest(string str, string value, string expected)
     {
         var result = str.Remove(value);
 
@@ -782,7 +784,7 @@ public sealed class StringHelperTest
     public void SplitPair(string text, string slice, string expected)
     {
         var pairs = StringHelper.SplitPair(text);
-        (_, var result) = pairs.Where(kv => kv.Key == slice).Single();
+        (_, var result) = pairs.Single(kv => kv.Key == slice);
         Assert.Equal(expected, result);
     }
 
@@ -835,7 +837,7 @@ public sealed class StringHelperTest
     public void ToLower_ReturnsLowercaseStrings()
     {
         // Arrange
-        IEnumerable<string> strings = new List<string> { "FOO", "Bar", "BaZ" };
+        IEnumerable<string> strings = ["FOO", "Bar", "BaZ"];
 
         // Act
         var result = strings.ToLower();
@@ -864,7 +866,7 @@ public sealed class StringHelperTest
     public void ToUnicode_ShouldReturnNull_WhenStringIsNull()
     {
         // Arrange
-        string? str = null;
+        string str = null;
 
         // Act
         var result = str.ToUnicode();
@@ -918,39 +920,38 @@ public sealed class StringHelperTest
     public void TrimAll_ShouldTrimSpecifiedChars_WhenTrimCharsIsProvided()
     {
         // Arrange
-        IEnumerable<string> values = new[] { "*Hello*", "*World*", "*" };
+        IEnumerable<string> values = ["*Hello*", "*World*", "*"];
 
         // Act
         var result = values.TrimAll('*');
 
         // Assert
-        Assert.Equal(new[] { "Hello", "World", "" }, result);
+        Assert.Equal(["Hello", "World", ""], result);
     }
 
     [Fact]
     public void TrimAll_ShouldTrimWhiteSpaceByDefault_WhenTrimCharsIsNotProvided()
     {
         // Arrange
-        IEnumerable<string> values = new[] { " Hello ", " World ", "!" };
+        IEnumerable<string> values = [" Hello ", " World ", "!"];
 
         // Act
         var result = values.TrimAll();
 
         // Assert
-        Assert.Equal(new[] { "Hello", "World", "!" }, result);
+        Assert.Equal(["Hello", "World", "!"], result);
     }
 }
 
 internal class CompactDataClass : IEnumerable<object[]>
 {
-    public static object[][] CompactData => new[]
-        {
-        new object[]
-        {
-            new[] { "Hello", "", "I ", "am", "", "Mohammad", ".", "", "I'm", "", "a ", "", "C# ", "", "Developer." },
-            new[] { "Hello", "I ", "am", "Mohammad", ".", "I'm", "a ", "C# ", "Developer." }
-        }
-    };
+    public static object[][] CompactData =>
+        [
+            [
+                new[] { "Hello", "", "I ", "am", "", "Mohammad", ".", "", "I'm", "", "a ", "", "C# ", "", "Developer." },
+                new[] { "Hello", "I ", "am", "Mohammad", ".", "I'm", "a ", "C# ", "Developer." }
+            ]
+        ];
 
     public IEnumerator<object[]> GetEnumerator() => ((IEnumerable<object[]>)CompactData).GetEnumerator();
 
