@@ -203,6 +203,7 @@ public static class RoslynHelper
         return nameSpace.AddUsings(usingDirective);
     }
 
+    [return: NotNull]
     public static RosMethod CreateConstructor(string className, IEnumerable<SyntaxKind>? modifiers = null, IEnumerable<MethodParameterInfo>? parameters = null, string? body = null)
     {
         modifiers ??= EnumerableHelper.AsEnumerable(SyntaxKind.PublicKeyword);
@@ -228,6 +229,7 @@ public static class RoslynHelper
         return result;
     }
 
+    [return: NotNull]
     public static RosMethod CreateMethod(RosMethodInfo methodInfo)
     {
         Checker.MustBeArgumentNotNull(methodInfo);
@@ -354,6 +356,7 @@ public static class RoslynHelper
             .GetText()
             .ToString();
 
+    [return: NotNull]
     private static RosMethod InnerCreateBaseMethod(RosMethodInfo methodInfo, RosMethod result)
     {
         Checker.MustBeArgumentNotNull(methodInfo);

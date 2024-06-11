@@ -106,6 +106,16 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             ? RoslynHelper.CreateConstructor(TypePath.GetName(className), modifiers, method.Arguments.Select(x => (x.Type, x.Name)), method.Body)
             : RoslynHelper.CreateMethod(new(modifiers, method.ReturnType, method.Name, method.Arguments.Select(x => (x.Type, x.Name)), method.Body, method.IsExtension));
         method.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
+
+        foreach (var attribute in method.Attributes.Compact())
+        {
+            var attributeType = TypePath.New(attribute.Name);
+            foreach (var ns in attributeType.GetNameSpaces().Compact())
+            {
+                root = root.AddUsingNameSpace(ns);
+            }
+            result = result.AddAttribute(attributeType.Name, attribute.Properties.Select(x => (x.Name, x.Value))).Cast().As<BaseMethodDeclarationSyntax>()!;
+        }
         return (result, root);
     }
 
