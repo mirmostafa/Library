@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-using Library.CodeGeneration.v2.Back;
+﻿using Library.CodeGeneration.v2.Back;
 using Library.Helpers.CodeGen;
 using Library.Results;
 using Library.Validations;
@@ -106,7 +104,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
         var modifiers = GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier);
         var result = method.IsConstructor || method.Name == className
             ? RoslynHelper.CreateConstructor(TypePath.GetName(className), modifiers, method.Arguments.Select(x => (x.Type, x.Name)), method.Body)
-            : RoslynHelper.CreateMethod(new(modifiers, method.ReturnType, method.Name, method.Arguments.Select(x=>(x.Type,x.Name)), method.Body, method.IsExtension));
+            : RoslynHelper.CreateMethod(new(modifiers, method.ReturnType, method.Name, method.Arguments.Select(x => (x.Type, x.Name)), method.Body, method.IsExtension));
         method.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
         return (result, root);
     }
