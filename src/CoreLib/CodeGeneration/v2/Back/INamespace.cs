@@ -54,10 +54,7 @@ public static class NamSpaceExtensions
         return nameSpace;
     }
 
-    public static TNameSpace AddUsingNameSpace<TNameSpace>(this TNameSpace ns, IEnumerable<string> nameSpaces) where TNameSpace : INamespace =>
-        AddUsingNameSpace(ns, nameSpaces.ToArray());
-
-    public static TNameSpace AddUsingNameSpace<TNameSpace>(this TNameSpace ns, params string[] nameSpaces) where TNameSpace : INamespace
+    public static TNameSpace AddUsingNameSpace<TNameSpace>(this TNameSpace ns, params IEnumerable<string> nameSpaces) where TNameSpace : INamespace
     {
         nameSpaces.Distinct().Compact().ForEach(x => ns.UsingNamespaces.Add(x));
         return ns;
