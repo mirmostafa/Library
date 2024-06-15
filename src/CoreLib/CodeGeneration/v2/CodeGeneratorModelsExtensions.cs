@@ -14,7 +14,7 @@ public static class CodeGeneratorModelsExtensions
     public static void AddAttribute<TAttribute>([DisallowNull] this IHasAttributes model, params IEnumerable<(string? Name, string Value)> properties)
         => model.ArgumentNotNull().Attributes.Add(ICodeGenAttribute.New(TypePath.New<TAttribute>(), properties));
 
-    public static THasAttributes AddAttribute<THasAttributes>([DisallowNull] this THasAttributes model, TypePath attribute, params (string? Name, string Value)[] properties)
+    public static THasAttributes AddAttribute<THasAttributes>([DisallowNull] this THasAttributes model, TypePath attribute, params IEnumerable<(string? Name, string Value)> properties)
         where THasAttributes : IHasAttributes
     {
         _ = model.ArgumentNotNull().Attributes.Add(ICodeGenAttribute.New(TypePath.New(attribute), properties));
