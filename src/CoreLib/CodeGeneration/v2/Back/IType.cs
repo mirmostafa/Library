@@ -44,6 +44,9 @@ public static class TypeExtensions
         return type;
     }
 
+    public static IClass AddBaseType<TBaseType>(this IClass type) 
+        => AddBaseType(type, typeof(TBaseType));
+
     public static TType AddField<TType>(this TType type, string name, TypePath typePath, AccessModifier? accessModifier = IField.DefaultAccessModifier) where TType : IType =>
         AddMember(type, IField.New(name, typePath, AccessModifier.Private));
 
