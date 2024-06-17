@@ -10,8 +10,8 @@ using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnu
 
 namespace Library.CodeGeneration;
 
-[Immutable]
 [DebuggerStepThrough, StackTraceHidden]
+[Immutable]
 public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
 {
     private static readonly (Type Type, string Keyword)[] _primitiveTypes = [
@@ -86,46 +86,76 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         typeInfo.IsNullOrEmpty() ? null : new(typeInfo);
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
-    [DebuggerStepThrough, StackTraceHidden]
-    public static implicit operator TypePath?(in Type? typeInfo) =>
-        typeInfo == null ? null : New(typeInfo);
+    public static implicit operator TypePath?(in Type? typeInfo)
+        => typeInfo == null ? null : New(typeInfo);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) =>
-        new(fullPath, generics, isNullable);
+    public static TypePath New([DisallowNull] in string name, in string? nameSpace)
+        => new(Combine(nameSpace, name));
 
     [return: NotNull]
-    public static TypePath New<T>(in IEnumerable<string>? generics = null) =>
-        new(typeof(T).FullName!, generics);
+    public static TypePath New([DisallowNull] in string name, in string? nameSpace, in IEnumerable<string>? generics)
+        => new(Combine(nameSpace, name), generics);
+
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in string name, in string? nameSpace, in IEnumerable<string>? generics, bool? isNullable)
+        => new(Combine(nameSpace, name), generics, null);
+
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in string fullPath)
+        => new(fullPath);
+
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in string fullPath, in IEnumerable<string>? generics)
+        => new(fullPath, generics);
+
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in string fullPath, in IEnumerable<string>? generics, bool? isNullable)
+        => new(fullPath, generics, isNullable);
+
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in Type type)
+        => new(type?.FullName!);
+
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in Type type, in IEnumerable<Type>? generics)
+        => new(type?.FullName!, generics?.Select(x => x.FullName!));
+
+    [return: NotNull]
+    public static TypePath New([DisallowNull] in Type type, in IEnumerable<Type>? generics, bool? isNullable)
+        => new(type?.FullName!, generics?.Select(x => x.FullName!), isNullable);
+
+    [return: NotNull]
+    public static TypePath New<T>()
+        => new(typeof(T).FullName!);
+
+    [return: NotNull]
+    public static TypePath New<T>(in IEnumerable<string>? generics)
+        => new(typeof(T).FullName!, generics);
+
+    [return: NotNull]
+    public static TypePath New<T>(in IEnumerable<string>? generics, bool isNullable)
+        => new(typeof(T).FullName!, generics, isNullable);
 
     [return: NotNull]
     public static TypePath NewTask()
-        => New(typeof(Task));
+        => New<Task>();
 
     [return: NotNull]
     public static TypePath NewTask(in TypePath generic)
-        => New(typeof(Task<>), [generic]);
+        => New(typeof(Task<>).FullName!, [generic.FullName]);
 
     [return: NotNull]
     public static TypePath NewTask(in TypePath generic, bool isNullable)
-        => New(typeof(Task<>).FullName!, [generic], isNullable);
+        => New(typeof(Task<>).FullName!, [generic.FullName], isNullable);
 
     [return: NotNull]
     public static TypePath NewEnumerable(in TypePath generic)
-        => New(typeof(IEnumerable<>), [generic]);
+        => New(typeof(IEnumerable<>).FullName!, [generic]);
 
     [return: NotNull]
     public static TypePath NewEnumerable()
         => New(typeof(IEnumerable));
-
-    [return: NotNull]
-    [DebuggerStepThrough, StackTraceHidden]
-    public static TypePath New([DisallowNull] in Type type, in IEnumerable<string>? generics = null) =>
-        new(type.ArgumentNotNull().FullName!, generics);
-
-    [return: NotNull]
-    public static TypePath New(in string? name, in string? nameSpace, params string[] generics) =>
-        new(Combine(nameSpace, name), generics);
 
     public static bool operator !=(in TypePath? left, in TypePath? right) =>
         !(left == right);
@@ -321,12 +351,4 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         }
         return buffer.ToString();
     }
-}
-
-public static class TypePathHelper
-{
-    public static TypePath WrapWithTask(string path) =>
-        TypePath.New(typeof(Task<>), [path]);
-    public static TypePath WrapWithIEnumetable(string path) =>
-        TypePath.New(typeof(IEnumerator<>), [path]);
 }
