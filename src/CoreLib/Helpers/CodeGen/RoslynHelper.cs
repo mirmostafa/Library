@@ -208,7 +208,7 @@ public static class RoslynHelper
     {
         modifiers ??= EnumerableHelper.AsEnumerable(SyntaxKind.PublicKeyword);
         var ctor = ConstructorDeclaration(className).WithModifiers(modifiers.ToSyntaxTokenList());
-        return InnerCreateBaseMethod(new(modifiers, null, TypePath.GetName(className), parameters, body), ctor);
+        return InnerCreateBaseMethod(new(TypePath.GetName(className), modifiers, returnType: null, parameters: parameters, body: body), ctor);
     }
 
     public static RosFld CreateField(RosFieldInfo fieldInfo)
@@ -240,7 +240,10 @@ public static class RoslynHelper
             modifiers = modifiers.AddImmuted(SyntaxKind.StaticKeyword);
         }
 
-        RosMethod result = MethodDeclaration(ParseTypeName(methodInfo.ReturnType?.FullName ?? "void"), methodInfo.Name).WithModifiers(modifiers.ToSyntaxTokenList());
+        var returnTypeText = string.Concat(methodInfo.IsAsync ? "async " : "", methodInfo.ReturnType?.FullName ?? "void");
+        RosMethod result =
+            MethodDeclaration(ParseTypeName(returnTypeText), methodInfo.Name)
+            .WithModifiers(modifiers.ToSyntaxTokenList());
 
         result = InnerCreateBaseMethod(methodInfo, result);
         return result;
@@ -439,34 +442,36 @@ public sealed class RosFieldInfo(
 
 [Immutable]
 public sealed class RosMethodInfo(
-    in IEnumerable<SyntaxKind>? modifiers,
-    in TypePath? returnType,
-    in string name,
-    in IEnumerable<MethodParameterInfo>? parameters,
+    [DisallowNull] in string name,
+    in IEnumerable<SyntaxKind>? modifiers = null,
+    in bool isAsync = false,
+    in TypePath? returnType = null,
+    in IEnumerable<MethodParameterInfo>? parameters = null,
     in string? body = null,
     in bool isExtensionMethod = false) : IEquatable<RosMethodInfo>
 {
     public string? Body { get; } = body ?? "throw new NotImplementedException();";
     public bool IsExtensionMethod { get; } = isExtensionMethod;
-    public IEnumerable<SyntaxKind> Modifiers { get; } = modifiers ?? EnumerableHelper.AsEnumerable(SyntaxKind.PublicKeyword);
-    public string Name { get; } = name;
-    public IEnumerable<MethodParameterInfo>? Parameters { get; } = parameters;
-    public TypePath? ReturnType { get; } = returnType;
+    public IEnumerable<SyntaxKind> Modifiers { get; } = modifiers ?? [SyntaxKind.PublicKeyword];
+    public string Name { get; } = name.ArgumentNotNull();
+    public IEnumerable<MethodParameterInfo> Parameters { get; } = parameters ?? [];
+    public TypePath ReturnType { get; } = returnType ?? new("void");
+    public bool IsAsync { get; } = isAsync;
 
-    public static bool operator !=(RosMethodInfo left, RosMethodInfo right) =>
-        !(left == right);
+    public static bool operator !=(RosMethodInfo left, RosMethodInfo right)
+        => !(left == right);
 
-    public static bool operator ==(RosMethodInfo left, RosMethodInfo right) =>
-        left?.Equals(right) ?? right is null;
+    public static bool operator ==(RosMethodInfo left, RosMethodInfo right)
+        => left?.Equals(right) ?? right is null;
 
-    public override bool Equals(object? obj) =>
-        obj is RosMethodInfo other && this.Equals(other);
+    public override bool Equals(object? obj)
+        => obj is RosMethodInfo other && this.Equals(other);
 
-    public bool Equals(RosMethodInfo? other) =>
-        other is { } o && o.Name == this.Name && o.Parameters == this.Parameters;
+    public bool Equals(RosMethodInfo? other)
+        => other is { } o && o.Name == this.Name && o.Parameters == this.Parameters;
 
-    public override int GetHashCode() =>
-        HashCode.Combine(this.Name, this.Parameters?.GetHashCode(), this.Name.GetHashCode(StringComparison.CurrentCulture));
+    public override int GetHashCode()
+        => HashCode.Combine(this.Name, this.Parameters?.GetHashCode(), this.Name.GetHashCode(StringComparison.CurrentCulture));
 }
 
 [Immutable]

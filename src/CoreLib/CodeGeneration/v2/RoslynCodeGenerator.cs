@@ -72,7 +72,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             .Compact();
         var finalRoot = root.WithUsings(List(distinctUsings));
 
-        return Result.Success<string>(finalRoot.GenerateCode());
+        return Result.Success(finalRoot.GenerateCode());
     }
 
     private static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) AddAttributes(PropertyDeclarationSyntax prop, CompilationUnitSyntax root, IMember member)
@@ -104,7 +104,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
         var modifiers = GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier);
         var result = method.IsConstructor || method.Name == className
             ? RoslynHelper.CreateConstructor(TypePath.GetName(className), modifiers, method.Arguments.Select(x => (x.Type, x.Name)), method.Body)
-            : RoslynHelper.CreateMethod(new(modifiers, method.ReturnType, method.Name, method.Arguments.Select(x => (x.Type, x.Name)), method.Body, method.IsExtension));
+            : RoslynHelper.CreateMethod(new(method.Name, modifiers, method.IsAsync, method.ReturnType, method.Arguments.Select(x => (x.Type, x.Name)), method.Body, method.IsExtension));
         method.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
 
         foreach (var attribute in method.Attributes.Compact())

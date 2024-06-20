@@ -11,6 +11,7 @@ public interface IMethod : IMember, IHasGenericTypes
     bool IsConstructor { get; }
     bool IsExtension { get; }
     TypePath? ReturnType { get; }
+    bool IsAsync { get; }
 
     static IMethod New(string name, string? body = null, IEnumerable<MethodArgument>? arguments = null, TypePath? returnType = null)
     {
@@ -35,6 +36,7 @@ public sealed class Method(string name) : Member(name), IMethod
     public bool IsConstructor { get; init; }
     public bool IsExtension { get; init; }
     public TypePath? ReturnType { get; init; }
+    public bool IsAsync { get; set; }
 
     protected override Result OnValidate() =>
         this.Check()
