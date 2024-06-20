@@ -99,7 +99,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
         return (result, root);
     }
 
-    private static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) CreateRosMethod(CompilationUnitSyntax root, IMethod method, string className)
+    private static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) CreateRosMethod(CompilationUnitSyntax root, in IMethod method, in string className)
     {
         var modifiers = GeneratorHelper.ToModifiers(method.AccessModifier, method.InheritanceModifier);
         var result = method.IsConstructor || method.Name == className
