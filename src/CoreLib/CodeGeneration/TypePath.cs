@@ -119,7 +119,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
     [return: NotNull]
     public static TypePath New([DisallowNull] in Type type, in IEnumerable<Type>? generics)
-        => new(type?.FullName!, generics?.Select(x => x.FullName!));
+        => new(type?.FullName!, generics?.Select(x => x.Name == "Nullable`1" ? $"{x.GenericTypeArguments[0].FullName}?" : x.FullName!));
 
     [return: NotNull]
     public static TypePath New([DisallowNull] in Type type, in IEnumerable<Type>? generics, bool? isNullable)
