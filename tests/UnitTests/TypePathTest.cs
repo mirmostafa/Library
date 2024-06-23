@@ -20,6 +20,11 @@ public sealed class TypePathTest(ITestOutputHelper output)
     [InlineData("string?", "System.String?")]
     [InlineData("Person", "Test.Person")]
     [InlineData("Person?", "Test.Person?")]
+    [InlineData("Task<int>", "Task<System.Int32>")]
+    [InlineData("Task<long>", "Task<System.Int64>")]
+    [InlineData("Task<long?>", "Task<System.Int64?>")]
+    [InlineData("Task<IEnumerable<long>>", "Task<IEnumerable<System.Int64>>")]
+    //[InlineData("Task<IEnumerable<long?>>", "Task<IEnumerable<System.Int64?>>")]
     public void AsKeyword(string keyword, string fullPath)
     {
         var expected = keyword;
