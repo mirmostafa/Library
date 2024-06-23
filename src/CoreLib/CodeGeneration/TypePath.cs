@@ -10,27 +10,28 @@ using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnu
 
 namespace Library.CodeGeneration;
 
-[DebuggerStepThrough, StackTraceHidden]
+//[DebuggerStepThrough, StackTraceHidden]
 [Immutable]
 public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
 {
-    private static readonly (Type Type, string Keyword)[] _primitiveTypes = [
-        (typeof(int), "int"),
-        (typeof(long), "long"),
-        (typeof(byte), "byte"),
-        (typeof(char), "char"),
-        (typeof(bool), "bool"),
-        (typeof(uint), "uint"),
-        (typeof(nint), "nint"),
-        (typeof(float), "float"),
-        (typeof(nuint), "nuint"),
-        (typeof(short), "short"),
-        (typeof(sbyte), "sbyte"),
-        (typeof(double), "double"),
-        (typeof(string), "string"),
-        (typeof(ushort), "ushort"),
-        (typeof(decimal), "decimal"),
-        ];
+    private static readonly Dictionary<Type, string> _primitiveTypes = new()
+    {
+        { typeof(int), "int" },
+        { typeof(long), "long" },
+        { typeof(byte), "byte" },
+        { typeof(char), "char" },
+        { typeof(bool), "bool" },
+        { typeof(uint), "uint" },
+        { typeof(nint), "nint" },
+        { typeof(float), "float" },
+        { typeof(nuint), "nuint" },
+        { typeof(short), "short" },
+        { typeof(sbyte), "sbyte" },
+        { typeof(double), "double" },
+        { typeof(string), "string" },
+        { typeof(ushort), "ushort" },
+        { typeof(decimal), "decimal" },
+    };
 
     private readonly TypeData _data = Parse(fullPath, generics, isNullable);
     private string? _fullName;
@@ -110,6 +111,10 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         => new(fullPath, generics);
 
     [return: NotNull]
+    public static TypePath New([DisallowNull] in string fullPath, bool? isNullable)
+        => new(fullPath, null, isNullable);
+
+    [return: NotNull]
     public static TypePath New([DisallowNull] in string fullPath, in IEnumerable<string>? generics, bool? isNullable)
         => new(fullPath, generics, isNullable);
 
@@ -155,7 +160,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
     [return: NotNull]
     public static TypePath NewEnumerable()
-        => New(typeof(IEnumerable));
+        => New<IEnumerable>();
 
     public static bool operator !=(in TypePath? left, in TypePath? right) =>
         !(left == right);
@@ -163,17 +168,35 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     public static bool operator ==(in TypePath? left, in TypePath? right) =>
         left?.Equals(right) ?? (right is null);
 
+    //public string AsKeyword()
+    //{
+    //    if (this.NameSpace == "System")
+    //    {
+    //        var keyword = _primitiveTypes.FirstOrDefault(x => x.Key.Name == this.Name).Value;
+    //        if (!keyword.IsNullOrEmpty())
+    //        {
+    //            return this.IsNullable ? keyword.AddEnd('?') : keyword;
+    //        }
+    //    }
+    //    return this.ToString();
+    //}
+
     public string AsKeyword()
     {
-        if (this.NameSpace == "System")
+        var keyword = GetKeyword(this.Name);
+        if (this.IsGeneric)
         {
-            var keyword = _primitiveTypes.FirstOrDefault(x => x.Type.Name == this.Name).Keyword;
-            if (!keyword.IsNullOrEmpty())
-            {
-                return this.IsNullable ? keyword.AddEnd('?') : keyword;
-            }
+            var genericArguments = string.Join(", ", this.Generics.Select(g => g.AsKeyword()));
+            keyword = $"{keyword}<{genericArguments}>";
         }
-        return this.ToString();
+        if (this.IsNullable)
+        {
+            keyword += "?";
+        }
+        return keyword;
+
+        static string GetKeyword(string typeName)
+            => _primitiveTypes.FirstOrDefault(x => x.Key.Name == typeName).Value ?? typeName;
     }
 
     public void Deconstruct(out string? name, out string? nameSpace) =>
@@ -302,9 +325,9 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
     private static string TransformKeyword(string keyword)
     {
-        var primitive = _primitiveTypes.FirstOrDefault(x => x.Keyword == keyword);
-        return primitive != default && primitive.Type?.FullName != null
-            ? primitive.Type.FullName
+        var primitive = _primitiveTypes.FirstOrDefault(x => x.Value == keyword);
+        return primitive.Key?.FullName != null
+            ? primitive.Key.FullName
             : keyword;
     }
 
