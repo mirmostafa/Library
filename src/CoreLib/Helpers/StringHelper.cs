@@ -138,22 +138,22 @@ public static class StringHelper
     }
 
     [return: NotNull]
-    public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> format) =>
-        sb.AppendAll(items.Select(format));
+    public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> formatter) =>
+        sb.AppendAll(items.Select(formatter));
 
     [return: NotNull]
-    public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, int, string> format)
+    public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, int, string> formatter)
     {
         if (items?.Any() is not true)
         {
             return sb;
         }
         Check.MustBeArgumentNotNull(sb);
-        Check.MustBeArgumentNotNull(format);
+        Check.MustBeArgumentNotNull(formatter);
 
         foreach (var data in items.Index())
         {
-            _ = sb.Append(format(data.Item, data.Index));
+            _ = sb.Append(formatter(data.Item, data.Index));
         }
         return sb;
     }
@@ -175,8 +175,8 @@ public static class StringHelper
         return sb;
     }
 
-    public static StringBuilder AppendAllLines<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> format) =>
-        sb.AppendAllLines(items.Select(format));
+    public static StringBuilder AppendAllLines<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> formatter) =>
+        sb.AppendAllLines(items.Select(formatter));
 
     /// <summary>
     /// Replaces all invalid Arabic characters in the given string with their Persian equivalents.

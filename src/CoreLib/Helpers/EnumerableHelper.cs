@@ -173,7 +173,8 @@ public static class EnumerableHelper
             (null, null) => [],
             (_, null) => source,
             (null, _) => items,
-            (_, _) => addRangeImmutedIterator(source, items)
+            (_, _) => addRangeImmutedIterator(source, items),
+            _ => throw new NotImplementedException()
         };
         static IEnumerable<T> addRangeImmutedIterator(IEnumerable<T> source, IEnumerable<T> items)
         {
@@ -219,7 +220,7 @@ public static class EnumerableHelper
         };
     }
 
-    public static T Aggregate<T>(this IEnumerable<T> items, Func<(T current, T result), T> aggregator, T defaultValue) 
+    public static T Aggregate<T>(this IEnumerable<T> items, Func<(T current, T result), T> aggregator, T defaultValue)
         => Aggregate(items, (T curr, T res) => aggregator((curr, res)), defaultValue);
 
     /// <summary>
@@ -288,6 +289,9 @@ public static class EnumerableHelper
     public static bool Any<T>(this ICollection source)
         => source?.Count > 0;
 
+    public static T[] AsArray<T>(this IEnumerable<T> items)
+            => items is T[] array ? array : (items?.ToArray() ?? []);
+
     /// <summary>
     /// Converts a single item into an IEnumerable of that item.
     /// </summary>
@@ -307,6 +311,19 @@ public static class EnumerableHelper
         => FluentList<TItem>.New(list);
 
     /// <summary>
+    /// Builds a read-only list from an enumerable.
+    /// </summary>
+    /// <typeparam name="T">The type of the elements in the enumerable.</typeparam>
+    /// <param name="items">The enumerable to build the read-only list from.</param>
+    /// <returns>A read-only list containing the elements from the enumerable.</returns>
+    public static IReadOnlyList<T> AsReadOnly<T>([DisallowNull] this IEnumerable<T> items)
+    {
+        Check.MustBeArgumentNotNull(items);
+
+        return Array.AsReadOnly(items.ToArray());
+    }
+
+    /// <summary>
     /// Converts a List to a Span using CollectionsMarshal.
     /// </summary>
     /// <typeparam name="TItem">The type of elements in the source List.</typeparam>
@@ -320,8 +337,10 @@ public static class EnumerableHelper
     /// </summary>
     /// <typeparam name="TItem">The type of elements in the source IEnumerable.</typeparam>
     /// <param name="items">The source IEnumerable to convert to a Span.</param>
-    /// <returns>A Span representing the elements of the source IEnumerable.
-    /// If the source IEnumerable is null, returns the default Span.</returns>
+    /// <returns>
+    /// A Span representing the elements of the source IEnumerable. If the source IEnumerable is
+    /// null, returns the default Span.
+    /// </returns>
     public static Span<TItem> AsSpan<TItem>(this IEnumerable<TItem> items)
     {
         // Check if the input IEnumerable is null.
@@ -333,22 +352,6 @@ public static class EnumerableHelper
 
         // Convert the IEnumerable to an array and create a Span from it.
         return MemoryExtensions.AsSpan(items.AsArray());
-    }
-
-    public static T[] AsArray<T>(this IEnumerable<T> items)
-        => items is T[] array ? array : (items?.ToArray() ?? []);
-
-    /// <summary>
-    /// Builds a read-only list from an enumerable.
-    /// </summary>
-    /// <typeparam name="T">The type of the elements in the enumerable.</typeparam>
-    /// <param name="items">The enumerable to build the read-only list from.</param>
-    /// <returns>A read-only list containing the elements from the enumerable.</returns>
-    public static IReadOnlyList<T> AsReadOnly<T>([DisallowNull] this IEnumerable<T> items)
-    {
-        Check.MustBeArgumentNotNull(items);
-
-        return Array.AsReadOnly(items.ToArray());
     }
 
     /// <summary>
@@ -810,7 +813,7 @@ public static class EnumerableHelper
     //{
     //    return (items, items.ForEach(action));
     //}
-    
+
     /// <summary>
     /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and performs an action
     /// on each item.
