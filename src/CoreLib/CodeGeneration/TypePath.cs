@@ -10,7 +10,7 @@ using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnu
 
 namespace Library.CodeGeneration;
 
-//[DebuggerStepThrough, StackTraceHidden]
+[DebuggerStepThrough, StackTraceHidden]
 [Immutable]
 public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
 {

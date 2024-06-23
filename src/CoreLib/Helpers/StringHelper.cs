@@ -10,6 +10,9 @@ using Library.Globalization.Pluralization;
 using Library.Results;
 using Library.Validations;
 
+using NullableStrings = System.Collections.Generic.IEnumerable<string?>;
+using Strings = System.Collections.Generic.IEnumerable<string>;
+
 namespace Library.Helpers;
 
 /// <summary>
@@ -120,7 +123,7 @@ public static class StringHelper
         !string.IsNullOrEmpty(str) && range.Any(str.Contains);
 
     [return: NotNull]
-    public static StringBuilder AppendAll([DisallowNull] this StringBuilder sb, IEnumerable<string> lines)
+    public static StringBuilder AppendAll([DisallowNull] this StringBuilder sb, Strings lines)
     {
         Check.MustBeArgumentNotNull(sb);
 
@@ -156,7 +159,7 @@ public static class StringHelper
     }
 
     [return: NotNull]
-    public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, IEnumerable<string>? lines)
+    public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, Strings? lines)
     {
         if (lines?.Any() is not true)
         {
@@ -208,7 +211,7 @@ public static class StringHelper
     /// <returns>A new IEnumerable with only non-null and non-empty strings.</returns>
     [Pure]
     [return: NotNull]
-    public static IEnumerable<string> Compact(this IEnumerable<string?>? strings) =>
+    public static Strings Compact(this NullableStrings? strings) =>
         (strings?.Where([StackTraceHidden][DebuggerStepThrough] (item) => !item.IsNullOrEmpty()).Select(s => s!)) ?? [];
 
     /// <summary>
@@ -231,7 +234,7 @@ public static class StringHelper
     /// <param name="strings">The strings to concatenate.</param>
     /// <param name="sep">The separator to use.</param>
     /// <returns>The concatenated string.</returns>
-    public static string ConcatAll(IEnumerable<string> strings, string sep) =>
+    public static string ConcatAll(Strings strings, string sep) =>
         (sep?.Length) switch
         {
             0 or null => string.Concat(strings),
@@ -244,7 +247,7 @@ public static class StringHelper
     /// <param name="values">The strings to concatenate.</param>
     /// <returns>The concatenated string.</returns>
     [return: NotNull]
-    public static string ConcatStrings(this IEnumerable<string> values) =>
+    public static string ConcatStrings(this Strings values) =>
         string.Concat(values.ToArray());
 
     /// <summary>
@@ -260,7 +263,7 @@ public static class StringHelper
     /// <param name="str">The string to search for.</param>
     /// <param name="ignoreCase">Whether to ignore case when searching.</param>
     /// <returns>True if the string is present in the array, false otherwise.</returns>
-    public static bool Contains(this IEnumerable<string?> array, string? str, bool ignoreCase = false)
+    public static bool Contains(this NullableStrings array, string? str, bool ignoreCase = false)
     {
         if (array == null)
         {
@@ -279,7 +282,7 @@ public static class StringHelper
     /// <param name="str">The string to check.</param>
     /// <param name="array">The array of strings to check against.</param>
     /// <returns>True if the string contains any of the strings in the array, false otherwise.</returns>
-    public static bool ContainsAny(this string str, in IEnumerable<string> array)
+    public static bool ContainsAny(this string str, in Strings array)
     {
         Check.MustBeArgumentNotNull(str);
         if (array is null)
@@ -339,7 +342,7 @@ public static class StringHelper
     /// <summary>
     /// Checks if the given string ends with any of the strings in the given IEnumerable.
     /// </summary>
-    public static bool EndsWithAny(this string str, in IEnumerable<string> values)
+    public static bool EndsWithAny(this string str, in Strings values)
     {
         Check.MustBeArgumentNotNull(str);
         return values.Compact().Any(str.EndsWith);
@@ -375,7 +378,7 @@ public static class StringHelper
         => array.Any(s => str1.EqualsTo(s));
 
     [return: NotNull]
-    public static IEnumerable<string> FindEach(this string str, IEnumerable<string> items)
+    public static Strings FindEach(this string str, Strings items)
     {
         if (str.IsNullOrEmpty())
         {
@@ -524,7 +527,7 @@ public static class StringHelper
     /// <param name="start">The start character.</param>
     /// <param name="end">The end character.</param>
     /// <returns>An enumerable of all phrases found.</returns>
-    public static IEnumerable<string?> GetPhrases(this string str, char start, char end = default)
+    public static NullableStrings GetPhrases(this string str, char start, char end = default)
     {
         var index = 0;
         var result = str.GetPhrase(index, start, end);
@@ -542,7 +545,7 @@ public static class StringHelper
     /// <param name="separator">The separator character.</param>
     /// <returns>A sequence of strings containing the grouped characters.</returns>
     [Pure]
-    public static IEnumerable<string> GroupBy(this IEnumerable<char> chars, char separator)
+    public static Strings GroupBy(this IEnumerable<char> chars, char separator)
     {
         var buffer = new StringBuilder();
         foreach (var c in chars)
@@ -565,7 +568,7 @@ public static class StringHelper
     /// <param name="str">The string to group.</param>
     /// <param name="separator">The separator character.</param>
     /// <returns>An enumerable of strings grouped by the separator character.</returns>
-    public static IEnumerable<string> GroupBy(string str, char separator)
+    public static Strings GroupBy(string str, char separator)
     {
         // Create a new StringBuilder object
         StringBuilder buffer = new();
@@ -621,7 +624,7 @@ public static class StringHelper
     /// <param name="trimmed">Whether or not to trim the strings before comparison.</param>
     /// <param name="ignoreCase">Whether or not to ignore case when comparing strings.</param>
     /// <returns>The index of the item in the enumerable, or null if the item is not found.</returns>
-    public static int? IndexOf([DisallowNull] this IEnumerable<string?> items, in string? item, bool trimmed = false, bool ignoreCase = true)
+    public static int? IndexOf([DisallowNull] this NullableStrings items, in string? item, bool trimmed = false, bool ignoreCase = true)
     {
         // Check if the argument is not null
         Check.MustBeArgumentNotNull(items, nameof(items));
@@ -753,7 +756,7 @@ public static class StringHelper
     /// <param name="ignoreCase">Whether the case should be ignored when checking.</param>
     /// <param name="range">The range to check against.</param>
     /// <returns>True if the text is in the range, false otherwise.</returns>
-    public static bool IsInRange(string? text, bool trimmed, bool ignoreCase, IEnumerable<string> range)
+    public static bool IsInRange(string? text, bool trimmed, bool ignoreCase, Strings range)
         => range.IndexOf(text, trimmed, ignoreCase) >= 0;
 
     /// <summary>
@@ -902,7 +905,7 @@ public static class StringHelper
         }
     }
 
-    public static string Merge(this string s, IEnumerable<string> items, string delimiter)
+    public static string Merge(this string s, Strings items, string delimiter)
     {
         if (!items.Any())
         {
@@ -943,7 +946,7 @@ public static class StringHelper
     /// A flag indicating whether to add the separator to the end of the merged string.
     /// </param>
     /// <returns>A single string containing the merged values separated by the specified separator.</returns>
-    public static string Merge(this IEnumerable<string> source, string separator, bool addSeparatorToEnd = true)
+    public static string Merge(this Strings source, string separator, bool addSeparatorToEnd = true)
     {
         // Define a function to operate on each item in the source.
         Func<string, string> operate = addSeparatorToEnd
@@ -959,26 +962,30 @@ public static class StringHelper
     /// </summary>
     /// <param name="source">The sequence of strings to merge.</param>
     /// <returns>A single string containing the merged values without any separators.</returns>
-    public static string Merge(this IEnumerable<string> source) =>
+    public static string Merge(this Strings source) =>
         string.Concat(source.ToArray());
 
-    /// <summary> Merges the elements of an IEnumerable<string> into a single string, separated by
-    /// the given separator. </summary>
-    public static string Merge(this IEnumerable<string> array, in char separator) =>
+    /// <summary>
+    /// Merges the elements of an Strings into a single string, separated by the given separator.
+    /// </summary>
+    public static string Merge(this Strings array, in char separator) =>
         string.Join(separator, array.ToArray());
 
-    public static string Merge(this IEnumerable<string> array, in char separator, Func<string, string> format) =>
+    public static string Merge(this Strings array, in char separator, Func<string, string> format) =>
         string.Join(separator, array.Select(format).ToArray());
 
-    public static string Merge(this IEnumerable<string> array, in string separator, Func<string, int, string> format) =>
+    public static string Merge(this Strings array, in string separator, Func<string, int, string> format) =>
         string.Join(separator, array.Select(format).ToArray());
 
-    /// <summary> Merges the elements of an IEnumerable<string> array into a single string, using
-    /// the specified quotation mark and separator. </summary> <param name="array">The array of
-    /// strings to be merged.</param> <param name="quat">The quotation mark to be used.</param>
-    /// <param name="separator">The separator to be used.</param> <returns>A string containing the
-    /// merged elements of the array.</returns>
-    public static string Merge(this IEnumerable<string> array, string quat, string separator) =>
+    /// <summary>
+    /// Merges the elements of an Strings array into a single string, using the specified quotation
+    /// mark and separator.
+    /// </summary>
+    /// <param name="array">The array of strings to be merged.</param>
+    /// <param name="quat">The quotation mark to be used.</param>
+    /// <param name="separator">The separator to be used.</param>
+    /// <returns>A string containing the merged elements of the array.</returns>
+    public static string Merge(this Strings array, string quat, string separator) =>
         array.Aggregate(string.Empty, (current, str) => $"{current}{quat}{str}{quat}{separator}").TrimEnd(separator.ToCharArray())[..^1];
 
     /// <summary>
@@ -1006,7 +1013,7 @@ public static class StringHelper
     /// </summary>
     /// <param name="str">The large string to read.</param>
     /// <returns>An enumerable of strings representing each line of the input string.</returns>
-    public static IEnumerable<string> ReadLines(this string str)
+    public static Strings ReadLines(this string str)
     {
         if (str.IsNullOrEmpty())
         {
@@ -1083,7 +1090,7 @@ public static class StringHelper
     /// Replaces all occurrences of the specified old values with the specified new value in the
     /// given string.
     /// </summary>
-    public static string ReplaceAll(this string value, in IEnumerable<string> oldValues, string newValue) =>
+    public static string ReplaceAll(this string value, in Strings oldValues, string newValue) =>
         oldValues.Aggregate(value, (current, oldValue) => current.Replace(oldValue, newValue));
 
     /// <summary>
@@ -1234,7 +1241,7 @@ public static class StringHelper
     /// .NET. It's funny. 😁
     /// </example>
     [Obsolete("Use `string.Split`, instead.", true)]
-    public static IEnumerable<string> Split(this string @this, string separator)
+    public static Strings Split(this string @this, string separator)
     {
         //Create a checkpoint variable to keep track of the current index
         var checkpoint = 0;
@@ -1259,7 +1266,7 @@ public static class StringHelper
     /// </summary>
     /// <param name="value">The string to split.</param>
     /// <returns>An IEnumerable of strings.</returns>
-    public static IEnumerable<string> SplitCamelCase(this string? value)
+    public static Strings SplitCamelCase(this string? value)
     //This code is used to split a camel case string into separate words.
     //It takes a string as an argument and returns an IEnumerable of strings.
     {
@@ -1354,7 +1361,7 @@ public static class StringHelper
     /// <summary>
     /// Checks if the given string starts with any of the strings in the given IEnumerable.
     /// </summary>
-    public static bool StartsWithAny(this string str, in IEnumerable<string> values) =>
+    public static bool StartsWithAny(this string str, in Strings values) =>
         values.Any(str.StartsWith);
 
     /// <summary>
@@ -1397,13 +1404,13 @@ public static class StringHelper
     /// <summary>
     /// Converts a collection of strings to a collection of integers.
     /// </summary>
-    public static IEnumerable<int> ToInt(in IEnumerable<string> array) =>
+    public static IEnumerable<int> ToInt(in Strings array) =>
         array.Where(str => IsNumber(str)).Select(str => str.Cast().ToInt());
 
     /// <summary>
     /// Converts a collection of strings to lowercase.
     /// </summary>
-    public static IEnumerable<string> ToLower(this IEnumerable<string> strings)
+    public static Strings ToLower(this Strings strings)
         => strings.Select(str => str.ToLower(CultureInfo.CurrentCulture));
 
     /// <summary>
@@ -1415,13 +1422,13 @@ public static class StringHelper
     /// <summary>
     /// Trims all strings in the given IEnumerable.
     /// </summary>
-    public static IEnumerable<string> TrimAll(this IEnumerable<string> values)
+    public static Strings TrimAll(this Strings values)
         => values.Select(t => t.Trim());
 
     /// <summary>
     /// Trims all strings in an IEnumerable using the specified characters.
     /// </summary>
-    public static IEnumerable<string> TrimAll(this IEnumerable<string> values, params char[] trimChars)
+    public static Strings TrimAll(this Strings values, params char[] trimChars)
         => values.Select(t => t.Trim(trimChars));
 
     /// <summary>

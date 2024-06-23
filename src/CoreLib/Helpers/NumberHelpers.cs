@@ -8,7 +8,7 @@ public static class NumberHelper
 {
     private static readonly string[] _sizeSuffixes = { "", "K", "M", "G", "T", "P", "E", "Z", "Y" };
 
-    [Obsolete("Use `System.Nullable<T>.GetValueOrDefault()` instead.", true)]
+    [Obsolete($"Use `System.Nullable<T>.GetValueOrDefault()` instead.", true)]
     public static long IfNull(this long? value, long defaultValue) =>
         value ?? defaultValue;
 

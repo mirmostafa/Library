@@ -344,7 +344,7 @@ public static class EnumerableHelper
     /// <typeparam name="T">The type of the elements in the enumerable.</typeparam>
     /// <param name="items">The enumerable to build the read-only list from.</param>
     /// <returns>A read-only list containing the elements from the enumerable.</returns>
-    public static IReadOnlyList<T> Build<T>([DisallowNull] this IEnumerable<T> items)
+    public static IReadOnlyList<T> AsReadOnly<T>([DisallowNull] this IEnumerable<T> items)
     {
         Check.MustBeArgumentNotNull(items);
 
@@ -810,6 +810,7 @@ public static class EnumerableHelper
     //{
     //    return (items, items.ForEach(action));
     //}
+    
     /// <summary>
     /// Asynchronously iterates over an <see cref="IAsyncEnumerableTItem"/> and performs an action
     /// on each item.
@@ -911,7 +912,7 @@ public static class EnumerableHelper
     /// <returns>A read-only list of the items.</returns>
     [return: NotNull]
     public static void ForEach<T>(this IEnumerable<T> items, [DisallowNull] Action<T> action) =>
-        _ = items.Enumerate(action).Build();
+        _ = items.Enumerate(action).AsReadOnly();
 
     /// <summary>
     /// Recursively iterates through a tree of objects, performing an action on each node.
@@ -943,7 +944,7 @@ public static class EnumerableHelper
             {
                 childAction?.Invoke(c, root);
                 ForEach(c, getChildren, rootAction, childAction);
-            }).Build());
+            }).AsReadOnly());
     }
 
     /// <summary>

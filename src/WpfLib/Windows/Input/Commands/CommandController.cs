@@ -13,7 +13,7 @@ public sealed class CommandController : IIndexable<string, CommandExtender>, IIn
     public CommandController(UIElement owner)
     {
         this._owner = owner;
-        _ = this._commandExtenders.AddRange(this._owner.CommandBindings.Cast<CommandBinding>().Compact().Select(x => new CommandExtender(x))).Build();
+        _ = this._commandExtenders.AddRange(this._owner.CommandBindings.Cast<CommandBinding>().Compact().Select(x => new CommandExtender(x))).AsReadOnly();
     }
 
     public CommandExtender this[CommandBinding index] => this._commandExtenders[index].NotNull(New<NotFoundValidationException>);
