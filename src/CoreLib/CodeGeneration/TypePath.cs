@@ -6,7 +6,7 @@ using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 
-using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnumerable<Library.CodeGeneration.TypePath> Generics, bool IsNullable, bool IsAsync);
+using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnumerable<Library.CodeGeneration.TypePath> Generics, bool IsNullable);
 
 namespace Library.CodeGeneration;
 
@@ -46,8 +46,6 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [NotNull]
     public IEnumerable<TypePath> Generics => this._data.Generics;
 
-    public bool IsAsync => this._data.IsAsync;
-
     public bool IsGeneric => this._data.Generics.Any();
 
     public bool IsNullable => this._data.IsNullable;
@@ -57,16 +55,16 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
     public string NameSpace => this._data.NameSpace;
 
-    public static string Combine(in string? part1, params string?[] parts) =>
-        StringHelper.Merge(EnumerableHelper.AsEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
+    public static string Combine(in string? part1, params string?[] parts)
+        => StringHelper.Merge(EnumerableHelper.AsEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
 
     [return: NotNullIfNotNull(nameof(typePath))]
-    public static string? GetName(in string? typePath) =>
-        typePath == null ? null : Parse(typePath).Name;
+    public static string? GetName(in string? typePath)
+        => typePath == null ? null : Parse(typePath).Name;
 
     [return: NotNullIfNotNull(nameof(typePath))]
-    public static string? GetNameSpace(in string? typePath) =>
-        typePath == null ? null : Parse(typePath).NameSpace;
+    public static string? GetNameSpace(in string? typePath)
+        => typePath == null ? null : Parse(typePath).NameSpace;
 
     public static string? GetNameSpace<T>()
     {
@@ -75,16 +73,16 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     }
 
     [return: NotNull]
-    public static IEnumerable<string>? GetNameSpaces(in string? typePath) =>
-        typePath == null ? [] : New(typePath).GetNameSpaces();
+    public static IEnumerable<string>? GetNameSpaces(in string? typePath)
+        => typePath == null ? [] : New(typePath).GetNameSpaces();
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
-    public static implicit operator string?(in TypePath? typeInfo) =>
-        typeInfo?.FullPath;
+    public static implicit operator string?(in TypePath? typeInfo)
+        => typeInfo?.FullPath;
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
-    public static implicit operator TypePath?(in string? typeInfo) =>
-        typeInfo.IsNullOrEmpty() ? null : new(typeInfo);
+    public static implicit operator TypePath?(in string? typeInfo)
+        => typeInfo.IsNullOrEmpty() ? null : new(typeInfo);
 
     [return: NotNullIfNotNull(nameof(typeInfo))]
     public static implicit operator TypePath?(in Type? typeInfo)
@@ -162,24 +160,11 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     public static TypePath NewEnumerable()
         => New<IEnumerable>();
 
-    public static bool operator !=(in TypePath? left, in TypePath? right) =>
-        !(left == right);
+    public static bool operator !=(in TypePath? left, in TypePath? right)
+        => !(left == right);
 
-    public static bool operator ==(in TypePath? left, in TypePath? right) =>
-        left?.Equals(right) ?? (right is null);
-
-    //public string AsKeyword()
-    //{
-    //    if (this.NameSpace == "System")
-    //    {
-    //        var keyword = _primitiveTypes.FirstOrDefault(x => x.Key.Name == this.Name).Value;
-    //        if (!keyword.IsNullOrEmpty())
-    //        {
-    //            return this.IsNullable ? keyword.AddEnd('?') : keyword;
-    //        }
-    //    }
-    //    return this.ToString();
-    //}
+    public static bool operator ==(in TypePath? left, in TypePath? right)
+        => left?.Equals(right) ?? (right is null);
 
     public string AsKeyword()
     {
@@ -199,20 +184,20 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
             => _primitiveTypes.FirstOrDefault(x => x.Key.Name == typeName).Value ?? typeName;
     }
 
-    public void Deconstruct(out string? name, out string? nameSpace) =>
-        (name, nameSpace) = (this.Name, this.NameSpace);
+    public void Deconstruct(out string? name, out string? nameSpace)
+        => (name, nameSpace) = (this.Name, this.NameSpace);
 
-    public void Deconstruct(out string? name, out string? nameSpace, out IEnumerable<TypePath> generics) =>
-        (name, nameSpace, generics) = (this.Name, this.NameSpace, this.Generics);
+    public void Deconstruct(out string? name, out string? nameSpace, out IEnumerable<TypePath> generics)
+        => (name, nameSpace, generics) = (this.Name, this.NameSpace, this.Generics);
 
-    public bool Equals(TypePath? other) =>
-        (this.Name, this.NameSpace) == (other?.Name, other?.NameSpace);
+    public bool Equals(TypePath? other)
+        => (this.Name, this.NameSpace) == (other?.Name, other?.NameSpace);
 
-    public override bool Equals(object? obj) =>
-        obj is TypePath path && this.Equals(path);
+    public override bool Equals(object? obj)
+        => obj is TypePath path && this.Equals(path);
 
-    public override int GetHashCode() =>
-        this.FullName.GetHashCode(StringComparison.Ordinal);
+    public override int GetHashCode()
+        => this.FullName.GetHashCode(StringComparison.Ordinal);
 
     [return: NotNull]
     public IEnumerable<string> GetNameSpaces()
@@ -237,8 +222,8 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     }
 
     [return: NotNull]
-    public override string ToString() =>
-        this.FullName;
+    public override string ToString()
+        => this.FullName;
 
     public TypePath WithNullable(bool isNullable)
     {
@@ -255,7 +240,6 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         return new(fullPath);
     }
 
-    [DebuggerStepThrough, StackTraceHidden]
     private static TypeData Parse(in string typePath, in IEnumerable<string>? generics = null, bool? isNullable = null)
     {
         // Validation checks
@@ -263,21 +247,16 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         Check.MustBe(generics?.All(x => !x.IsNullOrEmpty()) ?? true, () => "Generic types cannot be null or empty.");
 
         // Initializations
-        var typePathBuffer = typePath.ArgumentNotNull();
-
-        var isAsync = typePathBuffer.StartsWith(" async ", StringComparison.InvariantCulture);
-        if (isAsync)
-        {
-            typePathBuffer = typePathBuffer.TrimStart(" async ");
-        }
-
-        typePathBuffer = typePathBuffer.EndsWith('?')
-            ? typePathBuffer = TransformKeyword(typePath.TrimEnd('?')).AddEnd('?')
-            : typePathBuffer = TransformKeyword(typePath);
+        var typePathBuffer = typePath.ArgumentNotNull()
+            .Trim()
+            .TrimStart("async ")
+            .EndsWith('?')
+                ? TransformKeyword(typePath.TrimEnd('?')).AddEnd('?')
+                : TransformKeyword(typePath);
 
         var gens = new List<string>();
 
-        // Take care of nullability.
+        // Manage nullability.
         if (isNullable is { } nullable)
         {
             typePathBuffer = typePathBuffer.TrimEnd('?');
@@ -287,7 +266,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
             }
         }
 
-        // Nullability output parameter
+        // 1Nullability` is of output parameter
         var nullability = typePathBuffer.EndsWith('?');
 
         // No longer nullable sign is required. So remove it.
@@ -320,7 +299,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
         // To be more friendly, let's be kind and use C# keywords.
         //x (name, nameSpace) = ToKeyword(name, nameSpace);
-        return (name, nameSpace, genTypes, nullability, isAsync);
+        return (name, nameSpace, genTypes, nullability);
     }
 
     private static string TransformKeyword(string keyword)
@@ -353,10 +332,6 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     private string GetFullPath()
     {
         var buffer = new StringBuilder();
-        if (this._data.IsAsync)
-        {
-            _ = buffer.Append(" async ");
-        }
         if (!this.NameSpace.IsNullOrEmpty())
         {
             _ = buffer.Append(CultureInfo.CurrentCulture, $"{this.NameSpace}.");
