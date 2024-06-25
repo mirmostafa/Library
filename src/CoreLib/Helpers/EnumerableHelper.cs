@@ -173,8 +173,7 @@ public static class EnumerableHelper
             (null, null) => [],
             (_, null) => source,
             (null, _) => items,
-            (_, _) => addRangeImmutedIterator(source, items),
-            _ => throw new NotImplementedException()
+            _ => addRangeImmutedIterator(source, items)
         };
         static IEnumerable<T> addRangeImmutedIterator(IEnumerable<T> source, IEnumerable<T> items)
         {

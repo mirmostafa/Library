@@ -239,8 +239,12 @@ public static class RoslynHelper
         {
             modifiers = modifiers.AddImmuted(SyntaxKind.StaticKeyword);
         }
+        if (methodInfo.IsAsync)
+        {
+            modifiers = modifiers.AddImmuted(SyntaxKind.AsyncKeyword);
+        }
 
-        var returnTypeText = string.Concat(methodInfo.IsAsync ? "async " : "", methodInfo.ReturnType?.FullName ?? "void");
+        var returnTypeText = methodInfo.ReturnType?.FullName ?? "void";
         RosMethod result =
             MethodDeclaration(ParseTypeName(returnTypeText), methodInfo.Name)
             .WithModifiers(modifiers.ToSyntaxTokenList());

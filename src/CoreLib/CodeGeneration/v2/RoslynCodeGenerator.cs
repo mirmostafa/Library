@@ -23,23 +23,34 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
 
     public Result<string> Generate(INamespace nameSpace)
     {
+        // Validation checks
         Check.MustBeArgumentNotNull(nameSpace);
-
-        var root = RoslynHelper.CreateRoot();
         if (!nameSpace.Validate().TryParse(out var vr))
         {
             return vr.WithValue(string.Empty);
         }
+
+        // Create compilation unit
+        var root = RoslynHelper.CreateRoot();
+        
+        // Create namespace
         var rosNameSpace = RoslynHelper.CreateNamespace(nameSpace.Name);
+
+        // Add types
         foreach (var type in nameSpace.Types)
         {
             var modifiers = GeneratorHelper.ToModifiers(type.AccessModifier, type.InheritanceModifier);
+            // Create type
             var rosType = RoslynHelper.CreateType(TypePath.New(type.Name), modifiers);
+
+            // Add base class or interfaces to type
             foreach (var baseType in type.BaseTypes)
             {
                 rosType = rosType.AddBase(baseType.FullName);
                 root = baseType.GetNameSpaces().SelectImmutable((ns, r) => r.AddUsingNameSpace(ns), root);
             }
+
+            // Add attributes
             foreach (var attribute in type.Attributes.Compact())
             {
                 var attributeType = TypePath.New(attribute.Name);
@@ -49,6 +60,8 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
                 }
                 rosType = rosType.AddAttribute(attributeType.Name, attribute.Properties.Select(x => (x.Name, x.Value)));
             }
+
+            // Add members
             foreach (var member in type.Members.Compact())
             {
                 (var codeMember, root) = member switch
@@ -63,8 +76,10 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             rosNameSpace = rosNameSpace.AddType(rosType);
         }
 
+        // Add additional namespaces to unit
         nameSpace.UsingNamespaces.ForEach(x => root = root.AddUsingNameSpace(x));
 
+        // Add namespace to unit
         root = root!.AddNameSpace(rosNameSpace);
 
         var distinctUsings = root.DescendantNodes().OfType<UsingDirectiveSyntax>()
