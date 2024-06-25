@@ -10,7 +10,7 @@ using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnu
 
 namespace Library.CodeGeneration;
 
-[DebuggerStepThrough, StackTraceHidden]
+//[DebuggerStepThrough, StackTraceHidden]
 [Immutable]
 public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
 {
@@ -166,23 +166,15 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     public static bool operator ==(in TypePath? left, in TypePath? right)
         => left?.Equals(right) ?? (right is null);
 
-    public string AsKeyword()
+    public static string AsKeyword(in string nameOrFullName)
     {
-        var keyword = GetKeyword(this.Name);
-        if (this.IsGeneric)
-        {
-            var genericArguments = string.Join(", ", this.Generics.Select(g => g.AsKeyword()));
-            keyword = $"{keyword}<{genericArguments}>";
-        }
-        if (this.IsNullable)
-        {
-            keyword += "?";
-        }
-        return keyword;
-
-        static string GetKeyword(string typeName)
-            => _primitiveTypes.FirstOrDefault(x => x.Key.Name == typeName).Value ?? typeName;
+        var buffer = nameOrFullName;
+        _primitiveTypes.ForEach(x => buffer = buffer.Replace($"System.{x.Key.Name}", x.Value).Replace($"{x.Key.Name}", x.Value));
+        return buffer;
     }
+
+    public string AsKeyword()
+        => AsKeyword(this.FullName);
 
     public void Deconstruct(out string? name, out string? nameSpace)
         => (name, nameSpace) = (this.Name, this.NameSpace);
@@ -297,8 +289,6 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
         var genTypes = gens.Select(x => new TypePath(x));
 
-        // To be more friendly, let's be kind and use C# keywords.
-        //x (name, nameSpace) = ToKeyword(name, nameSpace);
         return (name, nameSpace, genTypes, nullability);
     }
 
