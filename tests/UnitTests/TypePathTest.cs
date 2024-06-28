@@ -1,74 +1,251 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using Library.CodeGeneration;
 
-namespace Library.Helpers;
+using UnitTests.Models;
 
-public readonly record struct TypeData(string Name, string? NameSpace, IEnumerable<TypeData> Generics, bool IsNullable) : IEquatable<TypeData>
+using Xunit.Abstractions;
+
+namespace UnitTests;
+
+[Collection(nameof(TypePathTest))]
+[Trait("Category", nameof(Library.CodeGeneration))]
+[Trait("Category", nameof(TypePath))]
+public sealed class TypePathTest(ITestOutputHelper output)
 {
-    public bool Equals(TypeData other)
-        => this.GetHashCode() == other.GetHashCode();
+    private static readonly string[] _generics = ["System.Int32", "String"];
+    private readonly ITestOutputHelper _output = output;
+    private readonly string _sampleFullPath = "System.Linq.IQueryable<Library.Tests.UnitTests.TypePathTest>";
 
-    public override int GetHashCode()
+    [Theory]
+    [InlineData("int", "System.Int32")]
+    [InlineData("int?", "System.Int32?")]
+    [InlineData("string", "System.String")]
+    [InlineData("string?", "System.String?")]
+    [InlineData("Person", "Test.Person")]
+    [InlineData("Person?", "Test.Person?")]
+    [InlineData("Task<int>", "Task<System.Int32>")]
+    [InlineData("Task<long>", "Task<System.Int64>")]
+    [InlineData("Task<long?>", "Task<System.Int64?>")]
+    [InlineData("Task<IEnumerable<long>>", "Task<IEnumerable<System.Int64>>")]
+    public void AsKeyword(string keyword, string fullPath)
     {
-        var result = HashCode.Combine(this.Name, this.NameSpace, this.IsNullable);
-        foreach (var generic in this.Generics)
-        {
-            result = HashCode.Combine(result, generic.GetHashCode());
-        }
-        return result;
+        var expected = keyword;
+        var actual = TypePath.New(fullPath).AsKeyword();
+
+        Assert.Equal(expected, actual);
     }
-}
 
-public static class TypePathHelper
-{
-    internal static TypeData ParseFullPath([DisallowNull] in string fullPath)
+    [Theory]
+    [InlineData("int", "System.Int32")]
+    [InlineData("int?", "System.Int32?")]
+    [InlineData("string", "System.String")]
+    [InlineData("string?", "System.String?")]
+    [InlineData("System.String?", "System.String?")]
+    [InlineData("Test.Person?", "Test.Person?")]
+    public void FromKeyword(string keyword, string fullPath)
     {
-        TypeData result = default;
-        if (!fullPath.Contains('<'))
+        var expected = fullPath;
+        var actual = TypePath.New(keyword).FullPath;
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact, Priority(25)]
+    public void GenericTypeTest()
+    {
+        // Assign
+        var expectedName = "IQueryable";
+        var expectedNameSpace = "System.Linq";
+        var expectedGeneric = "Library.Tests.UnitTests.TypePathTest";
+        var expectedGenericName = "TypePathTest";
+        var expectedGenericNameSpace = "Library.Tests.UnitTests";
+
+        // Act
+        TypePath path = this._sampleFullPath;
+        var actualGeneric = path.Generics.FirstOrDefault();
+        var actualName = path.Name;
+        var actualNameSpace = path.NameSpace;
+        var actualFullPath = path.FullPath;
+        var allNameSpaces = path.GetNameSpaces().ToList();
+
+        // Assert
+        this.Display(path);
+        this.Display(actualGeneric);
+        Assert.Equal(expectedName, actualName);
+        Assert.Equal(expectedNameSpace, actualNameSpace);
+        Assert.Equal(this._sampleFullPath, actualFullPath);
+
+        Assert.NotNull(actualGeneric);
+        Assert.NotNull(actualGeneric.Name);
+        Assert.NotNull(actualGeneric.NameSpace);
+        Assert.Equal(expectedGeneric, actualGeneric);
+        Assert.Equal(expectedGenericName, actualGeneric.Name);
+        Assert.Equal(expectedGenericNameSpace, actualGeneric.NameSpace);
+        Assert.Equal(2, allNameSpaces.Count);
+    }
+
+    [Fact, Priority(2)]
+    public void NormalTypeTest()
+    {
+        // Assign
+        var expectedFullPath = "Library.Tests.UnitTests.TypePathTest";
+        var expectedName = "TypePathTest";
+        var expectedNameSpace = "Library.Tests.UnitTests";
+        TypePath path = expectedFullPath;
+
+        // Act
+        var actualName = path.Name;
+        var actualNameSpace = path.NameSpace;
+        var actualFullPath = path.FullPath;
+
+        // Assert
+        this.Display(path);
+        Assert.Equal(expectedName, actualName);
+        Assert.Equal(expectedNameSpace, actualNameSpace);
+        Assert.Equal(expectedFullPath, actualFullPath);
+    }
+
+    [Theory]
+    [InlineData("int?", true)]
+    [InlineData("string?", true)]
+    [InlineData("Test.Person?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>", false)]
+    [InlineData("System.Collection.IEnumerable<int>?", true)]
+    public void NullabilityCheck(string type, bool expected)
+    {
+        // Assign
+        var tp = TypePath.New(type);
+
+        // Act
+        var actual = tp.IsNullable;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("int?", true)]
+    [InlineData("int?", false)]
+    [InlineData("string?", true)]
+    [InlineData("string?", false)]
+    [InlineData("System.String?", false)]
+    [InlineData("System.String?", true)]
+    [InlineData("Test.Person?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", false)]
+    [InlineData("System.Collection.IEnumerable<int?>", true)]
+    [InlineData("System.Collection.IEnumerable<int?>", false)]
+    [InlineData("System.Collection.IEnumerable<int>?", true)]
+    [InlineData("System.Collection.IEnumerable<int>?", false)]
+    public void NullabilityCreate(string type, bool expected)
+    {
+        // Assign
+        var tp = TypePath.New(type, isNullable: expected);
+
+        // Act
+        var actual = tp.IsNullable;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact, Priority(20)]
+    public void SimpleGenericTypeTest()
+    {
+        var path = new TypePath(this._sampleFullPath);
+        this.Display(path);
+    }
+
+    [Fact, Priority(35)]
+    public void SimpleGenericWithAdditionalGenericsTypeTest()
+    {
+        var path = new TypePath(this._sampleFullPath, _generics);
+        this.Display(path);
+    }
+
+    [Fact, Priority(1)]
+    public void SimpleTypeTest()
+    {
+        // Assign
+        var expectedFullPath = "TypePathTest";
+        var expectedName = "TypePathTest";
+        var expectedNameSpace = string.Empty;
+        TypePath path = expectedFullPath;
+
+        // Act
+        var actualName = path.Name;
+        var actualNameSpace = path.NameSpace;
+        var actualFullPath = path.FullPath;
+
+        // Assert
+        this.Display(path);
+        Assert.Equal(expectedName, actualName);
+        Assert.Equal(expectedNameSpace, actualNameSpace);
+        Assert.Equal(expectedFullPath, actualFullPath);
+    }
+
+    [Theory]
+    [InlineData("System.Collections.Generic.List<Test.HumanResources.PersonDto>?")]
+    [InlineData("System.Collections.Generic.List<Test.HumanResources.PersonDto?>?")]
+    public void SpecificTest1(string typeFullPath)
+    {
+        var expected = typeFullPath;
+
+        var actual = TypePath.New(in typeFullPath);
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData("int?", true)]
+    [InlineData("int?", false)]
+    [InlineData("string?", true)]
+    [InlineData("string?", false)]
+    [InlineData("System.String?", false)]
+    [InlineData("System.String?", true)]
+    [InlineData("Test.Person?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", true)]
+    [InlineData("System.Collection.IEnumerable<int?>?", false)]
+    [InlineData("System.Collection.IEnumerable<int?>", true)]
+    [InlineData("System.Collection.IEnumerable<int?>", false)]
+    [InlineData("System.Collection.IEnumerable<int>?", true)]
+    [InlineData("System.Collection.IEnumerable<int>?", false)]
+    public void WithNullable(string path, bool isNullable)
+    {
+        var tp = TypePath.New(path);
+        var tp1 = tp.WithNullable(isNullable);
+
+        Assert.Equal(isNullable, tp1.IsNullable);
+    }
+
+    [Theory]
+    [MemberData(nameof(TypePathTestData.ParseData), MemberType = typeof(TypePathTestData))]
+    internal void Parse(string fullPath, TypeData expected)
+    {
+        var actual = TypePathHelper.ParseFullPath(fullPath);
+
+        Assert.Equal(expected, actual);
+    }
+
+    private void Display(TypePath? path)
+    {
+        if (path is null)
         {
-            if (fullPath.StartsWith("System.Nullable`1[["))
+            this._output.WriteLine($"Path is empty.");
+            return;
+        }
+        this._output.WriteLine($"Path: {path}");
+        this._output.WriteLine($"Name: {path.Name}");
+        this._output.WriteLine($"NameSpace: {path.NameSpace}");
+        this._output.WriteLine($"FullName: {path.FullName}");
+        this._output.WriteLine($"FullPath: {path.FullPath}");
+        if (path.GetNameSpaces().Any())
+        {
+            this._output.WriteLine("namespaces:");
+            foreach (var ns in path.GetNameSpaces())
             {
-                var buffer = string.Concat(fullPath["System.Nullable`1[[".Length..fullPath.IndexOf(',')], "?");
-                result = ParseFullPath(buffer);
-            }
-            else if (fullPath.Contains("`1[["))
-            {
-                var indexOfGeneric = fullPath.IndexOf("`1[[");
-
-                var mainPart = fullPath[..indexOfGeneric];
-                var mainPartParseResult = ParseFullPath(mainPart);
-
-                var generic = fullPath[(indexOfGeneric + "`1[[".Length)..fullPath.IndexOf(',')];
-                var genericParseResult = ParseFullPath(generic);
-
-                var isNullable = fullPath.EndsWith('?');
-
-                result = mainPartParseResult with { Generics = [genericParseResult], IsNullable = isNullable };
-            }
-            else
-            {
-                var isNullable = fullPath.EndsWith('?');
-                var buffer = fullPath.TrimEnd('?');
-                var parts = buffer.Split('.');
-                var name = parts.Last();
-                result = parts.Length == 1
-                    ? new TypeData(name, null, [], isNullable)
-                    : new TypeData(name, parts.Take(parts.Length - 1).Merge('.'), [], isNullable);
+                this._output.WriteLine($"\t{ns}");
             }
         }
-        else
-        {
-            if (!fullPath.Contains(','))
-            {
-                var isNullable = fullPath.EndsWith('?');
-                var beginningOfGeneric = fullPath.IndexOf('<');
-                var mainType = fullPath[..beginningOfGeneric];
-                var genericType = fullPath[(beginningOfGeneric + 1)..fullPath.LastIndexOf('>')];
-                var mainTypeParseResult = ParseFullPath(mainType);
-                var genericTypeParseResult = ParseFullPath(genericType);
-                result = mainTypeParseResult with { Generics = [genericTypeParseResult], IsNullable = isNullable };
-            }
-        }
-
-        return result;
     }
 }
