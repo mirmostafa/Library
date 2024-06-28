@@ -32,7 +32,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
 
         // Create compilation unit
         var root = RoslynHelper.CreateRoot();
-        
+
         // Create namespace
         var rosNameSpace = RoslynHelper.CreateNamespace(nameSpace.Name);
 
