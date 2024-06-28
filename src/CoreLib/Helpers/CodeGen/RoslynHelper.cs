@@ -1,4 +1,6 @@
-﻿using Library.CodeGeneration;
+﻿using System;
+
+using Library.CodeGeneration;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 
@@ -61,6 +63,11 @@ public static class RoslynHelper
         var attributeList = AttributeList(SingletonSeparatedList(Attribute(IdentifierName(attributeName), attributeArgumentList)));
 
         return member.WithAttributeLists(member.AttributeLists.Add(attributeList));
+    }
+
+    public static AttributeSyntax Attribute(NameSyntax name, AttributeArgumentListSyntax? argumentList)
+    {
+        return SyntaxFactory.Attribute(name, argumentList);
     }
 
     public static RosClass AddBase(this RosClass type, string baseClassName)
@@ -298,7 +305,7 @@ public static class RoslynHelper
         var result = InnerCreatePropertyBase(propertyInfo);
         if (propertyInfo.GetAccessor.Has || propertyInfo.SetAccessor.Has)
         {
-            var accessors = List<AccessorDeclarationSyntax>();
+            var accessors =List<AccessorDeclarationSyntax>();
             if (propertyInfo.GetAccessor.Has)
             {
                 accessors = accessors.Add(AccessorDeclaration(
@@ -331,6 +338,9 @@ public static class RoslynHelper
         }
         return result;
     }
+
+    public static SyntaxList<TNode> List<TNode>() where TNode : SyntaxNode
+        => SyntaxFactory.List<TNode>();
 
     public static CompilationUnitSyntax CreateRoot() =>
         CompilationUnit();
@@ -416,6 +426,26 @@ public static class RoslynHelper
 
         return result;
     }
+
+    public static SyntaxList<UsingDirectiveSyntax> List(this IEnumerable<UsingDirectiveSyntax> usingDirectives)
+        => SyntaxFactory.List(usingDirectives);
+
+    public static SyntaxList<TNode> List<TNode>(IEnumerable<TNode> nodes) where TNode : SyntaxNode
+        => SyntaxFactory.List(nodes);
+
+    public static AttributeSyntax Attribute(string attrFullName)
+        => Attribute(ParseName(attrFullName));
+
+    public static AttributeSyntax Attribute(NameSyntax name)
+        => SyntaxFactory.Attribute(name);
+
+    public static AttributeListSyntax ToList(this AttributeSyntax attribute)
+        => AttributeList(attribute);
+
+    public static AttributeListSyntax AttributeList(AttributeSyntax attribute)
+        => AttributeList(SingletonSeparatedList(attribute));
+    public static AttributeListSyntax AttributeList(SeparatedSyntaxList<AttributeSyntax> attributes = default)
+        => SyntaxFactory.AttributeList(attributes);
 }
 
 [Immutable]

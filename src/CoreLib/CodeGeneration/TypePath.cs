@@ -315,7 +315,9 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         {
             _ = buffer.Append('?');
         }
-        return buffer.ToString();
+
+        var result = buffer.ToString();
+        return result;
     }
 
     [return: NotNull]
@@ -337,6 +339,8 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         {
             _ = buffer.Append('?');
         }
-        return buffer.ToString();
+
+        var result = buffer.ToString();
+        return result;
     }
 }

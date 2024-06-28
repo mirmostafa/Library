@@ -225,19 +225,6 @@ public sealed class EnumerableHelperTest
     }
 
     [Fact]
-    public void Build_ReturnsReadOnlyList()
-    {
-        // Arrange
-        var items = new List<int> { 1, 2, 3 };
-
-        // Act
-        var result = items.Build();
-
-        // Assert
-        Assert.Equal(items.Count, result.Count);
-    }
-
-    [Fact]
     public void ClearAndAdd_AddToEmptyList()
     {
         var list = new List<object>();

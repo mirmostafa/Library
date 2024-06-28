@@ -158,18 +158,17 @@ public sealed class ArchitecturalTests
             Assert.Fail(result.ToString());
         }
         IEnumerable<Type> getImmutableTypes(IEnumerable<Type> types)
-            => types.Where(ObjectHelper.HasAttribute<ImmutableAttribute>).Build();
+            => types.Where(ObjectHelper.HasAttribute<ImmutableAttribute>);
         IEnumerable<PropertyInfo> getAllPropertiesInTypes(IEnumerable<Type> types)
-            => types.SelectMany(t => t.GetProperties()).Build();
+            => types.SelectMany(t => t.GetProperties());
         IEnumerable<PropertyInfo> getMutableProperties(IEnumerable<PropertyInfo> properties)
-            => properties.Where(x => (x.SetMethod?.IsPublic ?? false) && !x.IsSetMethodInit()).Build();
+            => properties.Where(x => (x.SetMethod?.IsPublic ?? false) && !x.IsSetMethodInit());
         IEnumerable<PropertyInfo> getLibraryTypeProperties(IEnumerable<PropertyInfo> properties)
-            => properties.Where(x => x.PropertyType?.Namespace?.StartsWith("Library") ?? false).Build();
+            => properties.Where(x => x.PropertyType?.Namespace?.StartsWith("Library") ?? false);
         IEnumerable<PropertyInfo> getMutableTypeProperties(IEnumerable<PropertyInfo> properties)
             => properties
                 .Where(x => (x.PropertyType?.IsClass ?? false) && !ObjectHelper.HasAttribute<ImmutableAttribute>(x.PropertyType))
-                .Except(x => x.PropertyType.Name == "TValue" && x.Name == "Value")
-                .Build();
+                .Except(x => x.PropertyType.Name == "TValue" && x.Name == "Value");
     }
 
     private static IEnumerable<Type> GetAllTypes()
@@ -177,8 +176,7 @@ public sealed class ArchitecturalTests
             _libraryTypes.CoreLibTypes,
             _libraryTypes.CqrsLibTypes,
             _libraryTypes.WebLibTypes,
-            _libraryTypes.WpfLibTypes
-            ).Build();
+            _libraryTypes.WpfLibTypes);
 
     private static bool IsInNameSpace(Type type, string ns)
         => type?.Namespace?.StartsWith(ns) is true;

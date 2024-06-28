@@ -1,5 +1,7 @@
 ﻿using Library.CodeGeneration;
 
+using UnitTests.Models;
+
 using Xunit.Abstractions;
 
 namespace UnitTests;
@@ -24,7 +26,6 @@ public sealed class TypePathTest(ITestOutputHelper output)
     [InlineData("Task<long>", "Task<System.Int64>")]
     [InlineData("Task<long?>", "Task<System.Int64?>")]
     [InlineData("Task<IEnumerable<long>>", "Task<IEnumerable<System.Int64>>")]
-    //[InlineData("Task<IEnumerable<long?>>", "Task<IEnumerable<System.Int64?>>")]
     public void AsKeyword(string keyword, string fullPath)
     {
         var expected = keyword;
@@ -215,6 +216,15 @@ public sealed class TypePathTest(ITestOutputHelper output)
         var tp1 = tp.WithNullable(isNullable);
 
         Assert.Equal(isNullable, tp1.IsNullable);
+    }
+
+    [Theory]
+    [MemberData(nameof(TypePathTestData.ParseData), MemberType = typeof(TypePathTestData))]
+    internal void Parse(string fullPath, TypeData expected)
+    {
+        var actual = TypePathHelper.ParseFullPath(fullPath);
+
+        Assert.Equal(expected, actual);
     }
 
     private void Display(TypePath? path)
