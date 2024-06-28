@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Library.Wpf")]
 [assembly: InternalsVisibleTo("Library.Web")]
-[assembly: InternalsVisibleTo("LibraryTest")]
+[assembly: InternalsVisibleTo("UnitTests")]
 [assembly: InternalsVisibleTo("Library.Cqrs")]
 
 //x [ModuleInitializer]

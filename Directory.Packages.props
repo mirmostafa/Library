@@ -28,9 +28,9 @@
     <PackageVersion Include="System.Drawing.Common" Version="8.0.3" />
     <PackageVersion Include="Microsoft-Windows10-APICodePack-Core" Version="1.1.8" />
     <PackageVersion Include="Microsoft.DependencyValidation.Analyzers" Version="0.11.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageVersion Include="xunit" Version="2.7.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7">
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+    <PackageVersion Include="xunit" Version="2.8.1" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>

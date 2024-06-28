@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
+using static Library.Helpers.CodeGen.RoslynHelper;
 
 namespace Library.CodeGeneration.v2;
 
@@ -87,7 +87,7 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
             .Compact();
         var finalRoot = root.WithUsings(List(distinctUsings));
 
-        return Result.Success(finalRoot.GenerateCode());
+        return Result.Success(finalRoot.GenerateCode())!;
     }
 
     private static (MemberDeclarationSyntax Member, CompilationUnitSyntax Root) AddAttributes(PropertyDeclarationSyntax prop, CompilationUnitSyntax root, IMember member)
@@ -96,8 +96,8 @@ public sealed class RoslynCodeGenerator : ICodeGeneratorEngine
         {
             foreach (var attribute in member.Attributes)
             {
-                var attr = Attribute(ParseName(attribute.Name.FullName));
-                var attributeList = AttributeList(SingletonSeparatedList(attr));
+                var attr = Attribute(attribute.Name.FullName);
+                var attributeList = attr.ToList();
                 prop = prop.AddAttributeLists(attributeList);
 
                 attribute.Name.GetNameSpaces().ForEach(x => root = root.AddUsingNameSpace(x));
