@@ -21,6 +21,11 @@ public static class GlobalizationHelper
         dow switch
         {
             PersianDayOfWeek.Jomeh or PersianDayOfWeek.Shanbeh => true,
+            PersianDayOfWeek.YekShanbeh => false,
+            PersianDayOfWeek.DoShanbeh => false,
+            PersianDayOfWeek.SeShanbeh => false,
+            PersianDayOfWeek.ChaharShanbeh => false,
+            PersianDayOfWeek.PanjShanbeh => false,
             _ => false,
         };
 

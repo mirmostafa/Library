@@ -32,13 +32,13 @@ public static class DateTimeHelper
     /// Deconstructs a DateTime object into its year, month, and day components.
     /// </summary>
     public static void Deconstruct(this DateTime dt, out int year, out int month, out int day)
-        => Deconstruct(dt, out year, out month, out day, out var _, out _, out _, out _);
+        => Deconstruct(dt, out year, out month, out day, out _, out _, out _, out _);
 
     /// <summary>
     /// Deconstructs a DateTime object into its hour, minute, second, and millisecond components.
     /// </summary>
-    public static void Deconstruct(this DateTime dt, out int hour, out int minute, out int second, out int millisecond) =>
-        (hour, minute, second, millisecond) = (dt.Hour, dt.Minute, dt.Second, dt.Millisecond);
+    public static void Deconstruct(this DateTime dt, out int hour, out int minute, out int second, out int millisecond)
+         => (hour, minute, second, millisecond) = (dt.Hour, dt.Minute, dt.Second, dt.Millisecond);
 
     public static DateOnly GetDateOnly(this DateTime dt)
         => DateOnly.FromDateTime(dt);

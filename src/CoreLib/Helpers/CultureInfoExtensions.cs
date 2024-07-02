@@ -8,9 +8,9 @@ public static class CultureInfoHelper
 {
     private static readonly char[] _dash = ['-'];
 
-    private static readonly char[] separator = new[] { '(', ')' };
+    private static readonly char[] _separator = ['(', ')'];
 
-    private static readonly char[] separatorArray = new[] { ',' };
+    private static readonly char[] _separatorArray = [','];
 
     /// <summary>
     /// Returns the English version of the country name. Extracted from the CultureInfo.EnglishName.
@@ -22,7 +22,7 @@ public static class CultureInfoHelper
     {
         Check.MustBeArgumentNotNull(ci);
         //Split the EnglishName property of the CultureInfo object into an array of strings, removing any empty entries
-        var parts = ci.EnglishName.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+        var parts = ci.EnglishName.Split(_separator, StringSplitOptions.RemoveEmptyEntries);
         //If the array has fewer than two elements, return the EnglishName property
         if (parts.Length < 2)
         {
@@ -30,7 +30,7 @@ public static class CultureInfoHelper
         }
 
         //Split the second element of the array into an array of strings, removing any empty entries
-        parts = parts[1].Split(separatorArray, StringSplitOptions.RemoveEmptyEntries);
+        parts = parts[1].Split(_separatorArray, StringSplitOptions.RemoveEmptyEntries);
         //Return the last element of the array, trimmed of any whitespace
         return parts[^1].Trim();
     }
@@ -41,7 +41,7 @@ public static class CultureInfoHelper
     /// <param name="ci">The CultureInfo this object.</param>
     /// <returns>The English version of the language name.</returns>
     public static string GetLanguageEnglishName(this CultureInfo ci)
-        => ci.ArgumentNotNull().EnglishName.Split(new[] { '(' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim();
+        => ci.ArgumentNotNull().EnglishName.Split(['('], StringSplitOptions.RemoveEmptyEntries)[0].Trim();
 
     /// <summary>
     /// Gets the weekday state for the given culture and day of week.

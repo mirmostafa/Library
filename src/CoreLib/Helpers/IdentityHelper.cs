@@ -8,8 +8,8 @@ namespace Library.Helpers;
 
 public static class IdentityHelper
 {
-    public static Claim? ClaimByKey(this IList<Claim> claimList, [DisallowNull] string type) =>
-        claimList.FirstOrDefault(x => x.Type == type);
+    public static Claim? ClaimByKey(this IList<Claim> claimList, [DisallowNull] string type)
+         => claimList.FirstOrDefault(x => x.Type == type);
 
     public static async Task<IdentityResult> CreateAsync<TIdentityUser>(this UserManager<TIdentityUser> manager, [DisallowNull] TIdentityUser user, [DisallowNull] string password)
         where TIdentityUser : class

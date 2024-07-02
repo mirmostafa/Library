@@ -119,8 +119,8 @@ public static class StringHelper
     /// Checks if any character in the given string is present in the given range.
     /// </summary>
     [Pure]
-    public static bool AnyCharInString(this string str, in string range) =>
-        !string.IsNullOrEmpty(str) && range.Any(str.Contains);
+    public static bool AnyCharInString(this string str, in string range)
+        => !string.IsNullOrEmpty(str) && range.Any(str.Contains);
 
     [return: NotNull]
     public static StringBuilder AppendAll([DisallowNull] this StringBuilder sb, Strings lines)
@@ -138,8 +138,8 @@ public static class StringHelper
     }
 
     [return: NotNull]
-    public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> formatter) =>
-        sb.AppendAll(items.Select(formatter));
+    public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> formatter)
+        => sb.AppendAll(items.Select(formatter));
 
     [return: NotNull]
     public static StringBuilder AppendAll<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, int, string> formatter)
@@ -175,33 +175,33 @@ public static class StringHelper
         return sb;
     }
 
-    public static StringBuilder AppendAllLines<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> formatter) =>
-        sb.AppendAllLines(items.Select(formatter));
+    public static StringBuilder AppendAllLines<TItem>([DisallowNull] this StringBuilder sb, IEnumerable<TItem> items, Func<TItem, string> formatter)
+         => sb.AppendAllLines(items.Select(formatter));
 
     /// <summary>
     /// Replaces all invalid Arabic characters in the given string with their Persian equivalents.
     /// </summary>
     [Pure]
     [return: NotNullIfNotNull(nameof(value))]
-    public static string ArabicCharsToPersian(string value) =>
-        value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
+    public static string ArabicCharsToPersian(string value)
+         => value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
 
-    public static string Build(this StringBuilder sb) =>
-        sb.ArgumentNotNull().ToString();
+    public static string Build(this StringBuilder sb)
+         => sb.ArgumentNotNull().ToString();
 
     /// <summary>
     /// Checks if all characters in the given string are valid according to the given validation function.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CheckAllValidations(in string text, in Func<char, bool> regularValidate) =>
-        text.All(regularValidate);
+    public static bool CheckAllValidations(in string text, in Func<char, bool> regularValidate)
+         => text.All(regularValidate);
 
     /// <summary>
     /// Checks if any of the characters in the given string satisfy the given validation function.
     /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool CheckAnyValidations(in string text, in Func<char, bool> regularValidate) =>
-        text.Any(regularValidate);
+    public static bool CheckAnyValidations(in string text, in Func<char, bool> regularValidate)
+         => text.Any(regularValidate);
 
     /// <summary>
     /// Filters out null or empty strings from the given IEnumerable and returns a new IEnumerable
@@ -211,8 +211,8 @@ public static class StringHelper
     /// <returns>A new IEnumerable with only non-null and non-empty strings.</returns>
     [Pure]
     [return: NotNull]
-    public static Strings Compact(this NullableStrings? strings) =>
-        (strings?.Where([StackTraceHidden][DebuggerStepThrough] (item) => !item.IsNullOrEmpty()).Select(s => s!)) ?? [];
+    public static Strings Compact(this NullableStrings? strings)
+         => (strings?.Where([StackTraceHidden][DebuggerStepThrough] (item) => !item.IsNullOrEmpty()).Select(s => s!)) ?? [];
 
     /// <summary>
     /// Compares two strings and returns an integer that indicates their relative position in the
@@ -225,8 +225,8 @@ public static class StringHelper
     /// A 32-bit signed integer that indicates the lexical relationship between the two comparands.
     /// </returns>
     [Pure]
-    public static int CompareTo(this string str1, in string str, bool ignoreCase = false) =>
-        string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
+    public static int CompareTo(this string str1, in string str, bool ignoreCase = false)
+         => string.Compare(str1, str, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
 
     /// <summary>
     /// Concatenates all strings in the given enumerable, using the given separator.
@@ -657,17 +657,17 @@ public static class StringHelper
 
         // Get the item and trim it if necessary
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static string? get(string? current, bool trimmed) =>
-            trimmed ? current?.Trim() : current;
+        static string? get(string? current, bool trimmed)
+             => trimmed ? current?.Trim() : current;
 
         // Check if the items are equal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool equals(string? current, string? item, bool ignoreCase) =>
-            string.Compare(current, item, ignoreCase) == 0;
+        static bool equals(string? current, string? item, bool ignoreCase)
+            => string.Compare(current, item, ignoreCase) == 0;
     }
 
     [Pure]
-    public static int IndexOfAny(this string s, out string foundItem, params ReadOnlySpan<string> items)
+    public static int IndexOfFirst(this string s, out string foundItem, params ReadOnlySpan<string> items)
     {
         foreach (var s3 in items)
         {
@@ -681,7 +681,7 @@ public static class StringHelper
         foundItem = string.Empty;
         return -1;
 
-        static bool found(string s, string s2, out int index)
+        static bool found(in string s, in string s2, out int index)
         {
             index = s.IndexOf(s2);
             return index != -1;

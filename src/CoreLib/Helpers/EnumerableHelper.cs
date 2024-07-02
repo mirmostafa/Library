@@ -9,12 +9,12 @@ using System.Runtime.InteropServices;
 using Library.Collections;
 using Library.Interfaces;
 using Library.Results;
+using Library.Types;
 using Library.Validations;
 
 namespace Library.Helpers;
 
-[DebuggerStepThrough]
-[StackTraceHidden]
+[DebuggerStepThrough, StackTraceHidden]
 public static class EnumerableHelper
 {
     /// <summary>
@@ -1598,25 +1598,19 @@ public static class EnumerableHelper
     {
         var index = 0;
 
-        // Placeholder empty methods
-        void empty()
-        {
-        }
-        bool getTrue() => true;
-
         // Define increment index actions based on the steps value
         var incIndex = steps switch
         {
-            0 or 1 => (Action)empty, // No steps or step size is 1, no change in index
+            0 or 1 => Actions.Empty(), // No steps or step size is 1, no change in index
             < 1 => () => index--, // Negative steps, decrement index
             _ => () => index++, // Positive steps, increment index
         };
 
         // Define reset index action based on the steps value
-        var resIndex = steps is 0 or 1 ? (Action)empty : () => { index = 0; };
+        var resIndex = steps is 0 or 1 ? Actions.Empty() : () => { index = 0; };
 
         // Define a condition for returning items based on steps and index
-        var shouldReturn = steps is 0 or 1 ? (Func<bool>)getTrue : () => index == 0 || steps == index;
+        var shouldReturn = steps is 0 or 1 ? Actions.True() : () => index == 0 || steps == index;
 
         var buffer = items.AsEnumerable();
 
@@ -1653,32 +1647,8 @@ public static class EnumerableHelper
     /// <typeparam name="T">The type of the item.</typeparam>
     /// <param name="item">The item to create an array from.</param>
     /// <returns>An array containing the item.</returns>
-    public static T[] ToArray<T>(T item) =>
-        AsEnumerable(item).ToArray();
-
-    ///// <summary>
-    ///// Converts an enumerable collection of key-value pairs into a dictionary.
-    ///// </summary>
-    ///// <typeparam name="TKey">The type of keys in the dictionary.</typeparam>
-    ///// <typeparam name="TValue">The type of values in the dictionary.</typeparam>
-    ///// <param name="pairs">An enumerable collection of key-value pairs to convert.</param>
-    ///// <returns>
-    ///// A dictionary containing the key-value pairs from the input collection, or null if the input
-    ///// is null.
-    ///// </returns>
-    //public static Dictionary<TKey, TValue>? ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>>? pairs)
-    //    where TKey : notnull
-    //{
-    //    // Check if the input collection of key-value pairs is null, if so, return null.
-    //    if (pairs is null)
-    //    {
-    //        return null;
-    //    }
-
-    //    // Use LINQ's ToDictionary method to convert the key-value pairs into a dictionary. The
-    //    // lambda expressions specify how to extract keys and values from the pairs.
-    //    return pairs.ToDictionary(pair => pair.Key, pair => pair.Value) ?? [];
-    //}
+    public static T[] ToArray<T>(T item)
+         => AsEnumerable(item).ToArray();
 
     /// <summary>
     /// Converts a list to a dictionary using a selector function to extract the key-value pairs.
@@ -1716,6 +1686,7 @@ public static class EnumerableHelper
         where TKey : notnull =>
         new(values.Select(x => new KeyValuePair<TKey, TValue>(x.Item1, x.Item2)));
 
+    [Obsolete($"Use `{nameof(AsEnumerable)}`, instead.", true)]
     public static IEnumerable<T> ToEnumerable<T>(T item)
     {
         yield return item;
@@ -1767,8 +1738,8 @@ public static class EnumerableHelper
     /// <typeparam name="T">The type of elements in the IEnumerable.</typeparam>
     /// <param name="items">The IEnumerable to convert.</param>
     /// <returns>An ImmutableArray containing the elements of the IEnumerable.</returns>
-    public static ImmutableArray<T> ToImmutableArray<T>(IEnumerable<T> items) =>
-        [.. items];
+    public static ImmutableArray<T> ToImmutableArray<T>(IEnumerable<T> items)
+         => [.. items];
 
     /// <summary>
     /// Converts an IAsyncEnumerable to a List.
@@ -1834,8 +1805,8 @@ public static class EnumerableHelper
     /// failed to determine the count.
     /// </para>
     /// </returns>
-    public static TryMethodResult<int> TryCountNonEnumerated<T>([DisallowNull] this IEnumerable<T> source) =>
-        TryMethodResult<int>.TryParseResult(source.TryGetNonEnumeratedCount(out var count), count);
+    public static TryMethodResult<int> TryCountNonEnumerated<T>([DisallowNull] this IEnumerable<T> source)
+         => TryMethodResult<int>.TryParseResult(source.TryGetNonEnumeratedCount(out var count), count);
 
     public static TryMethodResult<TValue> TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dic, TKey key)
         where TKey : notnull => TryMethodResult<TValue>.TryParseResult(dic.ArgumentNotNull().TryGetValue(key, out var value), value);

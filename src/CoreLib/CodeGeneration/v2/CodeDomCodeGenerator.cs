@@ -155,7 +155,7 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                         {
                             return;
                         }
-                        var rightPlace = buffer.IndexOfAny(out var accessModifier, accessModifiers);
+                        var rightPlace = buffer.IndexOfFirst(out var accessModifier, accessModifiers);
                         buffer = rightPlace != -1 ? buffer.Insert(rightPlace + accessModifier!.Length, "static ") : buffer;
                     });
                     _ = result.AppendLine(buffer);

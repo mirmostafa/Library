@@ -37,6 +37,6 @@ public static class DI
     /// Initializes the DI class.
     /// </summary>
     /// <param name="serviceProvider">The service provider.</param>
-    public static void Initialize(in IServiceProvider serviceProvider) =>
-        _serviceProvider = serviceProvider;
+    public static void Initialize(in IServiceProvider serviceProvider)
+         => _serviceProvider = serviceProvider;
 }

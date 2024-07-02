@@ -291,6 +291,20 @@ public static class AdoHelper
         return result;
     }
 
+    public static DataSet FillDataSetByTableNames([DisallowNull] this SqlConnection connection, params string[] tableNames)
+    {
+        Check.MustBeArgumentNotNull(connection);
+        Check.MustBeArgumentNotNull(tableNames);
+
+        var result = connection.FillDataSet(tableNames.Select(t => SqlStatementBuilder.CreateSelect(t)).Merge(Environment.NewLine));
+        for (var i = 0; i < tableNames.Length; i++)
+        {
+            result.Tables[i].TableName = tableNames[i];
+        }
+
+        return result;
+    }
+
     public static DataTable FillDataTable([DisallowNull] this SqlConnection connection, [DisallowNull] string sql, Action<SqlParameterCollection>? fillParams = null)
     {
         var result = new DataTable();
@@ -390,19 +404,5 @@ public static class AdoHelper
 
         await using var command = connection.CreateCommand(sql, fillParams);
         return await connection.EnsureClosedAsync(_ => executeAsync(command), true, cancellationToken: cancellationToken);
-    }
-
-    public static DataSet FillDataSetByTableNames([DisallowNull] this SqlConnection connection, params string[] tableNames)
-    {
-        Check.MustBeArgumentNotNull(connection);
-        Check.MustBeArgumentNotNull(tableNames);
-
-        var result = connection.FillDataSet(tableNames.Select(t => SqlStatementBuilder.CreateSelect(t)).Merge(Environment.NewLine));
-        for (var i = 0; i < tableNames.Length; i++)
-        {
-            result.Tables[i].TableName = tableNames[i];
-        }
-
-        return result;
     }
 }

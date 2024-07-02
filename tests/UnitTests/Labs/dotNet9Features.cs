@@ -12,7 +12,7 @@ public class DotNet9Features
         var ali = "ali";
 
         // Act
-        var found = s.IndexOfAny(out var item, mohammad, ali);
+        var found = s.IndexOfFirst(out var item, mohammad, ali);
 
         // Assert
         Assert.True(found > -1);
