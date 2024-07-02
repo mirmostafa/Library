@@ -20,28 +20,37 @@ public static class TypePathHelper
 {
     internal static TypeData ParseFullPath([DisallowNull] in string fullPath)
     {
+        const string CLR_GENERIC_SYMBOL = "`1[[";
+
         TypeData result = default;
+        // Not Generic
         if (!fullPath.Contains('<'))
         {
-            if (fullPath.StartsWith("System.Nullable`1[["))
+            // Is CLR Nullable?
+            if (isClrNullable(fullPath))
             {
+                // Retrieve the generic parameter
                 var buffer = string.Concat(fullPath["System.Nullable`1[[".Length..fullPath.IndexOf(',')], "?");
                 result = ParseFullPath(buffer);
             }
-            else if (fullPath.Contains("`1[["))
+            // Not nullable, but CLR generic
+            else if (isClrGeneric(fullPath))
             {
-                var indexOfGeneric = fullPath.IndexOf("`1[[");
+                // So complicated type
+                var parts = fullPath.Split(CLR_GENERIC_SYMBOL);
+                parts[^1] = parts[^1].With(x => x[..x.IndexOf(',')]);
 
-                var mainPart = fullPath[..indexOfGeneric];
-                var mainPartParseResult = ParseFullPath(mainPart);
+                var buffer = ParseFullPath(parts[^1]);
+                var isNullable = false;
 
-                var generic = fullPath[(indexOfGeneric + "`1[[".Length)..fullPath.IndexOf(',')];
-                var genericParseResult = ParseFullPath(generic);
-
-                var isNullable = fullPath.EndsWith('?');
-
-                result = mainPartParseResult with { Generics = [genericParseResult], IsNullable = isNullable };
+                parts[..^1].ForEachReverse(item =>
+                {
+                    buffer = ParseFullPath(item) with { Generics = [buffer], IsNullable = isNullable };
+                    isNullable = item.StartsWith("System.Nullable");
+                });
+                result = buffer;
             }
+            // Not CLR nullable, not CLR generic
             else
             {
                 var isNullable = fullPath.EndsWith('?');
@@ -68,5 +77,10 @@ public static class TypePathHelper
         }
 
         return result;
+
+        static bool isClrNullable(string s)
+            => s?.StartsWith($"System.Nullable{CLR_GENERIC_SYMBOL}") is true;
+        static bool isClrGeneric(string s)
+            => s?.Contains(CLR_GENERIC_SYMBOL) is true;
     }
 }

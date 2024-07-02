@@ -769,7 +769,7 @@ public static class CodeHelper
 
     public static void If(Func<bool> b, in Action ifTrue, in Action? ifFalse = null)
     {
-        if (b() == true)
+        if (b())
         {
             ifTrue?.Invoke();
         }
@@ -781,7 +781,7 @@ public static class CodeHelper
 
     public static void If(bool b, in Action ifTrue, in Action? ifFalse = null)
     {
-        if (b == true)
+        if (b)
         {
             ifTrue?.Invoke();
         }
@@ -967,6 +967,9 @@ public static class CodeHelper
     /// <param name="action">The action to invoke.</param>
     /// <returns>The instance.</returns>
     public static TInstance With<TInstance>(this TInstance instance, in Action<TInstance>? action) =>
+        instance.Fluent(action);
+
+    public static TInstance With<TInstance>(this TInstance instance, in Func<TInstance, TInstance> action) =>
         instance.Fluent(action);
 
     /// <summary>
