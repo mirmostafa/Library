@@ -45,8 +45,14 @@ public static class TypePathHelper
 
                 parts[..^1].ForEachReverse(item =>
                 {
-                    buffer = ParseFullPath(item) with { Generics = [buffer], IsNullable = isNullable };
-                    isNullable = item.StartsWith("System.Nullable");
+                    if (!item.StartsWith("System.Nullable"))
+                    {
+                        buffer = ParseFullPath(item) with { Generics = [buffer], IsNullable = false };
+                    }
+                    else
+                    {
+                        buffer = buffer with { IsNullable = true};
+                    }
                 });
                 result = buffer;
             }
@@ -82,5 +88,90 @@ public static class TypePathHelper
             => s?.StartsWith($"System.Nullable{CLR_GENERIC_SYMBOL}") is true;
         static bool isClrGeneric(string s)
             => s?.Contains(CLR_GENERIC_SYMBOL) is true;
+    }
+
+    internal static TypeData ParseFullPath2([DisallowNull] in string fullPath)
+    {
+        if (string.IsNullOrEmpty(fullPath))
+        {
+            throw new ArgumentException("The fullPath cannot be null or empty", nameof(fullPath));
+        }
+
+        var isNullable = fullPath.EndsWith("?");
+        var cleanPath = isNullable ? fullPath.TrimEnd('?') : fullPath;
+
+        string name, nameSpace;
+        List<TypeData> generics = [];
+
+        var genericStartIndex = cleanPath.IndexOf('<');
+        if (genericStartIndex != -1)
+        {
+            // Extract generics
+            var genericEndIndex = cleanPath.LastIndexOf('>');
+            var genericsString = cleanPath.Substring(genericStartIndex + 1, genericEndIndex - genericStartIndex - 1);
+            generics = ParseGenerics(genericsString).ToList();
+            cleanPath = cleanPath[..genericStartIndex];
+        }
+
+        var lastDotIndex = cleanPath.LastIndexOf('.');
+        if (lastDotIndex != -1)
+        {
+            nameSpace = cleanPath[..lastDotIndex];
+            name = cleanPath[(lastDotIndex + 1)..];
+        }
+        else
+        {
+            nameSpace = null;
+            name = cleanPath;
+        }
+
+        // Special handling for nullable types
+        if (isNullable)
+        {
+            if (name.Equals("Nullable", StringComparison.OrdinalIgnoreCase) && generics.Count == 1)
+            {
+                var genericType = generics.First();
+                return new TypeData(genericType.Name, genericType.NameSpace, genericType.Generics, true);
+            }
+            else
+            {
+                return new TypeData(name, nameSpace, generics, true);
+            }
+        }
+
+        return new TypeData(name, nameSpace, generics, false);
+    }
+
+    private static IEnumerable<TypeData> ParseGenerics(string genericsString)
+    {
+        var generics = new List<TypeData>();
+        var depth = 0;
+        var start = 0;
+
+        for (var i = 0; i < genericsString.Length; i++)
+        {
+            if (genericsString[i] == '<')
+            {
+                depth++;
+            }
+
+            if (genericsString[i] == '>')
+            {
+                depth--;
+            }
+
+            if (genericsString[i] == ',' && depth == 0)
+            {
+                generics.Add(ParseFullPath(genericsString[start..i].Trim()));
+                start = i + 1;
+            }
+        }
+
+        if (start < genericsString.Length)
+        {
+            generics.Add(ParseFullPath(genericsString[start..].Trim()));
+        }
+
+        return generics;
     }
 }

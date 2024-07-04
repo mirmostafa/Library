@@ -65,16 +65,16 @@ public class TypePathTestData
             //    typeof(Task<int?>).FullName!, new TypeData(nameof(Task), typeof(Task<int>).Namespace, [new(nameof(Int32), typeof(int).Namespace, [], true)], false)
             //};
 
-            //// More complex generic - real world
-            //yield return new object[]
-            //{
-            //    typeof(Task<IEnumerable<int>>).FullName!, new TypeData(nameof(Task), typeof(Task<IEnumerable<int>>).Namespace, [new(nameof(IEnumerable<int>), typeof(IEnumerable<int>).Namespace, [new(nameof(Int32), typeof(int).Namespace, [], false)], false)], false)
-            //};
+            // More complex generic - real world
+            yield return new object[]
+            {
+                typeof(Task<IEnumerable<int>>).FullName!, new TypeData(nameof(Task), typeof(Task<IEnumerable<int>>).Namespace, [new(nameof(IEnumerable<int>), typeof(IEnumerable<int>).Namespace, [new(nameof(Int32), typeof(int).Namespace, [], false)], false)], false)
+            };
 
             // More complex null generic - real world
             yield return new object[]
             {
-                typeof(Task<IEnumerable<int?>>).FullName!, new TypeData(nameof(Task),typeof(Task).Namespace,[new(nameof(IEnumerable<int>), typeof(IEnumerable<>).Namespace, [new(nameof(Int64), typeof(int).Namespace, [],true)],false)], false)
+                typeof(Task<IEnumerable<int?>>).FullName!, new TypeData(nameof(Task),typeof(Task).Namespace, [new(nameof(IEnumerable<int>), typeof(IEnumerable<>).Namespace, [new(nameof(Int64), typeof(int).Namespace, [],true)],false)], false)
             };
         }
     }
