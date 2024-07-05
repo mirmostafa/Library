@@ -1,18 +1,15 @@
 using System.Collections;
-using System.Diagnostics;
 using System.Globalization;
 
 using Library.CodeGeneration.Models;
 using Library.DesignPatterns.Markers;
 using Library.Validations;
 
-using TypeData = (string Name, string NameSpace, System.Collections.Generic.IEnumerable<Library.CodeGeneration.TypePath> Generics, bool IsNullable);
-
 namespace Library.CodeGeneration;
 
 //[DebuggerStepThrough, StackTraceHidden]
 [Immutable]
-public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool? isNullable = null) : IEquatable<TypePath>
+public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool isNullable = false) : IEquatable<TypePath>
 {
     private static readonly Dictionary<Type, string> _primitiveTypes = new()
     {
@@ -44,7 +41,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     public string FullPath => this._fullPath ??= this.GetFullPath();
 
     [NotNull]
-    public IEnumerable<TypePath> Generics => this._data.Generics;
+    public IEnumerable<TypePath> Generics => (IEnumerable<TypePath>)this._data.Generics;
 
     public bool IsGeneric => this._data.Generics.Any();
 
@@ -53,10 +50,17 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [NotNull]
     public string Name => this._data.Name;
 
-    public string NameSpace => this._data.NameSpace;
+    public string? NameSpace => this._data.NameSpace;
+
+    public static string AsKeyword(in string nameOrFullName)
+    {
+        var buffer = nameOrFullName;
+        _primitiveTypes.ForEach(x => buffer = buffer.Replace($"System.{x.Key.Name}", x.Value).Replace($"{x.Key.Name}", x.Value));
+        return buffer;
+    }
 
     public static string Combine(in string? part1, params string?[] parts)
-        => StringHelper.Merge(EnumerableHelper.AsEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
+            => StringHelper.Merge(EnumerableHelper.AsEnumerable(part1).AddRangeImmuted(parts).Compact().Select(x => x.Trim('.')), '.');
 
     [return: NotNullIfNotNull(nameof(typePath))]
     public static string? GetName(in string? typePath)
@@ -97,8 +101,8 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         => new(Combine(nameSpace, name), generics);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string name, in string? nameSpace, in IEnumerable<string>? generics, bool? isNullable)
-        => new(Combine(nameSpace, name), generics, null);
+    public static TypePath New([DisallowNull] in string name, in string? nameSpace, in IEnumerable<string>? generics, bool isNullable)
+        => new(Combine(nameSpace, name), generics, isNullable);
 
     [return: NotNull]
     public static TypePath New([DisallowNull] in string fullPath)
@@ -109,11 +113,11 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         => new(fullPath, generics);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string fullPath, bool? isNullable)
+    public static TypePath New([DisallowNull] in string fullPath, bool isNullable)
         => new(fullPath, null, isNullable);
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in string fullPath, in IEnumerable<string>? generics, bool? isNullable)
+    public static TypePath New([DisallowNull] in string fullPath, in IEnumerable<string>? generics, bool isNullable)
         => new(fullPath, generics, isNullable);
 
     [return: NotNull]
@@ -125,7 +129,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         => new(type?.FullName!, generics?.Select(x => x.Name == "Nullable`1" ? $"{x.GenericTypeArguments[0].FullName}?" : x.FullName!));
 
     [return: NotNull]
-    public static TypePath New([DisallowNull] in Type type, in IEnumerable<Type>? generics, bool? isNullable)
+    public static TypePath New([DisallowNull] in Type type, in IEnumerable<Type>? generics, bool isNullable)
         => new(type?.FullName!, generics?.Select(x => x.FullName!), isNullable);
 
     [return: NotNull]
@@ -141,6 +145,14 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         => new(typeof(T).FullName!, generics, isNullable);
 
     [return: NotNull]
+    public static TypePath NewEnumerable(in TypePath generic)
+        => New(typeof(IEnumerable<>).FullName!, [generic]);
+
+    [return: NotNull]
+    public static TypePath NewEnumerable()
+        => New<IEnumerable>();
+
+    [return: NotNull]
     public static TypePath NewTask()
         => New<Task>();
 
@@ -152,26 +164,11 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     public static TypePath NewTask(in TypePath generic, bool isNullable)
         => New(typeof(Task<>).FullName!, [generic.FullName], isNullable);
 
-    [return: NotNull]
-    public static TypePath NewEnumerable(in TypePath generic)
-        => New(typeof(IEnumerable<>).FullName!, [generic]);
-
-    [return: NotNull]
-    public static TypePath NewEnumerable()
-        => New<IEnumerable>();
-
     public static bool operator !=(in TypePath? left, in TypePath? right)
         => !(left == right);
 
     public static bool operator ==(in TypePath? left, in TypePath? right)
         => left?.Equals(right) ?? (right is null);
-
-    public static string AsKeyword(in string nameOrFullName)
-    {
-        var buffer = nameOrFullName;
-        _primitiveTypes.ForEach(x => buffer = buffer.Replace($"System.{x.Key.Name}", x.Value).Replace($"{x.Key.Name}", x.Value));
-        return buffer;
-    }
 
     public string AsKeyword()
         => AsKeyword(this.FullName);
@@ -232,72 +229,15 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         return new(fullPath);
     }
 
-    private static TypeData Parse(in string typePath, in IEnumerable<string>? generics = null, bool? isNullable = null)
+    private static TypeData Parse(in string typePath, in IEnumerable<string>? generics = null, bool isNullable = false)
     {
         // Validation checks
         Check.MustBeArgumentNotNull(typePath);
         Check.MustBe(generics?.All(x => !x.IsNullOrEmpty()) ?? true, () => "Generic types cannot be null or empty.");
 
-        // Initializations
-        var typePathBuffer = typePath.ArgumentNotNull()
-            .Trim()
-            .TrimStart("async ")
-            .EndsWith('?')
-                ? TransformKeyword(typePath.TrimEnd('?')).AddEnd('?')
-                : TransformKeyword(typePath);
+        var result = TypeData.Parse(typePath, generics, isNullable);
 
-        var gens = new List<string>();
-
-        // Manage nullability.
-        if (isNullable is { } nullable)
-        {
-            typePathBuffer = typePathBuffer.TrimEnd('?');
-            if (nullable)
-            {
-                typePathBuffer = typePathBuffer.AddEnd('?');
-            }
-        }
-
-        // 1Nullability` is of output parameter
-        var nullability = typePathBuffer.EndsWith('?');
-
-        // No longer nullable sign is required. So remove it.
-        typePathBuffer = typePathBuffer.TrimEnd('?');
-
-        // Find generics
-        if (typePathBuffer.Contains('<', StringComparison.Ordinal))
-        {
-            var indexOfGenSymbol = typePathBuffer.IndexOf('<', StringComparison.Ordinal);
-            var gen = typePathBuffer[indexOfGenSymbol..].Trim('<').Trim('>');
-            typePathBuffer = typePathBuffer[..indexOfGenSymbol];
-            gens.AddRange(gen.Split(',').Select(x => x.Trim()));
-        }
-        if (typePathBuffer.Contains('`', StringComparison.Ordinal))
-        {
-            typePathBuffer = typePathBuffer.Remove(typePathBuffer.IndexOf('`', StringComparison.Ordinal), 2);
-        }
-        if (generics?.Any() ?? false)
-        {
-            gens.AddRange(generics);
-        }
-
-        // Retrieve name and namespace
-        var lastIndexOfDot = typePathBuffer.LastIndexOf('.');
-        (var name, var nameSpace) = lastIndexOfDot > 0
-            ? (typePathBuffer[(lastIndexOfDot + 1)..], typePathBuffer[..lastIndexOfDot])
-            : (typePathBuffer, string.Empty);
-
-        var genTypes = gens.Select(x => new TypePath(x));
-
-        return (name, nameSpace, genTypes, nullability);
-    }
-
-    private static string TransformKeyword(string keyword)
-    {
-        var primitive = _primitiveTypes.FirstOrDefault(x => x.Value == keyword);
-        return primitive.Key?.FullName != null
-            ? primitive.Key.FullName
-            : keyword;
+        return result;
     }
 
     [return: NotNull]
@@ -342,5 +282,104 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
         var result = buffer.ToString();
         return result;
+    }
+
+    internal readonly record struct TypeData(string Name, string? NameSpace, IEnumerable<TypeData> Generics, bool IsNullable) : IEquatable<TypeData>
+    {
+        public bool Equals(TypeData other)
+            => this.GetHashCode() == other.GetHashCode();
+
+        public override int GetHashCode()
+        {
+            var result = HashCode.Combine(this.Name, this.NameSpace, this.IsNullable);
+            foreach (var generic in this.Generics)
+            {
+                result = HashCode.Combine(result, generic.GetHashCode());
+            }
+            return result;
+        }
+
+        internal static TypeData Parse([DisallowNull] in string fullPath)
+        {
+            const string CLR_GENERIC_SYMBOL = "`1[[";
+            TypeData result = default;
+
+            // Not Generic
+            if (!fullPath.Contains('<'))
+            {
+                // Is CLR Nullable?
+                if (isClrNullable(fullPath))
+                {
+                    // Retrieve the generic parameter
+                    var buffer = string.Concat(fullPath["System.Nullable`1[[".Length..fullPath.IndexOf(',')], "?");
+                    result = Parse(buffer);
+                }
+                // Not nullable, but CLR generic
+                else if (isClrGeneric(fullPath))
+                {
+                    // So complicated type
+                    var parts = fullPath.Split(CLR_GENERIC_SYMBOL);
+                    parts[^1] = parts[^1].With(x => x[..x.IndexOf(',')]);
+
+                    var buffer = Parse(parts[^1]);
+
+                    parts[..^1].ForEachReverse(item =>
+                    {
+                        if (!item.StartsWith("System.Nullable"))
+                        {
+                            buffer = Parse(item) with { Generics = [buffer], IsNullable = false };
+                        }
+                        else
+                        {
+                            buffer = buffer with { IsNullable = true };
+                        }
+                    });
+                    result = buffer;
+                }
+                // Not CLR nullable, not CLR generic
+                else
+                {
+                    var isNullable = fullPath.EndsWith('?');
+                    var buffer = fullPath.TrimEnd('?');
+                    var parts = buffer.Split('.');
+                    var name = parts.Last();
+                    result = parts.Length == 1
+                        ? new TypeData(name, null, [], isNullable)
+                        : new TypeData(name, parts.Take(parts.Length - 1).Merge('.'), [], isNullable);
+                }
+            }
+            else
+            {
+                if (!fullPath.Contains(','))
+                {
+                    var isNullable = fullPath.EndsWith('?');
+                    var beginningOfGeneric = fullPath.IndexOf('<');
+                    var mainType = fullPath[..beginningOfGeneric];
+                    var genericType = fullPath[(beginningOfGeneric + 1)..fullPath.LastIndexOf('>')];
+                    var mainTypeParseResult = Parse(mainType);
+                    var genericTypeParseResult = Parse(genericType);
+                    result = mainTypeParseResult with { Generics = [genericTypeParseResult], IsNullable = isNullable };
+                }
+            }
+
+            return result;
+
+            static bool isClrNullable(string s)
+                => s?.StartsWith($"System.Nullable{CLR_GENERIC_SYMBOL}") is true;
+            static bool isClrGeneric(string s)
+                => s?.Contains(CLR_GENERIC_SYMBOL) is true;
+        }
+
+        internal static TypeData Parse([DisallowNull] in string fullType, IEnumerable<string>? generics, bool isNullable)
+        {
+            Checker.MustBeArgumentNotNull(fullType);
+            Checker.MustBe(generics?.All(x => !x.IsNullOrEmpty()) ?? true, () => "Generic types cannot be null or empty.");
+
+            var fullPath = generics?.Any() ?? false
+                ? $"{fullType}<{generics}>${(isNullable ? "?" : "")}"
+                : $"{fullType}${(isNullable ? "?" : "")}";
+
+            return Parse(fullPath);
+        }
     }
 }

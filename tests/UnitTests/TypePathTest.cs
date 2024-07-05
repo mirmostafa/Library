@@ -220,9 +220,9 @@ public sealed class TypePathTest(ITestOutputHelper output)
 
     [Theory]
     [MemberData(nameof(TypePathTestData.ParseData), MemberType = typeof(TypePathTestData))]
-    internal void Parse(string fullPath, TypeData expected)
+    internal void Parse(string fullPath, TypePath.TypeData expected)
     {
-        var actual = TypePathHelper.ParseFullPath(fullPath);
+        var actual = TypePath.TypeData.Parse(fullPath);
 
         Assert.Equal(expected, actual);
     }
