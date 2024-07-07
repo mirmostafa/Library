@@ -1,4 +1,5 @@
 ﻿using Library.CodeGeneration;
+using Library.Exceptions.Validations;
 
 using UnitTests.Models;
 
@@ -90,9 +91,9 @@ public sealed class TypePathTest(ITestOutputHelper output)
         var expectedFullPath = "Library.Tests.UnitTests.TypePathTest";
         var expectedName = "TypePathTest";
         var expectedNameSpace = "Library.Tests.UnitTests";
-        TypePath path = expectedFullPath;
 
         // Act
+        TypePath path = expectedFullPath;
         var actualName = path.Name;
         var actualNameSpace = path.NameSpace;
         var actualFullPath = path.FullPath;
@@ -149,6 +150,24 @@ public sealed class TypePathTest(ITestOutputHelper output)
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void RealWorldReturnType_TaskOfPerson()
+    {
+        var typePath = TypePath.New<Task>(["Person"]);
+        var actual = typePath.FullPath;
+        var expected = "System.Threading.Tasks.Task<Person>";
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void RealWorldReturnType_GenericTaskOfPerson()
+    {
+        var typePath = TypePath.New(typeof(Task<>),["Person"]);
+        var actual = typePath.FullPath;
+        var expected = "System.Threading.Tasks.Task<Person>";
+        Assert.Equal(expected, actual);
+    }
+
     [Fact, Priority(20)]
     public void SimpleGenericTypeTest()
     {
@@ -156,23 +175,20 @@ public sealed class TypePathTest(ITestOutputHelper output)
         this.Display(path);
     }
 
-    [Fact, Priority(35)]
+    [Fact, Priority(30)]
     public void SimpleGenericWithAdditionalGenericsTypeTest()
-    {
-        var path = new TypePath(this._sampleFullPath, _generics);
-        this.Display(path);
-    }
+        => Assert.Throws<ValidationException>(() => new TypePath(this._sampleFullPath, _generics));
 
     [Fact, Priority(1)]
     public void SimpleTypeTest()
     {
         // Assign
-        var expectedFullPath = "TypePathTest";
-        var expectedName = "TypePathTest";
+        var expectedFullPath = "Person";
+        var expectedName = "Person";
         var expectedNameSpace = string.Empty;
-        TypePath path = expectedFullPath;
 
         // Act
+        TypePath path = expectedFullPath;
         var actualName = path.Name;
         var actualNameSpace = path.NameSpace;
         var actualFullPath = path.FullPath;

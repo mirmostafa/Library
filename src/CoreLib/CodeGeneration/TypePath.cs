@@ -9,7 +9,7 @@ namespace Library.CodeGeneration;
 
 //[DebuggerStepThrough, StackTraceHidden]
 [Immutable]
-public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool isNullable = false) : IEquatable<TypePath>
+public sealed class TypePath : IEquatable<TypePath>
 {
     private static readonly Dictionary<Type, string> _primitiveTypes = new()
     {
@@ -30,9 +30,17 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         { typeof(decimal), "decimal" },
     };
 
-    private readonly TypeData _data = Parse(fullPath, generics, isNullable);
+    private readonly TypeData _data;
     private string? _fullName;
     private string? _fullPath;
+
+    public TypePath([DisallowNull] in string fullPath, in IEnumerable<string>? generics = null, bool isNullable = false)
+        : this(Parse(fullPath, generics, isNullable))
+    {
+    }
+
+    private TypePath(TypeData typeData)
+        => this._data = typeData;
 
     [NotNull]
     public string FullName => this._fullName ??= this.GetFullName();
@@ -41,7 +49,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     public string FullPath => this._fullPath ??= this.GetFullPath();
 
     [NotNull]
-    public IEnumerable<TypePath> Generics => (IEnumerable<TypePath>)this._data.Generics;
+    public IEnumerable<TypePath> Generics => this._data.Generics.Select(x => new TypePath(x));
 
     public bool IsGeneric => this._data.Generics.Any();
 
@@ -50,7 +58,7 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
     [NotNull]
     public string Name => this._data.Name;
 
-    public string? NameSpace => this._data.NameSpace;
+    public string NameSpace => this._data.NameSpace ?? string.Empty;
 
     public static string AsKeyword(in string nameOrFullName)
     {
@@ -68,12 +76,13 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
 
     [return: NotNullIfNotNull(nameof(typePath))]
     public static string? GetNameSpace(in string? typePath)
-        => typePath == null ? null : Parse(typePath).NameSpace;
+        => typePath == null ? null : Parse(typePath).NameSpace ?? string.Empty;
 
-    public static string? GetNameSpace<T>()
+    [return: NotNull]
+    public static string GetNameSpace<T>()
     {
         var path = typeof(T).FullName;
-        return path.IsNullOrEmpty() ? string.Empty : Parse(path).NameSpace;
+        return path.IsNullOrEmpty() ? string.Empty : Parse(path).NameSpace ?? string.Empty;
     }
 
     [return: NotNull]
@@ -234,6 +243,8 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
         // Validation checks
         Check.MustBeArgumentNotNull(typePath);
         Check.MustBe(generics?.All(x => !x.IsNullOrEmpty()) ?? true, () => "Generic types cannot be null or empty.");
+        Check.MustBe(generics?.Any() != true || (!typePath.ContainsAny(["<", ">"]) && !typePath.Contains(TypeData.CLR_GENERIC_SYMBOL))
+            , () => $"{nameof(generics)} cannot have items while {nameof(typePath)} is nullable.");
 
         var result = TypeData.Parse(typePath, generics, isNullable);
 
@@ -299,9 +310,9 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
             return result;
         }
 
+        internal const string CLR_GENERIC_SYMBOL = "`1[[";
         internal static TypeData Parse([DisallowNull] in string fullPath)
         {
-            const string CLR_GENERIC_SYMBOL = "`1[[";
             TypeData result = default;
 
             // Not Generic
@@ -376,10 +387,11 @@ public sealed class TypePath([DisallowNull] in string fullPath, in IEnumerable<s
             Checker.MustBe(generics?.All(x => !x.IsNullOrEmpty()) ?? true, () => "Generic types cannot be null or empty.");
 
             var fullPath = generics?.Any() ?? false
-                ? $"{fullType}<{generics}>${(isNullable ? "?" : "")}"
-                : $"{fullType}${(isNullable ? "?" : "")}";
+                ? $"{fullType}<{string.Join(',', generics)}>{(isNullable ? "?" : "")}"
+                : $"{fullType}{(isNullable ? "?" : "")}";
 
-            return Parse(fullPath);
+            var result = Parse(fullPath);
+            return result;
         }
     }
 }
