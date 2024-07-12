@@ -149,9 +149,9 @@ public sealed class CodeDomCodeGenerator : ICodeGeneratorEngine
                 code.ReadLines().ForEach(line =>
                 {
                     buffer = line;
-                    buffer.FindEach(memberNames).ForEach(member =>
+                    buffer.FindFirst(memberNames).ForEach(member =>
                     {
-                        if (!buffer.ContainsAny(new[] { $"class {member}", $"{member}(", $"{member} (" }) || buffer.Contains(prfx))
+                        if (!StringHelper.ContainsAny(buffer,[$"class {member}", $"{member}(", $"{member} ("]) || buffer.Contains(prfx))
                         {
                             return;
                         }

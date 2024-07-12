@@ -11,6 +11,7 @@ using Library.Results;
 using Library.Validations;
 
 using NullableStrings = System.Collections.Generic.IEnumerable<string?>;
+using SpanString = System.ReadOnlySpan<char>;
 using Strings = System.Collections.Generic.IEnumerable<string>;
 
 namespace Library.Helpers;
@@ -18,8 +19,7 @@ namespace Library.Helpers;
 /// <summary>
 /// A utility to do some common tasks about strings
 /// </summary>
-[DebuggerStepThrough]
-[StackTraceHidden]
+[DebuggerStepThrough, StackTraceHidden]
 public static class StringHelper
 {
     private static readonly char[] _standardSeparators = ['\0', '\n', '\r', '\t', '_', '-'];
@@ -119,20 +119,36 @@ public static class StringHelper
     /// Checks if any character in the given string is present in the given range.
     /// </summary>
     [Pure]
-    public static bool AnyCharInString(this string str, in string range)
-        => !string.IsNullOrEmpty(str) && range.Any(str.Contains);
+    public static bool AnyCharInString(this string str, SpanString range)
+    {
+        if (range.IsEmpty || str.IsNullOrEmpty())
+        {
+            return false;
+        }
+
+        foreach (var c in range)
+        {
+            if (str.Contains(c))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     [return: NotNull]
-    public static StringBuilder AppendAll([DisallowNull] this StringBuilder sb, Strings lines)
+    public static StringBuilder AppendAll([DisallowNull] this StringBuilder sb, params Strings lines)
     {
         Check.MustBeArgumentNotNull(sb);
 
-        if (lines != null)
+        if (lines?.Any() is not true)
         {
-            foreach (var line in lines)
-            {
-                _ = sb.Append(line);
-            }
+            return sb;
+        }
+        foreach (var line in lines)
+        {
+            _ = sb.Append(line);
         }
         return sb;
     }
@@ -159,7 +175,7 @@ public static class StringHelper
     }
 
     [return: NotNull]
-    public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, Strings? lines)
+    public static StringBuilder AppendAllLines([DisallowNull] this StringBuilder sb, params Strings lines)
     {
         if (lines?.Any() is not true)
         {
@@ -186,6 +202,7 @@ public static class StringHelper
     public static string ArabicCharsToPersian(string value)
          => value.IsNullOrEmpty() ? value : value.ReplaceAll(PersianTools.InvalidArabicCharPairs.Select(x => (x.Arabic, x.Persian)));
 
+    [Obsolete("Do NOT use this method.", true)]
     public static string Build(this StringBuilder sb)
          => sb.ArgumentNotNull().ToString();
 
@@ -234,7 +251,7 @@ public static class StringHelper
     /// <param name="strings">The strings to concatenate.</param>
     /// <param name="sep">The separator to use.</param>
     /// <returns>The concatenated string.</returns>
-    public static string ConcatAll(Strings strings, string sep) =>
+    public static string ConcatAll(this Strings strings, string sep) =>
         (sep?.Length) switch
         {
             0 or null => string.Concat(strings),
@@ -282,17 +299,16 @@ public static class StringHelper
     /// <param name="str">The string to check.</param>
     /// <param name="array">The array of strings to check against.</param>
     /// <returns>True if the string contains any of the strings in the array, false otherwise.</returns>
-    public static bool ContainsAny(this string str, in Strings array)
+    public static bool ContainsAny(this SpanString str, NullableStrings array)
     {
-        Check.MustBeArgumentNotNull(str);
-        if (array is null)
+        if (array == null)
         {
             return false;
         }
 
         foreach (var item in array)
         {
-            if (str.Contains(item))
+            if (item != null && str.IndexOf(item.AsSpan()) != -1)
             {
                 return true;
             }
@@ -378,7 +394,7 @@ public static class StringHelper
         => array.Any(s => str1.EqualsTo(s));
 
     [return: NotNull]
-    public static Strings FindEach(this string str, Strings items)
+    public static Strings FindFirst(this string str, Strings items)
     {
         if (str.IsNullOrEmpty())
         {
@@ -407,7 +423,24 @@ public static class StringHelper
     /// <summary>
     /// Formats a string using the specified arguments.
     /// </summary>
-    public static string Format(this string format, params object[] args)
+    public static string Format([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format, params object[] args)
+        => string.Format(format, args);
+
+    /// <summary>
+    /// Replaces the format item in a specified string with the string representation of a
+    /// corresponding object in a specified span.
+    /// </summary>
+    /// <param name="format">
+    /// A <see
+    /// href="https://learn.microsoft.com/dotnet/standard/base-types/composite-formatting">composite
+    /// format string</see>.
+    /// </param>
+    /// <param name="args">An object span that contains zero or more objects to format.</param>
+    /// <returns>
+    /// A copy of <paramref name="format"/> in which the format items have been replaced by the
+    /// string representation of the corresponding objects in <paramref name="args"/>.
+    /// </returns>
+    public static string Format([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format, /*params*/ ReadOnlySpan<object?> args)
         => string.Format(format, args);
 
     [Pure]
@@ -1076,7 +1109,8 @@ public static class StringHelper
     /// <summary>
     /// Removes the specified number of characters from the end of the string.
     /// </summary>
-    public static string RemoveEnd(this string str, in int count) => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
+    public static string RemoveEnd(this string str, in int count)
+        => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
 
     /// <summary>
     /// Removes the start of a string if it matches the given value.
@@ -1439,7 +1473,7 @@ public static class StringHelper
     /// Converts a collection of strings to a collection of integers.
     /// </summary>
     public static IEnumerable<int> ToInt(in Strings array) =>
-        array.Where(str => IsNumber(str)).Select(str => str.Cast().ToInt());
+        array.Select(int.Parse);
 
     /// <summary>
     /// Converts a collection of strings to lowercase.

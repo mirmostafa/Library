@@ -1,6 +1,9 @@
 #nullable disable
 
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
+
+using FluentAssertions;
 
 namespace UnitTests;
 
@@ -158,7 +161,9 @@ public sealed class StringHelperTest
     {
         var text = "Mohammad";
         string range = null;
-        _ = Assert.Throws<ArgumentNullException>(() => text.AnyCharInString(range!));
+        var actual = text.AnyCharInString(range!);
+        var expected = false;
+        Assert.Equal(expected, actual);
     }
 
     [Theory]
@@ -311,6 +316,9 @@ public sealed class StringHelperTest
     [InlineData("Hello", new string[] { "He", "ll", "o" }, true)]
     [InlineData("Hello", new string[] { "he", "LL", "O" }, false)]
     [InlineData("Hello", new string[] { "Hi", "Bye", "No" }, false)]
+    [InlineData(null, new string[] { "Hi", "Bye", "No" }, false)]
+    [InlineData("Hello", null, false)]
+    [InlineData(null, null, false)]
     public void ContainsAnyStringArrayTest(string str, string[] array, bool expected)
     {
         // Arrange
@@ -471,12 +479,9 @@ public sealed class StringHelperTest
     [InlineData("Hello ", new[] { "World" }, "Hello ")]
     [InlineData("Hello {0}", new[] { "World" }, "Hello World")]
     [InlineData("Hello {0}", new object[] { "World", "!" }, "Hello World")]
-    [InlineData("{0} + {1} = {2}", new object[] { 2, 3, 5 }, "2 + 3 = 5")]
-    public void Format_ShouldReturnFormattedString(string format, object[] args, string expected)
-    {
-        var result = format.Format(args);
-        Assert.Equal(expected, result);
-    }
+    [InlineData("{0} + {1} = ", new object[] { 2, 3, 5 }, "2 + 3 = 5")]
+    public void Format_ShouldReturnFormattedString([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format, object[] args, string expected)
+        => StringHelper.Format(format, args).Should().Be(expected);
 
     [Fact]
     public void Format_ShouldThrowArgumentNullException_WhenFormatIsNullEmptyButArgsIsNotNull()
@@ -691,6 +696,26 @@ public sealed class StringHelperTest
     [InlineData("children", "child")]
     public void PluralizeTest(string pluralized, string single)
         => Assert.Equal(pluralized, StringHelper.Pluralize(single));
+
+    [Theory]
+    [InlineData(null, "World", null)]
+    [InlineData("HelloWorld", null, "HelloWorld")]
+    [InlineData(null, null, null)]
+    [InlineData("HelloWorld", "World", "Hello")]
+    [InlineData("HelloWorld", "Hello", "HelloWorld")]
+    [InlineData("HelloWorld", "oWorld", "Hell")]
+    [InlineData("HelloWorld", "HelloWorld", "")]
+    [InlineData("Hello", "HelloWorld", "Hello")]
+    [InlineData("Hello", "", "Hello")]
+    [InlineData("Hello", "o", "Hell")]
+    public void RemoveEnd_ShouldReturnExpectedResults(string input, string value, string expected)
+    {
+        // Act
+        var result = input.RemoveEnd(value);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
 
     [Theory]
     [InlineData("hello world", "world", "hello ")]
@@ -940,26 +965,6 @@ public sealed class StringHelperTest
 
         // Assert
         Assert.Equal(["Hello", "World", "!"], result);
-    }
-
-    [Theory]
-    [InlineData(null, "World", null)]
-    [InlineData("HelloWorld", null, "HelloWorld")]
-    [InlineData(null, null, null)]
-    [InlineData("HelloWorld", "World", "Hello")]
-    [InlineData("HelloWorld", "Hello", "HelloWorld")]
-    [InlineData("HelloWorld", "oWorld", "Hell")]
-    [InlineData("HelloWorld", "HelloWorld", "")]
-    [InlineData("Hello", "HelloWorld", "Hello")]
-    [InlineData("Hello", "", "Hello")]
-    [InlineData("Hello", "o", "Hell")]
-    public void RemoveEnd_ShouldReturnExpectedResults(string input, string value, string expected)
-    {
-        // Act
-        var result = input.RemoveEnd(value);
-
-        // Assert
-        Assert.Equal(expected, result);
     }
 }
 

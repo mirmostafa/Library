@@ -441,10 +441,10 @@ public sealed class TypePathTest(ITestOutputHelper output)
     }
 
     [Theory]
+    [InlineData("int", true)]
+    [InlineData("int", false)]
     [InlineData("int?", true)]
     [InlineData("int?", false)]
-    [InlineData("string?", true)]
-    [InlineData("string?", false)]
     [InlineData("System.String?", false)]
     [InlineData("System.String?", true)]
     [InlineData("Test.Person?", true)]
@@ -454,12 +454,12 @@ public sealed class TypePathTest(ITestOutputHelper output)
     [InlineData("System.Collection.IEnumerable<int?>", false)]
     [InlineData("System.Collection.IEnumerable<int>?", true)]
     [InlineData("System.Collection.IEnumerable<int>?", false)]
-    public void WithNullable(string path, bool isNullable)
+    public void WithNullable(string path, bool expected)
     {
         var tp = TypePath.New(path);
-        var tp1 = tp.WithNullable(isNullable);
+        var tp1 = tp.WithNullable(expected);
 
-        Assert.Equal(isNullable, tp1.IsNullable);
+        Assert.Equal(expected, tp1.IsNullable);
     }
 
     [Theory]

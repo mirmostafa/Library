@@ -64,6 +64,6 @@ public static class NamSpaceExtensions
         where TCodeGeneratorEngine : ICodeGeneratorEngine => engine.Generate(ns);
 
     public static Result<string> GenerateCode<TCodeGeneratorEngine>(this INamespace ns)
-        where TCodeGeneratorEngine : ICodeGeneratorEngine, new() 
+        where TCodeGeneratorEngine : ICodeGeneratorEngine, new()
         => GenerateCode(ns, new TCodeGeneratorEngine());
 }

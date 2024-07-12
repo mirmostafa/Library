@@ -28,7 +28,7 @@ public partial class SqlStatementBuilder
             _ = result.AppendLine(";").Append("SELECT SCOPE_IDENTITY();");
         }
 
-        return result.Build();
+        return result.ToString();
     }
 
     public static IInsertStatement Insert() =>
