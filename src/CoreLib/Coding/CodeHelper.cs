@@ -11,8 +11,7 @@ namespace Library.Coding;
 /// <summary>
 /// 🤏 Little code snippets to do little works.
 /// </summary>
-[DebuggerStepThrough]
-[StackTraceHidden]
+//[DebuggerStepThrough, StackTraceHidden]
 public static class CodeHelper
 {
     /// <summary>

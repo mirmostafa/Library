@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Frozen;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -9,7 +10,7 @@ using Library.Validations;
 
 namespace Library.CodeGeneration;
 
-//[DebuggerStepThrough, StackTraceHidden]
+[DebuggerStepThrough, StackTraceHidden]
 [Immutable]
 public sealed class TypePath : IEquatable<TypePath>, IEquatable<Type>
 {
@@ -160,6 +161,8 @@ public sealed class TypePath : IEquatable<TypePath>, IEquatable<Type>
     [return: NotNull]
     public static TypePath New<T>()
         => New(typeof(T));
+    public static TypePath New<T>(in IEnumerable<string> generics)
+        => New(typeof(T).FullName!, generics);
 
     [return: NotNull]
     public static TypePath New<T>(in IEnumerable<Type>? generics)
