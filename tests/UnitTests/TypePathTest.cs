@@ -1,12 +1,13 @@
 ﻿using Library.CodeGeneration;
 using Library.Exceptions.Validations;
 
-using UnitTests.Models;
-
 using Xunit.Abstractions;
+
+using static Library.CodeGeneration.TypePath;
 
 namespace UnitTests;
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2263:Prefer generic overload when type is known", Justification = "<Pending>")]
 [Collection(nameof(TypePathTest))]
 [Trait("Category", nameof(Library.CodeGeneration))]
 [Trait("Category", nameof(TypePath))]
@@ -16,17 +17,85 @@ public sealed class TypePathTest(ITestOutputHelper output)
     private readonly ITestOutputHelper _output = output;
     private readonly string _sampleFullPath = "System.Linq.IQueryable<Library.Tests.UnitTests.TypePathTest>";
 
+    public static IEnumerable<object[]> ParseData
+    {
+        get
+        {
+            // Straight forward
+            yield return new object[]
+            {
+                "Person", new TypeData("Person", null, [], false)
+            };
+            // Simple namespace
+            yield return new object[]
+            {
+                "System.Int32", new TypeData(nameof(Int32)!, typeof(int).Namespace!, [], false)
+            };
+            // Complex namespace
+            yield return new object[]
+            {
+                "Sample.Data.Entities.Person", new TypeData("Person","Sample.Data.Entities", [], false)
+            };
+            // Straight forward nullable
+            yield return new object[]
+            {
+                "Person?", new TypeData("Person",null, [], true)
+            };
+            // Simple namespace nullable
+            yield return new object[]
+            {
+                "System.Int32?", new TypeData(nameof(Int32)!, typeof(int).Namespace!, [], true)
+            };
+            // Complex namespace nullable
+            yield return new object[]
+            {
+                "Sample.Data.Entities.Person?", new TypeData("Person","Sample.Data.Entities", [], true)
+            };
+
+            // Simple generic
+            yield return new object[]
+            {
+                "ValueType<Person>", new TypeData("ValueType", null, [new("Person", null, [], false)], false)
+            };
+            // Simple generic nullable 1
+            yield return new object[]
+            {
+                "ValueType<Person>?", new TypeData("ValueType", null, [new("Person", null, [], false)], true)
+            };
+            // Simple generic nullable 2
+            yield return new object[]
+            {
+                "ValueType<Person?>", new TypeData("ValueType", null, [new("Person", null, [], true)], false)
+            };
+
+            // Complex generic - real world
+            yield return new object[]
+            {
+                "System.Threading.Tasks.Task<System.Int32>", new TypeData(nameof(Task), typeof(Task<int>).Namespace, [new(nameof(Int32), typeof(int).Namespace, [], false)], false)
+            };
+
+            // Complex generic nullable - real world
+            yield return new object[]
+            {
+                "System.Threading.Tasks.Task<System.Int32?>", new TypeData(nameof(Task), typeof(Task<int>).Namespace, [new(nameof(Int32), typeof(int).Namespace, [], true)], false)
+            };
+
+            // More complex generic - real world
+            yield return new object[]
+            {
+                "System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<System.Int32>>", new TypeData(nameof(Task), typeof(Task<IEnumerable<int>>).Namespace, [new(nameof(IEnumerable<int>), typeof(IEnumerable<int>).Namespace, [new(nameof(Int32), typeof(int).Namespace, [], false)], false)], false)
+            };
+
+            // More complex null generic - real world
+            yield return new object[]
+            {
+                "System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<System.Int32?>>", new TypeData(nameof(Task), typeof(Task).Namespace, [new(nameof(IEnumerable<int>), typeof(IEnumerable<>).Namespace, [new(nameof(Int32), typeof(int).Namespace, [], true)], false)], false)
+            };
+        }
+    }
+
     [Theory]
     [InlineData("int", "System.Int32")]
-    [InlineData("int?", "System.Int32?")]
-    [InlineData("string", "System.String")]
-    [InlineData("string?", "System.String?")]
-    [InlineData("Person", "Test.Person")]
-    [InlineData("Person?", "Test.Person?")]
-    [InlineData("Task<int>", "Task<System.Int32>")]
-    [InlineData("Task<long>", "Task<System.Int64>")]
-    [InlineData("Task<long?>", "Task<System.Int64?>")]
-    [InlineData("Task<IEnumerable<long>>", "Task<IEnumerable<System.Int64>>")]
     public void AsKeyword(string keyword, string fullPath)
     {
         var expected = keyword;
@@ -45,7 +114,7 @@ public sealed class TypePathTest(ITestOutputHelper output)
     public void FromKeyword(string keyword, string fullPath)
     {
         var expected = fullPath;
-        var actual = TypePath.New(keyword).FullPath;
+        var actual = TypePath.FromKeyword(keyword).FullPath;
 
         Assert.Equal(expected, actual);
     }
@@ -151,18 +220,18 @@ public sealed class TypePathTest(ITestOutputHelper output)
     }
 
     [Fact]
-    public void RealWorldReturnType_TaskOfPerson()
+    public void RealWorldReturnType_GenericTaskOfPerson()
     {
-        var typePath = TypePath.New<Task>(["Person"]);
+        var typePath = TypePath.New(typeof(Task<>).FullName!, ["Person"]);
         var actual = typePath.FullPath;
         var expected = "System.Threading.Tasks.Task<Person>";
         Assert.Equal(expected, actual);
     }
 
     [Fact]
-    public void RealWorldReturnType_GenericTaskOfPerson()
+    public void RealWorldReturnType_TaskOfPerson()
     {
-        var typePath = TypePath.New(typeof(Task<>),["Person"]);
+        var typePath = TypePath.New(typeof(Task<>).FullName!, ["Person"]);
         var actual = typePath.FullPath;
         var expected = "System.Threading.Tasks.Task<Person>";
         Assert.Equal(expected, actual);
@@ -212,6 +281,165 @@ public sealed class TypePathTest(ITestOutputHelper output)
         Assert.Equal(expected, actual);
     }
 
+    [Fact]
+    public void TypeDataParse_Simple()
+    {
+        // Assign
+        var fullPath = "System.Threading.Tasks.Task";
+        var expected = fullPath;
+
+        // Act
+        var arg = TypePath.New(fullPath, []);
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Clr_Generic_1()
+    {
+        // Assign
+        var arg = TypePath.New<Task>([typeof(string)]);
+        var expected = "System.Threading.Tasks.Task<System.String>";
+
+        // Act
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Clr_Generic_2()
+    {
+        // Assign
+        var arg = TypePath.New(typeof(Task), [typeof(string)]);
+        var expected = "System.Threading.Tasks.Task<System.String>";
+
+        // Act
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Clr_Generic_Invalid()
+    {
+        // Assign
+        var type = typeof(Task<>).FullName!;
+        var expected = "System.Threading.Tasks.Task";
+
+        // Act
+        var typePath = TypePath.New(type, []);
+        var actual = typePath.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Clr_Generic_Nullable_1()
+    {
+        // Assign
+        var expected = "System.Threading.Tasks.Task<System.Int32?>";
+
+        // Act
+        var arg = TypePath.New<Task>([typeof(int?)]);
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Clr_Generic_Nullable_2()
+    {
+        // Assign
+        var expected = "System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<System.Int32?>>";
+
+        // Act
+        var arg = TypePath.New<Task>([typeof(IEnumerable<int?>)]);
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Clr_Generic_Valid()
+    {
+        // Assign
+        var mainType = typeof(Task<>).FullName!;
+        var expected = "System.Threading.Tasks.Task<System.String>";
+
+        // Act
+        var arg = TypePath.New(mainType, [typeof(string).FullName!]);
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Clr_Nullable()
+    {
+        // Assign
+        var expected = "System.Int32?";
+        var mainType = typeof(int?).FullName!;
+
+        // Act
+        var arg = TypePath.New(mainType, []);
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Nullable()
+    {
+        // Assign
+        var fullPath = "System.Int64?";
+        var expected = fullPath;
+
+        // Act
+        var arg = TypePath.New(fullPath, []);
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Type_1()
+    {
+        // Assign
+        var arg = TypePath.New<Task>();
+        var expected = "System.Threading.Tasks.Task";
+
+        // Act
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void TypeDataParse_Simple_Type_2()
+    {
+        // Assign
+        var arg = TypePath.New(typeof(Task));
+        var expected = "System.Threading.Tasks.Task";
+
+        // Act
+        var actual = arg.FullPath;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
     [Theory]
     [InlineData("int?", true)]
     [InlineData("int?", false)]
@@ -235,10 +463,11 @@ public sealed class TypePathTest(ITestOutputHelper output)
     }
 
     [Theory]
-    [MemberData(nameof(TypePathTestData.ParseData), MemberType = typeof(TypePathTestData))]
-    internal void Parse(string fullPath, TypePath.TypeData expected)
+    [MemberData(nameof(ParseData))]
+    internal void Parse(string fullPath, TypeData typeData)
     {
-        var actual = TypePath.TypeData.Parse(fullPath);
+        var actual = fullPath;
+        var expected = new TypePath(typeData).FullPath;
 
         Assert.Equal(expected, actual);
     }

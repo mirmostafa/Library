@@ -1039,10 +1039,44 @@ public static class StringHelper
         => value is null ? str : str?.Replace(value, "");
 
     /// <summary>
+    /// Removes the specified value from the end of the given string if it exists.
+    /// </summary>
+    /// <param name="str">The input string to be processed.</param>
+    /// <param name="value">The value to be removed from the end of the input string.</param>
+    /// <returns>
+    /// The input string without the specified value at the end if it exists; otherwise, returns the
+    /// input string unchanged.
+    /// </returns>
+    [return: NotNullIfNotNull(nameof(str))]
+    public static string? RemoveEnd(this string? str, in string? value)
+    {
+        // If either the input string or the value is null, return the input string unchanged
+        if (str == null || value == null)
+        {
+            return str;
+        }
+
+        // If the input string is shorter than the value, return the input string unchanged
+        if (str.Length < value.Length)
+        {
+            return str;
+        }
+
+        // Check if the input string ends with the specified value
+        if (str.EndsWith(value))
+        {
+            // Remove the specified value from the end of the input string
+            return str[..^value.Length];
+        }
+
+        // If the specified value is not at the end, return the input string unchanged
+        return str;
+    }
+
+    /// <summary>
     /// Removes the specified number of characters from the end of the string.
     /// </summary>
-    public static string RemoveEnd(this string str, in int count)
-        => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
+    public static string RemoveEnd(this string str, in int count) => str.ArgumentNotNull(nameof(str)).Slice(0, str.Length - count);
 
     /// <summary>
     /// Removes the start of a string if it matches the given value.

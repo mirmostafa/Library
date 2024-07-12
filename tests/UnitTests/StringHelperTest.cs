@@ -941,6 +941,26 @@ public sealed class StringHelperTest
         // Assert
         Assert.Equal(["Hello", "World", "!"], result);
     }
+
+    [Theory]
+    [InlineData(null, "World", null)]
+    [InlineData("HelloWorld", null, "HelloWorld")]
+    [InlineData(null, null, null)]
+    [InlineData("HelloWorld", "World", "Hello")]
+    [InlineData("HelloWorld", "Hello", "HelloWorld")]
+    [InlineData("HelloWorld", "oWorld", "Hell")]
+    [InlineData("HelloWorld", "HelloWorld", "")]
+    [InlineData("Hello", "HelloWorld", "Hello")]
+    [InlineData("Hello", "", "Hello")]
+    [InlineData("Hello", "o", "Hell")]
+    public void RemoveEnd_ShouldReturnExpectedResults(string input, string value, string expected)
+    {
+        // Act
+        var result = input.RemoveEnd(value);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
 }
 
 internal class CompactDataClass : IEnumerable<object[]>
