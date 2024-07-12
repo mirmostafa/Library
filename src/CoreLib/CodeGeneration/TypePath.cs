@@ -213,8 +213,15 @@ public sealed class TypePath : IEquatable<TypePath>
     public override bool Equals(object? obj)
         => obj is TypePath path && this.Equals(path);
 
+    [return: NotNull]
+    public IEnumerator<string> GetEnumerator()
+    {
+        yield return this.NameSpace;
+        yield return this.Name;
+    }
+
     public override int GetHashCode()
-        => this.FullName.GetHashCode(StringComparison.Ordinal);
+            => this.FullName.GetHashCode(StringComparison.Ordinal);
 
     [return: NotNull]
     public IEnumerable<string> GetNameSpaces()
@@ -382,13 +389,6 @@ public sealed class TypePath : IEquatable<TypePath>
                 => !(mainType.Contains('<') && !mainType.Contains("<>"));
         }
     }
-
-    [return: NotNull]
-    public IEnumerator<string> GetEnumerator()
-    {
-        yield return this.NameSpace;
-        yield return this.Name;
-    }
 }
 
 internal static class TypPathHelpers
@@ -401,18 +401,28 @@ internal static class TypPathHelpers
             return input;
         }
 
-        var pattern = @"`1\[\[(?<InnerType>(?>[^\[\]]+|(?<Depth>\[)|(?<-Depth>\]))*(?(Depth)(?!)))\]\]";
+        var nullablePattern = @"System\.Nullable`\d\[\[(?<InnerType>.+?)\]\]";
+        input = Regex.Replace(input, nullablePattern, "${InnerType}?");
 
-        var result = Regex.Replace(input, pattern, match =>
+        var genericPattern = @"`\d\[\[(?<InnerType>(?>[^\[\]]+|(?<Depth>\[)|(?<-Depth>\]))*(?(Depth)(?!)))\]\]";
+        input = Regex.Replace(input, genericPattern, match =>
         {
             var innerType = match.Groups["InnerType"].Value;
-            return "<" + ConvertClrFormToNormalForm(innerType) + ">";
+            var typeParams = innerType.Split("],[", StringSplitOptions.None);
+            for (var i = 0; i < typeParams.Length; i++)
+            {
+                typeParams[i] = ConvertClrFormToNormalForm(typeParams[i]);
+            }
+            return "<" + string.Join(", ", typeParams) + ">";
         });
 
-        // حذف اطلاعات اضافی بعد از نوع اصلی
-        result = Regex.Replace(result, @",.*?(?=\]|\>)", string.Empty);
+        input = Regex.Replace(input, @",.*?(?=\]|\>)", string.Empty);
 
-        return result;
+        var genericNoParamsPattern = @"`\d";
+        //input = Regex.Replace(input, genericNoParamsPattern, "<>");
+        input = Regex.Replace(input, genericNoParamsPattern, "");
+
+        return input;
     }
 
     [return: NotNullIfNotNull(nameof(typePath))]
@@ -423,7 +433,7 @@ internal static class TypPathHelpers
             return null;
         }
 
-        var clrPattern = @"System\.Nullable`1\[\[(?<InnerType>.+?)\]\]";
+        var clrPattern = @"System\.Nullable`\d\[\[(?<InnerType>.+?)\]\]";
         var normPattern = @"System\.Nullable\<(?<InnerType>.+?)\>";
 
         var clrFixed = Regex.Replace(typePath, clrPattern, "${InnerType}?");
