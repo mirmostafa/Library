@@ -308,14 +308,7 @@ public sealed class TypePath : IEquatable<TypePath>
             }
             else
             { // Generic
-                if (!fullPath.Contains(','))
-                { // Single parameter per Generic type
-                    result = processGenericType(fullPath);
-                }
-                else
-                { // Multiple parameters per Generic type
-                    throw new NotSupportedException("Multiple Generic parameters is not supported.");
-                }
+                result = processGenericType(fullPath);
             }
 
             return result;
@@ -339,10 +332,10 @@ public sealed class TypePath : IEquatable<TypePath>
                 var isNullable = fullPath.EndsWith('?');
                 var beginningOfGeneric = fullPath.IndexOf('<');
                 var mainType = fullPath[..beginningOfGeneric];
-                var genericType = fullPath[(beginningOfGeneric + 1)..fullPath.LastIndexOf('>')];
+                var genericTypes = fullPath[(beginningOfGeneric + 1)..fullPath.LastIndexOf('>')].Split(',');
                 var mainTypeParseResult = InnerParse(mainType);
-                var genericTypeParseResult = InnerParse(genericType);
-                result = mainTypeParseResult with { Generics = [genericTypeParseResult], IsNullable = isNullable };
+                var genericTypesParseResult = genericTypes.Select(x => InnerParse(x)).ToFrozenSet();
+                result = mainTypeParseResult with { Generics = genericTypesParseResult, IsNullable = isNullable };
                 return result;
             }
         }
