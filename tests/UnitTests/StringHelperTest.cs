@@ -1,7 +1,6 @@
 #nullable disable
 
 using System.Collections;
-using System.Diagnostics.CodeAnalysis;
 
 using FluentAssertions;
 
@@ -479,8 +478,8 @@ public sealed class StringHelperTest
     [InlineData("Hello ", new[] { "World" }, "Hello ")]
     [InlineData("Hello {0}", new[] { "World" }, "Hello World")]
     [InlineData("Hello {0}", new object[] { "World", "!" }, "Hello World")]
-    [InlineData("{0} + {1} = ", new object[] { 2, 3, 5 }, "2 + 3 = 5")]
-    public void Format_ShouldReturnFormattedString([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format, object[] args, string expected)
+    [InlineData("{0} + {1} = {2}", new object[] { 2, 3, 5 }, "2 + 3 = 5")]
+    public void Format_ShouldReturnFormattedString(string format, object[] args, string expected)
         => StringHelper.Format(format, args).Should().Be(expected);
 
     [Fact]
@@ -491,7 +490,7 @@ public sealed class StringHelperTest
         object[] args = [1, "foo"];
 
         // Act & Assert
-        _ = Assert.Throws<ArgumentNullException>(() => format.Format(args));
+        _ = Assert.Throws<ArgumentNullException>(() => StringHelper.Format(format, args));
     }
 
     [Fact]
@@ -502,7 +501,7 @@ public sealed class StringHelperTest
         object[] args = ["foo"];
 
         // Act & Assert
-        _ = Assert.Throws<FormatException>(() => format.Format(args));
+        _ = Assert.Throws<FormatException>(() => StringHelper.Format(format, args));
     }
 
     [Theory]

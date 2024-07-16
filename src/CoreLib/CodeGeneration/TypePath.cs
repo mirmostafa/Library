@@ -296,8 +296,6 @@ public sealed class TypePath : IEquatable<TypePath>
 
     internal readonly record struct TypeData(string Name, string? NameSpace, IEnumerable<TypeData> Generics, bool IsNullable)
     {
-        internal const string CLR_GENERIC_SYMBOL = "`1[[";
-
         private static TypeData InnerParse([DisallowNull] in string fullPath)
         {
             Check.MustBeArgumentNotNull(fullPath);
@@ -396,16 +394,41 @@ internal static class TypPathHelpers
     [return: NotNullIfNotNull(nameof(input))]
     public static string? ConvertClrFormToNormalForm(this string? input)
     {
-        if (input is null)
-        {
-            return input;
-        }
+        var result = ReformatGenerics(input);
+        result = RemoveExtraData(result);
+        result = RemoveEmptyGenerics(result);
+        return result;
+    }
 
-        var nullablePattern = @"System\.Nullable`\d\[\[(?<InnerType>.+?)\]\]";
-        input = Regex.Replace(input, nullablePattern, "${InnerType}?");
+    [return: NotNullIfNotNull(nameof(input))]
+    public static string? ConvertClrNullableToNormalNullable(this string? input)
+    {
+        var clrPattern = @"System\.Nullable`\d\[\[(?<InnerType>.+?)\]\]";
+        var normPattern = @"System\.Nullable\<(?<InnerType>.+?)\>";
+        var result = input
+            .ReplaceByRegEx(clrPattern, "${InnerType}?")
+            .ReplaceByRegEx(normPattern, "${InnerType}?");
 
+        return result;
+    }
+
+    [return: NotNullIfNotNull(nameof(input))]
+    public static string? EvaluateByRegEx(in string? input, [DisallowNull] in string regex, in MatchEvaluator evaluator)
+        => input is null ? null : Regex.Replace(input, regex, evaluator);
+
+    [return: NotNullIfNotNull(nameof(input))]
+    public static string? RemoveByRegEx(in string? input, [DisallowNull] string regex)
+        => input is null ? null : Regex.Replace(input, regex, string.Empty);
+
+    [return: NotNullIfNotNull(nameof(input))]
+    public static string? ReplaceByRegEx(this string? input, [DisallowNull] in string regex, in string replacement)
+        => input is null ? null : Regex.Replace(input, regex, replacement);
+
+    [return: NotNullIfNotNull(nameof(input))]
+    private static string? ReformatGenerics(this string? input)
+    {
         var genericPattern = @"`\d\[\[(?<InnerType>(?>[^\[\]]+|(?<Depth>\[)|(?<-Depth>\]))*(?(Depth)(?!)))\]\]";
-        input = Regex.Replace(input, genericPattern, match =>
+        var result = EvaluateByRegEx(input, genericPattern, match =>
         {
             var innerType = match.Groups["InnerType"].Value;
             var typeParams = innerType.Split("],[", StringSplitOptions.None);
@@ -415,30 +438,29 @@ internal static class TypPathHelpers
             }
             return "<" + string.Join(", ", typeParams) + ">";
         });
-
-        input = Regex.Replace(input, @",.*?(?=\]|\>)", string.Empty);
-
-        var genericNoParamsPattern = @"`\d";
-        //input = Regex.Replace(input, genericNoParamsPattern, "<>");
-        input = Regex.Replace(input, genericNoParamsPattern, "");
-
-        return input;
+        return result;
     }
 
-    [return: NotNullIfNotNull(nameof(typePath))]
-    public static string? ConvertClrNullableToNormalNullable(this string? typePath)
+    private static string? RemoveEmptyGenerics(this string? input)
+        => RemoveByRegEx(input, @"`\d");
+
+    private static string? RemoveExtraData(this string? input)
+    //=> RemoveByRegEx(input, @",\s*Version=.*?(?=\]|\>)");
     {
-        if (typePath is null)
+        if (input == null)
         {
             return null;
         }
 
-        var clrPattern = @"System\.Nullable`\d\[\[(?<InnerType>.+?)\]\]";
-        var normPattern = @"System\.Nullable\<(?<InnerType>.+?)\>";
+        var indexOfComma = input.IndexOf(',');
+        if (indexOfComma < 0)
+        {
+            return input;
+        }
 
-        var clrFixed = Regex.Replace(typePath, clrPattern, "${InnerType}?");
-        var result = Regex.Replace(clrFixed, normPattern, "${InnerType}?");
-
-        return result;
+        var indexOfEndGeneric = input.IndexOf('>');
+        return indexOfEndGeneric >= 0
+            ? input[indexOfComma..indexOfEndGeneric]
+            : input[..indexOfComma];
     }
 }
