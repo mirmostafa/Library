@@ -1069,6 +1069,17 @@ public static class EnumerableHelper
     public static IEnumerable<T?> IfEmpty<T>(this IEnumerable<T?>? items, [DisallowNull] IEnumerable<T?> defaultValues) =>
         items?.Any() is true ? items : defaultValues;
 
+    public static IEnumerable<(TItem Item, int Index)> Index<TItem>(this IEnumerable<TItem> items)
+    {
+        var index = 0;
+        using var enumerator = items.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            yield return (enumerator.Current, index);
+            index++;
+        }
+    }
+
     /// <summary>
     /// Returns an enumerable of indexes at which a specified item appears in the source sequence.
     /// </summary>

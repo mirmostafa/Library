@@ -420,29 +420,6 @@ public static class StringHelper
                 ? new string(gapChar, maxLength)
                 : str.Length > maxLength ? str[..maxLength] : str.PadRight(maxLength, gapChar);
 
-    /// <summary>
-    /// Formats a string using the specified arguments.
-    /// </summary>
-    public static string Format([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format, params object[] args)
-        => string.Format(format, args);
-
-    /// <summary>
-    /// Replaces the format item in a specified string with the string representation of a
-    /// corresponding object in a specified span.
-    /// </summary>
-    /// <param name="format">
-    /// A <see
-    /// href="https://learn.microsoft.com/dotnet/standard/base-types/composite-formatting">composite
-    /// format string</see>.
-    /// </param>
-    /// <param name="args">An object span that contains zero or more objects to format.</param>
-    /// <returns>
-    /// A copy of <paramref name="format"/> in which the format items have been replaced by the
-    /// string representation of the corresponding objects in <paramref name="args"/>.
-    /// </returns>
-    public static string Format([StringSyntax(StringSyntaxAttribute.CompositeFormat)] string format, /*params*/ ReadOnlySpan<object?> args)
-        => string.Format(format, args);
-
     [Pure]
     public static string Format(this string str, Func<string, string> formatter) =>
         formatter.ArgumentNotNull()(str);
