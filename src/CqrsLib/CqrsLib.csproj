@@ -1,5 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>preview</LangVersion>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+	</PropertyGroup>
+	<PropertyGroup>
+		<Product>Library</Product>
 		<AssemblyName>Library.Cqrs</AssemblyName>
 		<RootNamespace>Library.Cqrs</RootNamespace>
 		<Configurations>Debug;Release;Debug Unit Test</Configurations>

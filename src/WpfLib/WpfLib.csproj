@@ -1,12 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>preview</LangVersion>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
+	</PropertyGroup>
+	<PropertyGroup>
 		<UseWPF>true</UseWPF>
 		<Configurations>Debug;Release;Debug Unit Test</Configurations>
 		<RootNamespace>Library.Wpf</RootNamespace>
 		<GenerateDocumentationFile>False</GenerateDocumentationFile>
 		<Product>Library</Product>
 		<MinimumPlatformVersion>7.0</MinimumPlatformVersion>
-		<TargetFramework>net9.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows7.0</TargetFramework>
 		<AssemblyName>Library.Wpf</AssemblyName>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
