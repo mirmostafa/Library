@@ -19,8 +19,8 @@
 		<None Remove="Themes\DefaultTheme.xaml.old" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft-Windows10-APICodePack-Core" />
-		<PackageReference Include="Microsoft.DependencyValidation.Analyzers" />
+		<PackageReference Include="Microsoft-Windows10-APICodePack-Core" Version="1.1.8" />
+		<PackageReference Include="Microsoft.DependencyValidation.Analyzers" Version="0.11.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\CoreLib\CoreLib.csproj" />

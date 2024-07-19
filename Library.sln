@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
+# 17
 VisualStudioVersion = 17.0.31606.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebLib", "src\WebLib\WebLib.csproj", "{9D27B192-A3DB-4FA2-AFB1-942E0E2A8E7A}"
@@ -13,7 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreLib", "src\CoreLib\Core
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "items", "items", "{C3AC6F73-3D60-4E97-BA63-598C15E41B1E}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		.globalSuppressions.cs = .globalSuppressions.cs
+		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
+		Library.lutconfig = Library.lutconfig
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{1AA057DC-81A6-4147-8EBD-888FEED26EA0}"
